@@ -1,0 +1,11 @@
+component networking_spud
+source \sf\os\cellularsrv\telephonyprotocols\secondarypdpcontextumtsdriver
+binary \sf\os\cellularsrv\telephonyprotocols\secondarypdpcontextumtsdriver\group all
+exports \sf\os\cellularsrv\telephonyprotocols\secondarypdpcontextumtsdriver\group
+notes_source \component_defs\release.src
+
+
+ipr E 
+ipr T \sf\os\cellularsrv\telephonyprotocols\secondarypdpcontextumtsdriver\te_spudNetworkSide
+ipr T \sf\os\cellularsrv\telephonyprotocols\secondarypdpcontextumtsdriver\te_spudrsubconn
+

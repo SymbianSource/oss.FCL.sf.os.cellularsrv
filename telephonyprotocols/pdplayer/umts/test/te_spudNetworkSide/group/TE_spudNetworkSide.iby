@@ -1,0 +1,56 @@
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+#ifndef TE_SPUD_NETWORK_SIDE_IBY
+#define TE_SPUD_NETWORK_SIDE_IBY
+
+#ifdef SYMBIAN_EXCLUDE_QOS_PROTPLUGINS
+REM Feature QoS is not included in this ROM
+REM Temporary patch
+#else
+file=ABI_DIR\BUILD_DIR\TE_SpudNetworkSide.exe		System\Libs\TE_SpudNetworkSide.exe
+#endif
+
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SpudNetworkSide.script 		testdata\scripts\TE_SpudNetworkSide.script 
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SpudNetworkSide_ppp.script 	testdata\scripts\TE_SpudNetworkSide_ppp.script 
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SpudNetworkSide_nifman.script 	testdata\scripts\TE_SpudNetworkSide_nifman.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_PppSize_spud.script 			testdata\scripts\TE_PppSize_spud.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\Te_SpudNetworkside_Channel.script 	testdata\scripts\Te_SpudNetworkside_Channel.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SpudNetworkSide_r4_and_r5.script 		testdata\scripts\TE_SpudNetworkSide_r4_and_r5.script
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_config.txt 	testdata\configs\TE_SpudNetworkSide_config.txt
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_ppp_config.txt 	testdata\configs\TE_SpudNetworkSide_ppp_config.txt
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_ppp_config2.txt 	testdata\configs\TE_SpudNetworkSide_ppp_config2.txt
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_nifman_config.txt 	testdata\configs\TE_SpudNetworkSide_nifman_config.txt
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudNetworkSide_config_r4_and_r5.txt   testdata\configs\te_spudNetworkSide_config_r4_and_r5.txt
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide.xml 			testdata\configs\TE_SpudNetworkSide.xml
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_ppp.xml		testdata\configs\TE_SpudNetworkSide_ppp.xml
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_PppLoopback.xml		testdata\configs\TE_SpudNetworkSide_PppLoopback.xml
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_nifman.xml		testdata\configs\TE_SpudNetworkSide_nifman.xml
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_r4_and_r5.xml 			testdata\configs\TE_SpudNetworkSide_r4_and_r5.xml
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide.ini 			testdata\configs\TE_SpudNetworkSide.ini
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_nifman.ini		testdata\configs\TE_SpudNetworkSide_nifman.ini
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_platsec.ini 	testdata\configs\TE_SpudNetworkSide_platsec.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_SpudNetworkSideLoopbackCSY.ini testdata\configs\TE_SpudNetworkSideLoopbackCSY.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_SpudNetworkSideLoopbackCSY_serial.ini	testdata\configs\TE_SpudNetworkSideLoopbackCSY_serial.ini
+data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SpudNetworkSide_r4_and_r5.ini 			testdata\configs\TE_SpudNetworkSide_r4_and_r5.ini
+#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
+data=EPOCROOT##epoc32\data\z\TestData\Configs\qospolicies.ini 					testdata\configs\qospolicies.ini
+#endif
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_PPPSize_spud.ini								testdata\configs\TE_PPPSize_spud.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_PPPSize_spud.xml								testdata\configs\TE_PPPSize_spud.xml
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_PPPSize_config.txt								testdata\configs\TE_PPPSize_config.txt
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_SpudNetworkSide_Channel_config.txt			testdata\configs\TE_SpudNetworkSide_Channel_config.txt
+
+#endif // TE_SPUD_NETWORK_SIDE_IBY

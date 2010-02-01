@@ -1,0 +1,100 @@
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Network-side events / errors SPUD testing
+// 
+//
+
+/**
+ @file
+*/
+
+PRJ_EXPORTS
+
+PRJ_TESTEXPORTS
+
+#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
+// script files 
+../scripts/version1/TE_spudNetworkSide.script				z:/testdata/scripts/te_spudnetworkside.script
+../scripts/version1/TE_spudNetworkSide_nifman.script			z:/testdata/scripts/te_spudnetworkside_nifman.script
+../scripts/version1/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
+../scripts/version1/Te_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
+#else
+// script files
+../scripts/TE_spudNetworkSide.script				z:/testdata/scripts/te_spudnetworkside.script
+../scripts/TE_spudNetworkSide_nifman.script			z:/testdata/scripts/te_spudnetworkside_nifman.script
+../scripts/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
+../scripts/Te_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
+../scripts/TE_spudNetworkSide_R4_and_R5.script				z:/testdata/scripts/te_spudnetworkside_r4_and_r5.script
+#endif
+
+../scripts/TE_spudNetworkSide_ppp_9x.script			z:/testdata/scripts/te_spudnetworkside_ppp.script
+../configs/te_spudNetworkSide_ppp_config_9x.txt     z:/testdata/configs/te_spudnetworkside_ppp_config.txt
+../configs/te_spudnetworkside_ppp_config2_9x.txt    z:/testdata/configs/te_spudnetworkside_ppp_config2.txt
+../configs/te_spudNetworkSide_nifman_config_9x.txt		z:/testdata/configs/te_spudnetworkside_nifman_config.txt
+../configs/te_spudNetworkSide_config_9x.txt			z:/testdata/configs/te_spudnetworkside_config.txt
+../configs/te_spudNetworkSide_config_r4_and_r5.txt		z:/testdata/configs/te_spudnetworkside_config_r4_and_r5.txt
+
+#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
+../configs/version1/te_SpudNetworkSide.xml					z:/testdata/configs/te_spudnetworkside.xml
+../configs/version1/te_SpudNetworkSide_ppp.xml				z:/testdata/configs/te_spudnetworkside_ppp.xml
+../configs/version1/TE_SpudNetworkSide_PppLoopback.xml			z:/testdata/configs/te_spudnetworkside_ppploopback.xml
+../configs/version1/te_SpudNetworkSide_nifman.xml				z:/testdata/configs/te_spudnetworkside_nifman.xml
+../configs/version1/te_spudNetworkSide.ini					z:/testdata/configs/te_spudnetworkside.ini
+../configs/version1/TE_SpudNetworkSideLoopbackCSY.ini		z:/testdata/configs/te_spudnetworksideloopbackcsy.ini
+../configs/version1/TE_SpudNetworkSideLoopbackCSY_serial.ini	z:/testdata/configs/te_spudnetworksideloopbackcsy_serial.ini
+../configs/version1/te_spudNetworkSide_nifman.ini			z:/testdata/configs/te_spudnetworkside_nifman.ini
+
+../configs/version1/TE_PppSize_spud.ini						z:/testdata/configs/te_pppsize_spud.ini
+../configs/version1/TE_PppSize_spud.xml						z:/testdata/configs/te_pppsize_spud.xml
+../configs/version1/TE_PppSize_config.txt					z:/testdata/configs/te_pppsize_config.txt
+
+../configs/version1/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/TE_SpudNetworkSide_Channel_config.txt
+
+// Some error codes are platsec dependent
+../configs/version1/TE_SpudNetworkSide_9x.ini 	z:/testdata/configs/te_spudnetworkside_platsec.ini
+
+#else
+// requires 399 config values
+../configs/te_SpudNetworkSide.xml					z:/testdata/configs/te_spudnetworkside.xml
+../configs/te_SpudNetworkSide_ppp.xml				z:/testdata/configs/te_spudnetworkside_ppp.xml
+../configs/TE_SpudNetworkSide_PppLoopback.xml			z:/testdata/configs/te_spudnetworkside_ppploopback.xml
+../configs/te_SpudNetworkSide_nifman.xml				z:/testdata/configs/te_spudnetworkside_nifman.xml
+../configs/te_spudNetworkSide_r4_and_r5.xml			z:/testdata/configs/te_spudnetworkside_r4_and_r5.xml
+../configs/te_spudNetworkSide.ini					z:/testdata/configs/te_spudnetworkside.ini
+../configs/TE_SpudNetworkSideLoopbackCSY.ini		z:/testdata/configs/te_spudnetworksideloopbackcsy.ini
+../configs/TE_SpudNetworkSideLoopbackCSY_serial.ini	z:/testdata/configs/te_spudnetworksideloopbackcsy_serial.ini
+../configs/te_spudNetworkSide_nifman.ini			z:/testdata/configs/te_spudnetworkside_nifman.ini
+../configs/te_spudNetworkSide_r4_and_r5.ini			z:/testdata/configs/te_spudnetworkside_r4_and_r5.ini
+
+../configs/TE_PppSize_spud.ini						z:/testdata/configs/te_pppsize_spud.ini
+../configs/TE_PppSize_spud.xml						z:/testdata/configs/te_pppsize_spud.xml
+../configs/TE_PppSize_config.txt					z:/testdata/configs/te_pppsize_config.txt
+
+../configs/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/TE_SpudNetworkSide_Channel_config.txt
+
+// Some error codes are platsec dependent
+../configs/TE_SpudNetworkSide_9x.ini 	z:/testdata/configs/te_spudnetworkside_platsec.ini
+
+//Used to trigger GuQos to use Qospolicies.ini file for SetDefaultQoS
+../configs/qospolicies.ini							z:/testdata/configs/qospolicies.ini
+
+#endif // SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
+
+TE_spudNetworkSide.iby	/epoc32/rom/include/te_spudnetworkside.iby 
+
+PRJ_MMPFILES
+
+PRJ_TESTMMPFILES
+
+TE_SpudNetworkSide.mmp

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<relnotes schema="1.0.0" name="Secondary PDP context UMTS Driver" purpose="" type="component">
+  <revision major="1" functional="0" minor="0" date="20070727">
+    <ref name="PDEF109368" type="defect"/>
+    <description>SPUDMAN was not sending IfProgress with the KDataTransferTemporarilyBlocked constant when the PDP context is suspended - this is expected to be sent to Nifman from a Nif supporting GPRS but SPUDMAN was discarding notifications from lower level NIFs so that they never reached Nifman.  This means RConnection::ProgressNotification never sent any KDataTransferTemporarilyBlocked progress updates to clients.  SPUDMAN has now been changed to produce the correct behaviour.</description>
+  </revision>
+  <purpose>
+    (Only in 9.1) A network interface adaptation component that supports both primary and secondary PDP contexts
+  </purpose>
+</relnotes>

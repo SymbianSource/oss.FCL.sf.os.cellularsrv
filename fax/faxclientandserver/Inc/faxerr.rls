@@ -1,0 +1,27 @@
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+rls_string STRING_r_error_res_fax_modem_not_working	 "Could not connect to the fax machine. The fax modem has failed" 
+rls_string STRING_r_error_res_fax_cannot_connect	 "Could not connect to the fax machine." 
+rls_string STRING_r_error_res_fax_frame_fail		 "The connection to the fax machine has been broken." 
+rls_string STRING_r_error_res_fax_no_dial			 "Could not connect to the fax machine. Could not dial fax number" 
+rls_string STRING_r_error_res_fax_no_dial_tone		 "Could not connect to the fax machine. No dial tone was detected" 
+rls_string STRING_r_error_res_fax_busy				 "Could not connect to the fax machine. The line is busy" 
+rls_string STRING_r_error_res_fax_no_answer			 "Could not connect to the fax machine. The call was not answered" 
+rls_string STRING_r_error_res_fax_no_carrier		 "Could not connect to the fax machine. The call was not answered by a fax machine" 
+rls_string STRING_r_error_res_fax_remote_no_receive	 "Could not send to the fax machine. The fax machine is unable to receive faxes" 
+rls_string STRING_r_error_res_fax_receive_timeout	 "Could not send to the fax machine. The connection timed out" 
+rls_string STRING_r_error_res_fax_cannot_end		 "The connection to the fax machine has been broken" 
+rls_string STRING_r_error_res_fax_premature_hangup	 "Could not receive fax. The fax machine ended the call" 

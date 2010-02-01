@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relnotes name="DEVELOPERLIBRARY">
+  <purpose>
+  </purpose>
+
+  <preq number="2563" title="Remove Cellular Baseband Services TRP TSY and TRP CSY TPIP" revision="004">
+    Updated documentation for TRP removal
+  </preq>
+  
+  <preq number="1404" title="ETel support for 3GPP R6 USAT" revision="003">
+    Added ETel support for 3GPP R6 USAT
+  </preq>
+
+  <preq number="1372" title="ETel support for HSUPA" revision="002">
+    Added ETel support for HSUPA
+  </preq>
+
+  <preq number="928" title="GPS Assistance Data and Cell based Positioning API" revision="001">
+    Updated functional specification document
+  </preq>
+</relnotes>

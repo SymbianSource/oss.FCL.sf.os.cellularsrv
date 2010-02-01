@@ -1,0 +1,2654 @@
+
+(object Petal
+    version    	43
+    _written   	"Rose 6.1.9113.5"
+    charSet    	0)
+
+(object Design "Logical View"
+    is_unit    	TRUE
+    is_loaded  	TRUE
+    quid       	"41CC5881009C"
+    defaults   	(object defaults
+	rightMargin 	0.250000
+	leftMargin 	0.250000
+	topMargin  	0.250000
+	bottomMargin 	0.500000
+	pageOverlap 	0.250000
+	clipIconLabels 	TRUE
+	autoResize 	TRUE
+	snapToGrid 	TRUE
+	gridX      	16
+	gridY      	16
+	defaultFont 	(object Font
+	    size       	10
+	    face       	"Arial"
+	    bold       	FALSE
+	    italics    	FALSE
+	    underline  	FALSE
+	    strike     	FALSE
+	    color      	0
+	    default_color 	TRUE)
+	showMessageNum 	1
+	showClassOfObject 	TRUE
+	notation   	"Unified")
+    root_usecase_package 	(object Class_Category "Use Case View"
+	quid       	"41CC5881009E"
+	exportControl 	"Public"
+	global     	TRUE
+	logical_models 	(list unit_reference_list
+	    (object Mechanism @1
+		logical_models 	(list unit_reference_list
+		    (object Object "SPUDtel"
+			quid       	"41CC595900DA"
+			collaborators 	(list link_list
+			    (object Link
+				quid       	"41CC5992006D"
+				supplier   	"eTel"
+				quidu      	"41CC597100CB"
+				messages   	(list Messages
+				    (object Message ""
+					quid       	"41CC5BA10128"
+					documentation 	"TelServer.Connect()"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.1"
+					ordinal    	1)
+				    (object Message ""
+					quid       	"41CC609E004E"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"2.1"
+					ordinal    	7)
+				    (object Message ""
+					quid       	"41CC653F036B"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"3.1"
+					ordinal    	11)
+				    (object Message ""
+					quid       	"41CC68E90251"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"3.2"
+					ordinal    	12)
+				    (object Message ""
+					quid       	"41CC69310271"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"3.4"
+					ordinal    	14)
+				    (object Message ""
+					quid       	"41CC6AA50196"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"4.1"
+					ordinal    	17)
+				    (object Message ""
+					quid       	"41D2F01B0157"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"5.1"
+					ordinal    	21)
+				    (object Message ""
+					quid       	"41D2F0D50138"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"5.2"
+					ordinal    	22)
+				    (object Message ""
+					quid       	"41D2F2120138"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"6.1"
+					ordinal    	25)
+				    (object Message ""
+					quid       	"41D2F25701B5"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"6.3"
+					ordinal    	27)
+				    (object Message "RPacketContext::Activate()"
+					quid       	"41D2F335034B"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7.1"
+					ordinal    	31)
+				    (object Message "RPacketContext::AddPacketFilter()"
+					quid       	"41D2F3E20157"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.1"
+					ordinal    	39)
+				    (object Message "RPacketContext::RemovePacketFilter()"
+					quid       	"41D2F42202BF"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.3"
+					ordinal    	41)
+				    (object Message "RPacketContext::DeleteTFT()"
+					quid       	"41D2F4AB0242"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.5"
+					ordinal    	43)
+				    (object Message "RPacketContext::Deactivate()"
+					quid       	"41D2F57C01E4"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9.1"
+					ordinal    	53)
+				    (object Message "RPacketQoS::Close()"
+					quid       	"41D2F5AD0271"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9.3"
+					ordinal    	55)
+				    (object Message "RPacketContext::Delete()"
+					quid       	"41D2F68F01E4"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9.4"
+					ordinal    	56)
+				    (object Message "RPacketContext::Close()"
+					quid       	"41D2F74000EA"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9.6"
+					ordinal    	58)
+				    (object Message ""
+					quid       	"41D2FEC30109"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.2"
+					ordinal    	2)
+				    (object Message ""
+					quid       	"41D2FECA03D8"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.3"
+					ordinal    	3)
+				    (object Message ""
+					quid       	"41D2FED3006D"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1.4"
+					ordinal    	4)
+				    (object Message "RPacketContext::ModifyActiveContext"
+					quid       	"427944430001"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.7.1.1"
+					ordinal    	47)
+				    (object Message "RPacketQoS::GetProfileParameters"
+					quid       	"42794466006F"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.7.1.3"
+					ordinal    	49)
+				    (object Message "RPacketContext::InitialiseContext"
+					quid       	"427944EA014C"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7.3"
+					ordinal    	33)
+				    (object Message "RPacketQoS::GetProfileParameters"
+					quid       	"427944FE0266"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7.5"
+					ordinal    	35)))
+			    (object Link
+				quid       	"41CC5ACC0232"
+				supplier   	"SPUDtel"
+				quidu      	"41CC595900DA"
+				messages   	(list Messages
+				    (object Message ""
+					quid       	"41CC60AB034B"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"2.2"
+					ordinal    	8)
+				    (object Message ""
+					quid       	"41CC6925029F"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"3.3"
+					ordinal    	13)
+				    (object Message ""
+					quid       	"41CC6AE7006D"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"4.2"
+					ordinal    	18)
+				    (object Message ""
+					quid       	"41D2F23B009C"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"6.2"
+					ordinal    	26)
+				    (object Message ""
+					quid       	"41D2F27702EE"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"6.4"
+					ordinal    	28)
+				    (object Message ""
+					quid       	"41D2F34802DE"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7.2"
+					ordinal    	32)
+				    (object Message ""
+					quid       	"41D2F3FB0271"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.2"
+					ordinal    	40)
+				    (object Message ""
+					quid       	"41D2F453006D"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.4"
+					ordinal    	42)
+				    (object Message ""
+					quid       	"41D2F4D500AB"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.6"
+					ordinal    	44)
+				    (object Message ""
+					quid       	"41D2F61702DE"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9.2"
+					ordinal    	54)
+				    (object Message ""
+					quid       	"41D2F71100BB"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9.5"
+					ordinal    	57)
+				    (object Message ""
+					quid       	"427944490168"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.7.1.2"
+					ordinal    	48)
+				    (object Message ""
+					quid       	"427944720263"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.7.1.4"
+					ordinal    	50)
+				    (object Message ""
+					quid       	"427944F900D0"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7.4"
+					ordinal    	34)
+				    (object Message ""
+					quid       	"4279451300C0"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7.6"
+					ordinal    	36))))
+			persistence 	"Transient"
+			multi      	FALSE)
+		    (object Object "eTel"
+			quid       	"41CC597100CB"
+			persistence 	"Transient"
+			multi      	FALSE)
+		    (object Object "SPUDman"
+			quid       	"41CC59AA02DE"
+			collaborators 	(list link_list
+			    (object Link
+				quid       	"41CC59C4034B"
+				supplier   	"SPUDtel"
+				quidu      	"41CC595900DA"
+				messages   	(list Messages
+				    (object Message ""
+					quid       	"41CC5B6202DE"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"1"
+					ordinal    	0)
+				    (object Message ""
+					quid       	"41CC60930000"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"2"
+					ordinal    	6)
+				    (object Message ""
+					quid       	"41CC64300271"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"2.2.1"
+					ordinal    	9)
+				    (object Message ""
+					quid       	"41CC64A6006D"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"3"
+					ordinal    	10)
+				    (object Message ""
+					quid       	"41CC6A8A0203"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"4"
+					ordinal    	16)
+				    (object Message ""
+					quid       	"41D2EFB703B9"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"5"
+					ordinal    	20)
+				    (object Message ""
+					quid       	"41D2F1D8001F"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"6"
+					ordinal    	24)
+				    (object Message ""
+					quid       	"41D2F295005D"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"6.5"
+					ordinal    	29)
+				    (object Message "Activate pdp context"
+					quid       	"41D2F30900EA"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"7"
+					ordinal    	30)
+				    (object Message "Change TFT"
+					quid       	"41D2F3970148"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8"
+					ordinal    	38)
+				    (object Message "Change TFT completed"
+					quid       	"41D2F4FF03A9"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"8.7"
+					ordinal    	45)
+				    (object Message "Delete pdp context"
+					quid       	"41D2F56400AB"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"9"
+					ordinal    	52)
+				    (object Message "Pdp context deleted"
+					quid       	"41D2FB310399"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"9.7"
+					ordinal    	59)
+				    (object Message ""
+					quid       	"41D2FEE10271"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"1.5"
+					ordinal    	5)
+				    (object Message "Modify Active context"
+					quid       	"427944260223"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"FromClientToSupplier"
+					sequence   	"8.7.1"
+					ordinal    	46)
+				    (object Message "Modify Active completed"
+					quid       	"4279448002A2"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"8.7.1.4.1"
+					ordinal    	51)
+				    (object Message "Pdp context activated"
+					quid       	"427945170303"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"7.7"
+					ordinal    	37)
+				    (object Message "Set QoS completed"
+					quid       	"427945700036"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"4.3"
+					ordinal    	19)
+				    (object Message "Secondary context created"
+					quid       	"427945B603A2"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"5.3"
+					ordinal    	23)
+				    (object Message "Context created"
+					quid       	"4279464B03B4"
+					frequency  	"Aperiodic"
+					synchronization 	"Simple"
+					dir        	"ToClientFromSupplier"
+					sequence   	"3.5"
+					ordinal    	15))))
+			persistence 	"Transient"
+			multi      	FALSE))))
+	logical_presentations 	(list unit_reference_list
+	    (object UseCaseDiagram "Main"
+		quid       	"41CC588301F5"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))
+	    (object InteractionDiagram "SpudToEtel"
+		mechanism_ref 	@1
+		quid       	"41CC58910251"
+		title      	"SpudToEtel"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	22
+		origin_y   	0
+		items      	(list diagram_item_list
+		    (object InterObjView "SPUDtel" @2
+			location   	(784, 224)
+			font       	(object Font
+			    underline  	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@2
+			    location   	(784, 224)
+			    fill_color 	13434879
+			    anchor_loc 	1
+			    nlines     	2
+			    max_width  	282
+			    justify    	0
+			    label      	"SPUDtel")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"41CC595900DA"
+			width      	300
+			height     	6509
+			icon_height 	0
+			icon_width 	0
+			icon_y_offset 	0
+			annotation 	1
+			Focus_Of_Control 	(object Focus_Of_Control "" @3
+			    location   	(784, 448)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	472
+			    y_coord    	412
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @4
+			    location   	(784, 1056)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	244
+			    y_coord    	184
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @5
+			    location   	(784, 1088)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	152
+			    y_coord    	92
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @6
+			    location   	(784, 1408)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	440
+			    y_coord    	380
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @7
+			    location   	(784, 1536)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @8
+			    location   	(784, 2112)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	248
+			    y_coord    	188
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @9
+			    location   	(784, 2160)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @10
+			    location   	(784, 2592)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	312
+			    y_coord    	252
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @11
+			    location   	(784, 3264)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	424
+			    y_coord    	364
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @12
+			    location   	(784, 3312)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @13
+			    location   	(784, 3472)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @14
+			    location   	(784, 3872)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	568
+			    y_coord    	508
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @15
+			    location   	(784, 3904)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @16
+			    location   	(784, 4064)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @17
+			    location   	(784, 4224)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @18
+			    location   	(784, 4688)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	1164
+			    y_coord    	1104
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @19
+			    location   	(784, 4720)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @20
+			    location   	(784, 4912)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @21
+			    location   	(784, 5072)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @22
+			    location   	(784, 5296)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	436
+			    y_coord    	376
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @23
+			    location   	(784, 5344)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @24
+			    location   	(784, 5488)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	184
+			    y_coord    	124
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @25
+			    location   	(784, 6032)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	552
+			    y_coord    	492
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @26
+			    location   	(784, 6064)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @27
+			    location   	(784, 6336)
+			    line_color 	3342489
+			    InterObjView 	@2
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE))
+		    (object InterObjView "eTel" @28
+			location   	(1616, 224)
+			font       	(object Font
+			    underline  	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@28
+			    location   	(1616, 224)
+			    fill_color 	13434879
+			    anchor_loc 	1
+			    nlines     	2
+			    max_width  	282
+			    justify    	0
+			    label      	"eTel")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"41CC597100CB"
+			width      	300
+			height     	6509
+			icon_height 	0
+			icon_width 	0
+			icon_y_offset 	0
+			annotation 	1
+			Focus_Of_Control 	(object Focus_Of_Control "" @29
+			    location   	(1616, 480)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @30
+			    location   	(1616, 592)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @31
+			    location   	(1616, 672)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @32
+			    location   	(1616, 768)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @33
+			    location   	(1616, 1072)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @34
+			    location   	(1616, 1424)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @35
+			    location   	(1616, 1520)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @36
+			    location   	(1616, 1648)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @37
+			    location   	(1616, 2128)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @38
+			    location   	(1616, 2608)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @39
+			    location   	(1616, 2720)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @40
+			    location   	(1616, 3280)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @41
+			    location   	(1616, 3440)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @42
+			    location   	(1616, 3888)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @43
+			    location   	(1616, 4000)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @44
+			    location   	(1616, 4160)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @45
+			    location   	(1616, 4704)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @46
+			    location   	(1616, 4896)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @47
+			    location   	(1616, 5053)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @48
+			    location   	(1616, 5312)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @49
+			    location   	(1616, 5456)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @50
+			    location   	(1616, 6048)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @51
+			    location   	(1616, 6192)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @52
+			    location   	(1616, 6320)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @53
+			    location   	(1616, 6448)
+			    line_color 	3342489
+			    InterObjView 	@28
+			    height     	60
+			    y_coord    	0
+			    Nested     	FALSE))
+		    (object InterObjView "SPUDman" @54
+			location   	(240, 224)
+			font       	(object Font
+			    underline  	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@54
+			    location   	(240, 224)
+			    fill_color 	13434879
+			    anchor_loc 	1
+			    nlines     	2
+			    max_width  	282
+			    justify    	0
+			    label      	"SPUDman")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"41CC59AA02DE"
+			width      	300
+			height     	6509
+			icon_height 	0
+			icon_width 	0
+			icon_y_offset 	0
+			Focus_Of_Control 	(object Focus_Of_Control "" @55
+			    location   	(240, 448)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	1972
+			    y_coord    	1912
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @56
+			    location   	(240, 800)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @57
+			    location   	(240, 1120)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @58
+			    location   	(240, 1728)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @59
+			    location   	(240, 2240)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @60
+			    location   	(240, 2528)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	436
+			    y_coord    	376
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @61
+			    location   	(240, 2784)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @62
+			    location   	(240, 3264)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	484
+			    y_coord    	424
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @63
+			    location   	(240, 3568)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @64
+			    location   	(240, 3872)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	628
+			    y_coord    	568
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @65
+			    location   	(240, 4320)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @66
+			    location   	(240, 4688)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	1224
+			    y_coord    	1164
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @67
+			    location   	(240, 5200)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	592
+			    y_coord    	532
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @68
+			    location   	(240, 5552)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @69
+			    location   	(240, 5760)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	884
+			    y_coord    	824
+			    Nested     	FALSE)
+			Focus_Of_Control 	(object Focus_Of_Control "" @70
+			    location   	(240, 6464)
+			    line_color 	3342489
+			    InterObjView 	@54
+			    height     	60
+			    y_coord    	0
+			    Nested     	TRUE))
+		    (object Label @71
+			location   	(352, 992)
+			nlines     	1
+			max_width  	331
+			label      	"Open phone")
+		    (object Label @72
+			location   	(944, 1024)
+			nlines     	1
+			max_width  	362
+			label      	"RPhone::Initialise()")
+		    (object InterMessView "" @73
+			location   	(16, 448)
+			label      	(object SegLabel @74
+			    Parent_View 	@73
+			    location   	(511, 404)
+			    quidu      	"41CC5B6202DE"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@55
+			Focus_Entry 	@3
+			origin     	(255, 448)
+			terminus   	(768, 448)
+			ordinal    	0)
+		    (object Label @75
+			location   	(336, 400)
+			nlines     	1
+			max_width  	381
+			label      	"Initialize phone")
+		    (object InterMessView "" @76
+			location   	(16, 480)
+			label      	(object SegLabel @77
+			    Parent_View 	@76
+			    location   	(1199, 436)
+			    quidu      	"41CC5BA10128"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@3
+			Focus_Entry 	@29
+			origin     	(799, 480)
+			terminus   	(1600, 480)
+			ordinal    	1)
+		    (object Label @78
+			location   	(896, 432)
+			nlines     	1
+			max_width  	600
+			label      	"RTelServer::Connect()")
+		    (object Label @79
+			location   	(896, 544)
+			nlines     	1
+			max_width  	600
+			label      	"RTelServer::LoadPhoneModule()")
+		    (object Label @80
+			location   	(897, 625)
+			nlines     	1
+			max_width  	600
+			label      	"RPhone::Open()")
+		    (object Label @81
+			location   	(897, 719)
+			nlines     	1
+			max_width  	600
+			label      	"RPacketService::Open()")
+		    (object InterMessView "" @82
+			location   	(16, 1056)
+			label      	(object SegLabel @83
+			    Parent_View 	@82
+			    location   	(511, 1012)
+			    quidu      	"41CC60930000"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@55
+			Focus_Entry 	@4
+			origin     	(255, 1056)
+			terminus   	(768, 1056)
+			ordinal    	6)
+		    (object InterMessView "" @84
+			location   	(16, 1072)
+			label      	(object SegLabel @85
+			    Parent_View 	@84
+			    location   	(1199, 1028)
+			    quidu      	"41CC609E004E"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@4
+			Focus_Entry 	@33
+			origin     	(799, 1072)
+			terminus   	(1600, 1072)
+			ordinal    	7)
+		    (object SelfMessView "" @86
+			location   	(16, 1088)
+			label      	(object SegLabel @87
+			    Parent_View 	@86
+			    location   	(875, 1044)
+			    quidu      	"41CC60AB034B"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@4
+			Focus_Entry 	@5
+			origin     	(800, 1088)
+			terminus   	(950, 1088)
+			ordinal    	8)
+		    (object NoteView @88
+			location   	(1232, 1152)
+			label      	(object ItemLabel
+			    Parent_View 	@88
+			    location   	(976, 1083)
+			    fill_color 	13434879
+			    nlines     	2
+			    max_width  	477
+			    label      	"Etel completes initialization request")
+			line_color 	3342489
+			fill_color 	13434879
+			width      	537
+			height     	150)
+		    (object InterMessView "" @89
+			location   	(16, 1120)
+			label      	(object SegLabel @90
+			    Parent_View 	@89
+			    location   	(512, 1076)
+			    quidu      	"41CC64300271"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@5
+			Focus_Entry 	@57
+			origin     	(768, 1120)
+			terminus   	(256, 1120)
+			ordinal    	9)
+		    (object InterMessView "" @91
+			location   	(16, 1408)
+			label      	(object SegLabel @92
+			    Parent_View 	@91
+			    location   	(511, 1364)
+			    quidu      	"41CC64A6006D"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@55
+			Focus_Entry 	@6
+			origin     	(255, 1408)
+			terminus   	(768, 1408)
+			ordinal    	10)
+		    (object Label @93
+			location   	(304, 1360)
+			nlines     	2
+			max_width  	443
+			label      	"Create primary pdp context")
+		    (object InterMessView "" @94
+			location   	(16, 1424)
+			label      	(object SegLabel @95
+			    Parent_View 	@94
+			    location   	(1199, 1380)
+			    quidu      	"41CC653F036B"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@6
+			Focus_Entry 	@34
+			origin     	(799, 1424)
+			terminus   	(1600, 1424)
+			ordinal    	11)
+		    (object Label @96
+			location   	(866, 1377)
+			nlines     	1
+			max_width  	600
+			label      	"RPacketContext::OpenNewContext()")
+		    (object InterMessView "" @97
+			location   	(16, 1520)
+			label      	(object SegLabel @98
+			    Parent_View 	@97
+			    location   	(1199, 1476)
+			    quidu      	"41CC68E90251"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@6
+			Focus_Entry 	@35
+			origin     	(799, 1520)
+			terminus   	(1600, 1520)
+			ordinal    	12)
+		    (object Label @99
+			location   	(866, 1473)
+			nlines     	1
+			max_width  	600
+			label      	"RPacketContext::SetConfig()")
+		    (object SelfMessView "" @100
+			location   	(16, 1536)
+			label      	(object SegLabel @101
+			    Parent_View 	@100
+			    location   	(875, 1492)
+			    quidu      	"41CC6925029F"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@6
+			Focus_Entry 	@7
+			origin     	(800, 1536)
+			terminus   	(950, 1536)
+			ordinal    	13)
+		    (object InterMessView "" @102
+			location   	(16, 1648)
+			label      	(object SegLabel @103
+			    Parent_View 	@102
+			    location   	(1199, 1604)
+			    quidu      	"41CC69310271"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@6
+			Focus_Entry 	@36
+			origin     	(799, 1648)
+			terminus   	(1600, 1648)
+			ordinal    	14)
+		    (object Label @104
+			location   	(881, 1583)
+			nlines     	1
+			max_width  	600
+			label      	"RPacketQoS::OpenNewQoS()")
+		    (object Label @105
+			location   	(337, 1057)
+			nlines     	1
+			max_width  	394
+			label      	"Phone opened")
+		    (object InterMessView "" @106
+			location   	(16, 2112)
+			label      	(object SegLabel @107
+			    Parent_View 	@106
+			    location   	(511, 2068)
+			    quidu      	"41CC6A8A0203"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@55
+			Focus_Entry 	@8
+			origin     	(255, 2112)
+			terminus   	(768, 2112)
+			ordinal    	16)
+		    (object Label @108
+			location   	(303, 2048)
+			nlines     	1
+			max_width  	600
+			label      	"Set QoS")
+		    (object InterMessView "" @109
+			location   	(16, 2128)
+			label      	(object SegLabel @110
+			    Parent_View 	@109
+			    location   	(1199, 2084)
+			    quidu      	"41CC6AA50196"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@8
+			Focus_Entry 	@37
+			origin     	(799, 2128)
+			terminus   	(1600, 2128)
+			ordinal    	17)
+		    (object Label @111
+			location   	(847, 2045)
+			nlines     	1
+			max_width  	700
+			label      	"RPacketQoS::SetProfileParameters()")
+		    (object SelfMessView "" @112
+			location   	(16, 2160)
+			label      	(object SegLabel @113
+			    Parent_View 	@112
+			    location   	(875, 2116)
+			    quidu      	"41CC6AE7006D"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@8
+			Focus_Entry 	@9
+			origin     	(800, 2160)
+			terminus   	(950, 2160)
+			ordinal    	18)
+		    (object InterMessView "" @114
+			location   	(16, 2592)
+			label      	(object SegLabel @115
+			    Parent_View 	@114
+			    location   	(511, 2548)
+			    quidu      	"41D2EFB703B9"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@60
+			Focus_Entry 	@10
+			origin     	(255, 2592)
+			terminus   	(768, 2592)
+			ordinal    	20)
+		    (object Label @116
+			location   	(288, 2544)
+			nlines     	2
+			max_width  	463
+			label      	"Create secondary pdp context")
+		    (object InterMessView "" @117
+			location   	(16, 2608)
+			label      	(object SegLabel @118
+			    Parent_View 	@117
+			    location   	(1199, 2564)
+			    quidu      	"41D2F01B0157"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@10
+			Focus_Entry 	@38
+			origin     	(799, 2608)
+			terminus   	(1600, 2608)
+			ordinal    	21)
+		    (object Label @119
+			location   	(848, 2560)
+			nlines     	2
+			max_width  	700
+			label      	"RPacketContext::OpenNewSecondaryContext()")
+		    (object Label @120
+			location   	(847, 2674)
+			nlines     	1
+			max_width  	600
+			label      	"RPacketQoS::OpenNewQoS()")
+		    (object InterMessView "" @121
+			location   	(16, 2720)
+			label      	(object SegLabel @122
+			    Parent_View 	@121
+			    location   	(1199, 2676)
+			    quidu      	"41D2F0D50138"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@10
+			Focus_Entry 	@39
+			origin     	(799, 2720)
+			terminus   	(1600, 2720)
+			ordinal    	22)
+		    (object InterMessView "" @123
+			location   	(16, 3264)
+			label      	(object SegLabel @124
+			    Parent_View 	@123
+			    location   	(511, 3220)
+			    quidu      	"41D2F1D8001F"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@62
+			Focus_Entry 	@11
+			origin     	(255, 3264)
+			terminus   	(768, 3264)
+			ordinal    	24)
+		    (object Label @125
+			location   	(304, 3200)
+			nlines     	1
+			max_width  	419
+			label      	"Set TFT")
+		    (object InterMessView "" @126
+			location   	(16, 3280)
+			label      	(object SegLabel @127
+			    Parent_View 	@126
+			    location   	(1199, 3236)
+			    quidu      	"41D2F2120138"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@11
+			Focus_Entry 	@40
+			origin     	(799, 3280)
+			terminus   	(1600, 3280)
+			ordinal    	25)
+		    (object Label @128
+			location   	(847, 3213)
+			nlines     	1
+			max_width  	656
+			label      	"RPacketContext::CreateNewTFT()")
+		    (object SelfMessView "" @129
+			location   	(16, 3312)
+			label      	(object SegLabel @130
+			    Parent_View 	@129
+			    location   	(875, 3268)
+			    quidu      	"41D2F23B009C"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@11
+			Focus_Entry 	@12
+			origin     	(800, 3312)
+			terminus   	(950, 3312)
+			ordinal    	26)
+		    (object InterMessView "" @131
+			location   	(16, 3440)
+			label      	(object SegLabel @132
+			    Parent_View 	@131
+			    location   	(1199, 3396)
+			    quidu      	"41D2F25701B5"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@11
+			Focus_Entry 	@41
+			origin     	(799, 3440)
+			terminus   	(1600, 3440)
+			ordinal    	27)
+		    (object Label @133
+			location   	(847, 3376)
+			nlines     	1
+			max_width  	700
+			label      	"RPacketContext::AddPacketFilter()")
+		    (object SelfMessView "" @134
+			location   	(16, 3472)
+			label      	(object SegLabel @135
+			    Parent_View 	@134
+			    location   	(875, 3428)
+			    quidu      	"41D2F27702EE"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@11
+			Focus_Entry 	@13
+			origin     	(800, 3472)
+			terminus   	(950, 3472)
+			ordinal    	28)
+		    (object InterMessView "" @136
+			location   	(16, 3568)
+			label      	(object SegLabel @137
+			    Parent_View 	@136
+			    location   	(512, 3524)
+			    quidu      	"41D2F295005D"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@11
+			Focus_Entry 	@63
+			origin     	(768, 3568)
+			terminus   	(256, 3568)
+			ordinal    	29)
+		    (object Label @138
+			location   	(304, 3520)
+			nlines     	1
+			max_width  	412
+			label      	"Set TFT completed")
+		    (object InterMessView "" @139
+			location   	(16, 3872)
+			label      	(object SegLabel @140
+			    Parent_View 	@139
+			    location   	(511, 3828)
+			    quidu      	"41D2F30900EA"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	369
+			    justify    	0
+			    label      	"Activate pdp context"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@64
+			Focus_Entry 	@14
+			origin     	(255, 3872)
+			terminus   	(768, 3872)
+			ordinal    	30)
+		    (object InterMessView "" @141
+			location   	(16, 3888)
+			label      	(object SegLabel @142
+			    Parent_View 	@141
+			    location   	(1199, 3844)
+			    quidu      	"41D2F335034B"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	491
+			    justify    	0
+			    label      	"RPacketContext::Activate()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@14
+			Focus_Entry 	@42
+			origin     	(799, 3888)
+			terminus   	(1600, 3888)
+			ordinal    	31)
+		    (object SelfMessView "" @143
+			location   	(16, 3904)
+			label      	(object SegLabel @144
+			    Parent_View 	@143
+			    location   	(875, 3860)
+			    quidu      	"41D2F34802DE"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@14
+			Focus_Entry 	@15
+			origin     	(800, 3904)
+			terminus   	(950, 3904)
+			ordinal    	32)
+		    (object InterMessView "" @145
+			location   	(16, 4688)
+			label      	(object SegLabel @146
+			    Parent_View 	@145
+			    location   	(511, 4644)
+			    quidu      	"41D2F3970148"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	219
+			    justify    	0
+			    label      	"Change TFT"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@66
+			Focus_Entry 	@18
+			origin     	(255, 4688)
+			terminus   	(768, 4688)
+			ordinal    	38)
+		    (object InterMessView "" @147
+			location   	(16, 4704)
+			label      	(object SegLabel @148
+			    Parent_View 	@147
+			    location   	(1199, 4660)
+			    quidu      	"41D2F3E20157"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	637
+			    justify    	0
+			    label      	"RPacketContext::AddPacketFilter()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@18
+			Focus_Entry 	@45
+			origin     	(799, 4704)
+			terminus   	(1600, 4704)
+			ordinal    	39)
+		    (object SelfMessView "" @149
+			location   	(16, 4720)
+			label      	(object SegLabel @150
+			    Parent_View 	@149
+			    location   	(875, 4676)
+			    quidu      	"41D2F3FB0271"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@18
+			Focus_Entry 	@19
+			origin     	(800, 4720)
+			terminus   	(950, 4720)
+			ordinal    	40)
+		    (object Label @151
+			location   	(1152, 4736)
+			nlines     	1
+			max_width  	75
+			label      	"OR")
+		    (object InterMessView "" @152
+			location   	(16, 4896)
+			label      	(object SegLabel @153
+			    Parent_View 	@152
+			    location   	(1199, 4852)
+			    quidu      	"41D2F42202BF"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	709
+			    justify    	0
+			    label      	"RPacketContext::RemovePacketFilter()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@18
+			Focus_Entry 	@46
+			origin     	(799, 4896)
+			terminus   	(1600, 4896)
+			ordinal    	41)
+		    (object SelfMessView "" @154
+			location   	(16, 4912)
+			label      	(object SegLabel @155
+			    Parent_View 	@154
+			    location   	(875, 4868)
+			    quidu      	"41D2F453006D"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@18
+			Focus_Entry 	@20
+			origin     	(800, 4912)
+			terminus   	(950, 4912)
+			ordinal    	42)
+		    (object InterMessView "" @156
+			location   	(16, 5053)
+			label      	(object SegLabel @157
+			    Parent_View 	@156
+			    location   	(1199, 5009)
+			    quidu      	"41D2F4AB0242"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	531
+			    justify    	0
+			    label      	"RPacketContext::DeleteTFT()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@18
+			Focus_Entry 	@47
+			origin     	(799, 5053)
+			terminus   	(1600, 5053)
+			ordinal    	43)
+		    (object SelfMessView "" @158
+			location   	(16, 5072)
+			label      	(object SegLabel @159
+			    Parent_View 	@158
+			    location   	(875, 5028)
+			    quidu      	"41D2F4D500AB"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@18
+			Focus_Entry 	@21
+			origin     	(800, 5072)
+			terminus   	(950, 5072)
+			ordinal    	44)
+		    (object Label @160
+			location   	(1120, 4928)
+			nlines     	1
+			max_width  	75
+			label      	"OR")
+		    (object InterMessView "" @161
+			location   	(16, 5200)
+			label      	(object SegLabel @162
+			    Parent_View 	@161
+			    location   	(512, 5156)
+			    quidu      	"41D2F4FF03A9"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	419
+			    justify    	0
+			    label      	"Change TFT completed"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@18
+			Focus_Entry 	@67
+			origin     	(768, 5200)
+			terminus   	(256, 5200)
+			ordinal    	45)
+		    (object InterMessView "" @163
+			location   	(16, 6032)
+			label      	(object SegLabel @164
+			    Parent_View 	@163
+			    location   	(511, 5988)
+			    quidu      	"41D2F56400AB"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	341
+			    justify    	0
+			    label      	"Delete pdp context"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@69
+			Focus_Entry 	@25
+			origin     	(255, 6032)
+			terminus   	(768, 6032)
+			ordinal    	52)
+		    (object InterMessView "" @165
+			location   	(16, 6048)
+			label      	(object SegLabel @166
+			    Parent_View 	@165
+			    location   	(1199, 6004)
+			    quidu      	"41D2F57C01E4"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	534
+			    justify    	0
+			    label      	"RPacketContext::Deactivate()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@25
+			Focus_Entry 	@50
+			origin     	(799, 6048)
+			terminus   	(1600, 6048)
+			ordinal    	53)
+		    (object InterMessView "" @167
+			location   	(16, 6192)
+			label      	(object SegLabel @168
+			    Parent_View 	@167
+			    location   	(1199, 6148)
+			    quidu      	"41D2F5AD0271"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	391
+			    justify    	0
+			    label      	"RPacketQoS::Close()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@25
+			Focus_Entry 	@51
+			origin     	(799, 6192)
+			terminus   	(1600, 6192)
+			ordinal    	55)
+		    (object SelfMessView "" @169
+			location   	(16, 6064)
+			label      	(object SegLabel @170
+			    Parent_View 	@169
+			    location   	(875, 6020)
+			    quidu      	"41D2F61702DE"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@25
+			Focus_Entry 	@26
+			origin     	(800, 6064)
+			terminus   	(950, 6064)
+			ordinal    	54)
+		    (object InterMessView "" @171
+			location   	(16, 6320)
+			label      	(object SegLabel @172
+			    Parent_View 	@171
+			    location   	(1199, 6276)
+			    quidu      	"41D2F68F01E4"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	462
+			    justify    	0
+			    label      	"RPacketContext::Delete()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@25
+			Focus_Entry 	@52
+			origin     	(799, 6320)
+			terminus   	(1600, 6320)
+			ordinal    	56)
+		    (object SelfMessView "" @173
+			location   	(16, 6336)
+			label      	(object SegLabel @174
+			    Parent_View 	@173
+			    location   	(875, 6292)
+			    quidu      	"41D2F71100BB"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@25
+			Focus_Entry 	@27
+			origin     	(800, 6336)
+			terminus   	(950, 6336)
+			ordinal    	57)
+		    (object InterMessView "" @175
+			location   	(16, 6448)
+			label      	(object SegLabel @176
+			    Parent_View 	@175
+			    location   	(1199, 6404)
+			    quidu      	"41D2F74000EA"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	450
+			    justify    	0
+			    label      	"RPacketContext::Close()"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@25
+			Focus_Entry 	@53
+			origin     	(799, 6448)
+			terminus   	(1600, 6448)
+			ordinal    	58)
+		    (object InterMessView "" @177
+			location   	(16, 6464)
+			label      	(object SegLabel @178
+			    Parent_View 	@177
+			    location   	(512, 6420)
+			    quidu      	"41D2FB310399"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	362
+			    justify    	0
+			    label      	"Pdp context deleted"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@25
+			Focus_Entry 	@70
+			origin     	(768, 6464)
+			terminus   	(256, 6464)
+			ordinal    	59)
+		    (object Label @179
+			location   	(338, 753)
+			nlines     	1
+			max_width  	381
+			label      	"Phone initialised")
+		    (object InterMessView "" @180
+			location   	(16, 592)
+			label      	(object SegLabel @181
+			    Parent_View 	@180
+			    location   	(1199, 548)
+			    quidu      	"41D2FEC30109"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@3
+			Focus_Entry 	@30
+			origin     	(799, 592)
+			terminus   	(1600, 592)
+			ordinal    	2)
+		    (object InterMessView "" @182
+			location   	(16, 672)
+			label      	(object SegLabel @183
+			    Parent_View 	@182
+			    location   	(1199, 628)
+			    quidu      	"41D2FECA03D8"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@3
+			Focus_Entry 	@31
+			origin     	(799, 672)
+			terminus   	(1600, 672)
+			ordinal    	3)
+		    (object InterMessView "" @184
+			location   	(16, 768)
+			label      	(object SegLabel @185
+			    Parent_View 	@184
+			    location   	(1199, 724)
+			    quidu      	"41D2FED3006D"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@3
+			Focus_Entry 	@32
+			origin     	(799, 768)
+			terminus   	(1600, 768)
+			ordinal    	4)
+		    (object InterMessView "" @186
+			location   	(16, 800)
+			label      	(object SegLabel @187
+			    Parent_View 	@186
+			    location   	(512, 756)
+			    quidu      	"41D2FEE10271"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@3
+			Focus_Entry 	@56
+			origin     	(768, 800)
+			terminus   	(256, 800)
+			ordinal    	5)
+		    (object InterMessView "" @188
+			location   	(16, 5296)
+			label      	(object SegLabel @189
+			    Parent_View 	@188
+			    location   	(511, 5252)
+			    quidu      	"427944260223"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	387
+			    justify    	0
+			    label      	"Modify Active context"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@54
+			supplier   	@2
+			Focus_Src  	@67
+			Focus_Entry 	@22
+			origin     	(255, 5296)
+			terminus   	(768, 5296)
+			ordinal    	46)
+		    (object InterMessView "" @190
+			location   	(16, 5312)
+			label      	(object SegLabel @191
+			    Parent_View 	@190
+			    location   	(1199, 5268)
+			    quidu      	"427944430001"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	691
+			    justify    	0
+			    label      	"RPacketContext::ModifyActiveContext"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@22
+			Focus_Entry 	@48
+			origin     	(799, 5312)
+			terminus   	(1600, 5312)
+			ordinal    	47)
+		    (object SelfMessView "" @192
+			location   	(16, 5344)
+			label      	(object SegLabel @193
+			    Parent_View 	@192
+			    location   	(875, 5300)
+			    quidu      	"427944490168"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@22
+			Focus_Entry 	@23
+			origin     	(800, 5344)
+			terminus   	(950, 5344)
+			ordinal    	48)
+		    (object InterMessView "" @194
+			location   	(16, 5456)
+			label      	(object SegLabel @195
+			    Parent_View 	@194
+			    location   	(1199, 5412)
+			    quidu      	"42794466006F"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	650
+			    justify    	0
+			    label      	"RPacketQoS::GetProfileParameters"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@22
+			Focus_Entry 	@49
+			origin     	(799, 5456)
+			terminus   	(1600, 5456)
+			ordinal    	49)
+		    (object SelfMessView "" @196
+			location   	(16, 5488)
+			label      	(object SegLabel @197
+			    Parent_View 	@196
+			    location   	(875, 5444)
+			    quidu      	"427944720263"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@22
+			Focus_Entry 	@24
+			origin     	(800, 5488)
+			terminus   	(950, 5488)
+			ordinal    	50)
+		    (object InterMessView "" @198
+			location   	(16, 5552)
+			label      	(object SegLabel @199
+			    Parent_View 	@198
+			    location   	(512, 5508)
+			    quidu      	"4279448002A2"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	441
+			    justify    	0
+			    label      	"Modify Active completed"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@24
+			Focus_Entry 	@68
+			origin     	(768, 5552)
+			terminus   	(256, 5552)
+			ordinal    	51)
+		    (object InterMessView "" @200
+			location   	(16, 4000)
+			label      	(object SegLabel @201
+			    Parent_View 	@200
+			    location   	(1199, 3956)
+			    quidu      	"427944EA014C"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	609
+			    justify    	0
+			    label      	"RPacketContext::InitialiseContext"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@14
+			Focus_Entry 	@43
+			origin     	(799, 4000)
+			terminus   	(1600, 4000)
+			ordinal    	33)
+		    (object SelfMessView "" @202
+			location   	(16, 4064)
+			label      	(object SegLabel @203
+			    Parent_View 	@202
+			    location   	(875, 4020)
+			    quidu      	"427944F900D0"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@14
+			Focus_Entry 	@16
+			origin     	(800, 4064)
+			terminus   	(950, 4064)
+			ordinal    	34)
+		    (object InterMessView "" @204
+			location   	(16, 4160)
+			label      	(object SegLabel @205
+			    Parent_View 	@204
+			    location   	(1199, 4116)
+			    quidu      	"427944FE0266"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	650
+			    justify    	0
+			    label      	"RPacketQoS::GetProfileParameters"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@28
+			Focus_Src  	@14
+			Focus_Entry 	@44
+			origin     	(799, 4160)
+			terminus   	(1600, 4160)
+			ordinal    	35)
+		    (object SelfMessView "" @206
+			location   	(16, 4224)
+			label      	(object SegLabel @207
+			    Parent_View 	@206
+			    location   	(875, 4180)
+			    quidu      	"4279451300C0"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	0
+			    justify    	0
+			    label      	""
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	0)
+			line_color 	3342489
+			client     	@2
+			supplier   	@2
+			Focus_Src  	@14
+			Focus_Entry 	@17
+			origin     	(800, 4224)
+			terminus   	(950, 4224)
+			ordinal    	36)
+		    (object InterMessView "" @208
+			location   	(16, 4320)
+			label      	(object SegLabel @209
+			    Parent_View 	@208
+			    location   	(512, 4276)
+			    quidu      	"427945170303"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	391
+			    justify    	0
+			    label      	"Pdp context activated"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@14
+			Focus_Entry 	@65
+			origin     	(768, 4320)
+			terminus   	(256, 4320)
+			ordinal    	37)
+		    (object InterMessView "" @210
+			location   	(16, 2240)
+			label      	(object SegLabel @211
+			    Parent_View 	@210
+			    location   	(512, 2196)
+			    quidu      	"427945700036"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	356
+			    justify    	0
+			    label      	"Set QoS completed"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@8
+			Focus_Entry 	@59
+			origin     	(768, 2240)
+			terminus   	(256, 2240)
+			ordinal    	19)
+		    (object InterMessView "" @212
+			location   	(16, 2784)
+			label      	(object SegLabel @213
+			    Parent_View 	@212
+			    location   	(512, 2740)
+			    quidu      	"427945B603A2"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	487
+			    justify    	0
+			    label      	"Secondary context created"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@10
+			Focus_Entry 	@61
+			origin     	(768, 2784)
+			terminus   	(256, 2784)
+			ordinal    	23)
+		    (object InterMessView "" @214
+			location   	(16, 1728)
+			label      	(object SegLabel @215
+			    Parent_View 	@214
+			    location   	(512, 1684)
+			    quidu      	"4279464B03B4"
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	287
+			    justify    	0
+			    label      	"Context created"
+			    pctDist    	0.500000
+			    height     	45
+			    orientation 	1)
+			line_color 	3342489
+			client     	@2
+			supplier   	@54
+			Focus_Src  	@6
+			Focus_Entry 	@58
+			origin     	(768, 1728)
+			terminus   	(256, 1728)
+			ordinal    	15)))))
+    root_category 	(object Class_Category "Logical View"
+	quid       	"41CC5881009D"
+	exportControl 	"Public"
+	global     	TRUE
+	subsystem  	"Component View"
+	quidu      	"41CC5881009F"
+	logical_models 	(list unit_reference_list)
+	logical_presentations 	(list unit_reference_list
+	    (object ClassDiagram "Main"
+		quid       	"41CC588301F6"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    root_subsystem 	(object SubSystem "Component View"
+	quid       	"41CC5881009F"
+	physical_models 	(list unit_reference_list)
+	physical_presentations 	(list unit_reference_list
+	    (object Module_Diagram "Main"
+		quid       	"41CC588301F4"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    process_structure 	(object Processes
+	quid       	"41CC588100A0"
+	ProcsNDevs 	(list
+	    (object Process_Diagram "Deployment View"
+		quid       	"41CC588100A2"
+		title      	"Deployment View"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    properties 	(object Properties
+	attributes 	(list Attribute_Set
+	    (object Attribute
+		tool       	"DDL"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"DDL"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Directory"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DataBase"
+			value      	("DataBaseSet" 800))
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DataBaseSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"DDL"
+				name       	"ANSI"
+				value      	800)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Oracle"
+				value      	801)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"SQLServer"
+				value      	802)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Sybase"
+				value      	803)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Watcom"
+				value      	804)))
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKeyColumnName"
+			value      	"Id")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKeyColumnType"
+			value      	"NUMBER(5)")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"ViewName"
+			value      	"V_")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"TableName"
+			value      	"T_")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"InheritSuffix"
+			value      	"_V")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DropClause"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"BaseViews"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DDLScriptFilename"
+			value      	"DDL1.SQL")))
+	    (object Attribute
+		tool       	"DDL"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"DDL"
+			name       	"ColumnType"
+			value      	"VARCHAR")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Length"
+			value      	"")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"NullsOK"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKey"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Unique"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"CompositeUnique"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"CheckConstraint"
+			value      	"")))
+	    (object Attribute
+		tool       	"DDL"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Rose Model Integrator"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Version Control"
+		name       	"HiddenTool"
+		value      	FALSE))
+	quid       	"41CC588100A1"))

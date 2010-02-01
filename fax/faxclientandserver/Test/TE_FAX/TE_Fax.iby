@@ -1,0 +1,50 @@
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+#ifndef __TE_FAX_IBY__
+#define __TE_FAX_IBY__
+
+#include <testexecute.iby>
+#include <testconfigfileparser.iby>
+#include <fax.iby>
+
+// TE_Fax Test harness EXE
+file=ABI_DIR\DEBUG_DIR\TE_Fax.exe		                                   SYSTEM_BINDIR\TE_Fax.exe
+
+// Scripts
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_Transmit_comm0.script   TestData\scripts\TE_Fax_Transmit_comm0.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_Transmit_comm1.script   TestData\scripts\TE_Fax_Transmit_comm1.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_Transmit_IR.script      TestData\scripts\TE_Fax_Transmit_IR.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_Receive_comm0.script    TestData\scripts\TE_Fax_Receive_comm0.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_Receive_comm1.script    TestData\scripts\TE_Fax_Receive_comm1.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_Receive_IR.script       TestData\scripts\TE_Fax_Receive_IR.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_No_Phone.script         TestData\scripts\TE_Fax_No_Phone.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_setup_comm0.script      TestData\scripts\TE_Fax_setup_comm0.script 
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_setup_comm1.script      TestData\scripts\TE_Fax_setup_comm1.script 
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_Fax_setup_IR.script         TestData\scripts\TE_Fax_setup_IR.script 
+data=EPOCROOT##epoc32\data\z\testdata\Configs\TE_Fax_9210_comm0.cfg          TestData\Configs\TE_Fax_9210_comm0.cfg
+data=EPOCROOT##epoc32\data\z\testdata\Configs\TE_Fax_9210_comm1.cfg          TestData\Configs\TE_Fax_9210_comm1.cfg
+data=EPOCROOT##epoc32\data\z\testdata\Configs\TE_Fax_9210_IR.cfg             TestData\Configs\TE_Fax_9210_IR.cfg
+data=EPOCROOT##epoc32\data\z\testdata\Configs\TE_Fax.ini                     TestData\Configs\TE_Fax.ini
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_Test.FAX                   TestData\Data\TE_Fax_Test.FAX
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_One.FAX                    TestData\Data\TE_Fax_One.FAX
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_Two.FAX                    TestData\Data\TE_Fax_Two.FAX
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_Six.FAX                    TestData\Data\TE_Fax_Six.FAX
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_Blank.FAX                  TestData\Data\TE_Fax_Blank.FAX
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_BadPage.FAX                TestData\Data\TE_Fax_BadPage.FAX
+data=EPOCROOT##epoc32\data\z\TestData\Data\TE_Fax_Chart4.FAX                 TestData\Data\TE_Fax_Chart4.FAX
+
+
+#endif

@@ -1,0 +1,1009 @@
+
+(object Petal
+    version    	43
+    _written   	"Rose 6.1.9113.5"
+    charSet    	0)
+
+(object Design "Logical View"
+    is_unit    	TRUE
+    is_loaded  	TRUE
+    quid       	"4309BC2603DB"
+    defaults   	(object defaults
+	rightMargin 	0.250000
+	leftMargin 	0.250000
+	topMargin  	0.250000
+	bottomMargin 	0.500000
+	pageOverlap 	0.250000
+	clipIconLabels 	TRUE
+	autoResize 	TRUE
+	snapToGrid 	TRUE
+	gridX      	16
+	gridY      	16
+	defaultFont 	(object Font
+	    size       	10
+	    face       	"Arial"
+	    bold       	FALSE
+	    italics    	FALSE
+	    underline  	FALSE
+	    strike     	FALSE
+	    color      	0
+	    default_color 	TRUE)
+	showMessageNum 	1
+	showClassOfObject 	TRUE
+	notation   	"Unified")
+    root_usecase_package 	(object Class_Category "Use Case View"
+	quid       	"4309BC2603DD"
+	exportControl 	"Public"
+	global     	TRUE
+	logical_models 	(list unit_reference_list)
+	logical_presentations 	(list unit_reference_list
+	    (object UseCaseDiagram "Main"
+		quid       	"4309BC270004"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    root_category 	(object Class_Category "Logical View"
+	quid       	"4309BC2603DC"
+	exportControl 	"Public"
+	global     	TRUE
+	subsystem  	"Component View"
+	quidu      	"4309BC2603DE"
+	logical_models 	(list unit_reference_list
+	    (object Class "CActive"
+		quid       	"4309BC3B0254"
+		operations 	(list Operations
+		    (object Operation "RunL"
+			quid       	"4309C62003CB"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)
+		    (object Operation "NewL"
+			quid       	"4309C6250003"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Class "CISVAPIAsync"
+		quid       	"4309BC3E0051"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309C0030051"
+			supplier   	"Logical View::CISVAPIBase"
+			quidu      	"4309BC5E036E"))
+		used_nodes 	(list uses_relationship_list
+		    (object Uses_Relationship
+			quid       	"4309BDA30264"
+			supplier   	"Logical View::CISVAPIBase"
+			quidu      	"4309BC5E036E"))
+		operations 	(list Operations
+		    (object Operation "ExampleComplete"
+			quid       	"4309C33B00FD"
+			parameters 	(list Parameters
+			    (object Parameter "int"))
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)
+		    (object Operation "ExampleNotify"
+			quid       	"4309C34501C8"
+			parameters 	(list Parameters
+			    (object Parameter "int"))
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Class "CISVAPISync"
+		quid       	"4309BC40015A"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309C0060216"
+			supplier   	"Logical View::CISVAPIBase"
+			quidu      	"4309BC5E036E"))
+		used_nodes 	(list uses_relationship_list
+		    (object Uses_Relationship
+			quid       	"4309BDA5032F"
+			supplier   	"Logical View::CISVAPIBase"
+			quidu      	"4309BC5E036E"))
+		operations 	(list Operations
+		    (object Operation "ExampleComplete"
+			quid       	"4309C34D0041"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Class "MExecController"
+		quid       	"4309BC4701D7"
+		stereotype 	"Interface"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BCAD0293"
+			supplier   	"Logical View::MExecAsync"
+			quidu      	"4309BC4A012C"))
+		operations 	(list Operations
+		    (object Operation "ExecEnd"
+			quid       	"4309C5AB02A3"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)
+		    (object Operation "GetTelObj"
+			quid       	"4309C5B200BE"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "name"
+			quid       	"4309C59F013B")))
+	    (object Class "MExecAsync"
+		quid       	"4309BC4A012C"
+		stereotype 	"Interface"
+		used_nodes 	(list uses_relationship_list
+		    (object Uses_Relationship
+			quid       	"4309BCED01C8"
+			supplier   	"Logical View::MExecController"
+			quidu      	"4309BC4701D7"))
+		operations 	(list Operations
+		    (object Operation "ExecComplete"
+			quid       	"4309C2A10051"
+			parameters 	(list Parameters
+			    (object Parameter "int"))
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)
+		    (object Operation "ExecNotify"
+			quid       	"4309C2DB00AF"
+			parameters 	(list Parameters
+			    (object Parameter "int"))
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Class "MExecSync"
+		quid       	"4309BC4C032F"
+		stereotype 	"Interface"
+		used_nodes 	(list uses_relationship_list
+		    (object Uses_Relationship
+			quid       	"4309BD1D01C8"
+			supplier   	"Logical View::MExecController"
+			quidu      	"4309BC4701D7"))
+		operations 	(list Operations
+		    (object Operation "ExecComplete"
+			quid       	"4309C310034E"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Class "CISVAPIBase"
+		quid       	"4309BC5E036E"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BE4900FD"
+			supplier   	"Logical View::CActive"
+			quidu      	"4309BC3B0254"))
+		used_nodes 	(list uses_relationship_list
+		    (object Uses_Relationship
+			quid       	"4309BFFA0310"
+			supplier   	"Logical View::CBaseMenuAsync"
+			quidu      	"4309BC6700FD"
+			supplier_cardinality 	(value cardinality "1")
+			client_cardinality 	(value cardinality "1"))
+		    (object Uses_Relationship
+			quid       	"4309C1FA012C"
+			supplier   	"Logical View::CBaseMenuSync"
+			quidu      	"4309BC690199"
+			supplier_cardinality 	(value cardinality "1")
+			client_cardinality 	(value cardinality "1")))
+		operations 	(list Operations
+		    (object Operation "GetTelephonyObject"
+			quid       	"4309C5E80235"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "iController"
+			quid       	"4309BE9500FD"
+			type       	"MExecController")
+		    (object ClassAttribute "iTelephony"
+			quid       	"4309BF0B02C2"
+			type       	"CTelephony")))
+	    (object Class "CBaseMenuAsync"
+		quid       	"4309BC6700FD"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BDA8033F"
+			supplier   	"Logical View::CActive"
+			quidu      	"4309BC3B0254")
+		    (object Inheritance_Relationship
+			quid       	"4309C1D602E1"
+			supplier   	"Logical View::MExecAsync"
+			quidu      	"4309BC4A012C"
+			exportControl 	"Implementation"))
+		operations 	(list Operations
+		    (object Operation "CompleteOwnRequest"
+			quid       	"4309C57E0283"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "iTelephony"
+			quid       	"4309BF74032F"
+			type       	"CTelephony")
+		    (object ClassAttribute "iState"
+			quid       	"4309BF89016A"
+			type       	"TState")
+		    (object ClassAttribute "iLastOperation"
+			quid       	"4309BFAF0041"
+			type       	"CISVAPIBase")))
+	    (object Class "CBaseMenuSync"
+		quid       	"4309BC690199"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BDAB02D1"
+			supplier   	"Logical View::CActive"
+			quidu      	"4309BC3B0254")
+		    (object Inheritance_Relationship
+			quid       	"4309C1CD0320"
+			supplier   	"Logical View::MExecSync"
+			quidu      	"4309BC4C032F"
+			exportControl 	"Implementation"))
+		operations 	(list Operations
+		    (object Operation "CompleteOwnRequest"
+			quid       	"4309C5740032"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "iLastOperation"
+			quid       	"4309C02201D7"
+			type       	"CISVAPIBase")
+		    (object ClassAttribute "iState"
+			quid       	"4309C03302B2"
+			type       	"TState")
+		    (object ClassAttribute "iTelephony"
+			quid       	"4309C03A0245"
+			type       	"CTelephony")))
+	    (object Class "CNotifyMenu"
+		quid       	"4309BC7000DD"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BE220310"
+			supplier   	"Logical View::CBaseMenuAsync"
+			quidu      	"4309BC6700FD"))
+		operations 	(list Operations
+		    (object Operation "ExecComplete"
+			quid       	"4309C3E0014B"
+			parameters 	(list Parameters
+			    (object Parameter "int"))
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)
+		    (object Operation "ExecNotify"
+			quid       	"4309C3EC03DB"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "iSignalStrength"
+			quid       	"4309C06D0051"
+			type       	"CSignalStrength")))
+	    (object Class "NotifyMenu"
+		quid       	"4309BC72032F")
+	    (object Class "CPhoneMenu"
+		quid       	"4309BDFF038D"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BE1D0051"
+			supplier   	"Logical View::CISVAPISync"
+			quidu      	"4309BC40015A")
+		    (object Inheritance_Relationship
+			quid       	"4309BE26009F"
+			supplier   	"Logical View::CBaseMenuSync"
+			quidu      	"4309BC690199"))
+		operations 	(list Operations
+		    (object Operation "ExecComplete"
+			quid       	"4309C3B8034E"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "iPhoneId"
+			quid       	"4309C0B900DD"
+			type       	"CPhone")))
+	    (object Class "CSignalStrength"
+		quid       	"4309BE010226"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309BE1A02C2"
+			supplier   	"Logical View::CISVAPIAsync"
+			quidu      	"4309BC3E0051"))
+		operations 	(list Operations
+		    (object Operation "StartRequestL"
+			quid       	"4309C64C0012"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)
+		    (object Operation "RequestNotify"
+			quid       	"4309C661010C"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Class " CPhoneId"
+		quid       	"4309C0FE02E1"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"4309C11000ED"
+			supplier   	"Logical View::CISVAPISync"
+			quidu      	"4309BC40015A"))
+		operations 	(list Operations
+		    (object Operation "StartRequestL"
+			quid       	"4309C65402B2"
+			concurrency 	"Sequential"
+			opExportControl 	"Public"
+			uid        	0)))
+	    (object Association "$UNNAMED$0"
+		quid       	"4309C1790226"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$1"
+			quid       	"4309C17A0060"
+			supplier   	"Logical View::MExecController"
+			quidu      	"4309BC4701D7"
+			is_navigable 	TRUE)
+		    (object Role "$UNNAMED$2"
+			quid       	"4309C17A0061"
+			supplier   	"Logical View::MExecAsync"
+			quidu      	"4309BC4A012C"
+			exportControl 	"Implementation")))
+	    (object Class_Category "NewPackage"
+		quid       	"4309C0AA02E1"
+		exportControl 	"Public"
+		logical_models 	(list unit_reference_list)
+		logical_presentations 	(list unit_reference_list)))
+	logical_presentations 	(list unit_reference_list
+	    (object ClassDiagram "Main"
+		quid       	"4309BC2603E2"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list
+		    (object ClassView "Class" "Logical View::CActive" @1
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1632, 144)
+			label      	(object ItemLabel
+			    Parent_View 	@1
+			    location   	(1543, 38)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	178
+			    justify    	0
+			    label      	"CActive")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC3B0254"
+			compartment 	(object Compartment
+			    Parent_View 	@1
+			    location   	(1543, 99)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	184)
+			width      	196
+			height     	236
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CISVAPIAsync" @2
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(320, 1120)
+			label      	(object ItemLabel
+			    Parent_View 	@2
+			    location   	(116, 1014)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	408
+			    justify    	0
+			    label      	"CISVAPIAsync")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC3E0051"
+			compartment 	(object Compartment
+			    Parent_View 	@2
+			    location   	(116, 1075)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	415)
+			width      	426
+			height     	236
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CISVAPISync" @3
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(848, 1120)
+			label      	(object ItemLabel
+			    Parent_View 	@3
+			    location   	(644, 1039)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	408
+			    justify    	0
+			    label      	"CISVAPISync")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC40015A"
+			compartment 	(object Compartment
+			    Parent_View 	@3
+			    location   	(644, 1100)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	415)
+			width      	426
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::MExecSync" @4
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(2736, 960)
+			label      	(object ItemLabel
+			    Parent_View 	@4
+			    location   	(2564, 901)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	344
+			    justify    	0
+			    label      	"MExecSync")
+			stereotype 	(object ItemLabel
+			    Parent_View 	@4
+			    location   	(2564, 851)
+			    fill_color 	13434879
+			    anchor     	10
+			    nlines     	1
+			    max_width  	344
+			    justify    	0
+			    label      	"<<Interface>>")
+			icon       	"Interface"
+			icon_style 	"Label"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC4C032F"
+			compartment 	(object Compartment
+			    Parent_View 	@4
+			    location   	(2564, 962)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	350)
+			width      	362
+			height     	242
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CISVAPIBase" @5
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(608, 432)
+			label      	(object ItemLabel
+			    Parent_View 	@5
+			    location   	(322, 301)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	572
+			    justify    	0
+			    label      	"CISVAPIBase")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC5E036E"
+			compartment 	(object Compartment
+			    Parent_View 	@5
+			    location   	(322, 362)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	4
+			    max_width  	578)
+			width      	590
+			height     	286
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CBaseMenuAsync" @6
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1632, 1696)
+			label      	(object ItemLabel
+			    Parent_View 	@6
+			    location   	(1329, 1540)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	606
+			    justify    	0
+			    label      	"CBaseMenuAsync")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC6700FD"
+			compartment 	(object Compartment
+			    Parent_View 	@6
+			    location   	(1329, 1601)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	5
+			    max_width  	612)
+			width      	624
+			height     	336
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CBaseMenuSync" @7
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(2736, 1392)
+			label      	(object ItemLabel
+			    Parent_View 	@7
+			    location   	(2433, 1236)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	606
+			    justify    	0
+			    label      	"CBaseMenuSync")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC690199"
+			compartment 	(object Compartment
+			    Parent_View 	@7
+			    location   	(2433, 1297)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	5
+			    max_width  	612)
+			width      	624
+			height     	336
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CPhoneMenu" @8
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(2784, 1936)
+			label      	(object ItemLabel
+			    Parent_View 	@8
+			    location   	(2589, 1830)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	390
+			    justify    	0
+			    label      	"CPhoneMenu")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BDFF038D"
+			compartment 	(object Compartment
+			    Parent_View 	@8
+			    location   	(2589, 1891)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	396)
+			width      	408
+			height     	236
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @9
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BDA8033F"
+			client     	@6
+			supplier   	@1
+			line_style 	0)
+		    (object InheritView "" @10
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BDAB02D1"
+			client     	@7
+			supplier   	@1
+			line_style 	0)
+		    (object ClassView "Class" "Logical View::CNotifyMenu" @11
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1632, 2240)
+			label      	(object ItemLabel
+			    Parent_View 	@11
+			    location   	(1303, 2109)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	658
+			    justify    	0
+			    label      	"CNotifyMenu")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC7000DD"
+			compartment 	(object Compartment
+			    Parent_View 	@11
+			    location   	(1303, 2170)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	4
+			    max_width  	665)
+			width      	676
+			height     	286
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CSignalStrength" @12
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(320, 1568)
+			label      	(object ItemLabel
+			    Parent_View 	@12
+			    location   	(152, 1462)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	336
+			    justify    	0
+			    label      	"CSignalStrength")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BE010226"
+			compartment 	(object Compartment
+			    Parent_View 	@12
+			    location   	(152, 1523)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	343)
+			width      	354
+			height     	236
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @13
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BE1A02C2"
+			client     	@12
+			supplier   	@2
+			line_style 	0)
+		    (object InheritView "" @14
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BE220310"
+			client     	@11
+			supplier   	@6
+			line_style 	0)
+		    (object InheritView "" @15
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BE26009F"
+			client     	@8
+			supplier   	@7
+			line_style 	0)
+		    (object InheritView "" @16
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BE4900FD"
+			client     	@5
+			supplier   	@1
+			line_style 	0)
+		    (object InheritView "" @17
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309C0030051"
+			client     	@2
+			supplier   	@5
+			line_style 	0)
+		    (object ClassView "Class" "Logical View:: CPhoneId" @18
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(848, 1552)
+			label      	(object ItemLabel
+			    Parent_View 	@18
+			    location   	(680, 1471)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	336
+			    justify    	0
+			    label      	" CPhoneId")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309C0FE02E1"
+			compartment 	(object Compartment
+			    Parent_View 	@18
+			    location   	(680, 1532)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	343)
+			width      	354
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @19
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309C11000ED"
+			client     	@18
+			supplier   	@3
+			line_style 	0)
+		    (object ClassView "Class" "Logical View::MExecAsync" @20
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1936, 1248)
+			label      	(object ItemLabel
+			    Parent_View 	@20
+			    location   	(1764, 1164)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	344
+			    justify    	0
+			    label      	"MExecAsync")
+			stereotype 	(object ItemLabel
+			    Parent_View 	@20
+			    location   	(1764, 1114)
+			    fill_color 	13434879
+			    anchor     	10
+			    nlines     	1
+			    max_width  	344
+			    justify    	0
+			    label      	"<<Interface>>")
+			icon       	"Interface"
+			icon_style 	"Label"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC4A012C"
+			compartment 	(object Compartment
+			    Parent_View 	@20
+			    location   	(1764, 1225)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	350)
+			width      	362
+			height     	292
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::MExecController" @21
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(2192, 240)
+			label      	(object ItemLabel
+			    Parent_View 	@21
+			    location   	(2025, 131)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	334
+			    justify    	0
+			    label      	"MExecController")
+			stereotype 	(object ItemLabel
+			    Parent_View 	@21
+			    location   	(2025, 81)
+			    fill_color 	13434879
+			    anchor     	10
+			    nlines     	1
+			    max_width  	334
+			    justify    	0
+			    label      	"<<Interface>>")
+			icon       	"Interface"
+			icon_style 	"Label"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"4309BC4701D7"
+			compartment 	(object Compartment
+			    Parent_View 	@21
+			    location   	(2025, 192)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	4
+			    max_width  	265)
+			width      	352
+			height     	342
+			annotation 	8
+			autoResize 	TRUE)
+		    (object UsesView "" @22
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BCED01C8"
+			client     	@20
+			supplier   	@21
+			line_style 	0)
+		    (object UsesView "" @23
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309BD1D01C8"
+			client     	@4
+			supplier   	@21
+			line_style 	0)
+		    (object InheritView "" @24
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309C1CD0320"
+			client     	@7
+			supplier   	@4
+			line_style 	0)
+		    (object InheritView "" @25
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309C1D602E1"
+			client     	@6
+			supplier   	@20
+			line_style 	0)
+		    (object InheritView "" @26
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"4309C0060216"
+			client     	@3
+			supplier   	@5
+			line_style 	0)))))
+    root_subsystem 	(object SubSystem "Component View"
+	quid       	"4309BC2603DE"
+	physical_models 	(list unit_reference_list)
+	physical_presentations 	(list unit_reference_list
+	    (object Module_Diagram "Main"
+		quid       	"4309BC270003"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    process_structure 	(object Processes
+	quid       	"4309BC2603DF"
+	ProcsNDevs 	(list
+	    (object Process_Diagram "Deployment View"
+		quid       	"4309BC2603E1"
+		title      	"Deployment View"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    properties 	(object Properties
+	attributes 	(list Attribute_Set
+	    (object Attribute
+		tool       	"DDL"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"DDL"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Directory"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DataBase"
+			value      	("DataBaseSet" 800))
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DataBaseSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"DDL"
+				name       	"ANSI"
+				value      	800)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Oracle"
+				value      	801)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"SQLServer"
+				value      	802)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Sybase"
+				value      	803)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Watcom"
+				value      	804)))
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKeyColumnName"
+			value      	"Id")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKeyColumnType"
+			value      	"NUMBER(5)")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"ViewName"
+			value      	"V_")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"TableName"
+			value      	"T_")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"InheritSuffix"
+			value      	"_V")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DropClause"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"BaseViews"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DDLScriptFilename"
+			value      	"DDL1.SQL")))
+	    (object Attribute
+		tool       	"DDL"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"DDL"
+			name       	"ColumnType"
+			value      	"VARCHAR")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Length"
+			value      	"")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"NullsOK"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKey"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Unique"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"CompositeUnique"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"CheckConstraint"
+			value      	"")))
+	    (object Attribute
+		tool       	"DDL"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Rose Model Integrator"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Version Control"
+		name       	"HiddenTool"
+		value      	FALSE))
+	quid       	"4309BC2603E0"))

@@ -1,0 +1,207 @@
+EXPORTS
+	??0CTestGetSmsList@@IAE@HAAVRSocketServ@@AAVCSmsStackTestUtils@@@Z @ 1 NONAME ; CTestGetSmsList::CTestGetSmsList(int, class RSocketServ &, class CSmsStackTestUtils &)
+	??0CTestReceiveEnumerateMessages@@IAE@HAAVRSocketServ@@AAVCSmsStackTestUtils@@@Z @ 2 NONAME ; CTestReceiveEnumerateMessages::CTestReceiveEnumerateMessages(int, class RSocketServ &, class CSmsStackTestUtils &)
+	??0CTestReceiveMessages@@IAE@HAAVRSocketServ@@AAVCSmsStackTestUtils@@@Z @ 3 NONAME ; CTestReceiveMessages::CTestReceiveMessages(int, class RSocketServ &, class CSmsStackTestUtils &)
+	??1CEmsAnimationIE@@UAE@XZ @ 4 NONAME ; CEmsAnimationIE::~CEmsAnimationIE(void)
+	??1CEmsPictureIE@@UAE@XZ @ 5 NONAME ; CEmsPictureIE::~CEmsPictureIE(void)
+	??1CEmsSoundIE@@UAE@XZ @ 6 NONAME ; CEmsSoundIE::~CEmsSoundIE(void)
+	??1CEnhancedVoiceMailDeleteConfirmations@@UAE@XZ @ 7 NONAME ; CEnhancedVoiceMailDeleteConfirmations::~CEnhancedVoiceMailDeleteConfirmations(void)
+	??1CEnhancedVoiceMailNotification@@UAE@XZ @ 8 NONAME ; CEnhancedVoiceMailNotification::~CEnhancedVoiceMailNotification(void)
+	??1CSmsAlphabetConverter@@UAE@XZ @ 9 NONAME ; CSmsAlphabetConverter::~CSmsAlphabetConverter(void)
+	??1CSmsPduDatabase@@UAE@XZ @ 10 NONAME ; CSmsPduDatabase::~CSmsPduDatabase(void)
+	??1CSmsPduDbBase@@UAE@XZ @ 11 NONAME ; CSmsPduDbBase::~CSmsPduDbBase(void)
+	??1CSmsPduDbConcat@@UAE@XZ @ 12 NONAME ; CSmsPduDbConcat::~CSmsPduDbConcat(void)
+	??1CSmsStackTestUtils@@UAE@XZ @ 13 NONAME ; CSmsStackTestUtils::~CSmsStackTestUtils(void)
+	??1CTestReceiveEnumerateMessages@@UAE@XZ @ 14 NONAME ; CTestReceiveEnumerateMessages::~CTestReceiveEnumerateMessages(void)
+	??1CVoiceMailDeletion@@UAE@XZ @ 15 NONAME ; CVoiceMailDeletion::~CVoiceMailDeletion(void)
+	??1CVoiceMailNotification@@UAE@XZ @ 16 NONAME ; CVoiceMailNotification::~CVoiceMailNotification(void)
+	?AccessAddress@CEnhancedVoiceMailBoxInformation@@QBE?AVTPtrC16@@XZ @ 17 NONAME ; class TPtrC16 CEnhancedVoiceMailBoxInformation::AccessAddress(void) const
+	?AddInformationElementL@CSmsUserData@@QAEXW4TSmsInformationElementIdentifier@CSmsInformationElement@@ABVTDesC8@@@Z @ 18 NONAME ; void CSmsUserData::AddInformationElementL(enum CSmsInformationElement::TSmsInformationElementIdentifier, class TDesC8 const &)
+	?AddLogEventL@CSmsStackTestUtils@@QAEJAAVCSmsMessage@@AAVTLogSmsPduData@@@Z @ 19 NONAME ; long CSmsStackTestUtils::AddLogEventL(class CSmsMessage &, class TLogSmsPduData &)
+	?AddSmsRxL@CSmsStackTestUtils@@QBEXAAVCTestConfig@@HAAVCSmsMessage@@ABVTDesC16@@@Z @ 20 NONAME ; void CSmsStackTestUtils::AddSmsRxL(class CTestConfig &, int, class CSmsMessage &, class TDesC16 const &) const
+	?AddSmsTxL@CSmsStackTestUtils@@QBEXAAVCTestConfig@@HAAVCSmsMessage@@ABVTDesC16@@HPAV3@H@Z @ 21 NONAME ; void CSmsStackTestUtils::AddSmsTxL(class CTestConfig &, int, class CSmsMessage &, class TDesC16 const &, int, class CSmsMessage *, int) const
+	?Alignment@CEmsFormatIE@@QBE?AW4TAlignment@1@XZ @ 22 NONAME ; enum CEmsFormatIE::TAlignment CEmsFormatIE::Alignment(void) const
+	?AlmostMaximumCapacity@CEnhancedVoiceMailBoxInformation@@QBEHXZ @ 23 NONAME ; int CEnhancedVoiceMailBoxInformation::AlmostMaximumCapacity(void) const
+	?Animation@CEmsPreDefAnimationIE@@QBE?AW4TAnimType@1@XZ @ 24 NONAME ; enum CEmsPreDefAnimationIE::TAnimType CEmsPreDefAnimationIE::Animation(void) const
+	?AppendUserDataL@CSmsStackTestUtils@@QAEXAAVTGsmSms@@ABVCSmsUserData@@H@Z @ 25 NONAME ; void CSmsStackTestUtils::AppendUserDataL(class TGsmSms &, class CSmsUserData const &, int)
+	?Body@CSmsUserData@@QBE?AVTPtrC8@@XZ @ 26 NONAME ; class TPtrC8 CSmsUserData::Body(void) const
+	?Bold@CEmsFormatIE@@QBEHXZ @ 27 NONAME ; int CEmsFormatIE::Bold(void) const
+	?CallingLineIdentity@CVoiceMailNotification@@QBE?AVTPtrC16@@XZ @ 28 NONAME ; class TPtrC16 CVoiceMailNotification::CallingLineIdentity(void) const
+	?ChangeBearerL@CSmsStackTestUtils@@QAEXW4TMobileSmsBearer@RMobileSmsMessaging@@@Z @ 29 NONAME ; void CSmsStackTestUtils::ChangeBearerL(enum RMobileSmsMessaging::TMobileSmsBearer)
+	?CompareDCSL@CSmsStackTestUtils@@QAEXABVCSmsPDU@@VTSmsDataCodingScheme@@@Z @ 30 NONAME ; void CSmsStackTestUtils::CompareDCSL(class CSmsPDU const &, class TSmsDataCodingScheme)
+	?CompareEmsIE@EmsTestUtils@@YAHABVCEmsInformationElement@@0@Z @ 31 NONAME ; int EmsTestUtils::CompareEmsIE(class CEmsInformationElement const &, class CEmsInformationElement const &)
+	?CompareEmsMsgL@EmsTestUtils@@YAHABVCSmsMessage@@0@Z @ 32 NONAME ; int EmsTestUtils::CompareEmsMsgL(class CSmsMessage const &, class CSmsMessage const &)
+	?ComparePIDL@CSmsStackTestUtils@@QAEXABVCSmsPDU@@VTSmsProtocolIdentifier@@@Z @ 33 NONAME ; void CSmsStackTestUtils::ComparePIDL(class CSmsPDU const &, class TSmsProtocolIdentifier)
+	?CompareUDL@CSmsStackTestUtils@@QAEXABVCSmsPDU@@ABVCSmsUserData@@@Z @ 34 NONAME ; void CSmsStackTestUtils::CompareUDL(class CSmsPDU const &, class CSmsUserData const &)
+	?ConvertFromNativeL@CSmsAlphabetConverter@@QAE?AVTPtrC8@@ABVTDesC16@@@Z @ 35 NONAME ; class TPtrC8 CSmsAlphabetConverter::ConvertFromNativeL(class TDesC16 const &)
+	?ConvertToETelMM@TGsmSmsTypeOfAddress@@QBEXAAW4TMobileTON@NMobilePhone@@AAW4TMobileNPI@3@@Z @ 36 NONAME ; void TGsmSmsTypeOfAddress::ConvertToETelMM(enum NMobilePhone::TMobileTON &, enum NMobilePhone::TMobileNPI &) const
+	?ConvertToHexLC@CSmsStackTestUtils@@QBEPAVHBufC8@@ABVTDesC8@@@Z @ 37 NONAME ; class HBufC8 * CSmsStackTestUtils::ConvertToHexLC(class TDesC8 const &) const
+	?ConvertToNativeL@CSmsAlphabetConverter@@QAE?AVTPtrC16@@ABVTDesC8@@@Z @ 38 NONAME ; class TPtrC16 CSmsAlphabetConverter::ConvertToNativeL(class TDesC8 const &)
+	?CopyConfigFileL@CSmsStackTestUtils@@QAEXABVTDesC16@@PAVCSmsPduDatabase@@@Z @ 39 NONAME ; void CSmsStackTestUtils::CopyConfigFileL(class TDesC16 const &, class CSmsPduDatabase *)
+	?CopyL@CEmsAnimationIE@@QAEXABV1@@Z @ 40 NONAME ; void CEmsAnimationIE::CopyL(class CEmsAnimationIE const &)
+	?CopyL@CEmsFormatIE@@QAEXABV1@@Z @ 41 NONAME ; void CEmsFormatIE::CopyL(class CEmsFormatIE const &)
+	?CopyL@CEmsObjectDistribution@@QAEXABV1@@Z @ 42 NONAME ; void CEmsObjectDistribution::CopyL(class CEmsObjectDistribution const &)
+	?CopyL@CEmsPictureIE@@QAEXABV1@@Z @ 43 NONAME ; void CEmsPictureIE::CopyL(class CEmsPictureIE const &)
+	?CopyL@CEmsPreDefAnimationIE@@QAEXABV1@@Z @ 44 NONAME ; void CEmsPreDefAnimationIE::CopyL(class CEmsPreDefAnimationIE const &)
+	?CopyL@CEmsPreDefSoundIE@@QAEXABV1@@Z @ 45 NONAME ; void CEmsPreDefSoundIE::CopyL(class CEmsPreDefSoundIE const &)
+	?CopyL@CEmsSoundIE@@QAEXABV1@@Z @ 46 NONAME ; void CEmsSoundIE::CopyL(class CEmsSoundIE const &)
+	?CopyL@CEmsUserPrompt@@QAEXABV1@@Z @ 47 NONAME ; void CEmsUserPrompt::CopyL(class CEmsUserPrompt const &)
+	?CreateAnimationL@EmsTestUtils@@YAPAVCEmsAnimationIE@@H@Z @ 48 NONAME ; class CEmsAnimationIE * EmsTestUtils::CreateAnimationL(int)
+	?CreatePictureL@EmsTestUtils@@YAPAVCEmsPictureIE@@H@Z @ 49 NONAME ; class CEmsPictureIE * EmsTestUtils::CreatePictureL(int)
+	?CreateSmsMessageLC@CSmsStackTestUtils@@QAEPAVCSmsMessage@@W4TSmsPDUType@CSmsPDU@@ABVTDesC16@@1@Z @ 50 NONAME ; class CSmsMessage * CSmsStackTestUtils::CreateSmsMessageLC(enum CSmsPDU::TSmsPDUType, class TDesC16 const &, class TDesC16 const &)
+	?CreateTSmsServiceCenterTimeStampL@CSmsStackTestUtils@@QAEXXZ @ 51 NONAME ; void CSmsStackTestUtils::CreateTSmsServiceCenterTimeStampL(void)
+	?CreateTSmsValidityPeriodL@CSmsStackTestUtils@@QAEXXZ @ 52 NONAME ; void CSmsStackTestUtils::CreateTSmsValidityPeriodL(void)
+	?Data@CSmsInformationElement@@QAE?AVTPtr8@@XZ @ 53 NONAME ; class TPtr8 CSmsInformationElement::Data(void)
+	?Data@CSmsInformationElement@@QBEABVTDesC8@@XZ @ 54 NONAME ; class TDesC8 const & CSmsInformationElement::Data(void) const
+	?DecodeL@CSmsPduDbConcat@@QAEXAAVRFs@@@Z @ 55 NONAME ; void CSmsPduDbConcat::DecodeL(class RFs &)
+	?DecodeTSmsServiceCenterTimeStampL@CSmsStackTestUtils@@QAEXXZ @ 56 NONAME ; void CSmsStackTestUtils::DecodeTSmsServiceCenterTimeStampL(void)
+	?DecodeTSmsValidityPeriodL@CSmsStackTestUtils@@QAEXXZ @ 57 NONAME ; void CSmsStackTestUtils::DecodeTSmsValidityPeriodL(void)
+	?DeliverWithoutUserDataL@CSmsStackTestUtils@@QAEXAAVTGsmSms@@VTSmsFirstOctet@@ABVTGsmSmsTelNumber@@VTSmsProtocolIdentifier@@VTSmsDataCodingScheme@@ABVTTime@@H@Z @ 58 NONAME ; void CSmsStackTestUtils::DeliverWithoutUserDataL(class TGsmSms &, class TSmsFirstOctet, class TGsmSmsTelNumber const &, class TSmsProtocolIdentifier, class TSmsDataCodingScheme, class TTime const &, int)
+	?DuplicateL@CEmsAnimationIE@@UBEPAVCEmsInformationElement@@XZ @ 59 NONAME ; class CEmsInformationElement * CEmsAnimationIE::DuplicateL(void) const
+	?DuplicateL@CEmsFormatIE@@UBEPAVCEmsInformationElement@@XZ @ 60 NONAME ; class CEmsInformationElement * CEmsFormatIE::DuplicateL(void) const
+	?DuplicateL@CEmsObjectDistribution@@UBEPAVCEmsInformationElement@@XZ @ 61 NONAME ; class CEmsInformationElement * CEmsObjectDistribution::DuplicateL(void) const
+	?DuplicateL@CEmsPictureIE@@UBEPAVCEmsInformationElement@@XZ @ 62 NONAME ; class CEmsInformationElement * CEmsPictureIE::DuplicateL(void) const
+	?DuplicateL@CEmsPreDefAnimationIE@@UBEPAVCEmsInformationElement@@XZ @ 63 NONAME ; class CEmsInformationElement * CEmsPreDefAnimationIE::DuplicateL(void) const
+	?DuplicateL@CEmsPreDefSoundIE@@UBEPAVCEmsInformationElement@@XZ @ 64 NONAME ; class CEmsInformationElement * CEmsPreDefSoundIE::DuplicateL(void) const
+	?DuplicateL@CEmsSoundIE@@UBEPAVCEmsInformationElement@@XZ @ 65 NONAME ; class CEmsInformationElement * CEmsSoundIE::DuplicateL(void) const
+	?DuplicateL@CEmsUserPrompt@@UBEPAVCEmsInformationElement@@XZ @ 66 NONAME ; class CEmsInformationElement * CEmsUserPrompt::DuplicateL(void) const
+	?EncodeInformationElementL@CEmsInformationElement@@QAEXXZ @ 67 NONAME ; void CEmsInformationElement::EncodeInformationElementL(void)
+	?EncodeTSmsServiceCenterTimeStampL@CSmsStackTestUtils@@QAEXXZ @ 68 NONAME ; void CSmsStackTestUtils::EncodeTSmsServiceCenterTimeStampL(void)
+	?EncodeTSmsValidityPeriodL@CSmsStackTestUtils@@QAEXXZ @ 69 NONAME ; void CSmsStackTestUtils::EncodeTSmsValidityPeriodL(void)
+	?ExtensionIndicator@CEnhancedVoiceMailBoxInformation@@QBEHXZ @ 70 NONAME ; int CEnhancedVoiceMailBoxInformation::ExtensionIndicator(void) const
+	?FindElementL@EmsTestUtils@@YAPBVCEmsInformationElement@@ABVCSmsMessage@@W4TSmsInformationElementIdentifier@CSmsInformationElement@@@Z @ 71 NONAME ; class CEmsInformationElement const * EmsTestUtils::FindElementL(class CSmsMessage const &, enum CSmsInformationElement::TSmsInformationElementIdentifier)
+	?FirstDeliverOctet@CSmsStackTestUtils@@QAE?AVTSmsFirstOctet@@HHHH@Z @ 72 NONAME ; class TSmsFirstOctet CSmsStackTestUtils::FirstDeliverOctet(int, int, int, int)
+	?FontSize@CEmsFormatIE@@QBE?AW4TFontSize@1@XZ @ 73 NONAME ; enum CEmsFormatIE::TFontSize CEmsFormatIE::FontSize(void) const
+	?FormatLength@CEmsFormatIE@@QBEIXZ @ 74 NONAME ; unsigned int CEmsFormatIE::FormatLength(void) const
+	?Forwarding@CEmsObjectDistribution@@QBE?AW4TAttrs@1@XZ @ 75 NONAME ; enum CEmsObjectDistribution::TAttrs CEmsObjectDistribution::Forwarding(void) const
+	?GetBearerL@CSmsStackTestUtils@@QAEXAAW4TMobileSmsBearer@RMobileSmsMessaging@@@Z @ 76 NONAME ; void CSmsStackTestUtils::GetBearerL(enum RMobileSmsMessaging::TMobileSmsBearer &)
+	?GetBitmapL@CEmsAnimationIE@@QBEPAVCFbsBitmap@@XZ @ 77 NONAME ; class CFbsBitmap * CEmsAnimationIE::GetBitmapL(void) const
+	?GetBitmapL@CEmsPictureIE@@QBEPAVCFbsBitmap@@XZ @ 78 NONAME ; class CFbsBitmap * CEmsPictureIE::GetBitmapL(void) const
+	?GetConcatL@CSmsPduDatabase@@QBEXAAV?$RPointerArray@VCSmsPduDbConcat@@@@W4TSmsPDUType@CSmsPDU@@@Z @ 79 NONAME ; void CSmsPduDatabase::GetConcatL(class RPointerArray<class CSmsPduDbConcat> &, enum CSmsPDU::TSmsPDUType) const
+	?GetConcatLC@CSmsPduDatabase@@QBEPAVCSmsPduDbConcat@@W4TSmsPDUType@CSmsPDU@@H@Z @ 80 NONAME ; class CSmsPduDbConcat * CSmsPduDatabase::GetConcatLC(enum CSmsPDU::TSmsPDUType, int) const
+	?GetConcatSegmentLC@CSmsPduDatabase@@QBEPAVCSmsPduDbConcatSegment@@W4TSmsPDUType@CSmsPDU@@HH@Z @ 81 NONAME ; class CSmsPduDbConcatSegment * CSmsPduDatabase::GetConcatSegmentLC(enum CSmsPDU::TSmsPDUType, int, int) const
+	?GetHexPdu@CSmsPduDbPdu@@QBEXAAVTDes8@@@Z @ 82 NONAME ; void CSmsPduDbPdu::GetHexPdu(class TDes8 &) const
+	?GetLogEventL@CSmsStackTestUtils@@QAEXAAVCLogEvent@@H@Z @ 83 NONAME ; void CSmsStackTestUtils::GetLogEventL(class CLogEvent &, int)
+	?GetMessageL@CSmsPduDatabase@@QBEXAAV?$RPointerArray@VCSmsPduDbMessage@@@@W4TSmsPDUType@CSmsPDU@@@Z @ 84 NONAME ; void CSmsPduDatabase::GetMessageL(class RPointerArray<class CSmsPduDbMessage> &, enum CSmsPDU::TSmsPDUType) const
+	?GetMessageLC@CSmsPduDatabase@@QBEPAVCSmsPduDbMessage@@W4TSmsPDUType@CSmsPDU@@H@Z @ 85 NONAME ; class CSmsPduDbMessage * CSmsPduDatabase::GetMessageLC(enum CSmsPDU::TSmsPDUType, int) const
+	?GetPduL@CSmsPduDatabase@@QBEXAAV?$RPointerArray@VCSmsPduDbPdu@@@@W4TSmsPDUType@CSmsPDU@@@Z @ 86 NONAME ; void CSmsPduDatabase::GetPduL(class RPointerArray<class CSmsPduDbPdu> &, enum CSmsPDU::TSmsPDUType) const
+	?GetPduLC@CSmsPduDatabase@@QBEPAVCSmsPduDbPdu@@W4TSmsPDUType@CSmsPDU@@H@Z @ 87 NONAME ; class CSmsPduDbPdu * CSmsPduDatabase::GetPduLC(enum CSmsPDU::TSmsPDUType, int) const
+	?GetSectionL@CSmsStackTestUtils@@QBEAAVCTestConfigSection@@AAVCTestConfig@@H@Z @ 88 NONAME ; class CTestConfigSection & CSmsStackTestUtils::GetSectionL(class CTestConfig &, int) const
+	?GetSmsList@CTestGetSmsList@@QAEXAAVTRequestStatus@@@Z @ 89 NONAME ; void CTestGetSmsList::GetSmsList(class TRequestStatus &)
+	?GetVoiceMailDeletions@CEnhancedVoiceMailDeleteConfirmations@@QAEAAV?$RPointerArray@VCVoiceMailDeletion@@@@XZ @ 90 NONAME ; class RPointerArray<class CVoiceMailDeletion> & CEnhancedVoiceMailDeleteConfirmations::GetVoiceMailDeletions(void)
+	?GetVoiceMailNotifications@CEnhancedVoiceMailNotification@@QAEAAV?$RPointerArray@VCVoiceMailNotification@@@@XZ @ 91 NONAME ; class RPointerArray<class CVoiceMailNotification> & CEnhancedVoiceMailNotification::GetVoiceMailNotifications(void)
+	?Identifier@CSmsInformationElement@@QBE?AW4TSmsInformationElementIdentifier@1@XZ @ 92 NONAME ; enum CSmsInformationElement::TSmsInformationElementIdentifier CSmsInformationElement::Identifier(void) const
+	?InformationElement@CSmsUserData@@QBEAAVCSmsInformationElement@@H@Z @ 93 NONAME ; class CSmsInformationElement & CSmsUserData::InformationElement(int) const
+	?InformationElementIndex@CSmsUserData@@QBEHW4TSmsInformationElementIdentifier@CSmsInformationElement@@AAH@Z @ 94 NONAME ; int CSmsUserData::InformationElementIndex(enum CSmsInformationElement::TSmsInformationElementIdentifier, int &) const
+	?IsInstanceOf@TGsmSmsTelNumber@@QAEHW4TTypeOfIndicator@1@@Z @ 95 NONAME ; int TGsmSmsTelNumber::IsInstanceOf(enum TGsmSmsTelNumber::TTypeOfIndicator)
+	?IsSupportedL@CSmsUserData@@QAEHVTChar@@@Z @ 96 NONAME ; int CSmsUserData::IsSupportedL(class TChar)
+	?Italic@CEmsFormatIE@@QBEHXZ @ 97 NONAME ; int CEmsFormatIE::Italic(void) const
+	?Length@CEmsInformationElement@@QBEHXZ @ 98 NONAME ; int CEmsInformationElement::Length(void) const
+	?MakeParametersReadRequestL@CSmsStackTestUtils@@QAEXAAVRSocket@@@Z @ 99 NONAME ; void CSmsStackTestUtils::MakeParametersReadRequestL(class RSocket &)
+	?MaxBodyLengthInChars@CSmsUserData@@QBEHXZ @ 100 NONAME ; int CSmsUserData::MaxBodyLengthInChars(void) const
+	?MaximumCapacity@CEnhancedVoiceMailBoxInformation@@QBEHXZ @ 101 NONAME ; int CEnhancedVoiceMailBoxInformation::MaximumCapacity(void) const
+	?Melody@CEmsSoundIE@@QBEPBVHBufC8@@XZ @ 102 NONAME ; class HBufC8 const * CEmsSoundIE::Melody(void) const
+	?MessageExtensionIndication@CVoiceMailDeletion@@QBEHXZ @ 103 NONAME ; int CVoiceMailDeletion::MessageExtensionIndication(void) const
+	?MessageExtensionIndication@CVoiceMailNotification@@QBEHXZ @ 104 NONAME ; int CVoiceMailNotification::MessageExtensionIndication(void) const
+	?MessageId@CVoiceMailDeletion@@QBEGXZ @ 105 NONAME ; unsigned short CVoiceMailDeletion::MessageId(void) const
+	?MessageId@CVoiceMailNotification@@QBEGXZ @ 106 NONAME ; unsigned short CVoiceMailNotification::MessageId(void) const
+	?MessageLength@CVoiceMailNotification@@QBEEXZ @ 107 NONAME ; unsigned char CVoiceMailNotification::MessageLength(void) const
+	?NewL@CEmsAnimationIE@@SAPAV1@ABVCFbsBitmap@@@Z @ 108 NONAME ; class CEmsAnimationIE * CEmsAnimationIE::NewL(class CFbsBitmap const &)
+	?NewL@CEmsFormatIE@@SAPAV1@XZ @ 109 NONAME ; class CEmsFormatIE * CEmsFormatIE::NewL(void)
+	?NewL@CEmsObjectDistribution@@SAPAV1@IW4TAttrs@1@@Z @ 110 NONAME ; class CEmsObjectDistribution * CEmsObjectDistribution::NewL(unsigned int, enum CEmsObjectDistribution::TAttrs)
+	?NewL@CEmsPictureIE@@SAPAV1@ABVCFbsBitmap@@@Z @ 111 NONAME ; class CEmsPictureIE * CEmsPictureIE::NewL(class CFbsBitmap const &)
+	?NewL@CEmsPreDefAnimationIE@@SAPAV1@W4TAnimType@1@@Z @ 112 NONAME ; class CEmsPreDefAnimationIE * CEmsPreDefAnimationIE::NewL(enum CEmsPreDefAnimationIE::TAnimType)
+	?NewL@CEmsPreDefSoundIE@@SAPAV1@W4TPredefinedSound@1@@Z @ 113 NONAME ; class CEmsPreDefSoundIE * CEmsPreDefSoundIE::NewL(enum CEmsPreDefSoundIE::TPredefinedSound)
+	?NewL@CEmsSoundIE@@SAPAV1@ABVTDesC8@@@Z @ 114 NONAME ; class CEmsSoundIE * CEmsSoundIE::NewL(class TDesC8 const &)
+	?NewL@CEmsUserPrompt@@SAPAV1@I@Z @ 115 NONAME ; class CEmsUserPrompt * CEmsUserPrompt::NewL(unsigned int)
+	?NewL@CEnhancedVoiceMailDeleteConfirmations@@SAPAV1@XZ @ 116 NONAME ; class CEnhancedVoiceMailDeleteConfirmations * CEnhancedVoiceMailDeleteConfirmations::NewL(void)
+	?NewL@CEnhancedVoiceMailNotification@@SAPAV1@XZ @ 117 NONAME ; class CEnhancedVoiceMailNotification * CEnhancedVoiceMailNotification::NewL(void)
+	?NewL@CSmsPduDatabase@@SAPAV1@AAVRFs@@@Z @ 118 NONAME ; class CSmsPduDatabase * CSmsPduDatabase::NewL(class RFs &)
+	?NewL@CSmsPduDatabase@@SAPAV1@AAVRFs@@ABVCTestConfigSection@@@Z @ 119 NONAME ; class CSmsPduDatabase * CSmsPduDatabase::NewL(class RFs &, class CTestConfigSection const &)
+	?NewL@CSmsPduDatabase@@SAPAV1@AAVRFs@@ABVTDesC8@@ABVTDesC16@@2@Z @ 120 NONAME ; class CSmsPduDatabase * CSmsPduDatabase::NewL(class RFs &, class TDesC8 const &, class TDesC16 const &, class TDesC16 const &)
+	?NewL@CSmsPduDbConcatSegment@@SAPAV1@AAVRFs@@ABVCTestConfigItem@@W4TSmsPDUType@CSmsPDU@@@Z @ 121 NONAME ; class CSmsPduDbConcatSegment * CSmsPduDbConcatSegment::NewL(class RFs &, class CTestConfigItem const &, enum CSmsPDU::TSmsPDUType)
+	?NewL@CSmsPduDbMessage@@SAPAV1@AAVRFs@@ABVCTestConfigItem@@W4TSmsPDUType@CSmsPDU@@@Z @ 122 NONAME ; class CSmsPduDbMessage * CSmsPduDbMessage::NewL(class RFs &, class CTestConfigItem const &, enum CSmsPDU::TSmsPDUType)
+	?NewL@CSmsPduDbPdu@@SAPAV1@AAVRFs@@ABVCTestConfigItem@@W4TSmsPDUType@CSmsPDU@@@Z @ 123 NONAME ; class CSmsPduDbPdu * CSmsPduDbPdu::NewL(class RFs &, class CTestConfigItem const &, enum CSmsPDU::TSmsPDUType)
+	?NewL@CSmsStackTestUtils@@SAPAV1@PAVCTestStep@@AAVRFs@@@Z @ 124 NONAME ; class CSmsStackTestUtils * CSmsStackTestUtils::NewL(class CTestStep *, class RFs &)
+	?NewL@CTestGetSmsList@@SAPAV1@HAAVRSocketServ@@AAVCSmsStackTestUtils@@@Z @ 125 NONAME ; class CTestGetSmsList * CTestGetSmsList::NewL(int, class RSocketServ &, class CSmsStackTestUtils &)
+	?NewL@CTestReceiveEnumerateMessages@@SAPAV1@HAAVRSocketServ@@AAVCSmsStackTestUtils@@@Z @ 126 NONAME ; class CTestReceiveEnumerateMessages * CTestReceiveEnumerateMessages::NewL(int, class RSocketServ &, class CSmsStackTestUtils &)
+	?NewL@CTestReceiveMessages@@SAPAV1@HAAVRSocketServ@@AAVCSmsStackTestUtils@@@Z @ 127 NONAME ; class CTestReceiveMessages * CTestReceiveMessages::NewL(int, class RSocketServ &, class CSmsStackTestUtils &)
+	?NewL@CVoiceMailDeletion@@SAPAV1@XZ @ 128 NONAME ; class CVoiceMailDeletion * CVoiceMailDeletion::NewL(void)
+	?NewL@CVoiceMailNotification@@SAPAV1@XZ @ 129 NONAME ; class CVoiceMailNotification * CVoiceMailNotification::NewL(void)
+	?NewLC@CSmsAlphabetConverter@@SAPAV1@AAVCCnvCharacterSetConverter@@AAVRFs@@W4TSmsAlphabet@TSmsDataCodingScheme@@H@Z @ 130 NONAME ; class CSmsAlphabetConverter * CSmsAlphabetConverter::NewLC(class CCnvCharacterSetConverter &, class RFs &, enum TSmsDataCodingScheme::TSmsAlphabet, int)
+	?NumberOfDeletes@CEnhancedVoiceMailDeleteConfirmations@@QAEEXZ @ 131 NONAME ; unsigned char CEnhancedVoiceMailDeleteConfirmations::NumberOfDeletes(void)
+	?NumberOfVoiceMails@CEnhancedVoiceMailNotification@@QAEEXZ @ 132 NONAME ; unsigned char CEnhancedVoiceMailNotification::NumberOfVoiceMails(void)
+	?NumberOfVoiceMessages@CEnhancedVoiceMailBoxInformation@@QBEEXZ @ 133 NONAME ; unsigned char CEnhancedVoiceMailBoxInformation::NumberOfVoiceMessages(void) const
+	?ObjectCount@CEmsObjectDistribution@@QBEIXZ @ 134 NONAME ; unsigned int CEmsObjectDistribution::ObjectCount(void) const
+	?ObjectCount@CEmsUserPrompt@@QBEIXZ @ 135 NONAME ; unsigned int CEmsUserPrompt::ObjectCount(void) const
+	?OpenSmsSocketL@CSmsStackTestUtils@@QAEXAAVRSocketServ@@AAVRSocket@@AAVTSmsAddr@@@Z @ 136 NONAME ; void CSmsStackTestUtils::OpenSmsSocketL(class RSocketServ &, class RSocket &, class TSmsAddr &)
+	?OpenSmsSocketL@CSmsStackTestUtils@@QAEXAAVRSocketServ@@AAVRSocket@@W4TSmsAddrFamily@@@Z @ 137 NONAME ; void CSmsStackTestUtils::OpenSmsSocketL(class RSocketServ &, class RSocket &, enum TSmsAddrFamily)
+	?OpenSmsSocketLC@CSmsStackTestUtils@@QAEXAAVRSocketServ@@AAVRSocket@@AAVTSmsAddr@@@Z @ 138 NONAME ; void CSmsStackTestUtils::OpenSmsSocketLC(class RSocketServ &, class RSocket &, class TSmsAddr &)
+	?OpenSmsSocketLC@CSmsStackTestUtils@@QAEXAAVRSocketServ@@AAVRSocket@@W4TSmsAddrFamily@@@Z @ 139 NONAME ; void CSmsStackTestUtils::OpenSmsSocketLC(class RSocketServ &, class RSocket &, enum TSmsAddrFamily)
+	?ParsedAccessAddress@CEnhancedVoiceMailBoxInformation@@QBEXAAVTGsmSmsTelNumber@@@Z @ 140 NONAME ; void CEnhancedVoiceMailBoxInformation::ParsedAccessAddress(class TGsmSmsTelNumber &) const
+	?ParsedCallingLineIdentity@CVoiceMailNotification@@QBEXAAVTGsmSmsTelNumber@@@Z @ 141 NONAME ; void CVoiceMailNotification::ParsedCallingLineIdentity(class TGsmSmsTelNumber &) const
+	?PduFactory@CSmsPduDatabase@@QBEPAVCSmsPduDbPdu@@ABVCTestConfigItem@@W4TSmsPDUType@CSmsPDU@@@Z @ 142 NONAME ; class CSmsPduDbPdu * CSmsPduDatabase::PduFactory(class CTestConfigItem const &, enum CSmsPDU::TSmsPDUType) const
+	?PduFactory@CSmsPduDatabase@@QBEPAVCSmsPduDbPdu@@ABVTDesC8@@W4TSmsPDUType@CSmsPDU@@@Z @ 143 NONAME ; class CSmsPduDbPdu * CSmsPduDatabase::PduFactory(class TDesC8 const &, enum CSmsPDU::TSmsPDUType) const
+	?PduFactoryL@CSmsPduDatabase@@QBEPAVCSmsPduDbPdu@@ABVCTestConfigItem@@W4TSmsPDUType@CSmsPDU@@@Z @ 144 NONAME ; class CSmsPduDbPdu * CSmsPduDatabase::PduFactoryL(class CTestConfigItem const &, enum CSmsPDU::TSmsPDUType) const
+	?PduFactoryL@CSmsPduDatabase@@QBEPAVCSmsPduDbPdu@@ABVTDesC8@@W4TSmsPDUType@CSmsPDU@@@Z @ 145 NONAME ; class CSmsPduDbPdu * CSmsPduDatabase::PduFactoryL(class TDesC8 const &, enum CSmsPDU::TSmsPDUType) const
+	?PredefinedSound@CEmsPreDefSoundIE@@QBE?AW4TPredefinedSound@1@XZ @ 146 NONAME ; enum CEmsPreDefSoundIE::TPredefinedSound CEmsPreDefSoundIE::PredefinedSound(void) const
+	?PrintAndTestDecodeL@CSmsStackTestUtils@@QAEXABVTGsmSms@@VTSmsDataCodingScheme@@VTSmsProtocolIdentifier@@ABVCSmsUserData@@HH@Z @ 147 NONAME ; void CSmsStackTestUtils::PrintAndTestDecodeL(class TGsmSms const &, class TSmsDataCodingScheme, class TSmsProtocolIdentifier, class CSmsUserData const &, int, int)
+	?PrintSmspEntry@CSmsStackTestUtils@@QAEXAAVTMobileSmspEntryV1@RMobileSmsMessaging@@@Z @ 148 NONAME ; void CSmsStackTestUtils::PrintSmspEntry(class RMobileSmsMessaging::TMobileSmspEntryV1 &)
+	?PrintSmspList@CSmsStackTestUtils@@QAEXAAVCMobilePhoneSmspList@@@Z @ 149 NONAME ; void CSmsStackTestUtils::PrintSmspList(class CMobilePhoneSmspList &)
+	?PriorityIndication@CVoiceMailNotification@@QBEHXZ @ 150 NONAME ; int CVoiceMailNotification::PriorityIndication(void) const
+	?Profile@CEnhancedVoiceMailBoxInformation@@QBE?AW4TSmsMessageProfileType@@XZ @ 151 NONAME ; enum TSmsMessageProfileType CEnhancedVoiceMailBoxInformation::Profile(void) const
+	?Receive@CTestReceiveMessages@@QAEXAAVTRequestStatus@@H@Z @ 152 NONAME ; void CTestReceiveMessages::Receive(class TRequestStatus &, int)
+	?Receive@CTestReceiveMessages@@QAEXXZ @ 153 NONAME ; void CTestReceiveMessages::Receive(void)
+	?RemoveInformationElement@CSmsUserData@@QAEXH@Z @ 154 NONAME ; void CSmsUserData::RemoveInformationElement(int)
+	?RetentionDays@CVoiceMailNotification@@QBEEXZ @ 155 NONAME ; unsigned char CVoiceMailNotification::RetentionDays(void) const
+	?RetrieveParamsL@CSmsStackTestUtils@@QAEHAAVCMobilePhoneSmspList@@AAVRSocket@@H@Z @ 156 NONAME ; int CSmsStackTestUtils::RetrieveParamsL(class CMobilePhoneSmspList &, class RSocket &, int)
+	?RewriteFileL@CSmsPduDatabase@@QBEXABVTDesC16@@00@Z @ 157 NONAME ; void CSmsPduDatabase::RewriteFileL(class TDesC16 const &, class TDesC16 const &, class TDesC16 const &) const
+	?SendSmsAndChangeBearerL@CSmsStackTestUtils@@QAEXPAVCSmsMessage@@AAVRSocket@@W4TMobileSmsBearer@RMobileSmsMessaging@@@Z @ 158 NONAME ; void CSmsStackTestUtils::SendSmsAndChangeBearerL(class CSmsMessage *, class RSocket &, enum RMobileSmsMessaging::TMobileSmsBearer)
+	?SetAccessAddressL@CEnhancedVoiceMailBoxInformation@@QAEXABVTDesC16@@@Z @ 159 NONAME ; void CEnhancedVoiceMailBoxInformation::SetAccessAddressL(class TDesC16 const &)
+	?SetAlignment@CEmsFormatIE@@QAEXW4TAlignment@1@@Z @ 160 NONAME ; void CEmsFormatIE::SetAlignment(enum CEmsFormatIE::TAlignment)
+	?SetAlmostMaximumCapacity@CEnhancedVoiceMailBoxInformation@@QAEXH@Z @ 161 NONAME ; void CEnhancedVoiceMailBoxInformation::SetAlmostMaximumCapacity(int)
+	?SetAnimationL@CEmsPreDefAnimationIE@@QAEXW4TAnimType@1@@Z @ 162 NONAME ; void CEmsPreDefAnimationIE::SetAnimationL(enum CEmsPreDefAnimationIE::TAnimType)
+	?SetBodyL@CSmsUserData@@QAEXABVTDesC8@@@Z @ 163 NONAME ; void CSmsUserData::SetBodyL(class TDesC8 const &)
+	?SetBold@CEmsFormatIE@@QAEXH@Z @ 164 NONAME ; void CEmsFormatIE::SetBold(int)
+	?SetCallingLineIdentityL@CVoiceMailNotification@@QAEXAAVTDesC16@@@Z @ 165 NONAME ; void CVoiceMailNotification::SetCallingLineIdentityL(class TDesC16 &)
+	?SetFontSize@CEmsFormatIE@@QAEXW4TFontSize@1@@Z @ 166 NONAME ; void CEmsFormatIE::SetFontSize(enum CEmsFormatIE::TFontSize)
+	?SetFormatLength@CEmsFormatIE@@QAEXI@Z @ 167 NONAME ; void CEmsFormatIE::SetFormatLength(unsigned int)
+	?SetForwarding@CEmsObjectDistribution@@QAEXW4TAttrs@1@@Z @ 168 NONAME ; void CEmsObjectDistribution::SetForwarding(enum CEmsObjectDistribution::TAttrs)
+	?SetFromETelMM@TGsmSmsTypeOfAddress@@QAEXW4TMobileTON@NMobilePhone@@W4TMobileNPI@3@@Z @ 169 NONAME ; void TGsmSmsTypeOfAddress::SetFromETelMM(enum NMobilePhone::TMobileTON, enum NMobilePhone::TMobileNPI)
+	?SetItalic@CEmsFormatIE@@QAEXH@Z @ 170 NONAME ; void CEmsFormatIE::SetItalic(int)
+	?SetMaximumCapacity@CEnhancedVoiceMailBoxInformation@@QAEXH@Z @ 171 NONAME ; void CEnhancedVoiceMailBoxInformation::SetMaximumCapacity(int)
+	?SetMessageId@CVoiceMailDeletion@@QAEXG@Z @ 172 NONAME ; void CVoiceMailDeletion::SetMessageId(unsigned short)
+	?SetMessageId@CVoiceMailNotification@@QAEXG@Z @ 173 NONAME ; void CVoiceMailNotification::SetMessageId(unsigned short)
+	?SetMessageLength@CVoiceMailNotification@@QAEXE@Z @ 174 NONAME ; void CVoiceMailNotification::SetMessageLength(unsigned char)
+	?SetNumberOfVoiceMessages@CEnhancedVoiceMailBoxInformation@@QAEXE@Z @ 175 NONAME ; void CEnhancedVoiceMailBoxInformation::SetNumberOfVoiceMessages(unsigned char)
+	?SetObjectCount@CEmsObjectDistribution@@QAEXI@Z @ 176 NONAME ; void CEmsObjectDistribution::SetObjectCount(unsigned int)
+	?SetObjectCount@CEmsUserPrompt@@QAEXI@Z @ 177 NONAME ; void CEmsUserPrompt::SetObjectCount(unsigned int)
+	?SetParsedAccessAddressL@CEnhancedVoiceMailBoxInformation@@QAEXABVTGsmSmsTelNumber@@@Z @ 178 NONAME ; void CEnhancedVoiceMailBoxInformation::SetParsedAccessAddressL(class TGsmSmsTelNumber const &)
+	?SetParsedCallingLineIdentityL@CVoiceMailNotification@@QAEXAAVTGsmSmsTelNumber@@@Z @ 179 NONAME ; void CVoiceMailNotification::SetParsedCallingLineIdentityL(class TGsmSmsTelNumber &)
+	?SetPriorityIndication@CVoiceMailNotification@@QAEXH@Z @ 180 NONAME ; void CVoiceMailNotification::SetPriorityIndication(int)
+	?SetProfile@CEnhancedVoiceMailBoxInformation@@QAEXW4TSmsMessageProfileType@@@Z @ 181 NONAME ; void CEnhancedVoiceMailBoxInformation::SetProfile(enum TSmsMessageProfileType)
+	?SetRetentionDays@CVoiceMailNotification@@QAEXE@Z @ 182 NONAME ; void CVoiceMailNotification::SetRetentionDays(unsigned char)
+	?SetStartPosition@CEmsInformationElement@@QAEXI@Z @ 183 NONAME ; void CEmsInformationElement::SetStartPosition(unsigned int)
+	?SetStorage@CEnhancedVoiceMailBoxInformation@@QAEXH@Z @ 184 NONAME ; void CEnhancedVoiceMailBoxInformation::SetStorage(int)
+	?SetStrikethrough@CEmsFormatIE@@QAEXH@Z @ 185 NONAME ; void CEmsFormatIE::SetStrikethrough(int)
+	?SetUnderline@CEmsFormatIE@@QAEXH@Z @ 186 NONAME ; void CEmsFormatIE::SetUnderline(int)
+	?SizeInPixels@CEmsPictureIE@@QBE?AVTSize@@XZ @ 187 NONAME ; class TSize CEmsPictureIE::SizeInPixels(void) const
+	?Start@CTestReceiveEnumerateMessages@@QAEXHHH@Z @ 188 NONAME ; void CTestReceiveEnumerateMessages::Start(int, int, int)
+	?StartPosition@CEmsInformationElement@@QBEIXZ @ 189 NONAME ; unsigned int CEmsInformationElement::StartPosition(void) const
+	?Store@CEnhancedVoiceMailBoxInformation@@QBEHXZ @ 190 NONAME ; int CEnhancedVoiceMailBoxInformation::Store(void) const
+	?StoreParamsL@CSmsStackTestUtils@@QAEHAAVCMobilePhoneSmspList@@AAVRSocket@@H@Z @ 191 NONAME ; int CSmsStackTestUtils::StoreParamsL(class CMobilePhoneSmspList &, class RSocket &, int)
+	?StoreParamsLeaveIfErrorL@CSmsStackTestUtils@@QAEXAAVCMobilePhoneSmspList@@AAVRSocket@@@Z @ 192 NONAME ; void CSmsStackTestUtils::StoreParamsLeaveIfErrorL(class CMobilePhoneSmspList &, class RSocket &)
+	?Strikethrough@CEmsFormatIE@@QBEHXZ @ 193 NONAME ; int CEmsFormatIE::Strikethrough(void) const
+	?TestParameters@CSmsStackTestUtils@@QAEHAAVCMobilePhoneSmspList@@0@Z @ 194 NONAME ; int CSmsStackTestUtils::TestParameters(class CMobilePhoneSmspList &, class CMobilePhoneSmspList &)
+	?TestPhoneNumbers@CSmsStackTestUtils@@QAEHABVTMobileAddress@RMobilePhone@@0@Z @ 195 NONAME ; int CSmsStackTestUtils::TestPhoneNumbers(class RMobilePhone::TMobileAddress const &, class RMobilePhone::TMobileAddress const &)
+	?Type@CEnhancedVoiceMailBoxInformation@@QBE?AW4TVoiceMailInfoType@@XZ @ 196 NONAME ; enum TVoiceMailInfoType CEnhancedVoiceMailBoxInformation::Type(void) const
+	?Underline@CEmsFormatIE@@QBEHXZ @ 197 NONAME ; int CEmsFormatIE::Underline(void) const
+	?WaitForInitializeL@CSmsStackTestUtils@@QAEXXZ @ 198 NONAME ; void CSmsStackTestUtils::WaitForInitializeL(void)
+	?ConvertFromNativeL@CSmsAlphabetConverter@@QAE?AVTPtrC8@@ABVTDesC16@@W4TSmsEncoding@@AAH2@Z @ 199 NONAME ; class TPtrC8 CSmsAlphabetConverter::ConvertFromNativeL(class TDesC16 const &, enum TSmsEncoding, int &, int &)
+	?ConvertToNativeL@CSmsAlphabetConverter@@QAE?AVTPtrC16@@ABVTDesC8@@W4TSmsEncoding@@@Z @ 200 NONAME ; class TPtrC16 CSmsAlphabetConverter::ConvertToNativeL(class TDesC8 const &, enum TSmsEncoding)
+	?IsSupportedL@CSmsUserData@@QBEHABVTDesC16@@W4TSmsEncoding@@AAH222@Z @ 201 NONAME ; int CSmsUserData::IsSupportedL(class TDesC16 const &, enum TSmsEncoding, int &, int &, int &, int &) const
+	?IsSupportedL@CSmsUserData@@QBEHABVTDesC16@@AAH1@Z @ 202 NONAME ; int CSmsUserData::IsSupportedL(class TDesC16 const &, int &, int &) const
+	?InformationElementLastIndex@CSmsUserData@@QBEHW4TSmsInformationElementIdentifier@CSmsInformationElement@@AAH@Z @ 203 NONAME ; int CSmsUserData::InformationElementLastIndex(enum CSmsInformationElement::TSmsInformationElementIdentifier, int &) const
+	?EnableLogging@CSmsStackTestUtils@@QAEXXZ @ 204 NONAME ; void CSmsStackTestUtils::EnableLogging(void)
+	?DisableLogging@CSmsStackTestUtils@@QAEXXZ @ 205 NONAME ; void CSmsStackTestUtils::DisableLogging(void)
+

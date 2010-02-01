@@ -1,0 +1,65 @@
+EXPORTS
+	_ZN12CFaxPageInfo12InternalizeLER11RReadStream @ 1 NONAME
+	_ZN12CFaxPageInfo4NewLEv @ 2 NONAME
+	_ZN12CFaxPageInfoD0Ev @ 3 NONAME
+	_ZN12CFaxPageInfoD1Ev @ 4 NONAME
+	_ZN12CFaxPageInfoD2Ev @ 5 NONAME
+	_ZN12CReadFaxFile4NewLEv @ 6 NONAME
+	_ZN12CReadFaxFile5CloseEv @ 7 NONAME
+	_ZN12CReadFaxFile5OpenLERK7TDesC16 @ 8 NONAME
+	_ZN12CReadFaxFileD0Ev @ 9 NONAME
+	_ZN12CReadFaxFileD1Ev @ 10 NONAME
+	_ZN12CReadFaxFileD2Ev @ 11 NONAME
+	_ZN13CReadFaxPages12GetScanLineLER5TDes8 @ 12 NONAME
+	_ZN13CReadFaxPages13SeekScanLineLEi @ 13 NONAME
+	_ZN13CReadFaxPages19GetEncodedScanLineLER5TDes8 @ 14 NONAME
+	_ZN13CReadFaxPages4NewLER12CStreamStore9TStreamId @ 15 NONAME
+	_ZN13CReadFaxPages8SetPageLEi @ 16 NONAME
+	_ZN13CReadFaxPagesD0Ev @ 17 NONAME
+	_ZN13CReadFaxPagesD1Ev @ 18 NONAME
+	_ZN13CReadFaxPagesD2Ev @ 19 NONAME
+	_ZN13CWriteFaxFile10AbortWriteEv @ 20 NONAME
+	_ZN13CWriteFaxFile4NewLEv @ 21 NONAME
+	_ZN13CWriteFaxFile5CloseEv @ 22 NONAME
+	_ZN13CWriteFaxFile5OpenLERK7TDesC16i @ 23 NONAME
+	_ZN13CWriteFaxFile7CommitLEv @ 24 NONAME
+	_ZN13CWriteFaxFileD0Ev @ 25 NONAME
+	_ZN13CWriteFaxFileD1Ev @ 26 NONAME
+	_ZN13CWriteFaxFileD2Ev @ 27 NONAME
+	_ZN14CWriteFaxPages11CommitPageLEv @ 28 NONAME
+	_ZN14CWriteFaxPages12AddScanLineLERK6TDesC8 @ 29 NONAME
+	_ZN14CWriteFaxPages19AddEncodedScanLineLERK6TDesC8 @ 30 NONAME
+	_ZN14CWriteFaxPages4NewLER12CStreamStorei @ 31 NONAME
+	_ZN14CWriteFaxPages8EndPageLE14TFaxResolutionR4TBufILi20EE15TFaxCompressioni @ 32 NONAME
+	_ZN14CWriteFaxPages9StartPageE14TFaxResolution15TFaxCompressioni @ 33 NONAME
+	_ZN14CWriteFaxPagesD0Ev @ 34 NONAME
+	_ZN14CWriteFaxPagesD1Ev @ 35 NONAME
+	_ZN14CWriteFaxPagesD2Ev @ 36 NONAME
+	_ZN14TFaxBandHeader12InternalizeLER11RReadStream @ 37 NONAME
+	_ZN14TFaxBandHeaderC1E9TStreamId @ 38 NONAME
+	_ZN14TFaxBandHeaderC1Ev @ 39 NONAME
+	_ZN14TFaxBandHeaderC2E9TStreamId @ 40 NONAME
+	_ZN14TFaxBandHeaderC2Ev @ 41 NONAME
+	_ZN9CFaxPages12InternalizeLER11RReadStream @ 42 NONAME
+	_ZN9CFaxPages4NewLEv @ 43 NONAME
+	_ZN9CFaxPagesD0Ev @ 44 NONAME
+	_ZN9CFaxPagesD1Ev @ 45 NONAME
+	_ZN9CFaxPagesD2Ev @ 46 NONAME
+	_ZNK12CFaxPageInfo12ExternalizeLER12RWriteStream @ 47 NONAME
+	_ZNK13CReadFaxPages15CurrentPageInfoEv @ 48 NONAME
+	_ZNK13CReadFaxPages8NumPagesEv @ 49 NONAME
+	_ZNK14TFaxBandHeader12ExternalizeLER12RWriteStream @ 50 NONAME
+	_ZNK9CFaxPages12ExternalizeLER12RWriteStream @ 51 NONAME
+	_ZTI12CFaxPageInfo @ 52 NONAME ; #<TI>#
+	_ZTI12CReadFaxFile @ 53 NONAME ; #<TI>#
+	_ZTI13CReadFaxPages @ 54 NONAME ; #<TI>#
+	_ZTI13CWriteFaxFile @ 55 NONAME ; #<TI>#
+	_ZTI14CWriteFaxPages @ 56 NONAME ; #<TI>#
+	_ZTI9CFaxPages @ 57 NONAME ; #<TI>#
+	_ZTV12CFaxPageInfo @ 58 NONAME ; #<VT>#
+	_ZTV12CReadFaxFile @ 59 NONAME ; #<VT>#
+	_ZTV13CReadFaxPages @ 60 NONAME ; #<VT>#
+	_ZTV13CWriteFaxFile @ 61 NONAME ; #<VT>#
+	_ZTV14CWriteFaxPages @ 62 NONAME ; #<VT>#
+	_ZTV9CFaxPages @ 63 NONAME ; #<VT>#
+

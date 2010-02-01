@@ -1,0 +1,94 @@
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Registry info for RawIP Meta Connection Provider Factory plug-in
+// 
+//
+
+/**
+ @file 102822EF.RSS
+*/
+
+#include <ecom/registryinfo.rh>
+
+RESOURCE REGISTRY_INFO theInfo
+{
+dll_uid =  0x102822EF;
+interfaces = 
+    {
+    INTERFACE_INFO
+        {
+        interface_uid =  0x10281DD7;
+        implementations =
+            {
+           IMPLEMENTATION_INFO
+                {
+                implementation_uid = 0x2001A35B;
+                version_no = 1;
+                display_name = "PDP Tier Manager";
+                default_data = "PDPTierManager";
+                opaque_data = "";
+                }
+            };
+        },
+
+    INTERFACE_INFO
+        {
+        interface_uid =  0x10274546;
+        implementations = 
+            {
+           IMPLEMENTATION_INFO
+                {
+                implementation_uid = 0x102822F0;
+                version_no = 1;
+                display_name = "PDP Meta Connection Provider Factory";
+                default_data = "PDPMCprFactory";
+                opaque_data = "";
+                }
+            };
+        },
+#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
+    INTERFACE_INFO
+        {
+        interface_uid = 0x102070EE;
+        implementations = 
+            {
+           IMPLEMENTATION_INFO
+                {
+                implementation_uid = 0x102822E2;
+                version_no = 1;
+                display_name = "PDP Connection Provider Factory";
+                default_data = "PDPConnProvdFactory";
+                opaque_data = "";
+                }
+            };
+        },
+#endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
+    INTERFACE_INFO
+        {
+        interface_uid = 0x10204301;
+        implementations = 
+            {
+           IMPLEMENTATION_INFO
+                {
+                implementation_uid = 0x102822E0;
+                version_no = 1;
+                display_name = "PDP Sub-Connection Provider Factory";
+                default_data = "PdpSubConnectionProviderFactory";
+                opaque_data = "";
+                }
+            };
+        }
+	
+    };
+}

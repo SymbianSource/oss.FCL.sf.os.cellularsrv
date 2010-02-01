@@ -1,0 +1,44 @@
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// RawIp.iby
+// 
+//
+
+#ifndef __RAWIP_IBY__
+#define __RAWIP_IBY__
+
+#include <packetlogger.iby>
+
+// The default BCA is C32, but may be replaced by another BCA if desired
+#include <c32bca.iby>
+
+#ifdef _DEBUG
+
+#ifdef _ZERO_COPY_NETWORKING
+ECOM_PLUGIN_UDEB(rawip2.dll,10286AF7.rss)
+#else
+ECOM_PLUGIN_UDEB(rawip.dll,10281C4E.rss)
+#endif //_ZERO_COPY_NETWORKING
+
+#else
+
+#ifdef _ZERO_COPY_NETWORKING
+ECOM_PLUGIN(rawip2.dll,10286AF7.rss)
+#else
+ECOM_PLUGIN(rawip.dll,10281C4E.rss)
+#endif //_ZERO_COPY_NETWORKING
+
+#endif // _DEBUG
+
+#endif // __RAWIP_IBY__
