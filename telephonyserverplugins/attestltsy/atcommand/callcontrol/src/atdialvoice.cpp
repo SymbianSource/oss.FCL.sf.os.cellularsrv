@@ -315,10 +315,15 @@ void CATDialVoice::ParseResponseL(const TDesC8& aResponseBuf)
 		
 		// if no KLtsyUnsolicitedCallingAltert string was received before we receive "OK"
 		// it aslo means the call has been connected even though such KLtsyUnsolicitedCallingAltert
-		// was not received
-		if(iDialStep == EATWaitForConnectingComplete)
+		// or KLtsyUnsolicitedCallCreated was not received
+		if(iDialStep == EATWaitForConnectingComplete || iDialStep == EATWaitForDiallingComplete)
 		    {
 		    LOGTEXT(_L8("[Ltsy CallControl] No alert string [+WIND: 2] received before we receive string [ok]"));
+		    
+		    if (iCallId == KLtsyErrorCallId)
+		    	{
+		    	iCallId = iPhoneGlobals.GetCallInfoManager().FindUnUesedCallId();
+		    	}
 		    
 		    HandleConnectingComplete();
 		    iDialStep = EATWaitForConnectedComplete;
@@ -328,11 +333,13 @@ void CATDialVoice::ParseResponseL(const TDesC8& aResponseBuf)
 		}
 	else if (aResponseBuf.Match(KLtsyBusyString) == 0)
 		{
+		LOGTEXT(_L8("[Ltsy CallControl] Busy tone was detected"));
 		//iResult = KErrEtelBusyDetected;
 		iResult = KErrGsmCCUserBusy;
 		}
 	else if (aResponseBuf.Match(KLtsyNoAnswerString) == 0)
 		{
+		LOGTEXT(_L8("[Ltsy CallControl] No answer from remote party"));
 		//iResult = KErrEtelNoAnswer;
 		iResult = KErrGsmCCUserAlertingNoAnswer;
 		}
@@ -340,6 +347,7 @@ void CATDialVoice::ParseResponseL(const TDesC8& aResponseBuf)
 		{
 		// that could be the problem of the client, when there were two ongoing call, but a new call is coming up. As
 		// GSM only support two ongoing calls
+		LOGTEXT(_L8("[Ltsy CallControl] No carrier was detected"));
 		if(iCallId == KLtsyErrorCallId)
 		    {
 		    iResult = KErrEtelNoCarrier;
@@ -361,10 +369,12 @@ void CATDialVoice::ParseResponseL(const TDesC8& aResponseBuf)
 		}
 	else if (aResponseBuf.Match(KLtsyErrorString) == 0)
 		{
+		LOGTEXT(_L8("[Ltsy CallControl] There was an error connecting the call"));
 		iResult = KErrArgument;
 		}
 	else
 		{
+		LOGTEXT(_L8("[Ltsy CallControl] An unknown problem occurred connecting the call"));
 		iResult = KErrGeneral;
 		}
 	}

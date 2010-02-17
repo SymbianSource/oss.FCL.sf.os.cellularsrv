@@ -466,7 +466,7 @@ void CTsyConfig::GetModemBearerIdL(TUint32& aBearerId)
     CCDModemBearerRecord *modemRecord = static_cast<CCDModemBearerRecord*>(CCDRecordBase::RecordFactoryL(KCDTIdModemBearerRecord));
     CleanupStack::PushL(modemRecord);
     
-    _LIT(KTsyName,"PhoneTsyWithDispatcher");
+    _LIT(KTsyName,"phonetsy"); // Note this is case sensitive and must match the name in commdb
     modemRecord->iTsyName.SetMaxLengthL(KMaxTextLength);
     modemRecord->iTsyName = KTsyName;
     
