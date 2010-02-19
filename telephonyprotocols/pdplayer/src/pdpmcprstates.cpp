@@ -13,6 +13,7 @@
 // Description:
 //
 
+#include <etelqos.h>
 #include <comms-infras/ss_metaconnprov.h>
 #include <comms-infras/ss_nodeinterfaces.h>
 #include <elements/nm_messages_errorrecovery.h>

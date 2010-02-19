@@ -20,15 +20,16 @@
  @internalComponent
 */
 
+#include <etelqos.h>
+#include <comms-infras/agentmcpractivities.h>
+#include <comms-infras/coremcpractivities.h>
+#include <comms-infras/ss_msgintercept.h>
+#include <elements/nm_messages_errorrecovery.h>
 #include <comms-infras/ss_log.h>
 #include "pdpmcpr.h"
 #include "pdpmcprstates.h"
 #include "PDPProvision.h"
 #include "psdavailabilitylistener.h"
-#include <comms-infras/agentmcpractivities.h>
-#include <comms-infras/coremcpractivities.h>
-#include <comms-infras/ss_msgintercept.h>
-#include <elements/nm_messages_errorrecovery.h>
 
 using namespace Messages;
 using namespace MeshMachine;

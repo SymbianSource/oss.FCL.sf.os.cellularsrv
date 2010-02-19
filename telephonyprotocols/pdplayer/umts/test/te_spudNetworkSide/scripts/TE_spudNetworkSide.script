@@ -481,7 +481,78 @@ RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetwo
 END_TESTCASE            NET-Spud-NetworkSide-0825
 
 run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
+run_script z:\TestData\scripts\te_esock_test_loadesock.script
 
+// Unusual cases tests. This happens if TSY acting wrong.
+
+START_TESTCASE          NET-Spud-NetworkSide-0826
+//! @SYMTestCaseID      NET-Spud-NetworkSide-0826
+//! @SYMTestCaseDesc Sanity check: Primary context activation ends up with inactive context.
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Activate a primary PDP context, simtsy is set up to make context activation end up with an inactive context but return error code = KErrNone. SpudTel should treat this situation accordingly and return KErrCompletion.
+//! @SYMTestExpectedResults  Primary context activation should return KErrCompletion.
+//! @SYMTestPriority Normal
+//! @SYMTestStatus Implemented
+//! @SYMTestType CIT
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudPrimary z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationEndUpWithInactiveContext
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+END_TESTCASE            NET-Spud-NetworkSide-0826
+
+run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
+run_script z:\TestData\scripts\te_esock_test_loadesock.script
+
+START_TESTCASE          NET-Spud-NetworkSide-0827
+//! @SYMTestCaseID      NET-Spud-NetworkSide-0827
+//! @SYMTestCaseDesc  Sanity check: Primary context activation ends up with inactive context.
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Activate a primary PDP context, simtsy is set up to make context activation end up with an inactive context but return error code = KErrGeneral. SpudTel should treat this situation accordingly and return KErrGeneral.
+//! @SYMTestExpectedResults  Primary context activation should return KErrGeneral.
+//! @SYMTestPriority Normal
+//! @SYMTestStatus Implemented
+//! @SYMTestType CIT
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudPrimary z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationEndUpWithInactiveContext2
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+END_TESTCASE            NET-Spud-NetworkSide-0827
+
+run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
+run_script z:\TestData\scripts\te_esock_test_loadesock.script
+
+START_TESTCASE          NET-Spud-NetworkSide-0828
+//! @SYMTestCaseID      NET-Spud-NetworkSide-0828
+//! @SYMTestCaseDesc  Sanity check: Primary context activation ends up with inactive context.
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Activate a primary PDP context, simtsy is set up to make context activation end up with an inactive context but return an extended error code. SpudTel should treat this situation accordingly and return that extended error code.
+//! @SYMTestExpectedResults  Primary context activation should return -65536.
+//! @SYMTestPriority Normal
+//! @SYMTestStatus Implemented
+//! @SYMTestType CIT
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudPrimary z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationEndUpWithInactiveContext3
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+END_TESTCASE            NET-Spud-NetworkSide-0828
+
+run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
+run_script z:\TestData\scripts\te_esock_test_loadesock.script
+
+//The following testcase is for covering all the corner of the code for the case when primary context activation ends up with inactive context.
+
+START_TESTCASE          NET-Spud-NetworkSide-0829
+//! @SYMTestCaseID      NET-Spud-NetworkSide-0829
+//! @SYMTestCaseDesc  Sanity check: Primary context activation ends up with inactive context.
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Activate a primary PDP context, simtsy is set up to make context activation end up with an inactive context. The function GetLastErrorCause, which is used for getting the last error code, will complete with KErrGeneral. 
+//! @SYMTestExpectedResults  Primary context activation should return KErrCompletion.
+//! @SYMTestPriority Normal
+//! @SYMTestStatus Implemented
+//! @SYMTestType CIT
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudPrimary z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationEndUpWithInactiveContext4
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+END_TESTCASE            NET-Spud-NetworkSide-0829
+
+run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
 
 RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
 RUN_UTILS  MakeReadWrite c:\config.txt

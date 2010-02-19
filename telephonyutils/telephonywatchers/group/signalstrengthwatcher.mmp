@@ -39,7 +39,7 @@ SOURCEPATH		.
 SOURCE			../src/signalstrengthwatcher.cpp
 SOURCE			../src/SignalstrengthWatcherImplementationTable.cpp
 USERINCLUDE		../inc
-LIBRARY			euser.lib watcher.lib etel.lib etelmm.lib telwatcherbase.lib
+LIBRARY			euser.lib etel.lib etelmm.lib telwatcherbase.lib
 DEBUGLIBRARY	comsdbgutil.lib
 
 

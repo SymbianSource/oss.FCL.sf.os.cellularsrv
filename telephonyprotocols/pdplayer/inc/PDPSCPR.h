@@ -23,6 +23,7 @@
 #ifndef SYMBIAN_PDPSPR_H
 #define SYMBIAN_PDPSPR_H
 
+#include <etelqos.h>
 #include <comms-infras/corescpr.h>
 #include <comms-infras/corescprstates.h>
 #include <networking/qos3gpp_subconparams.h>
@@ -30,9 +31,11 @@
 #include <networking/pdpprovision.h>
 #include <comms-infras/linkprovision.h>
 #include <networking/ipaddrinfoparams.h>
+#include <comms-infras/commsdebugutility.h>
+
 #include "PDPFSM.h"
 #include "PDPParamMapper.h"
-#include <comms-infras/commsdebugutility.h>
+
 namespace PDPSCprStates
     {
     class TSelfInit;

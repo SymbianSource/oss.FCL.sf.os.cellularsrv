@@ -22,6 +22,7 @@
 PRJ_EXPORTS
 ../inc/etelpckt.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(etelpckt.h)
 ../inc/etelQoS.h 			SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(etelqos.h)
+../inc/eteldefaultqos.h 	SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(eteldefaultqos.h)
 ../inc/pcktlist.h 			SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(pcktlist.h)
 ../inc/pcktretrieve.h 		SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(pcktretrieve.h)
 ../inc/mbmstypes.h 			SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(mbmstypes.h)

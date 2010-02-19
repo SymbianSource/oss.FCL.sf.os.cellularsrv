@@ -222,6 +222,7 @@ void CSimPhone::ConstructL()
 	iSectionName.Format(KSectionNameFormat,testNumber);
 	if(iConfigFile->Section(iSectionName)==NULL)
 		{
+        LOGPHONE2("Section for requested test number (%d) not found in the Config File",testNumber);
 		CleanupStack::Pop();
 		User::Leave(KErrNotFound);
 		}

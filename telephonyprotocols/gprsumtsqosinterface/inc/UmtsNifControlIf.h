@@ -19,7 +19,7 @@
 #define __UMTSNIF_CONTROL__
 
 #include <nifman.h>
-
+#include <es_prot.h>
 #if MM_ETEL_API
 #include "uscl_packet.h"	// RPacketContext from UMTSSim
 #include "uscl_qos.h"		// RPacketQoS from UMTSSim

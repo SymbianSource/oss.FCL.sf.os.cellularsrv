@@ -28,7 +28,6 @@
 
 #include <e32property.h>
 #include <es_sock.h>
-#include <etelmm.h>
 
 /** SMS sockets family identifier.*/
 const TUint KSMSAddrFamily = 0x010;

@@ -1122,7 +1122,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
                         {
                         if (errTsy == KErrNone)
                         	{
-                        	err = KErrNone;
+                        	err = KErrCompletion;
                         	}
                         else if ((errTsy & 0xFFFF0000) != 0xFFFF0000)
                             {

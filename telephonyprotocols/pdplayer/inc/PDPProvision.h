@@ -27,9 +27,9 @@
 #ifndef PDPPROVISION_H_
 #define PDPPROVISION_H_
 
+#include <etelqos.h>
 #include <comms-infras/metadata.h>
 #include <metadatabase.h>		// TMDBElementId
-#include <etelqos.h>
 
 namespace ESock 
 	{
