@@ -23,9 +23,9 @@ use FMCreate;
 #
 # Hardwire the datafile - this is only an example.
 # 
-my $datfile = "/epoc32/data/config/features.dat";
-my $datfile2 = "/epoc32/data/config/features2.dat";
-my $datfileback = "/epoc32/data/config/features.bak";
+my $datfile = "/epoc32/release/winscw/udeb/z/private/10205054/features.dat";
+my $datfile2 = "/epoc32/release/winscw/udeb/z/private/10205054/features2.dat";
+my $datfileback = "/epoc32/release/winscw/udeb/z/private/10205054/features.bak";
 
 #
 # Create an object that represents a feature data file.
