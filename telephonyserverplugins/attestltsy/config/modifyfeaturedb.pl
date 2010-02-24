@@ -41,22 +41,14 @@ my $fmc = FMCreate->new();
 #
 $fmc->LoadUp($datfile) or die "Failed to load up data from '$datfile'\n";
 
-#
-#	Device supports GSM cellular stack.
-#    const TInt KFeatureIdProtocolGsm = 81;
-#
-#	Device supports WCDMA cellular stack   
-# 	const TInt KFeatureIdProtocolWcdma = 82;
-#
-#   KFeatureIdOnScreenDialer                            1696
-#
+# Setup an array of all the features we need to switch on.
 my $ffuid;
 my $ff;
 my @tomtab;
 
-$tomtab[0] = 81;
-$tomtab[1] = 82;
-$tomtab[1] = 1696;
+$tomtab[0] = 81; 	# KFeatureIdProtocolGsm
+$tomtab[1] = 82; 	# KFeatureIdProtocolWcdma
+$tomtab[1] = 1696;	# KFeatureIdOnScreenDialer
 
 foreach $ffuid (@tomtab)
 #for ($ffuid = 1696; $ffuid <= 1696; $ffuid++)
