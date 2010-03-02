@@ -4,7 +4,7 @@ REM All rights reserved.
 REM This component and the accompanying materials are made available
 REM under the terms of Eclipse Public License v1.0
 REM which accompanies this distribution, and is available
-REM at the URL http:REMwww.eclipse.org/legal/epl-v10.html.
+REM at the URL http://www.eclipse.org/legal/epl-v10.html.
 REM
 REM Initial Contributors:
 REM Symbian Foundation - initial contribution.
@@ -27,12 +27,15 @@ echo Copying phonetsywithdispatcher.tsy to phonetsy:
 copy /Y \epoc32\release\winscw\udeb\phonetsywithdispatcher.tsy \epoc32\release\winscw\udeb\phonetsy.tsy
 
 echo Setup the feature manager to include GSM and WCDMA features:
-@perl -S -I/epoc32/tools/featmgr /sf/os/cellularsrv/telephonyserverplugins/attestltsy/config/modifyfeaturedb.pl
+@perl -S -I/epoc32/tools/featmgr ./modifyfeaturedb.pl
 
-echo Setuping CommDB:
+echo Setup the Converged Call Engine plugin to use CS rather than VCC:
+@perl -S ./modifycenrep.pl
+
+echo Setup CommDB:
 REM copy /Y \sf\os\cellularsrv\telephonyserverplugins\attestltsy\config\AT-LTSY(default).cfg \epoc32\winscw\c\AT-LTSY(default).cfg
 cd \sf\os\cellularsrv\telephonyserverplugins\attestltsy\config
-@perl -S /sf/os/cellularsrv/telephonyserverplugins/attestltsy/config/modifycommdb.pl
-\epoc32\release\winscw\udeb\ced.exe -Dtextshell -- c:\AT-LTSY(wavcom).cfg
+@perl -S ./modifycommdb.pl
+\epoc32\release\winscw\udeb\ced.exe -Dtextshell -- c:\AT-LTSY.cfg
 
 REM M:\sf\os\devicesrv\sysstatemgmt\group>sbs -b bld.inf -c winscw_udeb RESOURCE

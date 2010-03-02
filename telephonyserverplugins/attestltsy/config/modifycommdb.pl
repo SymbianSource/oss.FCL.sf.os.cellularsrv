@@ -12,8 +12,7 @@
 # Contributors:
 #
 # Description:
-# This simple script shows how to modify the content of a feature manager
-# data file.
+# This modifies CommDB for the AT LTSY modem, asking the user for the comm port and baud rate to use.
 # 
 #
 
@@ -29,12 +28,11 @@ chomp ($com = <>);
 print "What is the baud rate of the modem?\n(Wavecomm default is 9600, Telit default is 152000)\n\tBaud=";
 chomp ($baud = <>);
 
-print "\nComm::$com Baud=$baud\n";
+#print "\nComm::$com Baud=$baud\n";
 
 # Open the config files
 my $defaultcomdb = "<./AT-LTSY(default).cfg";
-my $commdb = ">>../../../../../../epoc32/winscw/c/AT-LTSY.cfg";
-#my $commdb = ">./AT-LTSY.cfg";
+my $commdb = ">/epoc32/winscw/c/AT-LTSY.cfg";
 
 open(COMMDBOUT, $commdb);
 open(COMMDBREAD, $defaultcomdb);
@@ -50,13 +48,13 @@ my($line)=$_;
 # first wait till we've found the $modembearertable line.
 if ($line =~ m/^\[ModemBearer\]/) 
 	{
-	print "Found the modem bearer table\n";
+	#print "Found the modem bearer table\n";
 	$modembearertable = 1;
 	}
 # Or if we've got the end of the table unset the boolean
 elsif ($modembearertable && $line =~ m/^\[/) 
 	{
-	print "Found the end fo the modem bearer table\n";
+	#print "Found the end fo the modem bearer table\n";
 	$modembearertable = 0;	
 	}
 
@@ -66,14 +64,14 @@ if ($modembearertable)
 	# Now wait till we've got to an entry for our modem
 	if ($line =~ m/^\sName=CommModem/) 
 		{
-		print "Found the modem entry\n";
+		#print "Found the modem entry\n";
 		$modementry = 1;
 		}
 
 	# Or if we've reached the end of the modem entry unset the boolean
 	if ($modementry && $line =~ m/^END_ADD/) 
 		{
-		print "Found the end of the modem entry\n";
+		#print "Found the end of the modem entry\n";
 		$modementry = 0;
 		}
 	}
@@ -84,14 +82,14 @@ if ($modementry)
 	# If it's the comm port number set that up
 	if ($line =~ m/^\sPortName=COMM::/) 
 		{
-		print "Changing COMM port\n";
+		print "\tSetting the COMM port\n";
 		$line = "\tPortName=COMM::$com\n"
 		}
 	
 	# If it's the rate then set that up
 	if ($line =~ m/^\sRate=/) 
 		{
-		print "Changing Baud rate\n";
+		print "\tSetting the Baud rate\n";
 		$line = "\tRate=$baud\n"
 		}
 	}
@@ -104,16 +102,4 @@ print COMMDBOUT $line;
 close(COMMDBOUT);
 close(COMMDBREAD);
 
-
-
-# Open the .cfg file and read each line
-
-#rename($datfile, $datfileback) or die "Couldn't backup feature data file '$datfile'\n";
-#rename($datfile2, $datfile) or die "Couldn't copy feature data file '$datfile2'\n";
-
-#printf ("\tFeature Database setup\n");
-#
-# Example code to remove a feature flag.
-#
-#$fmc->RemoveFeatureFlagByUID($ffuid) or die "Couldn't remove feature flag\n";
 
