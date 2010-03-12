@@ -32,6 +32,8 @@
 #include "cctsyactiveretriever.h"
 #include <mmretrieve.h>
 
+const TInt KOneSecond=1000000;  // Used in a time out function, 1 second (in microSeconds)
+
 CTestSuite* CCTsyONStoreFU::CreateSuiteL(const TDesC& aName)
 	{
 	SUB_SUITE;
@@ -61,7 +63,10 @@ CTestSuite* CCTsyONStoreFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestDelete0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestDelete0004L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestDelete0005L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001cL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001dL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0004L);
@@ -1199,6 +1204,7 @@ void CCTsyONStoreFU::TestRead0003L()
     ASSERT_EQUALS(KErrNone, ret);
     CleanupClosePushL(onStore);
 
+    // Test 1: Bad package size
     TRequestStatus requestStatus;
     RMobileNamStore::TMobileNamEntryV1 info;    // bad param 
     RMobileNamStore::TMobileNamEntryV1Pckg infoPckg(info);
@@ -1208,6 +1214,16 @@ void CCTsyONStoreFU::TestRead0003L()
     User::WaitForRequest(requestStatus);
     ASSERT_EQUALS(KErrArgument, requestStatus.Int());
 
+    // Test 2: Bad index
+    RMobileONStore::TMobileONEntryV1 info2;  
+    RMobileONStore::TMobileONEntryV1Pckg infoPckg2(info2);
+    info2.iIndex = -2; // bad param
+    
+    onStore.Read(requestStatus, infoPckg2);
+
+    User::WaitForRequest(requestStatus);
+    ASSERT_EQUALS(KErrArgument, requestStatus.Int());
+    
     AssertMockLtsyStatusL();
 
     CleanupStack::PopAndDestroy(2); // this, onStore
@@ -1602,32 +1618,26 @@ void CCTsyONStoreFU::TestWrite0003L()
 	ASSERT_EQUALS(KErrNone, ret);
 	CleanupClosePushL(onStore);
 
+	// Test 1: Bad index
 	TRequestStatus requestStatus;
     RMobileONStore::TMobileONEntryV1 info;  
     RMobileONStore::TMobileONEntryV1Pckg infoPckg(info);
     
     info.iIndex = -2;   //bad index
 	    
-    TMockLtsyData1<RMobileONStore::TMobileONEntryV1> tsyData(info);
-    tsyData.SerialiseL(expData);
-
-    const TInt KLocation(2);
-    TInt location(KLocation);
-
-    TMockLtsyData1<TInt> tsyData2(location);           
-    tsyData2.SerialiseL(completeData);
-
-	iMockLTSY.ExpectL(EMmTsyONStoreWriteIPC, expData);
-	iMockLTSY.CompleteL(EMmTsyONStoreWriteIPC, KErrNone, completeData);
-	
     onStore.Write(requestStatus, infoPckg);
-    
     User::WaitForRequest(requestStatus);  
     
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 160401);	
-          
-	ASSERT_EQUALS(KLocation, info.iIndex);	
-	ASSERT_TRUE(KErrNone != requestStatus.Int());	
+    ASSERT_EQUALS(KErrArgument, requestStatus.Int());
+	
+	// Test 2: Bad package
+    RMobileNamStore::TMobileNamEntryV1 info2;    // bad param 
+    RMobileNamStore::TMobileNamEntryV1Pckg infoPckg2(info2);
+    
+    onStore.Write(requestStatus, infoPckg);
+    User::WaitForRequest(requestStatus);  
+    
+    ASSERT_EQUALS(KErrArgument, requestStatus.Int());
 
 	AssertMockLtsyStatusL();
 
@@ -2093,6 +2103,12 @@ void CCTsyONStoreFU::TestGetInfo0001L()
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
 
+	// Open ADN phonebook
+    TName name(KETelIccAdnPhoneBook);
+    RMobilePhoneBookStore bookStore;
+    OpenPhoneBookStoreL(bookStore, name, iPhone);
+    CleanupClosePushL(bookStore);
+
 	RBuf8 expData;
 	CleanupClosePushL(expData);
 
@@ -2177,48 +2193,488 @@ void CCTsyONStoreFU::TestGetInfo0001L()
 
 	AssertMockLtsyStatusL();
 	
-	//-------------------------------------------------------------------------
-	// TEST F: DEF132954: GetInfo fails when another phonebook's initialisation
-	// is in progress.
-	//-------------------------------------------------------------------------
-	
-	TName name(KETelIccAdnPhoneBook);
-	RMobilePhoneBookStore bookStore;
-	
-	RBuf8 data;
-	CleanupClosePushL(data);
-	    	
-	RBuf8 data2;
-	CleanupClosePushL(data2);
-	    	
-	iMockLTSY.NotifyTerminated(mockLtsyStatus);
-              
-	//EMmTsyPhoneBookStoreInitIPC
-	TMockLtsyPhoneBookData0 storeInitData(name);
-	storeInitData.SerialiseL(data);
-	        
-	iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, data);		
-	
-	//Open
-	ret = bookStore.Open(iPhone, name);
-	ASSERT_EQUALS(KErrNone, ret);
-	CleanupClosePushL(bookStore);
-	
-	User::WaitForRequest(mockLtsyStatus);        	
-	ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());	
-	
-	onStore.GetInfo(requestStatus, storePckg);		
-	    
-	User::WaitForRequest(requestStatus);        
-	ASSERT_EQUALS(KErrNotReady, requestStatus.Int());
-
-	AssertMockLtsyStatusL(); 	
-		    		
-	CleanupStack::PopAndDestroy(3); //data, data2, bookStore
-	
-	CleanupStack::PopAndDestroy(4, this); // this, etc...
+	CleanupStack::PopAndDestroy(5, this); // this, etc...
 	}
 
+
+/**
+@SYMTestCaseID BA-CTSY-PBON-OSGI-0001b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobileONStore::GetInfo when there is no ADN store
+@SYMTestPriority High
+@SYMTestActions Invokes RMobileONStore::GetInfo
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyONStoreFU::TestGetInfo0001bL()
+    {
+	// Since we can not get the ON store info from the SIM if the ADN storage was not initilized, the 
+	// CTSY must make sure that the ADN storage was initilize before requesting to get the ON store info from 
+	// the LTSY. This test test if the CTSY knows to create a new ADN and wait for the initilization to complete.
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 expData;
+    CleanupClosePushL(expData);
+
+    RBuf8 completeData;
+    CleanupClosePushL(completeData);
+
+    RMobileONStore  onStore;
+    TInt ret = onStore.Open(iPhone);
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(onStore);
+        
+        
+    TRequestStatus requestStatus;
+    RMobileONStore::TMobileONStoreInfoV1 storeInfo;
+    RMobileONStore::TMobileONStoreInfoV1Pckg storePckg(storeInfo);
+    
+    TName name(KETelIccAdnPhoneBook);
+    expData.Close();
+    TMockLtsyPhoneBookData0 storeInitData(name);
+    storeInitData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, expData);   
+
+    onStore.GetInfo(requestStatus, storePckg);      
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+
+    CStorageInfoData storageData;
+    SetStorageInfoData(storageData);
+    
+    ASSERT_EQUALS(KErrNone, iMockLTSY.PauseCompletion());
+    
+    TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(name, storageData);
+    completeData.Close();
+    retStoreInitC.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, completeData, 0);
+
+    //EMmTsyPhoneBookStoreCacheIPC
+    CArrayPtrSeg<CPhoneBookStoreEntry>* cache = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+    CleanupStack::PushL(cache);
+    
+    TMockLtsyPhoneBookData1<CArrayPtrSeg<CPhoneBookStoreEntry>*> storeCacheData(name, cache);
+    completeData.Close();
+    storeCacheData.SerialiseL(completeData);   
+    expData.Close();
+    storeInitData.SerialiseL(expData);
+    
+                  
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreCacheIPC, expData);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreCacheIPC, KErrNone, completeData, 0);
+    
+    TInt readIndex(-1);
+    TMockLtsyData1<TInt> tsyData(readIndex);
+    expData.Close();
+    tsyData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyONStoreGetInfoIPC, expData);
+
+    ASSERT_EQUALS(KErrNone, iMockLTSY.ResumeCompletion());
+
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    
+    const TInt KNumOfEntries = 11;
+    const TInt KUsedEntries = 21;
+    const TInt KNameLen = 31;
+    const TInt KNumLen = 41;
+    TServiceType serviceType = {KNumOfEntries, KUsedEntries, KNameLen, KNumLen};
+    TMockLtsyData1<TServiceType> tsyData2(serviceType);           
+    completeData.Close();
+    tsyData2.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyONStoreGetInfoIPC, KErrNone, completeData);
+    
+    
+    User::WaitForRequest(requestStatus);        
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());   
+        
+    ASSERT_EQUALS(RMobilePhoneStore::EOwnNumberStore, storeInfo.iType);
+    ASSERT_EQUALS(KONStoreCaps, storeInfo.iCaps);
+    ASSERT_TRUE(0 == storeInfo.iName.Compare(KETelOwnNumberStore));
+    ASSERT_EQUALS(KUsedEntries, storeInfo.iUsedEntries);
+    ASSERT_EQUALS(KNumOfEntries, storeInfo.iTotalEntries);
+    ASSERT_EQUALS(KNumLen, storeInfo.iNumberLen);
+    ASSERT_EQUALS(KNameLen, storeInfo.iTextLen);
+        
+    CleanupStack::PopAndDestroy(5, this); // this, etc...
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-PBON-OSGI-0001c
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobileONStore::GetInfo when there is no ADN store and another store is initilize
+@SYMTestPriority High
+@SYMTestActions Invokes RMobileONStore::GetInfo
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyONStoreFU::TestGetInfo0001cL()
+    {
+	// Since we can not get the ON store info from the SIM if the ADN storage was not initilized, the 
+	// CTSY must make sure that the ADN storage was initilize before requesting to get the ON store info from 
+	// the LTSY. This test test if the CTSY knows what to do when another storage creation was initilize but not completed.
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 expData;
+    CleanupClosePushL(expData);
+
+    RBuf8 completeData;
+    CleanupClosePushL(completeData);
+
+    RMobileONStore  onStore;
+    TInt ret = onStore.Open(iPhone);
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(onStore);
+        
+        
+    TRequestStatus requestStatus;
+    RMobileONStore::TMobileONStoreInfoV1 storeInfo;
+    RMobileONStore::TMobileONStoreInfoV1Pckg storePckg(storeInfo);
+    
+    TName mbdnName(KETelIccMbdnPhoneBook);
+    expData.Close();
+    TMockLtsyPhoneBookData0 storeInitData(mbdnName);
+    storeInitData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, expData);
+    
+    RMobilePhoneBookStore mbdnBookStore;
+    CleanupClosePushL(mbdnBookStore);
+    ASSERT_EQUALS(KErrNone, mbdnBookStore.Open(iPhone, KETelIccMbdnPhoneBook));
+    
+
+    onStore.GetInfo(requestStatus, storePckg);      
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+
+    CStorageInfoData storageData;
+    SetStorageInfoData(storageData);
+    
+    ASSERT_EQUALS(KErrNone, iMockLTSY.PauseCompletion());
+    
+    TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(mbdnName, storageData);
+    completeData.Close();
+    retStoreInitC.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, completeData, 0);
+
+    //EMmTsyPhoneBookStoreCacheIPC
+    CArrayPtrSeg<CPhoneBookStoreEntry>* cache = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+    CleanupStack::PushL(cache);
+    
+    TName adnName(KETelIccAdnPhoneBook);
+    TMockLtsyPhoneBookData1<CArrayPtrSeg<CPhoneBookStoreEntry>*> storeCacheData(adnName, cache);
+    completeData.Close();
+    storeCacheData.SerialiseL(completeData);   
+    TMockLtsyPhoneBookData0 adnStoreInitData(adnName);
+    expData.Close();
+    adnStoreInitData.SerialiseL(expData);
+    
+                  
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreCacheIPC, expData);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreCacheIPC, KErrNone, completeData, 0);
+    
+    TInt readIndex(-1);
+    TMockLtsyData1<TInt> tsyData(readIndex);
+    expData.Close();
+    tsyData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyONStoreGetInfoIPC, expData);
+
+    ASSERT_EQUALS(KErrNone, iMockLTSY.ResumeCompletion());
+
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    
+    const TInt KNumOfEntries = 12;
+    const TInt KUsedEntries = 23;
+    const TInt KNameLen = 3;
+    const TInt KNumLen = 14;
+    TServiceType serviceType = {KNumOfEntries, KUsedEntries, KNameLen, KNumLen};
+    TMockLtsyData1<TServiceType> tsyData2(serviceType);           
+    completeData.Close();
+    tsyData2.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyONStoreGetInfoIPC, KErrNone, completeData);
+    
+    
+    User::WaitForRequest(requestStatus);        
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());   
+        
+    ASSERT_EQUALS(RMobilePhoneStore::EOwnNumberStore, storeInfo.iType);
+    ASSERT_EQUALS(KONStoreCaps, storeInfo.iCaps);
+    ASSERT_TRUE(0 == storeInfo.iName.Compare(KETelOwnNumberStore));
+    ASSERT_EQUALS(KUsedEntries, storeInfo.iUsedEntries);
+    ASSERT_EQUALS(KNumOfEntries, storeInfo.iTotalEntries);
+    ASSERT_EQUALS(KNumLen, storeInfo.iNumberLen);
+    ASSERT_EQUALS(KNameLen, storeInfo.iTextLen);
+        
+    CleanupStack::PopAndDestroy(6, this); // this, etc...
+    }
+
+
+/**
+@SYMTestCaseID BA-CTSY-PBON-OSGI-0001d
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobileONStore::GetInfo when there is no ADN store and SIM is not ready
+@SYMTestPriority High
+@SYMTestActions Invokes RMobileONStore::GetInfo
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyONStoreFU::TestGetInfo0001dL()
+    {
+	// Since we can not get the ON store info from the SIM if the ADN storage was not initilized, the 
+	// CTSY must make sure that the ADN storage was initilize before requesting to get the ON store info from 
+	// the LTSY. We can not initilize the storage if the SIM is not ready. This test test if the CTSY knows 
+	// to wait for the SIM to be ready, the wait for the storage to complete the initilization and only then to
+	// ask the ON storage info from the LTSY.
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+
+    RBuf8 expData;
+    CleanupClosePushL(expData);
+
+    RBuf8 completeData;
+    CleanupClosePushL(completeData);
+
+    // Open the phone
+    RMobilePhone::TMobilePhoneNetworkInfoV8 homeNetwork;
+    homeNetwork.iMode = RMobilePhone::ENetworkModeWcdma;
+    homeNetwork.iStatus = RMobilePhone::ENetworkStatusCurrent;
+    homeNetwork.iBandInfo = RMobilePhone::EBandUnknown;
+    homeNetwork.iCountryCode = _L("234");
+    homeNetwork.iCdmaSID = _L("");
+    homeNetwork.iAnalogSID = _L("");
+    homeNetwork.iNetworkId = _L("23499");
+    homeNetwork.iDisplayTag = _L("symbian");
+    homeNetwork.iShortName = _L("symbian");
+    homeNetwork.iLongName = _L("symbian mobile");
+    homeNetwork.iAccess = RMobilePhone::ENetworkAccessUtran;
+    homeNetwork.iEgprsAvailableIndicator = ETrue;
+    homeNetwork.iHsdpaAvailableIndicator = ETrue;
+    homeNetwork.iHsupaAvailableIndicator = ETrue;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneNetworkInfoV8> homeNetworkData(homeNetwork);
+    homeNetworkData.SerialiseL(completeData);
+
+    TInt err = iPhone.Open(iTelServer,KMmTsyPhoneName);
+    ASSERT_EQUALS(KErrNone, err);
+
+    err=iMockLTSY.Connect();
+    ASSERT_EQUALS(KErrNone, err);
+
+    // EMmTsyBootNotifyModemStatusReadyIPC
+    ASSERT_EQUALS(KErrNone, iMockLTSY.PauseCompletion());
+    iMockLTSY.CompleteL(EMmTsyBootNotifyModemStatusReadyIPC,KErrNone);
+
+    // EMobilePhoneGetNetworkRegistrationStatus
+    iMockLTSY.ExpectL(EMobilePhoneGetNetworkRegistrationStatus);
+    iMockLTSY.CompleteL(EMobilePhoneGetNetworkRegistrationStatus,KErrNone,0);
+    // EMmTsyBootNotifySimStatusReadyIPC
+    iMockLTSY.ExpectL(EMmTsyBootNotifySimStatusReadyIPC);
+
+    ASSERT_EQUALS(KErrNone, iMockLTSY.ResumeCompletion());
+    
+    
+    
+
+    
+    RMobileONStore  onStore;
+    TInt ret = onStore.Open(iPhone);
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(onStore);
+        
+        
+    TRequestStatus requestStatus;
+    RMobileONStore::TMobileONStoreInfoV1 storeInfo;
+    RMobileONStore::TMobileONStoreInfoV1Pckg storePckg(storeInfo);
+    
+    onStore.GetInfo(requestStatus, storePckg);      
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+
+    ASSERT_EQUALS(KErrNone, iMockLTSY.PauseCompletion());
+
+    TRequestStatus mockLtsyStatus;
+    iMockLTSY.NotifyTerminated(mockLtsyStatus);
+    iMockLTSY.CompleteL(EMmTsyBootNotifySimStatusReadyIPC,KErrNone,0);
+                        
+    // EMobilePhoneGetHomeNetwork
+    iMockLTSY.ExpectL(EMobilePhoneGetHomeNetwork);
+    iMockLTSY.CompleteL(EMobilePhoneGetHomeNetwork,KErrNone,completeData,0);
+
+    // EMmTsyPhoneGetPin1DisableSupportedIPC
+    iMockLTSY.ExpectL(EMmTsyPhoneGetPin1DisableSupportedIPC);
+    
+    // EMmTsySimRefreshRegisterIPC
+    iMockLTSY.ExpectL(EMmTsySimRefreshRegisterIPC);
+    
+    // EMobilePhoneGetServiceTable
+    RMobilePhone::TMobilePhoneServiceTable serviceTable = RMobilePhone::ESIMServiceTable;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneServiceTable> serviceTableData(serviceTable);
+    expData.Close();
+    serviceTableData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMobilePhoneGetServiceTable, expData);
+  
+    TName name(KETelIccAdnPhoneBook);
+    expData.Close();
+    TMockLtsyPhoneBookData0 storeInitData(name);
+    storeInitData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, expData);   
+
+
+    CStorageInfoData storageData;
+    SetStorageInfoData(storageData);
+    
+    
+    TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(name, storageData);
+    completeData.Close();
+    retStoreInitC.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, completeData, 0);
+
+
+    // EMobilePhoneGetALSLine
+    iMockLTSY.ExpectL(EMobilePhoneGetALSLine);
+  
+    iMockLTSY.ExpectL(ECustomGetIccCallForwardingStatusIPC);
+  
+    // EMobilePhoneGetIccMessageWaitingIndicators
+    iMockLTSY.ExpectL(EMobilePhoneGetIccMessageWaitingIndicators);
+
+    //ECustomCheckAlsPpSupportIPC
+    iMockLTSY.ExpectL(ECustomCheckAlsPpSupportIPC);
+
+    //EMobilePhoneGetCustomerServiceProfile
+    iMockLTSY.ExpectL(EMobilePhoneGetCustomerServiceProfile);
+    
+    
+    // Complete for EMmTsyPhoneGetPin1DisableSupportedIPC 
+    TBool pin1DisableSupport = ETrue;
+    TMockLtsyData1<TBool> pin1DisableSupportData(pin1DisableSupport);
+    completeData.Close();
+    pin1DisableSupportData.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyPhoneGetPin1DisableSupportedIPC,KErrNone,completeData,0);
+
+    // Complete for EMmTsySimRefreshRegisterIPC
+    iMockLTSY.CompleteL(EMmTsySimRefreshRegisterIPC, KErrGeneral, 0);       
+
+    // Complete for EMobilePhoneGetServiceTable
+    RMobilePhone::TMobilePhoneServiceTableV1 serviceTableResult;
+    serviceTableResult.iServices1To8  = 0xFF;
+    serviceTableResult.iServices9To16 = 0xFF;
+    serviceTableResult.iServices17To24= 0xFF;
+    serviceTableResult.iServices25To32= 0xFF;
+    serviceTableResult.iServices33To40= 0xFF;
+    serviceTableResult.iServices41To48= 0xFF;
+    serviceTableResult.iServices49To56= 0xFF;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneServiceTableV1> serviceTableResultData(serviceTableResult);
+    completeData.Close();
+    serviceTableResultData.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMobilePhoneGetServiceTable,KErrNone,completeData,0);
+    
+    
+    // Complete for EMobilePhoneGetALSLine
+    RMobilePhone::TMobilePhoneALSLine alsLine = RMobilePhone::EAlternateLinePrimary;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneALSLine> alsLineData(alsLine);
+    completeData.Close();
+    alsLineData.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMobilePhoneGetALSLine,KErrNone,completeData,0);
+
+    
+    
+    // Complete for EMobilePhoneGetIccMessageWaitingIndicators
+    RMobilePhone::TMobilePhoneMessageWaitingV1 expectedMessageIndicators;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneMessageWaitingV1>
+                                    indicatorsData(expectedMessageIndicators);
+    completeData.Close();
+    indicatorsData.SerialiseL(completeData); 
+    iMockLTSY.CompleteL(EMobilePhoneGetIccMessageWaitingIndicators, KErrNone, completeData);
+    
+    //Complete for ECustomCheckAlsPpSupportIPC
+    RMmCustomAPI::TAlsSupport alsSupport(RMmCustomAPI::EAlsSupportOff); 
+    TMockLtsyData1< RMmCustomAPI::TAlsSupport > alsSupportData(alsSupport);
+    completeData.Close();   
+    alsSupportData.SerialiseL(completeData);
+    iMockLTSY.CompleteL(ECustomCheckAlsPpSupportIPC, KErrNone, completeData);
+    
+    // Complete for EMobilePhoneGetCustomerServiceProfile
+    RMobilePhone::TMobilePhoneCspFileV1 completeCsp;
+    completeCsp.iCallOfferingServices = 1;
+    completeCsp.iCallRestrictionServices = 2;
+    completeCsp.iOtherSuppServices = 3;
+    completeCsp.iCallCompletionServices = 4;
+    completeCsp.iTeleservices = 5;
+    completeCsp.iCphsTeleservices = 6;
+    completeCsp.iCphsFeatures = 7;
+    completeCsp.iNumberIdentServices = 8;
+    completeCsp.iPhase2PlusServices = 9;
+    completeCsp.iValueAddedServices = 10;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneCspFileV1> completeLtsyData(completeCsp);
+    completeData.Close();
+    completeLtsyData.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMobilePhoneGetCustomerServiceProfile, KErrNone, completeData, 10); 
+
+    
+    //EMmTsyPhoneBookStoreCacheIPC
+    CArrayPtrSeg<CPhoneBookStoreEntry>* cache = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+    CleanupStack::PushL(cache);
+    
+    TMockLtsyPhoneBookData1<CArrayPtrSeg<CPhoneBookStoreEntry>*> storeCacheData(name, cache);
+    completeData.Close();
+    storeCacheData.SerialiseL(completeData);   
+    TMockLtsyPhoneBookData0 adnStoreInitData(name);
+    expData.Close();
+    adnStoreInitData.SerialiseL(expData);
+    
+                  
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreCacheIPC, expData);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreCacheIPC, KErrNone, completeData, 0);
+    
+    TInt readIndex(-1);
+    TMockLtsyData1<TInt> tsyData(readIndex);
+    expData.Close();
+    tsyData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyONStoreGetInfoIPC, expData);
+
+    ASSERT_EQUALS(KErrNone, iMockLTSY.ResumeCompletion());
+
+    User::WaitForRequest(mockLtsyStatus);
+    AssertMockLtsyStatusL();
+
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    
+    
+    const TInt KNumOfEntries = 11;
+    const TInt KUsedEntries = 21;
+    const TInt KNameLen = 31;
+    const TInt KNumLen = 41;
+    TServiceType serviceType = {KNumOfEntries, KUsedEntries, KNameLen, KNumLen};
+    TMockLtsyData1<TServiceType> tsyData2(serviceType);           
+    completeData.Close();
+    tsyData2.SerialiseL(completeData);
+    iMockLTSY.CompleteL(EMmTsyONStoreGetInfoIPC, KErrNone, completeData);
+    
+    
+    User::WaitForRequest(requestStatus);        
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());   
+        
+    ASSERT_EQUALS(RMobilePhoneStore::EOwnNumberStore, storeInfo.iType);
+    ASSERT_EQUALS(KONStoreCaps, storeInfo.iCaps);
+    ASSERT_TRUE(0 == storeInfo.iName.Compare(KETelOwnNumberStore));
+    ASSERT_EQUALS(KUsedEntries, storeInfo.iUsedEntries);
+    ASSERT_EQUALS(KNumOfEntries, storeInfo.iTotalEntries);
+    ASSERT_EQUALS(KNumLen, storeInfo.iNumberLen);
+    ASSERT_EQUALS(KNameLen, storeInfo.iTextLen);
+        
+    CleanupStack::PopAndDestroy(5, this); // this, etc...
+    }
 
 /**
 @SYMTestCaseID BA-CTSY-PBON-OSGI-0002
@@ -2235,6 +2691,12 @@ void CCTsyONStoreFU::TestGetInfo0002L()
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
+
+    // Open ADN phonebook
+    TName name(KETelIccAdnPhoneBook);
+    RMobilePhoneBookStore bookStore;
+    OpenPhoneBookStoreL(bookStore, name, iPhone);
+    CleanupClosePushL(bookStore);
 
 	TRequestStatus mockLtsyStatus;
 	iMockLTSY.NotifyTerminated(mockLtsyStatus);
@@ -2281,7 +2743,7 @@ void CCTsyONStoreFU::TestGetInfo0002L()
 	User::WaitForRequest(mockLtsyStatus);
 	AssertMockLtsyStatusL();
 	
-	CleanupStack::PopAndDestroy(4); // expData, this
+	CleanupStack::PopAndDestroy(5); // expData, this
 	
 	}
 
@@ -2356,6 +2818,12 @@ void CCTsyONStoreFU::TestGetInfo0004L()
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
+
+    // Open ADN phonebook
+    TName name(KETelIccAdnPhoneBook);
+    RMobilePhoneBookStore bookStore;
+    OpenPhoneBookStoreL(bookStore, name, iPhone);
+    CleanupClosePushL(bookStore);
 
 	RTelServer telServer2;
 	TInt ret = telServer2.Connect();
@@ -2442,7 +2910,7 @@ void CCTsyONStoreFU::TestGetInfo0004L()
 	
 	AssertMockLtsyStatusL();
 	
-	CleanupStack::PopAndDestroy(7, this); 
+	CleanupStack::PopAndDestroy(8, this); 
 	}
 
 

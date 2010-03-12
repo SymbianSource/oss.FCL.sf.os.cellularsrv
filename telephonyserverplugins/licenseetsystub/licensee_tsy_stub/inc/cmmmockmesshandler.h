@@ -111,12 +111,6 @@ class CMmMockMessHandler : public CBase, public MMmMessHandlerBase
          */         
         CPeriodic* iTimer;
         
-        /*
-         * Pointer to the Custom stub extension
-         * Own.
-         */
-        CMmCustomStubExt* iMmCustomStubExt; 
-        
     };
 
 #endif // CMMMOCKMESSHANDLER_H

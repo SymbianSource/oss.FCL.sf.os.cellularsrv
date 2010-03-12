@@ -176,8 +176,7 @@ private:
     
     void NotifyMessageObservers(TInt aStatus);
 
- 	// TODO - flag
-	TBool IsWapSMS(const CSmsMessage& smsmessage );
+ 	TBool IsWapSMS(const CSmsMessage& smsmessage );
 
     inline TBool ClosingDown() const;
     inline void SetClosingDown(TBool aClosingDown);

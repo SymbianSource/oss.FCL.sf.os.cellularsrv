@@ -3337,6 +3337,7 @@ void CCTsyConferenceCallControlFU::TestHangUp0002L()
 
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	
 	OpenPhoneL();
 
 	RBuf8 data;
@@ -3419,14 +3420,7 @@ void CCTsyConferenceCallControlFU::TestHangUp0002L()
 	TRequestStatus mockLtsyStatus;
 	iMockLTSY.NotifyTerminated(mockLtsyStatus);      
 	iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
-	    
-	// when call becomes idle, remaining duration of the call is added to life time param in LTSY:		
-	TUint32 duration = 5;	// this is a dummy value, which won't be checked by mocksy engine
-	TMockLtsyData1<TUint32> ltsyData( duration );
-	data.Close();
-	ltsyData.SerialiseL(data);	
-	iMockLTSY.ExpectL(EMmTsyUpdateLifeTimeIPC, data);	            
-	    
+	 
 	User::WaitForRequest(mockLtsyStatus); 	
 	ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());   	
 
@@ -3434,7 +3428,7 @@ void CCTsyConferenceCallControlFU::TestHangUp0002L()
 	User::WaitForRequest(reqStatus);
 	// CTSY has no cancel for this ipc, so request completes with KErrNone
 	ASSERT_EQUALS(KErrNone, reqStatus.Int());
-
+	
 	AssertMockLtsyStatusL();
 	CleanupStack::PopAndDestroy(10, this); // call5, call4, call3, call2, call, line, callsInConference, conferenceCall, data, this
 	
@@ -4388,9 +4382,6 @@ void CCTsyConferenceCallControlFU::TestGetMobileCallInfo0003L()
 	// Test B: Test passing wrong descriptor size to parameter in
 	// RMobileConferenceCall::GetMobileCallInfo
  	//-------------------------------------------------------------------------
-
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 201701);	
-    ASSERT_TRUE(EFalse);
 
 	TBuf8<1> smallSizeBuf;
 	res = conferenceCall.GetMobileCallInfo(0, smallSizeBuf);

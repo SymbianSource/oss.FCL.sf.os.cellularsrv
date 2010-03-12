@@ -1148,6 +1148,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-0001
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo0001L
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-0001
 
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-0001b
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0001b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for ADN phonebook with slow SIM
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for ADN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo0001bL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-0001b
+
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-0003
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0003
 //!@SYMComponent telephony_ctsy
@@ -1192,6 +1203,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-0006b
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo0006bL
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-0006b
 
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-0006c
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0006c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for FDN phonebook with slow SIM
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for FDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo0006cL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-0006c
+
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-0008
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0008
 //!@SYMComponent telephony_ctsy
@@ -1224,6 +1246,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-00011
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00011L
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-00011
+
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-00011b
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00011b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for SDN phonebook with slow SIM
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for SDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00011bL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-00011b
 
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-00012
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00012
@@ -1280,6 +1313,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-00016
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00016L
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-00016
 
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-00016b
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00016b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for VMBX phonebook with slow SIM
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for VMBX phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00016bL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-00016b
+
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-00017
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00017
 //!@SYMComponent telephony_ctsy
@@ -1335,6 +1379,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-00021
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00021L
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-00021
 
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-00021b
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00021b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for BDN phonebook with slow SIM
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for BDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00021bL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-00021b
+
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-00023
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00023
 //!@SYMComponent telephony_ctsy
@@ -1367,6 +1422,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-00026
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00026L
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-00026
+
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-00026b
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00026b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for MBDN phonebook with slow SIM
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for MBDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00026bL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-00026b
 
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-00028
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00028

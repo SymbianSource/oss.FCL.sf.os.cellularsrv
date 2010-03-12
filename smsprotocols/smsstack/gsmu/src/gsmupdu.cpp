@@ -153,7 +153,6 @@ EXPORT_C CSmsPDU* CSmsPDU::NewL(const TGsmSms& aGsmSms,CCnvCharacterSetConverter
 	TGsmuLex8 lex(aGsmSms.Pdu());
 	smspdu->DecodeL(lex);
 
-	// TODO Service centre address should be in rigth format when it comes from TSY
 	smspdu->SetParsedServiceCenterAddressL(aGsmSms.Sca());
 
 	CleanupStack::Pop(smspdu);
@@ -487,11 +486,6 @@ EXPORT_C void CSmsPDU::SetParsedToFromAddressL(const TGsmSmsTelNumber& aParsedAd
 	} // CSmsPDU::SetParsedToFromAddressL
 
 
-//
-//  TODO move this to the DCS descriptions
-//  Also, the functions available are dependant on bits 7 to 4 in the data coding scheme.
-//  Functions panic when they are not available.
-//  This requires the caller to have some knowledge of ETSI GSM 03.38 in order to keep the data coding scheme in a consistent state.
 //
 /**
  *  Updates the three pieces of concatenation data (reference number,
@@ -2636,7 +2630,8 @@ void CSmsDeliverReport::DecodeL(TGsmuLex8& aPdu)
 		{
 		//
 		//  Throw away rest of the pdu - some pdus received with this bit set don't appear to conform to 03.40 v7.4.0 spec.
-		//  TODO Will need to review later, though this appears safest option now.
+		//  This appears safest option.
+		//	TODO check new versions of 03.40 to make sre that it is still the right option
 		//
 		((TSmsOctet&)iParameterIndicator)=TSmsParameterIndicator::ESmsPIDExtension;
 		return;
@@ -2852,7 +2847,8 @@ void CSmsSubmitReport::DecodeL(TGsmuLex8& aPdu)
 		{
 		//
 		//  Throw away rest of the pdu - some pdus received with this bit set don't appear to conform to 03.40 v7.4.0 spec.
-		//  TODO Will need to review later, though this appears safest option now.
+		//  This appears safest option.
+		//	TODO check new versions of 03.40 to make sre that it is still the right option
 		//
 		((TSmsOctet&)iParameterIndicator)=TSmsParameterIndicator::ESmsPIDExtension;
 		return;

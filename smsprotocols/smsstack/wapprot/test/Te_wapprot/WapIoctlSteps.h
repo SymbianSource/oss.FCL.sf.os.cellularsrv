@@ -15,19 +15,15 @@
 *
 */
 
-
-
 /**
- @file
+    @file
+    @test
 */
-#if (!defined __Ioctl_STEP_H__)
-#define __Ioctl_STEP_H__
-#include <test/testexecutestepbase.h>
-#include <in_sock.h>
-#include <es_sock.h>
-#include <wapmessage.h>
-#include "WapProtSuiteStepBase.h"
 
+#ifndef WAPIOCTLTESTSTEPS_H
+#define WAPIOCTLTESTSTEPS_H
+
+#include "WapProtSuiteStepBase.h"
 
 class CIoctlStep_1 : public CWapProtSuiteStepBase
 /**
@@ -38,7 +34,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_2 : public CWapProtSuiteStepBase
 /**
  *  Send/receive a long 7-Bit calendar entry using IOCTL(two segments)
@@ -47,7 +42,6 @@ class CIoctlStep_2 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CIoctlStep_3 : public CWapProtSuiteStepBase
 /**
@@ -58,7 +52,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_4 : public CWapProtSuiteStepBase
 /**
  *  Simulating client crash conditions with 7bit message
@@ -67,7 +60,6 @@ class CIoctlStep_4 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CIoctlStep_5 : public CWapProtSuiteStepBase
 /**
@@ -78,7 +70,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_6 : public CWapProtSuiteStepBase
 /**
  *  Testing the old client for 7Bit message
@@ -87,7 +78,6 @@ class CIoctlStep_6 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CIoctlStep_7 : public CWapProtSuiteStepBase
 /**
@@ -98,7 +88,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_8 : public CWapProtSuiteStepBase
 /**
  *  Testing store of 8-Bit messages
@@ -107,7 +96,6 @@ class CIoctlStep_8 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CIoctlStep_9 : public CWapProtSuiteStepBase
 /**
@@ -118,7 +106,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_10 : public CWapProtSuiteStepBase
 /**
  *  Testing wrong port numebr (i.e.8Bit port number) for 7Bit message
@@ -127,7 +114,6 @@ class CIoctlStep_10 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CIoctlStep_11 : public CWapProtSuiteStepBase
 /**
@@ -138,7 +124,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_12 : public CWapProtSuiteStepBase
 /**
  *  Test issue IOCTL without SetOption NewStyleClient
@@ -147,7 +132,6 @@ class CIoctlStep_12 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CIoctlStep_13 : public CWapProtSuiteStepBase
 /**
@@ -158,7 +142,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_14 : public CWapProtSuiteStepBase
 /**
  *  Simulating client crash conditions with 8bit message
@@ -168,7 +151,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CIoctlStep_15 : public CWapProtSuiteStepBase
 /**
  *  Receives a 7Bit v-card using IOCTL with concatenation for new style client
@@ -177,7 +159,6 @@ class CIoctlStep_15 : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CBackupRestoreStep : public CWapProtSuiteStepBase
 /**
@@ -190,7 +171,6 @@ public:
 private:
 	TInt SendWapL();
 	TBool IsWapFileOpenL();
-	RSocketServ iSocketServer;
 	};
 
 class CIoctlStep_17 : public CWapProtSuiteStepBase
@@ -303,7 +283,7 @@ class CIoctlStep_28 : public CWapProtSuiteStepBase
 	{
 public:
 
-	virtual TVerdict doTestStepPreambleL();
+    virtual TVerdict doTestStepPreambleL();
 	TInt DoPanicTestL(TPtrC* aTestData1, TPtrC16* aTelNumber, TInt aPort);
 	virtual TVerdict doTestStepL();
 	virtual TVerdict doTestStepPostambleL();
@@ -316,16 +296,14 @@ class CSetDiskMonitorLimits : public CWapProtSuiteStepBase
  */
 	{
 public:
+    CSetDiskMonitorLimits();
 	virtual TVerdict doTestStepL();
-
 	};
 
 class CSetDiskSpace : public CWapProtSuiteStepBase
-/**
- *  Fill the disk space
- */
 	{
 public:
+    CSetDiskSpace();
 	virtual TVerdict doTestStepL();
 
 	};
@@ -341,25 +319,11 @@ public:
 	};
 
 class CReceiveWapMessage : public CWapProtSuiteStepBase
-/**
- *  Free the disk space
- */
 	{
 public:
+    CReceiveWapMessage();
 	virtual TVerdict doTestStepL();
-
 	};
-	
-class CInitializePhone : public CWapProtSuiteStepBase
-/**
- *  Free the disk space
- */
-	{
-public:
-	virtual TVerdict doTestStepL();
-
-	};
-
 
 /**
 Tests enumerating of a VCard which needs to go via the observer and
@@ -371,7 +335,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 /**
  *  Sends a 7-bit VCard with an email address in it, to ensure that '@'
  *  characters are sent correctly.
@@ -381,7 +344,6 @@ class CTest7BitBusinessCardWithEmail : public CWapProtSuiteStepBase
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 /**
  *  Attempts to send datagrams bigger than the maximum message and bigger
@@ -399,9 +361,8 @@ class CTestWapDatagramSegmentContainingNoData : public CWapProtSuiteStepBase
   *  segment which has a wap header but an empty data field.
   */
      {
- public:
+public:
      virtual TVerdict doTestStepL();
      };
 
-	
-#endif
+#endif // WAPIOCTLTESTSTEPS_H

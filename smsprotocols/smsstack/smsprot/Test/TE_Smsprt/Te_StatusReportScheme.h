@@ -14,63 +14,54 @@
 //
 
 
-#ifndef __TE_STATUS_REPORT_SCHEME_H__
-#define __TE_STATUS_REPORT_SCHEME_H__
+#ifndef TE_STATUSREPORTSCHEME_H
+#define TE_STATUSREPORTSCHEME_H
 
+#include "smsstackbaseteststeps.h"
+#include "smsstacktestutilities.h"
+#include "smsstacktestconsts.h"
 
 #include "gsmuieoperations.h"
 #include "gsmunonieoperations.h"
-#include "TE_smsprt.h"
 
 /**
   Base class housing common functionality used by all test steps exercising 
   status report functionality
 */
-class CTestStatusReportScheme : public CSmsPrtTestStep
-{
+class CSmsStatusReportSchemeTestStep : public CSmsBaseTestStep
+    {
 public:
-	enum TCodingScheme{ESevenBit=7, EEightBit};
+    virtual TVerdict doTestStepPreambleL();
+    virtual TVerdict doTestStepPostambleL();
 
-	CTestStatusReportScheme();
-	~CTestStatusReportScheme();
-	
-	//Utilites
-	void CreateSmsL(TCodingScheme, TPtrC);
-	void SendSmsMessageL();
-	void TriggerReceiveL();
-	void GetNumberOfPDUs();
+    CSmsStatusReportSchemeTestStep();
+    ~CSmsStatusReportSchemeTestStep();
 
-	//TPSRR
-	void SetAllTPSRRsL();
-	void SetLastTPSRRL();
-	void SetSomeTPSRRL(TInt, TInt, TInt);
-	
-	//SMS
-	void SetAllSMSCL();
-	void SetLastSMSCL();
-	void SetSomeSMSCL(TInt, TInt, TInt);
-		
-	//TEF framework	
-	//virtual TVerdict doTestStepL();
- 	virtual TVerdict doTestStepPreambleL();
-	virtual TVerdict doTestStepPostambleL();
+    //Utilites - legacy methods, will be replaced by ones from the base class
+    void CreateSmsL(TCodingScheme, TPtrC);
+    void SendSmsMessageL();
+    void TriggerReceiveL();
+    void GetNumberOfPDUs();
+
+    //TPSRR
+    void SetAllTPSRRsL();
+    void SetLastTPSRRL();
+    void SetSomeTPSRRL(TInt, TInt, TInt);
+
+    //SMS
+    void SetAllSMSCL();
+    void SetLastSMSCL();
+    void SetSomeSMSCL(TInt, TInt, TInt);
 
 protected:
-	TCodingScheme iDataCodingScheme;
-	CSmsMessage* iSmsMessage;
-	TInt iNumberOfPDUs;
-	
+    RSocket iSocket;
+    TCodingScheme iDataCodingScheme;
+    CSmsMessage* iSmsMessage;
+    TInt iNumberOfPDUs;
+
 private:
-	void SetTestNumberL();
-	void OpenSocketServerL();
-	void SetCodingScheme();
+    void OpenSocketServerL();
+    void SetCodingScheme();
+    };
 
-protected:
-	RSocketServ iSocketServer;
-	RSocket iSocket;
-};
-
-#endif
-
-
-
+#endif // TE_STATUSREPORTSCHEME_H

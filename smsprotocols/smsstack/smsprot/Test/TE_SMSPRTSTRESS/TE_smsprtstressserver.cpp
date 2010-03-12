@@ -18,11 +18,10 @@
 */
 
 #include "TE_smsprtstressserver.h"
+
 #include "TE_smsprtstress.h"
 
-
 _LIT(KServerName,"TE_SMSPRTSTRESS");
-
 
 CSmsPrtStressTestServer* CSmsPrtStressTestServer::NewL()
 /**
@@ -33,6 +32,8 @@ CSmsPrtStressTestServer* CSmsPrtStressTestServer::NewL()
 	{
 	CSmsPrtStressTestServer * server = new (ELeave) CSmsPrtStressTestServer();
 	CleanupStack::PushL(server);
+	// CSmsStackTestServer intermediate base class call
+//	server->InitializeTsyAndPhonesL();
 	// CServer base class call
 	server->StartL(KServerName);
 	CleanupStack::Pop(server);
@@ -89,11 +90,7 @@ CTestStep* CSmsPrtStressTestServer::CreateTestStep(const TDesC& aStepName)
 	// the new could return NULL, but that is not a problem as it implies
 	// the test step is missing and this will be marked in the log file.
 	//
-	if (aStepName == _L("TestInit"))
-		{
-		testStep = new CTestInit ;
-		}
-	else if (aStepName == _L("TestRxAndRead"))
+	if (aStepName == _L("TestRxAndRead"))
 		{
 		testStep = new CTestRxAndRead ;
 		}

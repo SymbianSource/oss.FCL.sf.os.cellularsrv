@@ -33,6 +33,7 @@ void CCtsySystemStatePlugin::ConstructL()
 	{	
 	// create active object for do RF state changing  
 	iAoChangeRfForEmergencyCall = new (ELeave) CChangeRfForEmergencyCall(*this, iSsmEmergencyCallRf);
+	User::LeaveIfError(Connect());
 	}
 
 CCtsySystemStatePlugin::~CCtsySystemStatePlugin()
@@ -54,12 +55,19 @@ TInt CCtsySystemStatePlugin::Connect()
 	TFLOGSTRING("CCtsySystemStatePlugin::Connect()");		
 
 	TInt error (KErrNone);
-	if (!iConnected)	
+	if (!iConnected)	 
 	{	 
-		error = iSsmEmergencyCallRf.Connect(); 	
-		if (KErrNone == error)
+        error = iSsmEmergencyCallRf.Connect();  
+        if (KErrNone != error)
+            {
+            return error; 
+            }
+        iConnected = ETrue; 
+        error = iSsmEmergencyCallRf.SetAsPriorityClient();
+		if (KErrNone != error)
 			{
-			iConnected = ETrue;	
+            TFLOGSTRING2("CCtsySystemStatePlugin::Connect()  - SetAsPriorityClient returned %d", error);
+            error = KErrNone;
 			}
 	}	
 	return error;
@@ -75,18 +83,7 @@ void CCtsySystemStatePlugin::ActivateRfForEmergencyCall(MCtsySsmPluginCallback* 
                                                         TCtsySsmCallbackData& aCallbackData)
 	{
 	TFLOGSTRING("CCtsySystemStatePlugin::ActivateRfForEmergencyCall()" );
-	//try to connect
-	TInt err = Connect();
-	if (err)
-		{
-		TFLOGSTRING2("CCtsySystemStatePlugin::ActivateRfForEmergencyCall() failed to connect %d", err);
 
-		// inform CTSY about error...
-		aSsmPluginCallback->SsmPluginCallback(err, aCallbackData);
-		// and do nothing
-		return;
-		}
-					
 	iAoChangeRfForEmergencyCall->ActivateRfForEmergencyCall(aSsmPluginCallback, aCallbackData);	
 	}
 	
@@ -237,7 +234,6 @@ void CChangeRfForEmergencyCall::RunL()
    iBusy = ENotBusy;		
    
    // close SSM
-   iCtsySystemStatePlugin.Close();
    if (iSsmPluginCallback)
       {
 	  // just call callback interface and pass into it error code

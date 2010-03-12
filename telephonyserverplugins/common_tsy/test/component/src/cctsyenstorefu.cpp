@@ -351,6 +351,7 @@ void CCTsyENStoreFU::TestRead0003L()
 	ASSERT_EQUALS(KErrNone, ret);
 	CleanupClosePushL(enStore);
  	
+	// Test 1: Bad index
     const TInt KIndex(0);   //bad index
 	TRequestStatus requestStatus;
     RMobileENStore::TMobileENEntryV1 info;    
@@ -363,6 +364,15 @@ void CCTsyENStoreFU::TestRead0003L()
     User::WaitForRequest(requestStatus);        
 	ASSERT_EQUALS(KErrArgument, requestStatus.Int());
 	
+	// Test 2: Bad package size
+    RMobileNamStore::TMobileNamEntryV1 info2;    
+    RMobileNamStore::TMobileNamEntryV1Pckg infoPckg2(info2);
+
+    enStore.Read(requestStatus, infoPckg2);
+        
+    User::WaitForRequest(requestStatus);        
+    ASSERT_EQUALS(KErrArgument, requestStatus.Int());
+    
 	AssertMockLtsyStatusL();
 	CleanupStack::PopAndDestroy(2, this); // enStore, this
 	}

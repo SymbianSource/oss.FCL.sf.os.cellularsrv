@@ -833,6 +833,15 @@ NONSHARABLE_CLASS( CMmSmsTsy ) : public CSubSessionExtBase,
          * @return TBool 
          */
         TBool IsRequestPossibleInOffline( TInt aIpc ) const;
+        
+        /**
+         * Checks if error code is a relay protocol error
+         *          
+         * 
+         * @param aError Cause value received from LTSY
+         * @return TBool
+         */
+        static TBool IsRPError(TInt aError);
 
     private:
 

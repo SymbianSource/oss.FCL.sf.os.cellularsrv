@@ -132,8 +132,7 @@ public:
     inline TTimeIntervalSeconds UTCOffset() const;
     TBool SetUTCOffset(const TTimeIntervalSeconds& aUTCOffset);
 
-        // May return > 1, if the socket text headers are used
-        // TODO: to be removed ?
+    // May return > 1, if the socket text headers are used
     inline TInt NumConcatenatedMessages() const;
 
     inline TInt ConcatenatedMessageReference(TBool* aIs16BIt = NULL) const;

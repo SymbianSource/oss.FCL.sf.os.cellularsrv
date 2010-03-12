@@ -14,7 +14,7 @@
 //
 
 TARGET      te_wapthdr.exe
-CAPABILITY ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData
+CAPABILITY ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData PowerMgmt
 TARGETTYPE  exe
 UID             0x1000007A 0x101FBDED
 VENDORID 0x70000001

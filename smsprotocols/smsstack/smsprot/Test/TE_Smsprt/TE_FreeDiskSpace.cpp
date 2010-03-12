@@ -16,6 +16,10 @@
 
 #include "TE_smsmondsk.h"
 
+CFreeDiskSpace::CFreeDiskSpace()
+    {
+    iPartOfMultiStepTestCase = ETrue;
+    }
 
 /**
 	Free up disk space by deleting the temp files created

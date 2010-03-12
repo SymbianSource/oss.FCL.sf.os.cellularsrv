@@ -166,7 +166,6 @@ _LIT8(KSPNameDefault, "Vodafone");
 _LIT8(KPLMNFieldDefault, "\x50\x03\x21\x44\x21");	// < Default PLMN field TLV buffer.  This corresponds to tag=80, len=3,val=(MCC=123, MNC=123)
 
 _LIT8(KSubscriberId,"SubscriberId");			// < Configuration tag for Subscriber ID
-_LIT8(KSubscriberIdDefault,"01234567890123");	// < Default Subscriber ID (used if no Subscriber ID tag is present)
 _LIT8(KPhoneId,"PhoneId");			// < Configuration tag for PhoneId
 _LIT8(KPhoneManufacturerDefault, "Symbian");	// < Default Manufacturer 
 _LIT8(KPhoneModelDefault, "888");	// < Default Model 

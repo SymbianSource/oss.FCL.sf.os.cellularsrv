@@ -16,7 +16,7 @@
 //
 
 TARGET        te_smsemsprt.exe
-CAPABILITY    ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData ProtServ AllFiles
+CAPABILITY    ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData ProtServ AllFiles PowerMgmt
 TARGETTYPE    exe
 UID           0x1000007A 0x101FE443
 VENDORID      0x70000001

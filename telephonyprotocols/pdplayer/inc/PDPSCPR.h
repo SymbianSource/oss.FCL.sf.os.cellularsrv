@@ -157,6 +157,7 @@ public:
 
     //quite a big structure so kept here to avoid stack overflow.
     RPacketContext::TDataChannelV2 iTempDataChannelV2;
+    TInt  iProvisionFailure;
 protected:
     __FLOG_DECLARATION_MEMBER;
     TInt iLinkUps;

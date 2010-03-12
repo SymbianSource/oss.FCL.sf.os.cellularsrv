@@ -142,7 +142,6 @@ EXPORT_C void CSARStore::OpenL(const TDesC& aFullName, const TUid& aThirdUid)
 	DoOpenL();
  	// defect fix for EDNJJUN-4WYJGP
  	// Unable to send sms cause sms*.dat is corrupted
- 	// TODO - has to be back ported to higher versions
  	TRAPD(ret, InternalizeEntryArrayL());
 	if (ret != KErrNone)
 		{
@@ -183,8 +182,6 @@ EXPORT_C void CSARStore::CommitTransactionL()
 #else
 	DoCommitAndCompactL();
 #endif
-
-	//TODO AA: What should we do if err == KErrCorrupt?
 
 	CleanupStack::Pop(this);
 	iInTransaction = EFalse;
@@ -683,8 +680,11 @@ void CSARStore::DoDeleteEntryL(TInt aIndex)
 #endif // _SMS_LOGGING_ENABLED
 
 	__ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
-	TRAP_IGNORE(iFileStore->DeleteL(iEntryArray[aIndex].DataStreamId()));
-	iEntryArray[aIndex].SetIsDeleted(ETrue); // TODO - truth value should be set depending on ret
+	TRAPD(err, iFileStore->DeleteL(iEntryArray[aIndex].DataStreamId()));
+	if(err == KErrNone)
+	    {
+        iEntryArray[aIndex].SetIsDeleted(ETrue);
+  	    }
 	} // CSARStore::DoDeleteEntryL
 
 
@@ -790,7 +790,7 @@ void CSARStore::ExternalizeEntryArrayL()
 		}
 
 	stream << iExtraStreamId;
-	stream.CommitL(); // TODO - keep this in your head
+	stream.CommitL();
 	CleanupStack::PopAndDestroy(&stream);
 	} // CSARStore::ExternalizeEntryArrayL
 

@@ -177,7 +177,12 @@ TInt TNoTagOrContentionTag::TransitionTag()
 DEFINE_SMELEMENT(TSelfInit, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
 void TSelfInit::DoL()
     {
-    if (iContext.Node().iPdpFsmInterface == NULL)
+    CPDPSubConnectionProvider &tNode = static_cast<CPDPSubConnectionProvider&>(iContext.Node());
+    
+    // if the FSM interface is null, this means that we're initializing a secondary context
+    // as this code is common for both
+    
+    if (tNode.iPdpFsmInterface == NULL)
         {
         //Non-default SCPR running this code
         ASSERT(iContext.Node().ControlProvider());
@@ -193,60 +198,58 @@ void TSelfInit::DoL()
         }
     else
         {
-        //default SCPR running this code
-        const CTSYProvision* tsyProvision = static_cast<const CTSYProvision*>(
-	        iContext.Node().AccessPointConfig().FindExtension(CTSYProvision::TypeId()));
+        //default SCPR running this code (i.e. primary context)
+        const CTSYProvision* tsyProvision =\
+                static_cast<const CTSYProvision*>(tNode.AccessPointConfig().FindExtension(CTSYProvision::TypeId()));
+        
         if (tsyProvision == NULL)
         	{
+            // we do not have to set provision failure here
+            // as it was set in the base class constructor
+            // svg will show the leave error code though
         	User::Leave(KErrCorrupt);
         	}
+        
         CGPRSProvision* gprsProvision = const_cast<CGPRSProvision*>(static_cast<const CGPRSProvision*>(
-        	    iContext.Node().AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CGPRSProvision::EUid,CGPRSProvision::ETypeId))));
+        	    tNode.AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CGPRSProvision::EUid,CGPRSProvision::ETypeId))));
+        
         if (gprsProvision == NULL)
-                	{
-                	User::Leave(KErrCorrupt);
-                	}
-        switch(gprsProvision->UmtsGprsRelease())
+            {
+            tNode.iProvisionFailure = KErrCorrupt;
+            User::Leave(KErrCorrupt);
+            }
+        
+        TInt configType = TPacketDataConfigBase::KConfigGPRS;
+        
+        switch (gprsProvision->UmtsGprsRelease())
         	{
         	case TPacketDataConfigBase::KConfigGPRS:
-                iContext.Node().iPdpFsmInterface->NewL(tsyProvision->iTsyName, TPacketDataConfigBase::KConfigGPRS);
+        	    configType = TPacketDataConfigBase::KConfigGPRS;
         		break;
         	case TPacketDataConfigBase::KConfigRel99Rel4:
-                iContext.Node().iPdpFsmInterface->NewL(tsyProvision->iTsyName, TPacketDataConfigBase::KConfigRel99Rel4);
+        	    configType = TPacketDataConfigBase::KConfigRel99Rel4;
         		break;
         	case TPacketDataConfigBase::KConfigRel5:
-                iContext.Node().iPdpFsmInterface->NewL(tsyProvision->iTsyName, TPacketDataConfigBase::KConfigRel5);
+        	    configType = TPacketDataConfigBase::KConfigRel5;
         		break;
         	default:
+        	    // we do not have to set provision failure here
+        	    // as it was set in the base class constructor
+        	    // svg will show the leave error code though
         		User::Leave(KErrNotSupported);
+        		break;
         	}
-
-        iContext.Node().iDefaultSCPR = static_cast<CPDPDefaultSubConnectionProvider*>(&iContext.Node());
+        
+        // a provisioning failure would be unrecoverable as this only happens
+        // we cannot create memory, access etel or there is a configuration
+        // problem - however, leaving with an error here does not stop the
+        // sequence of events because the handler for provision config is not
+        // expecting a response. if there is a failure then it will be errored in 
+        // the next activity in the sequence, i.e. DataClientStart
+        TRAP(tNode.iProvisionFailure,tNode.iPdpFsmInterface->NewL(tsyProvision->iTsyName,configType));
+        
+        tNode.iDefaultSCPR = static_cast<CPDPDefaultSubConnectionProvider*>(&tNode);
         }
-
-    //Replace the BCA provision - we'll be overriding the portname (the rest stays the same).
-  
-    // BA: This doesn't make sense, the port name is copied too so just replaces one CBCAProvision
-    // with another identical one!!
-//    const CBCAProvision* bcaExtension = static_cast<const CBCAProvision*>(
-//        iContext.Node().AccessPointConfig().FindExtensionL(CBCAProvision::TypeId()));
-
-/*    
-	CBCAProvision* bcaExtension2 = new (ELeave) CBCAProvision;
-	CleanupStack::PushL(bcaExtension2);
-
-	//Could optimise it one day.
-	bcaExtension2->SetBCAStack(bcaExtension->GetBCAStack());
-	bcaExtension2->SetBCAName(bcaExtension->GetBCAName());
-	bcaExtension2->SetIAPid(bcaExtension->GetIAPid());
-	bcaExtension2->SetPortName(bcaExtension->GetPortName());
-	bcaExtension2->SetCommRole(bcaExtension->GetCommRole());
-	bcaExtension2->SetHandShaking(bcaExtension->GetHandShaking());
-
-	iContext.Node().iAccessPointConfig->RemoveAndDestroyExtension_INTERNALTECH(CBCAProvision::TypeId());
-    iContext.Node().iAccessPointConfig->AppendExtensionL(bcaExtension2);
-    CleanupStack::Pop(bcaExtension2); //Ownership with the list
-*/ 
     }
 
 
@@ -447,7 +450,15 @@ TBool TCreatePrimaryPDPCtx::IsModeGsmL() const
 
 void TCreatePrimaryPDPCtx::DoL()
     {
-    ASSERT(iContext.Node().iPdpFsmInterface);
+    // if the provisionconfig failed, there is no way to inform the CPR of the failure
+    // as the framework doesn't expect a response from provisionconfig, so error here
+    // if there was a problem so that the appropriate clean up can happen.
+    
+    CPDPDefaultSubConnectionProvider &tNode = static_cast<CPDPDefaultSubConnectionProvider&>(iContext.Node());
+    
+    User::LeaveIfError(tNode.iProvisionFailure);
+    
+    ASSERT(tNode.iPdpFsmInterface);
 
     iContext.Node().PostToClients<TDefaultClientMatchPolicy>(
             iContext.NodeId(),

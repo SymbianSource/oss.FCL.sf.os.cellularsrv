@@ -207,11 +207,9 @@ enum TSmsDiskSpaceMonitorStatus
 	};
 
 
-//ahe TODO
-//typedef TBuf<KGsmMaxTelNumberSize> TSmsServiceCenterAddress;
-
+const TInt KMaxServiceCenterAddressLength = 14;
 /** Buffer to hold Service Center address. */
-typedef TBuf<14> TSmsServiceCenterAddress;
+typedef TBuf<KMaxServiceCenterAddressLength> TSmsServiceCenterAddress;
 /** Package buffer for TSmsServiceCenterAddress objects. */
 typedef TPckgBuf<TSmsServiceCenterAddress> TSmsServiceCenterAddressBuf;
 

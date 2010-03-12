@@ -42,7 +42,6 @@ START_TESTCASE SMS-SMSStack-NA-6001
 //!@SYMTestExpectedResults Pass - If anthing fails the step will leave with error code
 //!@SYMTestType CT
 RUN_TEST_STEP 100 TE_wapthdr TestEncodeWapTextMessage
-
 END_TESTCASE SMS-SMSStack-NA-6001
 
 START_TESTCASE SMS-SMSStack-NA-6002
@@ -50,7 +49,7 @@ START_TESTCASE SMS-SMSStack-NA-6002
 //!@SYMREQ REQ0000
 //!@SYMTestCaseDesc Sends a buffer too long for the logger to handle
 //!@SYMTestPriority critical
-//!@SYMTestActions.Send a buffer too long for the logger to handle, therefore causing an overflow.
+//!@SYMTestActions Send a buffer too long for the logger to handle, therefore causing an overflow.
 // Function will panic if overflow handler is not implemented correctly.
 //!@SYMTestExpectedResults Pass - If anthing fails the step will leave with error code
 //!@SYMTestType CT

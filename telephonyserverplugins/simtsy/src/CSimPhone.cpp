@@ -198,6 +198,34 @@ void CSimPhone::PopulateServiceTableL(	TInt aMaxSupported,
  		}
  	}
 
+ 
+ 
+ void CSimPhone::SetTestNumberAndReadConfigurationFileL()
+     {
+     TInt testNumber;
+     User::LeaveIfError(GetTestNumber(testNumber));
+     iSectionName.Format(KSectionNameFormat,testNumber);
+     
+     delete iConfigFile;
+     iConfigFile = NULL;
+         
+     TRAPD(err, iConfigFile = CTestConfig::NewLC(iFs, KConfigFileDir, KConfigFilename); CleanupStack::Pop(iConfigFile));
+     if( err == KErrNone && iConfigFile->Section(iSectionName) != NULL )
+         {
+         iConfigSection = iConfigFile->Section(iSectionName);
+         }
+    else
+        {
+        LOGPHONE2("Section for requested test number (%d) not found in the Config File",testNumber);
+        delete iConfigFile;
+        iConfigFile = NULL;
+
+        User::Leave(KErrNotFound);
+        }
+     
+     User::LeaveIfError(SetTestNumberInUse(testNumber));
+     }
+ 
 void CSimPhone::ConstructL()
 /**
 * 2 Phase Construction (Second phase)
@@ -214,24 +242,11 @@ void CSimPhone::ConstructL()
 #endif
 
 	LOGPHONE1("Starting to Load and Parse the Config File");
-	(void)User::LeaveIfError(iFs.Connect());
-	iConfigFile=CTestConfig::NewLC(iFs,KConfigFileDir,KConfigFilename);
-
-	TInt testNumber;
-	(void)User::LeaveIfError(GetTestNumber(testNumber));
-	iSectionName.Format(KSectionNameFormat,testNumber);
-	if(iConfigFile->Section(iSectionName)==NULL)
-		{
-        LOGPHONE2("Section for requested test number (%d) not found in the Config File",testNumber);
-		CleanupStack::Pop();
-		User::Leave(KErrNotFound);
-		}
-	else
-		{
-		(void)User::LeaveIfError(SetTestNumberInUse(testNumber));
-		}
-	CleanupStack::Pop();	// iConfigFile pointer is safely stored as a member variable
-
+	
+	User::LeaveIfError(iFs.Connect());
+	
+	SetTestNumberAndReadConfigurationFileL();
+	
 	CSimTsyMode::InitL(this);
 
 	iReduceTimers = CSimReduceTimers::NewL();
@@ -293,18 +308,22 @@ void CSimPhone::ConstructL()
 
 	TPtrC8 IMSI;
 	iSubscriberId.iError = KErrNone;
-	const CTestConfigItem* item=CfgFile()->Item(KSubscriberId);
-    if (item)
+	const CTestConfigItem* itemSubscriberId=CfgFile()->Item(KSubscriberId);
+    if( itemSubscriberId != NULL )
         {
-        TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,IMSI);
-        if(ret!=KErrNone)
+        TInt ret=CTestConfig::GetElement(itemSubscriberId->Value(),KStdDelimiter,0,IMSI);
+        if( ret != KErrNone )
+			{
             LOGPARSERR("IMSI",ret,0,&KSubscriberId);
+			}
         // coverity[check_return]
-        CTestConfig::GetElement(item->Value(),KStdDelimiter,1,iSubscriberId.iError);
+        CTestConfig::GetElement(itemSubscriberId->Value(),KStdDelimiter,1,iSubscriberId.iError);
         iSubscriberId.iIMSI.Copy(IMSI);
         }
 	else
+		{
 		iSubscriberId.iIMSI.Copy(KSubscriberIdDefault);
+		}
 
 	iNtwkMode=(RMobilePhone::TMobilePhoneNetworkMode)CfgFile()->ItemValue(KNetworkMode,KNetworkModeDefault);
 	//get phone id from config file
@@ -332,7 +351,7 @@ void CSimPhone::ConstructL()
 	iNetworkModeTimer = CSimTimer::NewL(this);
 	//< Read in all network mode data
 	TInt count = CfgFile()->ItemCount(KNetworkMode);
-	item = NULL;
+	const CTestConfigItem* item = NULL;
 	for (TInt i = 0; i < count; ++i)
 		{
 		item = CfgFile()->Item(KNetworkMode,i);
@@ -388,7 +407,8 @@ void CSimPhone::ConstructL()
 		iNetworkModeTimer->Start(initialNetworkMode.iDuration, &iTimerCallBackNetworkMode);
 		}
 	// end of network mode simulation setup
-
+	iTestNumberObserver = CSimTestNumberObserver::NewL(*this);
+	
 	LOGPHONE1("Completed Loading and Parsing the Config File");
 	}
 
@@ -411,6 +431,7 @@ TInt CSimPhone::GetTestNumber(TInt& aTestNumber)
 	else
 		{
 		aTestNumber = KDefaultTestNumber;
+		LOGPHONE2("Using the default test number. testNumber=%d", aTestNumber);
 		}
 
 	return KErrNone;
@@ -479,8 +500,7 @@ CSimPhone::~CSimPhone()
 	if (iUSIMServiceTableV8 != NULL)		
 		delete(iUSIMServiceTableV8);
 	
-	
-	if(iPhBkStores)
+	if( iPhBkStores != NULL )
 		{
 		TInt storeCount=iPhBkStores->Count();
 		for(TInt i=0;i<storeCount;i++)
@@ -489,9 +509,8 @@ CSimPhone::~CSimPhone()
 			}
 		delete iPhBkStores;
 		}
-
-	if(iPhBkUSimStores)
-	{
+	if( iPhBkUSimStores != NULL )
+	    {
 		TInt storeCount=iPhBkUSimStores->Count();
 		for(TInt i=0;i<storeCount;i++)
 			{
@@ -505,28 +524,30 @@ CSimPhone::~CSimPhone()
 		iONStore->Close();
 		iONStore = NULL;
 		}
-	
-
-	if (iNetworkModeArray != NULL)
+	if( iNetworkModeArray != NULL )
 		{
 		iNetworkModeArray->Delete(0,iNetworkModeArray->Count());
 		delete iNetworkModeArray;
 		}
-
-
-	if(iPacketService)
+	if( iPacketService!= NULL )
+	    {
 		iPacketService->Close();
-
-	if(iSat)
+	    }
+	if( iSat != NULL )
+	    {
 		iSat->Close();
-	if(iConfigFile)
-		delete iConfigFile;
-	if(iCallBarring)
-		delete iCallBarring;
-	if (iCallForwarding)
-		delete iCallForwarding;
-	if (iCallWaiting)
-		delete iCallWaiting;
+	    }
+	if( iConfigFile == NULL)
+	    {
+	    // In this case if iConfigSection exists then it is not owned
+	    // by iConfigFile - this is cos there was no config file for
+	    // this SIM TSY.
+	    delete iConfigSection;
+	    }
+	delete iConfigFile;
+    delete iCallBarring;
+    delete iCallForwarding;
+    delete iCallWaiting;
 
 	if (iSetCallProcessingSuspendStateTimer)
 		{
@@ -536,7 +557,8 @@ CSimPhone::~CSimPhone()
 	delete iSimPhoneInitialise;
 	
 	delete iReduceTimers;
-
+	delete iTestNumberObserver;
+	
 	CSimTsyMode::FreeMode();
 	LOGPHONE1("CSimPhone Destroyed");
 	}
@@ -2174,12 +2196,18 @@ TInt CSimPhone::GetSubscriberInfo(TTsyReqHandle aReqHandle,TDes8* aPckg1)
 	if (iSubscriberId.iError == KErrNone)
 		{
 		if(iSubscriberId.iIMSI.Length()>RMobilePhone::KIMSISize)
+		    {
 			subscribe.Copy(iSubscriberId.iIMSI.Left(RMobilePhone::KIMSISize));
+		    }
 		else
+		    {
 			subscribe.Copy(iSubscriberId.iIMSI);
+		    }
 		}
 	else
+	    {
 		ret = iSubscriberId.iError;
+	    }
 	ReqCompleted(aReqHandle,ret);
 	return KErrNone;
 	}
@@ -2191,7 +2219,7 @@ const CTestConfigSection* CSimPhone::CfgFile()
 * @return CTestConfigSection	pointer to the configuration file section
 */
 	{
-	return iConfigFile->Section(iSectionName);
+	return iConfigSection;
 	}
 
 const CTestConfigSection* CSimPhone::DefaultCfgFile()
@@ -2201,6 +2229,10 @@ const CTestConfigSection* CSimPhone::DefaultCfgFile()
 * @return CTestConfigSection	pointer to the default configuration file section
 */
 	{
+	if( iConfigFile == NULL )
+	    {
+	    return NULL;
+	    }
 	return iConfigFile->Section(KScriptDefaults);
 	}
 
@@ -2948,6 +2980,38 @@ TInt CSimPhone::GetPhoneId(TTsyReqHandle aReqHandle,RMobilePhone::TMobilePhoneId
 	}
 
 /**
+ * Callback function invoked by the observer object when test number property is changed.
+ * This function is supposed to reset SIMTSY. Currently only SMS messaging part of SIMTSY
+ * is re-started with the new test number.
+ */
+void CSimPhone::HandleTestNumberChangedL()
+    {
+    SetTestNumberAndReadConfigurationFileL();
+    iSmsMessaging->ReloadConfigurationSettingsL();
+    }
+
+TInt CSimPhone::CheckConfigFile()
+    {
+    TInt testNumber;
+    User::LeaveIfError(GetTestNumber(testNumber));
+    iSectionName.Format(KSectionNameFormat,testNumber);
+    
+    CTestConfig* configFile = NULL; 
+
+    TRAPD(err, configFile = CTestConfig::NewLC(iFs, KConfigFileDir, KConfigFilename); CleanupStack::Pop(configFile));
+    CleanupStack::PushL(configFile);
+    if( err != KErrNone || configFile->Section(iSectionName) != NULL )
+        {
+        err = KErrNone;
+        }
+    else
+        {
+        err = KErrNotFound;
+        }
+    CleanupStack::PopAndDestroy(configFile);
+    return err;
+    }
+/**
 	Constructor for suspend call processing timer
 */
 CSimPhone::CSetCallProcessingSuspendStateTimerCallBack::CSetCallProcessingSuspendStateTimerCallBack()
@@ -3048,14 +3112,6 @@ void CSimPhone::TimerCallBackNetworkMode()
 		}
 	
 	iNetworkModeTimer->Start(iNetworkModeArray->At(iNetworkModeIndex).iDuration, &iTimerCallBackNetworkMode);
-	}
-
-
-void CSimPhone::ResetTestNumber()
-	{
-	TInt testNumber;
-	GetTestNumber(testNumber);
-	iSectionName.Format(KSectionNameFormat,testNumber);
 	}
 
 TInt CSimPhone::CheckSimTsyVersion(RMobilePhone::TMultimodeType& aDataStruct) // overload this for other types of structures
@@ -3247,3 +3303,61 @@ TInt CSimPhone::CheckSimTsyVersion(RPacketContext::CTFTMediaAuthorizationV3& /*a
 		
 	return ret;	
 	}
+////////////////////
+// CSimTestNumberObserver
+////////////////////
+
+CSimPhone::CSimTestNumberObserver::CSimTestNumberObserver(CSimPhone& aSimPhone)
+: CActive(CActive::EPriorityStandard),
+  iSimPhone(aSimPhone)
+    {
+    CActiveScheduler::Add(this);
+    }
+
+CSimPhone::CSimTestNumberObserver::~CSimTestNumberObserver()
+    {
+    Cancel();
+    iProperty.Close();
+    }
+
+CSimPhone::CSimTestNumberObserver* CSimPhone::CSimTestNumberObserver::NewL(CSimPhone& aSimPhone)
+    {
+    CSimPhone::CSimTestNumberObserver* self = new(ELeave)CSimPhone::CSimTestNumberObserver(aSimPhone);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+    }
+
+void CSimPhone::CSimTestNumberObserver::ConstructL()
+    {
+    LOGPHONE1("CSimPhone::CSimPhoneObserver::ConstructL");
+    User::LeaveIfError(iProperty.Attach(KUidPSSimTsyCategory, KPSSimTsyTestNumber));
+    Start();
+    }
+
+void CSimPhone::CSimTestNumberObserver::Start()
+    {
+    LOGPHONE1("CSimPhone::CSimPhoneObserver::Start");
+    iProperty.Subscribe(iStatus);
+    SetActive();
+    }
+
+void CSimPhone::CSimTestNumberObserver::RunL()
+    {
+    LOGPHONE2("CSimPhone::CSimPhoneObserver::RunL [iStatus=%d]", iStatus.Int());
+    TInt err = iSimPhone.CheckConfigFile();
+    if( err == KErrNone )
+        {
+        iSimPhone.HandleTestNumberChangedL();
+        }
+
+    Start();
+    }
+
+void CSimPhone::CSimTestNumberObserver::DoCancel()
+    {
+    LOGPHONE1("CSimPhone::CSimPhoneObserver::DoCancel");
+    iProperty.Cancel();
+    }
+

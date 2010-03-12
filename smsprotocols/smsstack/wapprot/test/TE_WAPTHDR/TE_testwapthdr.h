@@ -18,6 +18,7 @@
 #ifndef _TE_TESTWAPTHDR_H_
 #define _TE_TESTWAPTHDR_H_
 
+#include "TE_wapthdrbase.h"
 
 class CTestParseWapTextMessage : public CWapThdrTestStep
 	{

@@ -15,17 +15,16 @@
 // 
 //
 
-#ifndef __TE_SMSEMSPRTSERVER_H__
-#define __TE_SMSEMSPRTSERVER_H__
-#include <test/testexecuteserverbase.h>
-#include "TE_SMSEMSPRTBASE.h"
+#ifndef TE_SMSEMSPRTSERVER_H
+#define TE_SMSEMSPRTSERVER_H
 
+#include "smsstackbasetestserver.h"
 
-class CSmsEmsPrtTestServer : public CTestServer
+class CSmsEmsPrtTestServer : public CSmsStackTestServer
 	{
 public:
 	static CSmsEmsPrtTestServer* NewL();
 	virtual CTestStep* CreateTestStep(const TDesC& aStepName);
 	};
 
-#endif // __TE_SMSEMSPRTSERVER_H__
+#endif // TE_SMSEMSPRTSERVER_H

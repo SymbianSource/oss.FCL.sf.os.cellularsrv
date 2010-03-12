@@ -26,7 +26,8 @@ CSendReceiveSMSWhileServerInOOM::CSendReceiveSMSWhileServerInOOM(RSocketServ &aS
 	Each test step initialises it's own name
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
+	iPartOfMultiStepTestCase = ETrue;
 	}
 
 /**
@@ -41,32 +42,31 @@ TVerdict CSendReceiveSMSWhileServerInOOM::doTestStepL()
 	TInt timeout=10;
 	GetIntFromConfig(ConfigSection(), _L("timeout"), timeout);
 	
-	
 	//Open the socket for sending messages
 	RSocket socket;
-	INFO_PRINTF1(_L("Opening socket and loading SMS Protocol"));
-	OpenSmsSocketL(*iSocketServer, socket, ESmsAddrSendOnly);
+	OpenSmsSocketL(*iSharedSocketServer, socket, ESmsAddrSendOnly);
+	CleanupClosePushL(socket);
 	
 	//Create SMS
-	CSmsMessage* iSms=CreateSMSL();
-	CleanupStack::PushL(iSms);
+	CSmsMessage* sms=CreateSMSL();
+	CleanupStack::PushL(sms);
 
 	TBool isClientExpectingMessage;
 	GetBoolFromConfig(ConfigSection(), _L("isClientExpectingMessage"), isClientExpectingMessage);
 
 	INFO_PRINTF1(_L("Sending SMS...") );
-	PrintMessageL(iSms);
+	PrintMessageL(sms);
 			
 	//Send SMS
-	SendSmsL(iSms,socket);
-	CleanupStack::PopAndDestroy(iSms);
-	socket.Close();
+	SendSmsL(sms,socket);
+	CleanupStack::PopAndDestroy(sms);
+	CleanupStack::PopAndDestroy(&socket);
 	
 	//Open the socket for receiving messages
-	INFO_PRINTF1(_L("Opening socket and loading SMS Protocol"));
 	RSocket recSocket;
-	OpenSmsSocketL(*iSocketServer, recSocket, ESmsAddrRecvAny);
-
+	OpenSmsSocketL(*iSharedSocketServer, recSocket, ESmsAddrRecvAny);
+	CleanupClosePushL(recSocket);
+	
 	//Receive
 	TInt allocFailCount=0;
 	TInt ret=KErrNoMemory;
@@ -82,13 +82,13 @@ TVerdict CSendReceiveSMSWhileServerInOOM::doTestStepL()
 			{
 			INFO_PRINTF1(_L("Message received!"));
 			
-			iSocketServer->__DbgMarkHeap();
-			iSocketServer->__DbgFailNext(allocFailCount);
+			iSharedSocketServer->__DbgMarkHeap();
+			iSharedSocketServer->__DbgFailNext(allocFailCount);
 			
 			CSmsMessage *iSmsMessage=NULL;
 			
 			TRAP(ret,iSmsMessage=RecvSmsL(recSocket));	//Get the message from the STACK.
-			iSocketServer->__DbgMarkEnd(0);			
+			iSharedSocketServer->__DbgMarkEnd(0);			
 
 			//If a message was retrieved successfully.
 			if(ret==KErrNone)
@@ -105,19 +105,15 @@ TVerdict CSendReceiveSMSWhileServerInOOM::doTestStepL()
 					{
 					TestSmsContentsL(iSmsMessage,messageText);
 					}
-				
 				CleanupStack::PopAndDestroy(iSmsMessage);
 				}
-		
-			allocFailCount++;
+			++allocFailCount;
 			}
-		
 		}
 
-	recSocket.Close();
-	iSocketServer->__DbgFailNext(-1); // Reset heap
+	CleanupStack::PopAndDestroy(&recSocket);
+	iSharedSocketServer->__DbgFailNext(-1); // Reset heap
 #endif	
 	return TestStepResult();
 	}
 
-//-------------------------------------------------------------------------------------

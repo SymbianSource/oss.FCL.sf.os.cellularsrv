@@ -100,7 +100,12 @@ void CPdpFsmFactory::InitL(const TName& aTsyName, CPdpFsmInterface * aPdpFsmInte
 void CPdpFsmFactory::Close (void)
     {
 	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::Close()");
-	iEtelDriverInput->Close();
+	// in OOM conditions iEtelDriveInput may not have successfully
+	// been created, check here for safety.
+	if (iEtelDriverInput != NULL)
+	    {
+        iEtelDriverInput->Close();
+	    }
     }
 
 

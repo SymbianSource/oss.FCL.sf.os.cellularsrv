@@ -64,7 +64,7 @@ CMmMockMessHandler::~CMmMockMessHandler()
 //
 TInt CMmMockMessHandler::ExtFuncL( 
     TInt aIpc, 
-    const CMmDataPackage* aDataPackage )
+    const CMmDataPackage* /*aDataPackage*/)
     {
 TFLOGSTRING2("TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
     
@@ -291,24 +291,6 @@ TFLOGSTRING2("TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
             ret = KErrNone;
             complete = ETrue;
             break;
-                   
-        // Custom functionality
-        case EMmTsyGetCustomVendorExtPtrIPC:
-            {
-TFLOGSTRING("TSY: CMmCustomMessHandler::ExtFuncL --- EMmTsyGetCustomVendorExtPtrIPC");            
-            // return pointer to customapi extension
-            CMmCustomVendorExt** extPtr;
-            aDataPackage->UnPackData( &extPtr );
-
-            if ( !iMmCustomStubExt )
-                {
-                iMmCustomStubExt = new ( ELeave ) CMmCustomStubExt( );
-                }
-
-            *extPtr = iMmCustomStubExt;
-            iMmCustomStubExt->SetMessageRouter( iMessageRouter );
-            break;
-            }
             
         default:
             ret = KErrNotSupported;

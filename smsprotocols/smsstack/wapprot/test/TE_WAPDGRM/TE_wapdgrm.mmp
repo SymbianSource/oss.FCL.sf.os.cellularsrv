@@ -17,7 +17,7 @@
 #include <cflog.mmh>
 
 TARGET      te_wapdgrm.exe
-CAPABILITY ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData
+CAPABILITY ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData PowerMgmt
 TARGETTYPE  exe
 UID             0x1000007A 0x101FBC46
 VENDORID 0x70000001

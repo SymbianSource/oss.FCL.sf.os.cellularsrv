@@ -32,8 +32,8 @@ CCallControlDispatcher::CCallControlDispatcher(
 		iMessageManagerCallback(aMessageManagerCallback),
 		iRequestAsyncOneShot(aRequestAsyncOneShot),
 		iFoundDtmfStop(EFalse), iModeUsedForVoiceCallDial(RMobilePhone::EServiceUnspecified),
-		iFdnCheckPerformed(EFalse),iSwapHeldCallId(KInvalidCallId),
-		iSwapConnectedCallId(KInvalidCallId),iTransferHeldCallId(KInvalidCallId),
+		iFdnCheckPerformed(EFalse),iSwapCallId(KInvalidCallId),
+		iSecondSwapCallId(KInvalidCallId),iTransferHeldCallId(KInvalidCallId),
 		iTransferSecondCallId(KInvalidCallId)
 	{
 	iDtmfString.Zero();
@@ -237,6 +237,17 @@ void CCallControlDispatcher::ConstructL()
         __ASSERT_DEBUG(iLtsyDispatchCallControlSwap, CtsyDispatcherPanic(EInvalidNullPtr));
   		}
 
+	if(iLtsyFactoryV1.IsDispatchInterfaceSupported(KDispatchCallControlFuncUnitId, MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId))
+		{
+		TAny* swapInterface = NULL;
+		iLtsyFactoryV1.GetDispatchHandler(
+		       	MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId,
+		       	swapInterface);
+		iLtsyDispatchCallControlSingleSwap =
+				static_cast<MLtsyDispatchCallControlSwap*>(swapInterface);
+        __ASSERT_DEBUG(iLtsyDispatchCallControlSingleSwap, CtsyDispatcherPanic(EInvalidNullPtr));
+  		}
+		
 	if(iLtsyFactoryV1.IsDispatchInterfaceSupported(KDispatchCallControlFuncUnitId, MLtsyDispatchCallControlLoanDataPort::KLtsyDispatchCallControlLoanDataPortApiId))
 		{
 		TAny* loanDataPortInterface = NULL;
@@ -839,9 +850,23 @@ TInt CCallControlDispatcher::DispatchSwapL(const CMmDataPackage* aDataPackage)
 		{
 		const CCallDataPackage* dataPackage = static_cast<const CCallDataPackage*>(aDataPackage);
 		RMobilePhone::TMobileService mode;
-		dataPackage->GetCallIdAndMode(iSwapHeldCallId, mode);
-		dataPackage->UnPackData(iSwapConnectedCallId);
-		ret = iLtsyDispatchCallControlSwap->HandleSwapReqL(iSwapHeldCallId, iSwapConnectedCallId);
+		dataPackage->GetCallIdAndMode(iSwapCallId, mode);
+		dataPackage->UnPackData(iSecondSwapCallId);
+
+		if (iSwapCallId == KInvalidCallId)
+			{
+			// Swapping a single call.
+			ret = iLtsyDispatchCallControlSwap->HandleSwapReqL(iSecondSwapCallId);
+			}
+		else if (iSecondSwapCallId == KInvalidCallId)
+			{
+			// Swapping a single call.
+			ret = iLtsyDispatchCallControlSwap->HandleSwapReqL(iSwapCallId);
+			}		
+		else
+			{
+			ret = iLtsyDispatchCallControlSwap->HandleSwapReqL(iSwapCallId, iSecondSwapCallId);
+			}
 		}
 
 	return TSYLOGSETEXITERR(ret);
@@ -1651,7 +1676,7 @@ void CCallControlDispatcher::CallbackTransfer(TInt aError)
 	if (iTransferSecondCallId != KInvalidCallId)
 		{
 		dataPackage.SetCallIdAndMode(iTransferSecondCallId, RMobilePhone::EServiceUnspecified);
-		iSwapConnectedCallId = KInvalidCallId;
+		iSecondSwapCallId = KInvalidCallId;
 		iMessageManagerCallback.Complete(EMobileCallTransfer, &dataPackage, aError);
 		}
 
@@ -1726,17 +1751,17 @@ void CCallControlDispatcher::CallbackSwap(TInt aError)
 		// Check in case LTSY has completed a swap when no swap was called
 		// Don't complete back to CTSY in this case
 
-		if (iSwapHeldCallId != KInvalidCallId)
+		if (iSwapCallId != KInvalidCallId)
 			{
-			dataPackage.SetCallIdAndMode(iSwapHeldCallId, RMobilePhone::EServiceUnspecified);
-			iSwapHeldCallId = KInvalidCallId;
+			dataPackage.SetCallIdAndMode(iSwapCallId, RMobilePhone::EServiceUnspecified);
+			iSwapCallId = KInvalidCallId;
 			iMessageManagerCallback.Complete(EMobileCallSwap, &dataPackage, aError);
 			}
 
-		if (iSwapConnectedCallId != KInvalidCallId)
+		if (iSecondSwapCallId != KInvalidCallId)
 			{
-			dataPackage.SetCallIdAndMode(iSwapConnectedCallId, RMobilePhone::EServiceUnspecified);
-			iSwapConnectedCallId = KInvalidCallId;
+			dataPackage.SetCallIdAndMode(iSecondSwapCallId, RMobilePhone::EServiceUnspecified);
+			iSecondSwapCallId = KInvalidCallId;
 			iMessageManagerCallback.Complete(EMobileCallSwap, &dataPackage, aError);
 			}
 

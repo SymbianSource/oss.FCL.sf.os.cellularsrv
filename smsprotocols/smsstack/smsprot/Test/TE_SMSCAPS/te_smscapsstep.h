@@ -18,14 +18,10 @@
 #ifndef _TE_SMSCAPSSTEP_H_
 #define _TE_SMSCAPSSTEP_H_
 
-#include <test/testexecuteserverbase.h>
 #include <es_sock.h>
 #include <gsmumsg.h>
-
-//#include "networking/teststep.h"
 #include <testconfigfileparser.h>
 #include <test/testexecuteserverbase.h>
-
 
 class CSmsCapsTestStep : public CTestStep
 	{

@@ -471,14 +471,18 @@ TFLOGSTRING("TSY: CMmONStoreTsy::ReadL");
             ( RMobileONStore::TMobileONEntryV1Pckg*, aEntry );
         RMobileONStore::TMobileONEntryV1& entry = ( *entryPckg )();
 
-        // Save entry pointer
-        iReadONStoreEntryPtr = aEntry;
-
-        // Forward request to GSM Extension
-        ret = iMmONStoreExtInterface->ReadL( EMmTsyONStoreReadIPC, entry.iIndex );
+        // Check index
+        if ( (-1) <= entry.iIndex )
+            {
+            // Forward request to GSM Extension
+            ret = iMmONStoreExtInterface->ReadL( EMmTsyONStoreReadIPC, entry.iIndex );
+            }
 
         if ( KErrNone == ret )
             {
+            // Save entry pointer
+            iReadONStoreEntryPtr = aEntry;
+
             // Save tsy req handle type
             iReqHandleType = EMultimodeONStoreRead;
             }
@@ -600,8 +604,6 @@ TInt CMmONStoreTsy::WriteL(
     TDesC8* aEntry )
     {
 TFLOGSTRING("TSY: CMmONStoreTsy::WriteL");
-    // Save tsy req handle type
-    iReqHandleType = EMultimodeONStoreWrite;
 
     // Unpack entry param to get the location
     RMobileONStore::TMobileONEntryV1Pckg* entryPckg =
@@ -609,14 +611,24 @@ TFLOGSTRING("TSY: CMmONStoreTsy::WriteL");
         ( RMobileONStore::TMobileONEntryV1Pckg*, aEntry );
     RMobileONStore::TMobileONEntryV1& entry = ( *entryPckg )();
 
+    // Return value
+    TInt ret( KErrArgument );
+
+    // Check Parameters
+    if( (-1) > entry.iIndex || sizeof( RMobileONStore::TMobileONEntryV1 ) != aEntry->Size() )
+        {
+        return ret;
+        }
+
+    // Save tsy req handle type
+    iReqHandleType = EMultimodeONStoreWrite;
+
     iWriteONStoreEntryPtr = aEntry;
     iWriteIndexToReturn = entry.iIndex;
 
     // It is not possible to cancel write request anymore...
     iIsWriteCancellingPossible = EFalse;
 
-    // Return value
-    TInt ret( KErrNone );
 
     ret = iMmONStoreExtInterface->
         WriteL(
@@ -959,6 +971,13 @@ TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL");
 
     TInt ret( KErrNone );
 
+    TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
+        EMultimodeONStoreGetInfo );
+    if(reqHandle != EMultimodeONStoreReqHandleUnknown)
+        {
+        ReqCompleted( aTsyReqHandle, KErrServerBusy );
+        return ret;
+        }
     // if aInfo is not correct type, send KErrArgument to client and return
     if( RMobilePhoneStore::KETelMobileONStoreV1 != aInfo->ExtensionId() )
         {
@@ -967,55 +986,63 @@ TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL");
         }
 
    	// Don't send request if pb init is still ongoing
-	// instead send KErrNotReady to client
-	TBool done ( ETrue );
+	// instead create an ADN book store and wait for it to initilize
+    
 TFLOGSTRING2( "TSY: CMmONStoreTsy::GetInfoL iPBList->GetNumberOfObjects() = %d", iMmPhone->PBList()->GetNumberOfObjects());
-
-	for( TInt i = 0; i < iMmPhone->PBList()->GetNumberOfObjects(); i++ )
+    CMmPhoneBookStoreTsy* pbStore = NULL;
+	for( TInt i = 0; (i < iMmPhone->PBList()->GetNumberOfObjects()) && (NULL == pbStore) ; i++ )
 	    {
-	    CMmPhoneBookStoreTsy* pbStore = iMmPhone->PBList()->
-	        GetMmPBByIndex( i );
+	    pbStore = iMmPhone->PBList()->GetMmPBByIndex( i );
 TFLOGSTRING2( "TSY: CMmONStoreTsy::GetInfoL index = %d", i);    
-
-		if ( !pbStore->IsPBInitDone() 
-			  && ( pbStore->GetPhonebookType() == KADNPhoneBook
-		      || pbStore->GetPhonebookType() == KFDNPhoneBook )  )
-		    {
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - ADN or FDN init not done");
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - in !pbStore->IsPBInitDone()");
-			// init still ongoing
-			done = EFalse;
-			}
-   		}
-   				
-    // Check if some PB is not initialized, if so send KErrNotReady to client   				
-   	if ( !done )
-		{
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - PBInit not done, return KErrNotReady");
-		ReqCompleted( aTsyReqHandle, KErrNotReady );
-		}
-	            
-	else
-		{
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - PBInit done, complete");
-        // Set get info internal pointer
-        iONStoreInfoChanged = aInfo;
-        
-        // Request to GSM extension, get used entries,
-        // -1 as a index param-> specified location param not needed
-        ret = iMmONStoreExtInterface->ReadL( EMmTsyONStoreGetInfoIPC, -1 );
-
-        if ( KErrNone != ret )   // Message sending failed
+        if( (pbStore->GetPhonebookType() != KADNPhoneBook) && (pbStore->GetPhonebookType() != KFDNPhoneBook ) ) 
             {
-            ReqCompleted( aTsyReqHandle, ret );
+            pbStore = NULL;
             }
         else
             {
-            iIsGetInfoActive = ETrue;
-            // Save tsy req handle type
-            iReqHandleType = EMultimodeONStoreGetInfo;
+        
+TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - found ADN or FDN store");
+			}
+   		}
+	if(NULL == pbStore)
+	    {
+TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - no ADN nor FDN store- creating ADN");
+        pbStore = CMmPhoneBookStoreTsy::NewL( iMmPhone, KETelIccAdnPhoneBook );
+        TInt addPBSucceeded = iMmPhone->PBList()->AddObject( pbStore );
+        if(addPBSucceeded != KErrNone)
+            {
+            delete pbStore;
+            ReqCompleted( aTsyReqHandle, addPBSucceeded );
+            return KErrNone;
             }
-		}
+	    }
+
+	// Set get info internal pointer
+    iONStoreInfoChanged = aInfo;
+
+	if ( !pbStore->IsPBInitDone())
+	    {
+TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - waiting for phone book to be initilized");
+        // Save tsy req handle type
+        iReqHandleType = EMultimodeONStoreGetInfo;
+        return KErrNone;
+	    }
+     
+TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - PBInit done, complete");
+        
+    // Request to GSM extension, get used entries,
+    // -1 as a index param-> specified location param not needed
+    ret = iMmONStoreExtInterface->ReadL(EMmTsyONStoreGetInfoIPC, -1);
+
+    if (KErrNone != ret) // Message sending failed
+        {
+        ReqCompleted(aTsyReqHandle, ret);
+        }
+    else
+        {
+        // Save tsy req handle type
+        iReqHandleType = EMultimodeONStoreGetInfo;
+        }
 
     return KErrNone;
     }
@@ -1032,11 +1059,6 @@ void CMmONStoreTsy::CompleteGetInfo(
     {
 TFLOGSTRING2("TSY: CMmONStoreTsy::CompleteGetInfo - Result: %d", aResult );
 
-    // The number of used entries
-    TServiceType serviceType;   
-    //unpack data
-    aDataPackage->UnPackData( serviceType );
-
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreGetInfo );
@@ -1048,6 +1070,11 @@ TFLOGSTRING2("TSY: CMmONStoreTsy::CompleteGetInfo - Result: %d", aResult );
         // give info to client
         if ( KErrNone == aResult )
             {
+            // The number of used entries
+            TServiceType serviceType;   
+            //unpack data
+            aDataPackage->UnPackData( serviceType );
+
             iONStoreInfo.iTotalEntries = serviceType.iNumOfEntries;
             iONStoreInfo.iUsedEntries = serviceType.iUsedEntries;
             iONStoreInfo.iNumberLen = serviceType.iNumLen;
@@ -1062,7 +1089,6 @@ TFLOGSTRING3("TSY: CMmONStoreTsy::CompleteGetInfo - Max Number length: %d, Max N
 
         // NULL the pointer to info supplied to TSY from the client
         iONStoreInfoChanged = NULL;
-        iIsGetInfoActive = EFalse;
     
         // Complete with error
         ReqCompleted( reqHandle, aResult );
@@ -2004,5 +2030,44 @@ TFLOGSTRING3( "TSY: CMmONStoreTsy::Complete - ReqHandleType: %d Error: %d", aReq
     }
 
 #endif
+
+// ---------------------------------------------------------------------------
+// CMmONStoreTsy::PhoneBookStoreInitCompleteL
+// Phone book store initilization was complete
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmONStoreTsy::PhoneBookStoreInitCompleteL(TInt aError)
+    {
+    TFLOGSTRING("TSY: CMmONStoreTsy::PhoneBookStoreInitCompleteL ");
+    TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeONStoreGetInfo );   
+    if( EMultimodeONStoreReqHandleUnknown != reqHandle )
+        {
+        if( KErrNone != aError )
+            {
+            
+            ReqCompleted(reqHandle, aError);
+            return;
+            }
+        iReqHandleType = EMultimodeONStoreReqHandleUnknown;
+        TInt ret = GetInfoL(reqHandle, iONStoreInfoChanged);
+        if (ret == KErrNone)
+            {
+            if (iReqHandleType != EMultimodeONStoreReqHandleUnknown)
+                {
+#ifdef REQHANDLE_TIMER
+                SetTypeOfResponse(iReqHandleType, reqHandle);
+#else // REQHANDLE_TIMER
+                iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, reqHandle );
+#endif // REQHANDLE_TIMER
+                }
+            }
+        else
+            {
+            ReqCompleted(reqHandle, ret);
+            }
+        }
+    
+    }
 
 //  End of File

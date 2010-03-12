@@ -385,12 +385,12 @@ TInt CLtsyCallControlHandler::HandleDialVoiceReqL(RMobilePhone::TMobilePhoneALSL
 	} // CLtsyCallControlHandler::HandleDialReqL
 
 
-TInt CLtsyCallControlHandler::HandleTransferReqL(TInt aHeldCallId, TInt aSecondCallId)
+TInt CLtsyCallControlHandler::HandleTransferReqL(TInt aCallId, TInt aSecondCallId)
 /**
  * This request is completed by invoking
  * CCtsyDispatcherCallback::CallbackCallControlTransferComp()
  *
- * @param aHeldCallId Call ID of the held call to transfer.
+ * @param aCallId Call ID of the held call to transfer.
  *
  * @param aSecondCallId Call ID of the other to transfer the held call to.
  *
@@ -406,7 +406,7 @@ TInt CLtsyCallControlHandler::HandleTransferReqL(TInt aHeldCallId, TInt aSecondC
 
 	// REMOVE this line when implementing for real LTSY
 	MTEST_ISSUE_MOCKLTSYENGINE_REQ(ret, KDispatchCallControlFuncUnitId, MLtsyDispatchCallControlTransfer::KLtsyDispatchCallControlTransferApiId,
-			aHeldCallId, aSecondCallId);
+			aCallId, aSecondCallId);
 
 	return TSYLOGSETEXITERR(ret);
 	} // CLtsyCallControlHandler::HandleTransferReqL
@@ -467,14 +467,14 @@ TInt CLtsyCallControlHandler::HandleGetIdentityServiceStatusReqL(RMobilePhone::T
 	} // CLtsyCallControlHandler::HandleGetIdentityServiceStatusReqL
 
 
-TInt CLtsyCallControlHandler::HandleSwapReqL(TInt aHeldCallId, TInt aConnectedCallId)
+TInt CLtsyCallControlHandler::HandleSwapReqL(TInt aCallId, TInt aSecondCallId)
 /**
  * This request is completed by invoking
  * CCtsyDispatcherCallback::CallbackCallControlSwapComp()
  *
- * @param aHeldCallId The Call ID of the held call to swap.
+ * @param aCallId The Call ID of the call to swap.
  *
- * @param aConnectedCallId The Call ID of the connected call to swap.
+ * @param aSecondCallId The Call ID of the second call to swap.
  *
  * @return KErrNone on success, KErrNotSupported if this request is not supported,
  * or another error code to indicate the failure otherwise.
@@ -488,11 +488,34 @@ TInt CLtsyCallControlHandler::HandleSwapReqL(TInt aHeldCallId, TInt aConnectedCa
 
 	// REMOVE this line when implementing for real LTSY
 	MTEST_ISSUE_MOCKLTSYENGINE_REQ(ret, KDispatchCallControlFuncUnitId, MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSwapApiId,
-			aHeldCallId, aConnectedCallId);
+			aCallId, aSecondCallId);
 
 	return TSYLOGSETEXITERR(ret);
 	} // CLtsyCallControlHandler::HandleSwapReqL
 
+TInt CLtsyCallControlHandler::HandleSwapReqL(TInt aCallId)
+/**
+ * This request is completed by invoking
+ * CCtsyDispatcherCallback::CallbackCallControlSwapComp()
+ *
+ * @param aCallId The Call ID of the call to swap.
+ *
+ * @return KErrNone on success, KErrNotSupported if this request is not supported,
+ * or another error code to indicate the failure otherwise.
+ */
+	{
+	TSYLOGENTRYEXIT;
+
+	TInt ret = KErrNotSupported;
+
+	// Add implementation here.......
+
+	// REMOVE this line when implementing for real LTSY
+	MTEST_ISSUE_MOCKLTSYENGINE_REQ(ret, KDispatchCallControlFuncUnitId, MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId,
+			aCallId);
+
+	return TSYLOGSETEXITERR(ret);
+	} // CLtsyCallControlHandler::HandleSwapReqL
 
 TInt CLtsyCallControlHandler::HandleLoanDataPortSyncL(TInt aCallId, RCall::TCommPort& aCommPort)
 /**

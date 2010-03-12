@@ -1423,7 +1423,8 @@ void CCSatComponentTestBase::GenerateTerminalResponseL(
 			aCommandQualifier,
 			aGeneralResultAddInfo,
 			aGeneralResult,
-			aAdditionalInfoTlv);
+			aAdditionalInfoTlv,
+			aExpResult);
 	TerminalResponseL( aRSatTypeOfCommand, aRspPckg, aExpResult);
 	}
 

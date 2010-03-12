@@ -5272,13 +5272,26 @@ void CCTsyNetworkControlFU::TestGetNetworkRegistrationStatus0001L()
 
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
-	OpenPhoneL();
-
-	RBuf8 data;
-	CleanupClosePushL(data);
 
 	TRequestStatus requestStatus;
-	RMobilePhone::TMobilePhoneRegistrationStatus status;
+    RMobilePhone::TMobilePhoneRegistrationStatus status;
+    
+    // Initial test to verify that GetNetworkRegistrationStatus completes 
+    // with an error if the modem is not ready (i.e., before the LTSY sends
+    // a EMmTsyBootNotifyModemStatusReadyIPC notification to CTSY)
+    TInt err = iPhone.Open(iTelServer,KMmTsyPhoneName);
+    ASSERT_EQUALS(KErrNone, err);
+
+    iPhone.GetNetworkRegistrationStatus(requestStatus, status);
+    User::WaitForRequest(requestStatus);
+    ASSERT_EQUALS(KErrNotReady, requestStatus.Int());
+
+	iPhone.Close();
+	
+	OpenPhoneL(); // whole phone bootup procedure for rest of tests
+	
+	RBuf8 data;
+	CleanupClosePushL(data);
 
  	//-------------------------------------------------------------------------
 	// TEST A: failure to dispatch request to LTSY

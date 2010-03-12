@@ -52,6 +52,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - entered");
 
 #endif
 
+    iInitError = KErrNone;
     // Get mode of current extension.
     RMobilePhone::TMobilePhoneNetworkMode currentMode;
     iMmPhoneTsy->GetStaticExtensionMode( &currentMode );
@@ -91,29 +92,13 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - PB %S", &iPhoneBookName);
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - iIsPhonebookInitialized: %i", iStoreInfoData->iIsPhonebookInitialized);
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - iSIMReady: %i", bootState->iSIMReady);
 TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - before initialization");
-    // Check if phonebook has been initialized
-    if ( !iMmPhoneTsy->IsPBInitActive()
-        && ( !iStoreInfoData->iIsPhonebookInitialized )
-        && bootState->iSIMReady)
+    if(bootState->iSIMReady)
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - starting initialization");
-
-        // before phonebook requests, phonebook must be initialized
-        iMmPhoneBookStoreExtInterface->InitPhonebook(
-            EMmTsyPhoneBookStoreInitIPC, iPhoneBookName );
-
-        iMmPhoneTsy->SetPBInitActiveStatus( ETrue );
+        SimIsReady();
         }
-
-    if ( bootState->iSIMReady && iStoreInfoData->iIsPhonebookInitialized
-        && ( iPhoneBookType == KADNPhoneBook
-        || iPhoneBookType == KFDNPhoneBook ) )
+    else
         {
-	  	// Set initialization flag 
-        iIsPBInitCompleted = ETrue;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - starting caching");
-        // Call CacheEntries method to read entries from SIM.
-        CacheEntriesL();
+        iIsPBInitCompleted = EFalse;
         }
     }
 
@@ -650,8 +635,6 @@ void CMmPhoneBookStoreTsy::CompletePBStoreInitializationL(
     {
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - Result: %i",aResult );
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneBookType: %u",iPhoneBookType );
-    // Set initialization flag
-    iIsPBInitCompleted = ETrue;
 
     // If initialization made successfully
     // fill phonebook related static data
@@ -667,11 +650,19 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneB
         // Reset initialization value
         iStoreInfoData->iIsPhonebookInitialized = ETrue;
         iStoreInfoData->iIsPhonebookInitializeFailed = EFalse;
-        // Set max name & number length for the current phonebook
-        SetMaxNameAndNumLenght();
-        // Just in case here, if cache request has been come
-        // before initialization is finished.
-        CacheEntriesL();
+        // Set initialization flag for all phonebooks
+        for( TInt i = 0; i < iMmPhoneTsy->PBList()->GetNumberOfObjects(); i++ )
+            {
+            //Get pbStore object
+            CMmPhoneBookStoreTsy* pbStore = iMmPhoneTsy->PBList()->GetMmPBByIndex( i );
+            pbStore->iIsPBInitCompleted = ETrue;
+            pbStore->iInitError = aResult;
+            // Set max name & number length for the current phonebook
+            pbStore->SetMaxNameAndNumLenght();
+            // Just in case here, if cache request has been come
+            // before initialization is finished.
+            pbStore->CacheEntriesL();
+            }
         }
     else
     //Initialisation has failed
@@ -698,6 +689,33 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has faile
             iStoreInfoData->iIsPhonebookInitializeFailed = ETrue;
             }
         }
+		if( iStoreInfoData->iIsPhonebookInitialized )
+			{
+		    TTsyReqHandle getInfoHandle =
+				iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneStoreGetInfo );
+			if ( EMultimodePhoneBookStoreReqHandleUnknown != getInfoHandle )
+				{
+				iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
+				RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg info(*iPhoneBookInfoChanged);
+				TInt result = GetInfoL(getInfoHandle, &info);
+				if ( KErrNone != result )
+					{
+					ReqCompleted( getInfoHandle, result );
+					}
+					// Save request handle
+				if ( EMultimodePhoneBookStoreReqHandleUnknown != iReqHandleType )
+					{
+#ifdef REQHANDLE_TIMER
+					SetTypeOfResponse( iReqHandleType, getInfoHandle );
+#else
+					iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, getInfoHandle );
+#endif
+					}
+				
+				}
+			}
+		iMmPhoneTsy->PhoneBookStoreInitCompleteL(iInitError);
+
     }
 
 // ---------------------------------------------------------------------------
@@ -2379,6 +2397,21 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL Handle:%d", aTsyReqHandle);
         // the situation.
         ret = KErrServerBusy;
         }
+    else if(iInitError != KErrNone)
+        {
+        // The phone book initilization failed
+        return iInitError;
+        }
+	else if ( !(iStoreInfoData->iIsPhonebookInitialized) )
+		{
+		// The data is not ready yet, the store was not initialized...
+        RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg* infoPckg = 
+            reinterpret_cast<RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg*>( 
+            aInfo );
+        iPhoneBookInfoChanged = &( ( *infoPckg )() );    
+		iReqHandleType = EMultimodePhoneStoreGetInfo;
+		return KErrNone;
+		}
     else if ( sizeof( RMobilePhoneBookStore::TMobilePhoneBookInfoV1 ) > 
               aInfo->MaxLength() )
         {
@@ -2543,7 +2576,8 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - VMBX" );
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInfoData->iVMBXNumOfEntries );
 
             // Set caps by the store info data 
-            iPhoneBookInfoChanged->iCaps = iStoreInfoData->iVMBXCaps;
+            //iPhoneBookInfoChanged->iCaps = iStoreInfoData->iVMBXCaps;
+            iPhoneBookInfoChanged->iCaps = KPBTypeVMBXCaps;
             
             if ( !iIsUsedEntriesCounted )
                 {
@@ -2586,7 +2620,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxNumLength: %i",iPhoneBoo
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxTextLength: %i",iPhoneBookInfoChanged->iMaxTextLength );
 
             // Set caps by the store info data 
-            iPhoneBookInfoChanged->iCaps = iStoreInfoData->iMBDNCaps;
+            iPhoneBookInfoChanged->iCaps = KPBTypeMBDNCaps;
             }
         if ( completeRequest )
             {
@@ -3208,6 +3242,50 @@ void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache( CArrayPtrSeg<CPhoneBookStor
 		}
 	}
 
+// ---------------------------------------------------------------------------
+// CMmPhoneBookStoreTsy::SimIsReady()
+// This method will be activate by the phone to notify the SIM is ready.
+// ---------------------------------------------------------------------------
+//
+void CMmPhoneBookStoreTsy::SimIsReady()
+    {
+    
+    TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::SimIsReady - iIsPhonebookInitialized: %i", iStoreInfoData->iIsPhonebookInitialized);
+    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - before initialization");
+        // Check if phonebook has been initialized
+        if ( !iMmPhoneTsy->IsPBInitActive()
+            && ( !iStoreInfoData->iIsPhonebookInitialized )
+            )
+            {
+    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - starting initialization");
+
+            // before phonebook requests, phonebook must be initialized
+            iMmPhoneBookStoreExtInterface->InitPhonebook(
+                EMmTsyPhoneBookStoreInitIPC, iPhoneBookName );
+
+            iMmPhoneTsy->SetPBInitActiveStatus( ETrue );
+            }
+        else if (iMmPhoneTsy->IsPBInitActive())
+            {
+    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - initialization active via other store, waiting for completion");
+            iIsPBInitCompleted = EFalse;
+            }
+        else
+            {
+    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - Initialization was done via other store");
+            // Set initialization flag 
+            iIsPBInitCompleted = ETrue;
+            }
+        
+        if ( iStoreInfoData->iIsPhonebookInitialized
+            && ( iPhoneBookType == KADNPhoneBook
+            || iPhoneBookType == KFDNPhoneBook ) )
+            {
+    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - starting caching");
+            // Call CacheEntries method to read entries from SIM.
+            CacheEntriesL();
+            }
+    }
 
 
 //  End of File

@@ -36,7 +36,7 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0125
 //! @SYMAuthor                   donalclerkin
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60   TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber8
+RUN_TEST_STEP 60   TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber8
 RUN_TEST_STEP 60    TE_smsprt   SetDiskMonitorLimits    z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskMonitorLimits
 RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
@@ -46,7 +46,6 @@ RUN_TEST_STEP 120   TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutO
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
 RUN_UTILS       DeleteFile  c:\private\101F7989\sms\smsu.rsc
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 END_TESTCASE                    TEL-SMS-SMSPRT-0125
 
 
@@ -63,13 +62,12 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0126
 //! @SYMCreationDate             29/11/2006
 //! @SYMAuthor                   danieldu
 //! @SYMTestStatus               2. Development
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber1
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber1
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0126
 
@@ -91,14 +89,13 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0128
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber2
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber2
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  	TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0128
 
@@ -125,20 +122,26 @@ RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   z:\testdata\configs\smswap_MaxFivePDUsInOOD.esk    c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber27
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber27
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
+
+//Wait for 4 PDUs to be received - trigger each from a send - no message expected
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
-//Wait for 4 PDUs to be received -
-DELAY 60000
-//Trigger receipt of another PDU to fill the last slot
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
-//Check that the oldest  PDU is delivered
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+
+// Trigger receipt of another PDU to fill the last slot - check that the oldest  PDU is delivered
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpectedPartOf8Bit
+
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
@@ -162,30 +165,39 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0130
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
+
 //Copy esk file with MAX PDUs = 5
 RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   z:\testdata\configs\smswap_MaxFivePDUsInOOD.esk    c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber28
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber28
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
-//Fill the preallocation file
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
-RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
-//Wait for 4 PDUs to be received
-DELAY 60000
-RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
-//Recieve the first of the three
+
+//Wait for 4 PDUs to be received - trigger each from a send - no message expected
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+
+RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
+RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
+RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpectedPartOf8Bit
+
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpectedThreePDUs
+
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60  TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
@@ -214,7 +226,7 @@ RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   z:\testdata\configs\smswap_MaxFivePDUsInOOD.esk    c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber29
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber29
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 //Fill the preallocation file
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
@@ -233,7 +245,6 @@ RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.i
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpectedThreePDUs
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
@@ -256,7 +267,7 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0132
 //! @SYMAuthor                   danieldu
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber4
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber4
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
@@ -267,7 +278,6 @@ RUN_TEST_STEP 30 TE_smsprt ForwardSystemTime  z:\testdata\configs\SMSOutOfDiskSp
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpectedFirstPDU
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0132
 
@@ -289,14 +299,13 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0133
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber12
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber12
 RUN_TEST_STEP 60    TE_smsprt   SetDiskMonitorLimits   z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskMonitorLimits
 RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 120   TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageNotExpected
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber14
-RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber14
 RUN_TEST_STEP 30 TE_smsprt ForwardSystemTime  z:\testdata\configs\SMSOutOfDiskSpace.ini  TwelveHours
 RUN_TEST_STEP 120   TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageExpectedTwoPDUs
 RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
@@ -305,7 +314,6 @@ RUN_TEST_STEP 30 TE_smsprt ForwardSystemTime  z:\testdata\configs\SMSOutOfDiskSp
 RUN_TEST_STEP 120   TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageExpectedThirdPDU
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0133
 
@@ -328,19 +336,17 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0134
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
 RUN_TEST_STEP 60  TE_smsprt   DeleteSARStores
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber9
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber9
 RUN_TEST_STEP 60    TE_smsprt   SetDiskMonitorLimits   z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskMonitorLimits
 RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60    TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageNotExpected
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber13
-RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber13
 RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60    TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageExpectedThreePDUs
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS     DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0134
 
@@ -363,7 +369,7 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0135
 RUN_TEST_STEP 60  TE_smsprt   DeleteSARStores
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber10
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber10
 RUN_TEST_STEP 60    TE_smsprt   SetDiskMonitorLimits   z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskMonitorLimits
 RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
 RUN_TEST_STEP 60    TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageNotExpected
@@ -375,7 +381,6 @@ RUN_TEST_STEP 120  TE_smsprt  SendSMS        z:\testdata\configs\SMSOutOfDiskSpa
 RUN_TEST_STEP 60    TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageExpectedThreePDUs
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0135
 
@@ -396,8 +401,8 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0136
 //! @SYMTestStatus               3. Under Execution
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber5
 RUN_TEST_STEP 60  TE_smsprt  DeleteSARStores
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber5
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini   SinglePDU8BitMessage
 //Wait for all PDUs to be received
@@ -413,7 +418,6 @@ RUN_TEST_STEP 120 TE_smsprt  SendSMS     z:\testdata\configs\SMSOutOfDiskSpace.i
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini  MessageExpectedSecondMessage
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 END_TESTCASE                   TEL-SMS-SMSPRT-0136
 
 
@@ -437,13 +441,12 @@ RUN_UTILS  copyfile  z:\testdata\configs\smsclass0preallocated.dat  c:\private\1
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smsclass0preallocated.dat
 RUN_UTILS  copyfile  z:\testdata\configs\smsclass0reast.dat    c:\private\101F7989\esock\smsclass0reast.dat
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber1
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber1
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS DeleteFile c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0137
 
@@ -471,13 +474,12 @@ RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\1
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   z:\testdata\configs\smswap_DontDiscardType0s.esk   c:\private\101F7989\esock\smswap.sms.esk
 //Run Steps
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber25
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber25
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 //Tear Down
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
@@ -508,13 +510,12 @@ RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\1
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   z:\testdata\configs\smswap_discardType0s.esk    c:\private\101F7989\esock\smswap.sms.esk
 //Run Steps
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber25
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber25
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 //Tear Down
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
@@ -522,41 +523,40 @@ RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\10
 END_TESTCASE                   TEL-SMS-SMSPRT-0139
 
 
-START_TESTCASE                 TEL-SMS-SMSPRT-0140
-//! @SYMTestCaseID               TEL-SMS-SMSPRT-0140
-//! @SYMTestCaseDesc             Receive a type 0 class 2 single PDU message when there is NO availale disk space. SMS Stack is configured Not to discard type 0 messages. I.e. Class Takes precedence.
-//! @SYMFssID                    3.1.10.3
-//! @SYMREQ                      7232
-//! @SYMPREQ                     1736
-//! @SYMComponent                SMSStack
-//! @SYMTestPriority             Critical
-//! @SYMTestActions              Fill the disk. Receive a single PDU Class 0 type 0 message.
-//! @SYMTestExpectedResults      No message is delivered to the client, message is negatively Ack'd.
-//! @SYMTestType                 CIT
-//! @SYMTestCaseDependencies     SIM TSY
-//! @SYMCreationDate             1/12/2006
-//! @SYMAuthor                   danieldu
-//! @SYMTestStatus               2. Development
-//Setup
-RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
-RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
-RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
-RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
-RUN_UTILS  copyfile   z:\testdata\configs\smswap_DontDiscardType0s.esk   c:\private\101F7989\esock\smswap.sms.esk
-//Run Steps
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber26
-RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
-RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
-RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
-RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
-RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
-//Tear Down
-RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
-RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
-RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
-END_TESTCASE                   TEL-SMS-SMSPRT-0140
+//START_TESTCASE                 TEL-SMS-SMSPRT-0140
+////! @SYMTestCaseID               TEL-SMS-SMSPRT-0140
+////! @SYMTestCaseDesc             Receive a type 0 class 2 single PDU message when there is NO availale disk space. SMS Stack is configured Not to discard type 0 messages. I.e. Class Takes precedence.
+////! @SYMFssID                    3.1.10.3
+////! @SYMREQ                      7232
+////! @SYMPREQ                     1736
+////! @SYMComponent                SMSStack
+////! @SYMTestPriority             Critical
+////! @SYMTestActions              Fill the disk. Receive a single PDU Class 0 type 0 message.
+////! @SYMTestExpectedResults      No message is delivered to the client, message is negatively Ack'd.
+////! @SYMTestType                 CIT
+////! @SYMTestCaseDependencies     SIM TSY
+////! @SYMCreationDate             1/12/2006
+////! @SYMAuthor                   danieldu
+////! @SYMTestStatus               2. Development
+////Setup
+//RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
+//RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
+//RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
+//RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
+//RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
+//RUN_UTILS  copyfile   z:\testdata\configs\smswap_DontDiscardType0s.esk   c:\private\101F7989\esock\smswap.sms.esk
+////Run Steps
+//RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber26
+//RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
+//RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
+//RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
+//RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
+//RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
+////Tear Down
+//RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
+//RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
+//RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
+//END_TESTCASE                   TEL-SMS-SMSPRT-0140
 
 
 START_TESTCASE                 TEL-SMS-SMSPRT-0141
@@ -576,13 +576,12 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0141
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol      z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber7
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol      z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber7
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits   z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace       z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS         z:\testdata\configs\SMSOutOfDiskSpace.ini  MessageNotExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0141
 
@@ -602,13 +601,12 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0146
 //! @SYMTestStatus               2. Development
 RUN_UTILS  			DeleteFile	c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  			DeleteFile  c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  	TE_smsprt  	LoadSMSProtocol   			z:\testdata\configs\SIMTSYTestNumbers.ini  	TestNumber17
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol             z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber17
 RUN_TEST_STEP 60	TE_smsprt  	SetDiskMonitorLimits 		z:\testdata\configs\SMSOutOfDiskSpace.ini 	DiskMonitorLimits
 RUN_TEST_STEP 120 	TE_smsprt  	SetDiskSpace    			z:\testdata\configs\SMSOutOfDiskSpace.ini  	DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  	TE_smsprt  	EnumerateInOODCondition
 RUN_TEST_STEP 120  	TE_smsprt  	FreeDiskSpace
 RUN_TEST_STEP 60  	TE_smsprt  	CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  			DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0146
 
@@ -630,13 +628,12 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0151
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber30
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber30
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits     z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace        z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  SendReceiveSMSWhileServerInOOM   z:\testdata\configs\SMSOutOfDiskSpace.ini SendSinglePDU8BitMessageReceiveInOOM
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0151
 
@@ -660,7 +657,7 @@ RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile    z:\testdata\configs\smswap_MaxFivePDUsInOOD.esk   c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol         z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber15
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol         z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber15
 RUN_TEST_STEP 60    TE_smsprt   SetDiskMonitorLimits    z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskMonitorLimits
 RUN_TEST_STEP 120   TE_smsprt   SendSMS             z:\testdata\configs\SMSOutOfDiskSpace.ini   SinglePDU8BitMessage
 RUN_TEST_STEP 120   TE_smsprt   ReceiveSMS             z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageNotExpected
@@ -675,7 +672,6 @@ RUN_TEST_STEP 120   TE_smsprt   SendSMS             z:\testdata\configs\SMSOutOf
 RUN_TEST_STEP 120   TE_smsprt   ReceiveSMS             z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageExpectedTwoPDUs
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
@@ -704,13 +700,12 @@ RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile    z:\testdata\configs\smswap_discardType0s.esk   c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber6
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber6
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits    z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS          z:\testdata\configs\SMSOutOfDiskSpace.ini MessageNotExpected
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS   DeleteFile   c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
@@ -739,7 +734,7 @@ RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   MakeReadWrite  c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   z:\testdata\configs\smswap_MaxFivePDUsInOOD.esk    c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol     z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber32
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol     z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber32
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits  z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskMonitorLimits
 RUN_TEST_STEP 60  TE_smsprt  Class0StoreEnabled    z:\testdata\configs\SMSOutOfDiskSpace.ini   EnableClass0Store
 //Fill the preallocation file
@@ -749,7 +744,6 @@ RUN_TEST_STEP 120 TE_smsprt  SendSMS      z:\testdata\configs\SMSOutOfDiskSpace.
 RUN_TEST_STEP 120   TE_smsprt  ReceiveSMS     z:\testdata\configs\SMSOutOfDiskSpace.ini  MessageExpectedFirstMessage
 RUN_TEST_STEP 120   TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60   TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS   DeleteFile   c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite   c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile    c:\private\101F7989\esock\smswap.sms.bak     c:\private\101F7989\esock\smswap.sms.esk
@@ -777,7 +771,7 @@ RUN_UTILS  DeleteFile   c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS   copyfile  c:\private\101F7989\esock\smswap.sms.esk      c:\private\101F7989\esock\smswap.sms.bak
 RUN_UTILS  MakeReadWrite   		c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS  copyfile   			z:\testdata\configs\smswap_Class0DisabledMaxFivePDUsInOOD.esk  	c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 60   	TE_smsprt  	LoadSMSProtocol    	z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber16
+RUN_TEST_STEP 60   	TE_smsprt  	LoadSMSProtocol    	z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber16
 RUN_TEST_STEP 60   	TE_smsprt  	Class0StoreEnabled 	z:\testdata\configs\SMSOutOfDiskSpace.ini   DisableClass0Store
 //Fill the preallocation file
 RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace      z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
@@ -787,7 +781,6 @@ DELAY 60000
 RUN_TEST_STEP 60  TE_smsprt   ReceiveSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  MessageNotExpected
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS   DeleteFile      c:\private\101F7989\sms\smsu.rsc
 RUN_UTILS   MakeReadWrite    c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS   copyfile       c:\private\101F7989\esock\smswap.sms.bak  c:\private\101F7989\esock\smswap.sms.esk
@@ -810,7 +803,7 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0127
 //! @SYMTestStatus               2. Development
 RUN_UTILS  	DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  	DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol   		z:\testdata\configs\SIMTSYTestNumbers.ini  	TestNumber3
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol        z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber3
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits 	z:\testdata\configs\SMSOutOfDiskSpace.ini 	DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SendSMS     			z:\testdata\configs\SMSOutOfDiskSpace.ini   SinglePDU8BitMessage
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace    		z:\testdata\configs\SMSOutOfDiskSpace.ini  	DiskSpaceBelowLowLimit
@@ -818,7 +811,6 @@ RUN_TEST_STEP 120 TE_smsprt  SendSMS     			z:\testdata\configs\SMSOutOfDiskSpac
 RUN_TEST_STEP 60  TE_smsprt  ReceiveSMS    			z:\testdata\configs\SMSOutOfDiskSpace.ini 	MessageExpected
 RUN_TEST_STEP 120  TE_smsprt FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS   DeleteFile     c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE           TEL-SMS-SMSPRT-0127
 
@@ -840,13 +832,12 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0152
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini  TestNumber31
+RUN_TEST_STEP 60  TE_smsprt  LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini  TestNumber31
 RUN_TEST_STEP 60  TE_smsprt  SetDiskMonitorLimits     z:\testdata\configs\SMSOutOfDiskSpace.ini DiskMonitorLimits
 RUN_TEST_STEP 120 TE_smsprt  SetDiskSpace        z:\testdata\configs\SMSOutOfDiskSpace.ini  DiskSpaceBelowLowLimit
 RUN_TEST_STEP 60  TE_smsprt  SendReceiveSMSWhileServerInOOM   z:\testdata\configs\SMSOutOfDiskSpace.ini SendSinglePDU8BitMessageReceiveMultipleInOOM
 RUN_TEST_STEP 120  TE_smsprt  FreeDiskSpace
 RUN_TEST_STEP 60  TE_smsprt  CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0152
 
@@ -868,7 +859,7 @@ START_TESTCASE                 TEL-SMS-SMSPRT-0153
 //! @SYMTestStatus               2. Development
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0preallocated.dat
 RUN_UTILS  DeleteFile   c:\private\101F7989\sms\smsclass0reast.dat
-RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\SIMTSYTestNumbers.ini   TestNumber11
+RUN_TEST_STEP 60    TE_smsprt   LoadSMSProtocol       z:\testdata\configs\smsstacksimtsytestnumbers.ini   TestNumber11
 RUN_TEST_STEP 60    TE_smsprt   SetDiskMonitorLimits   z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskMonitorLimits
 RUN_TEST_STEP 120   TE_smsprt   SetDiskSpace         z:\testdata\configs\SMSOutOfDiskSpace.ini   DiskSpaceBelowLowLimit
 RUN_TEST_STEP 120   TE_smsprt   SendSMS        z:\testdata\configs\SMSOutOfDiskSpace.ini  SinglePDU8BitMessage
@@ -877,7 +868,6 @@ RUN_TEST_STEP 120   TE_smsprt   SendSMS        z:\testdata\configs\SMSOutOfDiskS
 RUN_TEST_STEP 60    TE_smsprt   ReceiveSMS           z:\testdata\configs\SMSOutOfDiskSpace.ini   MessageNotExpected
 RUN_TEST_STEP 120   TE_smsprt   FreeDiskSpace
 RUN_TEST_STEP 60    TE_smsprt   CloseSMSProtocol
-RUN_TEST_STEP 60	TE_smsprt   ESockMemoryLeakTest
 RUN_UTILS  DeleteFile  c:\private\101F7989\sms\smsu.rsc
 END_TESTCASE                   TEL-SMS-SMSPRT-0153
 

@@ -16,23 +16,19 @@
 #ifndef _TE_SMSSTORBASE_H_
 #define _TE_SMSSTORBASE_H_
 
+#include <testconfigfileparser.h>
+#include <test/testexecuteserverbase.h>
+#include <logwrap.h>
+#include <es_sock.h>
+
 #include "gsmubuf.h"
 #include "Gsmumsg.h"
 #include "gsmuset.h"
 #include "smsuset.h"
 #include "testconfigfileparser.h"
-
-#include <es_sock.h>
 #include "smsuaddr.H"
 #include "smsustrm.h"
-
 #include "smsprot.h"
-
-#include <logwrap.h>
-
-#include <testconfigfileparser.h>
-#include <test/testexecuteserverbase.h>
-
 
 const TInt KMaxNumberOfCharsFor7BitSms = 160;
 

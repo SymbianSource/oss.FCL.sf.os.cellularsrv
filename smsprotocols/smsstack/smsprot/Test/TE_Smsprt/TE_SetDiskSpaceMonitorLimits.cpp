@@ -16,17 +16,24 @@
 
 #include "TE_smsmondsk.h"
 
+CSetDiskMonitorLimits::CSetDiskMonitorLimits()
+/** 
+    Each test step initialises it's own name
+*/
+    {
+    iPartOfMultiStepTestCase = ETrue;
+    }
+
 enum TVerdict CSetDiskMonitorLimits::doTestStepL()
 /**
 	Creates smsu.rsc file which defines the upper and lower limits for the disk space monitor
 */
-
     {
 #ifndef _DEBUG
     INFO_PRINTF1(_L("This test can only be run when the SMS Stack is in debug mode."));
 #else    
-    TInt highDrop = 4;
-    TInt lowDrop = 10;
+    TInt highDrop = 3;
+    TInt lowDrop  = 8;
     TInt freeDrop = 0;
    
     GetIntFromConfig(_L("DiskMonitorLimits"), _L("highDrop"), highDrop);

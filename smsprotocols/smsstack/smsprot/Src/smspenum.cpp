@@ -937,6 +937,7 @@ void CSmsMessageWrite::DoRunL()
 					{
 					if ((iStoreInfo.iCaps & RMobilePhoneStore::KCapsWriteAccess) == 0)
 						{
+                        LOGSMSPROT2("CSmsMessageWrite::DoRunL left with KErrNotSuported [iState=%d]", iState);
 						User::Leave(KErrNotSupported);
 						}
 
@@ -954,7 +955,8 @@ void CSmsMessageWrite::DoRunL()
 						}
 					else
 						{
-						User::Leave(KErrNotFound); //< TODO Is this correct?
+                        LOGSMSPROT2("CSmsMessageWrite::DoRunL left with KErrNotFound [iState=%d]", iState);            
+						User::Leave(KErrNotFound);
 						}
 					}
 				}

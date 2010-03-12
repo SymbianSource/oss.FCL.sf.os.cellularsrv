@@ -76,6 +76,8 @@ class CMmDataPackage;
 
 class MTelephonyAudioControl;
 
+class CCtsySystemStatePluginHandler;
+
 // CLASS DECLARATION
 
 /**
@@ -239,6 +241,10 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
          */
          TBool IsModemStatusReady() const;
          
+         CCtsySystemStatePluginHandler* SystemStatePluginHandler()
+            {
+             return iSystemStatePluginHandler;
+            }
     private:
 		  /** used for queuing GetServiceTable requests */
 		  struct TServiceTableRequests
@@ -1463,6 +1469,13 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
          */
         void SaveFdnInfoDetails(TInt aErrorCode, CMmDataPackage* aDataPackage );
 
+        /*
+		 * This method used to notify the phone that the phone book store initilization was complete
+         *
+         * @param  aError Error value
+         */
+        void PhoneBookStoreInitCompleteL(TInt aError);
+        
     private:
     
         /**
@@ -2709,6 +2722,16 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
 	    * Pointer to the ChargingStatusObserver
 	    */
         CChargingStatusObserver* iChargingStatus;
+        
+        /**
+        * Pointer to SystemStatePlugin
+        */
+        CCtsySystemStatePluginHandler* iSystemStatePluginHandler;
+        
+        /**
+        * Holds the mailbox data
+        */
+        RMobilePhone::TMobilePhoneVoicemailIdsV3 iMailboxData;
     };
 
 #endif // CMMPHONETSY_H

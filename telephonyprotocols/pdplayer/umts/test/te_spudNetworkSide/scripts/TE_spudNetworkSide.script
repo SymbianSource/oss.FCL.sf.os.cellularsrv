@@ -553,6 +553,23 @@ RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetwo
 END_TESTCASE            NET-Spud-NetworkSide-0829
 
 run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
+run_script z:\TestData\scripts\te_esock_test_loadesock.script
+
+START_TESTCASE          NET-Spud-NetworkSide-0830
+//! @SYMTestCaseID      NET-Spud-NetworkSide-0830
+//! @SYMTestCaseDesc Sanity check: fail to activate Primary context (KErrCorrupt) because of bad QoS record in UmtsR99QoSAndOnTable. 
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Explicitly start the SPUD interface. SIM TSY, etc fail to activate the primary context.
+//! @SYMTestExpectedResults  Primary PDP context activation fails with -20.
+//! @SYMTestPriority Critical
+//! @SYMTestStatus Implemented
+//! @SYMTestType CIT
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudPrimary z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationFails20
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+END_TESTCASE            NET-Spud-NetworkSide-0830
+
+run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
 
 RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
 RUN_UTILS  MakeReadWrite c:\config.txt

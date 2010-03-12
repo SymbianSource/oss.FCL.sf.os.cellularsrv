@@ -218,6 +218,7 @@ private:	// Not owned
     MLtsyDispatchCallControlSendDtmfTones* iLtsyDispatchCallControlSendDtmfTones;
     MLtsyDispatchCallControlGetIdentityServiceStatus* iLtsyDispatchCallControlGetIdentityServiceStatus;
     MLtsyDispatchCallControlSwap* iLtsyDispatchCallControlSwap;
+    MLtsyDispatchCallControlSwap* iLtsyDispatchCallControlSingleSwap;
     MLtsyDispatchCallControlLoanDataPort* iLtsyDispatchCallControlLoanDataPort;
     MLtsyDispatchCallControlRecoverDataPort* iLtsyDispatchCallControlRecoverDataPort;
     MLtsyDispatchCallControlStartDtmfTone* iLtsyDispatchCallControlStartDtmfTone;
@@ -283,13 +284,13 @@ private:	// Not owned
      * These Call IDs should only have a value != -1 when there is a pending swap
      * operation.
      */
-    TInt iSwapHeldCallId;
-    TInt iSwapConnectedCallId;
+    TInt iSwapCallId;
+    TInt iSecondSwapCallId;
 
     /**
      * These are the two Call IDs of the calls on which a transfer operation
-     * has been requested. It is needed for the same reason as iSwapHeldCallId
-     * and iSwapConnectedCallId above.
+     * has been requested. It is needed for the same reason as iSwapCallId
+     * and iSecondSwapCallId above.
      */
     TInt iTransferHeldCallId;
     TInt iTransferSecondCallId;

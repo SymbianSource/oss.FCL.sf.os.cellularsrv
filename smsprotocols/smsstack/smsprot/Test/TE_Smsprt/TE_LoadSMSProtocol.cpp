@@ -20,31 +20,26 @@
 #include <smspver.h>
 #include "Te_SmsTestSteps.h"
 
+#include "smsstacktestconsts.h"
+
 CLoadSMSProtocol::CLoadSMSProtocol(RSocketServ &aSocketServer)
 /** Each test step initialises it's own name
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
+	iPartOfMultiStepTestCase = ETrue;
 	}
 
 /** 
 	This step is required before using the SMS stack.
-	It connects with the socket server, opens a socket subsession AND powers-up the phones using
-	interface to  Etel.
+	It connects with the socket server and opens a socket subsession.
 */
 TVerdict CLoadSMSProtocol::doTestStepL()
-	{	
-	TInt testNumber;
-	GetIntFromConfig(ConfigSection(), _L("testNumber"), testNumber);
-	INFO_PRINTF2(_L("Setting test number, %d"),testNumber );
-	SetSimTSYTestNumberL(testNumber);
-		
-	WaitForInitializeL();
-	
+	{		
 	INFO_PRINTF1(_L("Connecting to SocketServer"));
-	TInt ret=iSocketServer->Connect(KSocketMessageSlots);
+	TInt ret=iSharedSocketServer->Connect(KSocketMessageSlots);
 	TEST(ret == KErrNone);
-
+	
 #ifdef _DEBUG	
     TInt err = RProperty::Define(KUidPSSMSStackCategory, KUidPSSMSStackFreeDiskSpaceKey, RProperty::EInt);
     if ((err != KErrNone) && (err != KErrAlreadyExists))    
@@ -53,9 +48,5 @@ TVerdict CLoadSMSProtocol::doTestStepL()
         User::Leave(err);
         }
 #endif	
-		
 	return TestStepResult();
 	}
-	
-	
-	

@@ -91,6 +91,7 @@ TBool CMockCallControlMessHandler::IsHandlerForApi(TInt aApiId)
 		case MLtsyDispatchCallControlSendDtmfTones::KLtsyDispatchCallControlSendDtmfTonesApiId:
 		case MLtsyDispatchCallControlGetIdentityServiceStatus::KLtsyDispatchCallControlGetIdentityServiceStatusApiId:
 		case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSwapApiId:
+		case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId:
 		case MLtsyDispatchCallControlLoanDataPort::KLtsyDispatchCallControlLoanDataPortApiId:
 		case MLtsyDispatchCallControlRecoverDataPort::KLtsyDispatchCallControlRecoverDataPortApiId:
 		case MLtsyDispatchCallControlStartDtmfTone::KLtsyDispatchCallControlStartDtmfToneApiId:
@@ -217,6 +218,12 @@ TInt CMockCallControlMessHandler::ExtFuncL(TInt aInterfaceId, VA_LIST& aList)
     		TInt heldCallId = VA_ARG(aList, TInt);
     		TInt connectedCallId = VA_ARG(aList, TInt);
     		TMockLtsyData2<TInt, TInt> data(heldCallId, connectedCallId);
+    		return iMockLtsyEngine.ExecuteCommandL(aInterfaceId, data);
+    		}
+    	case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId:
+    		{
+    		TInt callId = VA_ARG(aList, TInt);
+    		TMockLtsyData1<TInt> data(callId);
     		return iMockLtsyEngine.ExecuteCommandL(aInterfaceId, data);
     		}
     	case MLtsyDispatchCallControlLoanDataPort::KLtsyDispatchCallControlLoanDataPortApiId:
@@ -463,6 +470,11 @@ void CMockCallControlMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt
 			}
 			break;
 		case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSwapApiId:
+		    {
+			iCompletionCallback.CallbackCallControlSwapComp(aResult);
+			}
+			break;
+		case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId:
 		    {
 			iCompletionCallback.CallbackCallControlSwapComp(aResult);
 			}

@@ -15,32 +15,19 @@
 *
 */
 
-
-
 /**
- @file
+    @file
+    @test
 */
 
-#if (!defined __WAPPROT_SUITE_STEP_BASE__)
-#define __WAPPROT_SUITE_STEP_BASE__
-#include <test/testexecutestepbase.h>
+#ifndef WAPPROTSUITESTEPBASE_H
+#define WAPPROTSUITESTEPBASE_H
+
+#include "smsstackbaseteststeps.h"
+
 #include <connect/sbeclient.h>
-
-#include <es_sock.h>
 #include <es_wsms.h>
-#include <smsuaddr.h>
-#include <gsmumsg.h>
-#include <gsmubuf.h>
-
-#include <c32comm.h>
-#include <etel.h>
-#include <e32property.h>
-#include <simtsy.h>
-#include <smsuaddr.h>
 #include <etelmm.h>
-#include "WapProtSuiteDefs.h"
-#include "wap_sock.h"
-#include "smsustrm.h"
 
 #if defined (__WINS__)
 #define PDD_NAME _L("ECDRV")
@@ -53,58 +40,41 @@
 
 using namespace conn;
 
-
-// Location and name of the RSC file.
-_LIT(KSMSUResourceDir, "C:\\private\\101f7989\\sms\\");
-_LIT(KSMSUResourceFile, "C:\\private\\101f7989\\sms\\smsu.rsc");
-// Location of directory for reserving disk space
-_LIT(KTempDiskSpaceDirName, "C:\\sms\\temp\\");
-
-class CWapProtSuiteStepBase : public CTestStep
+class CWapProtSuiteStepBase : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepPreambleL();
 	virtual TVerdict doTestStepPostambleL();
+
+    void SetupWapSocketL();
+    void SetupWapSocketL(RSocket& aSocket, TWapAddr& aWapAddr, const TDesC& aPort, TBool aNewStyleClient = ETrue);
+    //Socket for receiving status reports
+    void SetupStatusReportSocketL();
 	
-	
-	
-	//Utitilies
-	void WaitForRecvL(RSocket& aSocket);
-	CSmsMessage* RecvSmsL(RSocket& aSocket, TInt aIoctl = KIoctlReadMessageSucceeded);
-	TUint64 SetHighLowLimitsAndDiskSpaceLevelL(TUint aHighDrop, TUint aLowDrop, TUint aFreeDrop, TUint64 aMax=0x7fffffff);
-	void SetFreeDiskSpaceFromDropLevelL(TUint aFreeDrop);
-	void SetLowHighLimitsInSmsuRscL(TInt64 aLowLimit, TInt64 aHighLimit);
-	void SetFreeDiskSpaceL(TInt64 aNewFreeValue);
-	void ReleaseDiskSpaceL();
-	void ReadWapPortSettingsL(TWapAddr &aWapAddr);
-	void SetTestNumberL();
-	void SetWapAddrL();
+	void ReadWapPortSettingsL(TWapAddr& aWapAddr, const TDesC& aPort);
 	void SetCodingSchemeL();
 	void SetMessageTypeL();
-	
-	//Socket for receiving status reports
-	void SetupStatusReportSocketL();
-
-private:
-	void CheckSmsMessageL(CSmsMessage& aSmsmessagebuf, TPtrC8& aScnumber);
 
 protected:
-	void WaitForInitializeL();
 	void InternaliseSmsDataAndCheckL(TDes8& aBuffer , TPtrC8& aScnumber);
 	TInt GetMessageParameterLengthL(RSocket& aSock);
 	void GetMessageParameterL(RSocket& aSock, TPtr8& aParameterStorePtr);
-	void OpenSocketLC(RSocketServ& aSocketServer, RSocket& aSocket, TUint aAddrFamily = KWAPSMSAddrFamily, TUint aProtocol =KWAPSMSDatagramProtocol);
-    void OpenSocketL(RSocketServ& aSocketServer, RSocket& aSocket, TUint aAddrFamily = KWAPSMSAddrFamily, TUint aProtocol =KWAPSMSDatagramProtocol);
+	
+	void OpenSocketLC(RSocketServ& aSocketServer, RSocket& aSocket, TUint aAddrFamily = KWAPSMSAddrFamily, TUint aProtocol =KWAPSMSDatagramProtocol);          
+	void OpenSocketL(RSocketServ& aSocketServer, RSocket& aSocket, TUint aAddrFamily = KWAPSMSAddrFamily, TUint aProtocol =KWAPSMSDatagramProtocol);
+    
+	void ReceiveWapMessageFromSocket(TInt aLength, TPtrC& aData);
+	void ReceiveWapMessage(TPtrC& aData);
+	void SendWapMessage(TPtrC& aData);
+	
+private:
+    void CheckSmsMessageL(CSmsMessage& aSmsmessagebuf, TPtrC8& aScnumber);
 
 protected:
-	CActiveScheduler*  iScheduler;
-	CSBEClient*  iSecureBackupEngine;
-	RSocketServ iSocketServer;
 	RSocket iSocket;
 	RSocket iStatusReportSocket;
 	TWapAddr iWapAddr;
-	TWapSmsDataCodingScheme iCodingScheme;
 	TSmsAddr iSmsAddr;
 	};
 
-#endif
+#endif // WAPPROTSUITESTEPBASE_H

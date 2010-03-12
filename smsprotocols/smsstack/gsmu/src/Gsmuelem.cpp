@@ -682,14 +682,11 @@ TSmsDataCodingScheme::TSmsAlphabet TSmsDataCodingScheme::Alphabet() const
 			break;
 			}
 		default:
+		    LOGGSMU1("TSmsDataCodingScheme::Alphabet() WARNING! default case has been reached");
             break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-            // Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-		}
+ 		}
 	return (TSmsAlphabet) alphabet;
 	} // TSmsDataCodingScheme::TSmsAlphabet
-
 
 void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
 	{
@@ -720,38 +717,40 @@ void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
 			}
 		case (ESmsDCSMessageWaitingIndicationDiscardMessage):
 			{
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//if (aAlphabet!=ESmsAlphabet7Bit)
-				//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
+            if (aAlphabet!=ESmsAlphabet7Bit)
+                {
+                LOGGSMU3("TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
+                }
 			break;
 			}
 		case (ESmsDCSMessageWaitingIndication7Bit):
 			{
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//if (aAlphabet==ESmsAlphabet8Bit)
-				//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-			if (aAlphabet==ESmsAlphabetUCS2)
+ 			if (aAlphabet==ESmsAlphabetUCS2)
+ 			    {
 				iValue=(TUint8) (ESmsDCSMessageWaitingIndicationUCS2|(iValue&(~ESmsDCSBits7To4Mask)));
+ 			    }
+ 			else 
+                {
+        		LOGGSMU3("TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
+			    }	     
 			break;
 			}
 		case (ESmsDCSMessageWaitingIndicationUCS2):
 			{
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//if (aAlphabet==ESmsAlphabet8Bit)
-				//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-			if (aAlphabet==ESmsAlphabet7Bit)
+  			if (aAlphabet==ESmsAlphabet7Bit)
+			    {
 				iValue=(TUint8) (ESmsDCSMessageWaitingIndication7Bit|(iValue&(~ESmsDCSBits7To4Mask)));
+			    }
+			else 
+			    {
+				LOGGSMU3("TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
+			    }
 			break;
 			}
 		default:
+		    LOGGSMU1("TSmsDataCodingScheme::SetAlphabet() WARNING! default case has been reached");
             break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-		}
+      		}
 	} // TSmsDataCodingScheme::SetAlphabet
 
 
@@ -814,10 +813,8 @@ void TSmsDataCodingScheme::SetClass(TBool aClassDefined,TSmsDataCodingScheme::TS
 				break;
 				}
 			default:
+		        LOGGSMU1("WARNING! default case has been reached");
                 break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-				//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
 			}
 		}
 	else
@@ -880,11 +877,9 @@ TSmsDataCodingScheme::TSmsIndicationState TSmsDataCodingScheme::IndicationState(
 			break;
 			}
 		default:
+		    LOGGSMU1("WARNING! default case has been reached");
             break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-		}
+  		}
 	return state;
 	} // TSmsDataCodingScheme::TSmsIndicationState
 
@@ -904,11 +899,9 @@ void TSmsDataCodingScheme::SetIndicationState(TSmsIndicationState aState)
 			break;
 			}
 		default:
+		    LOGGSMU1("TSmsDataCodingScheme::SetIndicationState() WARNING! default case has been reached");
             break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-		}
+  		}
 	} // TSmsDataCodingScheme::SetIndicationState
 
 
@@ -928,10 +921,8 @@ TSmsDataCodingScheme::TSmsIndicationType TSmsDataCodingScheme::IndicationType() 
 			break;
 			}
 		default:
+		    LOGGSMU1("TSmsDataCodingScheme::IndicationType() WARNING default case has been reached");
             break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
 		}
 	return type;
 	} // TSmsDataCodingScheme::TSmsIndicationType
@@ -952,11 +943,9 @@ void TSmsDataCodingScheme::SetIndicationType(TSmsIndicationType aType)
 			break;
 			}
 		default:
+		    LOGGSMU1("TSmsDataCodingScheme::SetIndicationType() WARNING! default case has been reached");
             break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-			//Panic(KGsmuPanicNotSupportedWithDCSBits7To4);
-		}
+ 		}
 	} // TSmsDataCodingScheme::SetIndicationType
 
 
@@ -2743,17 +2732,17 @@ void CSmsAddress::NewBufferL(TInt aLength)
 	{
 	LOGGSMU1("CSmsAddress::NewBufferL()");
 
-	HBufC* buffer=HBufC::NewL(aLength);
-	delete iBuffer;
-	iBuffer=buffer;
-	iBuffer->Des().SetLength(aLength);
-	iBuffer->Des().FillZ();
-	} // CSmsAddress::NewBufferL
+    HBufC* buffer=HBufC::NewL(aLength);
+    delete iBuffer;
+    iBuffer=buffer;
+    iBuffer->Des().SetLength(aLength);
+    iBuffer->Des().FillZ();
+	}
 
 
 void CSmsAddress::DoSetParsedAddressL(const TDesC& aAddress)
 	{
-	LOGGSMU1("CSmsAddress::DoSetParsedAddressL()");
+	LOGGSMU2("CSmsAddress::DoSetParsedAddressL() the length of the Address [Length = %d", aAddress.Length());
 
 	TInt length=aAddress.Length();
 	if ((iTypeOfAddress.TON()==EGsmSmsTONInternationalNumber) &&
@@ -3900,11 +3889,9 @@ EXPORT_C TInt CSmsUserData::MaxBodyLengthInChars() const
 				break;
 				}
 			default:
+			    LOGGSMU1("CSmsUserData::MaxBodyLengthInChars() WARNING! default case has been reached");
                 break;
-            // TODO - ahe - Never Panic GSMU !!!
-            // has to be tested, what happens in this default case
-				//Panic(KGsmuPanicUnsupportedAlphabet);
-			}
+ 			}
 		}
 	return maxbodylengthinchars;
 	} // CSmsUserData::MaxBodyLengthInChars
@@ -4281,10 +4268,8 @@ TInt CSmsUserData::TotalHeaderLengthInUDLUnits() const
 					break;
 					}
 				default:
+				    LOGGSMU1("CSmsUserData::TotalHeaderLengthInUDLUnits() WARNING default case has been reached");
                     break;
-                // TODO - ahe - Never Panic GSMU !!!
-                // has to be tested, what happens in this default case
-					//Panic(KGsmuPanicUnsupportedAlphabet);
 				}
 			}
 		}

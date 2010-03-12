@@ -42,7 +42,6 @@ class CSmsMonitorDiskSpace;
 class CSmsPDURead;
 
 /**
-ToDo What is correct value of KDefaultMaxmumNumberOfCompleteMessagesInReassemblyStore?
 @internalComponent
 */
 

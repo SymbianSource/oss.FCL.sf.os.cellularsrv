@@ -90,9 +90,6 @@ TBool CWapReassemblyStore::AddMessageL( TInt& aIndex, const CWapDatagram& aDatag
             CWapDatagram* tempDatagram = CWapDatagram::NewL(KNullDesC8);
             CleanupStack::PushL(tempDatagram);
 
-            // defect fix for EDNJJUN-4WYJGP
-            // Unable to send sms cause sms*.dat is corrupted
-            // TODO - has to be back ported to higher versions
             TRAPD(ret, InternalizeEntryL(StreamdId,*tempDatagram,*segmentArray));
             if(ret == KErrCorrupt)
                 {
@@ -212,7 +209,6 @@ void CWapReassemblyStore::GetDatagramL( TInt            aIndex,
 
     // defect fix for EDNJJUN-4WYJGP
     // Unable to send sms cause sms*.dat is corrupted
-    // TODO - has to be back ported to higher versions
     TRAPD(ret, InternalizeEntryL(Entries()[aIndex].DataStreamId(), aDatagram,*segmentArray));
     if(ret == KErrCorrupt)
         {

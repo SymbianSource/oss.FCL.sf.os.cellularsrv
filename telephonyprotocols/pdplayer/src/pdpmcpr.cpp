@@ -154,17 +154,26 @@ void CPdpMetaConnectionProvider::SetAccessPointConfigFromDbL()
 	mec.AppendExtensionL(gprsProvision);
 	CleanupStack::Pop(gprsProvision);
 	
-	//It's legal for the qos defaults to be absent.
-	//in this case they're going to be supplied by
-	//GuQoS.
+	//It's not legal for the qos defaults to be absent.
 	CDefaultPacketQoSProvision* defaultQoS = NULL;
-	TRAP_IGNORE(defaultQoS = CDefaultPacketQoSProvision::NewL(iapView));
-	if (defaultQoS)
-    	{
-    	CleanupStack::PushL(defaultQoS);
-     	mec.AppendExtensionL(defaultQoS);
-     	CleanupStack::Pop(defaultQoS);
-    	}
+	TRAPD(ret, defaultQoS = CDefaultPacketQoSProvision::NewL(iapView));	  
+    if ((KErrNone == ret) && defaultQoS)           
+        {
+        CleanupStack::PushL(defaultQoS);
+        mec.AppendExtensionL(defaultQoS);
+        CleanupStack::Pop(defaultQoS);
+        }
+    else
+        {
+        if (KErrNoMemory == ret)
+            {
+            User::Leave(KErrNoMemory);
+            }
+        else
+            {
+            User::Leave(KErrCorrupt);
+            }          
+        }    
 	
 	CRawIpAgentConfig* rawIpAgentConfig = CRawIpAgentConfig::NewLC(iapView, &gprsProvision->GetScratchContextAs<TPacketDataConfigBase>());
 	mec.AppendExtensionL(rawIpAgentConfig);

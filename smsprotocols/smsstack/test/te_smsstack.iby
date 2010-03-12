@@ -29,13 +29,13 @@
 //
 // SMS Stack Test Utility DLLs...
 //
-file=ABI_DIR\BUILD_DIR\smsstacktestutilities.dll                                         SYSTEM_BINDIR\smsstacktestutilities.dll
+file=ABI_DIR\DEBUG_DIR\smsstacktestutilities.dll                                         SYSTEM_BINDIR\smsstacktestutilities.dll
 
 //
 // Gsmu Test Code...
 //
-file=ABI_DIR\BUILD_DIR\te_gsmu.exe                                                       SYSTEM_BINDIR\te_gsmu.exe
-file=ABI_DIR\BUILD_DIR\te_gsmustor.exe                                                   SYSTEM_BINDIR\te_gsmustor.exe
+file=ABI_DIR\DEBUG_DIR\te_gsmu.exe                                                       SYSTEM_BINDIR\te_gsmu.exe
+file=ABI_DIR\DEBUG_DIR\te_gsmustor.exe                                                   SYSTEM_BINDIR\te_gsmustor.exe
 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_gsmu.script                             testdata\scripts\te_gsmu.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_gsmustor.script                         testdata\scripts\te_gsmustor.script
@@ -43,7 +43,7 @@ data=EPOCROOT##epoc32\data\z\testdata\scripts\te_gsmustor.script                
 //
 // Smsprot Test Code...
 //
-file=ABI_DIR\BUILD_DIR\te_smsinter.exe                                                   SYSTEM_BINDIR\te_smsinter.exe stack=0x5000
+file=ABI_DIR\DEBUG_DIR\te_smsinter.exe                                                   SYSTEM_BINDIR\te_smsinter.exe stack=0x5000
 file=ABI_DIR\DEBUG_DIR\te_smsemsprt.exe                                                  SYSTEM_BINDIR\te_smsemsprt.exe
 file=ABI_DIR\DEBUG_DIR\te_smsstor.exe                                                    SYSTEM_BINDIR\te_smsstor.exe
 file=ABI_DIR\DEBUG_DIR\te_smsprtstress.exe                                               SYSTEM_BINDIR\te_smsprtstress.exe
@@ -70,11 +70,16 @@ data=EPOCROOT##epoc32\data\z\sms\smswap.sms-sendTryTimeout.esk                  
 data=EPOCROOT##epoc32\data\z\sms\smswap.sms-bootTimerTimeout.esk                         SMS\smswap.sms-bootTimerTimeout.esk
 
 
+data=EPOCROOT##epoc32\data\z\testdata\scripts\smsstackcleanprivatedata.script            TestData\scripts\smsstackcleanprivatedata.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\smsstackbackupeskfile.script               TestData\scripts\smsstackbackupeskfile.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\smsstackrestoreeskfile.script              TestData\scripts\smsstackrestoreeskfile.script
+
+data=EPOCROOT##epoc32\data\z\testdata\configs\smsstacksimtsytestnumbers.ini              TestData\configs\smsstacksimtsytestnumbers.ini
 
 data=EPOCROOT##epoc32\data\z\testdata\configs\t_smspdudb.txt                             testdata\configs\t_smspdudb.txt
 
 // te_smspdudb
-file=ABI_DIR\BUILD_DIR\te_smspdudb.exe                                                   SYSTEM_BINDIR\te_smspdudb.exe
+file=ABI_DIR\DEBUG_DIR\te_smspdudb.exe                                                   SYSTEM_BINDIR\te_smspdudb.exe
 
 //te_smspdudb script and configs
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_smspdudb.script                         testdata\scripts\te_smspdudb.script
@@ -84,7 +89,7 @@ data=EPOCROOT##epoc32\data\z\testdata\configs\te_smspdudb.txt                   
 data=EPOCROOT##epoc32\data\z\testdata\configs\smspdudb.txt                               testdata\configs\smspdudb.txt
 
 // te_R6SMS
-file=ABI_DIR\BUILD_DIR\te_R6SMS.exe                                                      SYSTEM_BINDIR\te_R6SMS.exe
+file=ABI_DIR\DEBUG_DIR\te_R6SMS.exe                                                      SYSTEM_BINDIR\te_R6SMS.exe
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_R6SMS.script                            testdata\scripts\te_R6SMS.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_R6SMS_setup.script                      testdata\scripts\te_R6SMS_setup.script
 
@@ -114,13 +119,12 @@ data=EPOCROOT##epoc32\data\c\sms\t_sms_inter_ems_6210.txt                       
 data=EPOCROOT##epoc32\data\z\sms\tsmsprt_config.txt                                      Sms\tsmsprt_config.txt
 data=EPOCROOT##epoc32\data\z\sms\tsmsprt_config_extra.txt                                Sms\tsmsprt_config_extra.txt
 data=EPOCROOT##epoc32\data\z\sms\tsmsprt_config_tx_rx_maxmsg.txt                         Sms\tsmsprt_config_tx_rx_maxmsg.txt
-data=EPOCROOT##epoc32\data\c\sms\tsmsprtStress_config.txt                                Sms\tsmsprtStress_config.txt
-data=EPOCROOT##epoc32\data\c\sms\tsmsemsprt_config.txt                                   Sms\tsmsemsprt_config.txt
+data=EPOCROOT##epoc32\data\z\sms\tsmsprtstress_config.txt                                Sms\tsmsprtstress_config.txt
+data=EPOCROOT##epoc32\data\z\sms\tsmsemsprt_config.txt                                   Sms\tsmsemsprt_config.txt
 data=EPOCROOT##epoc32\data\c\sms\smspdudb.txt                                            Sms\smspdudb.txt
 data=EPOCROOT##epoc32\data\c\sms\t_smspdudb.txt                                          Sms\t_smspdudb.txt
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_statusReportScheme.ini                  testdata\configs\te_statusReportScheme.ini
 data=EPOCROOT##epoc32\data\z\testdata\configs\TE_DiskSpaceMonitor.ini                  	 testdata\configs\TE_DiskSpaceMonitor.ini
-data=EPOCROOT##epoc32\data\z\testdata\configs\SIMTSYTestNumbers.ini                   	 testdata\configs\SIMTSYTestNumbers.ini
 
 //SMSOutOfDiskSpace
 #ifndef _DEBUG
@@ -135,6 +139,7 @@ data=EPOCROOT##epoc32\data\z\sms\SMSStackOutOfDiskSpace.txt                  		s
 data=EPOCROOT##epoc32\data\z\testdata\configs\smsclass0preallocated.dat             	testdata\configs\smsclass0preallocated.dat
 data=EPOCROOT##epoc32\data\z\testdata\configs\smsclass0reast.dat		        testdata\configs\smsclass0reast.dat
 data=EPOCROOT##epoc32\data\z\testdata\configs\smswap_class0.sms.esk                	testdata\configs\smswap_class0.sms.esk
+
 data=EPOCROOT##epoc32\data\z\testdata\configs\smswap_discardType0s.esk                	testdata\configs\smswap_discardType0s.esk
 data=EPOCROOT##epoc32\data\z\testdata\configs\smswap_DontDiscardType0s.esk            	testdata\configs\smswap_DontDiscardType0s.esk
 data=EPOCROOT##epoc32\data\z\testdata\configs\smswap_MaxFivePDUsInOOD.esk            	testdata\configs\smswap_MaxFivePDUsInOOD.esk
@@ -162,7 +167,7 @@ data=EPOCROOT##epoc32\data\z\testdata\configs\te_smsprt_data.ini                
 data=EPOCROOT##Epoc32\data\z\sms\smswap.sms-AutoDeletionClass2.esk                       sms\smswap.sms-AutoDeletionClass2.esk
 data=EPOCROOT##Epoc32\data\z\sms\smswap.sms-AutomaticDeletionOfType0.esk                 sms\smswap.sms-AutomaticDeletionOfType0.esk
 
-file=ABI_DIR\BUILD_DIR\te_gsmu_ems.exe                                                   System\bin\te_gsmu_ems.exe
+file=ABI_DIR\DEBUG_DIR\te_gsmu_ems.exe                                                   System\bin\te_gsmu_ems.exe
 
 data=EPOCROOT##Epoc32\data\z\TestData\scripts\te_gsmu_ems.script                         TestData\Scripts\te_gsmu_ems.Script
 
@@ -186,7 +191,7 @@ data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_wapthdr_setup.script           
 data=EPOCROOT##epoc32\data\z\testdata\configs\TE_waphdr.txt                              testdata\configs\TE_waphdr.txt
 
 // This binary file is marked as "data=" because in the ROM it is must be a RAM executable image to be used with SETCAP.exe.
-data=ABI_DIR\BUILD_DIR\TE_WapProt.exe                                                    SYSTEM_BINDIR\TE_WapProt.exe
+data=ABI_DIR\DEBUG_DIR\TE_WapProt.exe                                                    SYSTEM_BINDIR\TE_WapProt.exe
 
 data=EPOCROOT##Epoc32\data\z\testdata\configs\WapProtSuite\WapProtSuite.ini              testdata\configs\WapProtSuite\WapProtSuite.ini
 data=EPOCROOT##Epoc32\data\z\testdata\configs\WapProtSuite\WapStatusReports.ini          testdata\configs\WapProtSuite\WapStatusReports.ini
@@ -207,7 +212,7 @@ data=EPOCROOT##Epoc32\data\z\testdata\scripts\Te_WapStackOutOfDiskSpace.script  
 //
 // TE_WAPSMS files...
 //
-file=ABI_DIR\BUILD_DIR\TE_WAPSMS.exe                                                     SYSTEM_BINDIR\TE_WAPSMS.exe
+file=ABI_DIR\DEBUG_DIR\TE_WAPSMS.exe                                                     SYSTEM_BINDIR\TE_WAPSMS.exe
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_setupgsmsms.txt                         testdata\configs\te_setupgsmsms.txt
 data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_WAPSMS.script                           testdata\scripts\TE_WAPSMS.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_WAPSMS_setup.script                     testdata\scripts\TE_WAPSMS_setup.script

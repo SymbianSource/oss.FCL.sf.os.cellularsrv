@@ -24,7 +24,8 @@ CReceiveSMS::CReceiveSMS(RSocketServ &aSocketServer)
 	Each test step initialises it's own name
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
+	iPartOfMultiStepTestCase = ETrue;
 	}
 
 /**
@@ -35,26 +36,14 @@ TVerdict CReceiveSMS::doTestStepL()
 #ifndef _DEBUG
     INFO_PRINTF1(_L("This test can only be run when the SMS Stack is in debug mode."));
 #else   
-
-	//Read from the INI file.  
+	//Read from the INI file
 	TInt timeout=10;
 	GetIntFromConfig(ConfigSection(), _L("timeout"), timeout);
 	
+	TBool messageExpected;
+	GetBoolFromConfig(ConfigSection(), _L("isClientExpectingMessage"), messageExpected);
 	
-	TBool isThisADiskSpaceMonitorTest;
-	GetBoolFromConfig(_L("DiskSpaceMonitor"), _L("diskSpaceMonitor"), isThisADiskSpaceMonitorTest);
-	TBool isClientExpectingMessage;
-	GetBoolFromConfig(ConfigSection(), _L("isClientExpectingMessage"), isClientExpectingMessage);
-	
-	//Disk SpaceMonitor tests are only run in DEBUG builds
-	if(isThisADiskSpaceMonitorTest)
-		{
-#ifndef _DEBUG
-		return TestStepResult();
-#endif
-		}
-	
-	if( isClientExpectingMessage && timeout < 40 )
+	if( messageExpected && timeout < 40 )
 		{
 		// Change timeout to be 40 seconds
 		timeout = 40;
@@ -63,57 +52,50 @@ TVerdict CReceiveSMS::doTestStepL()
 	INFO_PRINTF1(_L("Receiving SMS message..."));
 
 	//Open the socket for receiving messages
-	INFO_PRINTF1(_L("Opening socket and loading SMS Protocol"));
 	RSocket socket;
-	OpenSmsSocketL(*iSocketServer, socket, ESmsAddrRecvAny);
+	OpenSmsSocketL(*iSharedSocketServer, socket, ESmsAddrRecvAny);
+	CleanupClosePushL(socket);
 
 	//Message must be received in "timeout" else the test will fail	
 	INFO_PRINTF2(_L("Wait for message (timeout: %d)..."), timeout);
 	TBool messageReceived = TimedWaitForRecvL(socket, timeout*1000000);
 	
-	if(messageReceived)
-		{
-		INFO_PRINTF1(_L("Message received!"));		
-		}
-	
-	//Set the result to "fail" if no message is received in the specified time
-	if(messageReceived && isClientExpectingMessage )
-		{
-		CSmsMessage *smsMessage=RecvSmsL(socket);	//Get the message from the STACK.
-		CleanupStack::PushL(smsMessage);
-		
-		//Get the text from the ini file
-		TPtrC messageText;
-		GetStringFromConfig(ConfigSection(), _L("messageExpected"), messageText);
+    if( !messageReceived )
+        {
+        if( messageExpected )
+            {
+            ERR_PRINTF1(_L("Message expected - not received!"));  
+            TEST(EFalse);
+            }
+        else
+            {
+            INFO_PRINTF1(_L("No message expected and not received"));  
+            }
+        }
+    else
+        {
+        CSmsMessage* smsMessage = RecvSmsL(socket);   //Get the message from the STACK.
+        CleanupStack::PushL(smsMessage);
+        
+        if( !messageExpected )
+            {
+            ERR_PRINTF1(_L("Message not expected!"));  
+            TEST(EFalse);
+            }
+        else
+            {
+            //Get the text from the ini file
+            TPtrC messageText;
+            GetStringFromConfig(ConfigSection(), _L("messageExpected"), messageText);
 
-		if(messageText!=_L(""))
-			{
-			TestSmsContentsL(smsMessage,messageText);
-			}
-		
-		CleanupStack::PopAndDestroy(smsMessage);
-		}
-		
-	else if((!messageReceived  &&  isClientExpectingMessage) ||
-		    (messageReceived  &&  !isClientExpectingMessage))
-		{
-		if( !messageReceived  &&  isClientExpectingMessage )
-			{
-			INFO_PRINTF1(_L("Message expected - not received"));
-			}
-		TEST(EFalse);
-		}
-		
-	socket.Close();
+            if(messageText!=_L(""))
+                {
+                TestSmsContentsL(smsMessage,messageText);
+                }
+            }
+        CleanupStack::PopAndDestroy(smsMessage);
+        }
+	CleanupStack::PopAndDestroy(&socket);
 #endif
 	return TestStepResult();
 	}
-	
-//-----------------------------------------------------------------------------
-
-
-
-
-
-
-

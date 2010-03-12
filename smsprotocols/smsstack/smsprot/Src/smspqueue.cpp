@@ -88,8 +88,6 @@ void CSmspMessageQueue::DoRunL()
 
 void CSmspMessageQueue::Queue(CSmsMessage* aMessage, MSmsMessageObserver& aObserver, TUint aOptions)
 	{
-	// TODO __ASSERT_DEBUG no item is in the queue for this observer
-
 	TRAPD(err, DoQueueL(aMessage, aObserver, aOptions));
 
 	LOGSMSPROT4("*** CSmspMessageQueue::Queue [err=%d aObserver=0x%08x IsActive=%d]", err, &aObserver, IsActive());
@@ -313,8 +311,6 @@ void CSmspDeleteQueue::DoRunL()
 
 void CSmspDeleteQueue::Queue(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray, MSmsMessageObserver* aObserver)
 	{
-	// TODO __ASSERT_DEBUG no item is in the queue for this observer
-
 	TRAPD(err, DoQueueL(aSlotArray, aObserver));
 
 	LOGSMSPROT4("*** CSmspDeleteQueue::Queue [err=%d aObserver=0x%X IsActive=%d]", err, aObserver, IsActive());

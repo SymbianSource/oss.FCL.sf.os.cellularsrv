@@ -34,13 +34,23 @@
 TInt CMmCallGsmWcdmaExt::SwapL(TInt aCallId)
 	{
     TInt ret = KErrNone;
-
-    // CTSY supports RMobileCall::Swap where there are two calls (one held, one active)
-    // and their states are swapped. Where Swap() is called on a single call, this is
-    // not supported.
+	const TInt KInvalidCallId = -1;
+	
+    // CTSY supports RMobileCall::Swap when there are one or two calls. When Swap() is called
+	// on a single call, it's state is switched (active to held or held to active), when on two 
+	// calls(one held, one active) their states are swapped. 
     CMmPhoneTsy& mmPhone = *iMmCallTsy->Phone();
     CMmCallList& callList = *mmPhone.CallList();
+    
+	CCallDataPackage package;
+	
+	if ( callList.GetNumberOfObjects() > 2 )
+		{
+		// Swapping between calls only makes sense with one or two opened calls.
+		return KErrNotSupported;
+		}
     CMmCallTsy* call = callList.GetMmCallById(aCallId);
+	package.SetCallIdAndMode(aCallId, iSymbianCallMode);
     
     if (!call)
     	{
@@ -60,16 +70,13 @@ TInt CMmCallGsmWcdmaExt::SwapL(TInt aCallId)
         		package.SetCallIdAndMode(aCallId, iSymbianCallMode);
         		// Get connected call and pack its call ID
         		CMmCallTsy* connectedCall = callList.GetMmCallByStatus(RMobileCall::EStatusConnected);
+				TInt connectedCallId = KInvalidCallId;
         		if (connectedCall)
         			{
-        			TInt connectedCallId = connectedCall->CallId();
-        			package.PackData(&connectedCallId);
-        			ret = iMessageManager->HandleRequestL(EMobileCallSwap, &package);
+        			connectedCallId = connectedCall->CallId();
         			}
-        		else
-        			{
-        			ret = KErrNotSupported;
-        			}
+        		package.PackData(&connectedCallId);
+        		ret = iMessageManager->HandleRequestL(EMobileCallSwap, &package);
         		
     			break;
     			}
@@ -79,18 +86,15 @@ TInt CMmCallGsmWcdmaExt::SwapL(TInt aCallId)
     		    // Pack the following to the dispatcher:
     		    // Call status of connected call in additional parameter slot in CCallDataPackage
     		    CCallDataPackage package;
+				
     			package.PackData(&aCallId);
         		// Get held call and pack its call ID
         		CMmCallTsy* heldCall = callList.GetMmCallByStatus(RMobileCall::EStatusHold);
-        		if (heldCall)
+         		if (heldCall)
         			{
         			package.SetCallIdAndMode(heldCall->CallId(), heldCall->CallMode());
-        			ret = iMessageManager->HandleRequestL(EMobileCallSwap, &package);
         			}
-        		else
-        			{
-        			ret = KErrNotSupported;
-        			}
+         		ret = iMessageManager->HandleRequestL(EMobileCallSwap, &package);
     			break;
     			}
     		

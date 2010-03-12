@@ -16,14 +16,15 @@
 //
 
 /**
- @file
+    @file
+    @test
 */
 
 // Include your own server header file and step header file(s) here
 #include "WapProtSuiteServer.h"
+
 #include "WapIoctlSteps.h"
 #include "WapStatusReports.h"
-
 
 CWapProtSuite* CWapProtSuite::NewL()
 /**
@@ -33,18 +34,20 @@ CWapProtSuite* CWapProtSuite::NewL()
  *  CTestServer derived server.
  */
 	{
-	CWapProtSuite * server = new (ELeave) CWapProtSuite();
+	CWapProtSuite* server = new (ELeave) CWapProtSuite();
 	CleanupStack::PushL(server);
-	// CServer base class call
-	
-	RProcess	handle = RProcess();
-	TParsePtrC	serverName(handle.FileName());
+
+    // CSmsStackTestServer intermediate base class call
+    server->InitializeTsyAndPhonesL();
+    
+    // CServer base class call
+    RProcess    handle = RProcess();
+    TParsePtrC  serverName(handle.FileName());
 	server->ConstructL(serverName.Name());
 	
 	CleanupStack::Pop(server);
 	return server;
 	}
-
 
 LOCAL_C void MainL()
 	{
@@ -255,10 +258,6 @@ CTestStep* CWapProtSuite::CreateTestStep(const TDesC& aStepName)
 	else if (aStepName == _L("ReceiveWapMessage"))
 		{
 		testStep = new CReceiveWapMessage();
-		}		
-	else if (aStepName == _L("InitializePhone"))
-		{
-		testStep = new CInitializePhone();
 		}
 	else if (aStepName == _L("TestEnumeratingVCard"))
 		{
@@ -272,11 +271,11 @@ CTestStep* CWapProtSuite::CreateTestStep(const TDesC& aStepName)
 		{
 		testStep = new CTestOversizedDatagram();
 		}
- 	else if (aStepName == _L("TestWapDatagramSegmentContainingNoData"))
- 	    {
- 	    testStep = new CTestWapDatagramSegmentContainingNoData();
- 	    }
-		
+	else if (aStepName == _L("TestWapDatagramSegmentContainingNoData"))
+        {
+        testStep = new CTestWapDatagramSegmentContainingNoData();
+        }
+	
 	//
 	// Set the test step name here to save code!!!
 	//

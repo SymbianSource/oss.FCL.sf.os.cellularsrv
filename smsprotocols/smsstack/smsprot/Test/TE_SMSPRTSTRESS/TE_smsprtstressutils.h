@@ -19,8 +19,8 @@
  @file
 */
 
-#ifndef __TE_SMSPRTSTRESSUTILS_H__
-#define __TE_SMSPRTSTRESSUTILS_H__
+#ifndef TE_SMSPRTSTRESSUTILS_H
+#define TE_SMSPRTSTRESSUTILS_H
 
 #include "TE_smsprtstressbase.h"
 
@@ -35,6 +35,7 @@ class CTestSmsActiveBase : public CActive
 	{
 public:
 	CTestSmsActiveBase(TInt aHowManyRequests);
+	
 protected:
 	RSocket iSocket;
 	TPckgBuf<TUint> iSbuf;
@@ -57,12 +58,11 @@ class CTestSmsActiveStop
 public:
 	CTestSmsActiveStop(RPointerArray<CTestSmsActiveBase>& aTestSmsActives,TInt& aRet);
 	void StopTests(TInt aStatus);
+	
 private:
 	RPointerArray<CTestSmsActiveBase>& iTestSmsActives;
 	TInt& iRet;
 	};
-
-
 
 /*
 -------------------------------------------------------------------------------
@@ -82,10 +82,12 @@ public:
 	void CreateSmsWithStatusReportReqL(const TDesC& aDes, TSmsDataCodingScheme::TSmsAlphabet aAlphabet, RFs& aFs) ;
 	~CTestSmsSendActive();
 	void StartL();
+	
 protected:
 	void DoCancel();
 	void RunL();
 	TInt RunError(TInt aError);
+	
 private:
 	void SendMessageL();
 	CSmsMessage* CreateSmsMessageL(const TDesC& aDes, TSmsDataCodingScheme::TSmsAlphabet aAlphabet, RFs& aFs, CSmsPDU::TSmsPDUType aType = CSmsPDU::ESmsSubmit);
@@ -96,7 +98,6 @@ private:
 	TSmsServiceCenterAddress iTelephoneNumber;
 	TSmsServiceCenterAddress iServiceCenterNumber;
 	CTestStep* iTestStep;
-
 	};
 
 /*
@@ -117,14 +118,17 @@ public:
 	CTestSmsParametersActive(CTestSmsActiveStop& aTestSmsActiveStop,TInt aHowManyRequests, CSmsStackTestUtils* aSmsStackTestUtils, CTestStep* aTestStep);
 	~CTestSmsParametersActive();
 	void StartL();
+	
 protected:
 	void DoCancel();
 	void RunL();
 	TInt RunError(TInt aError);
+	
 private:
 	void StoreParametersL();
 	void RetrieveParameters();
 	void GetParametersL();
+	
 private:
 	enum TSmsDeleteAndEnumState
 		{
@@ -132,6 +136,7 @@ private:
 		ESmsNextRetrieveParameters,
 		ESmsNextGetParameters
 		};
+	
 private:
 	TSmsDeleteAndEnumState iState;
 	CMobilePhoneSmspList* iStoreSmspList;
@@ -157,10 +162,12 @@ public:
 	CTestSmsStorageActive(CTestSmsActiveStop& aTestSmsActiveStop,TInt aHowManyRequests, RFs& aFs, CTestStep* aTestStep);
 	~CTestSmsStorageActive();
 	void StartL();
+	
 protected:
 	void DoCancel();
 	void RunL();
 	TInt RunError(TInt aError);
+	
 private:
 	void WriteMessageL();
 	void DeleteMessageL();
@@ -168,6 +175,7 @@ private:
 	void GetMessagesL();
 	CSmsMessage* CreateSmsMessageL(const TDesC& aDes, TSmsDataCodingScheme::TSmsAlphabet aAlphabet, RFs& aFs, CSmsPDU::TSmsPDUType aType = CSmsPDU::ESmsSubmit);
 	void TestSmsListsL(RPointerArray<CSmsMessage>& aLeft,RPointerArray<CSmsMessage>& aRight) ;
+	
 private:
 	enum TSmsDeleteAndEnumState
 		{
@@ -176,6 +184,7 @@ private:
 		ESmsNextGetMessages,
 		ESmsNextDeleteMessage
 		};
+	
 private:
 	CTestSmsActiveStop& iTestSmsActiveStop;
 	RPointerArray<CSmsMessage> iEnumeratedMessages;
@@ -205,21 +214,25 @@ public:
 	CTestSmsReceiveActive(CTestSmsActiveStop& aTestSmsActiveStop,TInt aHowManyRequests, RFs& aFs, CTestStep* aTestStep);
 	~CTestSmsReceiveActive();
 	void StartL();
+	
 protected:
 	void DoCancel();
 	void RunL();
 	TInt RunError(TInt aError);
+	
 private:
 	void ReceiveMessage();
 	void GetMessagesL();
 	void PrintMessageL(const CSmsMessage* aSms);
 	TText8 IsCharDisplayable( const TText8 aChar );
+	
 private:
 	enum TSmsReceiveState
 		{
 		ESmsNextReceiveMessage,
 		ESmsNextGetMessage,
 		};
+	
 private:
 	TSmsReceiveState iState;
 	CTestSmsActiveStop& iTestSmsActiveStop;
@@ -228,4 +241,4 @@ private:
 	CTestStep* iTestStep ;
 	};
 
-#endif  //__TE_SMSPRTSTRESSUTILS
+#endif  // TE_SMSPRTSTRESSUTILS_H

@@ -130,7 +130,10 @@ public:
     virtual TInt HandleGetIdentityServiceStatusReqL(RMobilePhone::TMobilePhoneIdService aService);
 
     // From MLtsyDispatchCallControlSwap
-    virtual TInt HandleSwapReqL(TInt aHeldCallId, TInt aConnectedCallId);
+    virtual TInt HandleSwapReqL(TInt aCallId, TInt aSecondCallId);
+
+    // From MLtsyDispatchCallControlSwap
+    virtual TInt HandleSwapReqL(TInt aCallId);
 
     // From MLtsyDispatchCallControlLoanDataPort
     virtual TInt HandleLoanDataPortSyncL(TInt aCallId, RCall::TCommPort& aCommPort);

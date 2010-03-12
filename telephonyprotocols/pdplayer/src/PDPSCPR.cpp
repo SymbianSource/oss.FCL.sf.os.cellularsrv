@@ -243,7 +243,8 @@ CPDPSubConnectionProvider::CPDPSubConnectionProvider(ESock::CSubConnectionProvid
 :CCoreSubConnectionProvider(aFactory, PDPSCprActivities::activityMap::Self()),
  iPDPFsmContextId(EInvalidContextId),
  iPdpFsmInterface(NULL),
- iActivityAwaitingResponse(KActivityNull)
+ iActivityAwaitingResponse(KActivityNull),
+ iProvisionFailure(KErrCorrupt)
     {
     LOG_NODE_CREATE1(KPDPSCprSubTag, CPDPSubConnectionProvider, " [factory=%08x]", &aFactory)
     __FLOG_OPEN(KCFNodeTag, KPDPSCprSubTag);

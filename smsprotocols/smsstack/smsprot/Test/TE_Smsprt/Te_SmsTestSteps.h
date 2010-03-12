@@ -17,143 +17,154 @@
  @file
 */
  
-#ifndef __TE_SMS_TEST_STEPS_H__
-#define __TE_SMS_TEST_STEPS_H__
- 
-#include "TE_smsprtbase.h"
+#ifndef TE_SMSTESTSTEPS_H
+#define TE_SMSTESTSTEPS_H
+
+#include <Gsmumsg.h>
+#include <gsmubuf.h>
+
+#include "smsstackbaseteststeps.h"
 
 /**
   Test Step to Load SMS Protocol
 */
-class CLoadSMSProtocol : public CSMSTestSteps
+class CLoadSMSProtocol : public CSmsBaseTestStep
 {
 public:
 	CLoadSMSProtocol(RSocketServ &aSocketServer);
 	
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
-
+	virtual TVerdict doTestStepL();
+    
+public: 
+    RSocketServ* iSharedSocketServer;   
 };
 
 /**
   Test Step to receive a SMS message
 */
-class CReceiveSMS : public CSMSTestSteps
+class CReceiveSMS : public CSmsBaseTestStep
 	{
 public:
 	CReceiveSMS(RSocketServ &aSocketServer);
 
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
+    
+public: 
+    RSocketServ* iSharedSocketServer;   
 	};
 
 /**
   Test Step to send a SMS message
 */
-class CSendSMS : public CSMSTestSteps
+class CSendSMS : public CSmsBaseTestStep
 {
 public:
 	CSendSMS(RSocketServ &aSocketServer);
 
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
+    
+public: 
+    RSocketServ* iSharedSocketServer;   
 };
 
 /**
   Close the socket and the socket server session
 */
-class CCloseSMSProtocol : public CSMSTestSteps
+class CCloseSMSProtocol : public CSmsBaseTestStep
 {
 public:
 	CCloseSMSProtocol(RSocketServ &aSocketServer);
 
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
+    
+public: 
+    RSocketServ* iSharedSocketServer;   
 };
 
 
 /**
   Delete segmentation and reasembly stores
 */
-class CDeleteSARStores : public CSMSTestSteps
+class CDeleteSARStores : public CSmsBaseTestStep
 {
 public:
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+    CDeleteSARStores();
+	virtual TVerdict doTestStepL();
 };
 
 /**
   Forwards system time by x number of minutes
 */
-class CForwardSystemTime : public CSMSTestSteps
+class CForwardSystemTime : public CSmsBaseTestStep
 {
 public:
+    CForwardSystemTime();
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
 };
 
 /**
   Tests receive of SMS message while SMSStack Out of Memory (OOM)
 */
-class CSendReceiveSMSWhileServerInOOM : public CSMSTestSteps
+class CSendReceiveSMSWhileServerInOOM : public CSmsBaseTestStep
 {
 public:
 	CSendReceiveSMSWhileServerInOOM(RSocketServ &aSocketServer);
 
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
+    
+public: 
+    RSocketServ* iSharedSocketServer;   
 };
 
 /**
   Compares the text contents of a SMS message with some text
 */
-class CCompareSMS : public CSMSTestSteps
+class CCompareSMS : public CSmsBaseTestStep
 {
 public:
 	CCompareSMS(CSmsMessage &aSmsMessage);
 	
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
 };
 
 
 /**
   Checks if the Class0 Stores have been enabled
 */
-class CClass0StoreEnabled : public CSMSTestSteps
+class CClass0StoreEnabled : public CSmsBaseTestStep
 {
 public:
 	CClass0StoreEnabled(RSocketServ &aSocketServer);
 
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
+	
+public:	
+    RSocketServ* iSharedSocketServer;   
 };
 
 /**
   Test for Enumeration in an OOD Condition 
 */
-class CEnumerateInOODCondition : public CSMSTestSteps
+class CEnumerateInOODCondition : public CSmsBaseTestStep
 {
 public:
 	CEnumerateInOODCondition(RSocketServ &aSocketServer);
 
 	//From CTestStep
-	virtual enum TVerdict doTestStepL();
-};
-
-/**
-  Test Esock for any memory leaks
-*/
-class CESockMemoryLeakTest : public CSMSTestSteps
-{
-public:
-	//From CTestStep
-	virtual enum TVerdict doTestStepL();
+	virtual TVerdict doTestStepL();
+    
+public: 
+    RSocketServ* iSharedSocketServer;   
 };
 
 
-
-#endif
-
-
-
+#endif // TE_SMSTESTSTEPS_H

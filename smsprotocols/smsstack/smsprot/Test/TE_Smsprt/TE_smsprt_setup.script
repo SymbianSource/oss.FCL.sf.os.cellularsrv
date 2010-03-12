@@ -17,6 +17,8 @@
 
 RUN_UTILS  DeleteFile c:\config.txt
 
+RUN_SCRIPT  z:\testdata\scripts\smsstackcleanprivatedata.script
+
 RUN_UTILS  MkDir c:\sms\
 RUN_UTILS  CopyFile z:\sms\setupgsmsms.txt                  c:\sms\setupgsmsms.txt
 RUN_UTILS  CopyFile z:\sms\tsmsprt_config.txt               c:\sms\tsmsprt_config.txt

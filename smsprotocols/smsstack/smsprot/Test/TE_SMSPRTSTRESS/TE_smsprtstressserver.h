@@ -13,16 +13,16 @@
 // Description:
 //
 
-#if (!defined __TE_SMSPRTSTRESSSERVER_H__)
-#define __TE_SMSPRTSTRESSSERVER_H__
-#include "TE_smsprtstressbase.h"
-#include <test/testexecuteserverbase.h>
+#ifndef TE_SMSPRTSTRESSSERVER_H
+#define TE_SMSPRTSTRESSSERVER_H
 
-class CSmsPrtStressTestServer : public CTestServer
+#include "smsstackbasetestserver.h"
+
+class CSmsPrtStressTestServer : public CSmsStackTestServer
 	{
 public:
 	static CSmsPrtStressTestServer* NewL();
 	virtual CTestStep* CreateTestStep(const TDesC& aStepName);
 	};
 
-#endif
+#endif // TE_SMSPRTSTRESSSERVER_H

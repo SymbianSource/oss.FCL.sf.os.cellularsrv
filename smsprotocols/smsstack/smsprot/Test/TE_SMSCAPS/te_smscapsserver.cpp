@@ -19,19 +19,14 @@
  @file
 */
 
-#include <commsdattypesv1_1.h>
+#include "te_smscapsserver.h"
 
 #include <rsshared.h>		// StartC32
-#include "te_smscapsstep.h"
-#include "te_smscapsserver.h"
 #include <smsuaddr.h>
 #include <e32property.h>
 #include <simtsy.h>
 
-using namespace CommsDat;
-
-
-//
+#include "te_smscapsstep.h"
 
 _LIT(KSmsCapsServerName,"TE_SMSCAPS_SC");
 
@@ -51,6 +46,8 @@ CSmsCapsTestServer* CSmsCapsTestServer::NewL()
 	CSmsCapsTestServer * server = new (ELeave) CSmsCapsTestServer();
 	CleanupStack::PushL(server);
 	server->ConstructL(KNullDesC);
+	// CSmsStackTestServer intermediate base class call
+	server->InitializeTsyAndPhonesL();
 	// CServer base class call
 	server->StartL(KSmsCapsServerName);
 	CleanupStack::Pop(server);
@@ -105,52 +102,15 @@ GLDEF_C TInt E32Main()
 	return err;
     }
 
+
 void CSmsCapsTestServer::ConstructL(const TDesC& /*aName*/)
 	{
-	TSmsServiceCenterAddress serviceCenterNumber=_L("+358508771010"); //Radiolinja
-
-	// File Server
+	////////// File Server
 	User::LeaveIfError(iFs.Connect());
 
-	//
-	// Create CommDB
-	//
-
-#ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_2);
-#else
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
-#endif
-	
-    CleanupStack::PushL(db);
-    db->OpenTransactionL();
-    CMDBRecordSet<CCDModemBearerRecord>* modemBearerRecordSet = new(ELeave) CMDBRecordSet<CCDModemBearerRecord>;
-    CleanupStack::PushL(modemBearerRecordSet);
-    modemBearerRecordSet->LoadL(*db);
-
-	_LIT(KDummy0, "DUMMY::0");
-	_LIT(KDummy, "DUMMY");
-	_LIT(KSim, "SIM");
-
-    RPointerArray<CCDModemBearerRecord>& resultSet = (RPointerArray<CCDModemBearerRecord>&) modemBearerRecordSet->iRecords;
-    CCDModemBearerRecord* modemRecord;
-    for (TInt i=0; i<resultSet.Count(); i++)
-    	{
-    		modemRecord = resultSet[i];
-    	    modemRecord->iPortName = KDummy0;
-       	    modemRecord->iCsyName = KDummy;
-       	    modemRecord->iTsyName = KSim;
-    		modemRecord->iMessageCentreNumber = serviceCenterNumber;
-    		modemRecord->ModifyL(*db);
-    		modemRecord = NULL;
-    	}
-    db->CommitTransactionL();
-    CleanupStack::PopAndDestroy(); //modemBearerRecordSet
-    CleanupStack::PopAndDestroy(); //db
-
-	//
-	// initialise ser-comms - is this really needed ????
-	//
+	//////////////////////////////////////////////////////
+	/// initialise ser-comms - TODO: is this really needed ????
+	//////////////////////////////////////////////////////
 
     TInt err=User::LoadPhysicalDevice(PDD_NAME);
     if (err!=KErrNone && err!=KErrAlreadyExists)
@@ -159,24 +119,13 @@ void CSmsCapsTestServer::ConstructL(const TDesC& /*aName*/)
     if (err!=KErrNone && err!=KErrAlreadyExists)
         User::Leave(err);
 
+    
     err = StartC32();
     if (err!=KErrNone)
+        {
+        ERR_PRINTF2(_L("Couldn't start the comms process root server. Error:%d"), err);
     	User::Leave(err);
-
-	//
-	// turn phone on
-	//
-//    User::LeaveIfError(RProperty::Set(KUidSystemCategory,KUidPhonePwr.iUid,ESAPhoneOn));
-//    User::After(1000000);
-
-    //
-    // define test number property
-    //
-//	TInt val = RProperty::Define(KUidPSSimTsyCategory, KPSSimTsyTestNumber, RProperty::EInt);
-//	if ((val != KErrNone) && (val != KErrAlreadyExists))
-//		{
-//		User::Leave(val);
-//		}
+        }
 	}
 
 CTestStep* CSmsCapsTestServer::CreateTestStep(const TDesC& aStepName)

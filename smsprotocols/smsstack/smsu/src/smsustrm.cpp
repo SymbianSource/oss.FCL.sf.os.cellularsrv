@@ -59,7 +59,7 @@ TInt RSmsSocketBuf::UnderflowL(TInt)
 	TPtr8 ptr(iBuffer,sizeof(iBuffer));
 //	iSocket.RecvOneOrMore(ptr,0,s,l);
 	iSocket.Recv(ptr,0,s,l);
-	User::WaitForRequest(s); // TODO check this
+	User::WaitForRequest(s); 
 	User::LeaveIfError(s.Int());
 	TInt len=ptr.Length();
 	SetBuf(ERead,iBuffer,iBuffer+len);
@@ -110,7 +110,7 @@ void RSmsSocketBuf::SocketWriteL()
 //
 	TRequestStatus s;
 	iSocket.Write(TPtrC8(iBuffer,length),s);
-	User::WaitForRequest(s);  // TODO check this
+	User::WaitForRequest(s);  
 	User::LeaveIfError(s.Int());
 	} // RSmsSocketBuf::SocketWriteL
 

@@ -64,6 +64,7 @@
 
 #include <comms-infras/commsdebugutility.h>
 #include <etelmm.h>
+#include "SimTsy.h"
 
 #ifdef _DEBUG
 #define _SIMTSY_LOGGING_ENABLED
@@ -71,8 +72,6 @@
 
 
 #ifdef _SIMTSY_LOGGING_ENABLED
-
-_LIT8(KSIMTSYSubSystem, "SIMTSY");
 
 #define SIMTSYFLOG1(N,A)                 { \
 									  _LIT8(KLogString, A); \

@@ -529,11 +529,13 @@ void CRawIPFlow::Unbind(MUpperDataReceiver* aUpperReceiver, MUpperControl* aUppe
     {
     _LOG_L1C2(_L8("CRawIPFlow %08x:\tUnbind()"), this);
 
-	ASSERT(iBinder);
-	iBinder->Unbind(aUpperReceiver, aUpperControl);
+	if (iBinder)
+	    {
+        iBinder->Unbind(aUpperReceiver, aUpperControl);
 
-    delete iBinder;
-    iBinder = NULL;
+        delete iBinder;
+        iBinder = NULL;
+	    }
 
     SendDataClientIdleIfNoClients();
     }

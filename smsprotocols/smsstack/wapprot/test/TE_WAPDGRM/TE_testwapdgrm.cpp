@@ -53,15 +53,6 @@
 #include "TE_wapdgrmbase.h"
 #include "TE_testwapdgrm.h"
 
-#if defined (__WINS__)
-#define PDD_NAME _L("ECDRV")
-#define LDD_NAME _L("ECOMM")
-#else
-#define PDD_NAME _L("EUART1")
-#define LDD_NAME _L("ECOMM")
-#endif
-
-
 TVerdict CTestWapProtDatagram::doTestStepL()
 /*
  * implementation of Wap Protocol Datagram test case

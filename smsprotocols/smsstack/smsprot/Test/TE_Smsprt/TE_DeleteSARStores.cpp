@@ -19,6 +19,13 @@
 
 #include "Te_SmsTestSteps.h"
 
+
+CDeleteSARStores::CDeleteSARStores()
+    {
+    iPartOfMultiStepTestCase = ETrue;
+    }
+
+
 /**
 	Deletes the SMS and WAP segmentation and reassembly stores
 */

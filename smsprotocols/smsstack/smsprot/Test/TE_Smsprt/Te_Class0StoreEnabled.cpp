@@ -24,22 +24,23 @@ CClass0StoreEnabled::CClass0StoreEnabled(RSocketServ &aSocketServer)
 	Each test step initialises it's own name
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
+	iPartOfMultiStepTestCase = ETrue;
 	}
 
 
 /**
   Checks wheather the CLASS0 store has in fact been enabled.
-		*/
+ */
 TVerdict CClass0StoreEnabled::doTestStepL()
 	{	
 	TBool isClass0StoreEnabled = EFalse;
 	GetBoolFromConfig(ConfigSection(), _L("isClass0StoreEnabled"), isClass0StoreEnabled);
 		
 	//Open a socket 
-	INFO_PRINTF1(_L("Opening socket..."));
 	RSocket socket;
-	OpenSmsSocketL(*iSocketServer, socket, ESmsAddrRecvAny);
+	OpenSmsSocketL(*iSharedSocketServer, socket, ESmsAddrRecvAny);
+	CleanupClosePushL(socket);
 
 	TRequestStatus status;
 	socket.Ioctl(KIoctlSupportOODClass0SmsMessages, status, NULL, KSolSmsProv);
@@ -48,15 +49,6 @@ TVerdict CClass0StoreEnabled::doTestStepL()
 	TEST((isClass0StoreEnabled  &&  status == KErrNone)  ||
 		 (!isClass0StoreEnabled  &&  status == KErrNotSupported));
 	
-	socket.Close();
-	
+	CleanupStack::PopAndDestroy(&socket);
 	return TestStepResult();
 	}
-//-----------------------------------------------------------------------------
-
-
-
-
-
-
-

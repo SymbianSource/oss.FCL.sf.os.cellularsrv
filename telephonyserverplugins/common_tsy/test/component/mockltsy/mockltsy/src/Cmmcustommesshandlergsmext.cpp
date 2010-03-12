@@ -30,7 +30,6 @@ CMmCustomMessHandlerGsmExt::CMmCustomMessHandlerGsmExt()
 
 void CMmCustomMessHandlerGsmExt::ConstructL()
     {
-       iMmCustomStubExt = 0;
     }
 
 CMmCustomMessHandlerGsmExt* CMmCustomMessHandlerGsmExt::NewL( 
@@ -69,23 +68,6 @@ TInt CMmCustomMessHandlerGsmExt::ExtFuncL(
 
     switch ( aIpc )
         {
-        
-        case EMmTsyGetCustomVendorExtPtrIPC:
-            {
-            // return pointer to customapi extension
-TFLOGSTRING("TSY: CMmCustomMessHandler::ExtFuncL --- EMmTsyGetCustomVendorExtPtrIPC");
-            CMmCustomVendorExt** extPtr;
-            aDataPackage->UnPackData( &extPtr );
-
-            if ( !iMmCustomStubExt )
-                {
-                iMmCustomStubExt = new ( ELeave ) CMmCustomStubExt( );
-                }
-
-            *extPtr = iMmCustomStubExt;
-            iMmCustomStubExt->SetMessageRouter( iMessageRouter );
-            break;
-            }
        
 		case ECustomCheckAlsPpSupportIPC:
             {

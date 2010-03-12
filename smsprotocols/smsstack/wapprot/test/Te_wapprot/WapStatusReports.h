@@ -15,23 +15,15 @@
 *
 */
 
-
-
 /**
- @file
+    @file
+    @test
 */
- 
- 
-#if (!defined __WAPPROT_STATUS_REPORTS__)
-#define __WAPPROT_STATUS_REPORTS__
 
+#ifndef WAPPROTSTATUSREPORTS_H
+#define WAPPROTSTATUSREPORTS_H
 
 #include "WapProtSuiteStepBase.h"
-#include <gsmuelem.h>
-#include <gsmuelem.h>
-#include <smsuaddr.h>
-#include <smsustrm.h>
-
 
 /** 
 Base class for testing WAP status reports
@@ -53,7 +45,6 @@ protected:
 	TInt iExpectedStatus;
 	};
 
-
 /**
 Base class for sending WAP messages, requesting status reports
 */
@@ -64,7 +55,6 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 /**
 Class sets the request for only the last segment to receive status reports
 */
@@ -73,7 +63,6 @@ class CTestRequestingStatusReportsWithOption : public CTestRequestingStatusRepor
 public:
 	virtual TVerdict doTestStepPreambleL();
 	};
-
 
 /** 
 Class for receiving status reports 
@@ -86,7 +75,6 @@ public:
 	virtual TVerdict doTestStepPostambleL();
 	};
 
-
 /** 
 Class for receiving status reports for multiple 7 bit messages
 */
@@ -95,7 +83,6 @@ class CTestReceivingStatusReportsSevenBitMultiplePDUs : public CTestReceivingSta
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 /**
 Step receives a status report for a request for only the last segment
@@ -106,5 +93,4 @@ public:
 	virtual TVerdict doTestStepPreambleL();
 	};
 
-
-#endif
+#endif //WAPPROTSTATUSREPORTS_H

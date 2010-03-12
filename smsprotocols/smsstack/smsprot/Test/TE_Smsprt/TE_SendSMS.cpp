@@ -24,7 +24,8 @@ CSendSMS::CSendSMS(RSocketServ &aSocketServer)
 	Each test step initialises it's own name
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
+	iPartOfMultiStepTestCase = ETrue;
 	}
 
 /**
@@ -34,38 +35,28 @@ TVerdict CSendSMS::doTestStepL()
 	{
 #ifndef _DEBUG
     INFO_PRINTF1(_L("This test can only be run when the SMS Stack is in debug mode."));
-#else   	
+#else
 	//Open the socket for sending messages
 	RSocket socket;
-	INFO_PRINTF1(_L("Opening socket and loading SMS Protocol"));
-	OpenSmsSocketL(*iSocketServer, socket, ESmsAddrSendOnly);
-	
+	OpenSmsSocketL(*iSharedSocketServer, socket, ESmsAddrSendOnly);
+    CleanupClosePushL(socket);
+    
 	//Create SMS
-	CSmsMessage* iSms=CreateSMSL();
-	CleanupStack::PushL(iSms);
+	CSmsMessage* sms=CreateSMSL();
+    CleanupStack::PushL(sms);
 
-	if( iSms )
+	if( sms )
 		{
-		INFO_PRINTF1(_L("Sending SMS...") );
-		PrintMessageL(iSms);
-		SendSmsL(iSms,socket);				
+		SendSmsL(sms,socket);				
 		}
 	else
 		{
-		INFO_PRINTF1(_L("Error creating SMS.") );
-		TEST(EFalse);
+		INFO_PRINTF1(_L("Error creating SMS") );
+		SetTestStepResult(EFail);
 		}
-	
-	CleanupStack::PopAndDestroy(iSms);
-	socket.Close();
+
+    CleanupStack::PopAndDestroy(sms);
+	CleanupStack::PopAndDestroy(&socket);
 #endif	
 	return TestStepResult();
 	}
-//-----------------------------------------------------------------------------
-
-
-
-
-
-
-

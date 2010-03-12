@@ -132,7 +132,7 @@ enum TMmTsyLayerIPC
 
     EMmTsyNotifyEGprsInfoChangeIPC,			//1000373
 
-    EMmTsyGetCustomVendorExtPtrIPC,			//1000374
+    EMmTsyGetCustomVendorExtPtrIPC,			//1000374 (@deprecated. There should be no references to this.)
     
     EMmTsyONStoreReadEntryIPC,			//1000375
     EMmTsyONStoreReadSizeIPC,			//1000376

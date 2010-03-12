@@ -90,7 +90,7 @@ END_TESTCASE SMS-SMSSTACK-SMSSTOR-1005
 START_TESTCASE SMS-SMSSTACK-SMSSTOR-1006
 //!@SYMTestCaseID SMS-SMSSTACK-SMSSTOR-1006
 //!@SYMREQ REQ0000
-//!@SYMTestCaseDesc Test Internalize Externalize SMS
+//!@SYMTestCaseDesc Test Internaliz eExternalize SMS
 //!@SYMTestPriority critical
 //!@SYMTestActions Test Internalize Externalize SMS
 //!@SYMTestExpectedResults Pass

@@ -229,5 +229,8 @@ _LIT(KConfigFilename,"c:\\config.txt");  //< Configuration filename.
 _LIT(KPhoneName,"SimulatorPhone");       //< The name of the phone supported by the Simulator TSY.
 _LIT(KVoiceLineName,"Voice");            //< The name of the voice line supported by the Simulator TSY.
 _LIT(KDataLineName,"Data");              //< The name of the data line supported by the Simulator TSY.
+_LIT8(KSIMTSYSubSystem, "SIMTSY");       ///< The name of the sub-system used by Comms Debug Utility.
+_LIT8(KSubscriberIdDefault,"01234567890123");   /// < Default Subscriber ID for the Simulator TSY (used if no Subscriber ID tag is present)
+_LIT8(KIccIdDefault, "01234567890123456789");   /// < Default ICC ID for the Simulator TSY (used if no ICC ID tag is present)
 
 #endif // __SIMTSY_H__

@@ -556,6 +556,7 @@ void CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL(
     TInt aError )
     {
 TFLOGSTRING("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL");
+    iLastViagHomeZoneCacheError = aError;
     if (iCurrentlyRetrievedCache == NULL)
         {
         // Got an unexpected update... ignore!
@@ -643,9 +644,21 @@ TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadDynamicViagHomeZoneCacheRespL: for i:%
         else
             {
             // caching aborted
-            delete iCurrentlyRetrievedCache;
-            iCurrentlyRetrievedCache = NULL;
+        delete iCurrentlyRetrievedCache;
+        iCurrentlyRetrievedCache = NULL;
 TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:There was a problem reading cache values from SIM, error=%d", aError);
+            //iViagHomeZoneCacheReady = ETrue;
+TFLOGSTRING("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL: Caching completed unsuccessfully!");
+
+            for (TInt i = 0; i < iReadViagHomeZoneCacheRequests.Count(); i++)
+                {
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadDynamicViagHomeZoneCacheRespL: for i:%d", i);
+                TReadViagHomeZoneCacheRequest* req =
+                        iReadViagHomeZoneCacheRequests[i];
+                iMmCustomTsy->ReqCompleted(req->iReqHandle, aError);
+                }
+            iReadViagHomeZoneCacheRequests.ResetAndDestroy();
+
             }
     }
 
@@ -748,6 +761,11 @@ TFLOGSTRING("TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache: else if : Cache is re
 		req->iViagRecordId = aViagRecordId;
 		req->iViagRecordContent = aViagRecordContent;
 		iReadViagHomeZoneCacheRequests.AppendL( req );
+		if(iLastViagHomeZoneCacheError != KErrNone)
+		    {
+            // Got an error last time, ask again
+            StartDynamicCachingL();
+		    }
         }
 
     // complete to client
@@ -882,7 +900,7 @@ TInt CMmSIMTsy::WriteViagHomeZoneCacheCancel()
 void CMmSIMTsy::StartDynamicCachingL()
     {
 TFLOGSTRING("TSY: CMmSIMTsy::StartDynamicCachingL");
-
+    iLastViagHomeZoneCacheError = KErrNone;
 	// Make sure there are no ongoing dynamic caching requests.. 
 	if( iCurrentlyRetrievedCache ) 
 		{ 

@@ -36,6 +36,7 @@ const TInt KViagHomeZoneCacheIdMin = 1;
 const TInt KViagHomeZoneCacheIdMax = KPhEngMaxViagHomeZones;
 const TInt KViagHomeZoneCacheRecordIdMin = 0;
 const TInt KViagHomeZoneCacheRecordIdMax = KPhEngMaxCacheId - 1;
+const TInt KOneSecond=1000000;  // Used in a time out function, 1 second (in microSeconds)
 
 CTestSuite* CCTsyCustomIPCFU::CreateSuiteL(const TDesC& aName)
 	{
@@ -102,7 +103,9 @@ CTestSuite* CCTsyCustomIPCFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneParams0004L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneParams0005L);
 	
-	ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0001bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0001cL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCustomIPCFU, TestReadViagHomeZoneCache0004L);
@@ -4641,72 +4644,326 @@ void CCTsyCustomIPCFU::TestReadViagHomeZoneParams0005L()
 @SYMTestType CT
 */
 void CCTsyCustomIPCFU::TestReadViagHomeZoneCache0001L()
-	{
-	OpenEtelServerL(EUseExtendedError);
-	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    {
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
 
-	RMmCustomAPI customAPI;
+    RMmCustomAPI customAPI;
 
-	//----------------------------------------------
-	// TEST D: CTSY will get results from the cache.
- 	//----------------------------------------------
+    //----------------------------------------------
+    // TEST D: CTSY will get results from the cache.
+    //----------------------------------------------
 
-	//********************************************************************************
-	//* To initialize the VIAG home zone cache properly RMmCustomAPI::OpenL should be
-	//* invoked _before_ EMmTsyBootNotifySimStatusReadyIPC is triggered.
-	//* That's why OpenPhoneAndCustomAPILC was implemented and is used here 
-	//* instead of usual OpenPhoneL/OpenCustomAPILC sequence.
-	//********************************************************************************
+    //********************************************************************************
+    //* To initialize the VIAG home zone cache properly RMmCustomAPI::OpenL should be
+    //* invoked _before_ EMmTsyBootNotifySimStatusReadyIPC is triggered.
+    //* That's why OpenPhoneAndCustomAPILC was implemented and is used here 
+    //* instead of usual OpenPhoneL/OpenCustomAPILC sequence.
+    //********************************************************************************
 
-	OpenPhoneAndCustomAPILC(customAPI);
+    OpenPhoneAndCustomAPILC(customAPI);
 
-	for(TInt c = KViagHomeZoneCacheIdMin; c <= KViagHomeZoneCacheIdMin; c++)
-		{
-		for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
-			{			
-			RMmCustomAPI::TViagCacheRecordId recId;
-			recId.iCacheId  = c; 
-			recId.iRecordId = r;
-		
-			RMmCustomAPI::TViagCacheRecordContent recContent;
+    for(TInt c = KViagHomeZoneCacheIdMin; c <= KViagHomeZoneCacheIdMin; c++)
+        {
+        for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
+            {           
+            RMmCustomAPI::TViagCacheRecordId recId;
+            recId.iCacheId  = c; 
+            recId.iRecordId = r;
+        
+            RMmCustomAPI::TViagCacheRecordContent recContent;
 
-			TRequestStatus reqStatus;
-			customAPI.ReadViagHomeZoneCache(reqStatus,recId,recContent);
-			User::WaitForRequest(reqStatus);
+            TRequestStatus reqStatus;
+            customAPI.ReadViagHomeZoneCache(reqStatus,recId,recContent);
+            User::WaitForRequest(reqStatus);
 
-			ASSERT_EQUALS(KErrNone,reqStatus.Int());
-			
-			const RMmCustomAPI::TViagCacheRecordContent& expectedContent =
-				iViagHomeZoneCache[c - KViagHomeZoneCacheIdMin][r - KViagHomeZoneCacheRecordIdMin];
-			ASSERT_EQUALS(expectedContent.iLac, recContent.iLac);
-			ASSERT_EQUALS(expectedContent.iCellId, recContent.iCellId);
-			}
-		}	
+            ASSERT_EQUALS(KErrNone,reqStatus.Int());
+            
+            const RMmCustomAPI::TViagCacheRecordContent& expectedContent =
+                iViagHomeZoneCache[c - KViagHomeZoneCacheIdMin][r - KViagHomeZoneCacheRecordIdMin];
+            ASSERT_EQUALS(expectedContent.iLac, recContent.iLac);
+            ASSERT_EQUALS(expectedContent.iCellId, recContent.iCellId);
+            }
+        }   
 
-	AssertMockLtsyStatusL();
+    AssertMockLtsyStatusL();
 
-	//-------------------------------------------------------------------------
-	// TEST E: Unsolicited completion of RMmCustomAPI::ReadViagHomeZoneCache
-	// from LTSY.
- 	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // TEST E: Unsolicited completion of RMmCustomAPI::ReadViagHomeZoneCache
+    // from LTSY.
+    //-------------------------------------------------------------------------
 
-	// unsolicited EReadViagHomeZoneCacheIPC completion crashes CTSY
-	
-	RMmCustomAPI::TViagCacheRecordContent unsolicitedData;
-	TPckgC<RMmCustomAPI::TViagCacheRecordContent> unsolicitedDataPckg(unsolicitedData);
-	unsolicitedData.iCellId = 111;
-	unsolicitedData.iLac = 222;
-	
-	TRequestStatus mockLtsyStatus;
-	iMockLTSY.NotifyTerminated(mockLtsyStatus);
-	iMockLTSY.CompleteL(EReadViagHomeZoneCacheIPC,KErrNone,unsolicitedDataPckg);
+    // unsolicited EReadViagHomeZoneCacheIPC completion crashes CTSY
+    
+    RMmCustomAPI::TViagCacheRecordContent unsolicitedData;
+    TPckgC<RMmCustomAPI::TViagCacheRecordContent> unsolicitedDataPckg(unsolicitedData);
+    unsolicitedData.iCellId = 111;
+    unsolicitedData.iLac = 222;
+    
+    TRequestStatus mockLtsyStatus;
+    iMockLTSY.NotifyTerminated(mockLtsyStatus);
+    iMockLTSY.CompleteL(EReadViagHomeZoneCacheIPC,KErrNone,unsolicitedDataPckg);
 
-	User::WaitForRequest(mockLtsyStatus);
-	ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
-	AssertMockLtsyStatusL();
-	
-	CleanupStack::PopAndDestroy(2, this); // customAPI, this
-	}
+    User::WaitForRequest(mockLtsyStatus);
+    ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
+    AssertMockLtsyStatusL();
+    
+    CleanupStack::PopAndDestroy(2, this); // customAPI, this
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-CIPC-MCRVHZC-0001b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMmCustomAPI::ReadViagHomeZoneCache when request failed by NTSY
+@SYMTestPriority High
+@SYMTestActions Invokes RMmCustomAPI::ReadViagHomeZoneCache
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyCustomIPCFU::TestReadViagHomeZoneCache0001bL()
+    {
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+
+    RMmCustomAPI customAPI;
+
+    //********************************************************************************
+    //* To initialize the VIAG home zone cache properly RMmCustomAPI::OpenL should be
+    //* invoked _before_ EMmTsyBootNotifySimStatusReadyIPC is triggered.
+    //* That's why OpenPhoneAndCustomAPILC was implemented and is used here 
+    //* instead of usual OpenPhoneL/OpenCustomAPILC sequence.
+    //********************************************************************************
+
+    OpenPhoneAndCustomAPILC(customAPI, KErrGeneral);
+    
+    // Complete with an error
+    MockPrimeEReadViagHomeZoneCacheIPCL(KViagHomeZoneCacheIdMin, KViagHomeZoneCacheRecordIdMin, ETrue, ETrue, KErrGeneral);
+
+    RMmCustomAPI::TViagCacheRecordContent recContent;
+    TRequestStatus reqStatus;
+    RMmCustomAPI::TViagCacheRecordId recId;
+    recId.iCacheId  = 2; 
+    recId.iRecordId = 2;
+    customAPI.ReadViagHomeZoneCache(reqStatus, recId, recContent);
+    User::WaitForRequest(reqStatus);
+
+    ASSERT_EQUALS(KErrGeneral,reqStatus.Int());
+
+    //complete without an error
+    for(TInt c = KViagHomeZoneCacheIdMin; c <= KViagHomeZoneCacheIdMax; c++)
+        {
+        for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
+            {
+            MockPrimeEReadViagHomeZoneCacheIPCL(c,r, ETrue, ETrue, KErrNone);
+            }
+        }
+
+    
+    for(TInt c = KViagHomeZoneCacheIdMin; c <= KViagHomeZoneCacheIdMin; c++)
+        {
+        for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
+            {           
+            recId.iCacheId  = c; 
+            recId.iRecordId = r;
+            customAPI.ReadViagHomeZoneCache(reqStatus,recId,recContent);
+            User::WaitForRequest(reqStatus);
+
+            ASSERT_EQUALS(KErrNone,reqStatus.Int());
+            
+            const RMmCustomAPI::TViagCacheRecordContent& expectedContent =
+                iViagHomeZoneCache[c - KViagHomeZoneCacheIdMin][r - KViagHomeZoneCacheRecordIdMin];
+            ASSERT_EQUALS(expectedContent.iLac, recContent.iLac);
+            ASSERT_EQUALS(expectedContent.iCellId, recContent.iCellId);
+            }
+        }   
+
+    AssertMockLtsyStatusL();
+
+
+    CleanupStack::PopAndDestroy(2, this); // customAPI, this
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-CIPC-MCRVHZC-0001c
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMmCustomAPI::ReadViagHomeZoneCache when request complete when customAPI is dead
+@SYMTestPriority High
+@SYMTestActions Invokes RMmCustomAPI::ReadViagHomeZoneCache
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyCustomIPCFU::TestReadViagHomeZoneCache0001cL()
+    {
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    RBuf8 data;
+    data.CleanupClosePushL();
+
+    RMmCustomAPI customAPI;
+    CleanupClosePushL(customAPI);
+    TInt err = iPhone.Open(iTelServer,KMmTsyPhoneName);
+    ASSERT_EQUALS(KErrNone, err);
+
+    err=iMockLTSY.Connect();
+    ASSERT_EQUALS(KErrNone, err);
+
+    RMmCustomAPI::TViagCacheRecordId currentlyRetrievedCache;
+    currentlyRetrievedCache.iCacheId    = 1;
+    currentlyRetrievedCache.iRecordId   = 0;        
+    TMockLtsyData1 <RMmCustomAPI::TViagCacheRecordId> ltsyData(currentlyRetrievedCache);
+
+    // Only Expect, no complete
+    MockPrimeEReadViagHomeZoneCacheIPCL(KViagHomeZoneCacheIdMin, KViagHomeZoneCacheRecordIdMin, EFalse, ETrue );
+
+    TRequestStatus mockLtsyStatus;
+    iMockLTSY.NotifyTerminated(mockLtsyStatus);
+
+    //************************************************************
+    //* Invoke RMmCustomAPI::Open prior to triggering any further 
+    //* CTSY events including EMmTsyBootNotifySimStatusReadyIPC
+    //************************************************************
+    err = customAPI.Open(iPhone);
+    ASSERT_EQUALS(KErrNone, err);
+
+    // EMmTsyBootNotifyModemStatusReadyIPC
+    iMockLTSY.CompleteL(EMmTsyBootNotifyModemStatusReadyIPC,KErrNone);
+
+    // EMobilePhoneGetNetworkRegistrationStatus
+    iMockLTSY.ExpectL(EMobilePhoneGetNetworkRegistrationStatus);
+    iMockLTSY.CompleteL(EMobilePhoneGetNetworkRegistrationStatus,KErrNone,0);
+
+    // EMmTsyBootNotifySimStatusReadyIPC
+    iMockLTSY.ExpectL(EMmTsyBootNotifySimStatusReadyIPC);
+    iMockLTSY.CompleteL(EMmTsyBootNotifySimStatusReadyIPC,KErrNone,0);
+
+    
+    // EMobilePhoneGetHomeNetwork
+    RMobilePhone::TMobilePhoneNetworkInfoV5 homeNetwork;
+    homeNetwork.iMode = RMobilePhone::ENetworkModeWcdma;
+    homeNetwork.iStatus = RMobilePhone::ENetworkStatusCurrent;
+    homeNetwork.iBandInfo = RMobilePhone::EBandUnknown;
+    homeNetwork.iCountryCode = _L("234");
+    homeNetwork.iCdmaSID = _L("");
+    homeNetwork.iAnalogSID = _L("");
+    homeNetwork.iNetworkId = _L("23499");
+    homeNetwork.iDisplayTag = _L("symbian");
+    homeNetwork.iShortName = _L("symbian");
+    homeNetwork.iLongName = _L("symbian mobile");
+    homeNetwork.iAccess = RMobilePhone::ENetworkAccessUtran;
+    homeNetwork.iEgprsAvailableIndicator = ETrue;
+    homeNetwork.iHsdpaAvailableIndicator = ETrue;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneNetworkInfoV5> homeNetworkData(homeNetwork);
+    homeNetworkData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMobilePhoneGetHomeNetwork);
+    iMockLTSY.CompleteL(EMobilePhoneGetHomeNetwork,KErrNone,data,0);
+
+    // EMmTsyPhoneGetPin1DisableSupportedIPC
+    TBool pin1DisableSupport = ETrue;
+    TMockLtsyData1<TBool> pin1DisableSupportData(pin1DisableSupport);
+    data.Close();
+    pin1DisableSupportData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMmTsyPhoneGetPin1DisableSupportedIPC);
+    iMockLTSY.CompleteL(EMmTsyPhoneGetPin1DisableSupportedIPC,KErrNone,data,0);
+
+    // EMmTsySimRefreshRegisterIPC
+    iMockLTSY.ExpectL(EMmTsySimRefreshRegisterIPC);
+    iMockLTSY.CompleteL(EMmTsySimRefreshRegisterIPC, KErrGeneral, 0);       
+
+    // EMobilePhoneGetServiceTable
+    RMobilePhone::TMobilePhoneServiceTable serviceTable = RMobilePhone::ESIMServiceTable;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneServiceTable> serviceTableData(serviceTable);
+    data.Close();
+    serviceTableData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMobilePhoneGetServiceTable, data);
+    RMobilePhone::TMobilePhoneServiceTableV1 serviceTableResult;
+    serviceTableResult.iServices1To8  = 0xFF;
+    serviceTableResult.iServices9To16 = 0xFF;
+    serviceTableResult.iServices17To24= 0xFF;
+    serviceTableResult.iServices25To32= 0xFF;
+    serviceTableResult.iServices33To40= 0xFF;
+    serviceTableResult.iServices41To48= 0xFF;
+    serviceTableResult.iServices49To56= 0xFF;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneServiceTableV1> serviceTableResultData(serviceTableResult);
+    data.Close();
+    serviceTableResultData.SerialiseL(data);
+    iMockLTSY.CompleteL(EMobilePhoneGetServiceTable,KErrNone,data,0);
+    
+    // EMobilePhoneGetALSLine
+    RMobilePhone::TMobilePhoneALSLine alsLine = RMobilePhone::EAlternateLinePrimary;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneALSLine> alsLineData(alsLine);
+    data.Close();
+    alsLineData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMobilePhoneGetALSLine);
+    iMockLTSY.CompleteL(EMobilePhoneGetALSLine,KErrNone,data,0);
+
+    // ECustomGetIccCallForwardingStatusIPC
+    iMockLTSY.ExpectL(ECustomGetIccCallForwardingStatusIPC);    
+
+    // EMobilePhoneGetIccMessageWaitingIndicators
+    RMobilePhone::TMobilePhoneMessageWaitingV1 expectedMessageIndicators;
+    TMockLtsyData1<RMobilePhone::TMobilePhoneMessageWaitingV1>
+                                    indicatorsData(expectedMessageIndicators);
+    data.Close();
+    indicatorsData.SerialiseL(data); 
+    iMockLTSY.ExpectL(EMobilePhoneGetIccMessageWaitingIndicators);
+    iMockLTSY.CompleteL(EMobilePhoneGetIccMessageWaitingIndicators, KErrNone, data);
+
+    iMockLTSY.ExpectL(ECustomCheckAlsPpSupportIPC);
+    iMockLTSY.ExpectL(EMobilePhoneGetCustomerServiceProfile);
+    
+
+    User::WaitForRequest(mockLtsyStatus);
+    ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
+
+    // Close the customAPI.
+    CleanupStack::PopAndDestroy(&customAPI);
+    // Wait for server to clear...
+    User::After(KOneSecond);
+
+    // ECustomGetIccCallForwardingStatusIPC
+    iMockLTSY.ExpectL(ECustomGetIccCallForwardingStatusIPC); 
+    
+    for(TInt c = KViagHomeZoneCacheIdMin; c <= KViagHomeZoneCacheIdMax; c++)
+        {
+        for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
+            {
+            MockPrimeEReadViagHomeZoneCacheIPCL(c,r, ETrue, ETrue, KErrNone);
+            }
+        }
+
+    // Open another client
+    RMmCustomAPI customAPI2;
+    CleanupClosePushL(customAPI2);
+    ASSERT_EQUALS(KErrNone,customAPI2.Open(iPhone));
+    
+
+    
+    for(TInt c = KViagHomeZoneCacheIdMin; c <= KViagHomeZoneCacheIdMin; c++)
+        {
+        for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
+            {           
+            TRequestStatus reqStatus;
+            RMmCustomAPI::TViagCacheRecordId recId;
+            recId.iCacheId  = c; 
+            recId.iRecordId = r;
+            RMmCustomAPI::TViagCacheRecordContent recContent;
+            customAPI2.ReadViagHomeZoneCache(reqStatus,recId,recContent);
+            User::WaitForRequest(reqStatus);
+
+            ASSERT_EQUALS(KErrNone,reqStatus.Int());
+            
+            const RMmCustomAPI::TViagCacheRecordContent& expectedContent =
+                iViagHomeZoneCache[c - KViagHomeZoneCacheIdMin][r - KViagHomeZoneCacheRecordIdMin];
+            ASSERT_EQUALS(expectedContent.iLac, recContent.iLac);
+            ASSERT_EQUALS(expectedContent.iCellId, recContent.iCellId);
+            }
+        }   
+
+    AssertMockLtsyStatusL();
+
+
+    CleanupStack::PopAndDestroy(3, this); // customAPI2, data, this
+    }
 
 
 /**
@@ -18864,7 +19121,7 @@ void CCTsyCustomIPCFU::CreateAndOpenIncomingCalLC(RLine &aLine,
  * _before_ EMmTsyBootNotifySimStatusReadyIPC CTSY event is triggered and thus
  * let the Viag Home Zome Cache to be initialized. 
  */
-void CCTsyCustomIPCFU::OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI)
+void CCTsyCustomIPCFU::OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI, TInt aNtsyError)
 	{
     CleanupClosePushL(aCustomAPI);
 	TInt err = iPhone.Open(iTelServer,KMmTsyPhoneName);
@@ -18886,7 +19143,13 @@ void CCTsyCustomIPCFU::OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI)
          {
          for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
              {
-             MockPrimeEReadViagHomeZoneCacheIPCL(c,r);
+             MockPrimeEReadViagHomeZoneCacheIPCL(c,r, ETrue, ETrue, aNtsyError);
+             if(aNtsyError != KErrNone)
+                 {
+                 // got error, send only once
+                 c = KViagHomeZoneCacheIdMax + 1;
+                 r = KViagHomeZoneCacheRecordIdMax + 1;
+                 }
              }
          }
 
@@ -18990,7 +19253,13 @@ void CCTsyCustomIPCFU::OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI)
 		{
 		for(TInt r = KViagHomeZoneCacheRecordIdMin; r <= KViagHomeZoneCacheRecordIdMax; r++)
 			{
-			MockPrimeEReadViagHomeZoneCacheIPCL(c,r);
+			MockPrimeEReadViagHomeZoneCacheIPCL(c,r, ETrue, ETrue, aNtsyError);
+            if(aNtsyError != KErrNone)
+                {
+                // got error, send only once
+                c = KViagHomeZoneCacheIdMax + 1;
+                r = KViagHomeZoneCacheRecordIdMax + 1;
+                }
 			}
 		}
 	
@@ -19001,7 +19270,7 @@ void CCTsyCustomIPCFU::OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI)
 	CleanupStack::PopAndDestroy(1,&data);
 	}
 
-void CCTsyCustomIPCFU::MockPrimeEReadViagHomeZoneCacheIPCL(TInt aCacheId,TInt aRecordId,TBool aDoComplete, TBool aDoExpect)
+void CCTsyCustomIPCFU::MockPrimeEReadViagHomeZoneCacheIPCL(TInt aCacheId,TInt aRecordId,TBool aDoComplete, TBool aDoExpect, TInt aNtsyError)
 	{
 	RBuf8 data;
 	data.CleanupClosePushL();
@@ -19027,7 +19296,7 @@ void CCTsyCustomIPCFU::MockPrimeEReadViagHomeZoneCacheIPCL(TInt aCacheId,TInt aR
 		TMockLtsyData1<RMmCustomAPI::TViagCacheRecordContent> contentData(content);
 		data.Close();
 		contentData.SerialiseL(data);
-		iMockLTSY.CompleteL(EReadViagHomeZoneCacheIPC,KErrNone,data,0);
+		iMockLTSY.CompleteL(EReadViagHomeZoneCacheIPC,aNtsyError,data,0);
 		}
 
 	CleanupStack::PopAndDestroy(1,&data);

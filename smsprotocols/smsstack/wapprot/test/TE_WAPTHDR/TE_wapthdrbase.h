@@ -24,12 +24,8 @@
 #include "smsstacklog.h"
 #include "wapthdr.h"
 
-
 #include <testconfigfileparser.h>
 #include <test/testexecuteserverbase.h>
-
-#define DSTDNC_NEWCALL_FULLNAME				_L("DummyNc::PotsNc::")
-
 
 _LIT(KConfigFileDir,"sms");
 _LIT(KConfigFilename,"TE_waphdr.txt");

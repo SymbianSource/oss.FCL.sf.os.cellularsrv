@@ -103,6 +103,7 @@ private:
 	void DriverCreateIncomingCallL(TInt aCallId, RMobilePhone::TMobileService aMode);
 	void DriverAnswerIncomingCallL(TInt aCallId, RMobilePhone::TMobileService aMode, TBool aIsIsvCall = EFalse, TInt aAnswerError = KErrNone);
 	void DriverResumeCallL(TInt aCallId, TInt aResumeError);
+	void DriverSwapCallL(TInt aCallId, TInt aSwapError, RMobileCall::TMobileCallStatus aNewCallStatus);
 	void DriverSwapCallL(TInt aCallId1, TInt aCallId2, TInt aSwapError, RMobileCall::TMobileCallStatus aNewCall1Status, RMobileCall::TMobileCallStatus aNewCall2Status);
 
 	}; // class CCTsyCallControlFU

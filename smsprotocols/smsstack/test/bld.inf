@@ -49,6 +49,11 @@ TE_R6SMS/TE_R6SMS_setup.script          z:/testdata/scripts/te_r6sms_setup.scrip
 //Class0 Store Regresssion Test Suite
 ./Te_Class0StoreRegressionSuite.script	z:/testdata/scripts/te_class0storeregressionsuite.script
 
+./smsstackcleanprivatedata.script           z:/testdata/scripts/smsstackcleanprivatedata.script
+./smsstackbackupeskfile.script                z:/testdata/scripts/smsstackbackupeskfile.script
+./smsstackrestoreeskfile.script                z:/testdata/scripts/smsstackrestoreeskfile.script
+
+./smsstacksimtsytestnumbers.ini             z:/testdata/configs/smsstacksimtsytestnumbers.ini
 
 PRJ_MMPFILES
 

@@ -395,16 +395,7 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
                         }
                     __ASSERT_DEBUG(iLocalAddress.SmsAddrFamily()!=ESmsAddrSendOnly,SmspPanic(KSmspPanicWrongSmsAddressFamily));
                     __ASSERT_DEBUG(NumSegments(iSegmentIndex==NumSegments(iRecvBufSegArray->At(0)->Size())),SmspPanic(KSmspPanicBadClientIoctlCall));
-                    // TODO - flag
-                    // i)  delete entry from reassemblystore
-                    //     smsmsg = MyInternalize( iRecvBufSegArray );
-                    //     iReasStore->GetIndex( Index, smsmsg ); // iReasStore->DeleteSMS(smsmsg);
-                    //     iReasStore->DeleteEntry( Index );
-                    // ii) looking for more sms left in the store
-                    //     iPotocol.ProcessCompleteSMSMessage();
-                    //     @note if this is only called from here the msg stay for a long time
-                    //     in the reassembly store if the processmessage fails
-                    // i)
+                    // Delete entry from reassemblystore
                     CSmsMessage*smsmessage=NULL;
                     TRAPD(ret,(smsmessage=InternalizeMessageL(iRecvBufSegArray->At(0))));
                     if( ret==KErrNone )
@@ -417,9 +408,8 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
                         LOGSMSPROT2("-> CSmsProvider::Ioctl - CSmsProvider::InternalizeMessageL [ret=%d]", ret);
                         }
                     delete smsmessage;
-                    // ii)
-                    // this is now down after finishing the readprocess
-                    // it has to be called here o in pdureadprocescompleted???
+                    // Looking for more sms left in the store
+                    // This is now done after finishing the readprocess
                     iProtocol.MessageReadedSuccessfully();
                     if( iEnumSocket )
                         {

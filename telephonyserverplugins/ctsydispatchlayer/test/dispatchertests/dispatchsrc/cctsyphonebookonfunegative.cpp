@@ -44,6 +44,15 @@ CTestSuite* CCTsyPhonebookOnFUNegative::CreateSuiteL(const TDesC& aName)
 	}
 
 /**
+ * Cleanup
+ */
+void CCTsyPhonebookOnFUNegative::DoCleanup()
+    {
+    iAdnPhoneBookStore.Close();
+    CCTsyPhonebookFU::DoCleanup();
+    }
+
+/**
  * Wraps up boilerplate code for starting tests with a clean RPhone session and RMobileONStore
  * initialised. On return this and aONStore have been pushed to the CleanupStack
  */
@@ -52,6 +61,8 @@ void CCTsyPhonebookOnFUNegative::OpenAndPushEtelAndPhoneONStoreL(RMobileONStore&
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
+
+    OpenCachingPhoneBookL(DispatcherPhonebook::EIccAdn,iAdnPhoneBookStore,KErrNone);
 	
 	TInt ret = aONStore.Open(iPhone);
 	ASSERT_EQUALS(ret, KErrNone);

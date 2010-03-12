@@ -1,4 +1,5 @@
 #This config file describes SIM tsy requests for SMS Stack unit testing (T_SmsPrt)
+[test0]
 
 #TestFormatIEA
 [test1]

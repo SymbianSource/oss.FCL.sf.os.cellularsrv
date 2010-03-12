@@ -13,14 +13,14 @@
 // Description:
 //
 
-#ifndef _TE_SMSEMSPRTBASE_H_
-#define _TE_SMSEMSPRTBASE_H_
-
+#ifndef TE_SMSEMSPRTBASE_H
+#define TE_SMSEMSPRTBASE_H
 
 #include <test/testexecuteserverbase.h>
 #include <simtsy.h>
 #include <testconfigfileparser.h>
-
+#include <mmlist.h>
+#include <mmretrieve.h>
 
 #include "gsmubuf.h"
 #include "Gsmumsg.h"
@@ -30,8 +30,7 @@
 #include "smsustrm.h"
 #include "smspdudb.h"
 #include "smsstacktestutilities.h"
-#include <mmlist.h>
-#include <mmretrieve.h>
+#include "smsstackbaseteststeps.h"
 
 #include "attributes.h"
 #include "smspproc.h"
@@ -43,47 +42,16 @@
 #include "EmsTestUtils.h"
 #include "EMSObjectDistributionIE.h"
 
-
-const TUint KSocketMessageSlots = 16;   // Override the default value of 8
-
-// The basic text we send - 26 chars long
-_LIT(KBasicSmsText,"abcdefghijklmnopqrstuvwxyz");
-_LIT(KTSmsEmsPrtConfigFileName, "tsmsemsprt_config.txt");
-
-_LIT(KGmsSmsConfigFileName,"setupgsmsms.txt");
-
-class CSmsEmsPrtTestStep : public CTestStep
-{
-
+class CSmsEmsPrtTestStep : public CSmsBaseTestStep
+    {
 public:
-	CSmsMessage* ConfigCreateSmsMessageLC(const TDesC& aDes,
-			TSmsDataCodingScheme::TSmsAlphabet aAlphabet = TSmsDataCodingScheme::ESmsAlphabet8Bit);
-	CSmsMessage* CreateSmsMessageL(const TDesC& aDes, TSmsDataCodingScheme::TSmsAlphabet aAlphabet, CSmsPDU::TSmsPDUType aType  = CSmsPDU::ESmsSubmit) ;
+    virtual TVerdict doTestStepPreambleL();
+    virtual TVerdict doTestStepPostambleL();
+    
 	TBool SendReceiveMsgL(CSmsMessage& aMsg);
-	void SendSmsL(const CSmsMessage* aSms, RSocket& aSocket);
-	void PrintMessageL(const CSmsMessage* aSms);
-	void WaitForRecvL(RSocket& aSocket);
-	CSmsMessage* RecvSmsL(RSocket& aSocket, TInt aIoctl = KIoctlReadMessageSucceeded) ;
-	TText8 IsCharDisplayable( const TText8 aChar ) ;
-	void PrepareRegTestL() ;
-	void EndRegTest();
-	TInt CommInit() ;
-    void CreateCommDBL();
-	void ParseSettingsFromFileL();
-
-
-	RFs iFs;
-	TSmsServiceCenterAddress iTelephoneNumber; //Test SIM
-	TSmsServiceCenterAddress iServiceCenterNumber; //Radiolinja
-	RSocketServ iSocketServ;
+    
+protected:
 	RSocket iSocket;
+    };
 
- 	virtual TVerdict doTestStepPreambleL();
-	virtual TVerdict doTestStepPostambleL();
-	virtual TInt GetTestNumber() = 0 ;
-
-	CSmsStackTestUtils* iSmsStackTestUtils;
-
-};
-
-#endif // _TE_SMSEMSPRTBASE_H_
+#endif // TE_SMSEMSPRTBASE_H

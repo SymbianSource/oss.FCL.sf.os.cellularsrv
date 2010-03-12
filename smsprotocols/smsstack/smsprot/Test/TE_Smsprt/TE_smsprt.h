@@ -13,330 +13,334 @@
 // Description:
 //
 
-
-#ifndef __TE_SMSPRT_H_
-#define __TE_SMSPRT_H_
-
+#ifndef TE_SMSPRT_H
+#define TE_SMSPRT_H
 
 #include "TE_smsprtbase.h"
 #include "logcheck.h"
 
+class CSmsEventLogger;
 
-class CTestSimpleTxAndRx : public CSmsPrtTestStep
+class CTestSimpleTxAndRx : public CSmsBaseTestStep
+	{
+public:
+	virtual TVerdict doTestStepL();
+	};
+	
+	
+class CTestBinaryTxAndRx : public CSmsBaseTestStep
+	{
+public:
+	virtual TVerdict doTestStepL();
+	};	
+
+
+class CTestStatusReport : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestBinaryTxAndRx : public CSmsPrtTestStep
+class CTestTxWithError : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestStatusReport : public CSmsPrtTestStep
+class CTestTxFailed : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestTxWithError : public CSmsPrtTestStep
+class CTestMatchingToObserver : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestTxFailed : public CSmsPrtTestStep
+class CTestCommandMessages : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMatchingToObserver : public CSmsPrtTestStep
+class CTestSimpleRx : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestCommandMessages : public CSmsPrtTestStep
+class CTest7bitMessTest : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSimpleRx : public CSmsPrtTestStep
+class CTestClassMessages : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTest7bitMessTest : public CSmsPrtTestStep
+class CTestRxConcatenated : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestClassMessages : public CSmsPrtTestStep
+class CTestRxDuplicate : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRxConcatenated : public CSmsPrtTestStep
+class CTestRxRingToneA : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRxDuplicate : public CSmsPrtTestStep
+class CTestTxRxConcatenated : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRxRingToneA : public CSmsPrtTestStep
+class CTestParamStorage : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestTxRxConcatenated : public CSmsPrtTestStep
+class CTestSmsStore : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestParamStorage : public CSmsPrtTestStep
+class CTestSmsStoreList : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSmsStore : public CSmsPrtTestStep
+class CTestDeleteSms : public CSmsBaseTestStep
+	{
+public:
+	virtual TVerdict doTestStepL();
+	};
+
+class CTestSmsAddr : public CSmsBaseTestStep
+    {
+public:
+    virtual TVerdict doTestStepL();
+    };
+
+class CTestSocketBinding : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSmsStoreList : public CSmsPrtTestStep
+class CTestSmsEventLogger : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestDeleteSms : public CSmsPrtTestStep
+class CTestBearerChange : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSocketBinding : public CSmsPrtTestStep
+class CTestRestoreBearer : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSmsEventLogger : public CSmsPrtTestStep
+class CTestRecvModeChange : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestBearerChange : public CSmsPrtTestStep
+class CTestTsyCaps : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRestoreBearer : public CSmsPrtTestStep
+class CTestOOMSendSms : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRecvModeChange : public CSmsPrtTestStep
+class CTestOOMWriteSms : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestTsyCaps : public CSmsPrtTestStep
+class CTestOOMReadSms : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMSendSms : public CSmsPrtTestStep
+class CTestOOMReadSmsList : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMWriteSms : public CSmsPrtTestStep
+class CTestOOMDeleteSms : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMReadSms : public CSmsPrtTestStep
+class CTestOOMSmsParams : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMReadSmsList : public CSmsPrtTestStep
+class CTestMeStoreDupAndMiss : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMDeleteSms : public CSmsPrtTestStep
+class CTestSimStoreDupAndMiss : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMSmsParams : public CSmsPrtTestStep
+class CTestRxCphs : public CSmsBaseTestStep
+	{
+public:
+	virtual TVerdict doTestStepL();
+	};
+
+class CTestInvalidPDUs : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMeStoreDupAndMiss : public CSmsPrtTestStep
+class CTestStress : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSimStoreDupAndMiss : public CSmsPrtTestStep
+class CTestCombinedStore : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRxCphs : public CSmsPrtTestStep
-	{
-public:
-	virtual TVerdict doTestStepL();
-	};
-
-class CTestInvalidPDUs : public CSmsPrtTestStep
+class CTestParamsInter : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestStress : public CSmsPrtTestStep
+class CTestTxRxAlphanumeric : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestCombinedStore : public CSmsPrtTestStep
+class CTestRxSuspend : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestParamsInter : public CSmsPrtTestStep
+class CTestEnumerateCorrupted : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestTxRxAlphanumeric : public CSmsPrtTestStep
+class CTestCancelling : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestRxSuspend : public CSmsPrtTestStep
+class CTestSendAndRecvMsgsWithDifferentTON : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestEnumerateCorrupted : public CSmsPrtTestStep
+class CTestSendAndReceiveIndicatorMsgs : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestCancelling : public CSmsPrtTestStep
+class CTestSendRecvMaxLengthMsg : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSendAndRecvMsgsWithDifferentTON : public CSmsPrtTestStep
+class CTestSendAndRecvMsgsWithDifferentPID : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSendAndReceiveIndicatorMsgs : public CSmsPrtTestStep
-	{
-public:
-	virtual TVerdict doTestStepL();
-	};
-
-
-class CTestSendRecvMaxLengthMsg : public CSmsPrtTestStep
-	{
-public:
-	virtual TVerdict doTestStepL();
-	};
-
-
-class CTestSendAndRecvMsgsWithDifferentPID : public CSmsPrtTestStep
-	{
-public:
-	virtual TVerdict doTestStepL();
-	};
-
-
-class CSmsParamsErrorCases : public CSmsPrtTestStep
+class CTestSmsParamsErrorCases : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
@@ -350,255 +354,243 @@ private:
 	};
 
 
-class CTestResendFailedConcatinatedMessage : public CSmsPrtTestStep
+class CTestResendFailedConcatinatedMessage : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMultipartWapMessage : public CSmsPrtTestStep
+class CTestMultipartWapMessage : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMOSESMessage : public CSmsPrtTestStep
+class CTestMOSESMessage : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestClockBack : public CSmsPrtTestStep
+class CTestClockBack : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestEnumerateNoMessages : public CSmsPrtTestStep
+class CTestEnumerateNoMessages : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestIE : public CSmsPrtTestStep
+class CTestIE : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestEmailIE : public CSmsPrtTestStep
+class CTestEmailIE : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMaxReadTimeForSmsStoreList : public CSmsPrtTestStep
+class CTestMaxReadTimeForSmsStoreList : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSameLogIdMultiplePDU	: public CSmsPrtTestStep
+class CTestSameLogIdMultiplePDU	: public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSameLogIdSinglePDU : public CSmsPrtTestStep
+class CTestSameLogIdSinglePDU : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestConcatenatedMessageLogging : public CSmsPrtTestStep
-	{
+class CTestConcatenatedMessageLogging : public CSmsBaseTestStep
+    {
 public:
-	virtual TVerdict doTestStepL();
-	};
+    virtual TVerdict doTestStepL();
+    };
 
 
 class CSmsLogChecker;
 
 class CTestLog : public CActive
-	{
-	public:
-		static CTestLog* NewLC(CSmsStackTestUtils& aUtils, RFs& aFs, CSmsPrtTestStep* aTest, TInt aPriority);
-		~CTestLog();
+    {
+public:
+    static CTestLog* NewLC(CSmsStackTestUtils& aUtils, RFs& aFs, CSmsBaseTestStep* aTest, TInt aPriority);
+    ~CTestLog();
 
-		void StartL();
+    void StartL();
 
-	private:
+private:
+    void ConstructL(RFs& aFs);
+    CTestLog(CSmsStackTestUtils& aUtils, CSmsBaseTestStep* aTest, TInt aPriority);
+    void RunL();
+    void DoCancel() {};
+    TInt RunError(TInt aError) {Complete(aError); return KErrNone;}
+    void Complete(TInt aError) {iStatus = aError; CActiveScheduler::Stop();}
+    void StartOriginalL();
+    void StartCompareL(TInt aExpectError);
 
-		void ConstructL(RFs& aFs);
-		CTestLog(CSmsStackTestUtils& aUtils, CSmsPrtTestStep* aTest, TInt aPriority);
-		void RunL();
-		void DoCancel() {};
-		TInt RunError(TInt aError) {Complete(aError); return KErrNone;}
-		void Complete(TInt aError) {iStatus = aError; CActiveScheduler::Stop();}
-		void StartOriginalL();
-		void StartCompareL(TInt aExpectError);
+private:
+    enum TState
+        {
+        EOriginal
+        } iState;
 
-	private:
+    CSmsStackTestUtils& iUtils;
+    CSmsBaseTestStep* iTest;
 
-		enum TState
-			{
-			EOriginal
-			} iState;
+    CSmsLogChecker* iLogChecker;
+    CSmsEventLogger* iEventLogger;
+    CSmsMessage* iMessage;
+    RSocket iSocket;
 
-		CSmsStackTestUtils& iUtils;
-		CSmsPrtTestStep* iTest;
+    RArray<TLogId> iAddedIds;
+    TInt iNumberToAdd;
+    TLogSmsPduData iData;
+    };
 
-		CSmsLogChecker* iLogChecker;
-		CSmsEventLogger* iEventLogger;
-		CSmsMessage* iMessage;
-		RSocketServ iSocketServer;
-		RSocket iSocket;
 
-		RArray<TLogId> iAddedIds;
-		TInt iNumberToAdd;
-		TLogSmsPduData iData;
+class CTestEnumerationOfStatusReport : public CSmsBaseTestStep
+    {
+public:
+    TVerdict doTestStepL();
+    };
+
+
+class CTestWriteStatusReportToSIM : public CSmsBaseTestStep
+    {
+public:
+	TVerdict doTestStepL();
 	};
 
 
-class CTestEnumerationOfStatusReport : public CSmsPrtTestStep
+class CTestTxSmsWithDelayedCompletion : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestWriteStatusReportToSIM : public CSmsPrtTestStep
+class CTestSmsStoreReadCancel : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestTxSmsWithDelayedCompletion : public CSmsPrtTestStep
-	{
-public:
-	TVerdict doTestStepL();
-	};
-
-
-class CTestSmsStoreReadCancel : public CSmsPrtTestStep
-	{
-public:
-	TVerdict doTestStepL();
-	};
-
-
-class CTestBindWhenPoweredDownWithPublishSubscribe : public CSmsPrtTestStep
+class CTestBindWhenPoweredDownWithPublishSubscribe : public CSmsBaseTestStep
 	{
 public :
 	TVerdict doTestStepL();
 	};
 
 
-class CTestObserverNotifiedWhenPoweredDownWithPublishSubscribe : public CSmsPrtTestStep
+class CTestObserverNotifiedWhenPoweredDownWithPublishSubscribe : public CSmsBaseTestStep
 	{
 public :
 	TVerdict doTestStepL();
 	};
 
 
-class CTestSmsCNumberChangeWithPublishSubscribe : public CSmsPrtTestStep
+class CTestSmsCNumberChangeWithPublishSubscribe : public CSmsBaseTestStep
 	{
 public :
 	TVerdict doTestStepL();
 	};
 
 
-class CTestStatusReportTime : public CSmsPrtTestStep
+class CTestStatusReportTime : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestTx8BitWapWithStatus : public CSmsPrtTestStep
+class CTestTx8BitWapWithStatus : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestSimStoreCorruptMessage : public CSmsPrtTestStep
+class CTestSimStoreCorruptMessage : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestCorruptPduWithNegativeResponse : public CSmsPrtTestStep
+class CTestCorruptPduWithNegativeResponse : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepL();
 	};
 
 
-class CTestBootTimer : public CSmsPrtTestStep
+class CTestBootTimer : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepL();
 	};
 
 
-class CTestCSmsMessageTimeStamp : public CSmsPrtTestStep
+class CTestCSmsMessageTimeStamp : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepL();
 	};
 
 
-class CTestCSmsMessageWithDeliverPDU : public CSmsPrtTestStep
+class CTestCSmsMessageWithDeliverPDU : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepL();
 	};
 
 
-class CTestCSmsMessageWithStatusReportPDU : public CSmsPrtTestStep
+class CTestCSmsMessageWithStatusReportPDU : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepL();
 	};
 
 
-class CTestCSmsMessageWithSubmitPDU : public CSmsPrtTestStep
+class CTestCSmsMessageWithSubmitPDU : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepL();
 	};
 
 
-class CTestHandlePID40h : public CSmsPrtTestStep
+class CTestHandlePID40h : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestDiskSpaceMidRangeClass0Class2 : public CSmsPrtTestStep
-	{
-public:	
-	TVerdict doTestStepPreambleL();
-	TVerdict doTestStepL();
-	TVerdict doTestStepPostambleL();
-	};
-
-
-class CTestDiskSpaceLowRangeClass0Class2 : public CSmsPrtTestStep
+class CTestDiskSpaceMidRangeClass0Class2 : public CSmsBaseTestStep
 	{
 public:
     TVerdict doTestStepPreambleL();
@@ -607,28 +599,37 @@ public:
 	};
 
 
-class CTestCorruptPDUs : public CSmsPrtTestStep
+class CTestDiskSpaceLowRangeClass0Class2 : public CSmsBaseTestStep
+	{
+public:
+    TVerdict doTestStepPreambleL();
+	TVerdict doTestStepL();
+	TVerdict doTestStepPostambleL();
+	};
+
+
+class CTestCorruptPDUs : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestCongestedReceive : public CSmsPrtTestStep
+class CTestCongestedReceive : public CSmsBaseTestStep
 	{
 public:
 	TVerdict doTestStepL();
 	};
 
 
-class CTestEncodingPDUonBoundary : public CSmsPrtTestStep
+class CTestEncodingPDUonBoundary : public CSmsBaseTestStep
 	{
 public:
 	virtual enum TVerdict doTestStepL();
 	};
 
 
-class CTestReceiveInvalidOrReservedIE : public CSmsPrtTestStep
+class CTestReceiveInvalidOrReservedIE : public CSmsBaseTestStep
 	{
 public:
 	virtual enum TVerdict doTestStepL();
@@ -676,25 +677,27 @@ public:
 	virtual enum TVerdict doTestStepL();
 	};
 
+
 class CTestEncoding7bitTurkishAndUnconvertible : public CSmsPrtEncodingTestStep
 	{
 public:
 	virtual enum TVerdict doTestStepL();
 	};
 
-class CTestReceivingMessageWithDifferentEncodings : public CSmsPrtTestStep
+
+class CTestReceivingMessageWithDifferentEncodings : public CSmsBaseTestStep
 	{
 public:
 	virtual enum TVerdict doTestStepL();
 	};
 
-class CTestReceivingMessageAfterSocketClosure : public CSmsPrtTestStep
+class CTestReceivingMessageAfterSocketClosure : public CSmsBaseTestStep
 	{
 public:
 	virtual enum TVerdict doTestStepL();
 	};
 
-class CTestSimpleTxAndRxWithLoggingDisabled : public CSmsPrtTestStep
+class CTestSimpleTxAndRxWithLoggingDisabled : public CSmsBaseTestStep
  	{
 public:
  	virtual TVerdict doTestStepL();
@@ -736,4 +739,4 @@ public:
     virtual enum TVerdict doTestStepL();
     };
 
-#endif
+#endif // TE_SMSPRT_H

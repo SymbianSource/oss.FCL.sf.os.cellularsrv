@@ -19,24 +19,21 @@
 *
 */
 
-
-
 /**
  @file
 */
 
-#ifndef __TSMSPTESTUTILS_H__
-#define __TSMSPTESTUTILS_H__
+#ifndef SMSSTACKTESTUTILITIES_H
+#define SMSSTACKTESTUTILITIES_H
 
 #include <e32test.h>
 #include <es_sock.h>
 #include <mmlist.h>
 #include <gsmupdu.h>
 #include <smsuact.h>
-#include <smsuaddr.h>
-#include "logwrap.h"
-#include "logeng.h"
+#include <smsuaddr.H>
 #include <test/testexecuteserverbase.h>
+#include <logwrapconst.h>
 #include <logsmspdudata.h>
 #include <commsdat_partner.h>
 
@@ -56,7 +53,6 @@ _LIT(KSimTsyConfigFileName,"c:\\config.txt");
 class CSmsStackTestUtils : public CBase
 	{
 	public:
-
 		//Factory
 		IMPORT_C static CSmsStackTestUtils* NewL(CTestStep* aTestStep, RFs& aFs);
 		IMPORT_C ~CSmsStackTestUtils();
@@ -93,7 +89,6 @@ class CSmsStackTestUtils : public CBase
 		IMPORT_C void OpenSmsSocketLC(RSocketServ& aSocketServer, RSocket& aSocket, TSmsAddrFamily aFamily);
 		IMPORT_C void OpenSmsSocketL(RSocketServ& aSocketServer, RSocket& aSocket, TSmsAddr& aSmsAddr);
 		IMPORT_C void OpenSmsSocketL(RSocketServ& aSocketServer, RSocket& aSocket, TSmsAddrFamily aFamily);
-		IMPORT_C void WaitForInitializeL();
 
 		///SMS Parameter utils
 		IMPORT_C TInt StoreParamsL(CMobilePhoneSmspList& aSmspList, RSocket& aSocket, TBool aCancelAfterRequest);
@@ -120,12 +115,10 @@ class CSmsStackTestUtils : public CBase
 		IMPORT_C void GetBearerL(RMobileSmsMessaging::TMobileSmsBearer& aBearer);
 		
 	private:
-
 		CSmsStackTestUtils(CTestStep* aTestStep, RFs& aFs);
 		void ConstructL();
-
+	     
 	public:
-
 		CTestStep* iTestStep;
 		RFs& iFs;
 		CCnvCharacterSetConverter* iCharConv;
@@ -224,7 +217,4 @@ protected:
 	CSmsStackTestUtils& iTestUtils;
 	};
 
-
-#endif  //__TSMSPTESTUTILS_H__
-
-
+#endif  // SMSSTACKTESTUTILITIES_H

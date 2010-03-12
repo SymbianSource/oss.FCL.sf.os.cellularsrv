@@ -18,9 +18,14 @@
 */
 
 #include "te_smsprt_R6.h"
-#include "e32def.h"
-#include "gsmunonieoperations.h"
 
+#include <gsmunonieoperations.h>
+#include <gsmubuf.h>
+#include <gsmuset.h>
+#include <gsmuieoperations.h>
+
+#include "smsstacktestconsts.h"
+#include "smsstacktestutilities.h"
 
 TVerdict CTestSinglePDUHyperLinks::doTestStepL()
 /**
@@ -28,14 +33,8 @@ TVerdict CTestSinglePDUHyperLinks::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test HyperLinks in SMS message"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 70);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//This is a 95 character msg.
 	_LIT(KTestMsg,"HyperLink message, Symbian. http://www.symbian.com Some content Intranet http://web.intra/homes");
@@ -46,8 +45,7 @@ TVerdict CTestSinglePDUHyperLinks::doTestStepL()
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	INFO_PRINTF2(_L("Destination number:..... %S "),&iTelephoneNumber);
 	INFO_PRINTF2(_L("ServiceCenter number:... %S "),&iServiceCenterNumber);
@@ -176,6 +174,7 @@ TVerdict CTestSinglePDUHyperLinks::doTestStepL()
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
+	
 	TestSmsContentsL(smsMessage,KTestMsg);
 
 	//Get the operations
@@ -196,6 +195,7 @@ TVerdict CTestSinglePDUHyperLinks::doTestStepL()
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
+	
 	TestSmsContentsL(smsMessage,KTestMsg);
 	//Get the operations
 	CSmsHyperLinkOperations& multipleHyperLinkOperations = static_cast<CSmsHyperLinkOperations&>(smsMessage->GetOperationsForIEL(CSmsInformationElement::ESmsHyperLinkFormat));
@@ -229,15 +229,8 @@ TVerdict CTestSinglePDUHyperLinks::doTestStepL()
 	CleanupStack::PopAndDestroy(smsMessage);
 
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult() ;
 }
-
-
-//Multiple PDU's
 
 TVerdict CTestMultiplePDUHyperLinks::doTestStepL()
 /**
@@ -245,14 +238,8 @@ TVerdict CTestMultiplePDUHyperLinks::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test multiple PDUs with hyperLinks in SMS message"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 71);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	_LIT(KLongText,"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCC");
 
@@ -261,9 +248,7 @@ TVerdict CTestMultiplePDUHyperLinks::doTestStepL()
 	iServiceCenterNumber=KRadiolinjaSC;
 
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KLongText,alphabet);
-
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KLongText,alphabet);
 
 	//Check number of hyperlinks
 	//Get the operations
@@ -443,10 +428,6 @@ TVerdict CTestMultiplePDUHyperLinks::doTestStepL()
 
 	CleanupStack::PopAndDestroy(smsMessage);
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult() ;
 }
 
@@ -456,15 +437,9 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
  *  Test reply address can be different to the senders address
  */
 	{
-	__UHEAP_MARK;
-
 	INFO_PRINTF1(_L("Test reply address in SMS message"));
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 72);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//This is character msg
 	_LIT(KTestMsg,"Reply address message.  Message will be sent to other address than sender");
@@ -475,8 +450,7 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* specialMessageAndReplyAddresMessage=CreateSmsMessageL(KEmptyMsg,alphabet);
-	CleanupStack::PushL(specialMessageAndReplyAddresMessage);
+	CSmsMessage* specialMessageAndReplyAddresMessage=CreateSmsMessageLC(KEmptyMsg,alphabet);
 
 	//Get the operations
 	CSmsReplyAddressOperations& replyAddressOperations =
@@ -514,21 +488,19 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	//Each special message is 4 octects.
 	//Maximum variations on the type of messages for 5 bits is 32
 	for(TInt indicationType=EGsmSmsVoiceMessageWaiting; indicationType<=EGsmSmsExtendedMessageTypeWaiting;
-				indicationType++)
+				++indicationType)
 	{
 		TBool toStore=EFalse;
 		TSmsMessageProfileType messageProfileType=EGsmSmsProfileId1;
 		TUint8 messageCount=5;
 
 		for(TUint extendedType=EGsmSmsNoExtendedMessageTypeIndication;
-					extendedType<=EGsmSmsExtendedIndicationType7; extendedType++)
+					extendedType<=EGsmSmsExtendedIndicationType7; ++extendedType)
 		{
 			TRAP(err,specialMessageOperations.AddSpecialMessageIndicationL(toStore,TSmsMessageIndicationType(indicationType),
 									TExtendedSmsIndicationType(extendedType),messageProfileType,messageCount));
 			TEST(err==KErrNone);
-
 		}
-
 	}
 
 	//Add six zero length information elements
@@ -536,19 +508,17 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	CSmsPDU &pdu=specialMessageAndReplyAddresMessage->SmsPDU();
 	//Get the UserData
 	CSmsUserData &userData=pdu.UserData();
-	_LIT8(KEmptyString,"");
+	
 	//Add the information element
 	//TSmsId
 	for(TUint informationElement=CSmsInformationElement::ESmsIEISIMToolkitSecurityHeaders1;
-				informationElement<=CSmsInformationElement::ESmsIEISIMToolkitSecurityHeaders5;
-				informationElement++)
-	{
-		//CSmsInformationElement::TSmsInformationElementIdentifier informationElement;
+		informationElement<=CSmsInformationElement::ESmsIEISIMToolkitSecurityHeaders5;
+		++informationElement)
+	    {
 		TRAP(err,userData.AddInformationElementL(
-			CSmsInformationElement::TSmsInformationElementIdentifier(informationElement),KEmptyString()));
+			CSmsInformationElement::TSmsInformationElementIdentifier(informationElement),KNullDesC8()));
 		TEST(err==KErrNone);
-	}
-
+	    }
 
 	//Add address
 	TPtrC replyAddress;
@@ -678,8 +648,7 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	CleanupStack::PopAndDestroy(specialMessageAndReplyAddresMessage);
 
 	//Create a new message
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Get the operations
 	CSmsReplyAddressOperations& operations =
@@ -821,8 +790,6 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 
-	INFO_PRINTF1(_L("incoming SMS") );
-
 	CleanupStack::PushL(smsMessage);
 	TestSmsContentsL(smsMessage,KTestMsg);
 
@@ -850,10 +817,8 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	INFO_PRINTF1(_L("waiting for incoming SMS with reply address...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
-
-	INFO_PRINTF1(_L("incoming SMS") );
-
 	CleanupStack::PushL(smsMessage);
+	
 	TestSmsContentsL(smsMessage,KTestMsg);
 
 	//Get the operations
@@ -879,10 +844,8 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	INFO_PRINTF1(_L("waiting for incoming SMS with parsed reply address...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
-
-	INFO_PRINTF1(_L("incoming SMS") );
-
 	CleanupStack::PushL(smsMessage);
+	
 	TestSmsContentsL(smsMessage,KTestMsg);
 
 	//Get the operations
@@ -907,9 +870,6 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	INFO_PRINTF1(_L("waiting for incoming SMS with three reply addresses...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
-
-	INFO_PRINTF1(_L("incoming SMS") );
-
 	CleanupStack::PushL(smsMessage);
 	//TestSmsContentsL(smsMessage,KTestMsg);
 
@@ -952,12 +912,7 @@ TVerdict CTestSinglePDUReplyAddress::doTestStepL()
 	//-------- END receive with corrupt reply address
 	//-------- END receive
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
-
 }
 
 
@@ -966,6 +921,7 @@ TVerdict CTestMultiplePDUReplyAddress::doTestStepL()
  *  Test a simple Transmit and Receive of a TPDU
  */
 	{
+    // TODO: redundant test case???
 	INFO_PRINTF1(_L("Test multiple PDUs with reply address in SMS message"));
 
 	return TestStepResult();
@@ -978,16 +934,12 @@ TVerdict CTestSpecialMessageOperations::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test special message waiting operations"));
-
-	__UHEAP_MARK;
-
 	//This is character msg - 96 characters
 	_LIT(KTestMsg,"This message is a special message waiting message. You have a special message waiting for you :)");
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Get the operations for a version 0 message i.e. before operations for IE were added
 	smsMessage->SetVersion(CSmsMessage::ESmsMessageV0);
@@ -1299,12 +1251,8 @@ TVerdict CTestSpecialMessageOperations::doTestStepL()
 
 	CleanupStack::PopAndDestroy(smsMessage);
 	//-------- END API Test for special message operations
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 TVerdict CTestSinglePDUSpecialMessageWaiting::doTestStepL()
 /**
@@ -1312,14 +1260,8 @@ TVerdict CTestSinglePDUSpecialMessageWaiting::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test special message waiting in single PDU SMS message"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 73);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//This is a 95 character msg.
 	_LIT(KTestMsg,"This message is a special message waiting message. You have a special message waiting for you :)");
@@ -1330,8 +1272,7 @@ TVerdict CTestSinglePDUSpecialMessageWaiting::doTestStepL()
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	INFO_PRINTF2(_L("Destination number:..... %S "),&iTelephoneNumber);
 	INFO_PRINTF2(_L("ServiceCenter number:... %S "),&iServiceCenterNumber);
@@ -1412,10 +1353,8 @@ TVerdict CTestSinglePDUSpecialMessageWaiting::doTestStepL()
 	//-------- END Sending Single PDU
 
 	//-------- START receiving
-	INFO_PRINTF1(_L("waiting for incoming SMS...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
-
 	CleanupStack::PushL(smsMessage);
 
 	//Get the operations
@@ -1597,13 +1536,8 @@ TVerdict CTestSinglePDUSpecialMessageWaiting::doTestStepL()
 
 	//-------- END receive
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 TVerdict CTestMultiplePDUSpecialMessageWaiting::doTestStepL()
 /**
@@ -1615,23 +1549,18 @@ TVerdict CTestMultiplePDUSpecialMessageWaiting::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEnhancedVoiceMailOperations::doTestStepL()
 /**
  *  Test the operations available for special message waiting
  */
 	{
 	INFO_PRINTF1(_L("Test enhanced voice mail message operations"));
-
-	__UHEAP_MARK;
-
 	//This is character msg - 96 characters
 	_LIT(KTestMsg,"This is a enhanced voice mail information message!");
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Get the operations
 	CSmsEnhancedVoiceMailOperations& operations =
@@ -1683,9 +1612,9 @@ TVerdict CTestEnhancedVoiceMailOperations::doTestStepL()
 	//Test the boundary values for calling line identity
 	TUint count=0;
 	//Do this test for both parsed address and international numbers
-	for (TUint addressType=EInternational;addressType<=EParsed;addressType++)
+	for (TUint addressType=EInternational; addressType<=EParsed; ++addressType)
 	{
-		for(TUint boundaryCheck=EInside; boundaryCheck<=EOutside;boundaryCheck++)
+		for(TUint boundaryCheck=EInside; boundaryCheck<=EOutside; ++boundaryCheck)
 		{
 			//Just before the boundary
 			TPtrC boundaryCallingLineIdentity;
@@ -1757,11 +1686,8 @@ TVerdict CTestEnhancedVoiceMailOperations::doTestStepL()
 
 				delete notNeededEnhancedVoiceMailNotification;
 			}
-
-
 		}
 	}
-
 
 	voiceMailNotification->SetParsedCallingLineIdentityL(accessAddressTGsm);
 
@@ -1772,9 +1698,9 @@ TVerdict CTestEnhancedVoiceMailOperations::doTestStepL()
 	count=newNotificationsList.Count();
 	//Remove all pointers to notifications
 	if(count)
-	{
-		newNotificationsList.Reset();
-	}
+	    {
+        newNotificationsList.Reset();
+	    }
 
 	result=newNotificationsList.Append(voiceMailNotification);
 	TEST(result==KErrNone);
@@ -1846,19 +1772,15 @@ TVerdict CTestEnhancedVoiceMailOperations::doTestStepL()
 	CleanupStack::PopAndDestroy(retrievedNotification);
 	CleanupStack::PopAndDestroy(enhancedVoiceMailNotification);
 	CleanupStack::PopAndDestroy(smsMessage);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 //Helper function:  Adds the address to a notification
 void CTestEnhancedVoiceMailOperations::AddAddressToNotifcationL(
 			CEnhancedVoiceMailNotification* aEnhancedVoiceMailNotification,
 			CVoiceMailNotification* aVoiceMailNotification,
 			TPtrC aCallingLineIdentity,TUint aAddressType)
-{
+    {
 	//Get the notifications in the enhanced message
 	RPointerArray<CVoiceMailNotification>& notificationsList=
 					aEnhancedVoiceMailNotification->GetVoiceMailNotifications();
@@ -1866,29 +1788,28 @@ void CTestEnhancedVoiceMailOperations::AddAddressToNotifcationL(
 	TUint count=notificationsList.Count();
 
 	if(count==1)
-	{
+	   {
 		notificationsList.Remove(0);
-	}
+	   }
 
 	//Add the address
 	if(aAddressType==EParsed)
-	{
+	   {
 		//Create Calling Line Identity
 		TGsmSmsTelNumber callingLineIdentityTGsm;
 		callingLineIdentityTGsm.iTelNumber=aCallingLineIdentity;
 		callingLineIdentityTGsm.iTypeOfAddress=EGsmSmsTONAlphaNumeric;
 		aVoiceMailNotification->SetParsedCallingLineIdentityL(callingLineIdentityTGsm);
-	}
+    	}
 	else
-	{
-		aVoiceMailNotification->SetCallingLineIdentityL(aCallingLineIdentity);
-	}
+	    {
+        aVoiceMailNotification->SetCallingLineIdentityL(aCallingLineIdentity);
+	    }
 
 	//Add the notification to the voice mail
 	TInt result=notificationsList.Append(aVoiceMailNotification);
 	TEST(result==KErrNone);
 }
-
 
 TVerdict CTestSinglePDUEnhancedVoiceMailInformation::doTestStepL()
 /**
@@ -1896,14 +1817,8 @@ TVerdict CTestSinglePDUEnhancedVoiceMailInformation::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test enhanced voice mail information with a single PDU message"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 74);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//This is an enhanced voice mail character msg.
 	_LIT(KTestMsg,"");
@@ -1914,8 +1829,7 @@ TVerdict CTestSinglePDUEnhancedVoiceMailInformation::doTestStepL()
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	INFO_PRINTF2(_L("Destination number:..... %S "),&iTelephoneNumber);
 	INFO_PRINTF2(_L("ServiceCenter number:... %S "),&iServiceCenterNumber);
@@ -1985,11 +1899,10 @@ TVerdict CTestSinglePDUEnhancedVoiceMailInformation::doTestStepL()
 	//Single pdu, max size = 137.  That is 140-2(UDHL) -1(IEId) = 137
 	//User data = 8C
 	//Make a new message
-	for (TUint i = 0; i < enhancedVoiceMailNotification->NumberOfVoiceMails(); i++)
+	for (TUint i = 0; i < enhancedVoiceMailNotification->NumberOfVoiceMails(); ++i)
 	    {
 	    delete notificationsList[i];
 	    }
-
 	notificationsList.Reset();
 
 	CSmsMessage* boundaryValueVoiceMessage=CreateSmsMessageL(KTestMsg,alphabet);
@@ -2002,12 +1915,12 @@ TVerdict CTestSinglePDUEnhancedVoiceMailInformation::doTestStepL()
 
 	//Add five more notifications
 	const TUint KNumNotifications=4;
-	for(count=0;count<KNumNotifications; count++)
-	{
+	for(count=0; count<KNumNotifications; ++count)
+	   {
 		CVoiceMailNotification* voiceMailNotification=CreateVoiceMailNotificationL(callingLineIdentityTGsm);
 		result=notificationsList.Append(voiceMailNotification);
 		TEST(result==KErrNone);
-	}
+	   }
 
 	//Add the number to make the size on the boundary
 	TPtrC boundaryCallingLineIdentity;
@@ -2106,16 +2019,11 @@ TVerdict CTestSinglePDUEnhancedVoiceMailInformation::doTestStepL()
 	CleanupStack::PopAndDestroy(smsMessage);
 
 	//---------- END receiving
-
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
-	return TestStepResult();
+ 	return TestStepResult();
 	}
 
-CEnhancedVoiceMailNotification* CTestEnhancedVoiceMail::CreateEnhancedVoiceMailNotificationL(TGsmSmsTelNumber aAccessAddress)
+CEnhancedVoiceMailNotification* CSmsEnhancedVoiceMailTestStep::CreateEnhancedVoiceMailNotificationL(TGsmSmsTelNumber aAccessAddress)
 {
 	CEnhancedVoiceMailNotification* enhancedVoiceMailNotification=CEnhancedVoiceMailNotification::NewL();
 
@@ -2131,8 +2039,7 @@ CEnhancedVoiceMailNotification* CTestEnhancedVoiceMail::CreateEnhancedVoiceMailN
 	return enhancedVoiceMailNotification;
 }
 
-
-CVoiceMailNotification*  CTestEnhancedVoiceMail::CreateVoiceMailNotificationL(TGsmSmsTelNumber aCallingLineIdentity)
+CVoiceMailNotification*  CSmsEnhancedVoiceMailTestStep::CreateVoiceMailNotificationL(TGsmSmsTelNumber aCallingLineIdentity)
 {
 	CVoiceMailNotification* voiceMailNotification=CVoiceMailNotification::NewL();
 
@@ -2155,11 +2062,11 @@ TVerdict CTestMultiplePDUEnhancedVoiceMailInformation::doTestStepL()
  *  Test the sending and receiving of enhanced voice mail
  */
 	{
+    // TODO: redundant test case???
 	INFO_PRINTF1(_L("Test enhanced voice mail information with multiple PDU message"));
 
 	return TestStepResult();
 	}
-
 
 TVerdict CTestEnhancedVoiceMailDeleteOperations::doTestStepL()
 /**
@@ -2167,16 +2074,12 @@ TVerdict CTestEnhancedVoiceMailDeleteOperations::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test enhanced voice mail delete confirmation operations"));
-
-	__UHEAP_MARK;
-
 	//This is character msg - 96 characters
 	_LIT(KTestMsg,"This is a enhanced voice mail information message!");
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Get the operations
 	CSmsEnhancedVoiceMailOperations& operations =
@@ -2287,12 +2190,8 @@ TVerdict CTestEnhancedVoiceMailDeleteOperations::doTestStepL()
 	CleanupStack::PopAndDestroy(retrievedDeletion);
 	CleanupStack::PopAndDestroy(enhancedVoiceMailDeleteConfirmation);
 	CleanupStack::PopAndDestroy(smsMessage);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 TVerdict CTestSinglePDUEnhancedVoiceMailDeleteConfirmation::doTestStepL()
 /**
@@ -2300,14 +2199,8 @@ TVerdict CTestSinglePDUEnhancedVoiceMailDeleteConfirmation::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test enhanced voice mail single PDU message delete confirmation"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 75);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//This is an enhanced voice mail character msg.
 	_LIT(KTestMsg,"");
@@ -2318,8 +2211,7 @@ TVerdict CTestSinglePDUEnhancedVoiceMailDeleteConfirmation::doTestStepL()
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	INFO_PRINTF2(_L("Destination number:..... %S "),&iTelephoneNumber);
 	INFO_PRINTF2(_L("ServiceCenter number:... %S "),&iServiceCenterNumber);
@@ -2453,14 +2345,9 @@ TVerdict CTestSinglePDUEnhancedVoiceMailDeleteConfirmation::doTestStepL()
 	TEST(count==1);
 
 	CleanupStack::PopAndDestroy(retrievedNotification);
-
 	CleanupStack::PopAndDestroy(smsMessage);
 	//---------- END receiving
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
 
@@ -2470,11 +2357,11 @@ TVerdict CTestMultiplePDUEnhancedVoiceMailDeleteConfirmation::doTestStepL()
  *  Test the enhanced voice mail delete confirmation
  */
 	{
+    // TODO: redundant test case???
 	INFO_PRINTF1(_L("Test enhanced voice mail multiple PDU message delete confirmation"));
 
 	return TestStepResult();
 	}
-
 
 TVerdict CTest7BitDefaultAlphabet::doTestStepL()
 /**
@@ -2483,14 +2370,9 @@ TVerdict CTest7BitDefaultAlphabet::doTestStepL()
 	{
 	INFO_PRINTF1(_L("Test 7 bit default alphabet"));
 
-	__UHEAP_MARK;
-
 	//Send a message with no alphabet set
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 76);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//This is a msg.
 	_LIT(KTestMsg,"This message has no coding scheme set.  Assume 7 bit default.");
@@ -2544,15 +2426,9 @@ TVerdict CTest7BitDefaultAlphabet::doTestStepL()
 	TEST(alphabet==TSmsDataCodingScheme::ESmsAlphabet7Bit);
 	CleanupStack::PopAndDestroy(smsMessage);
 
-
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 TVerdict CTestZeroLengthIE::doTestStepL()
 /**
@@ -2561,14 +2437,9 @@ TVerdict CTestZeroLengthIE::doTestStepL()
 	{
 	INFO_PRINTF1(_L("Test zero length IE, USIM toolkit IE"));
 
-	__UHEAP_MARK;
-
 	//Send a message with no alphabet set
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 77);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	_LIT(KTestMsg,"This message has a zero length information element.  USIM toolkit security header.");
 
@@ -2579,8 +2450,7 @@ TVerdict CTestZeroLengthIE::doTestStepL()
 	//Create message
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	INFO_PRINTF2(_L("Destination number:..... %S "),&iTelephoneNumber);
 	INFO_PRINTF2(_L("ServiceCenter number:... %S "),&iServiceCenterNumber);
@@ -2632,7 +2502,7 @@ TVerdict CTestZeroLengthIE::doTestStepL()
 
 	//-----------
 	//Receive message with multiple USIM security headers - 7F and 70, with zero length
-	INFO_PRINTF1(_L("waiting for incoming SMS with multiple USIM security headers, 7F and 70, with zero length...") );
+	INFO_PRINTF1(_L("Receive SMS with multiple USIM security headers, 7F and 70, with zero length...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 
@@ -2651,7 +2521,7 @@ TVerdict CTestZeroLengthIE::doTestStepL()
 	//-----------
 	//Receive message with multiple USIM security headers - 7F and 7F, with zero length
 	//This is a duplicate information element
-	INFO_PRINTF1(_L("waiting for incoming SMS with multiple USIM security headers, 7F and 7F, with zero length...") );
+	INFO_PRINTF1(_L("Receive SMS with multiple USIM security headers, 7F and 7F, with zero length...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 
@@ -2670,8 +2540,7 @@ TVerdict CTestZeroLengthIE::doTestStepL()
 
 	//-----Send multiple PDU message with one zero length IE =  0x70
 	 _LIT(KLongMessage,"We might as well use our SMS stack in these phones.  It is by far the most robust, and it performs well under stress.  We have built a stack that is worth being inside a phone, processing messages for the wireless communnity :)");
-	CSmsMessage *longSmsMessage=CreateSmsMessageL(KLongMessage,alphabet);
-	CleanupStack::PushL(longSmsMessage);
+	CSmsMessage *longSmsMessage=CreateSmsMessageLC(KLongMessage,alphabet);
 
 	//Get the PDU
 	CSmsPDU &multiplePdu=longSmsMessage->SmsPDU();
@@ -2797,13 +2666,8 @@ TVerdict CTestZeroLengthIE::doTestStepL()
 
 	CleanupStack::PopAndDestroy(longSmsMessage);
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 /*
 	Class 2 Messages are stored on the SIM.  Automatic deletion in the DCS does not delete these messages
@@ -2816,14 +2680,8 @@ TVerdict CTestAutomaticDeletionInDCS::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test automatic deletion of messages marked as such in the code data segment(cds)"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 78);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	_LIT(KTestMsg,"");
 
@@ -2833,8 +2691,7 @@ TVerdict CTestAutomaticDeletionInDCS::doTestStepL()
 
 	//8 bit coding scheme
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Set message to class 2
 	TSmsDataCodingScheme::TSmsClass pduClass=TSmsDataCodingScheme::ESmsClass2;
@@ -2867,15 +2724,14 @@ TVerdict CTestAutomaticDeletionInDCS::doTestStepL()
 	pdu.SetBits7To4(TSmsDataCodingScheme::TSmsDCSBits7To4(autoDeleteHexValue));
 	//Send this message
 	SendSmsL(smsMessage,socket);
-
 	CleanupStack::PopAndDestroy(smsMessage);
 	//----------End Sending
 
-	//Receive a message of class 2 - message will be stored on the SIM
-	INFO_PRINTF1(_L("waiting for incoming SMS...") );
+	INFO_PRINTF1(_L("Receive a message of class 2 - message will be stored on the SIM..."));
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
+	
 	//Get PDU
 	CSmsPDU& classTwoPdu = smsMessage->SmsPDU();
 	//Class
@@ -2890,11 +2746,9 @@ TVerdict CTestAutomaticDeletionInDCS::doTestStepL()
 	TEST(count==1);
 	TGsmSmsSlotEntry smsSlot=smsMessage->iSlotArray[0];
 	TEST(smsSlot.iStore.Compare(_L("S14"))==0);
-
 	CleanupStack::PopAndDestroy(smsMessage);
 
-	//Receive a message of class 2 with automatic delete - message will be stored on the SIM
-	INFO_PRINTF1(_L("waiting for incoming SMS class 2 with automatic delete...") );
+	INFO_PRINTF1(_L("Receive a message of class 2 with automatic delete - message will be stored on the SIM..."));
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
@@ -2913,46 +2767,49 @@ TVerdict CTestAutomaticDeletionInDCS::doTestStepL()
 	TEST(smsSlot.iStore.Compare(_L("S14"))==0);
 	CleanupStack::PopAndDestroy(smsMessage);
 
-	//Receive a message of class 1 with automatic delete
-	INFO_PRINTF1(_L("waiting for incoming SMS class 1 with automatic delete...") );
+	INFO_PRINTF1(_L("Receive a message of class 1 with automatic delete...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
+
 	//Get PDU
 	CSmsPDU& pduClass1 = smsMessage->SmsPDU();
 	//Class
 	pduClass1.Class(pduClass);
 	TEST(pduClass==TSmsDataCodingScheme::ESmsClass1);
+	
 	//Test the storage
 	storage=smsMessage->Storage();
 	TEST(storage==CSmsMessage::ESmsNoStorage);
 	CleanupStack::PopAndDestroy(smsMessage);
 
-	//Receive a message of class 3 with automatic delete
-	INFO_PRINTF1(_L("waiting for incoming SMS class 3 with automatic delete...") );
+	INFO_PRINTF1(_L("Receive a message of class 3 with automatic delete...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
+	
 	//Get PDU
 	CSmsPDU& pduClass3 = smsMessage->SmsPDU();
 	//Class
 	pduClass3.Class(pduClass);
 	TEST(pduClass==TSmsDataCodingScheme::ESmsClass3);
+	
 	//Test the storage
 	storage=smsMessage->Storage();
 	TEST(storage==CSmsMessage::ESmsNoStorage);
 	CleanupStack::PopAndDestroy(smsMessage);
 
-	//Receive a message of class 0 with automatic delete
-	INFO_PRINTF1(_L("waiting for incoming SMS class 0 with automatic delete...") );
+	INFO_PRINTF1(_L("Receive a message of class 0 with automatic delete...") );
 	WaitForRecvL(socket);
 	smsMessage = RecvSmsL(socket);
 	CleanupStack::PushL(smsMessage);
+	
 	//Get PDU
 	CSmsPDU& pduClass0 = smsMessage->SmsPDU();
 	//Class
 	pduClass0.Class(pduClass);
 	TEST(pduClass==TSmsDataCodingScheme::ESmsClass0);
+	
 	//Test the storage
 	storage=smsMessage->Storage();
 	TEST(storage==CSmsMessage::ESmsNoStorage);
@@ -2982,13 +2839,8 @@ TVerdict CTestAutomaticDeletionInDCS::doTestStepL()
 	TEST(count==2);
 
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
 	return TestStepResult();
 	}
-
 
 /*
 	Class 2 Messages are stored on the SIM.  Automatic deletion in the DCS does not delete these messages
@@ -3001,14 +2853,8 @@ TVerdict CTestAutomaticDeletionInDCSAndInESK::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test automatic deletion of messages marked in dcs, and set for delete in the ESK file"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 79);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	_LIT(KTestMsg,"Esk file has been set to delete class 2 messages marked for automatic deletion");
 
@@ -3018,8 +2864,7 @@ TVerdict CTestAutomaticDeletionInDCSAndInESK::doTestStepL()
 
 	//8 bit coding scheme - create message
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Set message to class 2
 	TSmsDataCodingScheme::TSmsClass pduClass=TSmsDataCodingScheme::ESmsClass2;
@@ -3128,11 +2973,7 @@ TVerdict CTestAutomaticDeletionInDCSAndInESK::doTestStepL()
 	TEST(count==0);
 
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
-	return TestStepResult();
+ 	return TestStepResult();
 	}
 
 
@@ -3142,14 +2983,8 @@ TVerdict CTestAutomaticDeletionTypeZeroSMS::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test automatic deletion of messages of type zero"));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 80);
-	
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	_LIT(KTestMsg,"Type 0 Sms message");
 
@@ -3159,8 +2994,7 @@ TVerdict CTestAutomaticDeletionTypeZeroSMS::doTestStepL()
 
 	//8 bit coding scheme - create message
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Set message to type 0
 	CSmsPDU& pdu = smsMessage->SmsPDU();
@@ -3276,14 +3110,8 @@ TVerdict CTestAutomaticDeletionTypeZeroSMS::doTestStepL()
 	TEST(count==2);
 
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
-	return TestStepResult();
+  	return TestStepResult();
 	}
-
-
 
 TVerdict CTestAutomaticDeletionTypeZeroAndSetInESK::doTestStepL()
 /**
@@ -3291,14 +3119,8 @@ TVerdict CTestAutomaticDeletionTypeZeroAndSetInESK::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test automatic deletion of messages of type zero, and set for deletion for Class 0 in ESK file."));
-
-	__UHEAP_MARK;
-
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 81);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	_LIT(KTestMsg,"Type 0 Sms message");
 
@@ -3308,8 +3130,7 @@ TVerdict CTestAutomaticDeletionTypeZeroAndSetInESK::doTestStepL()
 
 	//8 bit coding scheme - create message
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg,alphabet);
 
 	//Set message to type 0
 	CSmsPDU& pdu = smsMessage->SmsPDU();
@@ -3394,13 +3215,8 @@ TVerdict CTestAutomaticDeletionTypeZeroAndSetInESK::doTestStepL()
 	TEST(count==2);
 
 	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	__UHEAP_MARKEND;
-
-	return TestStepResult();
+  	return TestStepResult();
 	}
-
 
 TVerdict CTestOOMSendR6Sms::doTestStepL()
 /**
@@ -3422,11 +3238,8 @@ TVerdict CTestOOMSendR6Sms::doTestStepL()
  */
 	{
 	INFO_PRINTF1(_L("Test out of memory handling"));
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 82);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	//Set destination and SC numbers
 	iTelephoneNumber=KPekka;
@@ -3435,8 +3248,7 @@ TVerdict CTestOOMSendR6Sms::doTestStepL()
 	_LIT(KTestMsg1,"test message, 8bits, length 30");
 
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg1,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg1,alphabet);
 
 	//Get the operations
 	CSmsHyperLinkOperations& hyperLinkOperations = static_cast<CSmsHyperLinkOperations&>(smsMessage->GetOperationsForIEL(CSmsInformationElement::ESmsHyperLinkFormat));
@@ -3554,17 +3366,19 @@ TVerdict CTestOOMSendR6Sms::doTestStepL()
 	TInt successfullSends=0;  //maximum expected number of succeeded sends is 2 in TSY config file
 	while (successfullSends<8)
 		{
-		socketServer.__DbgFailNext(count);		
-		socketServer.__DbgMarkHeap();
+		iSocketServer.__DbgFailNext(count);		
+		iSocketServer.__DbgMarkHeap();
 		TRAP(ret,SendSmsDontCheckReturnValueL(smsMessage,socket));
-		socketServer.__DbgMarkEnd(0);
+		iSocketServer.__DbgMarkEnd(0);
 		if(ret==KErrNone)
-			successfullSends++;
-		count++;
+		    {
+			++successfullSends;
+		    }
+		++count;
 		}
 
 	TEST(ret == KErrNone);
-	socketServer.__DbgFailNext(-1); // Reset heap
+	iSocketServer.__DbgFailNext(-1); // Reset heap
 
 	INFO_PRINTF1(_L("TPSRR Scheme"));
 	
@@ -3578,39 +3392,33 @@ TVerdict CTestOOMSendR6Sms::doTestStepL()
 	successfullSends=0;  //maximum expected number of succeeded sends is 2 in TSY config file
 	while (successfullSends<12)
 		{
-		socketServer.__DbgFailNext(count);
+		iSocketServer.__DbgFailNext(count);
 		
-		socketServer.__DbgMarkHeap();
+		iSocketServer.__DbgMarkHeap();
 		TRAP(ret,SendSmsDontCheckReturnValueL(smsMessage,socket));
-		socketServer.__DbgMarkEnd(0);
+		iSocketServer.__DbgMarkEnd(0);
 		if(ret==KErrNone)
-			successfullSends++;
-		count++;
+		    {
+            ++successfullSends;		
+		    }
+		++count;
 		}
 
 	TEST(ret == KErrNone);
-	socketServer.__DbgFailNext(-1); // Reset heap
+	iSocketServer.__DbgFailNext(-1); // Reset heap
 
-	CleanupStack::PopAndDestroy(2);	//smsMessage, socket
-
-	//Ensure socket server session is closed to remove cache
-    CleanupStack::PopAndDestroy(&socketServer);
-
+	CleanupStack::PopAndDestroy(2, &socket); // socket, smsMessage
 	return TestStepResult() ;
 	}
 
-
-TVerdict CEnhancedVoiceMessageBoundaryTest::doTestStepL()
+TVerdict CTestEnhancedVoiceMessageBoundary::doTestStepL()
 {
 	/**
 	 *  Create a Enhanced Voice Mail Information Element that occupies 139 bytes.
 	 *  139 bytes is the maximum that fit into a single segment message.
 	 */
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 83);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	CEnhancedVoiceMailNotification* enhancedVoiceMailNotification = CEnhancedVoiceMailNotification::NewL();
 
@@ -3626,7 +3434,7 @@ TVerdict CEnhancedVoiceMessageBoundaryTest::doTestStepL()
 	enhancedVoiceMailNotification->SetNumberOfVoiceMessages(0xFF);
 
 	RPointerArray<CVoiceMailNotification>& voiceMailNotificationArray = enhancedVoiceMailNotification->GetVoiceMailNotifications();
-	for (TUint i = 0; i < 8; i++)
+	for (TUint i = 0; i < 8; ++i)
 		{
 		// Set up notification 1
 		CVoiceMailNotification* voiceMailNotification = CVoiceMailNotification::NewL();
@@ -3647,8 +3455,7 @@ TVerdict CEnhancedVoiceMessageBoundaryTest::doTestStepL()
 
 	_LIT(KTestMsg1,"");
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg1,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg1,alphabet);
 
 	TSmsUserDataSettings userDataSettings;
 	userDataSettings.SetAlphabet(TSmsDataCodingScheme::ESmsAlphabet8Bit);
@@ -3661,25 +3468,18 @@ TVerdict CEnhancedVoiceMessageBoundaryTest::doTestStepL()
 	//Send the message
 	SendSmsL(smsMessage,socket);
 
-	CleanupStack::PopAndDestroy(smsMessage);
-	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	return TestStepResult();
+    CleanupStack::PopAndDestroy(2, &socket); // socket, smsMessage
+  	return TestStepResult();
 }
 
-
-TVerdict CEnhancedVoiceMessageBoundaryTest1::doTestStepL()
+TVerdict CTestEnhancedVoiceMessageBoundary1::doTestStepL()
 {
 	/*Creates the maximum size enhanced voice message ie that will fit
 	* into a concatenated message, size 134 bytes, allowing 5 bytes for
 	* a concatenation ie in the PDU.
 	*/
-	RSocketServ socketServer;
-	PrepareRegTestLC(socketServer, 84);
-
 	RSocket socket;
-	iSmsStackTestUtils->OpenSmsSocketLC(socketServer,socket,ESmsAddrRecvAny);
+	iSmsStackTestUtils->OpenSmsSocketLC(iSocketServer,socket,ESmsAddrRecvAny);
 
 	CEnhancedVoiceMailNotification* enhancedVoiceMailNotification = CEnhancedVoiceMailNotification::NewL();
 
@@ -3695,7 +3495,7 @@ TVerdict CEnhancedVoiceMessageBoundaryTest1::doTestStepL()
 	enhancedVoiceMailNotification->SetNumberOfVoiceMessages(0xFF);
 
 	RPointerArray<CVoiceMailNotification>& voiceMailNotificationArray = enhancedVoiceMailNotification->GetVoiceMailNotifications();
-	for (TUint i = 0; i < 8; i++)
+	for (TUint i = 0; i < 8; ++i)
 	{
 		// Set up notification 1
 		CVoiceMailNotification* voiceMailNotification = CVoiceMailNotification::NewL();
@@ -3725,8 +3525,7 @@ TVerdict CEnhancedVoiceMessageBoundaryTest1::doTestStepL()
 
 	_LIT(KTestMsg1,"Dundee United");
 	TSmsDataCodingScheme::TSmsAlphabet alphabet=TSmsDataCodingScheme::ESmsAlphabet8Bit;
-	CSmsMessage* smsMessage=CreateSmsMessageL(KTestMsg1,alphabet);
-	CleanupStack::PushL(smsMessage);
+	CSmsMessage* smsMessage=CreateSmsMessageLC(KTestMsg1,alphabet);
 
 	TSmsUserDataSettings userDataSettings;
 	userDataSettings.SetAlphabet(TSmsDataCodingScheme::ESmsAlphabet8Bit);
@@ -3739,15 +3538,11 @@ TVerdict CEnhancedVoiceMessageBoundaryTest1::doTestStepL()
 	//Send the message
 	SendSmsL(smsMessage,socket);
 
-	CleanupStack::PopAndDestroy(smsMessage);
-	CleanupStack::PopAndDestroy(&socket);
-    CleanupStack::PopAndDestroy(&socketServer);
-
-	return TestStepResult();
+    CleanupStack::PopAndDestroy(2, &socket); // socket, smsMessage
+ 	return TestStepResult();
 }
 
-
-TVerdict CSubmitReportDefaultsTo7BitDecoding::doTestStepL()
+TVerdict CTestSubmitReportDefaultsTo7BitDecoding::doTestStepL()
 {
 	TBuf8<30> buff;
 	buff.SetLength(30);
@@ -3791,14 +3586,11 @@ TVerdict CSubmitReportDefaultsTo7BitDecoding::doTestStepL()
 	_LIT(KTestMsg,"David Narey");
 	TestSmsContentsL(decodedMessage,KTestMsg);
 
-
 	CleanupStack::PopAndDestroy(decodedMessage);
-
     return TestStepResult();
 }
 
-
-TVerdict CDeliverReportDefaultsTo7BitDecoding::doTestStepL()
+TVerdict CTestDeliverReportDefaultsTo7BitDecoding::doTestStepL()
 {
 	TBuf8<30> buff;
 	buff.SetLength(30);
@@ -3835,14 +3627,11 @@ TVerdict CDeliverReportDefaultsTo7BitDecoding::doTestStepL()
 	_LIT(KTestMsg,"David Narey");
 	TestSmsContentsL(decodedMessage,KTestMsg);
 
-
 	CleanupStack::PopAndDestroy(decodedMessage);
-
     return TestStepResult();
 }
 
-
-TVerdict CStatusReportDefaultsTo7BitDecoding::doTestStepL()
+TVerdict CTestStatusReportDefaultsTo7BitDecoding::doTestStepL()
 {
 	TBuf8<40> buff;
 	buff.SetLength(40);
@@ -3898,8 +3687,6 @@ TVerdict CStatusReportDefaultsTo7BitDecoding::doTestStepL()
 	_LIT(KTestMsg,"David Narey");
 	TestSmsContentsL(decodedMessage,KTestMsg);
 
-
 	CleanupStack::PopAndDestroy(decodedMessage);
-
     return TestStepResult();
 }

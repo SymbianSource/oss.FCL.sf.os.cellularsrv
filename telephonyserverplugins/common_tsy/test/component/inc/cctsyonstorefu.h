@@ -60,7 +60,10 @@ public:
 	void TestDelete0003L();
 	void TestDelete0004L();
 	void TestDelete0005L();
-	void TestGetInfo0001L();
+    void TestGetInfo0001L();
+    void TestGetInfo0001bL();
+    void TestGetInfo0001cL();
+    void TestGetInfo0001dL();
 	void TestGetInfo0002L();
 	void TestGetInfo0003L();
 	void TestGetInfo0004L();

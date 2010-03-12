@@ -68,6 +68,11 @@ void CSimSmsMessaging::ConstructL()
  * If there are no constraints any SMS specified in the configuration file and the "incoming SMS event" timer will
  * be started.
  */
+    {
+    InitializeL();
+    }
+
+void CSimSmsMessaging::InitializeL()
 	{
 	LOGSMS1("Starting to Load and Parse Sms Messaging Config ");
 	iRxTimer=CSimTimer::NewL(iPhone);
@@ -95,48 +100,70 @@ void CSimSmsMessaging::ConstructL()
 	}
 
 
-CSimSmsMessaging::~CSimSmsMessaging()
-/**
- *	Standard destructor.  Any objects created by the ::ConstructL() function should be destroyed here.
- */
-	{
-	if(iSmsRxParameterListGsm)
+void CSimSmsMessaging::Reset()
+    {
+ 	if(iSmsRxParameterListGsm)
 		{
 		iSmsRxParameterListGsm->Delete(0,iSmsRxParameterListGsm->Count());
 		delete iSmsRxParameterListGsm;
+        iSmsRxParameterListGsm = NULL;
 		}
 		
 	if(iSmsTxParametersListGsm)
 		{
 		iSmsTxParametersListGsm->Delete(0,iSmsTxParametersListGsm->Count());
 		delete iSmsTxParametersListGsm;
+        iSmsTxParametersListGsm = NULL;
 		}
 			
-	delete iSmspEntries;
+    delete iSmspEntries;
+    iSmspEntries = NULL;
+    
+    if (iSmsStores)
+        {
+        TInt storeCount=iSmsStores->Count();    
+        for(TInt i=0;i<storeCount;i++)
+            {
+            iSmsStores->At(i)->Close();
+            }
+        delete iSmsStores;
+        iSmsStores = NULL;
+        }
 
-	if (iSmsStores)
-		{
-		TInt storeCount=iSmsStores->Count();	
-		for(TInt i=0;i<storeCount;i++)
-			{
-			iSmsStores->At(i)->Close();
-			}
-		delete iSmsStores;
-		}
+    if (iSmspReadAll)
+        {
+        iSmspReadAll->ResetAndDestroy();
+        delete iSmspReadAll;
+        iSmspReadAll = NULL;
+        }
+        
+    iConstraints.Reset();
+    
+    iSmsTxCnt = 0;
+    iSmsRxCnt = 0;
+    iCurrentConstraint = 0;
+    iConstraintRxCnt = 0;
+    
+    iSmspBusy   = EFalse;
+    iRxState    = ESmsRxStateIdle;
+    iTxState    = ESmsTxStateIdle;
+       
+    delete iRxTimer;
+    iRxTimer = NULL;
 
-	if (iSmspReadAll)
-		{
-		iSmspReadAll->ResetAndDestroy();
-		delete iSmspReadAll;
-		}
-	
-	iConstraints.Close();
-	if(iRxTimer)
-		delete iRxTimer;
-	if(iTxTimer)
-		delete iTxTimer;
-	if(iSmspTimer)
-		delete iSmspTimer;
+    delete iTxTimer;
+    iTxTimer = NULL;
+    
+    delete iSmspTimer;
+    iSmspTimer = NULL;
+    }
+
+CSimSmsMessaging::~CSimSmsMessaging()
+/**
+ *	Standard destructor.  Any objects created by the ::ConstructL() function should be destroyed here.
+ */
+	{
+	Reset();
 	}
 
 void CSimSmsMessaging::FindAndCreateRxAttributesL()
@@ -816,8 +843,8 @@ TBool CSimSmsMessaging::IpcMatch()
 	// NOTE - call ConstraintEllapsed() before doing loop below as iCurrentConstraint
 	// is updated in the loop and so can result in ConstraintEllapsed() giving a 
 	// different result
-	
-	for(i=0;i<iConstraints.Count();i++)
+	TInt count = iConstraints.Count(); 
+	for(i=0;i<count;++i)
 		{
 		if(iSmsTxCnt==(iConstraints[i].iIpcCnt))
 			{
@@ -1247,6 +1274,7 @@ void CSimSmsMessaging::ReceiveMessageCancel()
 	{
 	if(iSmsRxReqOutstanding)
 		{
+		iRxTimer->Cancel();
 		iSmsRxReqOutstanding=EFalse;
 		iRxState=ESmsRxStateIdle;
 		ReqCompleted(iSmsRxReqHandle,KErrCancel);
@@ -1570,6 +1598,21 @@ void CSimSmsMessaging::CompleteTxPendingReq(TInt aError)
 	if(IpcMatch())
 		{
 		iConstraintRxCnt=0;
+		if( iRxState == ESmsRxStateSuspend )
+		    {
+		    // A previous rx message was NACKed due memory full and 
+		    // SIM TSY is waiting for resume event from client - as
+		    // a new message needs to be received, change states
+		    // to allow receipt of the message.
+		    if( iSmsRxReqOutstanding )
+		        {
+		        iRxState = ESmsRxStateWaitingForSmsRx;
+		        }
+		    else
+		        {
+		        iRxState = ESmsRxStateIdle;
+		        }
+		    }
 		if( iSmsRxReqOutstanding )
 			{
 			// Client has a pending receive request - safe to start Rx timer
@@ -2103,58 +2146,15 @@ const CTestConfigSection* CSimSmsMessaging::CfgFileSection()
 	}
 
 
-TInt CSimSmsMessaging::ReloadConfigL(const TTsyReqHandle aReqHandle)
+void CSimSmsMessaging::ReloadConfigurationSettingsL()
 /**
- * This function reloads the Rx, Tx and constraint parameters from the config file
- * @param aReqHandle Handle to notify when operation completed
- * @return KErrNone
+ *  This function reloads settings from the config file
  */
-	{
-	LOGSMS1("Reloading configuration");
-	//Tell SimPhone to reread the test number property
-	iPhone->ResetTestNumber();
-	//Delete current configuration
-	iSmsRxParameterListGsm->Reset();	
-	iSmsTxParametersListGsm->Reset();
-	
-	iSmsTxCnt = 0;
-	iSmsRxCnt = 0;
-	iConstraints.Reset();
-	iCurrentConstraint = 0;
-	iConstraintRxCnt = 0;
-	//Reread the configuration
-	TInt err;
-	TRAP(err, FindAndCreateRxAttributesL());
-	if (err != KErrNone) return err;
-	TRAP(err, FindAndCreateTxAttributesL());
-	if (err != KErrNone) return err;
-	FindAndCreateConstraints();
-	
-	TInt count;
-	count = iSmsRxParameterListGsm->Count();
-		
-	if((count>0)&&(iConstraints.Count()==0))	// If there are messages to receive & no constraints, then
-		{
-		if (iRxTimer->Running())
-			{
-			iRxTimer->Cancel();
-			}
-		LOGSMS1("Starting Rx Timer");
-		iRxStatePrevious = iRxState;
-		iRxState = ESmsRxStateWaitingToStart;
-		iRxTimer->Start(iSmsRxStartDelay,this, ETimerIdSmsMessRx);
-		}
-	else if (iRxTimer->Running())
-		{
-		LOGSMS1("Stopping Rx Timer");
-		iRxTimer->Cancel();
-		}
-		
-	LOGSMS1("Finished reloading configuration");
-	ReqCompleted(aReqHandle,KErrNone);
-	return KErrNone;
-	}
-	
+    {
+    Reset();
+    InitializeL();
+    }
+
 HBufC8* CSimSmsMessaging::PduToAscii(TDesC8& aSmsPdu)
 /**
  * Converts the contents of a TDes8 to their Hex representation

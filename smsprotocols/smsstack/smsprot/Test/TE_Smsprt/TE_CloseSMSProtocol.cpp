@@ -27,7 +27,7 @@ CCloseSMSProtocol::CCloseSMSProtocol(RSocketServ &aSocketServer)
 	@param aSocket is the sub-session handle
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
 	}
 
 /**
@@ -36,10 +36,10 @@ CCloseSMSProtocol::CCloseSMSProtocol(RSocketServ &aSocketServer)
 TVerdict CCloseSMSProtocol::doTestStepL()
 	{	
 	//Close session
-	if(iSocketServer)
-		{
-		iSocketServer->Close();	
-		}
+    if( iSharedSocketServer != NULL )
+        {
+        iSharedSocketServer->Close(); 
+        }
 
 #ifdef _DEBUG	
 	TInt err = RProperty::Delete(KUidPSSMSStackCategory, KUidPSSMSStackFreeDiskSpaceKey);
@@ -51,11 +51,3 @@ TVerdict CCloseSMSProtocol::doTestStepL()
 	
 	return TestStepResult();
 	}
-//-----------------------------------------------------------------------------
-
-
-
-
-
-
-

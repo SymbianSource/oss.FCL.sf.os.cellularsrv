@@ -17,8 +17,6 @@
 
 ced -i z:\TestData\configs\WapProtSuite\WapProtSuite.cfg ced.log
 
-LOAD_SUITE TE_WapProt
-
 //delete any existing config.txt
 RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
@@ -26,6 +24,8 @@ RUN_UTILS  DeleteFile c:\config.txt
 //copy our config file
 RUN_UTILS copyfile z:\testdata\configs\wapprotsuite\config.txt c:\config.txt
 RUN_UTILS  MakeReadWrite c:\config.txt
+
+LOAD_SUITE TE_WapProt
 
 START_TESTCASE SMS-SMSStack-NA-8000
 //!@SYMTestCaseID SMS-SMSStack-NA-8000
@@ -707,7 +707,7 @@ START_TESTCASE SMS-WAPPROT-0127
 //!@SYMTestCaseDesc Receive a VCard via an enumerate.
 //!@SYMTestActions A VCard is on the SIM and enumerated.
 //!@SYMTestExpectedResults It should be received as a VCard and not as text.
-RUN_TEST_STEP 100 TE_WapProt TestEnumeratingVCard
+RUN_TEST_STEP 100 TE_WapProt TestEnumeratingVCard z:\testdata\configs\WapProtSuite\WapProtSuite.ini EnumeratingVCard
 END_TESTCASE SMS-WAPPROT-0127
 
 START_TESTCASE SMS-WAPPROT-0131
@@ -717,6 +717,5 @@ START_TESTCASE SMS-WAPPROT-0131
 //!@SYMTestCaseDesc Attempt to send oversized messages and check that the stack does not panic.
 //!@SYMTestActions Send a messgae bigger than the maximum datagram size and the MBuf maximum size.
 //!@SYMTestExpectedResults The stack should return KErrTooBig.
-RUN_TEST_STEP 100 TE_WapProt TestOversizedDatagram
+RUN_TEST_STEP 100 TE_WapProt TestOversizedDatagram z:\testdata\configs\WapProtSuite\WapProtSuite.ini TestStep1
 END_TESTCASE SMS-WAPPROT-0131
-

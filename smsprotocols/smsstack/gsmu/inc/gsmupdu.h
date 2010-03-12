@@ -82,6 +82,10 @@ public:
 	IMPORT_C void SetParsedToFromAddressL(const TGsmSmsTelNumber& aParsedAddress);
 
 //  Functions on data coding scheme
+//  The functions available are dependant on bits 7 to 4 in the data coding scheme.
+//  Functions panic when they are not available.
+//  This requires the caller to have some knowledge of ETSI GSM 03.38 in order to keep the data coding scheme in a consistent state.
+
 	IMPORT_C TSmsDataCodingScheme::TSmsDCSBits7To4 Bits7To4() const;
 	IMPORT_C void SetBits7To4(TSmsDataCodingScheme::TSmsDCSBits7To4 aBits7To4);
 

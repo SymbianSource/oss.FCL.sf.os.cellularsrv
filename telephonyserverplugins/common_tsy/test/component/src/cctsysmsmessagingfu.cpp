@@ -406,6 +406,7 @@ void CCTsySmsMessagingFU::TestSendMessage0001L()
     compTsyData.SerialiseL(data);
     
     iMockLTSY.CompleteL(EMobileSmsMessagingSendMessage, KErrGeneral, data, 10);
+    
     messaging.SendMessage(reqStatus, tmpName, smsAttrPckg);
 
     data.Close();
@@ -416,6 +417,7 @@ void CCTsySmsMessagingFU::TestSendMessage0001L()
 
     User::WaitForRequest(reqStatus);
     ASSERT_EQUALS(KErrGeneral, reqStatus.Int());
+    
     
     AssertMockLtsyStatusL();
 
@@ -459,6 +461,28 @@ void CCTsySmsMessagingFU::TestSendMessage0001L()
 
     AssertMockLtsyStatusL();
 
+    //--------------------------------------------------------------------------
+    // TEST B3: failure on completion of pending request from LTSY->CTSY
+    //--------------------------------------------------------------------------
+    TMockLtsyData1<TSendSmsDataAndAttributes> expData(dataAndAttr);           
+    expData.SerialiseL(data);    
+    iMockLTSY.ExpectL(EMobileSmsMessagingSendMessage, data);
+   
+    data.Close();
+    compTsyData.SerialiseL(data);  
+    //simulate error code sent by network when SMS msg has an invalid destination number
+    TInt compErrorCode = -298123266;
+    iMockLTSY.CompleteL(EMobileSmsMessagingSendMessage, compErrorCode, data, 10);
+   
+    messaging.SendMessage(reqStatus, tmpName, smsAttrPckg);
+
+    
+    User::WaitForRequest(reqStatus);
+    ASSERT_EQUALS(KErrGsmSMSNetworkOutOfOrder, reqStatus.Int());
+   
+    AssertMockLtsyStatusL();
+
+    
     //-------------------------------------------------------------------------
     // TEST C: Successful completion request of
     // RMobileSmsMessaging::SendMessage when result is not cached.

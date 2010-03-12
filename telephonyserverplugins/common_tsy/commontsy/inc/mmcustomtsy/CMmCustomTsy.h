@@ -1922,12 +1922,6 @@ NONSHARABLE_CLASS( CMmCustomTsy ) : public CMmTsyBase,
         CMmCustomSecurityTsy* iMmSecurityTsy;
 
         /**
-         * Pointer to vendor extension
-         * Own.
-         */
-        CMmCustomVendorExt*   iMmCustomVendorExt;
-
-        /**
          * Pointer to 2G authentication data
          * Not Own.
          */

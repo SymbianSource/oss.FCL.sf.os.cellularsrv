@@ -20,8 +20,8 @@
 */
 
 TARGET           smsstacktestutilities.dll
-CAPABILITY       ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData ProtServ AllFiles PowerMgmt
-//UID           	 0x1000008D 0x101FBB4F
+CAPABILITY       All -TCB
+UID           	 0x1000008D 0x101FBB4F
 EPOCSTACKSIZE    0x10000
 TARGETTYPE       dll
 
@@ -29,6 +29,8 @@ SOURCEPATH	.
 SOURCE		smsstacktestutilities.cpp EmsTestUtils.cpp
 SOURCE		smspdudb.cpp
 SOURCE		smspdudbitems.cpp
+SOURCE 		smsstackbaseteststeps.cpp smsstacktestcase.cpp
+SOURCE          smsstackbasetestserver.cpp
 SOURCEPATH	../gsmu/src
 SOURCE		gsmupriv.cpp
 SOURCE		Gsmumain.cpp
@@ -46,6 +48,7 @@ USERINCLUDE      ../ems/inc
 USERINCLUDE      ../smsu/inc
 USERINCLUDE      ../test
 USERINCLUDE      ../common/inc
+USERINCLUDE   	 ../smsprot/inc
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
@@ -54,9 +57,9 @@ LIBRARY      esock.lib         // loading SMSPROT.PRT
 LIBRARY      euser.lib estor.lib
 LIBRARY          logwrap.lib testconfigfileparser.lib etel.lib efsrv.lib charconv.lib etelmm.lib fbscli.lib bitgdi.lib
 LIBRARY		 testexecuteutils.lib
-LIBRARY		 testexecutelogclient.lib logcli.lib
+LIBRARY		 testexecutelogclient.lib
 
-LIBRARY		 commsdat.lib
+LIBRARY		 commsdat.lib logcli.lib c32root.lib
 
 DEBUGLIBRARY		 comsdbgutil.lib
 

@@ -334,6 +334,12 @@ NONSHARABLE_CLASS( CMmONStoreTsy ) : public CSubSessionExtBase
         virtual void Complete( TInt aReqHandleType, TInt aError );
 #endif
 
+        /*
+         * This method used to notify the phone that the phone book store initilization was complete
+         *
+         * @param  aError Error value
+         */
+        void PhoneBookStoreInitCompleteL(TInt aError);
     private:
     
         /**
@@ -672,11 +678,6 @@ NONSHARABLE_CLASS( CMmONStoreTsy ) : public CSubSessionExtBase
          * Own.
          */
         RMobileONStore::TMobileONStoreInfoV1* iONStoreInfoChanged;
-
-        /*
-         * Holds the info is GetInfo active
-         */
-        TBool iIsGetInfoActive;
 
         /*
          * ReadAll message pointer

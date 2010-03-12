@@ -37,8 +37,6 @@
 #include <testconfigfileparser.h>
 #include <test/testexecuteserverbase.h>
 
-#define DSTDNC_NEWCALL_FULLNAME				_L("DummyNc::PotsNc::")
-
 _LIT8(KWapDgrm1,    "");
 _LIT8(KWapDgrm2,    "Auto on kuin ikääntynyt jalosukuinen englantilainen herrasmies konsanaan. Kun istuu sen juuri oikealla tavalla hieman kuluneella nahkaistuimella ja katselee pähkinänpuun juuresta tehtyä kojelautaa, tuntee olevansa itseänsä paremmassa seurassa. Ajassa, jolloin hienostuneisuudella oli vielä merkitystä. Korin värinä on hillitysti hohteleva Opaslecent Dark Green ja hieman punertavan ruskea nahkasisustus on soinnutettu sävy sävyyn pähkinänjuuresta tehdyn kojelaudan kanssa aina etuistuimen selkänojasta aukeavaa pöytää myöten. 2,4 litraisessa moottorissa on hevosvoimia 120");
 _LIT8(KWapDgrm3,    "1234567890");

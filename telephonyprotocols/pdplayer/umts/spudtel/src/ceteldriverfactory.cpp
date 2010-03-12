@@ -205,12 +205,14 @@ void CEtelDriverFactory::FreePdp(TContextId aPdpId)
 	{
 
 	SPUDTELVERBOSE_INFO_LOG1(_L("Free pdp id : %d"), aPdpId);
-	// the context has to be closed before a call to FreePdp
-	__ASSERT_ALWAYS(!Context(aPdpId).PacketContext().SubSessionHandle(), User::Panic(KTxtSpudTel, KErrInUse));
-	
-	delete iContexts[aPdpId];
-	iContexts[aPdpId] = NULL;
-
+    // In an OOM situation, this object may be cleaned up prior to establishment. 
+    if (iContexts[aPdpId] != NULL) 
+        { 
+        // the context has to be closed before a call to FreePdp 
+        __ASSERT_ALWAYS(!Context(aPdpId).PacketContext().SubSessionHandle(), User::Panic(KTxtSpudTel, KErrInUse)); 
+        delete iContexts[aPdpId];
+        iContexts[aPdpId] = NULL;
+        } 
 	}
 
 

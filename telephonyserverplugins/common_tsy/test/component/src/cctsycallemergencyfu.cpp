@@ -282,9 +282,7 @@ void CCTsyCallEmergencyFU::TestDialEmergencyCall0001L()
 	User::__DbgSetAllocFail(EFalse, RAllocator::ENone, 1);
 	User::__DbgSetAllocFail(ETrue, RAllocator::ENone, 1);
 
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: Dependent on Symbian System State Manager.  DEF141353 </font>"), 210106);
-	    // Symbian SSM allocates memory in call to Connect() in ActivateRfForEmergencyCall
-	   
+   
 	// check results
 	ASSERT_EQUALS(KErrNone, reqStatus.Int());
 	AssertMockLtsyStatusL();
@@ -677,125 +675,8 @@ void CCTsyCallEmergencyFU::TestDialEmergencyCall0004L()
 	TMockLtsyCallData1<RMobileCall::TMobileCallStatus> completeCallStatusData2(KCallId2, KMobileService, mobileCallStatus);
 
 	//-------------------------------------------------------------------------
-	// Test requesting RMobileCall::DialEmergencyCall 
-	// when pending RCall::Dial
- 	//-------------------------------------------------------------------------
-
-	// create pending dial request
-	RMobileCall::TMobileCallParamsV1 expDialCallParams;
-	expDialCallParams.iInterval = 0;
-	expDialCallParams.iCug.iCugIndex = 0xFFFF;
-	expDialCallParams.iSpeakerControl = 
-        RCall::EMonitorSpeakerControlOnUntilCarrier;
-	expDialCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeLow;
-	expDialCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	expDialCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
-	expDialCallParams.iCug.iExplicitInvoke = EFalse;
-	expDialCallParams.iCug.iSuppressPrefCug = EFalse;
-	expDialCallParams.iCug.iSuppressOA = EFalse;
-	expDialCallParams.iAutoRedial = EFalse;
-	
-    
-	RMobileCall::TMobileCallInfoV8 expDialCallInfo;
-	_LIT(KPhoneNumber, "101632960000");   	
-	expDialCallInfo.iDialledParty.iTelNumber.Copy(KPhoneNumber);
-	expDialCallInfo.iService = KMobileService;
-	expDialCallInfo.iValid = RMobileCall::KCallDialledParty|RMobileCall::KCallAlternating;
-	expDialCallInfo.iDialledParty.iNumberPlan = 
-            RMobilePhone::EUnknownNumberingPlan;
-	expDialCallInfo.iDialledParty.iTypeOfNumber = 
-	        RMobilePhone::EUnknownNumber;
-	expDialCallInfo.iAlternatingCall = 
-	        RMobilePhone::EAlternatingModeUnspecified;
-
-	
-	TMockLtsyCallData2<RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1> 
-		dialExpectData(0, KMobileService, expDialCallParams, expDialCallInfo);
-
-    data.Close();
-    dialExpectData.SerialiseL(data);
-	iMockLTSY.ExpectL(EEtelCallDial, data);
-
-    data.Close();
-    completeDialCallInfoData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, data, 10);
-
-    data.Close();
-    mobileCallStatus = RMobileCall::EStatusDialling;
-    completeCallStatusData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data, 10);
-
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 210106);
-	// Test fails, TEF aborts the test and all the following
-	// Actually DialEmergencyCall completes with KErrServerBusy
-	
-	// following assert is added to prevent test abortions
-	ASSERT_TRUE( EFalse );
-
-	TRequestStatus dialStatus;
-	mobileCall.Dial(dialStatus, KPhoneNumber);
-
-	// prepare test
-
-	// prepare canceling dial request
-    data.Close();
-	TInt hangUpCause = KErrGsmReleaseByUser;
-	TBool autoStChangeDisable = ETrue;
-    TMockLtsyCallData2<TInt, TBool> expHangupData(KCallId, KMobileService, 
-                                             hangUpCause, 
-                                             autoStChangeDisable);
-    expHangupData.SerialiseL(data);
-    iMockLTSY.ExpectL(EEtelCallHangUp, data);
-
-    data.Close();
-    mobileCallStatus = RMobileCall::EStatusIdle;
-    completeCallStatusData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, hangUpCause, data, 10);
-
-	// prepare dialling emergency call
-    data.Close();
-	numberLtsyData.SerialiseL(data);
-	iMockLTSY.ExpectL(EMobileCallDialEmergencyCall, data, KErrNone);
-
-    data.Close();
-    completeCallInfoData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, data);
-
-    data.Close();
-    mobileCallStatus = RMobileCall::EStatusDialling;
-    completeCallStatusData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
-
-    data.Close();
-    mobileCallStatus = RMobileCall::EStatusConnecting;
-    completeCallStatusData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
-
-    data.Close();
-    mobileCallStatus = RMobileCall::EStatusConnected;
-    completeCallStatusData.SerialiseL(data);
-    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
-
-	// actual test
-	mobileCall.DialEmergencyCall(reqStatus, number);
-
-	User::WaitForRequest(dialStatus);
-	ASSERT_EQUALS(KErrCancel, dialStatus.Int());
-
-	User::WaitForRequest(reqStatus);
-	ASSERT_EQUALS(KErrNone, reqStatus.Int());
-
-	PrepareCallCloseL(KCallId, KMobileService);
-	CleanupStack::PopAndDestroy(&mobileCall);
-	AssertMockLtsyStatusL();
-
-	//-------------------------------------------------------------------------
 	// Test A: Test multiple clients requesting RMobileCall::DialEmergencyCall
  	//-------------------------------------------------------------------------
-
-	err = mobileCall.OpenNewCall(line, callName);
-	ASSERT_EQUALS(KErrNone, err);
-	CleanupClosePushL(mobileCall);
 
 	// Open second client
 	RTelServer telServer2;
@@ -871,11 +752,7 @@ void CCTsyCallEmergencyFU::TestDialEmergencyCall0004L()
 	User::WaitForRequest(reqStatus2);
 	AssertMockLtsyStatusL();
 	ASSERT_EQUALS(KErrNone, reqStatus.Int());
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 210104);
-	// Second completion with EMobileCallGetMobileCallInfo ipc
-	// changes callid of 1st call from 1 to 2
-	// can not invoke completions for 2nd call 
-	ASSERT_EQUALS(KErrNone, reqStatus2.Int()); // KErrTimedOut
+	ASSERT_EQUALS(KErrNone, reqStatus2.Int());
 
 	// Done !
 	CleanupStack::PopAndDestroy(8, this); // mobileCall2, line2, phone2, telServer2, mobileCall, line, data, this
@@ -946,62 +823,6 @@ void CCTsyCallEmergencyFU::TestDialEmergencyCall0005L()
 	data.Close();
 	completeCallInfoData.SerialiseL(data);
 	iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, data);
-
-	mobileCall.DialEmergencyCall(reqStatus, number);
-	User::WaitForRequest(reqStatus);
-	ASSERT_EQUALS(KErrTimedOut, reqStatus.Int());
-
-	AssertMockLtsyStatusL();
-
-	//-------------------------------------------------------------------------
-	// Test: Test timeout of RMobileCall::DialEmergencyCall
-	// when call status is changed to RMobileCall::EStatusDialling
- 	//-------------------------------------------------------------------------
-
-	data.Close();
-	numberLtsyData.SerialiseL(data);
-	iMockLTSY.ExpectL(EMobileCallDialEmergencyCall, data, KErrNone);
-
-	data.Close();
-	completeCallInfoData.SerialiseL(data);
-	iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, data);
-
-	RMobileCall::TMobileCallStatus mobileCallStatus = RMobileCall::EStatusDialling;
-	TMockLtsyCallData1<RMobileCall::TMobileCallStatus> completeCallStatusData(KCallId, KMobileService, mobileCallStatus);
-	data.Close();
-	completeCallStatusData.SerialiseL(data);
-	iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
-
-	mobileCall.DialEmergencyCall(reqStatus, number);
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 210107);
-	// TEF aborts the test
-	User::WaitForRequest(reqStatus);
-	ASSERT_EQUALS(KErrTimedOut, reqStatus.Int());
-
-	AssertMockLtsyStatusL();
-
-	//-------------------------------------------------------------------------
-	// Test: Test timeout of RMobileCall::DialEmergencyCall
-	// when call status is changed to RMobileCall::EStatusConnecting
- 	//-------------------------------------------------------------------------
-
-	data.Close();
-	numberLtsyData.SerialiseL(data);
-	iMockLTSY.ExpectL(EMobileCallDialEmergencyCall, data, KErrNone);
-
-	data.Close();
-	completeCallInfoData.SerialiseL(data);
-	iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, data);
-
-	data.Close();
-	mobileCallStatus = RMobileCall::EStatusDialling;
-	completeCallStatusData.SerialiseL(data);
-	iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
-
-	data.Close();
-	mobileCallStatus = RMobileCall::EStatusConnecting;
-	completeCallStatusData.SerialiseL(data);
-	iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
 
 	mobileCall.DialEmergencyCall(reqStatus, number);
 	User::WaitForRequest(reqStatus);

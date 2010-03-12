@@ -1831,7 +1831,54 @@ TFLOGSTRING("TSY: CMmSmsTsy::SendMessageL: Send request saved");
 
     return KErrNone;
     }
+  
+//----------------------------------------------------------------------------
+// CMmSmsTsy::IsRPError
+// Checks if error code is a relay protocol error
+// --------------------------------------------------------------------------- 
+TBool CMmSmsTsy::IsRPError(TInt aError)
+    {
+    TFLOGSTRING2("CMmSmsTsy::IsRPError(): %d", aError);
     
+    TBool  isRPError = EFalse;
+    switch (aError)
+        {
+        case KErrGsmSMSShortMessageTransferRejected:
+            {
+            isRPError = ETrue;
+            }
+            break;   
+        case KErrGsmSMSInvalidMandatoryInformation:
+            {
+            isRPError = ETrue;
+            }
+            break;
+        case KErrGsmSMSUnidentifiedSubscriber:
+            {
+            isRPError = ETrue;
+            }
+            break;
+        case KErrGsmSMSUnknownSubscriber:
+            {
+            isRPError = ETrue;
+            }
+            break;
+        case KErrGsmSMSNetworkOutOfOrder:
+            {
+            isRPError = ETrue;
+            }
+            break;
+        default:
+            {
+            // NOP
+            }
+            break;
+        }
+
+    return isRPError;
+    } // CMmSmsTsy::IsRPError
+
+
 //----------------------------------------------------------------------------
 // CMmSmsTsy::CompleteSendMessage 
 // Complete SendMessage request
@@ -1842,7 +1889,25 @@ void CMmSmsTsy::CompleteSendMessage(
     TInt aError, 
     CMmDataPackage* aDataPackage )
     {
-    if ( ( KErrNone != aError ) && ( KErrTimedOut != aError ) 
+    TInt extendedError = CMmCommonStaticUtility::ExtendedErrorCode(aError);
+    TBool res = IsRPError(extendedError);
+    if(res)
+        {
+        // Delete send message entry from send array
+        if ( iSmsSendReq )
+            {
+            delete iSmsSendReq;   // Delete object
+            iSmsSendReq = NULL;   // Reset pointer
+            }
+        // reset req handle and complete request
+        TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
+                   EMultimodeSmsSendMessage );
+        ReqCompleted( reqHandle, extendedError );
+        // reset pointer to client memory
+        iSendMessageMsgAttrPckgPtr = NULL;
+        iSmsNoFdnCheckFlag = ESmsNoFdnCheckUnknown;
+        }        
+    else if ( ( KErrNone != aError ) && ( KErrTimedOut != aError ) 
         && ( KErrGsmSMSOperationNotAllowed != 
             CMmCommonStaticUtility::ExtendedErrorCode ( aError ) )
             // FDB check failed

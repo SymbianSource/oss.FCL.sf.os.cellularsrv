@@ -15,21 +15,12 @@
 // 
 //
 
+#include "TE_testwapthdr.h"
 
 #include "TE_wapthdrbase.h"
-#include "TE_testwapthdr.h"
 #include "smsstackutils.h"
 
-#if defined (__WINS__)
-#define PDD_NAME _L("ECDRV")
-#define LDD_NAME _L("ECOMM")
-#else
-#define PDD_NAME _L("EUART1")
-#define LDD_NAME _L("ECOMM")
-#endif
-
 const TInt KSmsLogBufferSize = 1280;
-
 
 TVerdict CTestParseWapTextMessage::doTestStepL()
 /*

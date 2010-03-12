@@ -74,8 +74,8 @@ PRJ_TESTEXPORTS
 ../../test/configfiles/setupgsmsms.txt                        z:/sms/setupgsmsms.txt
 ../../test/configfiles/te_intersetupgsmsms.txt                z:/sms/te_intersetupgsmsms.txt
 
-../Test/configfiles/tsmsprtstress_config.txt                  c:/sms/tsmsprtstress_config.txt
-../Test/configfiles/tsmsemsprt_config.txt                     c:/sms/tsmsemsprt_config.txt
+../Test/configfiles/tsmsprtstress_config.txt                  z:/sms/tsmsprtstress_config.txt
+../Test/configfiles/tsmsemsprt_config.txt                     z:/sms/tsmsemsprt_config.txt
 
 ../Test/configfiles/tsmscaps_config.txt                       z:/testdata/configs/tsmscaps_config.txt
 ../Test/TE_SMSCAPS/te_smscaps.cfg                             z:/testdata/configs/te_smscaps.cfg
@@ -129,7 +129,6 @@ PRJ_TESTEXPORTS
 ../Test/TE_Smsprt/smswap_DontDiscardType0s.esk			      z:/testdata/configs/smswap_dontdiscardtype0s.esk
 ../Test/TE_Smsprt/smswap_discardType0s.esk			      	  z:/testdata/configs/smswap_discardtype0s.esk
 ../Test/TE_Smsprt/smswap_MaxFivePDUsInOOD.esk			      z:/testdata/configs/smswap_maxfivepdusinood.esk
-../Test/TE_Smsprt/SIMTSYTestNumbers.ini			      		  z:/testdata/configs/simtsytestnumbers.ini
 ../Test/TE_Smsprt/smswap_Class0DisabledMaxFivePDUsInOOD.esk	  z:/testdata/configs/smswap_class0disabledmaxfivepdusinood.esk
 
 //Class0RegressionTestSuite

@@ -482,6 +482,11 @@ NONSHARABLE_CLASS( CMmSIMTsy ) : public CMmSubTsyBase
          * Is ViagHomeZone cache ready
          */
         TBool iViagHomeZoneCacheReady;
+
+        /**
+         * last ViagHomeZone cache error
+         */
+        TInt iLastViagHomeZoneCacheError;
         
         /** 
          * Used for queuing ReadViagHomeZoneCache requests 

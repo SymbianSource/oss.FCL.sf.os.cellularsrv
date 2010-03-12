@@ -108,7 +108,9 @@ public:
 	void TestReadViagHomeZoneParams0003L();
 	void TestReadViagHomeZoneParams0004L();
 	void TestReadViagHomeZoneParams0005L();
-	void TestReadViagHomeZoneCache0001L();
+    void TestReadViagHomeZoneCache0001L();
+    void TestReadViagHomeZoneCache0001bL();
+    void TestReadViagHomeZoneCache0001cL();
 	void TestReadViagHomeZoneCache0002L();
 	void TestReadViagHomeZoneCache0003L();
 	void TestReadViagHomeZoneCache0004L();
@@ -330,8 +332,8 @@ private:
 									RMobileCall::TMobileCallStatus aMobileCallStatus,
 									RMobilePhone::TMobileService aMobileService
 									);
-	void OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI);
-	void MockPrimeEReadViagHomeZoneCacheIPCL(TInt aCacheId,TInt aRecordId, TBool aDoComplete = ETrue, TBool aDoExpect = ETrue);
+	void OpenPhoneAndCustomAPILC(RMmCustomAPI& aCustomAPI, TInt aNtsyError = KErrNone);
+	void MockPrimeEReadViagHomeZoneCacheIPCL(TInt aCacheId,TInt aRecordId, TBool aDoComplete = ETrue, TBool aDoExpect = ETrue, TInt aNtsyError = KErrNone);
 	void FillWithRandomData( RMmCustomAPI::TMmCellInfo& cell, TInt aRnd = 0) const;
 	void FillWithRandomDataLC( RMmCustomAPI::TViagElements*& cell, TInt aRnd = 0) const;
 	void InitSimCbTopicsL(RMmCustomAPI &aCustomApi, const TDesC& aTopic, TInt aNum);

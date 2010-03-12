@@ -454,7 +454,7 @@ TInt CMmENStoreTsy::Read(
     RMobileENStore::TMobileENEntryV1& entry = ( *entryPckg )();
 
     // Check that client uses valid location index
-    if ( 0 < entry.iIndex )
+    if (0 < entry.iIndex && sizeof( RMobileENStore::TMobileENEntryV1 ) <= aEntry->MaxLength())
         {
         // Forward request to GSM Extension
         ret = iMmENStoreExtInterface->Read( 
@@ -464,7 +464,7 @@ TInt CMmENStoreTsy::Read(
     // ISI message construction failed or phonet sender returned error
     if ( KErrNone != ret )
         {
-        ReqCompleted( aTsyReqHandle, ret );
+        ReqCompleted( aTsyReqHandle, ret ); 
         }
     else
         {

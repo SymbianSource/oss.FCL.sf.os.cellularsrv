@@ -312,6 +312,10 @@ TInt CLtsyFactoryV1::GetDispatchHandler(
 		aDispatchInterface = static_cast<MLtsyDispatchCallControlSwap*>
 												(iLtsyDispatchCallControlHandler);
 		break;
+	case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId:
+		aDispatchInterface = static_cast<MLtsyDispatchCallControlSwap*>
+												(iLtsyDispatchCallControlHandler);
+		break;
 	case MLtsyDispatchCallControlLoanDataPort::KLtsyDispatchCallControlLoanDataPortApiId:
 		aDispatchInterface = static_cast<MLtsyDispatchCallControlLoanDataPort*>
 												(iLtsyDispatchCallControlHandler);

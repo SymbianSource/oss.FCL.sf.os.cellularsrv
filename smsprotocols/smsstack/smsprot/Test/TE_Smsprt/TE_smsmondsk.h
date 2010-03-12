@@ -13,37 +13,30 @@
 // Description:
 //
 
-#ifndef __TE_SMSMONDSK_H_
-#define __TE_SMSMONDSK_H_
+#ifndef TE_SMSMONDSK_H
+#define TE_SMSMONDSK_H
 
 #include "Te_SmsTestSteps.h"
 
-/**
- 
- */
-class CSetDiskMonitorLimits : public CSMSTestSteps
+class CSetDiskMonitorLimits : public CSmsBaseTestStep
 	{
 public:
-	virtual enum TVerdict doTestStepL();	
+    CSetDiskMonitorLimits();
+	virtual TVerdict doTestStepL();	
 	};
 
-/**
- 
- */
-class CSetDiskSpace : public CSMSTestSteps
+class CSetDiskSpace : public CSmsBaseTestStep
 	{
 public:
-	virtual enum TVerdict doTestStepL();	
+	CSetDiskSpace();
+	virtual TVerdict doTestStepL();	
 	};
-	
-/**
- 	
- */
-class CFreeDiskSpace : public CSMSTestSteps
+
+class CFreeDiskSpace : public CSmsBaseTestStep
 	{
 public:
-	virtual enum TVerdict doTestStepL();
+    CFreeDiskSpace();
+	virtual TVerdict doTestStepL();
 	};
 
-
-#endif // __TE_SMSMONDSK_H_
+#endif // TE_SMSMONDSK_H

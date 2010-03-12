@@ -22,9 +22,9 @@
 #ifndef CTSYPHONEBOOKONFUNEGATIVE_H_
 #define CTSYPHONEBOOKONFUNEGATIVE_H_
 
-#include "cctsycomponenttestbase.h"
+#include "cctsyphonebookfu.h"
 
-class CCTsyPhonebookOnFUNegative : public CCtsyComponentTestBase
+class CCTsyPhonebookOnFUNegative : public CCTsyPhonebookFU
 	{
 public:
 	// Create a suite of all the tests
@@ -40,9 +40,13 @@ public:
 	void TestReadEntryIpcL();
 	void TestReadSizeIpcL();
 	void TestWriteSizeIpcL();
+    virtual void DoCleanup();
 	
 private:
 	void OpenAndPushEtelAndPhoneONStoreL(RMobileONStore& aONStore);
+	
+private:
+	RMobilePhoneBookStore iAdnPhoneBookStore;
 	}; // class CCTsyPhonebookOnFUNegative
 
 

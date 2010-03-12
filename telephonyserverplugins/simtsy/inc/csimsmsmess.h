@@ -96,7 +96,9 @@ public:
 
 // MSubSessionExtBaseTSY pure virtual
 	virtual TInt ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt aIpc,const TDataPackage& aPackage);
-
+	
+	void ReloadConfigurationSettingsL();
+	
 protected:
 	void ConstructL();
 
@@ -120,8 +122,6 @@ private:
 		ESmsRxStateWaitingToStart
 		} iRxState;
 		
-	TSmsRxState iRxStatePrevious;
-
 	enum TSmsTxEvent
 		{
 		ESmsEventSendReq,
@@ -195,9 +195,11 @@ private:
     void AppendNpiToBuffer(TDes8& aBuffer, const RMobilePhone::TMobileNPI& aNpi);
 #endif
     	
-	TInt ReloadConfigL(const TTsyReqHandle aReqHandle);
 	HBufC8* PduToAscii(TDesC8& aSmsPdu);
 	void DumpPdu(const TDesC8& aText, TDesC8& aSmsPdu, HBufC8* aPduInAscii = 0);
+	
+	void Reset();
+	void InitializeL();
 	
 private:
 	
