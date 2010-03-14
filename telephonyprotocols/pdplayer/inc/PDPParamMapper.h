@@ -23,6 +23,7 @@
 #ifndef SYMBIAN_PDPPARAMMAPPER_H
 #define SYMBIAN_PDPPARAMMAPPER_H
 
+#include <etelqos.h>
 #include <comms-infras/ss_parameterfamilybundle.h>
 
 #include <networking/qos3gpp_subconparams.h>

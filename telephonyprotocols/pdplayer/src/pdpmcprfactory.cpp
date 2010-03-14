@@ -20,14 +20,18 @@
  @internalComponent
 */
 
+#include <etelqos.h>
 #include <ecom/implementationproxy.h>
-#include "pdpmcprfactory.h"
-#include "pdpmcpr.h"
 #include <comms-infras/ss_log.h>
 #include <ss_glob.h>
 #include <ecom/ecom.h>
 
 #include <comms-infras/ss_msgintercept.h>
+
+#include "pdpmcprfactory.h"
+#include "pdpmcpr.h"
+
+
 
 #ifdef _DEBUG
 #define KPdpMCprFactoryTag KESockMetaConnectionTag

@@ -29,5 +29,8 @@ pdp.mmp
 
 PRJ_TESTMMPFILES
 
+
+#include "..\test\controlplane\group\bld.inf"
+
 #endif
 

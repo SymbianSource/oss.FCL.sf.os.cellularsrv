@@ -36,7 +36,6 @@ CTestSuite* CCTsyFixedDiallingFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0001bL);
     ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0001cL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0002L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0004L);	
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0005L);
 		
@@ -372,19 +371,18 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001L()
 	// TEST to show defect 120102
  	//-------------------------------------------------------------------------
 
-    // get out before it panics
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 120102);
-    ASSERT_TRUE(EFalse);
-  
   	iMockLTSY.ExpectL(EMobileCallDialNoFdnCheck, expectData);   	
- 	// call of this API should lead to set CallId = 1, but because of defect 120102 it doesn't occure
- 	CallGetMobileCallInfoL(callId, mobileService, KSomeNumber); 	
+ 	CallGetMobileCallInfoL(callId, mobileService, KSomeNumber); 
+ 	
+ 	completeData.Close();
+ 	TMockLtsyCallData0 mockDataComplete2(callId, mobileService);
+ 	mockDataComplete2.SerialiseL(completeData);
   	iMockLTSY.CompleteL(EMobileCallDialNoFdnCheck, KErrNone, completeData);   	
   	
     call.DialNoFdnCheck(requestStatus, pckgCallParams, KSomeNumber);   
     
     User::WaitForRequest(requestStatus);      
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 120102);      
+     
     ASSERT_EQUALS(KErrNone, requestStatus.Int());      
     
     AssertMockLtsyStatusL();
@@ -393,7 +391,7 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001L()
 	
 	
 /**
-@SYMTestCaseID BA-CTSY-FXD-CDNFC-0001
+@SYMTestCaseID BA-CTSY-FXD-CDNFC-0001b
 @SYMComponent  telephony_ctsy
 @SYMTestCaseDesc Test support in CTSY for RMobileCall::DialNoFdnCheck for voice calls
 @SYMTestPriority High
@@ -623,267 +621,163 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001cL()
 void CCTsyFixedDiallingFU::TestDialNoFdnCheck0002L()
 	{
 
-// This test should test cancellation of GetCallParams
-// If this API does not have a cancel, the test step should be completely removed.
+     OpenEtelServerL(EUseExtendedError);
+     CleanupStack::PushL(TCleanupItem(Cleanup,this));
+     OpenPhoneL();
 
-	OpenEtelServerL(EUseExtendedError);
-	CleanupStack::PushL(TCleanupItem(Cleanup,this));
-	OpenPhoneL();
-
-	RBuf8 expectData;
-	CleanupClosePushL(expectData);
-	
-	RBuf8 completeData;
-	CleanupClosePushL(completeData);	
-	
-	 //-- For Voice1 -------------------------    
-    TBuf<256> lineName(KMmTsyVoice1LineName);
-    
-    // Open new line
-    RLine line;
-    TInt errorCode = line.Open(iPhone, lineName);
-    ASSERT_EQUALS(KErrNone, errorCode);
-    CleanupClosePushL(line);  
-    
-    // some data for opening call
-    _LIT(KDoubleColon, "::");
-    
-    TBuf<256> name;
-    name = KMmTsyPhoneName;
-    name.Append(KDoubleColon);
-    name.Append(lineName);
-    name.Append(KDoubleColon);
-        
-   	TInt callId = 1;   	
- 	// create new incoming call
- 	TName incomingCallName;
- 	RMobileCall::TMobileCallStatus mobileCallStatus = RMobileCall::EStatusIdle; 
- 	RMobilePhone::TMobileService mobileService = RMobilePhone::EVoiceService;	
- 	
- 	TRequestStatus requestStatus;
-	errorCode = CreateIncomingCallL(line, callId, lineName, incomingCallName, 
-                             mobileService, mobileCallStatus);	
-	ASSERT_EQUALS(KErrNone, errorCode);	 	
+     RBuf8 expectData;
+     CleanupClosePushL(expectData);
+     
+     RBuf8 completeData;
+     CleanupClosePushL(completeData);
+     
+     TInt errorCode = KErrNone;    
+     
+     //-- For Voice1 -------------------------
+         
+     TBuf<256> lineName(KMmTsyVoice1LineName);    
+     // Open new line
+     RLine line;
+     errorCode = line.Open(iPhone, lineName);
+     ASSERT_EQUALS(KErrNone, errorCode);
+     CleanupClosePushL(line);      
+     // open call
+     _LIT(KDoubleColon, "::");    
+     TBuf<256> name;
+     name = KMmTsyPhoneName;
+     name.Append(KDoubleColon);
+     name.Append(lineName);
+     name.Append(KDoubleColon);
+     
+     RMobileCall call;
+     errorCode = call.OpenNewCall(line, name);
+     ASSERT_EQUALS(KErrNone, errorCode);
+     CleanupClosePushL(call);   
+     
+     TRequestStatus requestStatus;    
+     _LIT(KSomeNumber, "123456789");
+     
+     RMobilePhone::TMobileService mobileService = RMobilePhone::EVoiceService;
+     
+     TInt expectCallId = 0;
  	   
     // --------  make for this call callId > 0 --------------------------------------   
-    RMobileCall::TMobileCallInfoV1 callInfo;  
-            
-	line.NotifyIncomingCall(requestStatus, incomingCallName);
+    RMobileCall::TMobileCallInfoV8 callInfo;  
 
-    callInfo.iService = mobileService;
-    TMockLtsyCallData1<RMobileCall::TMobileCallInfoV1> idleCallData(callId, mobileService, callInfo);
-    idleCallData.SerialiseL(completeData);
-	
-	TRequestStatus mockLtsyStatus;
-    iMockLTSY.NotifyTerminated(mockLtsyStatus);
-    iMockLTSY.CompleteL(EEtelLineNotifyIncomingCall, KErrNone, completeData);
-    User::WaitForRequest(mockLtsyStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
-    
-    User::WaitForRequest(requestStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    
-    RMobileCall call;
-    errorCode = call.OpenExistingCall(line, incomingCallName);
-    ASSERT_EQUALS(KErrNone, errorCode);
-	CleanupClosePushL(call);
-	//------------------------------------------------------------------------- 
-	
+    //-------------------------------------------------------------------------
+	// Test cancelling of RMobileCall::DialNoFdnCheck
  	//-------------------------------------------------------------------------
-	// Test cancelling of RCall::GetCallParams
- 	//-------------------------------------------------------------------------
- 	_LIT(KSomeNumber, "123456789"); 
- 	// data for ExpextL
+ 	
+    // data for ExpextL
  	RMobileCall::TMobileCallParamsV1 callParams; 
     RMobileCall::TMobileCallParamsV1Pckg    pckgCallParams(callParams); 	
  	 	
- 	callInfo.iRemoteParty.iDirection = RMobileCall::EMobileTerminated;  
- 	callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
-	callInfo.iService	= mobileService;  
-	callInfo.iDialledParty.iTelNumber.Copy( KSomeNumber );
-	    
+    callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
+    callInfo.iService   = mobileService;
+    callInfo.iStatus    = RMobileCall::EStatusUnknown;
+    callInfo.iCallId    = -1;
+    callInfo.iExitCode  =0; 
+    callInfo.iEmergency =0;
+    callInfo.iForwarded =0; 
+    callInfo.iPrivacy               = RMobilePhone::EPrivacyUnspecified;
+    callInfo.iAlternatingCall       = RMobilePhone::EAlternatingModeUnspecified;    
+    callInfo.iTch = RMobileCall::ETchUnknown;               
+    callInfo.iRemoteParty.iCallingName = KNullDesC;
+    callInfo.iRemoteParty.iRemoteIdStatus = RMobileCall::ERemoteIdentityUnknown;
+    callInfo.iRemoteParty.iRemoteNumber.iTelNumber = KNullDesC;
+    callInfo.iRemoteParty.iRemoteNumber.iNumberPlan = RMobilePhone::EUnknownNumberingPlan;
+    callInfo.iRemoteParty.iRemoteNumber.iTypeOfNumber = RMobilePhone::EUnknownNumber;
+    callInfo.iDialledParty.iTelNumber.Copy( KSomeNumber );
+    callInfo.iDialledParty.iNumberPlan = 
+            RMobilePhone::EUnknownNumberingPlan;
+    callInfo.iDialledParty.iTypeOfNumber = 
+            RMobilePhone::EUnknownNumber;   
+	
     TMockLtsyCallData2< RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1 >
-    											 mockCallData(callId, mobileService, callParams, callInfo);
+    											 mockCallData(expectCallId, mobileService, callParams, callInfo);
     mockCallData.SerialiseL(expectData);
+    
+    // Expect the dial
     
     iMockLTSY.ExpectL(EMobileCallDialNoFdnCheck, expectData, KErrNone);   
      
+    // Dial and cancel
     call.DialNoFdnCheck(requestStatus, pckgCallParams, KSomeNumber);
     call.CancelAsyncRequest(EMobileCallDialNoFdnCheck);
+    
+    // prepare and complete Mobile Call info
+    
+    TInt callId = 1;
+    
+    _LIT(KNullDesC , "");
         
-    User::WaitForRequest(requestStatus);    
-          
-    ASSERT_EQUALS(KErrCancel, requestStatus.Int());      
-    AssertMockLtsyStatusL();
-     
-	CleanupStack::PopAndDestroy(5, this); // expectData, this ...
-	
-	}
+    RBuf8 data;
+    CleanupClosePushL(data);
 
+    RMobileCall::TMobileCallInfoV1 callInfo2;
+    callInfo2.iDialledParty.iTelNumber.Copy(KSomeNumber);
+    callInfo2.iService = mobileService;
+    callInfo2.iEmergency = EFalse;
+    callInfo2.iRemoteParty.iCallingName = KNullDesC;
+    callInfo2.iRemoteParty.iRemoteIdStatus = RMobileCall::ERemoteIdentityUnknown;
+    callInfo2.iRemoteParty.iRemoteNumber.iTelNumber = KNullDesC;
+    callInfo2.iRemoteParty.iRemoteNumber.iNumberPlan = RMobilePhone::EUnknownNumberingPlan;
+    callInfo2.iRemoteParty.iRemoteNumber.iTypeOfNumber = RMobilePhone::EUnknownNumber;
+    callInfo2.iForwarded = EFalse;
+    callInfo2.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallRemoteParty;
 
-/**
-@SYMTestCaseID BA-CTSY-FXD-CDNFC-0003
-@SYMComponent  telephony_ctsy
-@SYMTestCaseDesc Test support in CTSY for RMobileCall::DialNoFdnCheck with bad parameter data for voice calls
-@SYMTestPriority High
-@SYMTestActions Invokes RMobileCall::DialNoFdnCheck with bad parameter data for voice calls
-@SYMTestExpectedResults Pass
-@SYMTestType CT
-*/
-void CCTsyFixedDiallingFU::TestDialNoFdnCheck0003L()
-	{
+    TMockLtsyCallData1<RMobileCall::TMobileCallInfoV1> callInfoData(callId, mobileService, callInfo2);
+    callInfoData.SerialiseL(data);
 
-	OpenEtelServerL(EUseExtendedError);
-	CleanupStack::PushL(TCleanupItem(Cleanup,this));
-	OpenPhoneL();
+    iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, data);
 
-	RBuf8 expectData;
-	CleanupClosePushL(expectData);
-	
-	RBuf8 completeData;
-	CleanupClosePushL(completeData);
-	
-	 //-- For Voice1 -------------------------    
-    TBuf<256> lineName(KMmTsyVoice1LineName);
+    //Pause the MockLTSY so we can program the sequence of Expect - Completes involved 
+    //with cancelling 
+    iMockLTSY.PauseCompletion();
     
-    // Open new line
-    RLine line;
-    TInt errorCode = line.Open(iPhone, lineName);
-    ASSERT_EQUALS(KErrNone, errorCode);
-    CleanupClosePushL(line);  
+    RMobileCall::TMobileCallStatus  mobileCallStatus = RMobileCall::EStatusDialling; 
+    TMockLtsyCallData1<RMobileCall::TMobileCallStatus> mockCallDataStatus(callId, mobileService, mobileCallStatus);
+    completeData.Close();
+    mockCallDataStatus.SerialiseL(completeData);
     
-    // some data for opening call
-    _LIT(KDoubleColon, "::");
-    
-    TBuf<256> name;
-    name = KMmTsyPhoneName;
-    name.Append(KDoubleColon);
-    name.Append(lineName);
-    name.Append(KDoubleColon);
-        
-   	TInt callId = 1;   	
- 	// create new incoming call
- 	TName incomingCallName;
- 	RMobileCall::TMobileCallStatus mobileCallStatus = RMobileCall::EStatusIdle; 
- 	RMobilePhone::TMobileService mobileService = RMobilePhone::EVoiceService;	
- 	
- 	TRequestStatus requestStatus;
-	errorCode = CreateIncomingCallL(line, callId, lineName, incomingCallName, 
-                             mobileService, mobileCallStatus);	
-	ASSERT_EQUALS(KErrNone, errorCode);	 	
- 	   
-    // --------  make for this call callId > 0 --------------------------------------   
-    RMobileCall::TMobileCallInfoV1 callInfo;  
-            
-	line.NotifyIncomingCall(requestStatus, incomingCallName);
+    //Change state to dialling, this set the call ID
+    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, completeData);
 
-    callInfo.iService = mobileService;
-    TMockLtsyCallData1<RMobileCall::TMobileCallInfoV1> idleCallData(callId, mobileService, callInfo);
-    idleCallData.SerialiseL(completeData);
-	
-	TRequestStatus mockLtsyStatus;
-    iMockLTSY.NotifyTerminated(mockLtsyStatus);
-    iMockLTSY.CompleteL(EEtelLineNotifyIncomingCall, KErrNone, completeData);
-    User::WaitForRequest(mockLtsyStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
     
-    User::WaitForRequest(requestStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    
-    RMobileCall call;
-    errorCode = call.OpenExistingCall(line, incomingCallName);
-    ASSERT_EQUALS(KErrNone, errorCode);
-	CleanupClosePushL(call);
-	//------------------------------------------------------------------------- 
-	    
-    _LIT(KSomeNumber, "123456789");    
-    
-    
-	//-------------------------------------------------------------------------
-	// Test B: Test passing wrong descriptor size to parameter in
-	// RCall::GetCallParams
- 	//-------------------------------------------------------------------------
- 	RMobileCall::TMobileCallParamsV1 		callParams; 	
- 	RMobileCall::TMobileCallParamsV1Pckg    pckgCallParams(callParams);	
- 	
- 	// --- data for ExpectL ---
- 	// set up callParams for case of pckgCallParams zero length
- 	callParams.iSpeakerControl = 
-	            RCall::EMonitorSpeakerControlOnUntilCarrier;
-	callParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeLow;
-	callParams.iInterval = 0;
-	callParams.iWaitForDialTone = RCall::EDialToneWait;
-	callParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
-	callParams.iCug.iExplicitInvoke = EFalse;
-	callParams.iCug.iCugIndex = 0xFFFF;
-	callParams.iCug.iSuppressPrefCug = EFalse;
-	callParams.iCug.iSuppressOA = EFalse;
-	callParams.iAutoRedial = EFalse; 	
- 	// set up callInfo#
-	
-	RMobileCall::TMobileCallInfoV8 callInformation; 
-	callInformation.iRemoteParty.iDirection = RMobileCall::EMobileTerminated;  
-	callInformation.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
-	callInformation.iService	= mobileService;  
-	callInformation.iDialledParty.iTelNumber.Copy( KSomeNumber ); 	
- 	TMockLtsyCallData2< RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV8 >
-    											 mockCallData2(callId, mobileService, callParams, callInformation);
-    mockCallData2.SerialiseL(expectData);
-    
- 	// --- data for CompleteL ---
- 	TMockLtsyCallData0 mockDataComplete(callId, mobileService);
- 	completeData.Close();
- 	mockDataComplete.SerialiseL(completeData);
- 
-	iMockLTSY.ExpectL(EMobileCallDialNoFdnCheck, expectData);   	
-  	iMockLTSY.CompleteL(EMobileCallDialNoFdnCheck, KErrNone, completeData);   	
-  	
-    // set Length of param to 0 
-  	pckgCallParams.SetLength(0);
-  	// call DialNoFdnCheck itself
-    call.DialNoFdnCheck(requestStatus, pckgCallParams, KSomeNumber);   
-    
-    User::WaitForRequest(requestStatus);          
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    AssertMockLtsyStatusL();   
- 			
-	//-------------------------------------------------------------------------
-	// Test A: Test passing wrong version of parameters to
-	// RCall::GetCallParams use TMobileCallParamsV2 instead of TMobileCallParamsV1
- 	//------------------------------------------------------------------------- 	
-    RMobileCall::TMobileCallParamsV2 callParamsV2; 
-    RMobileCall::TMobileCallParamsV2Pckg    pckgCallParamsV2(callParamsV2);    	
- 
- 	// data for ExpextL 	
- 	callInfo.iRemoteParty.iDirection = RMobileCall::EMobileTerminated;  
- 	callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
-	callInfo.iService	= mobileService;  
-	callInfo.iDialledParty.iTelNumber.Copy( KSomeNumber );
-	    
-    TMockLtsyCallData2< RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1 >
-    											 mockCallData(callId, mobileService, callParams, callInfo);
+    TInt hangUpCause = KErrGsmReleaseByUser;
+    TBool autoStChangeDisable = ETrue;
+    TMockLtsyCallData2<TInt, TBool> mockCallData2(callId, mobileService, 
+                                                          hangUpCause, 
+                                                          autoStChangeDisable);    
     expectData.Close();
-    mockCallData.SerialiseL(expectData);    
-       
-	iMockLTSY.ExpectL(EMobileCallDialNoFdnCheck, expectData, KErrGeneral);  // use KErrGeneral just only to avoid waiting for timeout
-   	call.DialNoFdnCheck(requestStatus, pckgCallParamsV2, KSomeNumber);
-   	User::WaitForRequest(requestStatus);
-   	
-   	// Possible defect. There is no checking of iExtensionId of geting params in 
-   	// TInt CMmVoiceCallTsy::DialNoFdnCheck(const TTsyReqHandle aTsyReqHandle, const TDesC8* aCallParams, TDesC* aTelNumber )
-   	// and in 
-   	// TInt CMmCallGsmWcdmaExt::DialL(RMobilePhone::TMobileService aCallMode,  const TDesC8* aCallParams, const TDesC* aTelNumber, TInt aExtensionId )
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 120105);      
-    ASSERT_EQUALS(KErrArgument, requestStatus.Int());     
-	AssertMockLtsyStatusL();
-	
-	// Done !
-	CleanupStack::PopAndDestroy(5, this); // this...
+    mockCallData2.SerialiseL(expectData);
+    // Since the call ID has been set, the CTSY will go ahead with the cancellation
+    // by hanging up.
+    iMockLTSY.ExpectL(EEtelCallHangUp, expectData);
+    
+    // Cancelled Dial request. After this CTSY hangs up the call and it goes to idle state.
+   
+    
+    RMobileCall::TMobileCallStatus  mobileCallStatus2 = RMobileCall::EStatusIdle; 
+    TMockLtsyCallData1<RMobileCall::TMobileCallStatus> mockCallDataStatus2(callId, mobileService, mobileCallStatus2);
+    completeData.Close();
+    mockCallDataStatus2.SerialiseL(completeData);
 
+    // Complete the hangup
+    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrGsmReleaseByUser, completeData);
+ 
+    // Release the MockLTSY so that the above sequence is triggered.
+    iMockLTSY.ResumeCompletion();
+    
+    
+    // Check results.
+    User::WaitForRequest(requestStatus);    
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrCancel, requestStatus.Int());      
+
+     
+	CleanupStack::PopAndDestroy(6, this); // expectData, this ...
+	
 	}
 
 

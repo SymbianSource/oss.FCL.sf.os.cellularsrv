@@ -23,6 +23,7 @@
 #ifndef SYMBIAN_PDPMCPR_H
 #define SYMBIAN_PDPMCPR_H
 
+#include <etelqos.h>
 #include <comms-infras/ss_mcprnodemessages.h>
 #include <comms-infras/linkprovision.h>
 #include <networking/pppconfig.h>
@@ -31,8 +32,10 @@
 
 #include <comms-infras/agentmcpr.h>
 #include <comms-infras/coremcprstates.h>
-#include "pdpmcprfactory.h"
+
 #include "PDPProvision.h"
+#include "pdpmcprfactory.h"
+
 
 #if defined __CFLOG_ACTIVE || defined SYMBIAN_TRACE_ENABLE
 #define KPdpMCprTag KESockMetaConnectionTag

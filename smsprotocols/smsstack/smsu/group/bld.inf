@@ -30,7 +30,7 @@ PRJ_EXPORTS
 ../inc/smsuset.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsuset.h)
 ../inc/smsuset.inl SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsuset.inl)
 ../inc/smsustrm.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsustrm.h)
-../inc/smsustrm.inl SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(smsustrm.inl)
+../inc/smsustrm.inl SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsustrm.inl)
 ../inc/smsulog.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsulog.h)
 ../inc/smsulog.inl SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsulog.inl)
 ../inc/smsuact.h SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(smsuact.h)

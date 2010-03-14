@@ -27,6 +27,7 @@
 #include <test/testexecutestepbase.h>
 // Please add your include here if you have
 #include <fbs.h>
+#include <etelmm.h>
 #include <e32math.h>
 #include "gsmumsg.h"
 #include "gsmubuf.h"
