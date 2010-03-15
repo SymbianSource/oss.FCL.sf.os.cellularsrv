@@ -25,5 +25,5 @@ START_TESTCASE BA-CTSY-INT-CAPI-0050
 //!@SYMTestExpectedResults Pass - Place holder - fill this in when writing test
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies live/automatic
-RUN_TEST_STEP 100 TE_CTSYIntegrationTestSuite CCTSYIntegrationTestCustomAPI0050 c:\ctsy\ctsyintegration_data.ini
+RUN_TEST_STEP 100 TE_CTSYIntegrationTestSuite CCTSYIntegrationTestCustomAPI0050 c:\testdata\configs\ctsyintegration_data.ini
 END_TESTCASE BA-CTSY-INT-CAPI-0050

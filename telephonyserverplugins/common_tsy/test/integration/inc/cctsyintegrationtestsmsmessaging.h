@@ -40,6 +40,7 @@ _LIT(KNetworkO2,"O2");
 _LIT(KNetworkVodafone,"Vodafone");
 _LIT(KNetworkOrange,"Orange");
 _LIT(KNetworkTMobile,"TMobile");
+_LIT(KNetworkNTN,"NTN");
 
 
 class CCTSYIntegrationTestSmsMessagingBase : public CCTSYIntegrationTestSuiteStepBase

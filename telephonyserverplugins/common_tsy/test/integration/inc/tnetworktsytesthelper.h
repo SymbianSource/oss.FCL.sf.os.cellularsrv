@@ -30,6 +30,7 @@ enum TOperatorName
 	EOperatorDNA,
 	EOperatorSonera,
 	EOperatorAnite,
+	EOperatorNTN,
 	EOperatorUnknown
 	};
 	

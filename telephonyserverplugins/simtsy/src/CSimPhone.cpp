@@ -2999,7 +2999,6 @@ TInt CSimPhone::CheckConfigFile()
     CTestConfig* configFile = NULL; 
 
     TRAPD(err, configFile = CTestConfig::NewLC(iFs, KConfigFileDir, KConfigFilename); CleanupStack::Pop(configFile));
-    CleanupStack::PushL(configFile);
     if( err != KErrNone || configFile->Section(iSectionName) != NULL )
         {
         err = KErrNone;
@@ -3008,7 +3007,7 @@ TInt CSimPhone::CheckConfigFile()
         {
         err = KErrNotFound;
         }
-    CleanupStack::PopAndDestroy(configFile);
+    delete configFile;
     return err;
     }
 /**

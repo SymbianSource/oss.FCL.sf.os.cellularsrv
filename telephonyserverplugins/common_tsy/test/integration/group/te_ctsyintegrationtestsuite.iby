@@ -23,13 +23,15 @@
 // Test Harness Executables
 file=ABI_DIR\DEBUG_DIR\te_ctsyintegrationtestsuite.exe		SYSTEM_BINDIR\te_ctsyintegrationtestsuite.exe
 
+file=ABI_DIR\DEBUG_DIR\RpsCommon.dll	SYSTEM_BINDIR\RpsCommon.dll
+file=ABI_DIR\DEBUG_DIR\rpsmaster.dll	SYSTEM_BINDIR\rpsmaster.dll
 
 data=EPOCROOT##epoc32\data\z\TestData\configs\ctsyintegration_setup.ini 	testdata\configs\ctsyintegration_setup.ini
 data=EPOCROOT##epoc32\data\z\TestData\configs\ctsyintegration_trpat_setup.ini 	testdata\configs\ctsyintegration_trpat_setup.ini
 data=EPOCROOT##epoc32\data\z\TestData\configs\ctsyintegration_trpstubbed_setup.ini 	testdata\configs\ctsyintegration_trpstubbed_setup.ini
 data=EPOCROOT##epoc32\data\z\TestData\configs\ctsyintegration_data.ini 	testdata\configs\ctsyintegration_data.ini
 data=EPOCROOT##epoc32\data\z\TestData\configs\uk_commdb.cfg		testdata\configs\uk_commdb.cfg
-
+data=EPOCROOT##epoc32\data\z\testdata\configs\testexecute.ini		system\data\testexecute.ini
 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_ctsy_trpat_test_setup.script		testdata\scripts\te_ctsy_trpat_test_setup.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_ctsy_trpstubbed_test_setup.script	testdata\scripts\te_ctsy_trpstubbed_test_setup.script

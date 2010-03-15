@@ -1003,23 +1003,31 @@ TVerdict CCTSYIntegrationTestCallWaiting0007::doTestStepL()
 	TInt noOfEntries = cwList->Enumerate();
 	ASSERT_TRUE( noOfEntries >=  2, _L("CRetrieveMobilePhoneCWList::Enumerate returned incorrect information"))
 
+	const RMobilePhone::TMobilePhoneCWInfoEntryV1& cwInfoEntry = cwList->GetEntryL(0);
+	const RMobilePhone::TMobilePhoneCWInfoEntryV1& cwInfoEntry1 = cwList->GetEntryL(1);
 	// Check CMobilePhoneCWList::GetEntryL with aIndex=0 returns a RMobilePhone::TMobilePhoneCWInfoEntryV1 with iServiceGroup=EVoiceService and iStatus=ECallWaitingStatusActive
-	const RMobilePhone::TMobilePhoneCWInfoEntryV1& cwInfoEntry = cwList->GetEntryL(0);	
-	ASSERT_TRUE((cwInfoEntry.iServiceGroup  ==  RMobilePhone::EVoiceService 
-				|| cwInfoEntry.iServiceGroup  ==  RMobilePhone::ETelephony) , 
-				_L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iServiceGroup"))
-	ASSERT_EQUALS(cwInfoEntry.iStatus, RMobilePhone::ECallWaitingStatusActive, 
-				_L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iStatus"));
-	
 	// Check CMobilePhoneCWList::GetEntryL with aIndex=1 returns a RMobilePhone::TMobilePhoneCWInfoEntryV1 with iServiceGroup=ECircuitDataService and iStatus=ECallWaitingStatusActive
-	const RMobilePhone::TMobilePhoneCWInfoEntryV1& cwInfoEntry1 = cwList->GetEntryL(1);	
-	ASSERT_TRUE( ( cwInfoEntry1.iServiceGroup == RMobilePhone::ECircuitDataService
-				|| cwInfoEntry1.iServiceGroup == RMobilePhone::ESyncData
-				|| cwInfoEntry1.iServiceGroup == RMobilePhone::EAsyncData), 
-				_L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iServiceGroup"))
-	ASSERT_EQUALS(cwInfoEntry1.iStatus, RMobilePhone::ECallWaitingStatusActive, 
-				_L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iStatus"))	
-		
+	// or opposite.
+	TBool serviceGroupFlag1(EFalse);
+	TBool serviceGroupFlag2(EFalse);
+	serviceGroupFlag1 = ((cwInfoEntry.iServiceGroup  ==  RMobilePhone::EVoiceService 
+            || cwInfoEntry.iServiceGroup  ==  RMobilePhone::ETelephony)
+            && ( cwInfoEntry1.iServiceGroup == RMobilePhone::ECircuitDataService
+            || cwInfoEntry1.iServiceGroup == RMobilePhone::ESyncData
+            || cwInfoEntry1.iServiceGroup == RMobilePhone::EAsyncData) );
+	serviceGroupFlag2 = ((cwInfoEntry1.iServiceGroup  ==  RMobilePhone::EVoiceService 
+            || cwInfoEntry1.iServiceGroup  ==  RMobilePhone::ETelephony)
+            && ( cwInfoEntry.iServiceGroup == RMobilePhone::ECircuitDataService
+            || cwInfoEntry.iServiceGroup == RMobilePhone::ESyncData
+            || cwInfoEntry.iServiceGroup == RMobilePhone::EAsyncData) );
+	
+	ASSERT_TRUE((serviceGroupFlag1 || serviceGroupFlag2), 
+            _L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iServiceGroup"));
+    ASSERT_EQUALS(cwInfoEntry.iStatus, RMobilePhone::ECallWaitingStatusActive, 
+            _L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iStatus"));
+    ASSERT_EQUALS(cwInfoEntry1.iStatus, RMobilePhone::ECallWaitingStatusActive, 
+            _L("CRetrieveMobilePhoneCWList::GetEntryL returned wrong iStatus"));
+	
 	//
 	// TEST END
 	//

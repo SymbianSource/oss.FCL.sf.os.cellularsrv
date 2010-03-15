@@ -286,7 +286,7 @@ TBool CMBMSEngine::InitialisePhoneL()
 	//Open phone
 	User::LeaveIfError(iPhone.Open(iTelServer,iPhoneInfo.iName));
 	//Get phone status
-	iPhone.GetStatus(iPhoneStatus);
+	User::LeaveIfError(iPhone.GetStatus(iPhoneStatus));
 
 	SetActive();
 	iPhoneState = EInitialising;

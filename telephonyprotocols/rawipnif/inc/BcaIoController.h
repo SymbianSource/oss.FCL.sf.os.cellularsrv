@@ -214,7 +214,9 @@ private:
 		/** Bca IAP is set*/
 		EIAPSet,
 		/** Bca stack is set*/
-		EBcaStackSet
+		EBcaStackSet,
+		/** Bca channel is open */
+		EBcaOpened
 		};
 	
 private:

@@ -41,4 +41,16 @@ ECOM_PLUGIN(rawip.dll,10281C4E.rss)
 
 #endif // _DEBUG
 
+#ifdef _ZERO_COPY_NETWORKING
+// patch data for CBcaController::BaseConstructL API
+patchdata rawip2.dll@KMaxSendQueueLen 0x5
+patchdata rawip2.dll@KMaxTxIPPacketSize 0x5de
+patchdata rawip2.dll@KMaxRxIPPacketSize 0x7d2
+#else
+// patch data for CBcaController::BaseConstructL API
+patchdata rawip.dll@KMaxSendQueueLen 0x5
+patchdata rawip.dll@KMaxTxIPPacketSize 0x5de
+patchdata rawip.dll@KMaxRxIPPacketSize 0x7d2
+#endif //_ZERO_COPY_NETWORKING
+
 #endif // __RAWIP_IBY__

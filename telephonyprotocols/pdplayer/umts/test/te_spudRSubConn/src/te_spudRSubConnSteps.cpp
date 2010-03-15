@@ -354,7 +354,11 @@ TVerdict CLoopbackPpp1::RunTestStepL()
 TBool CSpudRSubConnTestStepBase::ApplyQoSParametersL(RSubConnection& aPdpContext)
 	{
 	TInt qosParamSet = 0;
-	ASSERT(GetIntFromConfig(ConfigSection(), _L("QoSParamSet"), qosParamSet));
+    if (!GetIntFromConfig(ConfigSection(), _L("QoSParamSet"), qosParamSet))
+        {
+        User::Leave(KErrNotFound);
+        }
+		
 	ASSERT(qosParamSet >= 0);
 
 	switch(qosParamSet)
@@ -774,7 +778,11 @@ TVerdict CSpudPppPrimaryStop::RunTestStepL()
 	WaitForCompletionL(peerStartReq, KErrNone, _L(">>>>>Starting PPP Peer for SPUD primary context"));
 
 	TInt stopTypeInt = -1;  
-	ASSERT(GetIntFromConfig(ConfigSection(), _L("StopType"), stopTypeInt));
+	if(!GetIntFromConfig(ConfigSection(), _L("StopType"), stopTypeInt))
+	    {
+        User::Leave(KErrNotFound);
+	    }
+		
 	RConnection::TConnStopType stopType = static_cast<RConnection::TConnStopType>(stopTypeInt);
 	INFO_PRINTF2(_L("Stopping Spud with stop type= %d (0 = EStopNormal, 1 = EStopAuthoritative)"), stopType);
 	ASSERT(RConnection::EStopNormal == stopType || RConnection::EStopAuthoritative == stopType);

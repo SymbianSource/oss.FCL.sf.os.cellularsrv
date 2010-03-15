@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -30,6 +30,7 @@
 #include <etelqos.h>
 #include <comms-infras/metadata.h>
 #include <metadatabase.h>		// TMDBElementId
+#include "pdp.hrh"
 
 namespace ESock 
 	{
@@ -45,7 +46,7 @@ class CGPRSProvision : public CBase, public Meta::SMetaData
 public:
     enum 
     {
-    EUid = 0x102822E0,  //Same as PDPSCPR, who's gonna use it.
+    EUid = PDPScprImplUid,  //Same as PDPSCPR, who's gonna use it.
     ETypeId = 1,
     };
 	
@@ -88,7 +89,7 @@ class CTSYProvision : public CBase, public Meta::SMetaData
 public:
     enum 
     {
-    EUid = 0x102822E0,  //Same as PDPSCPR, who's gonna use it.
+    EUid = PDPScprImplUid,  //Same as PDPSCPR, who's gonna use it.
     ETypeId = 2,
     };
     
@@ -111,7 +112,7 @@ class CDefaultPacketQoSProvision : public CBase, public Meta::SMetaData
 public:
     enum 
     {
-    EUid = 0x102822E0,  //Same as PDPSCPR, who's gonna use it.
+    EUid = PDPScprImplUid,  //Same as PDPSCPR, who's gonna use it.
     ETypeId = 3,
     };
 	static CDefaultPacketQoSProvision* NewL(ESock::CCommsDatIapView* aIapView);
@@ -132,7 +133,7 @@ class CImsExtProvision : public CBase, public Meta::SMetaData
 public:
     enum 
     {
-    EUid = 0x102822E0,  //Same as PDPSCPR, who's gonna use it.
+    EUid = PDPScprImplUid,  //Same as PDPSCPR, who's gonna use it.
     ETypeId = 4,
     };
 	static CImsExtProvision* NewLC(ESock::CCommsDatIapView* aIapView);

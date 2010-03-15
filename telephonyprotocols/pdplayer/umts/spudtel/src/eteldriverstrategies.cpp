@@ -1102,7 +1102,10 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 		
 		case EActivateStep:
 			{
-            aContext.PacketContext().GetStatus(aContext.ContextStatus());
+            if (aContext.PacketContext().GetStatus(aContext.ContextStatus()) != KErrNone)
+                {
+                aContext.ContextStatus() = RPacketContext::EStatusInactive;
+                }
             
             switch (aContext.ContextStatus())
             	{

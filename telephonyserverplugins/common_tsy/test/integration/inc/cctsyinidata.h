@@ -35,6 +35,7 @@ _LIT(KIniSectionElisaGprs, "ElisaGprsSettings");
 _LIT(KIniSectionSoneraGprs, "SoneraGprsSettings");
 _LIT(KIniSectionO2Gprs, "O2GprsSettings");
 _LIT(KIniSectionThreeGprs, "ThreeGprsSettings");
+_LIT(KIniSectionNTNGprs, "NTNGprsSettings");
 
 _LIT(KIniSectionOrangePasswords, "OrangePasswords");
 _LIT(KIniSectionVodafonePasswords, "VodafonePasswords");
@@ -44,6 +45,7 @@ _LIT(KIniSectionAnitePasswords, "AnitePasswords");
 _LIT(KIniSectionElisaPasswords, "ElisaPasswords");
 _LIT(KIniSectionDNAPasswords, "DNAPasswords");
 _LIT(KIniSectionSoneraPasswords, "SoneraPasswords");
+_LIT(KIniSectionNTNPasswords, "NTNPasswords");
 _LIT(KIniSectionBoardParams, "BoardParams"); // contains board specific parameters like phonelock
 _LIT(KIniSectionSIMParams, "SIMParams"); // contains SIM specific parameters like PUK1, PUK2
 

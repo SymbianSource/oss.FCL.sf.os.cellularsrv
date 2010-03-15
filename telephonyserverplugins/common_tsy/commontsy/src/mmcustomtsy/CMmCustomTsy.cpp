@@ -141,7 +141,7 @@ TFLOGSTRING("TSY: CMmCustomTsy::NewL");
 CMmCustomTsy::~CMmCustomTsy()
     {
 TFLOGSTRING("TSY: CMmCustomTsy::~CMmCustomTsy");
-    iMmPhoneTsy->SetHomeZoneParamsChecked( EFalse );
+
 	iFeatureControl.Close();
 	
     // Delete subsystems
@@ -150,34 +150,19 @@ TFLOGSTRING("TSY: CMmCustomTsy::~CMmCustomTsy");
         delete iMmSubTsy[i];
         }
 
-    if ( iMmSecurityTsy )
-        {
-        // Delete SecurityTsy
-        delete iMmSecurityTsy;
-        }
+    // Delete SecurityTsy
+    delete iMmSecurityTsy;
 
-    if ( iMmCustomExtInterface )
-        {
-        // Delete GSM extensions
-        delete iMmCustomExtInterface;
-        }
-
-    if ( iTsyReqHandleStore )
-        {
-        // delete req handle store
-        delete iTsyReqHandleStore;
-        }
-
-    iMmSecurityTsy = NULL;
-    iMmCustomExtInterface = NULL;
-    iTsyReqHandleStore = NULL;
-    iISVDialNumberCheckObject = NULL;
-    iCFISCentRep = NULL;
+    // Delete GSM extensions
+    delete iMmCustomExtInterface;
+    
+    // delete req handle store
+    delete iTsyReqHandleStore;
 
     if ( iMmPhoneTsy )
         {
+        iMmPhoneTsy->SetHomeZoneParamsChecked( EFalse );
         iMmPhoneTsy->SetCustomTsy( NULL );
-
         // unregister custom tsy in the message manager
         iMmPhoneTsy->MessageManager()->DeregisterTsyObject(this);
         }

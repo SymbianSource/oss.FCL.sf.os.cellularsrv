@@ -427,9 +427,9 @@ void CCTsyPhoneIdentityFU::TestGetPhoneId0001eL()
 /**
 @SYMTestCaseID BA-CTSY-PID-MGPI-0001f
 @SYMComponent  telephony_ctsy
-@SYMTestCaseDesc test reading from deviceattributes.ini not encoded as UNICODE Little Endian
+@SYMTestCaseDesc test reading from deviceattributes.ini encoded in an invalid format
 @SYMTestPriority High
-@SYMTestActions Calls GetPhoneId when deviceattributes.ini not using the right encoding.
+@SYMTestActions Calls GetPhoneId when deviceattributes.ini not using a valid encoding.
 @SYMTestExpectedResults Pass
 @SYMTestType CT
 */

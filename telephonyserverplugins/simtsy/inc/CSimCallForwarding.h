@@ -71,7 +71,7 @@ public:
 	void ActivateL(RMobilePhone::TMobilePhoneCFCondition* aCF, RMobilePhone::TMobilePhoneCFChangeV1* aCFInfo );
 	void DeactivateL(RMobilePhone::TMobilePhoneCFCondition* aCF, RMobilePhone::TMobilePhoneCFChangeV1* aCFInfo );
 	void EraseL(RMobilePhone::TMobilePhoneCFCondition* aCF, RMobilePhone::TMobilePhoneCFChangeV1* aCFInfo );
-	void UpdateCFQuiescentCondition(TBool aActivate, RMobilePhone::TMobilePhoneCFCondition aCF);
+	void UpdateCFQuiescentConditionL(TBool aActivate, RMobilePhone::TMobilePhoneCFCondition aCF);
 		
 	const CTestConfigSection* CfgFile();
 

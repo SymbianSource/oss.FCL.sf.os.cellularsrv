@@ -652,7 +652,7 @@ inline void SplitOneCFEntryIntoSeparateGroupsL(CMobilePhoneCFList* aCFList,
 	}
 	
 	
-void CSimCallForwarding::UpdateCFQuiescentCondition(TBool aActivate, 
+void CSimCallForwarding::UpdateCFQuiescentConditionL(TBool aActivate, 
 													RMobilePhone::TMobilePhoneCFCondition aCF)
 	{
 	// only the Call Forward Unconditional can alter any other CF condition
@@ -828,7 +828,7 @@ void CSimCallForwarding::ActivateL(RMobilePhone::TMobilePhoneCFCondition* aCF,
 	if(callForwardActivated)
 		{
 		// only need to check quiescent status if an activation has occurred
-		UpdateCFQuiescentCondition(ETrue, theNewEntry.iCondition);	
+		UpdateCFQuiescentConditionL(ETrue, theNewEntry.iCondition);	
 		}
 
 	CleanupStack::PopAndDestroy(thePrevCFList);
@@ -1000,7 +1000,7 @@ void CSimCallForwarding::DeactivateL(RMobilePhone::TMobilePhoneCFCondition* aCF,
 	if(callForwardDeactivated)
 		{		
 		// pass a FALSE to the function to notify of a service de-activation
-		UpdateCFQuiescentCondition(EFalse, theNewEntry.iCondition);
+		UpdateCFQuiescentConditionL(EFalse, theNewEntry.iCondition);
 		}
 
 	// now delete the old memory	

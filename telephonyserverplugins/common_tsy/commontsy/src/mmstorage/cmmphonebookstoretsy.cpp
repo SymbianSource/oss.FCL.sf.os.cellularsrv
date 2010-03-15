@@ -1161,7 +1161,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %i",aResult 
 #else
 	CArrayPtrSeg<CPhoneBookStoreEntry>* entryData;
 	aDataPackage->UnPackData(entryData);	
-	CopyLtsyCacheToCtsyCache(entryData);
+	CopyLtsyCacheToCtsyCacheL(entryData);
 #endif
 	
     CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
@@ -3163,7 +3163,7 @@ TFLOGSTRING2( "TSY: CMmPhoneBookStoreTsy::GetPhonebookType - iPhoneBookType: %d"
  	}
 
 // ---------------------------------------------------------------------------
-// CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache
+// CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCacheL
 // This method copies Ltsy Cache to Ctsy Cache
 // This is only done when NOT using the dispatcher as the Ltsy creates the array and destroys
 // the memory before CTSY is completely done with it. It now has to be copied over to CTSY domain
@@ -3171,7 +3171,7 @@ TFLOGSTRING2( "TSY: CMmPhoneBookStoreTsy::GetPhonebookType - iPhoneBookType: %d"
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache( CArrayPtrSeg<CPhoneBookStoreEntry>* aEntryData )
+void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCacheL( CArrayPtrSeg<CPhoneBookStoreEntry>* aEntryData )
 	{
 	if (iPBStoreCache!=NULL)
 		{
@@ -3231,7 +3231,7 @@ void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache( CArrayPtrSeg<CPhoneBookStor
 					(phoneBookStoreEntry->iAnr)->AppendL((*anr)[anrCount]);
 					}	
 				}
-						
+			
 			iPBStoreCache->AppendL(phoneBookStoreEntry);
 			CleanupStack::Pop( phoneBookStoreEntry );
 			}

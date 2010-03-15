@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -337,6 +337,9 @@ void CGPRSProvision::RetrieveIPAndDnsSettingsL(TDes8& aPdpAddress, TDes8& aDns1,
 	if (!fromServer)
 	    {
     	aIapView->GetTextL(KCDTIdWCDMAIPAddr | KCDTIdOutgoingGprsRecord, buf);
+    	TInetAddr addr;
+    	User::LeaveIfError(addr.Input(*buf));
+    	// sending ASCII to MA but checking the validity of the address above.
     	aPdpAddress.Copy(*buf);
     	delete buf;
     	buf = NULL;
@@ -363,10 +366,15 @@ void CGPRSProvision::RetrieveIPAndDnsSettingsL(TDes8& aPdpAddress, TDes8& aDns1,
     	if (!fromServer)
     	    {
     	    aIapView->GetTextL(KCDTIdWCDMAIPNameServer1 | KCDTIdOutgoingGprsRecord, buf);
+            TInetAddr addr;
+            User::LeaveIfError(addr.Input(*buf));
+            // sending ASCII to MA but checking the validity of the address above.
     	    aDns1.Copy(*buf);
         	delete buf;
         	buf = NULL;
     	    aIapView->GetTextL(KCDTIdWCDMAIPNameServer2 | KCDTIdOutgoingGprsRecord, buf);
+    	    User::LeaveIfError(addr.Input(*buf));
+            // sending ASCII to MA but checking the validity of the address above.
         	aDns2.Copy(*buf);
     	    delete buf;
         	buf = NULL;
@@ -379,10 +387,15 @@ void CGPRSProvision::RetrieveIPAndDnsSettingsL(TDes8& aPdpAddress, TDes8& aDns1,
     	if (!fromServer)
     	    {
     	    aIapView->GetTextL(KCDTIdWCDMAIP6NameServer1 | KCDTIdOutgoingGprsRecord, buf);
-    	    aDns1.Copy(*buf);
+            TInetAddr addr;
+            User::LeaveIfError(addr.Input(*buf));
+            // sending ASCII to MA but checking the validity of the address above.
+            aDns1.Copy(*buf);
     	    delete buf;
     		buf = NULL;
     	    aIapView->GetTextL(KCDTIdWCDMAIP6NameServer2 | KCDTIdOutgoingGprsRecord, buf);
+            User::LeaveIfError(addr.Input(*buf));
+            // sending ASCII to MA but checking the validity of the address above.
           	aDns2.Copy(*buf);
         	delete buf;
             buf = NULL;

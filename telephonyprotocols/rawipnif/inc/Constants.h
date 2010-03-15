@@ -50,8 +50,10 @@ enum TRawIPNifPanic
 	/** Bca in unkonwn State */
 	KBcaUnkownState,
 	/** BCA not exist*/
-	KBcaNotExist 	
-	};
+	KBcaNotExist,
+    /** BCA not exist*/
+    KBcaAlreadyExists
+    };
 
 
 const TUint16 KIp4FrameType = 0x21;

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,11 +24,12 @@
 #define SYMBIAN_PDPMCPR_FACTORY_H
 
 #include <comms-infras/ss_metaconnprov.h>
+#include "pdp.hrh"
 
 class CPdpMetaConnectionProviderFactory : public ESock::CMetaConnectionProviderFactoryBase
 	{
 public:
-    enum { iUid = 0x102822F0 };
+    enum { iUid = PDPMcprImplUid };
 	static CPdpMetaConnectionProviderFactory* NewL(TAny* aParentContainer);
 
 protected:

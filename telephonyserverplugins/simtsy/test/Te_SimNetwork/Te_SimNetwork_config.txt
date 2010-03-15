@@ -143,6 +143,19 @@ RegStatus= 2,5,0
 #  6 = Denied
 #  7 = Roaming
 
+
+NetworkMode= 5,2
+NetworkMode= 5,6
+#NetworkMode= <Duration>, <NetworkMode>
+# <NetworkMode>:
+#  0 = Unknown
+#  1 = Unregistered
+#  2 = GSM
+#  3 = AMPS
+#  6 = WCDMA
+#  7 = TDCDMA
+
+
 PacketRegStatus= 5,2
 PacketRegStatus= 2,1
 PacketRegStatus= 3,5

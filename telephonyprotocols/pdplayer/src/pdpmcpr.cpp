@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,6 +30,7 @@
 #include "pdpmcprstates.h"
 #include "PDPProvision.h"
 #include "psdavailabilitylistener.h"
+#include "pdp.hrh"
 
 using namespace Messages;
 using namespace MeshMachine;
@@ -106,7 +107,43 @@ CPdpMetaConnectionProvider* CPdpMetaConnectionProvider::NewL(ESock::CMetaConnect
 void CPdpMetaConnectionProvider::ConstructL()
     {
     CAgentMetaConnectionProvider::ConstructL();
-    SetAccessPointConfigFromDbL();
+    
+    const TLayerConfig* layerCfg = static_cast<const TLayerConfig*>(AccessPointConfig().FindExtension(
+        STypeId::CreateSTypeId(TLayerConfig::EUid,TLayerConfig::ETypeId)));
+
+    // defensive programming.  If the layer cfg isn't here
+    // then this is really corrupt.
+    
+    if (layerCfg == NULL)
+        {
+        User::Leave(KErrCorrupt);
+        }
+    
+    // these constants and all of the implementation ids should be in a header file
+    // and included in the .rss / ecom files.
+    
+    // Any layer that uses an outbound PDP.SCPR will have information that is overwritten by
+    // the network (for example, negotiated parameters), this configuration information is 
+    // local to the connection and should not be created here.  So this check is to ensure 
+    // that legacy behaviour is maintained for any layer that uses this MCPR but not a 
+    // PDP.SCPR.  But the PDP.SCPR behaviour has been modified to create the information
+    // that is local to that connection.
+    
+    if (layerCfg->SCprUid().iUid == PDPScprImplUid)
+        {
+        // the PDP layer MCPR is being used in conjunction with a PDP.SCPR
+        // in this case we can rightly assume that the PDP.SCPR will create
+        // the access point config for that connection.
+        // code from the PDP.SCPR will need to be moved into the PDP.CPR when
+        // that component becomes available for use.
+        ConfigurePDPLayerL();
+        }
+    else
+        {
+        // non-PDP.SCPR specific behaviour
+        // this is legacy for any layers that are constructed expecting the previous behaviour
+        SetAccessPointConfigFromDbL();
+        }
     }
 
 CPdpMetaConnectionProvider::CPdpMetaConnectionProvider(CMetaConnectionProviderFactoryBase& aFactory, const TProviderInfo& aProviderInfo)
@@ -132,6 +169,38 @@ void CPdpMetaConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const T
     CCoreMetaConnectionProvider::Received(ctx);
     User::LeaveIfError(ctx.iReturn);
 	}
+
+
+void CPdpMetaConnectionProvider::ConfigurePDPLayerL()
+    {
+    RMetaExtensionContainer mec;
+    mec.Open(AccessPointConfig());
+    CleanupClosePushL(mec);
+    
+    CCommsDatIapView* iapView = OpenIapViewLC();
+
+
+    mec.AppendExtensionL(CTSYProvision::NewLC(iapView));
+    CleanupStack::Pop();
+
+    mec.AppendExtensionL(CPppLcpConfig::NewLC(iapView));
+    CleanupStack::Pop();
+    mec.AppendExtensionL(CPppAuthConfig::NewLC(iapView));
+    CleanupStack::Pop();
+
+    CPppProvisionInfo* agentProvision = new (ELeave) CPppProvisionInfo;
+    CleanupStack::PushL(agentProvision);
+    agentProvision->SetIsDialIn(KErrNotSupported);
+    agentProvision->SetNotificationData(NULL);
+    mec.AppendExtensionL(agentProvision);
+    CleanupStack::Pop(agentProvision);
+
+    CleanupStack::PopAndDestroy();          // CloseIapView();
+
+    iAccessPointConfig.Close();
+    iAccessPointConfig.Open(mec);
+    CleanupStack::PopAndDestroy(&mec);
+    }
 
 void CPdpMetaConnectionProvider::SetAccessPointConfigFromDbL()
     {

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,11 +24,12 @@
 #define SYMBIAN_PDPSCPR_FACTORY_H
 
 #include <comms-infras/ss_subconnprov.h>
+#include "pdp.hrh"
 
 class CPDPSubConnectionProviderFactory : public ESock::CSubConnectionProviderFactoryBase
 	{
 public:
-    enum { iUid = 0x102822E0 };
+    enum { iUid = PDPScprImplUid };
 	static CPDPSubConnectionProviderFactory* NewL(TAny* aParentContainer);
 
 protected:

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -175,9 +175,97 @@ TInt TNoTagOrContentionTag::TransitionTag()
 //Provisioning
 //-=========================================================
 DEFINE_SMELEMENT(TSelfInit, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
+// This is should be revisited in future releases, basic idea is that information
+// that can be modified should have a visibility that is to that node's
+// level and not further (i.e. changes here will affect this connection
+// only, not every connection that uses this MCPR)
+//      MCPR - AccessPointConfig() contains information that is used by
+//             all connections under that MCPR and is unchanging
+//       CPR - Again for all connections under that CPR and is unchanging
+//      SCPR - Connection specific information (i.e. can change and does change)
+//        DC - No point - just reads information.
+// Here we've moved basically all of the configuration information that was in
+// the MCPR [that could be moved] this is because some of it changes / is overwritten
+// with information that comes out of etel/modem.  This also has the added benefit of
+// freeing up memory in cases where the connection is torn down but the MCPR lies 
+// around for availability purposes.  In the future, this code (or something like it)
+// should be moved into the PDP.CPR when it exists.
+
+void TSelfInit::SetupProvisionCfgL()
+    {
+    CPDPSubConnectionProvider &tNode = static_cast<CPDPSubConnectionProvider&>(iContext.Node());
+    
+    const TProviderInfoExt* providerInfoExt = static_cast<const TProviderInfoExt*>(tNode.AccessPointConfig().FindExtension(
+            STypeId::CreateSTypeId(TProviderInfoExt::EUid, TProviderInfoExt::ETypeId)));
+    
+    // this should always be here, however, a bit of defensive programming
+    // never hurt..
+    if (providerInfoExt == NULL)
+        {
+        User::Leave(KErrCorrupt);
+        }
+    
+    RMetaExtensionContainer mec;
+    mec.Open(tNode.AccessPointConfig());
+    CleanupClosePushL(mec);
+
+    CCommsDatIapView* iapView = CCommsDatIapView::NewLC(providerInfoExt->iProviderInfo.APId());
+  
+    mec.AppendExtensionL(CIPConfig::NewFromGPRSOutLC(iapView));
+    CleanupStack::Pop();
+
+    mec.AppendExtensionL(CBCAProvision::NewLC(iapView));
+    CleanupStack::Pop();
+
+    mec.AppendExtensionL(CImsExtProvision::NewLC(iapView));
+    CleanupStack::Pop();
+    
+    CGPRSProvision* gprsProvision = CGPRSProvision::NewLC(iapView);
+    mec.AppendExtensionL(gprsProvision);
+    CleanupStack::Pop(gprsProvision);
+    
+    //It's not legal for the qos defaults to be absent.
+    CDefaultPacketQoSProvision* defaultQoS = NULL;
+    TRAPD(ret, defaultQoS = CDefaultPacketQoSProvision::NewL(iapView));   
+    if ((KErrNone == ret) && defaultQoS)           
+        {
+        CleanupStack::PushL(defaultQoS);
+        mec.AppendExtensionL(defaultQoS);
+        CleanupStack::Pop(defaultQoS);
+        }
+    else
+        {
+        if (KErrNoMemory == ret)
+            {
+            User::Leave(KErrNoMemory);
+            }
+        else
+            {
+            User::Leave(KErrCorrupt);
+            }          
+        }    
+    
+    CRawIpAgentConfig* rawIpAgentConfig = CRawIpAgentConfig::NewLC(iapView, &gprsProvision->GetScratchContextAs<TPacketDataConfigBase>());
+    mec.AppendExtensionL(rawIpAgentConfig);
+    CleanupStack::Pop();
+    
+    CleanupStack::PopAndDestroy();          // CloseIapView();  
+    tNode.AccessPointConfig().Close();
+    tNode.AccessPointConfig().Open(mec);
+    CleanupStack::PopAndDestroy(&mec); 
+    }
+
 void TSelfInit::DoL()
     {
     CPDPSubConnectionProvider &tNode = static_cast<CPDPSubConnectionProvider&>(iContext.Node());
+
+    TRAP(tNode.iProvisionFailure,SetupProvisionCfgL());
+
+    // Don't want any failure here to be masked by successful configuration later on.
+    // A leave here will not cause a roll back of the connection but it will show an
+    // Error -> message in the SVG diagram.  The provision failure error code will 
+    // cause the connection rollback.
+    User::LeaveIfError(tNode.iProvisionFailure);
     
     // if the FSM interface is null, this means that we're initializing a secondary context
     // as this code is common for both

@@ -5276,16 +5276,19 @@ void CCTsyNetworkControlFU::TestGetNetworkRegistrationStatus0001L()
 	TRequestStatus requestStatus;
     RMobilePhone::TMobilePhoneRegistrationStatus status;
     
-    // Initial test to verify that GetNetworkRegistrationStatus completes 
-    // with an error if the modem is not ready (i.e., before the LTSY sends
+    // Initial test to verify that GetNetworkRegistrationStatus behaves 
+	// correctly when the modem is not ready (i.e., before the LTSY sends
     // a EMmTsyBootNotifyModemStatusReadyIPC notification to CTSY)
     TInt err = iPhone.Open(iTelServer,KMmTsyPhoneName);
     ASSERT_EQUALS(KErrNone, err);
 
     iPhone.GetNetworkRegistrationStatus(requestStatus, status);
+    
+    // If the modem is not ready, the request should complete immediately
+    // with KErrNone, and registration status should be "Unknown"
     User::WaitForRequest(requestStatus);
-    ASSERT_EQUALS(KErrNotReady, requestStatus.Int());
-
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+    ASSERT_EQUALS(RMobilePhone::ERegistrationUnknown, status);
 	iPhone.Close();
 	
 	OpenPhoneL(); // whole phone bootup procedure for rest of tests

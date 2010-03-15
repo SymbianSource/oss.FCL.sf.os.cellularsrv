@@ -2108,7 +2108,18 @@ TInt CMmNetTsy::GetNetworkRegistrationStatusL(
     RMobilePhone::TMobilePhoneRegistrationStatus* aStatus ) 
     {
 TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusL Handle: %d", aTsyReqHandle);
-    if ( RMobilePhone::ERegistrationUnknown == iNWRegistrationStatus )
+    
+	// If the modem is not ready (Common TSY has not received EMmTsyBootNotifyModemStatusReadyIPC
+	// from LTSY), we don't need to ask. Update registration status and complete client immediately. 
+	if (!iMmPhoneTsy->IsModemStatusReady())
+		{
+		iNWRegistrationStatus = RMobilePhone::ERegistrationUnknown;
+		*aStatus = iNWRegistrationStatus;
+		iMmPhoneTsy->ReqCompleted( aTsyReqHandle, KErrNone );
+		return KErrNone;
+		}
+	
+	if (RMobilePhone::ERegistrationUnknown == iNWRegistrationStatus)	// modem is ready
         {
         TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
             GetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetNetworkRegistrationStatus );
@@ -2124,21 +2135,9 @@ TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusL Handle: %d", aTsyReq
             }
         else
             {
-            TInt ret(KErrGeneral);
-            // verify that modem is ready
-            if ( iMmPhoneTsy->IsModemStatusReady() )
-                {
-                //get mode specific information 
-                TFLOGSTRING("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Sending request to LTSY" );
-                ret = iMmPhoneTsy->iMmPhoneExtInterface->
-                    GetNetworkRegistrationStatusL();
-                }
-            else
-                {
-                // modem is not ready. Client to be completed with error code.
-                TFLOGSTRING("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Modem not ready" );            
-                ret = KErrNotReady;
-                }
+			//get mode specific information 
+			TInt ret ( iMmPhoneTsy->iMmPhoneExtInterface->
+					GetNetworkRegistrationStatusL() );
 
             if ( KErrNone != ret )
                 {
