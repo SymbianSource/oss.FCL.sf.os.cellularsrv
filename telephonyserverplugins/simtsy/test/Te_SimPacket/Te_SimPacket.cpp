@@ -606,8 +606,6 @@ TVerdict CGprsContextUnSupportedTest::doTestStepL( void )
     User::WaitForRequest(stat1);
     TESTL(stat1.Int() == KErrNotSupported);
 
-    TESTL(iPacketContext[0].GetLastErrorCause(err) == KErrNotSupported);
-
     iPacketContext[0].Close();
     iPacketService.Close();
 	iPhone.Close();

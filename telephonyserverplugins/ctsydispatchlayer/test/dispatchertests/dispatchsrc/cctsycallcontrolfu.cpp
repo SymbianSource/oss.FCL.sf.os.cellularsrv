@@ -926,6 +926,12 @@ void CCTsyCallControlFU::TestUseCase0012L()
 	// Resume call
 	DriverResumeCallL(callId, KErrNone);
 
+	// Swap single call.
+	DriverSwapCallL(callId, KErrNone, RMobileCall::EStatusHold);
+	
+	// Swap single call again.
+	DriverSwapCallL(callId, KErrNone, RMobileCall::EStatusConnected);
+
 	TInt hangUpCause = KErrGsmCCNormalCallClearing;
 	DriverHangUpCallL(callId, hangUpCause);
 
@@ -960,13 +966,32 @@ void CCTsyCallControlFU::TestUseCase0012L()
 	User::WaitForRequest(notifyStatus);
 	ASSERT_EQUALS(KErrNone, notifyStatus.Int());
 	ASSERT_EQUALS(RMobileCall::EStatusConnected, callStatus);
-
-	// Attempt to swap it when it is the sole call (not supported by CTSY)
+	
+	mobileCall.NotifyMobileCallStatusChange(notifyStatus, callStatus);
+	
+	// Attempt to swap it when it is the sole call.
 	TRequestStatus swapStatus;
 	mobileCall.Swap(swapStatus);
 	User::WaitForRequest(swapStatus);
-	ASSERT_EQUALS(KErrNotSupported, swapStatus.Int());
+	ASSERT_EQUALS(KErrNone, swapStatus.Int());
 
+	User::WaitForRequest(notifyStatus);
+	ASSERT_EQUALS(KErrNone, notifyStatus.Int());
+	ASSERT_EQUALS(RMobileCall::EStatusHold, callStatus);
+	
+	mobileCall.NotifyMobileCallStatusChange(notifyStatus, callStatus);
+
+	// Swapping single call again, back to connected.
+	swapStatus;
+	mobileCall.Swap(swapStatus);
+	User::WaitForRequest(swapStatus);
+	ASSERT_EQUALS(KErrNone, swapStatus.Int());
+
+	User::WaitForRequest(notifyStatus);
+	ASSERT_EQUALS(KErrNone, notifyStatus.Int());
+	ASSERT_EQUALS(RMobileCall::EStatusConnected, callStatus);
+
+	
 	TRequestStatus reqStatusTerminated;
 	iMockLTSY.NotifyTerminated(reqStatusTerminated); 
 	
@@ -976,8 +1001,8 @@ void CCTsyCallControlFU::TestUseCase0012L()
 	mobileLine.Close();
 	data.Close();
 	
-	User::WaitForRequest(reqStatusTerminated);
-	ASSERT_EQUALS(KErrNone, reqStatusTerminated.Int());
+	User::WaitForRequest(notifyStatus);
+	ASSERT_EQUALS(KErrNone, notifyStatus.Int());
 
 	AssertMockLtsyStatusL();
 	CleanupStack::PopAndDestroy(4, this); // mobileCall, mobileLine, data, this
@@ -3534,6 +3559,43 @@ void CCTsyCallControlFU::DriverResumeCallL(TInt aCallId, TInt aResumeError)
 /**
  * Swap the call.
  *
+ * @param aCallId Call ID of held call to swap.
+ * @param aSwapError Error returned by LTSY in response to the swap request.
+ * @param aNewCallStatus New status of the call 1 if aSwapError = KErrNone
+ *
+ * In the case where aSwapError passed is not KErrNone, the new call statuses
+ * are irrelevant as the calls don't change state.
+ */
+void CCTsyCallControlFU::DriverSwapCallL(TInt aCallId, TInt aSwapError, 
+								RMobileCall::TMobileCallStatus aNewCallStatus)
+	{
+	RBuf8 data;
+	CleanupClosePushL(data);
+
+	TMockLtsyData1<TInt> mockData2(aCallId);
+	data.Close();
+	mockData2.SerialiseL(data);
+	iMockLTSY.ExpectL(MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId, data);
+
+    iMockLTSY.CompleteL(MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId, aSwapError);
+
+    if (aSwapError == KErrNone)
+    	{
+	    TMockLtsyCallData1<RMobileCall::TMobileCallStatus> mockCallData2(
+	    		aCallId, RMobilePhone::EServiceUnspecified, aNewCallStatus);
+	    data.Close();
+	    mockCallData2.SerialiseL(data);
+	    iMockLTSY.CompleteL(KMockLtsyDispatchCallControlNotifyCallStatusChangeIndId, KErrNone, data);
+    	}
+
+    data.Close();
+    CleanupStack::PopAndDestroy(1, &data);
+	} // CCTsyCallControlFU::DriverSwapCallL
+
+
+/**
+ * Swap the call.
+ *
  * @param aCallId1 Call ID of held call to swap.
  * @param aCallId2 Call ID of connected call to swap.
  * @param aSwapError Error returned by LTSY in response to the swap request.
@@ -3575,8 +3637,6 @@ void CCTsyCallControlFU::DriverSwapCallL(TInt aCallId1, TInt aCallId2,
     data.Close();
     CleanupStack::PopAndDestroy(1, &data);
 	} // CCTsyCallControlFU::DriverSwapCallL
-
-
 
 
 /**

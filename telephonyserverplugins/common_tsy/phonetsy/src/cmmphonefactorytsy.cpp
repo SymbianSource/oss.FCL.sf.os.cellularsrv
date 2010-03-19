@@ -142,6 +142,8 @@ TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL -  LicenceeTSY successfully opened");
 	            // set the pointer to the message router object
 	            messageManager->SetMessageRouter( iMessageRouter );
 
+	            // Ownership of messageManager passed to iPhoneTsy.
+                CleanupStack::Pop( messageManager );
 	            // Create Phone Tsy (which creates the whole Common TSY)
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open CommonTSY");
 	            iPhoneTsy = CMmPhoneTsy::NewL( 
@@ -149,14 +151,9 @@ TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open CommonTSY");
 
 	            if ( iPhoneTsy )
 	                {
-			        CleanupStack::Pop( messageManager );
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - CommonTSY successfully opened");
 	                messageManager->SetPhoneTsy( iPhoneTsy );
 	                }
-	            else
-	            	{
-			        CleanupStack::PopAndDestroy( messageManager );
-	            	}
                 }
             else
             	{

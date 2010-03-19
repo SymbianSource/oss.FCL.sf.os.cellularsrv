@@ -204,6 +204,7 @@ void CPsdAvailabilityListener::StartL()
 		}
 	else
 		{
+        // Kick off this class' mini state machine in the RunL
 		TRequestStatus* status = &iStatus;
 		User::RequestComplete(status, KErrNone);
 		}

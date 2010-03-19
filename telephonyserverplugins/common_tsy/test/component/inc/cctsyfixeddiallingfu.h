@@ -39,7 +39,6 @@ public:
 	void TestDialNoFdnCheck0001bL();
 	void TestDialNoFdnCheck0001cL();
 	void TestDialNoFdnCheck0002L();
-	void TestDialNoFdnCheck0003L();
 	void TestDialNoFdnCheck0004L();
 	void TestDialNoFdnCheck0005L();
 	void TestDialNoFdnCheck0006L();

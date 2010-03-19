@@ -91,10 +91,13 @@ EXPORT_C CMmPhoneTsy* CMmPhoneTsy::NewL (
     MLtsyFactoryBase* aFactory )
     {
 TFLOGSTRING2("TSY: CMmPhoneTsy::NewL - Phone model Id: %S", &KPhoneModelId);
+    CleanupStack::PushL( aMessageManager );
     CMmPhoneTsy* mmPhoneTsy = new (ELeave) CMmPhoneTsy();
 
     mmPhoneTsy->iMessageManager = aMessageManager;
+    CleanupStack::Pop(aMessageManager);
     mmPhoneTsy->iMmPhoneFactory = aMmPhoneFactoryTsy;
+    CleanupClosePushL( *mmPhoneTsy );
     //For pointer is stored for deleting licenseetsy instance
     mmPhoneTsy->iLtsyFactory = aFactory;
     mmPhoneTsy->iTelephonyAudioControl = NULL;
@@ -115,7 +118,6 @@ TFLOGSTRING2("TSY: CMmPhoneTsy::NewL - Phone model Id: %S", &KPhoneModelId);
             }
         }
 
-    CleanupClosePushL( *mmPhoneTsy );
     mmPhoneTsy->ConstructL();
     CleanupStack::Pop( mmPhoneTsy );
     return mmPhoneTsy;
@@ -184,6 +186,10 @@ TFLOGSTRING("TSY: CMmPhoneTsy::ConstructL Central Repository opened successfully
 		iBattery = CBatteryInfoObserver::NewL( *iPowerManager, *this ); 
 		iChargingStatus = CChargingStatusObserver::NewL( *this );
 		}
+    
+    //Create the SSM Plugin Handler on creation rather than on demand to avoid problems 
+    //with Emergency Calls in Out Of Memory situations.
+    iSystemStatePluginHandler = CCtsySystemStatePluginHandler::NewL();
 	
 //#ifdef __WINS__  SYMBIAN commented out
 //   iMmPhoneExtInterface->NotifySimStatusReadyL();
@@ -545,6 +551,13 @@ TFLOGSTRING("TSY: CMmPhoneTsy::~CMmPhoneTsy");
     iRetAclStatus = NULL;
     iSetAclStatus = NULL;
     iRetNotifyAclStatus = NULL;
+    
+    if ( iSystemStatePluginHandler )
+        {
+        iSystemStatePluginHandler->Close();
+        delete iSystemStatePluginHandler;
+        }
+    iSystemStatePluginHandler = NULL;
 TFLOGSTRING("TSY: CMmPhoneTsy::~CMmPhoneTsy DONE");
    }
 
@@ -687,24 +700,10 @@ void CMmPhoneTsy::StartPBCachingL()
     // entries from SIM into cache.
     for( TInt i = 0; i < iPBList->GetNumberOfObjects(); i++ )
         {
-        //Get pbStore object
+        // Get pbStore object
         CMmPhoneBookStoreTsy* pbStore = iPBList->GetMmPBByIndex( i );
-        //Check if the current PB is the object that we are trying to find.
-        //If both names are exactly the same, CompareF returns 0.
-        if ( 0 == pbStore->PhoneBookName()->CompareF( KETelIccAdnPhoneBook ) )
-            {
-TFLOGSTRING("TSY: CMmPhoneTsy::StartPBCachingL - Start to read ADN entries");
-            //Start to cache phonebook entries.
-            pbStore->CacheEntriesL();
-            }
-        //If current PB is FDN
-        else if ( 0 == pbStore->PhoneBookName()->CompareF( 
-            KETelIccFdnPhoneBook ) )
-            {
-TFLOGSTRING("TSY: CMmPhoneTsy::StartPBCaching - Start to read FDN entries" );
-            //Start to cache phonebook entries.
-            pbStore->CacheEntriesL();
-            }
+        // Notify the store that the SIM is ready
+        pbStore->SimIsReady();
         }
     }
 
@@ -5686,16 +5685,48 @@ TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersL");
             REINTERPRET_CAST
             ( RMobilePhone::TMobilePhoneVoicemailIdsV3Pckg*, aMailBox );
             
-            RMobilePhone::TMobilePhoneVoicemailIdsV3& mailboxData = 
-              ( *entryPckg )();
+            iMailboxData = ( *entryPckg )();
 
-            if ( KETelExtMultimodeV3 == mailboxData.ExtensionId() )
+            if ( KETelExtMultimodeV3 == iMailboxData.ExtensionId() )
                 {
                 // Save pointer to client space
                 iMailBoxData = aMailBox;
 
+                // Check that VMBX book store was initilized...
+                TBool found = EFalse;
+                for( TInt i = 0; (!found) && (i < iPBList->GetNumberOfObjects()); i++ )
+                    {
+                    //Get pbStore object
+                    CMmPhoneBookStoreTsy* pbStore = iPBList->GetMmPBByIndex( i );
+                    //Check if the current PB is the object that we are trying to find.
+                    if ( 0 == pbStore->PhoneBookName()->CompareF( KETelIccVoiceMailBox ) )
+                        {
+                        found = ETrue;
+                        if( !pbStore->IsPBInitDone() )
+                            {
+                            TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersL VoiceMailBox initilizing was not complete... Waiting for completion");
+                            iReqHandleType = EMultimodePhoneGetMailboxNumbers;
+                            return KErrNone;
+                            }
+                        }
+                    }
+                if(!found)
+                    {
+                    TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersL VoiceMailBox should be created...");
+                    iMmPhoneBookStoreTsy = 
+                        CMmPhoneBookStoreTsy::NewL( this, KETelIccVoiceMailBox );
+                    
+                    TInt addPBSucceeded = iPBList->AddObject( iMmPhoneBookStoreTsy );
+                    if( !iMmPhoneBookStoreTsy->IsPBInitDone() )
+                        {
+                        iReqHandleType = EMultimodePhoneGetMailboxNumbers;
+                        return addPBSucceeded;
+                        }
+                    }
+                
+
                 CMmDataPackage mailBoxDataPackage;
-                mailBoxDataPackage.PackData( &mailboxData );
+                mailBoxDataPackage.PackData( &iMailboxData );
 
                 ret = ( MessageManager()->HandleRequestL(
                     EMobilePhoneGetMailboxNumbers, &mailBoxDataPackage ) );
@@ -6651,17 +6682,6 @@ CMmDtmfTsy* CMmPhoneTsy::GetDtmfTsy()
 CMmSupplServTsy* CMmPhoneTsy::GetSupplServTsy()
     {
     return iMmSupplServTsy;
-    }
-
-// ---------------------------------------------------------------------------
-// CMmPhoneTsy::HandleType
-// Returns req handle type
-// (other items were commented in a header).
-// ---------------------------------------------------------------------------
-//
-CMmPhoneTsy::TPhoneRequestTypes CMmPhoneTsy::HandleType()
-    {
-    return iReqHandleType;
     }
 
 // ---------------------------------------------------------------------------
@@ -7936,5 +7956,43 @@ TFLOGSTRING2("TSY: CMmPhoneTsy::IsModemStatusReady: %i", iIsModemReady );
     
     return iIsModemReady;
     }
+	
+// ---------------------------------------------------------------------------
+// CMmPhoneTsy::PhoneBookStoreInitCompleteL
+// The phone book store initilization was complete
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//    
+void CMmPhoneTsy::PhoneBookStoreInitCompleteL(TInt aError)
+    {
+    TFLOGSTRING("TSY: CMmPhoneTsy::PhoneBookStoreInitCompleteL ");
+    TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
+        EMultimodePhoneGetMailboxNumbers );   
+    if( EMultimodePhoneReqHandleUnknown != reqHandle )
+        {
+        if( KErrNone != aError )
+            {
+            iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneGetMailboxNumbers );
+            ReqCompleted(reqHandle, aError);
+            return;
+            }
+        CMmDataPackage mailBoxDataPackage;
+        mailBoxDataPackage.PackData( &iMailboxData );
+
+        TInt ret = ( MessageManager()->HandleRequestL(
+                EMobilePhoneGetMailboxNumbers, &mailBoxDataPackage ) );
+        if(ret != KErrNone)
+            {
+            iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneGetMailboxNumbers );
+            ReqCompleted(reqHandle, ret);
+            }
+        
+        }
+    if(GetONStoreTsy() != NULL)
+        {
+        GetONStoreTsy()->PhoneBookStoreInitCompleteL(aError);
+        }
+    }
+
 //  End of File
 

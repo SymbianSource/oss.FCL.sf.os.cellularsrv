@@ -66,28 +66,7 @@ TFLOGSTRING("TSY: CMmCustomTsy::ConstructL");
 
     iMmSecurityTsy = CMmCustomSecurityTsy::NewL( this, aMmPhoneTsy );
 
-    // Create custom vendor extension
-    // Send request to the Domestic OS layer.
-    iMmCustomVendorExt = (CMmCustomVendorExt*) NULL;
-    CMmDataPackage package;
 
-    package.PackData( &iMmCustomVendorExt ); // ptr to ptr
-    Phone()->MessageManager()->HandleRequestL(
-            EMmTsyGetCustomVendorExtPtrIPC, &package );
-TFLOGSTRING2("TSY: CMmCustomTsy::ConstructL -- iMmCustomVendorExt=0x%x", TUint(iMmCustomVendorExt));
-    // The request above is 'completed' immediatedly (there is no need for
-    // actual complete)
-
-    // iMmCustomVendorExt should now hold ptr to custom vendor extension.
-    // But if not, no problem, we just use the base class.
-    if ( NULL == iMmCustomVendorExt )
-        {
-TFLOGSTRING("TSY: CMmCustomTsy::ConstructL -- no vendor IPC extensions");
-        iMmCustomVendorExt = new(ELeave)CMmCustomVendorExt();
-        }
-    
-    // initialize custom vendor extension 
-    iMmCustomVendorExt->InitializeL( *this );
 
 #ifdef REQHANDLE_TIMER
     // Create req handle store
@@ -162,19 +141,13 @@ TFLOGSTRING("TSY: CMmCustomTsy::NewL");
 CMmCustomTsy::~CMmCustomTsy()
     {
 TFLOGSTRING("TSY: CMmCustomTsy::~CMmCustomTsy");
-
+    iMmPhoneTsy->SetHomeZoneParamsChecked( EFalse );
 	iFeatureControl.Close();
 	
     // Delete subsystems
     for ( TInt i = 0; ESubTsyIdxMaxNum > i; i++ )
         {
         delete iMmSubTsy[i];
-        }
-
-    if ( iMmCustomVendorExt )
-        {
-        // delete vendor extension
-        delete iMmCustomVendorExt;
         }
 
     if ( iMmSecurityTsy )
@@ -195,7 +168,6 @@ TFLOGSTRING("TSY: CMmCustomTsy::~CMmCustomTsy");
         delete iTsyReqHandleStore;
         }
 
-    iMmCustomVendorExt = NULL;
     iMmSecurityTsy = NULL;
     iMmCustomExtInterface = NULL;
     iTsyReqHandleStore = NULL;
@@ -293,18 +265,9 @@ TInt CMmCustomTsy::DoExtFuncL(
 
     if ( KErrNotSupported == ret )
         {
-        // then check if this is vendor extension IPC
-        // these IPCs are handled by VendorExt class in licensee tsy.
-       if ( iMmCustomVendorExt->SupportingIPC(aIpc) )
-          {
-          ret = iMmCustomVendorExt->DoExtFuncL( aTsyReqHandle, aIpc,
-                    aPackage );
-          }
-       else
-          {
-          // then check all the Custom extension modules
-          ret = CMmTsyBase::DoBaseExtFuncL( aTsyReqHandle, aIpc, aPackage );
-	      }
+ 
+        // then check all the Custom extension modules
+        ret = CMmTsyBase::DoBaseExtFuncL( aTsyReqHandle, aIpc, aPackage );
 
         // if extension modules did not serve this request
         if ( KErrNotSupported == ret )
@@ -638,14 +601,7 @@ TInt CMmCustomTsy::RegisterNotification(
             break;
 
         default:
-            if ( iMmCustomVendorExt->SupportingIPC( aIpc ) )
-                {
-                ret = iMmCustomVendorExt->RegisterNotification( aIpc );
-                }
-            else
-                {
-                ret = CMmTsyBase::RegisterNotification( aIpc );
-                }
+            ret = CMmTsyBase::RegisterNotification( aIpc );
             break;
         }
 
@@ -686,14 +642,7 @@ TInt CMmCustomTsy::DeregisterNotification(
             ret =  KErrNone;
             break;
         default:
-            if ( iMmCustomVendorExt->SupportingIPC( aIpc ) )
-                {
-                ret = iMmCustomVendorExt->DeregisterNotification( aIpc );
-                }
-            else
-                {
-                ret = CMmTsyBase::DeregisterNotification( aIpc );
-                }
+            ret = CMmTsyBase::DeregisterNotification( aIpc );
             break;
         }
 
@@ -794,14 +743,7 @@ CTelObject::TReqMode CMmCustomTsy::ReqModeL(
             ret = 0;
             break;
         default:
-            if ( iMmCustomVendorExt->SupportingIPC( aIpc ) )
-                {
-                ret = iMmCustomVendorExt->ReqModeL( aIpc );
-                }
-            else
-                {
-                ret = CMmTsyBase::ReqModeL ( aIpc );
-                }
+            ret = CMmTsyBase::ReqModeL ( aIpc );
             break;
         }
 
@@ -841,14 +783,7 @@ TInt CMmCustomTsy::NumberOfSlotsL(
             break;
 
         default:
-            if ( iMmCustomVendorExt->SupportingIPC( aIpc ) )
-                {
-                numberOfSlots = iMmCustomVendorExt->NumberOfSlotsL( aIpc );
-                }
-            else
-                {
-                numberOfSlots = CMmTsyBase:: NumberOfSlotsL( aIpc );
-                }
+            numberOfSlots = CMmTsyBase:: NumberOfSlotsL( aIpc );
             break;
         }
 
@@ -1061,16 +996,9 @@ TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData");
             policy = TSecurityPolicy( ECapabilityWriteDeviceData );
             break;
         default:
-            if ( iMmCustomVendorExt->SupportingIPC(ipc) )
-                {
-                policy = iMmCustomVendorExt->GetRequiredPlatSecCaps(ipc);
-                }
-            else
-                {
-                // if none of the above then we end up here,
-                // as a default we already have caps as alwaysfail.
+            // if none of the above then we end up here,
+            // as a default we already have caps as alwaysfail.
 TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=AlwaysFail");
-                }
             break;
         }
 
@@ -1239,11 +1167,6 @@ TInt CMmCustomTsy::CancelService(
         		ret = iMmSecurityTsy->CancelService ( aIpc, 
         				aTsyReqHandle ); 
         		}
-        	else if ( iMmCustomVendorExt->SupportingIPC( aIpc ) )
-                {
-                ret = iMmCustomVendorExt->CancelService ( aIpc,
-                        aTsyReqHandle );
-                }
             else
                 {
                 ret = CMmTsyBase::CancelService ( aIpc, aTsyReqHandle );
@@ -5453,18 +5376,21 @@ TFLOGSTRING3("TSY: CMmCustomTsy::SetDriveModeL - Req handle: %d, Mode status: %d
             // packed parameter: TSetDriveMode (mode status)
             CMmDataPackage dataPackage;
             dataPackage.PackData( aModeStatus );
+		    // allow for ECustomSetDriveModeIPC immediate completion
+#ifdef REQHANDLE_TIMER
+            // set timer for the request
+            SetTypeOfResponse ( ECustomTsySetDriveMode, aTsyReqHandle );
+#else
+            iTsyReqHandleStore->SetTsyReqHandle( ECustomTsySetDriveMode,
+                    aTsyReqHandle );
+#endif // REQHANDLE_TIMER
             TInt ret = iMmPhoneTsy->MessageManager()->HandleRequestL(
                 ECustomSetDriveModeIPC, &dataPackage );
 
             // check success
-            if ( KErrNone != ret )
+            if ( (KErrNone != ret) && (iTsyReqHandleStore->ResetTsyReqHandle(ECustomTsySetDriveMode)) )
                 {
                 ReqCompleted ( aTsyReqHandle, ret );
-                }
-            else
-                {
-                // Store the request handle
-                iReqHandleType = ECustomTsySetDriveMode;
                 }
             }
         }

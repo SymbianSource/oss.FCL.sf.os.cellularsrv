@@ -346,6 +346,11 @@ NONSHARABLE_CLASS( CMmPhoneBookStoreTsy ) : public CSubSessionExtBase
          */
          TUint8 GetPhonebookType();
          
+         /**
+          * This method will be activate by the phone to notify the SIM is ready
+          */
+         void SimIsReady();
+         
     private:
 
         /**
@@ -812,6 +817,8 @@ NONSHARABLE_CLASS( CMmPhoneBookStoreTsy ) : public CSubSessionExtBase
          * Attribute to tell the status of PB initialization
          */
         TBool iIsPBInitCompleted;
+        
+        TInt iInitError;
     };
 
 #endif // PHONEBOOKSTORAGE_H

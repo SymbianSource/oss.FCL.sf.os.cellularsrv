@@ -568,6 +568,28 @@ START_TESTCASE BA-CTSY-CIPC-MCRVHZC-0001
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCustomIPCFU.TestReadViagHomeZoneCache0001L
 END_TESTCASE BA-CTSY-CIPC-MCRVHZC-0001
 
+START_TESTCASE BA-CTSY-CIPC-MCRVHZC-0001b
+//!@SYMTestCaseID BA-CTSY-CIPC-MCRVHZC-0001b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMmCustomAPI::ReadViagHomeZoneCache when request failed by NTSY
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMmCustomAPI::ReadViagHomeZoneCache
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCustomIPCFU.TestReadViagHomeZoneCache0001bL
+END_TESTCASE BA-CTSY-CIPC-MCRVHZC-0001b
+
+START_TESTCASE BA-CTSY-CIPC-MCRVHZC-0001c
+//!@SYMTestCaseID BA-CTSY-CIPC-MCRVHZC-0001c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMmCustomAPI::ReadViagHomeZoneCache when request complete when customAPI is dead
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMmCustomAPI::ReadViagHomeZoneCache
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCustomIPCFU.TestReadViagHomeZoneCache0001cL
+END_TESTCASE BA-CTSY-CIPC-MCRVHZC-0001c
+
 START_TESTCASE BA-CTSY-CIPC-MCRVHZC-0002
 //!@SYMTestCaseID BA-CTSY-CIPC-MCRVHZC-0002
 //!@SYMComponent telephony_ctsy

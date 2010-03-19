@@ -229,6 +229,9 @@ void CCTsyPhonebookOnFU::TestUseCase0001L()
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
+    RMobilePhoneBookStore adnPhoneBookStore;
+    CleanupClosePushL(adnPhoneBookStore);
+    OpenCachingPhoneBookL(DispatcherPhonebook::EIccAdn,adnPhoneBookStore,KErrNone);
 	
 	RMobileONStore onStore;
 	TInt ret = onStore.Open(iPhone);
@@ -378,7 +381,7 @@ void CCTsyPhonebookOnFU::TestUseCase0001L()
 	
 	AssertMockLtsyStatusL();
     
-	CleanupStack::PopAndDestroy(4, this); // completeData, expectData, onStore, this
+	CleanupStack::PopAndDestroy(5, this); // completeData, expectData, onStore, adnPhoneBookStore, this
 	}
 
 /**
@@ -395,6 +398,9 @@ void CCTsyPhonebookOnFU::TestUseCase0002L()
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
+    RMobilePhoneBookStore adnPhoneBookStore;
+    CleanupClosePushL(adnPhoneBookStore);
+    OpenCachingPhoneBookL(DispatcherPhonebook::EIccAdn,adnPhoneBookStore,KErrNone);
 	
 	RMobileONStore onStore;
 	TInt ret = onStore.Open(iPhone);
@@ -470,7 +476,7 @@ void CCTsyPhonebookOnFU::TestUseCase0002L()
 	
 	AssertMockLtsyStatusL();
 
-	CleanupStack::PopAndDestroy(3, this); // completeData, onStore, this
+	CleanupStack::PopAndDestroy(4, this); // completeData, onStore, adnPhoneBookStore, this
 	}
 
 	
@@ -492,6 +498,9 @@ void CCTsyPhonebookOnFU::TestUnit0001L()
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();
+    RMobilePhoneBookStore adnPhoneBookStore;
+    CleanupClosePushL(adnPhoneBookStore);
+    OpenCachingPhoneBookL(DispatcherPhonebook::EIccAdn,adnPhoneBookStore,KErrNone);
 	
 	RMobileONStore onStore;
 	TInt ret = onStore.Open(iPhone);
@@ -573,7 +582,7 @@ void CCTsyPhonebookOnFU::TestUnit0001L()
 	ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
 	AssertMockLtsyStatusL();
 	
-	CleanupStack::PopAndDestroy(3, this); // data, onStore, this
+	CleanupStack::PopAndDestroy(4, this); // data, onStore, adnPhoneBookStore, this
 
 	}
 	

@@ -123,9 +123,7 @@ void CMmCallGsmWcdmaExt::ConstructL()
     TInt err = iFeatureControl.Open();
 	iUsingFeatureManager = (err == KErrNone);
 	
-	//Create the SSM Plugin Handler on creation rather than on demand to avoid problems 
-	//with Emergency Calls in Out Of Memory situations.
-	iSystemStatePluginHandler = CCtsySystemStatePluginHandler::NewL();
+	iSystemStatePluginHandler = iMmCallTsy->Phone()->SystemStatePluginHandler();
 
 	ResetInternalAttributes();
     }
@@ -173,12 +171,6 @@ CMmCallGsmWcdmaExt::~CMmCallGsmWcdmaExt()
 
     iMmCallTsy = NULL;
     iMessageManager = NULL;
-    
-    if ( iSystemStatePluginHandler )
-        {
-        delete iSystemStatePluginHandler;
-        }
-    iSystemStatePluginHandler = NULL;
     
     }
     

@@ -34,6 +34,10 @@
 #include <ctsy/serviceapi/cmmutility.h>
 
 const TUint KNotFound=0xfffffff;
+const TInt KLimitForErrorCodeForContextGoToInactive=-700;
+const TInt KContextGoToInactiveWithNormalErrorCode=-600;
+const TInt KContextGoToInactiveWithExtendedErrorCode=-400;
+const TInt KContextGoToInactiveWithErrorWhenTryingToGetLastErrorCode = -300;
 
 enum TContextEvent //< Enum for the state machine
 	{
@@ -454,6 +458,9 @@ protected:
 	virtual void TimerCallBack(TInt aId);
 	TCommSetupItem FindCommSettings();
 
+private:
+    TInt iLastError;
+    TInt iErrorCodeForGetLastErrorCause;
 	};
 
 #endif

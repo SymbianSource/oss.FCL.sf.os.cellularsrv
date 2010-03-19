@@ -27,6 +27,39 @@ START_TESTCASE BA-CTSY-MBXN-MGMN-0001
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyMailboxNumbersFU.TestGetMailboxNumbers0001L
 END_TESTCASE BA-CTSY-MBXN-MGMN-0001
 
+START_TESTCASE BA-CTSY-MBXN-MGMN-0001b
+//!@SYMTestCaseID BA-CTSY-MBXN-MGMN-0001b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::GetMailboxNumbers when VMBX storage is not exist
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::GetMailboxNumbers
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyMailboxNumbersFU.TestGetMailboxNumbers0001bL
+END_TESTCASE BA-CTSY-MBXN-MGMN-0001b
+
+START_TESTCASE BA-CTSY-MBXN-MGMN-0001c
+//!@SYMTestCaseID BA-CTSY-MBXN-MGMN-0001c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::GetMailboxNumbers when VMBX storage is exist but not ready
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::GetMailboxNumbers
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyMailboxNumbersFU.TestGetMailboxNumbers0001cL
+END_TESTCASE BA-CTSY-MBXN-MGMN-0001c
+
+START_TESTCASE BA-CTSY-MBXN-MGMN-0001d
+//!@SYMTestCaseID BA-CTSY-MBXN-MGMN-0001d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::GetMailboxNumbers when VMBX storage is not exist but another phone book store (ADN) exist
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::GetMailboxNumbers
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyMailboxNumbersFU.TestGetMailboxNumbers0001dL
+END_TESTCASE BA-CTSY-MBXN-MGMN-0001d
+
 START_TESTCASE BA-CTSY-MBXN-MGMN-0002
 //!@SYMTestCaseID BA-CTSY-MBXN-MGMN-0002
 //!@SYMComponent telephony_ctsy

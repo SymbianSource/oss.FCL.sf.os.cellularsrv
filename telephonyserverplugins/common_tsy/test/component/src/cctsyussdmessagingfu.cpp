@@ -1295,13 +1295,9 @@ void CCTsyUssdMessagingFU::TestReceiveMessage0004L()
 
     User::WaitForRequest(requestStatus2);        
 
-	/*
-	 * The function returned KErrNone instead of KErrServerBusy.
-	 */
-
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 380303);
-
-	ASSERT_EQUALS(KErrServerBusy, requestStatus2.Int());	
+    // CTSY treats USSD receive requests as multiple completion requests, and completes
+    // all client requests when a message comes in.
+	ASSERT_EQUALS(KErrNone, requestStatus2.Int());	
 
 	ASSERT_EQUALS(completeAttributes1.iFlags , attributes1.iFlags );
 	ASSERT_EQUALS(completeAttributes1.iFormat, attributes1.iFormat);

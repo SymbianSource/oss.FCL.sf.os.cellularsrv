@@ -71,6 +71,7 @@ _LIT(KCallControlTransferApiName, "CallControl Transfer");
 _LIT(KCallControlSendDtmfTonesApiName, "CallControl SendDtmfTones");
 _LIT(KCallControlGetIdentityServiceStatusApiName, "CallControl GetIdentityServiceStatus");
 _LIT(KCallControlSwapApiName, "CallControl Swap");
+_LIT(KCallControlSingleSwapApiName, "CallControl Single Swap");
 _LIT(KCallControlLoanDataPortApiName, "CallControl LoanDataPort");
 _LIT(KCallControlRecoverDataPortApiName, "CallControl RecoverDataPort");
 _LIT(KCallControlStartDtmfToneApiName, "CallControl StartDtmfTone");
@@ -751,6 +752,8 @@ const TDesC& ApiIdToName(TInt aIpc)
 		    return KCallControlGetIdentityServiceStatusApiName;
 		case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSwapApiId:
 		    return KCallControlSwapApiName;
+		case MLtsyDispatchCallControlSwap::KLtsyDispatchCallControlSingleSwapApiId:
+		    return KCallControlSingleSwapApiName;
 		case MLtsyDispatchCallControlLoanDataPort::KLtsyDispatchCallControlLoanDataPortApiId:
 		    return KCallControlLoanDataPortApiName;
 		case MLtsyDispatchCallControlRecoverDataPort::KLtsyDispatchCallControlRecoverDataPortApiId:

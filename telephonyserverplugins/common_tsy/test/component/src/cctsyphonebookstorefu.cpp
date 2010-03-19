@@ -141,33 +141,39 @@ CTestSuite* CCTsyPhoneBookStoreFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestDelete00028L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestDelete00029L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestDelete00030L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0001L);     //adn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0001L);     //adn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0001bL);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0004L);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0005L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0006L);     //fdn
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0006bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0006bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0006cL);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0007L);  
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0008L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo0009L);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00010L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00011L);   //sdn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00011L);   //sdn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00011bL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00012L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00013L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00014L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00015L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00016L);    //vmbx
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00016L);    //vmbx
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00016bL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00017L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00018L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00019L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00020L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00021L);    //bdn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00021L);    //bdn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00021bL);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00022L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00023L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00024L);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00025L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00026L);    //mbdn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00026L);    //mbdn
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00026bL);
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00027L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00028L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00029L);
@@ -2121,9 +2127,24 @@ void CCTsyPhoneBookStoreFU::TestDelete00030L()
 @SYMTestType CT
 */
 void CCTsyPhoneBookStoreFU::TestGetInfo0001L()
-	{
-    AuxGetInfo1L(KETelIccAdnPhoneBook);	
-	}
+    {
+    AuxGetInfo1L(KETelIccAdnPhoneBook); 
+    }
+
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0001b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for ADN phonebook with a slow SIM
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for ADN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo0001bL()
+    {
+    AuxGetInfo1bL(KETelIccAdnPhoneBook); 
+    }
 
 
 
@@ -2168,9 +2189,9 @@ void CCTsyPhoneBookStoreFU::TestGetInfo0004L()
 @SYMTestType CT
 */
 void CCTsyPhoneBookStoreFU::TestGetInfo0006L()
-	{
-    AuxGetInfo1L(KETelIccFdnPhoneBook);	    
-	}
+    {
+    AuxGetInfo1L(KETelIccFdnPhoneBook);     
+    }
 
 /**
 @SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0006b
@@ -2236,6 +2257,21 @@ void CCTsyPhoneBookStoreFU::TestGetInfo0006bL()
     CleanupStack::PopAndDestroy(4, this); // this, data, completeData, bookStore, cache   
     }
 
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0006c
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for FDN phonebook with a slow SIM
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for FDN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo0006cL()
+    {
+    AuxGetInfo1bL(KETelIccFdnPhoneBook);     
+    }
+
 /**
 @SYMTestCaseID BA-CTSY-PBSTR-PBSGI-0008
 @SYMComponent  telephony_ctsy
@@ -2277,9 +2313,23 @@ void CCTsyPhoneBookStoreFU::TestGetInfo0009L()
 @SYMTestType CT
 */
 void CCTsyPhoneBookStoreFU::TestGetInfo00011L()
-	{
-    AuxGetInfo1L(KETelIccSdnPhoneBook);	    
-	}
+    {
+    AuxGetInfo1L(KETelIccSdnPhoneBook);     
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00011b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for SDN phonebook with a slow SIM
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for SDN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo00011bL()
+    {
+    AuxGetInfo1bL(KETelIccSdnPhoneBook);     
+    }
 
 
 /**
@@ -2357,9 +2407,23 @@ void CCTsyPhoneBookStoreFU::TestGetInfo00015L()
 @SYMTestType CT
 */
 void CCTsyPhoneBookStoreFU::TestGetInfo00016L()
-	{
-    AuxGetInfo1L(KETelIccVoiceMailBox);	    
-	}
+    {
+    AuxGetInfo1L(KETelIccVoiceMailBox);     
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00016b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for VMBX phonebook with a slow SIM
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for VMBX phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo00016bL()
+    {
+    AuxGetInfo1bL(KETelIccVoiceMailBox);     
+    }
 
 
 /**
@@ -2433,9 +2497,23 @@ void CCTsyPhoneBookStoreFU::TestGetInfo00020L()
 @SYMTestType CT
 */
 void CCTsyPhoneBookStoreFU::TestGetInfo00021L()
-	{
-    AuxGetInfo1L(KETelIccBdnPhoneBook);	    
-	}
+    {
+    AuxGetInfo1L(KETelIccBdnPhoneBook);     
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00021b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for BDN phonebook with slow SIM
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for BDN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo00021bL()
+    {
+    AuxGetInfo1bL(KETelIccBdnPhoneBook);     
+    }
 
 
 /**
@@ -2478,9 +2556,23 @@ void CCTsyPhoneBookStoreFU::TestGetInfo00024L()
 @SYMTestType CT
 */
 void CCTsyPhoneBookStoreFU::TestGetInfo00026L()
-	{
-    AuxGetInfo1L(KETelIccMbdnPhoneBook);	    
-	}
+    {
+    AuxGetInfo1L(KETelIccMbdnPhoneBook);        
+    }
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00026b
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for MBDN phonebook with slow SIM
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for MBDN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo00026bL()
+    {
+    AuxGetInfo1bL(KETelIccMbdnPhoneBook);        
+    }
 
 
 
@@ -5446,7 +5538,7 @@ void CCTsyPhoneBookStoreFU::AuxGetInfo1L(const TDesC& aName)
     	ASSERT_EQUALS((TUint16)0, bookInfo.iChangeCounter);	
     	if(!name.CompareF( KETelIccVoiceMailBox ))
     		{
-	    	ASSERT_EQUALS((TUint32)0, bookInfo.iCaps);	
+	    	ASSERT_EQUALS(KPBTypeVMBXCaps, bookInfo.iCaps);	
     		}
     	else
     		{
@@ -5502,6 +5594,14 @@ void CCTsyPhoneBookStoreFU::AuxGetInfo1L(const TDesC& aName)
 	    					RMobilePhoneBookStore::KCapsRestrictedWriteAccess),
 	    		bookInfo.iCaps);	
     		}
+        else if( !name.CompareF( KETelIccVoiceMailBox ))
+            {
+            ASSERT_EQUALS(KPBTypeVMBXCaps, bookInfo.iCaps);
+            }
+        else if( !name.CompareF( KETelIccMbdnPhoneBook ))
+            {
+            ASSERT_EQUALS(KPBTypeMBDNCaps, bookInfo.iCaps);
+            }
     	else
     		{
 	    	ASSERT_EQUALS((TUint32)0, bookInfo.iCaps);	
@@ -5563,10 +5663,13 @@ void CCTsyPhoneBookStoreFU::AuxGetInfo1L(const TDesC& aName)
     	ASSERT_TRUE(bookInfo.iLocation == bookInfo2.iLocation); 
     	ASSERT_TRUE(bookInfo.iIdentity == bookInfo2.iIdentity); 
     	ASSERT_TRUE(bookInfo.iChangeCounter == bookInfo2.iChangeCounter);   // no write or delete was done
-        if ( !name.CompareF( KETelIccVoiceMailBox ) || 
-        		!name.CompareF( KETelIccMbdnPhoneBook ) )
+        if ( !name.CompareF( KETelIccVoiceMailBox ) )
             {
-        	ASSERT_EQUALS(KCaps, bookInfo2.iCaps);	
+            ASSERT_EQUALS(KPBTypeVMBXCaps, bookInfo2.iCaps);  
+            }
+        else if ( !name.CompareF( KETelIccMbdnPhoneBook ) )
+            {
+            ASSERT_EQUALS(KPBTypeMBDNCaps, bookInfo2.iCaps);  
             }
         }
 
@@ -5614,6 +5717,130 @@ void CCTsyPhoneBookStoreFU::AuxGetInfo1L(const TDesC& aName)
 	CleanupStack::PopAndDestroy(4, this); // data, data2, this...	
     }
     
+
+void CCTsyPhoneBookStoreFU::AuxGetInfo1bL(const TDesC& aName)
+    {
+	// Since we can not get the phone book info from the SIM if the phone book was not initilized, the 
+	// CTSY must make sure that the phone book  was initilize before requesting the info from 
+	// the LTSY. This test test if the CTSY knows to wait for the initilize request to complete 
+	// before requesting to get the phone book info.
+
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhone2L();
+
+	RBuf8 data;
+	CleanupClosePushL(data);
+	
+	RBuf8 data2;
+	CleanupClosePushL(data2);
+
+	TName name(aName);
+	RMobilePhoneBookStore bookStore;
+	CleanupClosePushL(bookStore);
+	
+    TMockLtsyPhoneBookData0 storeInitData(name);
+    storeInitData.SerialiseL(data);
+  	iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, data);	
+
+	TInt ret = bookStore.Open(iPhone, name);	
+	
+	ASSERT_EQUALS(KErrNone, ret);	
+	
+	TRequestStatus requestStatus;
+   	TRequestStatus mockLtsyStatus;
+	RMobilePhoneBookStore::TMobilePhoneBookInfoV1 bookInfo;
+	RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg bookPckg(bookInfo);
+	bookStore.GetInfo(requestStatus, bookPckg); 	
+	
+	ASSERT_EQUALS(KRequestPending, requestStatus.Int());	
+	User::After(KOneSecond);
+	ASSERT_EQUALS(KRequestPending, requestStatus.Int());	
+	
+
+    CStorageInfoData storageData;
+	SetStorageInfoData(storageData);
+	
+    TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(name, storageData); 
+    retStoreInitC.SerialiseL(data2);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, data2, 0);
+
+    TInt expected = KErrNone;
+    TInt usedEntries(12);
+    if ( !aName.CompareF( KETelIccAdnPhoneBook ) ||
+            !aName.CompareF( KETelIccFdnPhoneBook ))
+        {
+        data.Close();
+        storeInitData.SerialiseL(data);
+        iMockLTSY.ExpectL(EMmTsyPhoneBookStoreCacheIPC, data);
+        CArrayPtrSeg<CPhoneBookStoreEntry>* cache = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+        CleanupStack::PushL(cache);
+    
+        TMockLtsyPhoneBookData1<CArrayPtrSeg<CPhoneBookStoreEntry>*> storeCacheData(name, cache);
+        data2.Close();
+        storeCacheData.SerialiseL(data2);   
+    
+                  
+        iMockLTSY.CompleteL(EMmTsyPhoneBookStoreCacheIPC, KErrNone, data2, 0);
+        CleanupStack::PopAndDestroy(cache);
+        expected = KErrNotReady;
+        }
+    else if ( ( !aName.CompareF( KETelIccBdnPhoneBook ) ) || (!aName.CompareF( KETelIccMbdnPhoneBook ) ) )
+        {
+        usedEntries = 0;
+        }
+    else
+        {
+        data.Close();
+        TMockLtsyPhoneBookData0 tsyData(name);           
+        tsyData.SerialiseL(data);
+
+        iMockLTSY.ExpectL(EMmTsyPhoneBookStoreGetInfoIPC, data);
+        ASSERT_EQUALS(KRequestPending, requestStatus.Int());    
+        User::After(KOneSecond);
+        ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+        TMockLtsyPhoneBookData1< TInt > styData2(name, usedEntries);
+        data2.Close();    
+        styData2.SerialiseL(data2);
+        iMockLTSY.CompleteL(EMmTsyPhoneBookStoreGetInfoIPC, KErrNone, data2, 10);
+        }
+
+
+    User::WaitForRequest(requestStatus);        
+   	AssertMockLtsyStatusL();
+   	ASSERT_EQUALS(expected, requestStatus.Int());
+   	if ( ( aName.CompareF( KETelIccBdnPhoneBook ) ) && (KErrNone == expected) )
+   	    {
+        ASSERT_TRUE(0 == bookInfo.iName.Compare(name));
+        
+        ASSERT_EQUALS(usedEntries, bookInfo.iUsedEntries);	
+        ASSERT_EQUALS(-1, bookInfo.iTotalEntries);	
+        ASSERT_EQUALS(50, bookInfo.iMaxTextLength);	
+        ASSERT_EQUALS(50, bookInfo.iMaxNumLength);	
+        ASSERT_EQUALS(RMobilePhoneBookStore::ELocationIccMemory, bookInfo.iLocation);	
+        ASSERT_EQUALS((TUint16)0, bookInfo.iChangeCounter);	
+        if( !name.CompareF( KETelIccVoiceMailBox ))
+            {
+            ASSERT_EQUALS(KPBTypeVMBXCaps, bookInfo.iCaps);
+            }
+        else if( !name.CompareF( KETelIccMbdnPhoneBook ))
+            {
+            ASSERT_EQUALS(KPBTypeMBDNCaps, bookInfo.iCaps);
+            }
+        else if( !name.CompareF( KETelIccSdnPhoneBook ))
+            {
+            ASSERT_EQUALS((TUint32)RMobilePhoneStore::KCapsReadAccess, bookInfo.iCaps);
+            }
+        else
+            {
+            ASSERT_EQUALS((TUint32)0, bookInfo.iCaps);  
+            }
+	
+   	    }
+	AssertMockLtsyStatusL();
+
+	CleanupStack::PopAndDestroy(4, this); // data, data2, this...	
+    }
 
 
 void CCTsyPhoneBookStoreFU::AuxGetInfo2L(const TDesC& aName)

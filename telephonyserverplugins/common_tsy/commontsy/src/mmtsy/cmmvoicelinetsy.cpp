@@ -386,14 +386,15 @@ TFLOGSTRING("TSY: CMmVoiceLineTsy::CompleteNotifyDiallingStatus - Not Emergency 
                 {    
                 mmCall = reinterpret_cast<CMmVoiceCallTsy*>(
                     iMmPhone->CallList()->GetMmCallByIndex(i) );
-                if ( mmCall->ServiceRequested(
+                if ( ( ( mmCall->CallId() == 0 ) || ( mmCall->CallId() == -1 ))
+                    && ( mmCall->ServiceRequested(
                         CMmCallTsy::EMultimodeCallDial ) 
                     ||  mmCall->ServiceRequested(
                         CMmCallTsy::EMultimodeMobileCallDialEmergencyCall )
                     || ( mmCall->ServiceRequested(
                         CMmCallTsy::EMultimodeCallDialISV ) ) 
                     || ( mmCall->ServiceRequested(
-                        CMmCallTsy::EMultimodeCallDialNoFdnCheck ) ) )
+                        CMmCallTsy::EMultimodeCallDialNoFdnCheck ) ) ) )
                     {
                     mmCall->SetCallId( callId );
 TFLOGSTRING2("TSY: CMmVoiceLineTsy::CompleteNotifyDiallingStatus - mmCall SetCallId: %d", callId);                      
@@ -454,6 +455,10 @@ TBool CMmVoiceLineTsy::IsSwapReady(
             }
         }
 
+	CMmCallList* callList = iMmPhone->CallList();
+	TInt numberOfObjectsInCallList = callList->GetNumberOfObjects();
+    CMmVoiceCallTsy* mmCall = NULL;
+		
     //is TSY still waiting both hold and connected status indications
     if ( EWaitingHoldAndResumeOk == iSwapStatus )
         {
@@ -477,9 +482,6 @@ TBool CMmVoiceLineTsy::IsSwapReady(
               ( EWaitingHoldOk == iSwapStatus &&
         RMobileCall::EStatusHold == aCallStatus ) )
         {
-        CMmCallList* callList = iMmPhone->CallList();
-        TInt numberOfObjectsInCallList = callList->GetNumberOfObjects();
-        CMmVoiceCallTsy* mmCall = NULL;
         //find the call object from which the swap was requested.
         for ( TInt i = 0; i < numberOfObjectsInCallList; i++ )
             {
@@ -532,6 +534,22 @@ TBool CMmVoiceLineTsy::IsSwapReady(
             ret = ETrue;
             }
         }
+
+    if ( numberOfObjectsInCallList==1 && !otherVoiceLine )
+    	{
+
+    	// Swapping a single call. 
+        mmCall = reinterpret_cast<CMmVoiceCallTsy*>(
+            callList->GetMmCallByIndex(0) );
+        if ( mmCall->ServiceRequested( 
+                CMmCallTsy::EMultimodeMobileCallSwap ) )
+            {
+            // Complete swap request when the correct object has been found
+            mmCall->CompleteSwap( KErrNone );
+            }    	
+    	ret = ETrue;
+    	}
+    
     return ret;
     }
 

@@ -475,6 +475,7 @@ class MLtsyDispatchCallControlSwap : public MLtsyDispatchInterface
 public:
 
 	static const TInt KLtsyDispatchCallControlSwapApiId = KDispatchCallControlFuncUnitId + 14;
+	static const TInt KLtsyDispatchCallControlSingleSwapApiId = KDispatchCallControlFuncUnitId + 29;
 
 	/**
 	 * The CTSY Dispatcher shall invoke this function on receiving the EMobileCallSwap
@@ -483,30 +484,50 @@ public:
 	 * It is a request call that is completed by invoking
 	 * CCtsyDispatcherCallback::CallbackCallControlSwapComp()
 	 *
-	 * This request should be completed when the request to swap the call has
-	 * been placed.
+	 * This request should be completed when the request to swap two calls has
+	 * been placed. One is held and the other connected. The held call becomes connected
+	 * (RMobileCall::EStatusConnected) and the connected call becomes held 
+	 * (RMobileCall::EStatusHold).
 	 *
 	 * Implementation of this interface should request that the Licensee TSY
-	 * swap the specified calls.  Swapping requires two calls to be active,
-	 * one held and one connected.  It involves switching the states of the
-	 * two call such that the held call becomes connected (RMobileCall::EStatusConnected)
-	 * and the connected call becomes held (RMobileCall::EStatusHold).
+	 * swap the specified calls. Swapping is allowed for one or two active calls.
 	 *
-	 * @param aHeldCallId The Call ID of the held call to swap.
-	 *
-	 * @param aConnectedCallId The Call ID of the connected call to swap with
-	 * aHeldCallId.
+	 * @param aCallId The Call ID of the call to swap.
 	 *
 	 * @return KErrNone on success, otherwise another error code indicating the
 	 * failure.
 	 *
 	 * @see RMobileCall::Swap()
 	 */
-	virtual TInt HandleSwapReqL(TInt aHeldCallId, TInt aConnectedCallId) = 0;
+	virtual TInt HandleSwapReqL(TInt aCallId, TInt aSecondCallId) = 0;
+
+	/**
+	 * The CTSY Dispatcher shall invoke this function on receiving the EMobileCallSwap
+	 * request, for a single call, from the CTSY.
+	 *
+	 * It is a request call that is completed by invoking
+	 * CCtsyDispatcherCallback::CallbackCallControlSwapComp()
+	 *
+	 * This request should be completed when the request to swap the single call has
+	 * been placed.
+	 *
+	 * Implementation of this interface should request that the Licensee TSY
+	 * swap the specified call. The state of the call will be swapped from held to connected 
+	 * (or visa versa)
+	 *
+	 * @param aCallId The Call ID of the single call to swap.
+	 *
+	 * @return KErrNone on success, otherwise another error code indicating the
+	 * failure.
+	 *
+	 * @see RMobileCall::Swap()
+	 */
+	virtual TInt HandleSwapReqL(TInt aCallId) = 0;
 
 	}; // class MLtsyDispatchCallControlSwap
 
 
+	
 class MLtsyDispatchCallControlLoanDataPort : public MLtsyDispatchInterface
 	{
 public:
@@ -909,6 +930,9 @@ public:
 
 	}; // class MLtsyDispatchCallControlUpdateLifeTimer
 
-
+	
+// Note: A static constant has been defined in MLtsyDispatchCallControlSwap (abbove) with the highest Id 
+// in this file... "KLtsyDispatchCallControlSingleSwapApiId = KDispatchCallControlFuncUnitId + 29"
+// If adding a new Id it must be greater than KDispatchCallControlFuncUnitId + 29.
 
 #endif /*MLTSYDISPATCHCALLCONTROLINTERFACE_H_*/

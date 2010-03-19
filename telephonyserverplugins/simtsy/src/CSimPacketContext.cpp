@@ -99,7 +99,7 @@ CSimPacketContext::CSimPacketContext(CSimPhone* aPhone, CSimPacketService* aPack
 	  iTFTCreated(EFalse), iNumTFTsCreated(-1), iNumFiltersAdded(0),
       iContextConfigParamsIndex(0), iCommPortLoaned(EFalse),iQoSObjectCount(0),
       iNotifyContextConfigChangeArray(NULL), iSetConfigData(NULL), iSetConfigCallCount(0), iTFTChangeBool(0),
-      iNotifyContextStatusChangeIndex(0),iState(RPacketContext::EStatusInactive)
+      iNotifyContextStatusChangeIndex(0),iState(RPacketContext::EStatusInactive), iLastError(KErrNone), iErrorCodeForGetLastErrorCause(KErrNone)
 	  
 /**
 * Trivial Constructor.  Initialises all the data members
@@ -2476,7 +2476,7 @@ TInt CSimPacketContext::NotifyDataTransferredCancel(const TTsyReqHandle /*aTsyRe
 	return KErrNone;
 	}
 
-TInt CSimPacketContext::GetLastErrorCause(const TTsyReqHandle aTsyReqHandle,TInt* /*aError*/)
+TInt CSimPacketContext::GetLastErrorCause(const TTsyReqHandle aTsyReqHandle, TInt* aError)
 /**
 * This method is not supported in this TSY
 *
@@ -2486,7 +2486,9 @@ TInt CSimPacketContext::GetLastErrorCause(const TTsyReqHandle aTsyReqHandle,TInt
 */
 	{
 	LOGPACKET1("CSimPacketContext::GetLastErrorCause called");
-	ReqCompleted(aTsyReqHandle,KErrNotSupported);
+	*aError = iLastError;
+	ReqCompleted(aTsyReqHandle,iErrorCodeForGetLastErrorCause);
+	iErrorCodeForGetLastErrorCause = KErrNone;
 	return KErrNone;
 	}
 
@@ -2837,8 +2839,49 @@ TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
 						if (found)
 							activateValue = iContextConfigsRel99->At(i).iActivateErrorCode;
 						else
-							activateValue = iActivateFail;				
-
+							activateValue = iActivateFail;	
+						if(activateValue == KContextGoToInactiveWithErrorWhenTryingToGetLastErrorCode)
+						    {
+						    //this will allow context activation move to the next state but with context being inactive 
+						    ret=ChangeState(RPacketContext::EStatusInactive);
+						    iCurrentEvent=EContextEventNone;
+						    iLastError = activateValue;
+						    iErrorCodeForGetLastErrorCause=KErrGeneral;
+						    
+						    iContextConfigsRel99->At(i).iActivateErrorCode = iLastError;
+						    ReqCompleted(iActivateRequestHandle, KErrNone);
+						    
+						    break;
+						    }
+						if(activateValue <= KContextGoToInactiveWithExtendedErrorCode && activateValue > KContextGoToInactiveWithNormalErrorCode)
+                            {
+                            //this will allow context activation move to the next state but with context being inactive     
+                            //tsy extended error case
+                            ret=ChangeState(RPacketContext::EStatusInactive);
+                            iCurrentEvent=EContextEventNone;
+                            iLastError = activateValue - KContextGoToInactiveWithExtendedErrorCode;
+                            //move the error code to the higher 16 bit.
+                            iLastError<<=16;
+                            
+                            iContextConfigsRel99->At(i).iActivateErrorCode = iLastError;
+                            ReqCompleted(iActivateRequestHandle, KErrNone);
+                            
+                            break;
+                            }
+						if(activateValue <= KContextGoToInactiveWithNormalErrorCode && activateValue > KLimitForErrorCodeForContextGoToInactive)
+						    {
+						    //this will allow context activation move to the next state but with context being inactive
+						    //normal error case
+						    ret=ChangeState(RPacketContext::EStatusInactive);
+						    iCurrentEvent=EContextEventNone;
+						    iLastError = activateValue - KContextGoToInactiveWithNormalErrorCode;
+						    
+						    iContextConfigsRel99->At(i).iActivateErrorCode = iLastError;
+						    ReqCompleted(iActivateRequestHandle, KErrNone);
+						    
+						    break;
+						    }
+						else
 						if(activateValue != KErrNone)
 							{
 							ReqCompleted(iActivateRequestHandle,activateValue);

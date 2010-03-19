@@ -79,6 +79,11 @@ public:
 	void TestUnit0011L();
 	void TestUnit0012L();
 	
+protected:
+    virtual void OpenNonCachingPhoneBookL(DispatcherPhonebook::TPhonebook aPhonebook, RMobilePhoneBookStore& aPhoneBookStore, TInt aError);
+    virtual void OpenCachingPhoneBookL(DispatcherPhonebook::TPhonebook aPhonebook, RMobilePhoneBookStore& aPhoneBookStore, TInt aError);
+    virtual void DoCleanup();
+	
 private:
 
 	void CreateTlvFromEntryL(const CPhoneBookEntry& aPhoneBookEntry, RBuf8& aBuf);
@@ -92,9 +97,7 @@ private:
 
 	void OpenPhoneBookL(DispatcherPhonebook::TPhonebook aPhonebook, RMobilePhoneBookStore& aPhoneBookStore, RMmCustomAPI& aCustomApi);
 	void OpenPhoneBookWithInitialisationL(DispatcherPhonebook::TPhonebook aPhonebook, RMobilePhoneBookStore& aPhoneBookStore, TInt aError);
-	void OpenCachingPhoneBookL(DispatcherPhonebook::TPhonebook aPhonebook, RMobilePhoneBookStore& aPhoneBookStore, TInt aError);
 	void CompleteCacheL(DispatcherPhonebook::TPhonebook aPhonebook, TInt aError, TBool aIsRefresh);
-	void OpenNonCachingPhoneBookL(DispatcherPhonebook::TPhonebook aPhonebook, RMobilePhoneBookStore& aPhoneBookStore, TInt aError);
 	TBool InitialisationRequired(DispatcherPhonebook::TPhonebook aPhonebook) const;
 	TBool CachingPhonebook(DispatcherPhonebook::TPhonebook aPhonebook) const;
 	
@@ -127,8 +130,6 @@ private:
 	static void PhoneBookEntryArrayCleanup(TAny* aArray);
 
 	void OpenSmsStoreL(RMobileSmsMessaging& aSmsMessaging, RMobileSmsStore& aSmsStore, const TDesC& aSmsStoreName);
-
-	virtual void DoCleanup();
 	
 private:
 	

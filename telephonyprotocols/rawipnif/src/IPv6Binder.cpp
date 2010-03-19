@@ -25,6 +25,8 @@
 #include "RawIPFlow.h"
 #include "IPv6Binder.h"
 #include <comms-infras/linkprovision.h>
+#include <e32hal.h>
+
 
 using namespace ESock;
 #ifdef WCDMA_STUB

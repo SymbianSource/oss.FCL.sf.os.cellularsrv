@@ -35,7 +35,10 @@ public:
 public:
 	// Individual test steps
 
-	void TestGetMailboxNumbers0001L();
+    void TestGetMailboxNumbers0001L();
+    void TestGetMailboxNumbers0001bL();
+    void TestGetMailboxNumbers0001cL();
+    void TestGetMailboxNumbers0001dL();
 	void TestGetMailboxNumbers0002L();
 	void TestGetMailboxNumbers0003L();
 	void TestGetMailboxNumbers0004L();

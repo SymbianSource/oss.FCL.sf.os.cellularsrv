@@ -475,5 +475,5 @@ START_TESTCASE BA-CTSY-CONC-CGMCI-0003
 //!@SYMTestActions Invokes RMobileConferenceCall::GetMobileCallInfo with bad parameter data
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-//RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyConferenceCallControlFU.TestGetMobileCallInfo0003L
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyConferenceCallControlFU.TestGetMobileCallInfo0003L
 END_TESTCASE BA-CTSY-CONC-CGMCI-0003

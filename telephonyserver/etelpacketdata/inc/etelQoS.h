@@ -17,10 +17,10 @@
 // Copyright (c) Symbian Software Ltd. 2002-2009.  All rights reserved.
 // 
 //
-
-
-#if!defined(__ETELQOS_H__)
+#ifndef __ETELQOS_H__
 #define __ETELQOS_H__
+
+#ifndef __ETELDEFAULTQOS_H__
 
 #include "etelpckt.h"
 
@@ -753,3 +753,4 @@ private:
 
 #endif
 	
+#endif

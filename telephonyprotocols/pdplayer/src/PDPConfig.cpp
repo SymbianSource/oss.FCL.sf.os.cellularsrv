@@ -82,6 +82,10 @@ void CGPRSProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
 	    getErr = KErrNone;
 	    iUmtsGprsRelease = TPacketDataConfigBase::KConfigGPRS;
 	    }
+	    
+	TBool useEdge = EFalse;
+	
+	aIapView->GetBoolL(KCDTIdWCDMAUseEdge | KCDTIdOutgoingGprsRecord, useEdge);
 	
 	getErr = InitialiseScratchContext(iUmtsGprsRelease);
 	//-====================================================
@@ -104,7 +108,7 @@ void CGPRSProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
             // GPRS specific
         	RetrieveGprsCompression(contextGPRS.iPdpCompression, aIapView);
         	RetrieveGprsAnonymousAccess(contextGPRS.iAnonymousAccessReqd, aIapView);
-        	contextGPRS.iUseEdge = EFalse;
+        	contextGPRS.iUseEdge = useEdge;
 			}
 			break;
 	    case TPacketDataConfigBase::KConfigRel5:
@@ -119,7 +123,7 @@ void CGPRSProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
             		contextR5.iProtocolConfigOption.iDnsAddresses.iPrimaryDns,
             		contextR5.iProtocolConfigOption.iDnsAddresses.iSecondaryDns, aIapView);
             RetrieveAuthenticationInfoL(contextR5.iProtocolConfigOption, aIapView);
-            contextR5.iUseEdge = EFalse;
+            contextR5.iUseEdge = useEdge;
 
     		RetrieveUmtsPacketFlowIdentifierL(contextR5.iPFI, aIapView);
 			}
@@ -134,7 +138,7 @@ void CGPRSProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
                 contextUMTS.iProtocolConfigOption.iDnsAddresses.iPrimaryDns,
                 contextUMTS.iProtocolConfigOption.iDnsAddresses.iSecondaryDns, aIapView);
             RetrieveAuthenticationInfoL(contextUMTS.iProtocolConfigOption, aIapView);
-            contextUMTS.iUseEdge = EFalse;
+            contextUMTS.iUseEdge = useEdge;
             RetrieveUmtsPacketFlowIdentifierL(contextUMTS.iPFI, aIapView);
 			}
 			break;

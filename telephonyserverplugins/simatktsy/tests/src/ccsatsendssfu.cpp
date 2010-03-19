@@ -277,11 +277,22 @@ void CCSatSendSSFU::TestNotifySendSsPCmd0001L()
 	rsp.iAdditionalInfo.Zero();
 	rsp.iAdditionalInfo.Append(KSSOpCodeAndParameters);
 
-	// defect, first byte from additional info is deleted in CSatNotifySendSs::TerminalResponseL()
+// first byte from additional info is deleted in CSatNotifySendSs::TerminalResponseL()
+// Let MockLTsy expect this behaviour 
+	rsp.iAdditionalInfo.Delete( 0, 1 );
 	
-	GenerateTerminalResponseL(KCmdId,	KSendSs,	KCmdDetails,
-			RSat::ESendSs, rspPckg,	rsp.iAdditionalInfo, 
-			rsp.iGeneralResult);
+    PrepareTerminalResponseMockDataL(
+            KCmdId,
+            KSendSs,
+            KCmdDetails,
+            rsp.iAdditionalInfo,
+            rsp.iGeneralResult,
+            KNullDesC8);
+
+    rsp.iAdditionalInfo.Zero();
+    rsp.iAdditionalInfo.Append( KSSOpCodeAndParameters );
+    
+    TerminalResponseL( RSat::ESendSs, rspPckg);
 	
 	AssertMockLtsyStatusL();
 	
@@ -885,15 +896,43 @@ void CCSatSendSSFU::DoTestTerminalResponseL()
 				if ( rsp->iInfoType == RSat::KSendSsInfo )
 					{
 					rsp->iAdditionalInfo.Append( KSSOpCodeAndParameters );
+					
+// first byte from additional info is deleted in CSatNotifySendSs::TerminalResponseL()
+// Let MockLTsy expect this behaviour 
+					if( rsp->iGeneralResult == RSat::KSuccess ||
+					       rsp->iGeneralResult == RSat::KPartialComprehension ||
+					       rsp->iGeneralResult == RSat::KMissingInformation ||
+					       rsp->iGeneralResult == RSat::KSuccessRequestedIconNotDisplayed )
+					    {
+					    rsp->iAdditionalInfo.Delete( 0, 1 );
+					    }
 					}
 				else
 					{
 					rsp->iAdditionalInfo.Append( KResponsesToTest[i].iAdditionalInfo );
 					}
 				}
-			GenerateTerminalResponseL(KCmdId,	KSendSs,	KCmdDetails,
-					RSat::ESendSs, *rspPckg,	rsp->iAdditionalInfo, 
-					rsp->iGeneralResult, KNullDesC8, KResponsesToTest[i].iExpectedResult);
+			PrepareTerminalResponseMockDataL(
+			        KCmdId,
+			        KSendSs,
+			        KCmdDetails,
+			        rsp->iAdditionalInfo,
+			        rsp->iGeneralResult,
+			        KNullDesC8,
+			        KResponsesToTest[i].iExpectedResult);
+			
+			if ( (!KResponsesToTest[i].iIntentionallyOmmitAdditionalInfo && rsp->iInfoType == RSat::KSendSsInfo ) 
+			     &&
+			     (rsp->iGeneralResult == RSat::KSuccess ||
+                       rsp->iGeneralResult == RSat::KPartialComprehension ||
+                       rsp->iGeneralResult == RSat::KMissingInformation ||
+                       rsp->iGeneralResult == RSat::KSuccessRequestedIconNotDisplayed) )
+			    {
+                rsp->iAdditionalInfo.Zero();
+                rsp->iAdditionalInfo.Append( KSSOpCodeAndParameters );
+			    }
+			
+			TerminalResponseL( RSat::ESendSs, *rspPckg, KResponsesToTest[i].iExpectedResult);
 			}
 		else
 			{
@@ -901,10 +940,18 @@ void CCSatSendSSFU::DoTestTerminalResponseL()
 			rsp->iGeneralResult	= RSat::KSuccess;
 			rsp->iInfoType 		= RSat::KSendSsInfo;
 			rsp->iAdditionalInfo.Append(KSSOpCodeAndParameters);
+
+// first byte from additional info is deleted in CSatNotifySendSs::TerminalResponseL()
+// Let MockLTsy expect this behaviour 
+
+			rsp->iAdditionalInfo.Delete( 0, 1 );
 			
 			PrepareTerminalResponseMockDataL( KCmdId, KSendSs, KCmdDetails,
 					rsp->iAdditionalInfo, rsp->iGeneralResult, KNullDesC8, KErrUnknown);
 
+			rsp->iAdditionalInfo.Zero();
+			rsp->iAdditionalInfo.Append( KSSOpCodeAndParameters );
+			
 			TerminalResponseL( RSat::ESendSs, *rspPckg, KErrUnknown);
 			}
 		

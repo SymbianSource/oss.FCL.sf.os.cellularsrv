@@ -2124,12 +2124,25 @@ TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusL Handle: %d", aTsyReq
             }
         else
             {
-            //get mode specific information 
-            TInt ret ( iMmPhoneTsy->iMmPhoneExtInterface->
-                GetNetworkRegistrationStatusL() );
+            TInt ret(KErrGeneral);
+            // verify that modem is ready
+            if ( iMmPhoneTsy->IsModemStatusReady() )
+                {
+                //get mode specific information 
+                TFLOGSTRING("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Sending request to LTSY" );
+                ret = iMmPhoneTsy->iMmPhoneExtInterface->
+                    GetNetworkRegistrationStatusL();
+                }
+            else
+                {
+                // modem is not ready. Client to be completed with error code.
+                TFLOGSTRING("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Modem not ready" );            
+                ret = KErrNotReady;
+                }
 
             if ( KErrNone != ret )
                 {
+                TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Complete with error %d", ret );
                 iMmPhoneTsy->ReqCompleted( aTsyReqHandle, ret );
                 }
             else

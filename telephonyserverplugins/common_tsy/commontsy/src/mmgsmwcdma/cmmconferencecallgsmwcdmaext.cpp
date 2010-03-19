@@ -632,8 +632,7 @@ TInt CMmConferenceCallGsmWcdmaExt::GetMobileCallInfo(
                 if ( counter == *aIndex )
                     {
                     //get mobile call info
-                    mobileCall->FillMobileCallInfo( aCallInfo );
-                    ret = KErrNone;
+                    ret = mobileCall->FillMobileCallInfo( aCallInfo );
                     break;
                     }
                 else

@@ -78,12 +78,6 @@ class CMmCustomMessHandlerGsmExt : public CBase, public MMockMessHandlerBase
          * Own.
          */                  
         CMmMessageRouter* iMessageRouter;
-        
-        /*
-         * Pointer to the Custom stub extension
-         * Own.
-         */
-        CMmCustomStubExt* iMmCustomStubExt;
     };
 
 #endif // CMMCUSTOMMESSHANDLERGSMEXT_H

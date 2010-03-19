@@ -130,6 +130,14 @@
         <IAPNetworkWeighting>0</IAPNetworkWeighting>
         <LocationRef>Location.Mobile</LocationRef>
     </IAP>
+    <IAP operation="add">
+        <Name>IAP_GRPS_BAD_QOS</Name>
+        <IAPService>OutgoingGPRS.GPRS_BAD_QOS</IAPService>
+        <IAPBearer>ModemBearer.Loopback_SPUD_2</IAPBearer>
+        <IAPNetwork>Network.Intranet</IAPNetwork>
+        <IAPNetworkWeighting>0</IAPNetworkWeighting>
+        <LocationRef>Location.Mobile</LocationRef>
+    </IAP>
 </IAPTable>
 
 
@@ -417,6 +425,16 @@
         <IpDNSAddrFromServer>TRUE</IpDNSAddrFromServer>  
         <IpAddr>192.168.1.13</IpAddr>
     </OutgoingGPRS>
+    <OutgoingGPRS operation="add">
+        <Name>GPRS_BAD_QOS</Name>
+      	<PDPType>IPV4</PDPType>
+        <IfParams>lowernif=RAWIP</IfParams>
+        <IfPromptForAuth>FALSE</IfPromptForAuth>
+        <IpAddrFromServer>TRUE</IpAddrFromServer>
+        <IpDNSAddrFromServer>TRUE</IpDNSAddrFromServer>  
+        <IpAddr>192.168.1.2</IpAddr>
+        <UmtsR99QoSAndOnRef>UmtsR99QoSAndOn.BAD_QOS</UmtsR99QoSAndOnRef>       
+    </OutgoingGPRS>
 </OutgoingGPRSTable>
 
 <DefaultGPRSTable>
@@ -607,6 +625,36 @@
 		<MinGuaranteedUplinkRat>1024</MinGuaranteedUplinkRat>
 		<ReqGuaranteedDownlinkRate>1024</ReqGuaranteedDownlinkRate>
 		<MinGuaranteedDownlinkRate>1024</MinGuaranteedDownlinkRate>
+		<SignallingIndication>FALSE</SignallingIndication>
+		<IMCNSignallingIndication>FALSE</IMCNSignallingIndication>
+		<SourceStatisticsDescriptor>0</SourceStatisticsDescriptor>
+	</UmtsR99QoSAndOn>
+	
+	<UmtsR99QoSAndOn operation ="add">
+	  	<Name>BAD_QOS</Name>		
+		<MinTrafficClass>1</MinTrafficClass>
+		<ReqDeliveryOrder>1</ReqDeliveryOrder>
+		<MinDeliveryOrder>1</MinDeliveryOrder>
+		<ReqDeliverErroneousSDU>1</ReqDeliverErroneousSDU>
+		<MinDeliverErroneousSDU>1</MinDeliverErroneousSDU>
+		<ReqMaxSDUSize>0</ReqMaxSDUSize>
+		<MinAcceptableMaxSDUSize>0</MinAcceptableMaxSDUSize>
+		<ReqMaxUplinkRate>0</ReqMaxUplinkRate>
+		<ReqMinUplinkRate>0</ReqMinUplinkRate>
+		<ReqMaxDownlinkRate>0</ReqMaxDownlinkRate>
+		<ReqMinDownlinkRate>0</ReqMinDownlinkRate>
+		<ReqBER>1</ReqBER>
+		<MaxBER>1</MaxBER>
+		<ReqSDUErrorRatio>1</ReqSDUErrorRatio>
+		<MaxSDUErrorRatio>1</MaxSDUErrorRatio>
+		<ReqTrafficHandlingPriority>1</ReqTrafficHandlingPriority>
+		<MinTrafficHandlingPriority>1</MinTrafficHandlingPriority>
+		<ReqTransferDelay>0</ReqTransferDelay>
+		<MaxTransferDelay>0</MaxTransferDelay>
+		<ReqGuaranteedUplinkRate>0</ReqGuaranteedUplinkRate>
+		<MinGuaranteedUplinkRat>0</MinGuaranteedUplinkRat>
+		<ReqGuaranteedDownlinkRate>0</ReqGuaranteedDownlinkRate>
+		<MinGuaranteedDownlinkRate>0</MinGuaranteedDownlinkRate>
 		<SignallingIndication>FALSE</SignallingIndication>
 		<IMCNSignallingIndication>FALSE</IMCNSignallingIndication>
 		<SourceStatisticsDescriptor>0</SourceStatisticsDescriptor>

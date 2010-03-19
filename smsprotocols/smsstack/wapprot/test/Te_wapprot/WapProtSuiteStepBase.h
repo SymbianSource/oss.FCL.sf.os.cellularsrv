@@ -37,6 +37,7 @@
 #include <e32property.h>
 #include <simtsy.h>
 #include <smsuaddr.h>
+#include <etelmm.h>
 #include "WapProtSuiteDefs.h"
 #include "wap_sock.h"
 #include "smsustrm.h"

@@ -31,14 +31,14 @@
 #include <test/tefunit.h>
 #include <etelmm.h>
 #include <etelmmcs.h>
-#include "cctsycomponenttestbase.h"
+#include "cctsyphonebookfu.h"
 
 _LIT(KText, "Number%d");											
 _LIT(KNumber, "0000000%d");
 _LIT(KText1, "Number1");											
 _LIT(KNumber1, "11111111");
 
-class CCTsyPhonebookOnFU : public CCtsyComponentTestBase
+class CCTsyPhonebookOnFU : public CCTsyPhonebookFU
 	{
 public:
 	// Create a suite of all the tests

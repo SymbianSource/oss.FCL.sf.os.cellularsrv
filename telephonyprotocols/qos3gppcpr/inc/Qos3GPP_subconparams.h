@@ -28,7 +28,12 @@
 #include <es_sock.h>
 #include <comms-infras/metadata.h>
 #include <comms-infras/metatype.h>
+
+#ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <etelqos.h>
+#else
+#include <eteldefaultqos.h>
+#endif
 #include <comms-infras/es_parameterfamily.h>
 
 const TInt KSubCon3GPPExtParamsFactoryUid = 0x1020D460;

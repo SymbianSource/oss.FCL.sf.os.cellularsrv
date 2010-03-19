@@ -291,7 +291,6 @@ MMockMessHandlerBase* CMmMessageRouter::RouteRequest(const TInt aIpc )
         case ECustomReadHSxPAStatusIPC:
         case ECustomNotifyRauEventIPC:
 
-        case EMmTsyGetCustomVendorExtPtrIPC:
         case ECustomSimLockActivateIPC:
         case ECustomSimLockDeActivateIPC:
         case ECustomSendAPDUReqIPC:
