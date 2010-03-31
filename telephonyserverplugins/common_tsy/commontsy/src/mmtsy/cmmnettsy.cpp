@@ -372,10 +372,14 @@ TInt CMmNetTsy::CancelService(
         case EMobilePhoneGetDetectedNetworksV2Phase1:
         case EMobilePhoneSelectNetwork:
             {
-            //reset last tsy request type and Traid type
-            iMmPhoneTsy->iReqHandleType = 
-                CMmPhoneTsy::EMultimodePhoneReqHandleUnknown;
-
+            // Ensure the ReqHandleType is unset.
+            // This will detect cases where this method indirectly calls itself
+            // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+            // Such cases are not supported because iReqHandleType is in the context of this class instance,
+            // not this request, and we don't want the values set by the inner request and the outer request
+            // interfering with each other.
+            __ASSERT_DEBUG(iMmPhoneTsy->iReqHandleType==CMmPhoneTsy::EMultimodePhoneReqHandleUnknown, User::Invariant());
+            
             TInt trapError( KErrNone );
 
             //call cancel handling
@@ -418,6 +422,10 @@ TInt CMmNetTsy::CancelService(
                 {
                 iMmPhoneTsy->iTsyReqHandleStore->SetTsyReqHandle( 
                     iMmPhoneTsy->iReqHandleType, aTsyReqHandle );
+                
+                // We've finished with this value now. Clear it so it doesn't leak
+                //  up to any other instances of this method down the call stack
+                iMmPhoneTsy->iReqHandleType=CMmPhoneTsy::EMultimodePhoneReqHandleUnknown;
                 }
             break;
             }    

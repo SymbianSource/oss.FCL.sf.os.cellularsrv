@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -31,33 +31,23 @@ class CBttLogger;
 class CSender : public CActive
 	{
 public:
-	CSender(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
-	static CSender* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
-	void ConstructL();
-	~CSender();	
+    CSender(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
+    static CSender* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
+    void ConstructL();
+    ~CSender();	
 
-	
-	
+    // Inherited from CActive.
+    virtual void RunL();
+    virtual void DoCancel();
 
-public: // Inherited from CActive.
-	virtual void RunL();
-	virtual void DoCancel();
-
-public:
-	void Send(RMBufChain& aPdu);
-	void SendBuffer(const TDesC8& aBuffer);
-	inline TInt SendBufferLength();
+    void Send(RMBufChain& aPdu);
+    inline TInt SendBufferLength();
 
 private: // Unowned data.
-	CBcaIoController& iObserver;
-	CBttLogger* iTheLogger;	
-	TInt iMaxPacketSise;
-	
-private:
-	//CLASSNAMEDECL(CSender);
-
-	//TBuf8<KMaxIPPacketAndHeader> iSendBuffer;
-	RBuf8 iSendBuffer;
+    CBcaIoController& iObserver;
+    CBttLogger* iTheLogger;	
+    TInt iMaxPacketSize;
+    RBuf8 iSendBuffer;
 	};
 
 TInt CSender::SendBufferLength()

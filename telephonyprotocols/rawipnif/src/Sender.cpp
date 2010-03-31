@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,11 +30,15 @@ CSender::CSender(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxP
  *
  * @param aObserver Reference to the observer of this state machine
  */
-	: CActive(EPriorityStandard), 
+	: CActive(EPriorityUserInput), 
 	  iObserver(aObserver),
 	  iTheLogger(aTheLogger),
-	  iMaxPacketSise(aMaxPacketSise)
+	  iMaxPacketSize(aMaxPacketSise)
 	{
+    // EPriorityUserInput is higher than the default priority but lower than
+    // EPriorityHigh which is used on Receiving (DL having priority), however,
+    // we want this to be handled in an expedited manner compared to other
+    // active objects in the thread.
 	CActiveScheduler::Add(this);
 	}
 
@@ -61,7 +65,7 @@ void CSender::ConstructL()
  */
 	{
 	_LOG_L1C1(_L8("CSender::ConstructL"));
-	iSendBuffer.CreateL(iMaxPacketSise);
+	iSendBuffer.CreateL(iMaxPacketSize);
 	}
 
 CSender::~CSender()
@@ -143,20 +147,8 @@ void CSender::Send(RMBufChain& aPdu)
 
 	aPdu.Free();
 
-	SendBuffer(iSendBuffer);
-	}
-
-void CSender::SendBuffer(const TDesC8& aBuffer)
-/**
- * Sends an IP packet, contained in the specified descriptor
- *
- * @param aBuffer The IP packet to send.
- * @return Always KStopSending.
- */
-	{
-	_LOG_L1C1(_L8("CSender::SendBuffer"));
-
-	// Finally, send the packet to BCA
-	(iObserver.Bca())->Write(iStatus, aBuffer);
+	(iObserver.Bca())->Write(iStatus, iSendBuffer);
+	
 	SetActive();
 	}
+

@@ -197,9 +197,6 @@ void CCTsySmsMessagingFU::TestNotifyReceiveModeChange0001L()
     // from LTSY.
     //-------------------------------------------------------------------------
 
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 360201); 
-    ASSERT_TRUE(EFalse);
-
     //Request for EMobileSmsMessagingNotifyReceiveModeChange is self reposting. 
     //If it was completed somehow and then SetReceiveMode() was called without call of NotifyReceiveModeChange() - 
     //this result in getting wrong request handle for completion in CTelObject::ReqCompleted() 
@@ -1011,6 +1008,12 @@ void CCTsySmsMessagingFU::TestAckSmsStored0001L()
     // that have iDeleteAfterClientAck = true
     //-------------------------------------------------------------------------
 
+    // Since Ack failed, the CTSY needs to ask to activate the sms routing again
+    data.Close();
+    compSmsRoutingTsyData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMmTsyActivateSmsRouting);    
+    iMockLTSY.CompleteL(EMmTsyActivateSmsRouting, KErrNone, data);
+
     // make the server expect an acknowledgement
     messaging.ReceiveMessage(reqReceiveStatus, forMsg, receiveAttrPckg);
 
@@ -1479,7 +1482,13 @@ void CCTsySmsMessagingFU::TestNackSmsStored0001L()
     // TEST B1, test NackSmsStored() when there are sms received
     // that have iDeleteAfterClientAck = true
     //-------------------------------------------------------------------------
-    
+  
+    // Since Nack failed, the CTSY needs to ask to activate the sms routing again  
+    data.Close();
+    compSmsRoutingTsyData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMmTsyActivateSmsRouting);    
+    iMockLTSY.CompleteL(EMmTsyActivateSmsRouting, KErrNone, data);
+
     // make the server expect an acknowledgement
     messaging.ReceiveMessage(reqReceiveStatus, forMsg, receiveAttrPckg);
 

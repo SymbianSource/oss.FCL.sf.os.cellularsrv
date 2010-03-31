@@ -196,7 +196,6 @@ void CMockPhoneBookStoreMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, T
 	{
 	CPhoneBookDataPackage dataPackage;
 	CArrayPtrSeg<CPhoneBookStoreEntry>* pbEntryArray = NULL;
-	CArrayPtrSeg<CPhoneBookStoreEntry>** ptr = NULL;
 
 	switch (aIpc)
 		{
@@ -229,7 +228,6 @@ void CMockPhoneBookStoreMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, T
 			
 			return;
 		    }
-		    break;
     	case EMmTsyPhoneBookStoreReadIPC:
     	    {
 		    TMockLtsyPhoneBookData1Buf<CArrayPtrSeg<CPhoneBookStoreEntry>*> retStoreAndName;
@@ -248,7 +246,6 @@ void CMockPhoneBookStoreMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, T
 			
 			return;
     	    }    		
-    	    break;
     	case EMmTsyPhoneBookStoreWriteIPC:
     	case EMmTsyPhoneBookStoreDeleteIPC:
     	case EMmTsyPhoneBookStoreDeleteAllIPC:

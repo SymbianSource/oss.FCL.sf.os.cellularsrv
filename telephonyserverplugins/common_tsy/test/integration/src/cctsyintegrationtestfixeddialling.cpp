@@ -803,11 +803,6 @@ TVerdict CCTSYIntegrationTestFixedDialling0004::doTestStepL()
 	call1.DialNoFdnCheck(dialStatus, number); 
 	ASSERT_EQUALS(WaitForRequestWithTimeOut(dialStatus, ETimeLong), KErrNone,
 			_L("RCall::DialNoFdnCheck timed-out"));
-    // $CTSYProblem The CTSY does supports the RMobileCall::DialNoFdnCheck 
-    // but waiting for LTSY support for this IPC
-	ASSERT_EQUALS(dialStatus.Int(), KErrTimedOut,
-			_L("RCall::DialNoFdnCheck returned with an error"));
-	/*
 	ASSERT_EQUALS(dialStatus.Int(), KErrNone, _L("RCall::DialNoFdnCheck returned with an error"));
 
 	// Check RMobileCall::NotifyMobileCallStatusChange completes with EStatusDialling -> EStatusConnecting -> EStatusConnected.
@@ -846,7 +841,7 @@ TVerdict CCTSYIntegrationTestFixedDialling0004::doTestStepL()
 			_L("RCall::HangUp timed-out"));
 	ASSERT_EQUALS(hangUpStatus.Int(), KErrNone,  
 			_L("RCall::HangUp returned an error"));
-    */
+
 	// ===  Dial no FDN check with FDN disabled ===
 
 	// Call RMobilePhone::SetFdnSetting with RMobilePhone::EFdnSetOff 
@@ -854,16 +849,12 @@ TVerdict CCTSYIntegrationTestFixedDialling0004::doTestStepL()
 
 	// Dial the number again using RMobileCall::DialNoFdnCheck 
 	call1.DialNoFdnCheck(dialStatus, number); 
-	ASSERT_EQUALS(WaitForRequestWithTimeOut(dialStatus, ETimeMedium), KErrTimedOut,
+	ASSERT_EQUALS(WaitForRequestWithTimeOut(dialStatus, ETimeMedium), KErrNone,
 			_L("RCall::DialNoFdnCheck timed-out"));
-	// $CTSYProblem Does not return KErrNone, returns KErrTimedOut
-	// CTSY supports this API but LTSY times out.
-	ASSERT_EQUALS(dialStatus.Int(), KErrTimedOut,
-			_L("RCall::DialNoFdnCheck returned with an error"));
-	
-	/*
+	ASSERT_EQUALS(dialStatus.Int(), KErrNone, _L("RCall::DialNoFdnCheck returned with an error"));
 
 	// Check RMobileCall::NotifyMobileCallStatusChange completes with EStatusDialling -> EStatusConnecting -> EStatusConnected.
+	call1.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus, mobileCallStatus);
 	expectedMobileCallStatus = RMobileCall::EStatusDialling;
 	iCallControlTsyTestHelper.WaitForMobileCallNotifyMobileCallStatusChange(call1,
 															notifyMobileCallStatusChangeStatus,
@@ -890,7 +881,7 @@ TVerdict CCTSYIntegrationTestFixedDialling0004::doTestStepL()
 			_L("RMobileCall::GetMobileCallStatus returned an Error"));
 	ASSERT_EQUALS(mobileCallStatus, RMobileCall::EStatusConnected,    
 			_L("RMobileCall::GetMobileCallStatus did not set the status to EStatusConnected"));
-	 */
+	 
 	
 	//
 	// TEST END
@@ -899,13 +890,13 @@ TVerdict CCTSYIntegrationTestFixedDialling0004::doTestStepL()
     StartCleanup();
 
 	// Hang up with RCall::HangUp 
-    /*
+    
 	call1.HangUp(hangUpStatus);
 	ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus, ETimeMedium), KErrNone,  
 			_L("RCall::HangUp timed-out"));
 	ASSERT_EQUALS(hangUpStatus.Int(), KErrNone,  
 			_L("RCall::HangUp returned an error"));
-    */
+    
 	// Pop:
 	//	/*hangUpStatus*/
 	//	dialStatus
@@ -913,7 +904,7 @@ TVerdict CCTSYIntegrationTestFixedDialling0004::doTestStepL()
 	//	deletaAllStatus
     //  backup
 	//	getInfoStatus
-	CleanupStack::PopAndDestroy(5, &getInfoStatus);
+	CleanupStack::PopAndDestroy(6, &getInfoStatus);
 	
 	return TestStepResult();
 	}

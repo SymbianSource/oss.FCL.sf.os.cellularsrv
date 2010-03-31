@@ -32,7 +32,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmConferenceCallTsy::CMmConferenceCallTsy()
+CMmConferenceCallTsy::CMmConferenceCallTsy():
+    iReqHandleType(EMultimodeConferenceCallReqHandleUnknown)
     {
     }
     
@@ -176,8 +177,13 @@ TInt CMmConferenceCallTsy::ExtFunc(
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
 
-    //reset last tsy request type
-    iReqHandleType = EMultimodeConferenceCallReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodeConferenceCallReqHandleUnknown, User::Invariant());
 
     //Original code continues here.
     TRAP( trapError, ret = DoExtFuncL( aTsyReqHandle, aIpc, aPackage ); );
@@ -202,6 +208,9 @@ TInt CMmConferenceCallTsy::ExtFunc(
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodeConferenceCallReqHandleUnknown;
         }
 
     return KErrNone;
@@ -1596,8 +1605,6 @@ TFLOGSTRING("TSY: CMmConferenceCallTsy::ResetAttributes." );
     iConferenceCaps = 0;
     //Number of calls in conference call
     iNumOfCallsInConferenceCall = 0;
-    //Last used req handle type
-    iReqHandleType = EMultimodeConferenceCallReqHandleUnknown;
     //Conference call status
     iStatus = RMobileConferenceCall::EConferenceIdle;
     //Reset pointer

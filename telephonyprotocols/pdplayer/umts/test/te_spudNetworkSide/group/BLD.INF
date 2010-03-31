@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -36,6 +36,15 @@ PRJ_TESTEXPORTS
 ../scripts/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
 ../scripts/Te_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
 ../scripts/TE_spudNetworkSide_R4_and_R5.script				z:/testdata/scripts/te_spudnetworkside_r4_and_r5.script
+../scripts/te_pdplayer_ip6.script				z:/testdata/scripts/te_pdplayer_ip6.script
+
+//stress tests
+../scripts/te_pdpstresstest1.script				z:/testdata/scripts/te_pdpstresstest1.script
+../scripts/te_pdpstresstests.script				z:/testdata/scripts/te_pdpstresstests.script
+
+//sip tests
+../scripts/te_spudnetworkside_sipaddress.script				z:/testdata/scripts/te_spudnetworkside_sipaddress.script
+
 #endif
 
 ../scripts/TE_spudNetworkSide_ppp_9x.script			z:/testdata/scripts/te_spudnetworkside_ppp.script
@@ -88,6 +97,23 @@ PRJ_TESTEXPORTS
 
 //Used to trigger GuQos to use Qospolicies.ini file for SetDefaultQoS
 ../configs/qospolicies.ini							z:/testdata/configs/qospolicies.ini
+
+../configs/te_pdplayer_ip6.ini							z:/testdata/configs/te_pdplayer_ip6.ini
+#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
+../configs/te_pdplayer_ip6_pdpcpr.cfg						z:/testdata/configs/te_pdplayer_ip6.cfg
+#else
+../configs/te_pdplayer_ip6.cfg							z:/testdata/configs/te_pdplayer_ip6.cfg
+#endif
+
+../configs/te_pdplayer_ip6_loopbackcsy.ini							z:/testdata/configs/te_pdplayer_ip6_loopbackcsy.ini
+../configs/te_pdplayer_ip6_simtsy_config.txt							z:/testdata/configs/te_pdplayer_ip6_simtsy_config.txt
+
+//stress tests
+../configs/te_pdpstresstestsparam.ini				z:/testdata/configs/te_pdpstresstestsparam.ini
+
+//sip tests
+../configs/te_spudnetworkside_sipaddress.ini				z:/testdata/configs/te_spudnetworkside_sipaddress.ini
+../configs/te_spudnetworkside_sipaddress_config.txt			z:/testdata/configs/te_spudnetworkside_sipaddress_config.txt
 
 #endif // SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 

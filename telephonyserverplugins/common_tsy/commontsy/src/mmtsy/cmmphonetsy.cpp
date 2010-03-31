@@ -123,7 +123,8 @@ TFLOGSTRING2("TSY: CMmPhoneTsy::NewL - Phone model Id: %S", &KPhoneModelId);
     return mmPhoneTsy;
     }
 
-CMmPhoneTsy::CMmPhoneTsy()
+CMmPhoneTsy::CMmPhoneTsy():
+    iReqHandleType(EMultimodePhoneReqHandleUnknown)
     {
     }
 
@@ -788,7 +789,7 @@ TFLOGSTRING("TSY: CMmPhoneTsy::NotifyIndicatorChangeCancel");
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-CMmPhoneTsy::CNosBootState* CMmPhoneTsy::NosBootState()
+CMmPhoneTsy::TNosBootState* CMmPhoneTsy::NosBootState()
     {
     return &iBootState;
     }
@@ -802,21 +803,6 @@ CMmPhoneTsy::CNosBootState* CMmPhoneTsy::NosBootState()
 CStorageInfoData* CMmPhoneTsy::PhoneBookState()
     {
     return iPhoneBookState;
-    }
-
-// ---------------------------------------------------------------------------
-// CMmPhoneTsy::SetNosBootState
-// Returns current Phonebook state
-// (other items were commented in a header).
-// ---------------------------------------------------------------------------
-//
-void CMmPhoneTsy::SetNosBootState(
-    CMmPhoneTsy::CNosBootState* aNewState )
-    {
-    iBootState.iSIMReady = aNewState->iSIMReady;
-    iBootState.iADNReady = aNewState->iADNReady;
-    iBootState.iSecReady = aNewState->iSecReady;
-    iBootState.iCachingActive = aNewState->iCachingActive;
     }
 
 // ---------------------------------------------------------------------------
@@ -1140,8 +1126,13 @@ TFLOGSTRING3("TSY: CMmPhoneTsy::ExtFunc, IPC:%d, Handle:%d", aIpc, aTsyReqHandle
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
 
-    //reset last tsy request type
-    iReqHandleType = EMultimodePhoneReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePhoneReqHandleUnknown, User::Invariant());
 
     //before processing further the request, check if offline mode status
     //is enabled and if the given request can be perfomed in that case.
@@ -1177,10 +1168,10 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
             iTsyReqHandleStore->SetTsyReqHandle( 
                 iReqHandleType, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
+            // We've finished with this value now. Clear it so it doesn't leak
+            //  up to any other instances of this method down the call stack
+            iReqHandleType = EMultimodePhoneReqHandleUnknown;
             }
-
-        //reset last tsy request type
-        iReqHandleType = EMultimodePhoneReqHandleUnknown;
         }
 
     return KErrNone;
@@ -2478,7 +2469,7 @@ TFLOGSTRING("TSY: CMmPhoneTsy::TerminateAllCalls");
                 SetTypeOfResponse( EMultimodePhoneTerminateAllCalls, aTsyReqHandle );
 #else
                 iTsyReqHandleStore->SetTsyReqHandle( 
-                		iReqHandleType, aTsyReqHandle );
+                        EMultimodePhoneTerminateAllCalls, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
                 }
             else

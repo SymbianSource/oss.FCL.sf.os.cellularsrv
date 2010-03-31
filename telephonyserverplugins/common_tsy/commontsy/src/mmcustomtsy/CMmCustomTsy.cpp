@@ -40,7 +40,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmCustomTsy::CMmCustomTsy()
+CMmCustomTsy::CMmCustomTsy():
+    iReqHandleType(ECustomTsyReqHandleUnknown)
     {
     iMmPhoneTsy = NULL;
     iMmCustomExtInterface = NULL;
@@ -196,7 +197,14 @@ TInt CMmCustomTsy::ExtFunc(
     {
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
-    iReqHandleType = ECustomTsyReqHandleUnknown;
+    
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==ECustomTsyReqHandleUnknown, User::Invariant());
 
     // before processing further the request, check if offline mode status
     // is enabled and if the given request can be perfomed in that case.
@@ -257,9 +265,14 @@ TInt CMmCustomTsy::DoExtFuncL(
         // if extension modules did not serve this request
         if ( KErrNotSupported == ret )
             {
-            // reset last tsy request type
-            iReqHandleType = ECustomTsyReqHandleUnknown;
-
+            // Ensure the ReqHandleType is unset.
+            // This will detect cases where this method indirectly calls itself
+            // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+            // Such cases are not supported because iReqHandleType is in the context of this class instance,
+            // not this request, and we don't want the values set by the inner request and the outer request
+            // interfering with each other.
+            __ASSERT_DEBUG(iReqHandleType==ECustomTsyReqHandleUnknown, User::Invariant());
+            
             switch ( aIpc )
                 {
                 // Perform IMS Authentication
@@ -545,6 +558,9 @@ TFLOGSTRING2("TSY: CMmCustomTsy::DoExtFuncL unsupported ipc=%d", aIpc);
                 iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType,
                     aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+                // We've finished with this value now. Clear it so it doesn't leak
+                //  up to any other instances of this method down the call stack
+                iReqHandleType = ECustomTsyReqHandleUnknown;
                 }
             }
         }

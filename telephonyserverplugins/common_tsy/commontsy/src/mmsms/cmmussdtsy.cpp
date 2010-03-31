@@ -121,9 +121,6 @@ TInt CMmUssdTsy::ExtFunc(
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
 
-    // reset last tsy request type
-    iReqHandleType = EMultimodeUssdReqHandleUnknown;
-
     // before processing further the request, check if offline mode status
     // is enabled and if the given request can be perfomed in that case.
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() && 
@@ -150,19 +147,8 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
             {
             ReqCompleted( aTsyReqHandle, ret );
             }
-
-        // save request handle
-        if ( EMultimodeUssdReqHandleUnknown != iReqHandleType )
-            {
-#ifdef REQHANDLE_TIMER
-            SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
-#else
-            iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, 
-                aTsyReqHandle );
-#endif // REQHANDLE_TIMER
-            }
         }
-        
+    
     return KErrNone;
     }
 
@@ -894,13 +880,37 @@ TFLOGSTRING2("TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorC
 				{
 				RMobileUssdMessaging::TMobileUssdAttributesV1* tempReturnNotifyUssdMessageAttributesPtr;
 				aDataPackage->UnPackData ( &tempReturnNotifyPtr, &tempReturnNotifyUssdMessageAttributesPtr );
-				*iReturnNotifyPtr = *tempReturnNotifyPtr;
-				*iReturnNotifyUssdMessageAttributesPtr = *tempReturnNotifyUssdMessageAttributesPtr;
+				if (tempReturnNotifyPtr != NULL)
+				    {
+				    *iReturnNotifyPtr = *tempReturnNotifyPtr;
+				    }
+				else
+				    {
+                    iReturnNotifyPtr->iOpCode = KErrNone;
+                    iReturnNotifyPtr->iAdditionalInfo.Append( KErrNone );
+				    }
+				if (tempReturnNotifyUssdMessageAttributesPtr != NULL)
+					{
+					*iReturnNotifyUssdMessageAttributesPtr = *tempReturnNotifyUssdMessageAttributesPtr;
+					}
+				else
+				    {
+                    iReturnNotifyUssdMessageAttributesPtr->iFormat = RMobileUssdMessaging::EFormatUnspecified;
+                    iReturnNotifyUssdMessageAttributesPtr->iType = RMobileUssdMessaging::EUssdUnknown;
+				    }
 				}
             else
 				{
 				aDataPackage->UnPackData ( &tempReturnNotifyPtr );
-				*iReturnNotifyPtr = *tempReturnNotifyPtr;
+				if(tempReturnNotifyPtr != NULL)
+				    {
+                    *iReturnNotifyPtr = *tempReturnNotifyPtr;
+				    }
+				else
+				    {
+                    iReturnNotifyPtr->iOpCode = KErrNone;
+                    iReturnNotifyPtr->iAdditionalInfo.Append( KErrNone );
+				    }
 				}
             }
          // Null ret pointers

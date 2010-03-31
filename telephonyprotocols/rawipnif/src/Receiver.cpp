@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -81,14 +81,16 @@ void CReceiver::RunL()
 	{
 	_LOG_L1C2(_L8("CReceiver::RunL [iStatus=%d]"), iStatus.Int());
 
-	if (iStatus!=KErrNone)
+	if (iStatus != KErrNone)
 		{
-		if(iStatus == KErrNoMemory)
+		if (iStatus == KErrNoMemory)
 			{
 			_LOG_L2C1(
 				_L8("WARNING! CReceiver: Read failed with KErrNoMemory"));
 			// Read operation failed!! Nif will re-issue the read request.
-			StartListening();
+		    (iObserver.Bca())->Read(iStatus, iData);
+
+		    SetActive();
 			}
 		else 
 			{
@@ -97,24 +99,29 @@ void CReceiver::RunL()
 			}
 		return;
 		}
-
-	_LOG_L1C1(_L8("CReceiver: Data Packet Received"));
-
-    iRMBufPacket.CreateL(iData);
-    iRMBufPacket.Pack();
-
-    // Immediately execute new read request.
-    StartListening();
-
+	else
+	    {
+        _LOG_L1C1(_L8("CReceiver: Data Packet Received"));
+    
+        iRMBufPacket.CreateL(iData);
+        
+        // Immediately execute new read request.
+        (iObserver.Bca())->Read(iStatus, iData);
+    
+        SetActive();
+        
+        iRMBufPacket.Pack();
+    
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
-    TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
+        TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
 #else
-    TUint16 protocolCode = 0;
+        TUint16 protocolCode = 0;
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
-
-    // Process the packet
-    iObserver.GetObserver().Process(iRMBufPacket, protocolCode);
-    iRMBufPacket.Free();
+    
+        // Process the packet
+        iObserver.GetObserver().Process(iRMBufPacket, protocolCode);
+        iRMBufPacket.Free();
+	    }
 	}
 
 void CReceiver::DoCancel()

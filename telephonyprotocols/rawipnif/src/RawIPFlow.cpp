@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -223,31 +223,21 @@ void CRawIPFlow::StopFlow(TInt aError)
 	ShutDown(MControllerObserver::EInitialised, aError);
 	}
 
-TInt CRawIPFlow::SendPacket(RMBufChain& aPdu, TAny* /*aProtocol*/,
+MLowerDataSender::TSendResult CRawIPFlow::SendPacket(RMBufChain& aPdu, TAny* /*aProtocol*/,
 							   TUint16 /*aType*/)
 /**
  * Sends a packet, via the BCA controller. This method is protocol-agnostic,
  * and is called by the IPv4 and IPv6 binder to actually send packets.
  *
  * @param aPdu The packet to send
- * @return A standard error code
+ * @return MLowerDataSender::TSendResult
  */
 	{
-	_LOG_L1C4(_L8("CRawIPFlow %08x:\tSendPacket(): length=%d, blocked=%d"),
-		this, aPdu.Length() - aPdu.First()->Length(),iBlocked);
+	_LOG_L1C3(_L8("CRawIPFlow %08x:\tSendPacket(): length=%d"),
+		this, aPdu.Length() - aPdu.First()->Length());
 
-    TInt ret = MLowerDataSender::ESendBlocked;
-	if (!iBlocked)
-    	{
-    	__PACKETLOG_WRITE_PACKET(aPdu, 0);
-    	ret = iBcaController->Send(aPdu);
-    	}
-    else
-        {
-        //crude flow cntrl handling: drop..
-        aPdu.Free();
-        }
-	return ret;
+    __PACKETLOG_WRITE_PACKET(aPdu, 0);
+    return iBcaController->Send(aPdu);
 	}
 
 void CRawIPFlow::Process(RMBufChain& aPdu, TUint16 aProtocolCode)
@@ -615,14 +605,22 @@ void CRawIPFlow::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipie
 		switch (aMessage.MessageId().MessageId())
 			{
 		case TCFFlow::TBlock::EId :
-			iBlocked = ETrue;
+		    {
+		    // if there is a packet being sent and it completes
+		    // flow control will stop sending any further packets
+		    // while the flow is blocked.
+		    
+		    iBcaController->BlockSending();
+		    }
 			break;
-		case TCFFlow::TUnBlock::EId :
-			iBlocked = EFalse;
-			if (iBinder)
-				{
-				iBinder->StartSending();
-				}
+        case TCFFlow::TUnBlock::EId :
+		    {          
+            // ResumeSending is specific for the unblocking the flow - it
+            // cancels the flow control and restarts the flow appropriately
+            // (i.e. if there is a packet outstanding, messages in the queue
+            // or idle and no queue).
+            iBcaController->ResumeSending();
+		    }
 			break;
 		case TCFFlow::TRejoin::EId:
 			{
@@ -795,25 +793,24 @@ some historical understanding.
 
 	switch (aEvent)
 	{
-	case EAgentToNifEventTypeDisableTimers: //GPRS suspension
-		{
-		_LOG_L1C1(_L8("CRawIPFlow::Received Suspend from Agent..."));
+    case EAgentToNifEventTypeDisableTimers: //GPRS suspension
+        {
+        _LOG_L1C1(_L8("CRawIPFlow::Received Suspend from Agent..."));
 
-		// Let the BCA controller know that data can no longer be sent over
-		// the PDP context.
-		iBcaController->UpdateContextStateFlag(EFalse);
+        // Let the BCA controller know that data can no longer be sent over
+        // the PDP context.
+        iBcaController->BlockSending();
 
-		break;
-		}
+        break;
+        }
 
-	case EAgentToNifEventTypeEnableTimers: //GPRS resumption
-		{
-		_LOG_L1C1(_L8("CRawIPFlow::Received Resume from Agent..."));
-		iBcaController->UpdateContextStateFlag(ETrue);
+    case EAgentToNifEventTypeEnableTimers: //GPRS resumption
+        {
+        _LOG_L1C1(_L8("CRawIPFlow::Received Resume from Agent..."));
+        iBcaController->ResumeSending();
 
-		break;
-		}
-
+        break;
+        }
 	case (EAgentToNifEventTypeDisableConnection) :
 		{
 		// This is handled by NIFMAN and passed to Flow as a Stop() call

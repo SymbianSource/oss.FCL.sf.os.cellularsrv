@@ -27,7 +27,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmPacketQoSTsy::CMmPacketQoSTsy()
+CMmPacketQoSTsy::CMmPacketQoSTsy():
+    iReqHandleType(EMultimodePacketQoSReqHandleUnknown)
     {
     }
 
@@ -121,8 +122,13 @@ TFLOGSTRING2("TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %d", aIpc );
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
 
-    // Reset last tsy request type
-    iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePacketQoSReqHandleUnknown, User::Invariant());
 
     TRAP( trapError, ret = DoExtFuncL( aTsyReqHandle, aIpc, aPackage ); );
 
@@ -143,6 +149,9 @@ TFLOGSTRING2("TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %d", aIpc );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
         }
 
     return KErrNone;

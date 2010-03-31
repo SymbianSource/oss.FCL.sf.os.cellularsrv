@@ -593,8 +593,7 @@ TVerdict CGprsContextUnSupportedTest::doTestStepL( void )
 	SetSimtsyTestNumberL(0);
     TRequestStatus            stat1;
     TBuf<30>                  contextName;
-    TInt                      err = 0;
-	RPacketContext::TDataVolume volume;
+    RPacketContext::TDataVolume volume;
 	TESTL(iPhone.Open(iTelServer, KPhoneName)==KErrNone);
 	TESTL(iPhone.Initialise()==KErrNone);
 

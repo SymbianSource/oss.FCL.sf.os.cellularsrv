@@ -34,7 +34,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmSmsTsy::CMmSmsTsy()
+CMmSmsTsy::CMmSmsTsy():
+    iReqHandleType(EMultimodeSmsReqHandleUnknown)
     {
 TFLOGSTRING("TSY: CMmSmsTsy::CMmSmsTsy: constructor");
     }
@@ -285,8 +286,13 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
                 break;
             // SMS messaging requests that need trapping
             default:
-                // reset last tsy request type
-                iReqHandleType = EMultimodeSmsReqHandleUnknown; 
+                // Ensure the ReqHandleType is unset.
+                // This will detect cases where this method indirectly calls itself
+                // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+                // Such cases are not supported because iReqHandleType is in the context of this class instance,
+                // not this request, and we don't want the values set by the inner request and the outer request
+                // interfering with each other.
+                __ASSERT_DEBUG(iReqHandleType==EMultimodeSmsReqHandleUnknown, User::Invariant());
 
                 TInt leaveCode( KErrNone );
                 TRAP( leaveCode, ret = DoExtFuncL( aTsyReqHandle, aIpc, 
@@ -308,6 +314,9 @@ TFLOGSTRING3("CMmSmsTsy: Leave trapped!, IPC=%d, error value:%d", aIpc, leaveCod
                     iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, 
                         aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+                    // We've finished with this value now. Clear it so it doesn't leak
+                    //  up to any other instances of this method down the call stack
+                    iReqHandleType = EMultimodeSmsReqHandleUnknown;
                     }
                 break;
             }
@@ -745,7 +754,6 @@ void CMmSmsTsy::CompleteNotifyReceiveModeChange()
 			*iNotifyReceiveModeChangePtr = iMobileSmsReceiveMode;
 			}
         ReqCompleted( reqHandle, KErrNone );
-        iNotifyReceiveModeChangePtr = NULL;
         }
     }
 
@@ -1328,6 +1336,17 @@ void CMmSmsTsy::CompleteAckSmsStored(
         {
         ReqCompleted( reqHandle, aError );
         }
+
+    if (aError != KErrNone)
+        {
+        // Ack error from LTSY. Need to reject receive messege request, to force the client to repost it.
+        reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(EMultimodeSmsReceiveMessage);
+        if( reqHandle != 0 )
+            {
+            ReqCompleted(reqHandle,  KErrGeneral);
+            }
+        iServerRoutingActivity = ERoutingNotActivated;
+        }
     }   
 
 //---------------------------------------------------------------------------- 
@@ -1463,6 +1482,17 @@ void CMmSmsTsy::CompleteNackSmsStored(
     if ( reqHandle )
         {
         ReqCompleted( reqHandle, aError );
+        }
+
+    if (aError != KErrNone)
+        {
+        // Nack error from LTSY. Need to reject receive messege request, to force the client to repost it.
+        reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(EMultimodeSmsReceiveMessage);
+        if( reqHandle != 0 )
+            {
+            ReqCompleted(reqHandle,  KErrGeneral);
+            }
+        iServerRoutingActivity = ERoutingNotActivated;
         }
     }
 
@@ -2787,9 +2817,6 @@ void CMmSmsTsy::SetTypeOfResponse(
     switch ( aReqHandleType )
         {
         // SMS specific requests
-        case EMultimodeSmsSetReceiveMode:
-            timeOut = KMmSmsSetReceiveMode;
-            break;
         case EMultimodeSmsAckStored:
         case EMultimodeSmsNackStored:
             timeOut = KMmSmsAckNackMessage;

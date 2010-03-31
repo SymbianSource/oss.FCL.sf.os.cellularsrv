@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -355,7 +355,7 @@ MLowerDataSender::TSendResult CIPv4Binder::Send(RMBufChain& aPdu)
  * Called by the protocol to send an outgoing IP packet to the network.
  *
  * @param aPdu The outgoing packet
- * @return Standard error codes
+ * @return MLowerDataSender::ESendBlocked or ESendAccepted based on state of flow.
  */
 	{
 	_LOG_L1C1(_L8("CIPv4Binder::Send"));
@@ -364,10 +364,10 @@ MLowerDataSender::TSendResult CIPv4Binder::Send(RMBufChain& aPdu)
 	LogPacket(aPdu);
 #endif
 
-	// Return <0: an error occurred
-	// Return  0: no error, but don't send any more packets
+	// Return ESendBlocked: flow cannot accept any more packets [blocked, queue full, etc]
+	// Return ESendAccepted: flow has accepted this packet and can accept another.
 
-	return static_cast<MLowerDataSender::TSendResult>(GetFlow().SendPacket(aPdu, NULL, KIp4FrameType));
+	return GetFlow().SendPacket(aPdu, NULL, KIp4FrameType);
 	}
 
 TInt CIPv4Binder::Notification(TAgentToNifEventType /*aEvent*/, 

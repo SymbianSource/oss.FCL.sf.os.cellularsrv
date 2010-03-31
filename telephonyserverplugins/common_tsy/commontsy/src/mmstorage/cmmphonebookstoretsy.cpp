@@ -32,7 +32,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmPhoneBookStoreTsy::CMmPhoneBookStoreTsy()
+CMmPhoneBookStoreTsy::CMmPhoneBookStoreTsy():
+    iReqHandleType(EMultimodePhoneBookStoreReqHandleUnknown)
     {
     }
 
@@ -79,7 +80,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - PB %S", &iPhoneBookName);
     iUsedEntries = 0;
 
     // Create bootState
-    CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+    CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 
     //Create Read Store
     iReadReqStore = new ( ELeave ) TReadRequestStore();
@@ -129,7 +130,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - PB %S", &iPhone
 
     if ( iMmPhoneTsy )
         {
-        CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+        CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
         
         if ( iMmPhoneTsy->GetCustomTsy() )
             {
@@ -487,8 +488,14 @@ TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyRe
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
 
-    // Reset last tsy request type
-    iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePhoneBookStoreReqHandleUnknown, User::Invariant());
+
 
     TRAP( trapError, ret = DoExtFuncL( aTsyReqHandle, aIpc, aPackage ); );
 
@@ -509,6 +516,9 @@ TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyRe
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
         }
 
     return KErrNone;
@@ -1092,7 +1102,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", &iPhoneBookName);
 
 		TInt ret = KErrNone;
-		CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+		CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 		
               if ( !iCacheReady )
                 {
@@ -1164,7 +1174,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %i",aResult 
 	CopyLtsyCacheToCtsyCacheL(entryData);
 #endif
 	
-    CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+    CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 
     // If cache were successfully generated, update
     // the number of used entries
@@ -1765,6 +1775,12 @@ TInt CMmPhoneBookStoreTsy::WriteByIndexL(
     // - ANR/AAS
     // - GRP
 
+	if ( iWriteEntry != NULL )
+		{
+		delete iWriteEntry;
+		iWriteEntry = NULL;
+		}
+
     // NOTE: when this entry is created, it is always
     // put on the cache in succesfull case.
     iWriteEntry = new( ELeave )CPhoneBookStoreEntry();
@@ -2119,6 +2135,12 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::DeleteL - aIndex: %i",*aIndex );
             }
         else
             {
+			if ( iDeleteEntry == NULL )
+				{
+				delete iDeleteEntry;
+				iDeleteEntry = NULL;
+				}
+
             // These are done for updating cache
             iDeleteEntry = new ( ELeave ) CPhoneBookStoreEntry;
             iDeleteEntry->ConstructL();

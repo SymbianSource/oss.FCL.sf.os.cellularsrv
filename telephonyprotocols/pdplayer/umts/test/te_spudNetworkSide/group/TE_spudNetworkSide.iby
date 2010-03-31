@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -52,5 +52,21 @@ data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_PPPSize_spud.ini								testdat
 data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_PPPSize_spud.xml								testdata\configs\TE_PPPSize_spud.xml
 data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_PPPSize_config.txt								testdata\configs\TE_PPPSize_config.txt
 data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_SpudNetworkSide_Channel_config.txt			testdata\configs\TE_SpudNetworkSide_Channel_config.txt
+
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdplayer_ip6.script 		testdata\scripts\te_pdplayer_ip6.script
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6.ini								testdata\configs\te_pdplayer_ip6.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6.cfg								testdata\configs\te_pdplayer_ip6.cfg
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6_loopbackcsy.ini								testdata\configs\te_pdplayer_ip6_loopbackcsy.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6_simtsy_config.txt			testdata\configs\te_pdplayer_ip6_simtsy_config.txt
+
+//stress tests
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdpstresstestsparam.ini						testdata\configs\te_pdpstresstestsparam.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdpstresstest1.script 							testdata\scripts\te_pdpstresstest1.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdpstresstests.script 							testdata\scripts\te_pdpstresstests.script
+
+//sip tests
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_sipaddress_config.txt			testdata\configs\te_spudnetworkside_sipaddress_config.txt
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_sipaddress.ini					testdata\configs\te_spudnetworkside_sipaddress.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_sipaddress.script 		testdata\scripts\te_spudnetworkside_sipaddress.script
 
 #endif // TE_SPUD_NETWORK_SIDE_IBY
