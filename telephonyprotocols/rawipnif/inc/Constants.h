@@ -78,9 +78,9 @@ _LIT8(KNifSubDir, "RawIp");
 _LIT8(KRefFile, "RawIP"); 
 
 // Max size of IP packet 
-const TInt KMaxIPPacket = 1500;
-const TInt KIPTagHeaderLength = 2;
-const TInt KMaxIPPacketAndHeader = KMaxIPPacket + KIPTagHeaderLength;
+const TUint KMaxIPPacket = 1500;
+const TUint KIPTagHeaderLength = 2;
+const TUint KMaxIPPacketAndHeader = KMaxIPPacket + KIPTagHeaderLength;
 
 const TInt KIPTagHeaderByte1 = 0x00;
 const TInt KIPTagHeaderByte2 = 0x21;

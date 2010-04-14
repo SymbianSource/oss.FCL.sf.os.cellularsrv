@@ -57,8 +57,7 @@ typedef MBcaFactory* (*TNewBcaFactoryL)();
 class CBcaIoController : public CBase
 	{
 public:
-	static CBcaIoController* NewL(MControllerObserver& aObserver, CBttLogger* aTheLogger);
-	void ConstructL();
+	static CBcaIoController* NewL(MControllerObserver& aObserver, CBttLogger* aTheLogger);	
 	~CBcaIoController();
 
 	void StartL();
@@ -93,12 +92,13 @@ public:
     
 protected:
     CBttLogger* iTheLogger;
-    TInt iMaxTxPacketSize;
-    TInt iMaxRxPacketSize;
+    TUint iMaxTxPacketSize;
+    TUint iMaxRxPacketSize;
     
 private:
     
     CBcaIoController(MControllerObserver& aObserver, CBttLogger* aTheLogger);
+    void ConstructL();
     
     enum TSendState
         {

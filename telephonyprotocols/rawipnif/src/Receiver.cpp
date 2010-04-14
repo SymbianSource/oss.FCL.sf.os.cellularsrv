@@ -23,7 +23,10 @@
 #include "Constants.h"
 #include <es_ini.h>
 
-CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise)
+const TUint KBufferIncreaseStep=500;
+const TUint K64k=65535;
+
+CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize)
 /**
  * Constructor. Performs standard active object initialisation.
  *
@@ -33,12 +36,12 @@ CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt a
 	: CActive(EPriorityHigh), 
 	  iObserver(aObserver), 
 	  iTheLogger(aTheLogger),
-	  iMaxPacketSise(aMaxPacketSise)
+	  iMaxPacketSize(aMaxPacketSize)
 	{	
 	CActiveScheduler::Add(this);
 	}
 
-CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise)
+CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize)
 /**
  * Two-phase constructor. Creates a new CBcaIoController object, performs 
  * second-phase construction, then returns it.
@@ -48,7 +51,7 @@ CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, 
  * @return A newly constructed CBcaIoController object
  */
 	{
-	CReceiver* self = new (ELeave) CReceiver(aObserver, aTheLogger, aMaxPacketSise);
+	CReceiver* self = new (ELeave) CReceiver(aObserver, aTheLogger, aMaxPacketSize);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -61,7 +64,7 @@ void CReceiver::ConstructL()
  */
 	{
 	_LOG_L1C1(_L8("CReceiver::ConstructL"));
-	iData.CreateL(iMaxPacketSise);
+	iData.CreateL(iMaxPacketSize);
 	}
 
 CReceiver::~CReceiver()
@@ -86,11 +89,27 @@ void CReceiver::RunL()
 		if (iStatus == KErrNoMemory)
 			{
 			_LOG_L2C1(
-				_L8("WARNING! CReceiver: Read failed with KErrNoMemory"));
-			// Read operation failed!! Nif will re-issue the read request.
-		    (iObserver.Bca())->Read(iStatus, iData);
-
-		    SetActive();
+				_L8("WARNING! CReceiver: Read failed with KErrNoMemory. Increase buffer."));
+			// Read operation failed!! Nif will re-issue the read request. Increase buffer.			
+			if ((iMaxPacketSize + KBufferIncreaseStep) > K64k)
+			    {
+			    // In theory IP packet can't be bigger than 64k, so if we come here something is wrong so stop observer. 
+                iObserver.Stop(KErrNoMemory);
+			    }
+			else
+			    {
+                iMaxPacketSize += KBufferIncreaseStep;
+                TInt err = iData.ReAlloc(iMaxPacketSize);
+                if (KErrNoMemory == err)
+                    {                
+                    iObserver.Stop(KErrNoMemory);
+                    }
+                else
+                    {
+                    (iObserver.Bca())->Read(iStatus, iData);    
+                    SetActive();
+                    }
+			    }
 			}
 		else 
 			{

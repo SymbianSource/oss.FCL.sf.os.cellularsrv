@@ -42,6 +42,7 @@ public:
 	void TestLoanDataPort00011L();
 	void TestRecoverDataPort0001L();
 	void TestRecoverDataPort0006L();
+    void TestRecoverDataPort0007L();
 	void TestRecoverDataPort00011L();
 	void TestAcquireOwnership0001L();
 	void TestAcquireOwnership0006L();

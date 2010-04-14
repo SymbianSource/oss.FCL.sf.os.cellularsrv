@@ -156,6 +156,7 @@ CTestSuite* CCTsyPhoneBookStoreFU::CreateSuiteL(const TDesC& aName)
 	//ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00010L);
     ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00011L);   //sdn
     ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00011bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00011cL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00012L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00013L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestGetInfo00014L);
@@ -2331,6 +2332,19 @@ void CCTsyPhoneBookStoreFU::TestGetInfo00011bL()
     AuxGetInfo1bL(KETelIccSdnPhoneBook);     
     }
 
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00011c
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for SDN phonebook when multiple phonebooks are opened simultaneously
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for SDN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestGetInfo00011cL()
+    {
+    AuxGetInfo1cL();
+    }
 
 /**
 @SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00012
@@ -5842,6 +5856,154 @@ void CCTsyPhoneBookStoreFU::AuxGetInfo1bL(const TDesC& aName)
 	CleanupStack::PopAndDestroy(4, this); // data, data2, this...	
     }
 
+void CCTsyPhoneBookStoreFU::AuxGetInfo1cL()
+    {
+	//
+	// Open three phonebooks: ADN, FDN, SDN. Check that SDN phonebook is initialised correctly.
+	//
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhone2L();
+
+	RBuf8 dataS7;
+	CleanupClosePushL(dataS7);
+	RBuf8 dataS8;
+	CleanupClosePushL(dataS8);
+	RBuf8 dataS9;
+	CleanupClosePushL(dataS9);	
+	
+	RBuf8 data2;
+	CleanupClosePushL(data2);
+
+	TName nameS7(KETelIccAdnPhoneBook);
+	RMobilePhoneBookStore bookStoreS7;
+	CleanupClosePushL(bookStoreS7);
+
+	TName nameS8(KETelIccFdnPhoneBook);
+	RMobilePhoneBookStore bookStoreS8;
+	CleanupClosePushL(bookStoreS8);
+
+	TName nameS9(KETelIccSdnPhoneBook);
+	RMobilePhoneBookStore bookStoreS9;
+	CleanupClosePushL(bookStoreS9);
+	
+	/*
+	Test scenario:
+		We open three bookstores: S7, S8, S9 (in that order).
+		We then call GetInfo on S9.
+	
+	LTSY must receive (>>) and complete (<<) the following requests in the following sequence:
+	>> EMmTsyPhoneBookStoreInitIPC (S7)
+	<< EMmTsyPhoneBookStoreInitIPC (S7)
+	>> EMmTsyPhoneBookStoreCacheIPC (S7)
+	>> EMmTsyPhoneBookStoreCacheIPC (S8)
+	>> EMmTsyPhoneBookStoreGetInfoIPC (S9)
+	<< EMmTsyPhoneBookStoreCacheIPC (S7)
+	<< EMmTsyPhoneBookStoreCacheIPC (S8)
+	<< EMmTsyPhoneBookStoreGetInfoIPC (S9) 	
+	*/
+	
+	TMockLtsyPhoneBookData0 storeInitData(nameS7);
+    storeInitData.SerialiseL(dataS7);
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, dataS7);	
+
+    // Open all phonebook store sessions. This will cause an Init request being sent down to LTSY,
+    // followed by Cache requests for S7 and S8 when initialisation completes.
+  	TInt ret = bookStoreS7.Open(iPhone, nameS7);
+  	ret = bookStoreS8.Open(iPhone, nameS8);
+	ret = bookStoreS9.Open(iPhone, nameS9);	
+	 
+	ASSERT_EQUALS(KErrNone, ret);	
+	
+	TRequestStatus requestStatus;
+   	TRequestStatus mockLtsyStatus;
+	RMobilePhoneBookStore::TMobilePhoneBookInfoV1 bookInfo;
+	RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg bookPckg(bookInfo);
+	bookStoreS9.GetInfo(requestStatus, bookPckg); 	
+	
+	ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+	// check that CTSY waits for initialisation to complete 
+	// before completing the GetInfo client request
+	User::After(KOneSecond);
+	ASSERT_EQUALS(KRequestPending, requestStatus.Int());	
+	
+	// prepare initialisation completion data
+    CStorageInfoData storageData;
+	SetStorageInfoData(storageData);
+	TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(nameS7, storageData);
+    retStoreInitC.SerialiseL(data2);
+
+    // complete the Init request. This will trigger cache requests 
+    // for S7 and S8 from CTSY to LTSY.
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, data2, 0);
+
+	dataS7.Close();
+	TMockLtsyPhoneBookData0 tsyDataS7(nameS7);           
+	tsyDataS7.SerialiseL(dataS7);        
+	iMockLTSY.ExpectL(EMmTsyPhoneBookStoreCacheIPC, dataS7);
+	
+	dataS8.Close();
+	TMockLtsyPhoneBookData0 tsyDataS8(nameS8);           
+	tsyDataS8.SerialiseL(dataS8);
+	iMockLTSY.ExpectL(EMmTsyPhoneBookStoreCacheIPC, dataS8);
+	
+    // GetInfo request should still be pending
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+
+    // Prepare the cache responses, and tell MockLTSY to complete them
+	CArrayPtrSeg<CPhoneBookStoreEntry>* cacheS7 = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+	CleanupStack::PushL(cacheS7);
+
+	TMockLtsyPhoneBookData1<CArrayPtrSeg<CPhoneBookStoreEntry>*> storeCacheDataS7(nameS7, cacheS7);
+	data2.Close();
+	storeCacheDataS7.SerialiseL(data2);   
+
+	iMockLTSY.CompleteL(EMmTsyPhoneBookStoreCacheIPC, KErrNone, data2, 0);
+	CleanupStack::PopAndDestroy(cacheS7);
+	
+	CArrayPtrSeg<CPhoneBookStoreEntry>* cacheS8 = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+	CleanupStack::PushL(cacheS8);
+
+	TMockLtsyPhoneBookData1<CArrayPtrSeg<CPhoneBookStoreEntry>*> storeCacheDataS8(nameS8, cacheS8);
+	data2.Close();
+	storeCacheDataS8.SerialiseL(data2);   
+			  
+	iMockLTSY.CompleteL(EMmTsyPhoneBookStoreCacheIPC, KErrNone, data2, 0);
+	CleanupStack::PopAndDestroy(cacheS8);
+	
+	dataS9.Close();
+	TMockLtsyPhoneBookData0 tsyDataS9(nameS9);           
+	tsyDataS9.SerialiseL(dataS9);
+	
+	// Next to come from CTSY to LTSY will be the GetInfo request for S9
+	iMockLTSY.ExpectL(EMmTsyPhoneBookStoreGetInfoIPC, dataS9);
+	ASSERT_EQUALS(KRequestPending, requestStatus.Int());    
+	
+	// prepare response and complete
+	TInt usedEntries(12);
+	TMockLtsyPhoneBookData1< TInt > styData2(nameS9, usedEntries);
+	data2.Close();    
+	styData2.SerialiseL(data2);
+	iMockLTSY.CompleteL(EMmTsyPhoneBookStoreGetInfoIPC, KErrNone, data2, 10);
+   
+	User::WaitForRequest(requestStatus); // GetInfo
+   	ASSERT_EQUALS(KErrNone, requestStatus.Int());
+ 
+ 	// check that returned values are correct
+    ASSERT_TRUE(0 == bookInfo.iName.Compare(nameS9));
+    ASSERT_EQUALS(usedEntries, bookInfo.iUsedEntries);	
+    ASSERT_EQUALS(-1, bookInfo.iTotalEntries);	
+    ASSERT_EQUALS(50, bookInfo.iMaxTextLength);	
+    ASSERT_EQUALS(50, bookInfo.iMaxNumLength);	
+    ASSERT_EQUALS(RMobilePhoneBookStore::ELocationIccMemory, bookInfo.iLocation);	
+    ASSERT_EQUALS((TUint16)0, bookInfo.iChangeCounter);	
+    ASSERT_EQUALS((TUint32)RMobilePhoneStore::KCapsReadAccess, bookInfo.iCaps);
+    
+   	
+   	// final check and cleanup
+   	AssertMockLtsyStatusL();
+	CleanupStack::PopAndDestroy(8, this); // data, data2, this...
+    }
 
 void CCTsyPhoneBookStoreFU::AuxGetInfo2L(const TDesC& aName)
     {

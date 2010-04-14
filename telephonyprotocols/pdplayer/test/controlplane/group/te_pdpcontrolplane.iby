@@ -1,0 +1,34 @@
+/*
+* Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:
+*
+*/
+
+#ifndef TE_PDPCONTROLPLANE_IBY
+#define TE_PDPCONTROLPLANE_IBY
+
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside1.xml Testdata\configs\te_controlplanenetworkside1.xml
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside_config.txt Testdata\configs\te_controlplanenetworkside_config.txt
+
+data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_PDP_ControlPlane.script Testdata\scripts\te_PDP_ControlPlane.script
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworksideloopbackcsy.ini Testdata\configs\te_controlplanenetworksideloopbackcsy.ini
+
+data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_PDP_ControlPlane28.script Testdata\scripts\te_PDP_ControlPlane28.script
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside_test28.ini Testdata\configs\te_controlplanenetworkside_test28.ini
+
+data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_PDP_ControlPlane29.script Testdata\scripts\te_PDP_ControlPlane29.script
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside_test29.ini Testdata\configs\te_controlplanenetworkside_test29.ini
+
+
+#endif // TE_PDPCONTROLPLANE_IBY

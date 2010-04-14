@@ -50,7 +50,7 @@ patchdata rawip2.dll@KMaxRxIPPacketSize 0x7d2
 // patch data for CBcaController::BaseConstructL API
 patchdata rawip.dll@KMaxSendQueueLen 0x5
 patchdata rawip.dll@KMaxTxIPPacketSize 0x57a
-patchdata rawip.dll@KMaxRxIPPacketSize 0x7d2
+patchdata rawip.dll@KMaxRxIPPacketSize 0x57a
 #endif //_ZERO_COPY_NETWORKING
 
 #endif // __RAWIP_IBY__

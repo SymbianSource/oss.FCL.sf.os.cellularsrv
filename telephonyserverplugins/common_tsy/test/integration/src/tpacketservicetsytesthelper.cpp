@@ -724,61 +724,71 @@ void TPacketServiceTsyTestHelper::WaitForPacketServiceNotifyStatusChange(
 void TPacketServiceTsyTestHelper::GetGprsSettings(RMobilePhone::TMobilePhoneNetworkInfoV1 aInfo, TPtrC& aAccessPoint, TPtrC& aUser, TPtrC& aPassword,TUint aNumber)
 {
     TBuf<200> section;
-    if(aInfo.iShortName.Find(_L("voda")) != KErrNotFound)	//vodafone
+    TPtrC ptrNetworkName;
+    if( aInfo.iShortName.Size() > 0 )
+        {
+        ptrNetworkName.Set(aInfo.iShortName.Ptr(), aInfo.iShortName.Length());
+        }
+    else
+        {
+        ptrNetworkName.Set(aInfo.iDisplayTag.Ptr(), aInfo.iDisplayTag.Length());    
+        }
+    DEBUG_PRINTF2(_L("Current network is %S"), &ptrNetworkName);
+    if(ptrNetworkName.Find(_L("voda")) != KErrNotFound)	//vodafone
 		{
         section.Copy(KIniSectionVodafoneGprs);
 		DEBUG_PRINTF1(_L("Retrieving Vodafone GPRS settings"));
 		}
-	else if(aInfo.iShortName.Find(_L("O2"))	!= KErrNotFound)//O2
+	else if(ptrNetworkName.Find(_L("O2"))	!= KErrNotFound)//O2
 		{
 		DEBUG_PRINTF1(_L("Retrieving O2 GPRS settings"));
         section.Copy(KIniSectionO2Gprs);
 		}
-	else if(aInfo.iShortName.Find(_L("Orange"))!= KErrNotFound)	//Orange
+	else if(ptrNetworkName.Find(_L("Orange"))!= KErrNotFound)	//Orange
 		{
 		DEBUG_PRINTF1(_L("Retrieving Orange GPRS settings"));
         section.Copy(KIniSectionOrangeGprs);
 		}
-	else if((aInfo.iShortName.Find(_L("one2one")) != KErrNotFound)||(aInfo.iShortName.Find(_L("T-Mobile"))	!= KErrNotFound))//TMobile
+	else if((ptrNetworkName.Find(_L("one2one")) != KErrNotFound)||(ptrNetworkName.Find(_L("T-Mobile"))	!= KErrNotFound) || (ptrNetworkName.Find(_L("TMO UK")) != KErrNotFound))//TMobile
 		{
 		DEBUG_PRINTF1(_L("Retrieving TMobile GPRS settings"));
         section.Copy(KIniSectionTMobileGprs);
 		}
-	else if(aInfo.iShortName.Find(_L("Elisa"))!= KErrNotFound)	//Elisa
+	else if(ptrNetworkName.Find(_L("Elisa"))!= KErrNotFound)	//Elisa
 		{
 		DEBUG_PRINTF1(_L("Retrieving Elisa GPRS settings"));
         section.Copy(KIniSectionElisaGprs);
 		}
-	else if(aInfo.iShortName.Find(_L("dna"))!= KErrNotFound)	//DNA
+	else if(ptrNetworkName.Find(_L("dna"))!= KErrNotFound)	//DNA
 		{
 		DEBUG_PRINTF1(_L("Retrieving DNA GPRS settings"));
         section.Copy(KIniSectionDNAGprs);
 		}
-	else if(aInfo.iShortName.Find(_L("SONERA"))!= KErrNotFound)	//SONERA
+	else if(ptrNetworkName.Find(_L("SONERA"))!= KErrNotFound)	//SONERA
 		{
 		DEBUG_PRINTF1(_L("Retrieving Sonera GPRS settings"));
         section.Copy(KIniSectionSoneraGprs);
 
 		}
-	else if(aInfo.iShortName.Find(_L("3 UK")) != KErrNotFound)  // Three
+	else if(ptrNetworkName.Find(_L("3 UK")) != KErrNotFound)  // Three
 		{
 		DEBUG_PRINTF1(_L("Retrieving Three GPRS settings"));
         section.Copy(KIniSectionThreeGprs);
         }
-    if(aInfo.iShortName.Find(_L("NTN")) != KErrNotFound)   // NTN
+	else if(ptrNetworkName.Find(_L("NTN")) != KErrNotFound)   // NTN
         {
         section.Copy(KIniSectionVodafoneGprs);
         DEBUG_PRINTF1(_L("Retrieving NTN GPRS settings"));
         }
-	else if( (aInfo.iShortName.Find(_L("01")) >=0) || 
-			(aInfo.iShortName.Find(_L("ANITE")) >=0) ) // Anite
+	else if( (ptrNetworkName.Find(_L("01")) >=0) || 
+			(ptrNetworkName.Find(_L("ANITE")) >=0) ) // Anite
 		{
 		DEBUG_PRINTF1(_L("Retrieving Anite GPRS settings"));
         section.Copy(KIniSectionVodafoneGprs); // Using vodafone GRPS settings, since Anite should accept any kind
 		}
 	else
 		{
-		DEBUG_PRINTF2(_L("Unable to retrieve network name \"%S\". Using defaults"),&(aInfo.iShortName));
+		DEBUG_PRINTF2(_L("Unable to retrieve network name \"%S\". Using defaults"),&(ptrNetworkName));
         section.Copy(KIniSectionDefaultGprs);
 		}
     if(aNumber!=1)

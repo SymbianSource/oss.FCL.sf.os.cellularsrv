@@ -660,6 +660,7 @@ void CMmDataCallTsy::CompleteNotifyStatusChange(
 
                 SetUnowned();
                 ClearCallStatus();
+				RecoverDataPort(0);
                 statusChanged = ETrue;
 
                 if ( KErrNone != aResult )
@@ -2448,7 +2449,10 @@ TFLOGSTRING2("TSY: CMmDataCallTsy::RecoverDataPort - Client returning control: %
         ret = KErrEtelPortNotLoanedToClient;
         }
 
-    ReqCompleted( aTsyReqHandle, ret );
+    if(0 != aTsyReqHandle)
+        {
+        ReqCompleted( aTsyReqHandle, ret );
+        }
 
     return KErrNone;
     }

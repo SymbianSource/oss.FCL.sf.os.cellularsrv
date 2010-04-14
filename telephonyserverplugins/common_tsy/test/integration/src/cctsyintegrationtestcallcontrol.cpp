@@ -569,7 +569,7 @@ TVerdict CCTSYIntegrationTestCallControl0003::doTestStepL()
 	// Check RCall::GetInfo returns valid call name.
 	// Check RCall::GetInfo returns valid voice line name.
 	// Check RCall::GetInfo returns call status of EStatusIdle.
-	// Check RCall::GetInfo returns call duration of 0.
+
 	RCall::TCallInfo callInfo;
 	ASSERT_EQUALS(call1.GetInfo(callInfo), KErrNone,  
 			_L("RCall::GetInfo returned an error"));
@@ -579,8 +579,6 @@ TVerdict CCTSYIntegrationTestCallControl0003::doTestStepL()
 			_L("RCall::GetInfo returned an invalid  Line name"));
 	ASSERT_EQUALS(callInfo.iStatus, RCall::EStatusIdle,    
 			_L("RCall::GetInfo wrong iStatus, should be EStatusIdle"));
-	ASSERT_EQUALS(callInfo.iDuration.Int(), 0,    
-			_L("RCall::GetInfo wrong iDuration, should be 0"));
 
 	// Check RMobileCall::GetMobileCallInfo returns iValid with correct flags for returned parameters set.
 	// Check RMobileCall::GetMobileCallInfo returns valid call name.
@@ -9090,6 +9088,10 @@ TVerdict CCTSYIntegrationTestCallControl0024::doTestStepL()
 
 	// Post notification RMobilePhone::NotifyDTMFCapsChange
 	mobilePhone.NotifyDTMFCapsChange(notifyDTMFCapsChangeStatus, dTMFcaps);
+	
+	// Post notifier for RCall::NotifyStatusChange
+	call1.NotifyStatusChange(notifyCallStatusChangeStatus, callStatus);
+	
 	// Resume the call 
 	TExtEtelRequestStatus resumeStatus(call1, EMobileCallResume);
 	CleanupStack::PushL(resumeStatus);
@@ -9177,8 +9179,7 @@ TVerdict CCTSYIntegrationTestCallControl0024::doTestStepL()
 
 	// ===  Check DTMF caps ===
 
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 10024);
-	// Check RMobilePhone::NotifyDTMFCapsChange completes with caps in set of KCapsSendDTMFString | KCapsSendDTMFSingleTone
+    // Check RMobilePhone::NotifyDTMFCapsChange completes with caps in set of KCapsSendDTMFString | KCapsSendDTMFSingleTone
 	TUint32 wantedDtmfCaps = RMobilePhone::KCapsSendDTMFString | RMobilePhone::KCapsSendDTMFSingleTone;
 	iCallControlTestHelper.WaitForMobilePhoneNotifyDTMFCapsChange(
 										mobilePhone,
@@ -12808,14 +12809,11 @@ TVerdict CCTSYIntegrationTestCallControl0036::doTestStepL()
 
 		if(callToTransfer == &call2)
 			{
-			// There is a Ctsy defect when attempting to transfer call2 (the unheld call), which causes the operation to time-out.
-			ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 10052);
 			ASSERT_EQUALS(transferStatus.Int(), KErrNone, _L("RCall::Transfer of call2 returned with an error"));
 			}
 		else
 			{
-			ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 10048);
-			ASSERT_EQUALS(transferStatus.Int(), KErrGsmCCFacilityRejected, _L("RCall::Transfer returned an unexpected status"));
+			ASSERT_EQUALS(transferStatus.Int(), KErrNone, _L("RCall::Transfer returned an unexpected status"));
 			}
 		
 		iEtelSessionMgr.ReleaseCall(KMainServer,KMainPhone,KVoiceLine,KCall3);
@@ -13011,6 +13009,7 @@ TVerdict CCTSYIntegrationTestCallControl0038::doTestStepL()
 	TExtEtelRequestStatus notifyMobileCallStatusChangeStatus (call1, EMobileCallNotifyMobileCallStatusChange);
 	CleanupStack::PushL(notifyMobileCallStatusChangeStatus);
 	RMobileCall::TMobileCallStatus mobileCallStatus;
+	RMobileCall::TMobileCallStatus mobileCallStatus2;
 	call1.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus, mobileCallStatus);
 	
 	// Dial a number that answers. 
@@ -13044,7 +13043,7 @@ TVerdict CCTSYIntegrationTestCallControl0038::doTestStepL()
 	// Post notifier
 	TExtEtelRequestStatus notifyMobileCallStatusChangeStatus2 (call2, EMobileCallNotifyMobileCallStatusChange);
 	CleanupStack::PushL(notifyMobileCallStatusChangeStatus2);
-	call2.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus2, mobileCallStatus);
+	call2.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus2, mobileCallStatus2);
 	
 	// Dial another number that answers. 
 	ASSERT_TRUE(GetStringFromConfig(KIniVoiceNumSection, KIniVoiceNumber2, number) != EFalse, _L("CTestStep::GetStringFromConfig did not complete as expected"));
@@ -13058,10 +13057,14 @@ TVerdict CCTSYIntegrationTestCallControl0038::doTestStepL()
 	expectedMobileCallStatus  = RMobileCall::EStatusConnected;
 	iCallControlTestHelper.WaitForMobileCallNotifyMobileCallStatusChange(call2,
 														                notifyMobileCallStatusChangeStatus2,
-														                mobileCallStatus,
+														                mobileCallStatus2,
 														                expectedMobileCallStatus ,
 														                expectedStatus);
-					
+	
+	// Post notifier
+	call1.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus, mobileCallStatus);
+	call2.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus2, mobileCallStatus2);
+	
 	// Transfer call 1.
 	TExtEtelRequestStatus getTransferStatus(call1, EMobileCallTransfer);
 	CleanupStack::PushL(getTransferStatus);
@@ -13070,26 +13073,71 @@ TVerdict CCTSYIntegrationTestCallControl0038::doTestStepL()
 	// Cancel transfer. 
 	phone.CancelAsyncRequest(EMobileCallTransfer);
 	
-	// Check KErrGsmCCFacilityRejected returned.
-	// $CTSYProblem LTSY propagating error -4285(KErrGsmCCFacilityRejected) to CTSY, which is correctly returning it back to client
-	// therefore error code does not indicate an error in the CTSY but rather that the LTSY / network is not supporting the requested operation.
-	// Changed test to check if KErrGsmCCFacilityRejected is returned instead of KErrCancel | KErrNone.
 	ASSERT_EQUALS(WaitForRequestWithTimeOut(getTransferStatus, ETimeMedium), KErrNone, _L("RTelSubSessionBase::CancelAsyncRequest timed-out"));
-	ASSERT_EQUALS(getTransferStatus.Int(), KErrGsmCCFacilityRejected, _L("RMobilePhone::CancelAsyncRequest returned with an incorrect status"));
+	ASSERT_TRUE((getTransferStatus.Int() == KErrNone) || (getTransferStatus.Int() == KErrCancel), _L("RMobileCall::Transfer did not return KErrNone or KErrCancel"));
 	
-	// Hang up call1. 
-	TCoreEtelRequestStatus<RCall> hangUpStatus (call1,&RCall::HangUpCancel);	
-	CleanupStack::PushL(hangUpStatus);
-	call1.HangUp(hangUpStatus);
-	ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus, ETimeMedium), KErrNone, _L("RCall::HangUp timed-out"));
-	ASSERT_EQUALS(hangUpStatus.Int(), KErrNone,  _L("RCall::HangUp returned with an error"));
+	if(getTransferStatus.Int() == KErrNone)
+	    { // call transfering has not been canceled
+        ERR_PRINTF1(_L("<font color=Orange>TransferCancel didn't succeed</font>"));
+        expectedMobileCallStatus  = RMobileCall::EStatusDisconnecting;
+        iCallControlTestHelper.WaitForMobileCallNotifyMobileCallStatusChange(call1,
+                                                                        notifyMobileCallStatusChangeStatus,
+                                                                        mobileCallStatus,
+                                                                        expectedMobileCallStatus ,
+                                                                        expectedStatus);
+        
+        call1.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus, mobileCallStatus);
+        
+        iCallControlTestHelper.WaitForMobileCallNotifyMobileCallStatusChange(call2,
+                                                                        notifyMobileCallStatusChangeStatus2,
+                                                                        mobileCallStatus2,
+                                                                        expectedMobileCallStatus ,
+                                                                        expectedStatus);
 
-	// Hang up call2. 
-	TCoreEtelRequestStatus<RCall> hangUpStatus2 (call2,&RCall::HangUpCancel);	
-	CleanupStack::PushL(hangUpStatus2);
-	call2.HangUp(hangUpStatus2);	
-	ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus2, ETimeMedium), KErrNone, _L("RCall::HangUp timed-out"));
-	ASSERT_EQUALS(hangUpStatus2.Int(), KErrNone,  _L("RCall::HangUp returned with an error"));
+        call2.NotifyMobileCallStatusChange(notifyMobileCallStatusChangeStatus2, mobileCallStatus2);
+        expectedMobileCallStatus = RMobileCall::EStatusIdle;
+        iCallControlTestHelper.WaitForMobileCallNotifyMobileCallStatusChange(call1,
+                                                                        notifyMobileCallStatusChangeStatus,
+                                                                        mobileCallStatus,
+                                                                        expectedMobileCallStatus ,
+                                                                        expectedStatus);
+        
+        iCallControlTestHelper.WaitForMobileCallNotifyMobileCallStatusChange(call2,
+                                                                        notifyMobileCallStatusChangeStatus2,
+                                                                        mobileCallStatus2,
+                                                                        expectedMobileCallStatus ,
+                                                                        expectedStatus);
+
+        // Check RMobileCall::GetMobileCallStatus returns status of EStatusIdle.
+        ASSERT_EQUALS(call1.GetMobileCallStatus(mobileCallStatus), KErrNone, _L("RMobileCall::GetMobileCallStatus returned an error"));
+        ASSERT_EQUALS(mobileCallStatus, RMobileCall::EStatusIdle, _L("RMobileCall::GetMobileCallStatus did not set call status EStatusIdle as expected"));
+
+        ASSERT_EQUALS(call2.GetMobileCallStatus(mobileCallStatus2), KErrNone, _L("RMobileCall::GetMobileCallStatus returned an error"));
+        ASSERT_EQUALS(mobileCallStatus2, RMobileCall::EStatusIdle, _L("RMobileCall::GetMobileCallStatus did not set call status EStatusIdle as expected"));
+
+	    }
+	else
+	    { // call transfering has been canceled.
+        // Hang up call1. 
+        TCoreEtelRequestStatus<RCall> hangUpStatus (call1,&RCall::HangUpCancel);    
+        CleanupStack::PushL(hangUpStatus);
+        call1.HangUp(hangUpStatus);
+        ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus, ETimeMedium), KErrNone, _L("RCall::HangUp timed-out"));
+        ASSERT_EQUALS(hangUpStatus.Int(), KErrNone,  _L("RCall::HangUp returned with an error"));
+    
+        // Hang up call2. 
+        TCoreEtelRequestStatus<RCall> hangUpStatus2 (call2,&RCall::HangUpCancel);   
+        CleanupStack::PushL(hangUpStatus2);
+        call2.HangUp(hangUpStatus2);    
+        ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus2, ETimeMedium), KErrNone, _L("RCall::HangUp timed-out"));
+        ASSERT_EQUALS(hangUpStatus2.Int(), KErrNone,  _L("RCall::HangUp returned with an error"));
+        
+        // hangUpStatus
+        // hangUpStatus2
+        CleanupStack::PopAndDestroy(2, &hangUpStatus);
+	    }
+	
+	
 	
 	////////////////////////////////////////////////////////////////
 	// TEST END
@@ -13104,9 +13152,8 @@ TVerdict CCTSYIntegrationTestCallControl0038::doTestStepL()
 	// notifyMobileCallStatusChangeStatus2
 	// dialStatus2
 	// getTransferStatus
-	// hangUpStatus
-	// hangUpStatus2
-	CleanupStack::PopAndDestroy(8, &notifyMobileCallStatusChangeStatus);
+
+	CleanupStack::PopAndDestroy(6, &notifyMobileCallStatusChangeStatus);
 	
 	return TestStepResult();
 	}
@@ -13630,7 +13677,7 @@ TVerdict CCTSYIntegrationTestCallControl0042::doTestStepL()
     packetService.SetMSClass(setMSClassStatus, RPacketService::EMSClassAlternateMode);
     CHECK_EQUALS_L(WaitForRequestWithTimeOut(setMSClassStatus, ETimeLong), KErrNone, _L("RPacketService::SetMSClass timed out"));
     ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 10050);
-	CHECK_TRUE_L(EFalse, _L("This test has been made to leave intentionally as CTSY currently does not support the SetMSClass operation."));		
+//	CTSY currently does not support the SetMSClass operation		
     CHECK_EQUALS_L(setMSClassStatus.Int(), KErrNone, _L("RPacketService::SetMSClass returned an error"));
 
 	// Set the preferred bearer to EBearerPacketSwitched
@@ -13926,10 +13973,18 @@ TVerdict CCTSYIntegrationTestCallControl0044::doTestStepL()
 	call1.HangUpCancel();
 		
 	// Check hang up is cancelled.
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 50007);
 	ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus, ETimeShort), KErrNone, _L("RCall::HangUpCancel timed-out"));
-	ASSERT_EQUALS(hangUpStatus.Int(), KErrNotSupported, _L("RCall::HangUpCancel returned with an error"));
-
+	ASSERT_TRUE((hangUpStatus.Int() == KErrNone) || (hangUpStatus.Int() == KErrCancel), _L("RMobileCall::HangUpCancel did not return KErrNone or KErrCancel"));
+	if(hangUpStatus.Int() == KErrNone)
+	    {
+        ERR_PRINTF1(_L("<font color=Orange>HangUpCancel didn't succeed</font>"));
+	    }
+	else
+	    {
+        call1.HangUp(hangUpStatus);
+        ASSERT_EQUALS(WaitForRequestWithTimeOut(hangUpStatus, ETimeShort), KErrNone, _L("RCall::HangUpCancel timed-out"));
+        ASSERT_EQUALS(hangUpStatus.Int(), KErrNone, _L("RMobileCall::HangUp did not return KErrNone"));
+	    }
 	////////////////////////////////////////////////////////////////
 	// TEST END
 	////////////////////////////////////////////////////////////////
@@ -14841,20 +14896,20 @@ TVerdict CCTSYIntegrationTestCallControl0048::doTestStepL()
 	// Check RCall::GetInfo returns valid call name.
 	// Check RCall::GetInfo returns valid voice line name.
 	// Check RCall::GetInfo returns call status of EStatusIdle.
-	// Check RCall::GetInfo returns call duration of 0.
 	RCall::TCallInfo callInfo;
 	ASSERT_EQUALS(call1.GetInfo(callInfo), KErrNone, _L("RCall::GetInfo returned an error"));
 	ASSERT_TRUE(callInfo.iCallName.Length() > 0, _L("RCall::GetInfo returned an invalid call name"));
 	ASSERT_TRUE(callInfo.iLineName.Length() > 0,_L("RCall::GetInfo returned an invalid  line name"));
 	ASSERT_EQUALS(callInfo.iStatus, RCall::EStatusIdle, _L("RCall::GetInfo returned wrong status, should be EStatusIdle"));
-	ASSERT_EQUALS(callInfo.iDuration.Int(), 0, _L("RCall::GetInfo returned a duration other than 0"));
 
 	// Check RMobileCall::GetMobileCallInfo returns iValid with correct flags for returned parameters set.
 	RMobileCall::TMobileCallInfoV1 mobileCallInfo;
 	RMobileCall::TMobileCallInfoV1Pckg callInfoPckg(mobileCallInfo);
 	ASSERT_EQUALS(call1.GetMobileCallInfo(callInfoPckg), KErrNone, _L("RMobileCall::GetMobileCallInfo returned an error"));
-	iCallControlTestHelper.CheckForValidCallInfo(mobileCallInfo, KErrNone, EFalse);
 
+	// Check RMobileCall::GetMobileCallInfo returns valid call status.
+	ASSERT_EQUALS(mobileCallInfo.iStatus, RMobileCall::EStatusIdle, _L("RMobileCall::GetMobileCallInfo returned an invalid status"));
+	
 	// Check RMobileCall::GetMobileCallInfo returns valid call name.
 	ASSERT_TRUE(mobileCallInfo.iCallName.Length() > 0, _L("RMobileCall::GetMobileCallInfo returned an invalid call name"));
 	
@@ -15600,13 +15655,10 @@ TVerdict CCTSYIntegrationTestCallControl0051::doTestStepL()
 	// TEST START
 	////////////////////////////////////////////////////////////////
 	
-	// Check RCall::GetCallDuration returns KErrEtelCallNotActive
-	// $CTSYProblem.  RCall::GetCallDuration returns KErrNone although there is no active call
-	// Got 0, Expected -2007, (KErrEtelCoreBase = -2000 and KErrEtelCallNotActive=KErrEtelCoreBase-7) 
-	TTimeIntervalSeconds duration;
-	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 10055);
-	ASSERT_EQUALS(call1.GetCallDuration(duration), KErrEtelCallNotActive, 
-			_L("RCall::GetCallDuration returned wrong error code, should be KErrEtelCallNotActive"));
+    // Check RCall::GetInfo returns call status of EStatusIdle.
+    RCall::TCallInfo callInfo;
+    ASSERT_EQUALS(call1.GetInfo(callInfo), KErrNone, _L("RCall::GetInfo returned an error"));
+    ASSERT_EQUALS(callInfo.iStatus, RCall::EStatusIdle, _L("RCall::GetInfo returned wrong status, should be EStatusIdle"));
 
 	// post RCall::NotifyCallDurationChange
 	TCoreEtelRequestStatus<RCall> notifyCallDurationChangeStatus(call1, &RCall::NotifyCallDurationChangeCancel);
@@ -17298,7 +17350,7 @@ TVerdict CCTSYIntegrationTestCallControl0060::doTestStepL()
     ASSERT_EQUALS(getLifeTimeStatus.Int(), KErrNone, _L("RMmCustomAPI::GetLifeTime returned an error"));    
     DEBUG_PRINTF3(_L("Life Time param before the call: hours=%d, min=%d"), lifeTimeData.iHours, lifeTimeData.iMinutes);
     
-    TUint8 minutes = lifeTimeData.iMinutes ;
+    TUint32 lifTimeInMintues = lifeTimeData.iHours * 60 + lifeTimeData.iMinutes;
     
     // Check RPhone::GetLineInfo returns iStatus of EStatusIdle
     RPhone::TLineInfo lineInfo;
@@ -17360,8 +17412,8 @@ TVerdict CCTSYIntegrationTestCallControl0060::doTestStepL()
         ASSERT_EQUALS(getLifeTimeStatus.Int(), KErrNone, _L("RMmCustomAPI::GetLifeTime returned an error"));    
         DEBUG_PRINTF3(_L("Life Time param after the call: hours=%d, min=%d"), lifeTimeData.iHours, lifeTimeData.iMinutes);   
         
-        minutes++;
-        ASSERT_TRUE( minutes <= lifeTimeData.iMinutes, _L("Life Time was not updated properly") );
+        lifTimeInMintues++;
+        ASSERT_TRUE( lifTimeInMintues <= (lifeTimeData.iHours * 60 + lifeTimeData.iMinutes), _L("Life Time was not updated properly") );
         }
 
     ////////////////////////////////////////////////////////////////
@@ -17369,7 +17421,7 @@ TVerdict CCTSYIntegrationTestCallControl0060::doTestStepL()
     ////////////////////////////////////////////////////////////////
 
     StartCleanup();
-    CleanupStack::PopAndDestroy(3,&getLifeTimeStatus);
+    CleanupStack::PopAndDestroy(5,&getLifeTimeStatus);
     return TestStepResult();
     }
 

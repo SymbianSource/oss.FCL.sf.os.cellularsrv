@@ -3730,18 +3730,17 @@ void CCTsyTelephonyAudioControlFU::TestNotifyTelephonyAudioControlError0001L()
     ASSERT_EQUALS( KErrNone, error );
 
     RMobilePhone::TMobileService mobileService2( RMobilePhone::EAuxVoiceService );
-    RMobileCall::TMobileCallParamsV7 callParams2; 
     RMobileCall::TMobileCallInfoV8 callInfo2;   
-    callParams2.iSpeakerControl  = RCall::EMonitorSpeakerControlOnUntilCarrier;
-    callParams2.iSpeakerVolume   = RCall::EMonitorSpeakerVolumeLow;
-    callParams2.iInterval        = 100;
-    callParams2.iWaitForDialTone = RCall::EDialToneWait;
-    callParams2.iIdRestrict = RMobileCall::EIdRestrictDefault;
-    callParams2.iCug.iExplicitInvoke = EFalse;
-    callParams2.iCug.iCugIndex = 0xFFFF;
-    callParams2.iCug.iSuppressPrefCug = EFalse;
-    callParams2.iCug.iSuppressOA = EFalse;
-    callParams2.iAutoRedial = EFalse;
+    callParams.iSpeakerControl  = RCall::EMonitorSpeakerControlOnUntilCarrier;
+    callParams.iSpeakerVolume   = RCall::EMonitorSpeakerVolumeLow;
+    callParams.iInterval        = 100;
+    callParams.iWaitForDialTone = RCall::EDialToneWait;
+    callParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
+    callParams.iCug.iExplicitInvoke = EFalse;
+    callParams.iCug.iCugIndex = 0xFFFF;
+    callParams.iCug.iSuppressPrefCug = EFalse;
+    callParams.iCug.iSuppressOA = EFalse;
+    callParams.iAutoRedial = EFalse;
     callInfo2.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
     callInfo2.iService   = mobileService2;
     callInfo2.iStatus    = RMobileCall::EStatusUnknown;
@@ -3754,7 +3753,7 @@ void CCTsyTelephonyAudioControlFU::TestNotifyTelephonyAudioControlError0001L()
     callInfo2.iDialledParty.iNumberPlan = RMobilePhone::EUnknownNumberingPlan;
     callInfo2.iDialledParty.iTypeOfNumber = RMobilePhone::EUnknownNumber;   
     callInfo2.iDialledParty.iTelNumber.Copy( KPhoneNumber );    
-    TMockLtsyCallData2<RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1> mockData3(0, mobileService2, callParams2, callInfo2);
+    TMockLtsyCallData2<RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1> mockData3(0, mobileService2, callParams, callInfo2);
     TMockLtsyCallData0 mockData4(callId, mobileService2);
 
     RCall::TCallParams callParamsX2;
@@ -3809,20 +3808,19 @@ void CCTsyTelephonyAudioControlFU::TestNotifyTelephonyAudioControlError0001L()
 
     // prepare MockLTSY
     CallGetMobileCallInfoL(callId, mobileService, KPhoneNumber);
-    RMobileCall::TMobileCallInfoV8 callInfo3;
-    callInfo3.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
-    callInfo3.iService   = mobileService;
-    callInfo3.iStatus    = RMobileCall::EStatusUnknown;
-    callInfo3.iCallId    =-1;
-    callInfo3.iExitCode  =0; 
-    callInfo3.iEmergency =0;
-    callInfo3.iForwarded =0; 
-    callInfo3.iPrivacy               = RMobilePhone::EPrivacyUnspecified;
-    callInfo3.iAlternatingCall       = RMobilePhone::EAlternatingModeUnspecified;    
-    callInfo3.iDialledParty.iNumberPlan = RMobilePhone::EUnknownNumberingPlan;
-    callInfo3.iDialledParty.iTypeOfNumber = RMobilePhone::EUnknownNumber;   
-    callInfo3.iDialledParty.iTelNumber.Copy( KPhoneNumber );
-    TMockLtsyCallData2<RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1> mockData5(0, mobileService, callParams, callInfo3);
+    callInfo2.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
+    callInfo2.iService   = mobileService;
+    callInfo2.iStatus    = RMobileCall::EStatusUnknown;
+    callInfo2.iCallId    =-1;
+    callInfo2.iExitCode  =0; 
+    callInfo2.iEmergency =0;
+    callInfo2.iForwarded =0; 
+    callInfo2.iPrivacy               = RMobilePhone::EPrivacyUnspecified;
+    callInfo2.iAlternatingCall       = RMobilePhone::EAlternatingModeUnspecified;    
+    callInfo2.iDialledParty.iNumberPlan = RMobilePhone::EUnknownNumberingPlan;
+    callInfo2.iDialledParty.iTypeOfNumber = RMobilePhone::EUnknownNumber;   
+    callInfo2.iDialledParty.iTelNumber.Copy( KPhoneNumber );
+    TMockLtsyCallData2<RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1> mockData5(0, mobileService, callParams, callInfo2);
     mockData5.SerialiseL(expectData);
 
     iMockLTSY.ExpectL(EEtelCallDial, expectData);

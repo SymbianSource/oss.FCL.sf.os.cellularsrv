@@ -772,7 +772,10 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
                     CompletePBStoreInitializationL( 
                     aResult, aDataPackage );
                     TBool done = EFalse;
-                    
+
+                    // NOTE: The statement above is redundant, as the loop below calls CompletePBStoreInitializationL
+                    // on every phonebook store. However, we need to be certain that changing the order in which
+                    // phonebook stores are initialised won't introduce side effects. (One future improvement)                    
                     for( TInt i = 0; i < iMmPhone->PBList()->GetNumberOfObjects(); i++ )
         	            {
 TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion:EMmTsyPhoneBookStoreInitIPC for loop, check init statuses ");

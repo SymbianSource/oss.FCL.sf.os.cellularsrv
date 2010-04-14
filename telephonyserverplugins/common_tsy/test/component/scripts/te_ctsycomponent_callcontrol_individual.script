@@ -126,6 +126,17 @@ START_TESTCASE BA-CTSY-CCON-CD-0001b
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestDial0001bL
 END_TESTCASE BA-CTSY-CCON-CD-0001b
 
+START_TESTCASE BA-CTSY-CCON-CD-0001c
+//!@SYMTestCaseID BA-CTSY-CCON-CD-0001c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RCall::Dial for voice calls with changing parameters
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RCall::Dial for voice calls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestDial0001cL
+END_TESTCASE BA-CTSY-CCON-CD-0001c
+
 START_TESTCASE BA-CTSY-CCON-CD-0002
 //!@SYMTestCaseID BA-CTSY-CCON-CD-0002
 //!@SYMComponent telephony_ctsy

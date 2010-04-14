@@ -1604,14 +1604,15 @@ void TCallControlTsyTestHelper::CheckForValidCallInfo(RMobileCall::TMobileCallIn
 	if(aCallInfo.iValid & RMobileCall::KCallDuration)
 		{
 		TTimeIntervalSeconds invalidTime = 0;
-		TTimeIntervalSeconds startTime(aCallInfo.iDuration);
+		TTimeIntervalSeconds callDuration(aCallInfo.iDuration);
 		if(aIsCallConnected)
 		    {
-		    ASSERT_TRUE( startTime > invalidTime, _L("RMobileCall::GetMobileCallInfo set bitmask for KCallDuration to true, but set iDuration to an invalid number"));
+		    ASSERT_TRUE( callDuration > invalidTime, _L("RMobileCall::GetMobileCallInfo set bitmask for KCallDuration to true, but set iDuration to an invalid number"));
 		    }
 		else
 		    {
-		    ASSERT_EQUALS( startTime.Int(), invalidTime.Int(), _L("RMobileCall::GetMobileCallInfo set bitmask for KCallDuration to true, but set iDuration to an invalid number"));
+		    // Note: This value contains previous call duration since it is not connected, can be 0 or bigger than 0. 
+            ASSERT_TRUE( callDuration >= invalidTime, _L("RMobileCall::GetMobileCallInfo set bitmask for KCallDuration to true, but set iDuration to an invalid number"));
 		    }
 		}
 
@@ -1634,6 +1635,7 @@ void TCallControlTsyTestHelper::CheckForValidCallInfo(RMobileCall::TMobileCallIn
 
 	if(aCallInfo.iValid & RMobileCall::KCallExitCode)
 		{
+        // Note: iExitCode contains previous call result if it is not connected. 
 		ASSERT_EQUALS( aCallInfo.iExitCode, aRequiredExitCode, _L("RMobileCall::GetMobileCallInfo set bitmask for KCallExitCode to true, but did not set iExitCode to that expected."))
 		}
 

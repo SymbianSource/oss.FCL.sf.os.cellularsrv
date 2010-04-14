@@ -3017,11 +3017,9 @@ void CCTsySmsMessagingFU::TestSetReceiveMode0002L()
 
     User::WaitForRequest(reqStatus);
 
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 360701);
-    //SetReceiveModeCancel() is never called, the request cancel can't be completed
-    // Remove the function and correct comment in mm_messaging.cpp
-
-    ASSERT_EQUALS(KErrCancel, reqStatus.Int());
+    // Since SetReceiveMode completes without any delays, the cancel will not have any effect.
+    // The CMmSmsTsy::SetReceiveModeCancel should be removed from the code in the next cleanup, since it never been called.
+    ASSERT_EQUALS(KErrNone, reqStatus.Int());
 
     AssertMockLtsyStatusL();
 

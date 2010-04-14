@@ -603,7 +603,8 @@ void TNetworkTsyTestHelper::WaitForMobilePhoneNotifyNetworkSelectionSettingChang
         aOperatorName = EOperatorSonera;
         }
     else if ( ptrNetworkName.Find(_L("T-Mobile")) >=0 
-            ||  ptrNetworkName.Find(_L("One2One")) >=0)
+            ||  ptrNetworkName.Find(_L("One2One")) >=0
+            ||  ptrNetworkName.Find(_L("TMO UK")) >=0)
         {
         aOperatorName = EOperatorTMobile;
         }

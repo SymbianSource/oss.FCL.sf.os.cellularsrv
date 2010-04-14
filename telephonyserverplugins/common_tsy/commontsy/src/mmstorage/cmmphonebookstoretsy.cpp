@@ -660,20 +660,13 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneB
         // Reset initialization value
         iStoreInfoData->iIsPhonebookInitialized = ETrue;
         iStoreInfoData->iIsPhonebookInitializeFailed = EFalse;
-        // Set initialization flag for all phonebooks
-        for( TInt i = 0; i < iMmPhoneTsy->PBList()->GetNumberOfObjects(); i++ )
-            {
-            //Get pbStore object
-            CMmPhoneBookStoreTsy* pbStore = iMmPhoneTsy->PBList()->GetMmPBByIndex( i );
-            pbStore->iIsPBInitCompleted = ETrue;
-            pbStore->iInitError = aResult;
-            // Set max name & number length for the current phonebook
-            pbStore->SetMaxNameAndNumLenght();
-            // Just in case here, if cache request has been come
-            // before initialization is finished.
-            pbStore->CacheEntriesL();
-            }
-        }
+        iIsPBInitCompleted = ETrue;
+        iInitError = aResult;
+        SetMaxNameAndNumLenght();
+        // Just in case here, if cache request has been come
+        // before initialization is finished.
+        CacheEntriesL();       
+       }
     else
     //Initialisation has failed
         {
@@ -699,32 +692,34 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has faile
             iStoreInfoData->iIsPhonebookInitializeFailed = ETrue;
             }
         }
-		if( iStoreInfoData->iIsPhonebookInitialized )
+    
+    
+	if( iStoreInfoData->iIsPhonebookInitialized )
+		{
+		TTsyReqHandle getInfoHandle =
+			iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneStoreGetInfo );
+		if ( EMultimodePhoneBookStoreReqHandleUnknown != getInfoHandle )
 			{
-		    TTsyReqHandle getInfoHandle =
-				iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneStoreGetInfo );
-			if ( EMultimodePhoneBookStoreReqHandleUnknown != getInfoHandle )
+			iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
+			RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg info(*iPhoneBookInfoChanged);
+			TInt result = GetInfoL(getInfoHandle, &info);
+			if ( KErrNone != result )
 				{
-				iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
-				RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg info(*iPhoneBookInfoChanged);
-				TInt result = GetInfoL(getInfoHandle, &info);
-				if ( KErrNone != result )
-					{
-					ReqCompleted( getInfoHandle, result );
-					}
-					// Save request handle
-				if ( EMultimodePhoneBookStoreReqHandleUnknown != iReqHandleType )
-					{
-#ifdef REQHANDLE_TIMER
-					SetTypeOfResponse( iReqHandleType, getInfoHandle );
-#else
-					iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, getInfoHandle );
-#endif
-					}
-				
+				ReqCompleted( getInfoHandle, result );
 				}
+				// Save request handle
+			if ( EMultimodePhoneBookStoreReqHandleUnknown != iReqHandleType )
+				{
+#ifdef REQHANDLE_TIMER
+				SetTypeOfResponse( iReqHandleType, getInfoHandle );
+#else
+				iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, getInfoHandle );
+#endif
+				}
+			
 			}
-		iMmPhoneTsy->PhoneBookStoreInitCompleteL(iInitError);
+		}
+	iMmPhoneTsy->PhoneBookStoreInitCompleteL(iInitError);
 
     }
 

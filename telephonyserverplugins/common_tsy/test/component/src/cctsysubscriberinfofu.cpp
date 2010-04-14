@@ -586,8 +586,13 @@ void CCTsySubscriberInfoFU::TestGetServiceTable0002L()
 
 	User::WaitForRequest(reqStatus);	
 	// There is no cancel for this ipc, so status is KErrNone
+#ifdef __WINS__
 	ASSERT_EQUALS(KErrCancel, reqStatus.Int());
-
+#else
+	// No support for cancel in hardware. See EMobilePhoneGetServiceTable in CMmPhoneTsy::CancelService.
+	ASSERT_EQUALS(KErrTimedOut, reqStatus.Int());
+#endif
+	
 	AssertMockLtsyStatusL();
 	CleanupStack::PopAndDestroy(this);
 	

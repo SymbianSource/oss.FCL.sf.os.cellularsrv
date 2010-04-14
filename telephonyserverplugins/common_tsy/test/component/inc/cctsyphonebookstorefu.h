@@ -152,6 +152,7 @@ public:
 	//void TestGetInfo00010L();
     void TestGetInfo00011L();
     void TestGetInfo00011bL();
+    void TestGetInfo00011cL();
 	void TestGetInfo00012L();
 	void TestGetInfo00013L();
 	void TestGetInfo00014L();
@@ -264,6 +265,7 @@ private:
 
 	void AuxGetInfo1L(const TDesC& aName);
 	void AuxGetInfo1bL(const TDesC& aName);
+	void AuxGetInfo1cL();
 	void AuxGetInfo2L(const TDesC& aName);
 	void AuxGetInfo3L(const TDesC& aName);
 	void AuxGetInfo4L(const TDesC& aName);

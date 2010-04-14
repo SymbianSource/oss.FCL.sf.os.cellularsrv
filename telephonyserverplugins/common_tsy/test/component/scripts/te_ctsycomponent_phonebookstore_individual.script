@@ -1258,6 +1258,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-00011b
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00011bL
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-00011b
 
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-00011c
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00011c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for SDN phonebook when multiple phonebooks are opened simultaneously
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for SDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00011cL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-00011c
+
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-00012
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00012
 //!@SYMComponent telephony_ctsy

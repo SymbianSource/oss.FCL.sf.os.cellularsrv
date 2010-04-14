@@ -36,8 +36,8 @@ RUN_UTILS  CopyFile z:\TestData\Configs\te_controlplanenetworksideloopbackcsy.in
 
 LOAD_SUITE te_esockteststepsSuite -SharedData
 
-RUN_SCRIPT Z:\TestData\Scripts\te_PDP-ControlPlane28.script
-RUN_SCRIPT Z:\TestData\Scripts\te_PDP-ControlPlane29.script
+RUN_SCRIPT Z:\TestData\Scripts\te_PDP_ControlPlane28.script
+RUN_SCRIPT Z:\TestData\Scripts\te_PDP_ControlPlane29.script
 
 PRINT Complete_te_controlplanenetworkside tests
 
