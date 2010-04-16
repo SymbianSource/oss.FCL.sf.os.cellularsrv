@@ -30,7 +30,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmBroadcastTsy::CMmBroadcastTsy()
+CMmBroadcastTsy::CMmBroadcastTsy():
+    iReqHandleType(EMultimodeBroadcastReqHandleUnknown)
     {
     // Set number of WCDMA CBS Pages to 0
 	iWcdmaPageNumber = 0;
@@ -153,8 +154,13 @@ TInt CMmBroadcastTsy::ExtFunc(
             break;
         // Cell broadcast requests that may need trapping
         default:
-            // reset last tsy request type
-            iReqHandleType = EMultimodeBroadcastReqHandleUnknown; 
+            // Ensure the ReqHandleType is unset.
+            // This will detect cases where this method indirectly calls itself
+            // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+            // Such cases are not supported because iReqHandleType is in the context of this class instance,
+            // not this request, and we don't want the values set by the inner request and the outer request
+            // interfering with each other.
+            __ASSERT_DEBUG(iReqHandleType==EMultimodeBroadcastReqHandleUnknown, User::Invariant());
 
             TInt leaveCode( KErrNone );
             TRAP( leaveCode, ret = DoExtFuncL( aTsyReqHandle, aIpc, 
@@ -175,6 +181,9 @@ TInt CMmBroadcastTsy::ExtFunc(
                 iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, 
                     aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+                // We've finished with this value now. Clear it so it doesn't leak
+                //  up to any other instances of this method down the call stack
+                iReqHandleType = EMultimodeBroadcastReqHandleUnknown;
                 }
             break;
         }
@@ -1022,10 +1031,6 @@ TFLOGSTRING3("TSY:CMmBroadcastTsy::SetFilterSettingL:Old filter setting=0x%x, se
             // CB routing is not activated. We can complete this now.
             CompleteNotifyFilterSettingChange();
             
-			// Using CompleteNotifyFilterSettingChange() causes iReqHandleType to be modified so that
-			// the object thinks it has been asked to perform a notification request, rather than a set request.
-            iReqHandleType = EMultimodeBroadcastReqHandleUnknown;
-
             ReqCompleted( aTsyReqHandle, KErrNone );
             }    
         }

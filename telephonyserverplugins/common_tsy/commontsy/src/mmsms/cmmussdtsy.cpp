@@ -121,9 +121,6 @@ TInt CMmUssdTsy::ExtFunc(
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
 
-    // reset last tsy request type
-    iReqHandleType = EMultimodeUssdReqHandleUnknown;
-
     // before processing further the request, check if offline mode status
     // is enabled and if the given request can be perfomed in that case.
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() && 
@@ -150,19 +147,8 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
             {
             ReqCompleted( aTsyReqHandle, ret );
             }
-
-        // save request handle
-        if ( EMultimodeUssdReqHandleUnknown != iReqHandleType )
-            {
-#ifdef REQHANDLE_TIMER
-            SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
-#else
-            iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, 
-                aTsyReqHandle );
-#endif // REQHANDLE_TIMER
-            }
         }
-        
+    
     return KErrNone;
     }
 

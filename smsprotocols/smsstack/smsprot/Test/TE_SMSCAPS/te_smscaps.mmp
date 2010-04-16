@@ -34,6 +34,7 @@ SOURCE        te_smscapsstep.cpp
 
 
 USERINCLUDE   .
+USERINCLUDE   ../../../test
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
@@ -43,7 +44,7 @@ LIBRARY       c32root.lib estor.lib
 LIBRARY       etelmm.lib
 LIBRARY       smsu.lib gsmu.lib // components under test
 LIBRARY       esock.lib efsrv.lib etel.lib
-
+LIBRARY		  smsstacktestutilities.lib
 LIBRARY commsdat.lib
 
 

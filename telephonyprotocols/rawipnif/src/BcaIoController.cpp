@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -92,7 +92,7 @@ CBcaIoController::~CBcaIoController()
 void CBcaIoController::SetBcaStackAndName(const TDesC& aBcaStack, const TDesC& aBcaName)
 	{
 	iBcaName.Set(aBcaName);
-	iBcaName.Set(aBcaStack);
+	iBcaStack.Set(aBcaStack);
 	}
 	
 
@@ -126,33 +126,8 @@ void CBcaIoController::Stop(TInt aError)
 	// Update module state
 	SendState(EShuttingDown);
 	
-	//It does nothing here.
-	iLoader->Cancel();
-	MBca* bca = iLoader->Bca();
-	if(bca)
-		{
-		if(aError == KErrConnectionTerminated )
-			{
-			_LOG_L1C1(_L8("This is an emergency shutdown, it kills the NIF immediately."));
-			// It is a emergency shutdown, it kills the NIF immediately.
-			bca->Close();
-			GetObserver().ShutDown(MControllerObserver::EBcaController, aError);
-			}
-	    
-		else
-			{
-			_LOG_L1C1(_L8("This is a graceful termination which takes a while."));
-			//It is a graceful termination which takes a while.
-			iLoader->ShutdownBca(aError); 	
-			}	
-		}
-	else //nothing to shutdown, just notify linklayer down.
-		{
-		_LOG_L1C1(_L8("Bca is not initialized, bring the linklayer down"));
-		GetObserver().ShutDown(MControllerObserver::EBcaController, aError);
-		}
-
-  	}
+    iLoader->ShutdownBca(aError);  
+	}
 
 void CBcaIoController::InitialiseBcaL()
 /**
@@ -235,9 +210,14 @@ CBcaControl::~CBcaControl()
 	Cancel();
 	if(iMBca)
 		{
+        //If the Bca is still open, close it
+        if(EBcaOpened == iState)
+            {
+            iMBca->Close();
+            }
+        //delete the BCA instance
 		iMBca->Release();	
 		}
-		
 	// Library will be Closed when iBcaDll is destroyed.
 	}
 
@@ -327,6 +307,8 @@ void CBcaControl::RunL()
 				}
 			else
 				{
+                iState = EBcaOpened;
+                //Activate the receiver Active Object
 				iObserver.Receiver().StartListening();
 				_LOG_L1C1(_L8("CBcaIoController Is Initialised"));
 				TRAPD(err, iObserver.GetObserver().InitialiseL(MRawIPObserverBase::EBcaController,KErrNone));
@@ -343,6 +325,7 @@ void CBcaControl::RunL()
 		case EClosing:
 			{
 			// linklayer shutdown
+			iState = EIdling;
 			iObserver.GetObserver().ShutDown(MControllerObserver::EBcaController, iError);
 			break;
 			}
@@ -368,20 +351,16 @@ void CBcaControl::DoCancel()
 		{
 		case EIdling:
 		case EIAPSet:
+	    case EBcaStackSet:
 			if(iMBca)
 				{
 				iMBca->CancelIoctl();
 				}
 			iState = EIdling;
 			break;
-		case EBcaStackSet:
 		case EClosing:
-		    if(iMBca)
-			    {
-			    iMBca->Close();
-			    }
-			iState = EIdling;
-			break;
+            iState = EIdling;		    
+            break;    
 		default:
 			_LOG_L2C1(_L8("ERROR CBcaControl::DoCancel(): Unknown state"));
 			_BTT_PANIC(KNifName, KBcaUnkownState);
@@ -396,6 +375,20 @@ void CBcaControl::StartLoadL()
 	{
 	_LOG_L1C1(_L8("CBcaControl::StartLoad"));
 	
+	//iMBca should not be initialized at this point
+	__ASSERT_DEBUG(!iMBca,Panic(KBcaAlreadyExists));
+	
+	//We don't expect iMBca here, but if it occurs, we delete previous BCA Instance
+	if(iMBca)
+	    {
+        //If the state is still "open", close it first
+        if(EBcaOpened == iState)
+            {
+            iMBca->Close();
+            }
+        iMBca->Release();
+        }
+
 	// Loads Bca Dll and creates a Bca instance;
 	User::LeaveIfError(iBcaDll.iObj.Load(iObserver.BcaName()));
 	
@@ -437,13 +430,35 @@ void CBcaControl::ShutdownBca(TInt aError)
 	{
 	__ASSERT_DEBUG(iMBca,Panic(KBcaNotExist));
 	Cancel();
-    iError = aError;
-    iState = EClosing;  
-    if(iMBca)
+        
+    //We should only call shutdown or close if we have successfully opened a BCA Channel
+    if((iMBca) && (EBcaOpened == iState))
         {
-        iMBca->Shutdown(iStatus);
-        SetActive();    
+        if(aError == KErrConnectionTerminated )
+            {
+            _LOG_L1C1(_L8("This is an emergency shutdown, it kills the NIF immediately."));
+            // It is a emergency shutdown, it kills the NIF immediately.
+            iMBca->Close();
+            iState = EIdling;
+            iObserver.GetObserver().ShutDown(MControllerObserver::EBcaController, aError);
+            }
+        else
+            {
+            _LOG_L1C1(_L8("This is a graceful termination which takes a while."));
+            //It is a graceful termination which takes a while.
+            iError = aError;
+            iState = EClosing;
+            iMBca->Shutdown(iStatus);
+            SetActive();    
+            }
         }
+    else //nothing to shutdown, just notify linklayer down.
+        {
+        _LOG_L1C1(_L8("Bca is not initialized or opened, bring the linklayer down"));
+        iState = EIdling;
+        iObserver.GetObserver().ShutDown(MControllerObserver::EBcaController, aError);
+        }
+  
 	}
 
 /** Panic function for RawIpNif 

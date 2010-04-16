@@ -15,11 +15,10 @@
 
 RUN_SCRIPT z:\TestData\Scripts\TE_smsprt_setup.script
 
-
-
 LOAD_SUITE TE_smsprt -SharedData
 
 //!@file
+
 START_TESTCASE SMS-SMSStack-NA-3001
 //!@SYMTestCaseID SMS-SMSStack-NA-3001
 //!@SYMREQ REQ0000
@@ -28,7 +27,7 @@ START_TESTCASE SMS-SMSStack-NA-3001
 //!@SYMTestActions Test simple transmit and receive
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSimpleTxAndRx
+RUN_TEST_STEP 500 TE_smsprt TestSimpleTxAndRx z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber0
 END_TESTCASE SMS-SMSStack-NA-3001
 
 START_TESTCASE SMS-SMSS-SMSPROT-0158
@@ -39,7 +38,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0158
 //!@SYMTestActions Sets the Log Server to "No Log", then sends and receives a SMS, both operations should be completed successfully.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 600 TE_smsprt TestSimpleTxAndRxWithLoggingDisabled
+RUN_TEST_STEP 600 TE_smsprt TestSimpleTxAndRxWithLoggingDisabled z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber158
 END_TESTCASE SMS-SMSS-SMSPROT-0158
 
 START_TESTCASE SMS-SMSStack-NA-3002
@@ -50,7 +49,7 @@ START_TESTCASE SMS-SMSStack-NA-3002
 //!@SYMTestActions  Test status report
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestStatusReport
+RUN_TEST_STEP 500 TE_smsprt TestStatusReport z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber1
 END_TESTCASE SMS-SMSStack-NA-3002
 
 
@@ -62,7 +61,7 @@ START_TESTCASE SMS-SMSStack-NA-3003
 //!@SYMTestActions Test Transmit with Error
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestTxWithError
+RUN_TEST_STEP 500 TE_smsprt TestTxWithError z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber2
 END_TESTCASE SMS-SMSStack-NA-3003
 
 
@@ -74,7 +73,7 @@ START_TESTCASE SMS-SMSStack-NA-3004
 //!@SYMTestActions  Test Transmit with failure
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestTxFailed
+RUN_TEST_STEP 500 TE_smsprt TestTxFailed z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber3
 END_TESTCASE SMS-SMSStack-NA-3004
 
 
@@ -86,7 +85,7 @@ START_TESTCASE SMS-SMSStack-NA-3005
 //!@SYMTestActions  Test Matching To Observer
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestMatchingToObserver
+RUN_TEST_STEP 500 TE_smsprt TestMatchingToObserver z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber4
 END_TESTCASE SMS-SMSStack-NA-3005
 
 
@@ -98,7 +97,7 @@ START_TESTCASE SMS-SMSStack-NA-3006
 //!@SYMTestActions Test Command Messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCommandMessages
+RUN_TEST_STEP 500 TE_smsprt TestCommandMessages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber5
 END_TESTCASE SMS-SMSStack-NA-3006
 
 
@@ -110,7 +109,7 @@ START_TESTCASE SMS-SMSStack-NA-3007
 //!@SYMTestActions Test Simple Receive
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSimpleRx
+RUN_TEST_STEP 500 TE_smsprt TestSimpleRx z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber6
 END_TESTCASE SMS-SMSStack-NA-3007
 
 
@@ -122,7 +121,7 @@ START_TESTCASE SMS-SMSStack-NA-3008
 //!@SYMTestActions  Test 7bit Mess Test
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt Test7bitMessTest
+RUN_TEST_STEP 500 TE_smsprt Test7bitMessTest z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber7
 END_TESTCASE SMS-SMSStack-NA-3008
 
 
@@ -134,7 +133,7 @@ START_TESTCASE SMS-SMSStack-NA-3009
 //!@SYMTestActions Test Class Messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestClassMessages
+RUN_TEST_STEP 500 TE_smsprt TestClassMessages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber8
 END_TESTCASE SMS-SMSStack-NA-3009
 
 
@@ -146,7 +145,7 @@ START_TESTCASE SMS-SMSStack-NA-3010
 //!@SYMTestActions  Test receive concatenated
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRxConcatenated
+RUN_TEST_STEP 500 TE_smsprt TestRxConcatenated z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber9
 END_TESTCASE SMS-SMSStack-NA-3010
 
 
@@ -158,7 +157,7 @@ START_TESTCASE SMS-SMSStack-NA-3011
 //!@SYMTestActions  Test receive duplicate
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRxDuplicate
+RUN_TEST_STEP 500 TE_smsprt TestRxDuplicate z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber10
 END_TESTCASE SMS-SMSStack-NA-3011
 
 
@@ -170,7 +169,7 @@ START_TESTCASE SMS-SMSStack-NA-3012
 //!@SYMTestActions  Test receive ring tone A
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRxRingToneA
+RUN_TEST_STEP 500 TE_smsprt TestRxRingToneA z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber11
 END_TESTCASE SMS-SMSStack-NA-3012
 
 
@@ -182,7 +181,7 @@ START_TESTCASE SMS-SMSStack-NA-3013
 //!@SYMTestActions  Test Transmit/receive concatenated messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestTxRxConcatenated
+RUN_TEST_STEP 500 TE_smsprt TestTxRxConcatenated z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber12
 END_TESTCASE SMS-SMSStack-NA-3013
 
 
@@ -194,7 +193,7 @@ START_TESTCASE SMS-SMSStack-NA-3014
 //!@SYMTestActions  Test storage of parameters
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestParamStorage
+RUN_TEST_STEP 500 TE_smsprt TestParamStorage z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber13
 END_TESTCASE SMS-SMSStack-NA-3014
 
 
@@ -206,7 +205,7 @@ START_TESTCASE SMS-SMSStack-NA-3015
 //!@SYMTestActions  Test Sms Store
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSmsStore
+RUN_TEST_STEP 500 TE_smsprt TestSmsStore z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber14
 END_TESTCASE SMS-SMSStack-NA-3015
 
 
@@ -218,7 +217,7 @@ START_TESTCASE SMS-SMSStack-NA-3016
 //!@SYMTestActions  Test Sms Store List
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSmsStoreList
+RUN_TEST_STEP 500 TE_smsprt TestSmsStoreList z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber15
 END_TESTCASE SMS-SMSStack-NA-3016
 
 
@@ -230,7 +229,7 @@ START_TESTCASE SMS-SMSStack-NA-3017
 //!@SYMTestActions Test Delete Sms
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestDeleteSms
+RUN_TEST_STEP 500 TE_smsprt TestDeleteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber15
 END_TESTCASE SMS-SMSStack-NA-3017
 
 
@@ -242,9 +241,19 @@ START_TESTCASE SMS-SMSStack-NA-3018
 //!@SYMTestActions  Test Socket Binding
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSocketBinding
+RUN_TEST_STEP 500 TE_smsprt TestSocketBinding z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber16
 END_TESTCASE SMS-SMSStack-NA-3018
 
+START_TESTCASE SMS-SMSStack-NA-3098
+//!@SYMTestCaseID SMS-SMSStack-NA-3098
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Test SMS address class
+//!@SYMTestPriority High
+//!@SYMTestActions  Test SMS address class
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 500 TE_smsprt TestSmsAddr
+END_TESTCASE SMS-SMSStack-NA-3098
 
 START_TESTCASE SMS-SMSStack-NA-3019
 //!@SYMTestCaseID SMS-SMSStack-NA-3019
@@ -254,7 +263,7 @@ START_TESTCASE SMS-SMSStack-NA-3019
 //!@SYMTestActions  Test Sms Event Logger
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSmsEventLogger
+RUN_TEST_STEP 500 TE_smsprt TestSmsEventLogger z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber17
 END_TESTCASE SMS-SMSStack-NA-3019
 
 
@@ -266,7 +275,7 @@ START_TESTCASE SMS-SMSStack-NA-3020
 //!@SYMTestActions  Test Bearer Change
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestBearerChange
+RUN_TEST_STEP 500 TE_smsprt TestBearerChange z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber18
 END_TESTCASE SMS-SMSStack-NA-3020
 
 
@@ -278,7 +287,7 @@ START_TESTCASE SMS-SMSStack-NA-3094
 //!@SYMTestActions  Test Restore Bearer
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRestoreBearer
+RUN_TEST_STEP 500 TE_smsprt TestRestoreBearer 
 END_TESTCASE SMS-SMSStack-NA-3094
 
 
@@ -290,7 +299,7 @@ START_TESTCASE SMS-SMSStack-NA-3021
 //!@SYMTestActions  Test Recieve Mode Change
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRecvModeChange
+RUN_TEST_STEP 500 TE_smsprt TestRecvModeChange z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber19
 END_TESTCASE SMS-SMSStack-NA-3021
 
 
@@ -302,7 +311,7 @@ START_TESTCASE SMS-SMSStack-NA-3022
 //!@SYMTestActions  Test Tsy Capabilities
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestTsyCaps
+RUN_TEST_STEP 500 TE_smsprt TestTsyCaps z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber20
 END_TESTCASE SMS-SMSStack-NA-3022
 
 
@@ -314,7 +323,7 @@ START_TESTCASE SMS-SMSStack-NA-3023
 //!@SYMTestActions  Test send sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMSendSms
+RUN_TEST_STEP 500 TE_smsprt TestOOMSendSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber21
 END_TESTCASE SMS-SMSStack-NA-3023
 
 
@@ -326,7 +335,7 @@ START_TESTCASE SMS-SMSStack-NA-3024
 //!@SYMTestActions  Test write sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMWriteSms
+RUN_TEST_STEP 500 TE_smsprt TestOOMWriteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber22
 END_TESTCASE SMS-SMSStack-NA-3024
 
 
@@ -338,7 +347,7 @@ START_TESTCASE SMS-SMSStack-NA-3025
 //!@SYMTestActions  Test Read Sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMReadSms
+RUN_TEST_STEP 500 TE_smsprt TestOOMReadSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber23
 END_TESTCASE SMS-SMSStack-NA-3025
 
 
@@ -350,7 +359,7 @@ START_TESTCASE SMS-SMSStack-NA-3026
 //!@SYMTestActions  Test read sms list with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1000 TE_smsprt TestOOMReadSmsList
+RUN_TEST_STEP 1000 TE_smsprt TestOOMReadSmsList z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber24
 END_TESTCASE SMS-SMSStack-NA-3026
 
 
@@ -362,7 +371,7 @@ START_TESTCASE SMS-SMSStack-NA-3027
 //!@SYMTestActions  Test delete sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMDeleteSms
+RUN_TEST_STEP 500 TE_smsprt TestOOMDeleteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber25
 END_TESTCASE SMS-SMSStack-NA-3027
 
 
@@ -374,7 +383,7 @@ START_TESTCASE SMS-SMSStack-NA-3028
 //!@SYMTestActions  Test sms params with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMSmsParams
+RUN_TEST_STEP 500 TE_smsprt TestOOMSmsParams z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber26
 END_TESTCASE SMS-SMSStack-NA-3028
 
 
@@ -386,7 +395,7 @@ START_TESTCASE SMS-SMSStack-NA-3029
 //!@SYMTestActions  Test Me store with duplicate and missing pdus'
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestMeStoreDupAndMiss
+RUN_TEST_STEP 500 TE_smsprt TestMeStoreDupAndMiss z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber27
 END_TESTCASE SMS-SMSStack-NA-3029
 
 
@@ -398,7 +407,7 @@ START_TESTCASE SMS-SMSStack-NA-3030
 //!@SYMTestActions  Test Sim Store with duplicate and Missing pdus'
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSimStoreDupAndMiss
+RUN_TEST_STEP 500 TE_smsprt TestSimStoreDupAndMiss z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber28
 END_TESTCASE SMS-SMSStack-NA-3030
 
 
@@ -410,7 +419,7 @@ START_TESTCASE SMS-SMSStack-NA-3031
 //!@SYMTestActions   Test the reception of a CPHS Message Waiting Indication
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRxCphs
+RUN_TEST_STEP 500 TE_smsprt TestRxCphs z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber30
 END_TESTCASE SMS-SMSStack-NA-3031
 
 
@@ -422,7 +431,7 @@ START_TESTCASE SMS-SMSStack-NA-3032
 //!@SYMTestActions  Test receiving invalid pdus
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestInvalidPDUs
+RUN_TEST_STEP 500 TE_smsprt TestInvalidPDUs z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber31
 END_TESTCASE SMS-SMSStack-NA-3032
 
 
@@ -434,7 +443,7 @@ START_TESTCASE SMS-SMSStack-NA-3033
 //!@SYMTestActions  Test Transmit and Receive large number of different messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 700 TE_smsprt TestStress
+RUN_TEST_STEP 700 TE_smsprt TestStress z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber32
 
 END_TESTCASE SMS-SMSStack-NA-3033
 
@@ -446,7 +455,7 @@ START_TESTCASE SMS-SMSStack-NA-3034
 //!@SYMTestActions  Test Combined Store
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCombinedStore
+RUN_TEST_STEP 500 TE_smsprt TestCombinedStore z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber33
 END_TESTCASE SMS-SMSStack-NA-3034
 
 
@@ -458,7 +467,7 @@ START_TESTCASE SMS-SMSStack-NA-3035
 //!@SYMTestActions  Test retrieving and storing the sms parameters
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestParamsInter
+RUN_TEST_STEP 500 TE_smsprt TestParamsInter z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber34
 END_TESTCASE SMS-SMSStack-NA-3035
 
 
@@ -470,7 +479,7 @@ START_TESTCASE SMS-SMSStack-NA-3036
 //!@SYMTestActions  est a Transmit And receive of messages with alphanumeric dest/orig addresses
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestTxRxAlphanumeric
+RUN_TEST_STEP 500 TE_smsprt TestTxRxAlphanumeric z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber35
 END_TESTCASE SMS-SMSStack-NA-3036
 
 
@@ -482,7 +491,7 @@ START_TESTCASE SMS-SMSStack-NA-3037
 //!@SYMTestActions  Test Receive Suspension
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestRxSuspend
+RUN_TEST_STEP 500 TE_smsprt TestRxSuspend 
 END_TESTCASE SMS-SMSStack-NA-3037
 
 
@@ -494,7 +503,7 @@ START_TESTCASE SMS-SMSStack-NA-3038
 //!@SYMTestActions Test Enumeration of Corrupted messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestEnumerateCorrupted
+RUN_TEST_STEP 500 TE_smsprt TestEnumerateCorrupted z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber37
 END_TESTCASE SMS-SMSStack-NA-3038
 
 
@@ -506,7 +515,7 @@ START_TESTCASE SMS-SMSStack-NA-3039
 //!@SYMTestActions  Test Cancellacion of an sms operation
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCancelling
+RUN_TEST_STEP 500 TE_smsprt TestCancelling z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber38
 END_TESTCASE SMS-SMSStack-NA-3039
 
 
@@ -518,7 +527,7 @@ START_TESTCASE SMS-SMSStack-NA-3040
 //!@SYMTestActions  Test send And recieve messages with different TON
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSendAndRecvMsgsWithDifferentTON
+RUN_TEST_STEP 500 TE_smsprt TestSendAndRecvMsgsWithDifferentTON 
 END_TESTCASE SMS-SMSStack-NA-3040
 
 
@@ -578,7 +587,7 @@ START_TESTCASE SMS-SMSStack-NA-3097
 //!@SYMTestActions Test Resend Failed Concatinated Message
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestResendFailedConcatinatedMessage
+RUN_TEST_STEP 500 TE_smsprt TestResendFailedConcatinatedMessage z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber44
 END_TESTCASE SMS-SMSStack-NA-3097
 
 
@@ -590,7 +599,7 @@ START_TESTCASE SMS-SMSStack-NA-3045
 //!@SYMTestActions Test Multipart Wap Message
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestMultipartWapMessage
+RUN_TEST_STEP 500 TE_smsprt TestMultipartWapMessage z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber45
 END_TESTCASE SMS-SMSStack-NA-3045
 
 
@@ -602,7 +611,7 @@ START_TESTCASE SMS-SMSStack-NA-3046
 //!@SYMTestActions  Test MOSES Message
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestMOSESMessage
+RUN_TEST_STEP 500 TE_smsprt TestMOSESMessage z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber46
 END_TESTCASE SMS-SMSStack-NA-3046
 
 
@@ -614,7 +623,7 @@ START_TESTCASE SMS-SMSStack-NA-3047
 //!@SYMTestActions  Test Clock Back
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestClockBack
+RUN_TEST_STEP 500 TE_smsprt TestClockBack z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber47
 END_TESTCASE SMS-SMSStack-NA-3047
 
 
@@ -626,7 +635,7 @@ START_TESTCASE SMS-SMSStack-NA-3048
 //!@SYMTestActions  Test enumeration of no messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestEnumerateNoMessages
+RUN_TEST_STEP 500 TE_smsprt TestEnumerateNoMessages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber48
 END_TESTCASE SMS-SMSStack-NA-3048
 
 
@@ -638,7 +647,7 @@ START_TESTCASE SMS-SMSStack-NA-3049
 //!@SYMTestActions  Test Concatenated Message Logging
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestConcatenatedMessageLogging
+RUN_TEST_STEP 500 TE_smsprt TestConcatenatedMessageLogging z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber50
 END_TESTCASE SMS-SMSStack-NA-3049
 
 
@@ -650,7 +659,7 @@ START_TESTCASE SMS-SMSStack-NA-3050
 //!@SYMTestActions  Test Enumeration Of Status Report
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestEnumerationOfStatusReport
+RUN_TEST_STEP 500 TE_smsprt TestEnumerationOfStatusReport z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber51
 END_TESTCASE SMS-SMSStack-NA-3050
 
 
@@ -662,7 +671,7 @@ START_TESTCASE SMS-SMSStack-NA-3051
 //!@SYMTestActions  Test IE
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestIE
+RUN_TEST_STEP 500 TE_smsprt TestIE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber52
 END_TESTCASE SMS-SMSStack-NA-3051
 
 
@@ -674,7 +683,7 @@ START_TESTCASE SMS-SMSStack-NA-3052
 //!@SYMTestActions Test Email IE
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestEmailIE
+RUN_TEST_STEP 500 TE_smsprt TestEmailIE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber53
 END_TESTCASE SMS-SMSStack-NA-3052
 
 
@@ -686,7 +695,7 @@ START_TESTCASE SMS-SMSStack-NA-3053
 //!@SYMTestActions Test Maximim Read Time For Sms Store List
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestMaxReadTimeForSmsStoreList
+RUN_TEST_STEP 500 TE_smsprt TestMaxReadTimeForSmsStoreList z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber54
 END_TESTCASE SMS-SMSStack-NA-3053
 
 
@@ -698,7 +707,7 @@ START_TESTCASE SMS-SMSStack-NA-3054
 //!@SYMTestActions  Test same log id multiple pdu
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSameLogIdMultiplePDU
+RUN_TEST_STEP 500 TE_smsprt TestSameLogIdMultiplePDU z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber57
 END_TESTCASE SMS-SMSStack-NA-3054
 
 
@@ -710,7 +719,7 @@ START_TESTCASE SMS-SMSStack-NA-3055
 //!@SYMTestActions  Test Same Log Id Single PDU
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSameLogIdSinglePDU
+RUN_TEST_STEP 500 TE_smsprt TestSameLogIdSinglePDU z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber58
 END_TESTCASE SMS-SMSStack-NA-3055
 
 
@@ -722,7 +731,7 @@ START_TESTCASE SMS-SMSStack-NA-3056
 //!@SYMTestActions Test Writing of a status report to the sim
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestWriteStatusReportToSIM
+RUN_TEST_STEP 500 TE_smsprt TestWriteStatusReportToSIM z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber49
 END_TESTCASE SMS-SMSStack-NA-3056
 
 
@@ -740,7 +749,7 @@ RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile z:\sms\smswap.sms-sendTryTimeout.esk c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 
-RUN_TEST_STEP 500 TE_smsprt TestTxSmsWithDelayedCompletion
+RUN_TEST_STEP 500 TE_smsprt TestTxSmsWithDelayedCompletion z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber60
 
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.bak c:\private\101F7989\esock\smswap.sms.esk
@@ -780,7 +789,7 @@ START_TESTCASE SMS-SMSStack-NA-3060
 //!@SYMTestActions  Test observer notified when powered down with publish and subscribe
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestObserverNotifiedWhenPoweredDownWithPublishSubscribe
+RUN_TEST_STEP 500 TE_smsprt TestObserverNotifiedWhenPoweredDownWithPublishSubscribe z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber59
 
 END_TESTCASE SMS-SMSStack-NA-3060
 
@@ -792,7 +801,7 @@ START_TESTCASE SMS-SMSStack-NA-3061
 //!@SYMTestActions  Test sms CNumber change with publish and subscribe
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSmsCNumberChangeWithPublishSubscribe
+RUN_TEST_STEP 500 TE_smsprt TestSmsCNumberChangeWithPublishSubscribe z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber55
 END_TESTCASE SMS-SMSStack-NA-3061
 
 
@@ -804,7 +813,7 @@ START_TESTCASE SMS-SMSStack-NA-3062
 //!@SYMTestActions  Test Status Report Time
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestStatusReportTime
+RUN_TEST_STEP 500 TE_smsprt TestStatusReportTime z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber62
 END_TESTCASE SMS-SMSStack-NA-3062
 
 
@@ -816,7 +825,7 @@ START_TESTCASE SMS-SMSStack-NA-3063
 //!@SYMTestActions  Test Transmit 8Bit wap message with status
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestTx8BitWapWithStatus
+RUN_TEST_STEP 500 TE_smsprt TestTx8BitWapWithStatus z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber63
 END_TESTCASE SMS-SMSStack-NA-3063
 
 
@@ -828,7 +837,7 @@ START_TESTCASE SMS-SMSStack-NA-3064
 //!@SYMTestActions  Test sim store with corrupt message
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestSimStoreCorruptMessage
+RUN_TEST_STEP 500 TE_smsprt TestSimStoreCorruptMessage z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber64
 END_TESTCASE SMS-SMSStack-NA-3064
 
 
@@ -846,7 +855,7 @@ RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.esk c:\private\101F7989\
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile z:\sms\testsmswap.sms.esk c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 500 TE_smsprt TestCorruptPduWithNegativeResponse
+RUN_TEST_STEP 500 TE_smsprt TestCorruptPduWithNegativeResponse z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber65
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.bak c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.bak
@@ -866,7 +875,7 @@ RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.esk c:\private\101F7989\
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile z:\sms\smswap.sms-bootTimerTimeout.esk c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 500 TE_smsprt TestBootTimer
+RUN_TEST_STEP 500 TE_smsprt TestBootTimer z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber45
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.bak c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.bak
@@ -892,7 +901,7 @@ START_TESTCASE SMS-SMSStack-NA-3068
 //!@SYMTestActions Simulate receiving deliver PDU's.  Create message and interogate PDU and check time stamp and validity period.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCSmsMessageWithDeliverPDU
+RUN_TEST_STEP 500 TE_smsprt TestCSmsMessageWithDeliverPDU z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber66
 END_TESTCASE SMS-SMSStack-NA-3068
 
 START_TESTCASE SMS-SMSStack-NA-3069
@@ -903,7 +912,7 @@ START_TESTCASE SMS-SMSStack-NA-3069
 //!@SYMTestActions  Test status report
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCSmsMessageWithStatusReportPDU
+RUN_TEST_STEP 500 TE_smsprt TestCSmsMessageWithStatusReportPDU z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber67
 END_TESTCASE SMS-SMSStack-NA-3069
 
 START_TESTCASE SMS-SMSStack-NA-3070
@@ -914,7 +923,7 @@ START_TESTCASE SMS-SMSStack-NA-3070
 //!@SYMTestActions  Create a submit message.  Send it using SimTSY.  SimTSY will validate the PDU to what is expected.  Status=0
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCSmsMessageWithSubmitPDU
+RUN_TEST_STEP 500 TE_smsprt TestCSmsMessageWithSubmitPDU z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber68
 END_TESTCASE SMS-SMSStack-NA-3070
 
 START_TESTCASE SMS-SMSStack-NA-3071
@@ -925,7 +934,7 @@ START_TESTCASE SMS-SMSStack-NA-3071
 //!@SYMTestActions  Check that PDUs with PID 0x40 are acknowledged but not forwarded to the client
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestHandlePID40h
+RUN_TEST_STEP 500 TE_smsprt TestHandlePID40h z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber69
 END_TESTCASE SMS-SMSStack-NA-3071
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3072
@@ -937,7 +946,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3072
 //!@SYMTestExpectedResults
 //!@SYMTestCaseDependencies Sim.tsy, smsstacktestutilities.dll
 //!@SYMTestType IT
-RUN_TEST_STEP 180 TE_smsprt TestSinglePDUHyperLinks
+RUN_TEST_STEP 180 TE_smsprt TestSinglePDUHyperLinks z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber70
 END_TESTCASE SMS-SMSS-SMSPROT-I-3072
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3073
@@ -948,7 +957,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3073
 //!@SYMTestActions Transmit and receive of multiple PDU message with and without hyperlinks
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType IT
-RUN_TEST_STEP 60 TE_smsprt TestMultiplePDUHyperLinks
+RUN_TEST_STEP 60 TE_smsprt TestMultiplePDUHyperLinks z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber71
 END_TESTCASE SMS-SMSS-SMSPROT-I-3073
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3074
@@ -992,7 +1001,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3077
 //!@SYMTestActions Transmit and receive single PDU message with and without special messages
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType IT
-RUN_TEST_STEP 120 TE_smsprt TestSinglePDUSpecialMessageWaiting
+RUN_TEST_STEP 120 TE_smsprt TestSinglePDUSpecialMessageWaiting z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber73
 END_TESTCASE SMS-SMSS-SMSPROT-I-3077
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3078
@@ -1058,7 +1067,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3083
 //!@SYMTestActions Transmit and receive single PDU message with and without enhanced voice mail delete confirmations
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType IT
-RUN_TEST_STEP 120 TE_smsprt TestSinglePDUEnhancedVoiceMailDeleteConfirmation
+RUN_TEST_STEP 120 TE_smsprt TestSinglePDUEnhancedVoiceMailDeleteConfirmation z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber75
 END_TESTCASE SMS-SMSS-SMSPROT-I-3083
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3084
@@ -1080,7 +1089,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3085
 //!@SYMTestActions Transmit and receive multiple PDU message with and without enhanced voice mail delete confirmations
 //!@SYMTestExpectedResults SMS stack will handle received SMS as a 7 Bit coded message, KErrNone
 //!@SYMTestType IT
-RUN_TEST_STEP 180 TE_smsprt Test7BitDefaultAlphabet
+RUN_TEST_STEP 180 TE_smsprt Test7BitDefaultAlphabet z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber76
 END_TESTCASE SMS-SMSS-SMSPROT-I-3085
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3086
@@ -1092,7 +1101,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3086
 //!@SYMTestExpectedResults Stack will accept zero length IE, add it to the list.  KErrNone
 //!@SYMTestType IT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 180 TE_smsprt TestZeroLengthIE
+RUN_TEST_STEP 180 TE_smsprt TestZeroLengthIE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber77
 END_TESTCASE SMS-SMSS-SMSPROT-I-3086
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3087
@@ -1104,7 +1113,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3087
 //!@SYMTestExpectedResults Messages are deleted from the phone store and SIM store.  Exception for class 2 messages, messages remains in the SIM store.
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 180 TE_smsprt TestAutomaticDeletionInDCS
+RUN_TEST_STEP 180 TE_smsprt TestAutomaticDeletionInDCS z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber78
 END_TESTCASE SMS-SMSS-SMSPROT-I-3087
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3088
@@ -1126,7 +1135,7 @@ RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.esk c:\private\101F7989\
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile z:\sms\smswap.sms-AutoDeletionClass2.esk c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
-RUN_TEST_STEP 500 TE_smsprt TestAutomaticDeletionInDCSAndInEsk
+RUN_TEST_STEP 500 TE_smsprt TestAutomaticDeletionInDCSAndInEsk z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber79
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.bak c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.bak
@@ -1142,7 +1151,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3089
 //!@SYMTestExpectedResults Stack will send messages marked as type 0.  Messages are deleted from the phone store and SIM store.  Exception for class 2 messages, messages remains in the SIM store.
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 300 TE_smsprt TestAutomaticDeletionTypeZeroSMS
+RUN_TEST_STEP 300 TE_smsprt TestAutomaticDeletionTypeZeroSMS z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber80
 
 END_TESTCASE SMS-SMSS-SMSPROT-I-3089
 
@@ -1163,7 +1172,7 @@ RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile z:\sms\smswap.sms-AutomaticDeletionOfType0.esk c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS MakeReadWrite c:\private\101F7989\esock\smswap.sms.esk
 //Run the test step
-RUN_TEST_STEP 180 TE_smsprt TestAutomaticDeletionTypeZeroAndSetInESK
+RUN_TEST_STEP 180 TE_smsprt TestAutomaticDeletionTypeZeroAndSetInESK z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber81
 //restore orig esk file
 RUN_UTILS DeleteFile c:\private\101F7989\esock\smswap.sms.esk
 RUN_UTILS copyfile c:\private\101F7989\esock\smswap.sms.bak c:\private\101F7989\esock\smswap.sms.esk
@@ -1180,7 +1189,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3091
 //!@SYMTestExpectedResults The message is sent successfully.
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 120 TE_smsprt EnhancedVoiceMessageBoundaryTest
+RUN_TEST_STEP 120 TE_smsprt EnhancedVoiceMessageBoundaryTest z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber83
 END_TESTCASE SMS-SMSS-SMSPROT-I-3091
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3092
@@ -1192,7 +1201,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3092
 //!@SYMTestExpectedResults The message is sent successfully.
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 120 TE_smsprt EnhancedVoiceMessageBoundaryTest1
+RUN_TEST_STEP 120 TE_smsprt EnhancedVoiceMessageBoundaryTest1 z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber84
 END_TESTCASE SMS-SMSS-SMSPROT-I-3092
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3093
@@ -1204,7 +1213,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3093
 //!@SYMTestExpectedResults Assume that sending a R6 SMS requires 'M' heap allocations. The stack should return an Out of Memory error when heap allocation request fails because 'n' has a value in the range 1..m. When 'n' has value m+1, the message should be sent successfully and the test should exit.
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 120 TE_smsprt TestOOMSendR6Sms
+RUN_TEST_STEP 120 TE_smsprt TestOOMSendR6Sms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber82
 END_TESTCASE SMS-SMSS-SMSPROT-I-3093
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3094
@@ -1990,48 +1999,6 @@ RUN_TEST_STEP  100 TE_smsprt TestReceivingSMSCMultiplePDU z:\testdata\configs\te
 END_TESTCASE SMS-GSMU-0074
 
 
-START_TESTCASE SMS-SMSS-SMSPROT-0121
-//!@SYMTestCaseID SMS-SMSS-SMSPROT-0121	
-//!@SYMEC EC015
-//!@SYMTestPriority Critical
-//!@SYMTestCaseDesc Receive class0 and class2 messages when DiskSpace in mid range
-//!@SYMTestActions Set the disk space to below the high limit, receive class 0, attempt to receive class 2, raise disk space and receive class 2.
-//!@SYMTestExpectedResults Class0 message received, class2 rejected until disk space is increased.
-RUN_TEST_STEP 60 TE_smsprt LoadSMSProtocol 		z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskSpaceInMidRange
-RUN_TEST_STEP 60 TE_smsprt SetDiskMonitorLimits	z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskMonitorLimits
-RUN_TEST_STEP 120 TE_smsprt SetDiskSpace	 	z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskSpaceInMidRange
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageExpected
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageNotExpected
-RUN_TEST_STEP 120 TE_smsprt FreeDiskSpace
-RUN_TEST_STEP 120 TE_smsprt SetDiskSpace	 	z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskSpaceAboveMidRange
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageExpected
-RUN_TEST_STEP 120 TE_smsprt FreeDiskSpace
-RUN_TEST_STEP 60 TE_smsprt CloseSMSProtocol
-RUN_UTILS DeleteFile c:\private\101F7989\sms\smsu.rsc
-END_TESTCASE SMS-SMSS-SMSPROT-0121
-
-
-START_TESTCASE SMS-SMSS-SMSPROT-0122
-//!@SYMTestCaseID SMS-SMSS-SMSPROT-0122
-//!@SYMEC EC015
-//!@SYMTestPriority Critical
-//!@SYMTestCaseDesc Receive class0 and class2 messages when DiskSpace below the mid range. 
-//!@SYMTestActions Set the disk space to below the low limit, attempt to receive class 0 and class 2, raise disk space and receive class 0 and class 2.
-//!@SYMTestExpectedResults Class0 and class2 messages rejected when disk space below the low limit, received when disk space increases.
-RUN_TEST_STEP 60 TE_smsprt LoadSMSProtocol 		z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskSpaceBelowMidRange
-RUN_TEST_STEP 60 TE_smsprt SetDiskMonitorLimits		z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskMonitorLimits
-RUN_TEST_STEP 120 TE_smsprt SetDiskSpace	 	z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskSpaceBelowMidRange
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageNotExpected
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageNotExpected
-RUN_TEST_STEP 120 TE_smsprt FreeDiskSpace
-RUN_TEST_STEP 120 TE_smsprt SetDiskSpace 		z:\testdata\configs\TE_DiskSpaceMonitor.ini DiskSpaceAboveMidRange
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageExpected
-RUN_TEST_STEP 60 TE_smsprt ReceiveSMS			z:\testdata\configs\TE_DiskSpaceMonitor.ini MessageExpected
-RUN_TEST_STEP 120 TE_smsprt FreeDiskSpace
-RUN_TEST_STEP 60 TE_smsprt CloseSMSProtocol
-RUN_UTILS DeleteFile c:\private\101F7989\sms\smsu.rsc
-END_TESTCASE SMS-SMSS-SMSPROT-0122
-
 START_TESTCASE SMS-SMSS-SMSPROT-0123
 //!@SYMTestCaseID SMS-SMSS-SMSPROT-0123
 //!@SYMDEF INC091449
@@ -2039,8 +2006,9 @@ START_TESTCASE SMS-SMSS-SMSPROT-0123
 //!@SYMTestCaseDesc Receive class0 and class2 messages when DiskSpace in mid range
 //!@SYMTestActions Set the disk space to below the high limit, receive class 0, attempt to receive class 2, raise disk space and receive class 2.
 //!@SYMTestExpectedResults Class0 message received, class2 rejected until disk space is increased.
-RUN_TEST_STEP 600 TE_smsprt TestDiskSpaceMidRangeClass0Class2
+RUN_TEST_STEP 600 TE_smsprt TestDiskSpaceMidRangeClass0Class2 z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber131
 END_TESTCASE SMS-SMSS-SMSPROT-0123
+
 
 START_TESTCASE SMS-SMSS-SMSPROT-0124
 //!@SYMTestCaseID SMS-SMSS-SMSPROT-0124
@@ -2049,8 +2017,9 @@ START_TESTCASE SMS-SMSS-SMSPROT-0124
 //!@SYMTestCaseDesc Receive class0 and class2 messages when DiskSpace below the mid range. 
 //!@SYMTestActions Set the disk space to below the low limit, attempt to receive class 0 and class 2, raise disk space and receive class 0 and class 2.
 //!@SYMTestExpectedResults Class0 and class2 messages rejected when disk space below the low limit, received when disk space increases.
-RUN_TEST_STEP 600 TE_smsprt TestDiskSpaceLowRangeClass0Class2
+RUN_TEST_STEP 600 TE_smsprt TestDiskSpaceLowRangeClass0Class2 z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber132
 END_TESTCASE SMS-SMSS-SMSPROT-0124
+
 
 START_TESTCASE SMS-SMSS-SMSPROT-0125
 //!@SYMTestCaseID SMS-SMSS-SMSPROT-0125
@@ -2060,7 +2029,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0125
 //!@SYMTestActions Receives SMSs that are invalid and then 1 that is valid.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCorruptPDUs
+RUN_TEST_STEP 500 TE_smsprt TestCorruptPDUs z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber133
 END_TESTCASE SMS-SMSS-SMSPROT-0125
 
 START_TESTCASE SMS-SMSS-SMSPROT-0126
@@ -2071,7 +2040,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0126
 //!@SYMTestActions Ensures that the resume code can restart reception when the store has been full.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestCongestedReceive
+RUN_TEST_STEP 500 TE_smsprt TestCongestedReceive z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber141
 END_TESTCASE SMS-SMSS-SMSPROT-0126
 
 START_TESTCASE SMS-SMSS-SMSPROT-0127
@@ -2082,7 +2051,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0127
 //!@SYMTestActions Test binary transmit and receive
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestBinaryTxAndRx
+RUN_TEST_STEP 500 TE_smsprt TestBinaryTxAndRx z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber142
 END_TESTCASE SMS-SMSS-SMSPROT-0127
 
 
@@ -2094,7 +2063,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0128
 //!@SYMTestActions GSMU encodes a PDU until it is full, then attempts to add an format IE, the format IE and its associated text should be encoded in a new PDU.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestEncodingPDUonBoundary
+RUN_TEST_STEP 500 TE_smsprt TestEncodingPDUonBoundary z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber143
 END_TESTCASE SMS-SMSS-SMSPROT-0128
 
 
@@ -2106,7 +2075,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0129
 //!@SYMTestActions Receives the PDU which has a reserved IE number.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestReceiveInvalidOrReservedIE
+RUN_TEST_STEP 500 TE_smsprt TestReceiveInvalidOrReservedIE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber144
 END_TESTCASE SMS-SMSS-SMSPROT-0129
 
 
@@ -2118,7 +2087,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0150
 //!@SYMTestActions Generates various messages based on standard GSM characters, sends/receives them and compares the contents.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitStandardGSM
+RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitStandardGSM z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber150
 END_TESTCASE SMS-SMSS-SMSPROT-0150
 
 
@@ -2130,7 +2099,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0151
 //!@SYMTestActions Generates various messages based on Code Page 1252 characters, sends/receives them and compares the contents.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1200 TE_smsprt TestEncoding8bitCodePage1252
+RUN_TEST_STEP 1200 TE_smsprt TestEncoding8bitCodePage1252 z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber151
 END_TESTCASE SMS-SMSS-SMSPROT-0151
 
 
@@ -2142,7 +2111,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0152
 //!@SYMTestActions Generates various messages based various characters, sends/receives them and compares the contents.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1800 TE_smsprt TestEncodingUnicode
+RUN_TEST_STEP 1800 TE_smsprt TestEncodingUnicode z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber152
 END_TESTCASE SMS-SMSS-SMSPROT-0152
 
 
@@ -2154,8 +2123,9 @@ START_TESTCASE SMS-SMSS-SMSPROT-0153
 //!@SYMTestActions Generates various messages based on unconvertible GSM characters, sends/receives them and compares the contents.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitUnconvertibleGSM
+RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitUnconvertibleGSM z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber153
 END_TESTCASE SMS-SMSS-SMSPROT-0153
+
 
 START_TESTCASE SMS-SMSS-SMSPROT-0154
 //!@SYMTestCaseID SMS-SMSS-SMSPROT-0154
@@ -2165,8 +2135,20 @@ START_TESTCASE SMS-SMSS-SMSPROT-0154
 //!@SYMTestActions Generates various messages based on standard GSM characters, sends/receives them and compares the contents.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitNonStandardGSM
+RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitNonStandardGSM z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber154
 END_TESTCASE SMS-SMSS-SMSPROT-0154
+
+
+START_TESTCASE SMS-SMSS-SMSPROT-0155
+//!@SYMTestCaseID SMS-SMSS-SMSPROT-0155
+//!@SYMREQ PREQ2265
+//!@SYMTestCaseDesc Tests that Turkish characters can be sent and received using 7bit without loss of characters.
+//!@SYMTestPriority Critical
+//!@SYMTestActions Generates various messages based on Turkish characters, sends/receives them and compares the contents.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 4500 TE_smsprt TestEncoding7bitTurkishNationalLanguage z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber155
+END_TESTCASE SMS-SMSS-SMSPROT-0155
 
 START_TESTCASE SMS-SMSS-SMSPROT-0156
 //!@SYMTestCaseID SMS-SMSS-SMSPROT-0156
@@ -2176,8 +2158,9 @@ START_TESTCASE SMS-SMSS-SMSPROT-0156
 //!@SYMTestActions Generates various messages with some Turkish and unconvertible characters, sends/receives them and compares the contents.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 1200 TE_smsprt TestEncoding7bitTurkishAndUnconvertible
+RUN_TEST_STEP 600 TE_smsprt TestEncoding7bitTurkishAndUnconvertible z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber156
 END_TESTCASE SMS-SMSS-SMSPROT-0156
+
 
 START_TESTCASE SMS-SMSS-SMSPROT-0157
 //!@SYMTestCaseID SMS-SMSS-SMSPROT-0157
@@ -2187,7 +2170,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0157
 //!@SYMTestActions Generates 3 messages with each DCS and then receives 3 mixed DCS messages.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 600 TE_smsprt TestReceivingMessageWithDifferentEncodings
+RUN_TEST_STEP 600 TE_smsprt TestReceivingMessageWithDifferentEncodings z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber157
 END_TESTCASE SMS-SMSS-SMSPROT-0157
 
 START_TESTCASE SMS-SMSS-SMSPROT-0159
@@ -2198,7 +2181,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0159
 //!@SYMTestActions Generates a message which is requested by client before and after closure of socket.
 //!@SYMTestExpectedResults The message should be able to be requested and read after closure of socket.
 //!@SYMTestType CT
-RUN_TEST_STEP 600 TE_smsprt TestReceivingMessageAfterSocketClosure
+RUN_TEST_STEP 600 TE_smsprt TestReceivingMessageAfterSocketClosure z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber159
 END_TESTCASE SMS-SMSS-SMSPROT-0159
 
 START_TESTCASE SMS-SMSS-SMSPROT-0160
@@ -2211,7 +2194,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0160
 //! @SYMTestExpectedResults     Pass
 //! @SYMTestDesignTechnique     Error Guessing
 //! @SYMCR                      CR2040
-RUN_TEST_STEP 100 TE_smsprt TestEncoding7bitNationalLanguages
+RUN_TEST_STEP 100 TE_smsprt TestEncoding7bitNationalLanguages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber160
 END_TESTCASE SMS-SMSS-SMSPROT-0160
 
 START_TESTCASE SMS-SMSS-SMSPROT-0161
@@ -2224,7 +2207,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0161
 //! @SYMTestExpectedResults     Pass
 //! @SYMTestDesignTechnique     Boundary Value Analysis
 //! @SYMCR                      CR2040
-RUN_TEST_STEP 100 TE_smsprt TestEncodingMultiPDUwith7bitNationalLanguages
+RUN_TEST_STEP 100 TE_smsprt TestEncodingMultiPDUwith7bitNationalLanguages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber161
 END_TESTCASE SMS-SMSS-SMSPROT-0161
 
 START_TESTCASE SMS-SMSS-SMSPROT-0162
@@ -2237,7 +2220,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0162
 //! @SYMTestExpectedResults     Pass
 //! @SYMTestDesignTechnique     Error Guessing
 //! @SYMCR                      CR2040
-RUN_TEST_STEP 100 TE_smsprt TestEncodingDowngradedWith7bitNationalLanguages
+RUN_TEST_STEP 100 TE_smsprt TestEncodingDowngradedWith7bitNationalLanguages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber162
 END_TESTCASE SMS-SMSS-SMSPROT-0162
 
 START_TESTCASE SMS-SMSS-SMSPROT-0163
@@ -2250,7 +2233,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0163
 //! @SYMTestExpectedResults     Pass
 //! @SYMTestDesignTechnique     Error Guessing
 //! @SYMCR                      CR2040
-RUN_TEST_STEP 100 TE_smsprt TestOptimumEncodingWithLockingAndShift7bitNationalLanguages
+RUN_TEST_STEP 100 TE_smsprt TestOptimumEncodingWithLockingAndShift7bitNationalLanguages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber163
 END_TESTCASE SMS-SMSS-SMSPROT-0163
 
 START_TESTCASE SMS-SMSS-SMSPROT-0164
@@ -2263,7 +2246,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0164
 //! @SYMTestExpectedResults     Pass
 //! @SYMTestDesignTechnique     Error Guessing
 //! @SYMCR                      CR2040
-RUN_TEST_STEP 100 TE_smsprt TestOptimumEncodingWithLockingAndDowngrade7bitNationalLanguages
+RUN_TEST_STEP 100 TE_smsprt TestOptimumEncodingWithLockingAndDowngrade7bitNationalLanguages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber164
 END_TESTCASE SMS-SMSS-SMSPROT-0164
 
 START_TESTCASE SMS-SMSS-SMSPROT-0165
@@ -2276,7 +2259,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-0165
 //! @SYMTestExpectedResults     Pass
 //! @SYMTestDesignTechnique     Error Guessing
 //! @SYMCR                      CR2040
-RUN_TEST_STEP 100 TE_smsprt TestOptimumEncodingWithLockingAndUnconvertible7bitNationalLanguages
+RUN_TEST_STEP 100 TE_smsprt TestOptimumEncodingWithLockingAndUnconvertible7bitNationalLanguages z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber165
 END_TESTCASE SMS-SMSS-SMSPROT-0165
 
-
+RUN_SCRIPT  z:\testdata\scripts\smsstackcleanprivatedata.script

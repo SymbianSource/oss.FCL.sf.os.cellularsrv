@@ -14,18 +14,8 @@
 //
 
 #include "TE_smsstorbase.h"
+
 #include "TE_smsstor.h"
-
-
-#if defined (__WINS__)
-#define PDD_NAME _L("ECDRV")
-#define PDD_NAME2 _L("ECDRV")
-#define LDD_NAME _L("ECOMM")
-#else
-#define PDD_NAME _L("EUART1")
-#define LDD_NAME _L("ECOMM")
-#endif
-
 
 TVerdict CSmsStorTestStep::doTestStepPreambleL()
 	{

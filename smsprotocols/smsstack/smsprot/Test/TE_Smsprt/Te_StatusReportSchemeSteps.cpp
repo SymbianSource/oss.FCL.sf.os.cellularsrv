@@ -390,9 +390,3 @@ TVerdict CTestDeliversWithTPSRRScheme::doTestStepL()
 }
 
 //-----------------------------------------------------------------------------
-
-
-
-
-
-

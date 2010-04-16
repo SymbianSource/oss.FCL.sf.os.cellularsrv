@@ -15,7 +15,7 @@
 *
 */
 
-
+   
 
 
 /**
@@ -167,7 +167,9 @@ enum TCtsyIpc
 	// RMobilePhone::NotifySendNetworkServiceRequest
 	ECtsyPhoneSendNetworkServiceRequestReq,
 	ECtsyPhoneSendNetworkServiceRequestIndReq,
-	ECtsyPhoneSendNetworkServiceRequestInd
+	ECtsyPhoneSendNetworkServiceRequestInd,
+	ECtsyPhoneTerminateActiveCallsReq,
+    ECtsyPhoneTerminateActiveCallsComp
 	};
 #else
 enum TCtsyIpc
@@ -184,7 +186,9 @@ enum TCtsyIpc
 	ECtsyPhoneTerminateAllCallsReq,
 	ECtsyPhoneTerminateAllCallsComp,
 	ECtsyPhoneSendNetworkServiceRequestInd,
-	ECtsyGetPhoneIdV2Comp
+	ECtsyGetPhoneIdV2Comp,
+    ECtsyPhoneTerminateActiveCallsReq,
+    ECtsyPhoneTerminateActiveCallsComp
 	};
 #endif //USING_CTSY_DISPATCHER
 

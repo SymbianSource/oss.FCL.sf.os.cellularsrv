@@ -405,11 +405,6 @@ NONSHARABLE_CLASS( CMmUssdTsy ) : public CSubSessionExtBase
     CMmTsyReqHandleStore* iTsyReqHandleStore;
 
     /**
-     * Request handle type
-     */        
-    TUssdRequestTypes iReqHandleType;
-
-    /**
      * A pointer iReceiveUssdMessagePtr
      * Not own.     
      */        

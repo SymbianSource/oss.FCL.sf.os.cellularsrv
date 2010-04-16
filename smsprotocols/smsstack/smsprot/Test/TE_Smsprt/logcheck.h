@@ -18,21 +18,20 @@
  @internalComponent 
 */
 
-#ifndef LOGCHECK_H__
-#define LOGCHECK_H__
-
+#ifndef LOGCHECK_H
+#define LOGCHECK_H
 
 #include <logwrap.h>
 #include <logview.h>
 #include <logcli.h>
 #include <e32test.h>
-#include "TE_smsprt.h"
 
+#include "smsstackbaseteststeps.h"
 
 class CSmsLogChecker : public CActive
 	{
 	public:
-		static CSmsLogChecker* NewL(RFs& aFs, CSmsPrtTestStep* aTest, TInt aPriority);
+		static CSmsLogChecker* NewL(RFs& aFs, CSmsBaseTestStep* aTest, TInt aPriority);
 		~CSmsLogChecker();
 
 		void CountOriginalIdsL(TRequestStatus& aStatus);
@@ -54,7 +53,7 @@ class CSmsLogChecker : public CActive
 			ENext
 			} iState;
 
-		CSmsLogChecker(RFs& aFs, CSmsPrtTestStep* aTest, TInt aPriority);
+		CSmsLogChecker(RFs& aFs, CSmsBaseTestStep* aTest, TInt aPriority);
 		void ConstructL();
 		void RunL();
 		TInt RunError(TInt aError);
@@ -67,7 +66,7 @@ class CSmsLogChecker : public CActive
 	private:
 
 		RFs& iFs;
-		CSmsPrtTestStep* iTest;
+		CSmsBaseTestStep* iTest;
 
 		const RArray<TLogId>* iMessageLogIds;
 		RArray<TLogId> iOriginalIds;

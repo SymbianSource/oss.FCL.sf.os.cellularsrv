@@ -15,10 +15,10 @@
 // 
 //
 
+#ifndef TE_TESTR6SMS_H
+#define TE_TESTR6SMS_H
 
-#ifndef _TE_TESTR6SMS_H_
-#define _TE_TESTR6SMS_H_
-
+#include <test/testexecuteserverbase.h>
 
 class CTestCSmsMessageAdditionalAttributes1 : public CTestStep
 	{
@@ -26,13 +26,11 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CTestCSmsMessageAdditionalAttributes2 : public CTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CTestCSmsMessageAdditionalAttributes3 : public CTestStep
 	{
@@ -40,13 +38,11 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CTestR6CSmsMessage : public CTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 class CTestAddingIEsViaNewAndExistingInterfaces : public CTestStep
 	{
@@ -54,19 +50,16 @@ public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CTestIECategoryDefinitions : public CTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
-
 class CTestR6DCS : public CTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
-
 
 #endif

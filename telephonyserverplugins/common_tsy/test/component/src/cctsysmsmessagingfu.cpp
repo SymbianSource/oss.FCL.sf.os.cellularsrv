@@ -197,9 +197,6 @@ void CCTsySmsMessagingFU::TestNotifyReceiveModeChange0001L()
     // from LTSY.
     //-------------------------------------------------------------------------
 
-    ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 360201); 
-    ASSERT_TRUE(EFalse);
-
     //Request for EMobileSmsMessagingNotifyReceiveModeChange is self reposting. 
     //If it was completed somehow and then SetReceiveMode() was called without call of NotifyReceiveModeChange() - 
     //this result in getting wrong request handle for completion in CTelObject::ReqCompleted() 

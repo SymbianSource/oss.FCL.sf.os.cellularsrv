@@ -16,18 +16,15 @@
 // 
 //
 
-#include "TE_R6SMSbase.h"
 #include "TE_testR6SMS.h"
 
+#include "TE_R6SMSbase.h"
 #include "Gsmumsg.h"
 #include "gsmumsgadditionalattributes.h"
 #include "Gsmuelem.h"
 #include "gsmuset.h"
-
 #include "EMSInformationElement.h"
 #include "EMSFormatIE.h"
-
-
 
 TVerdict CTestCSmsMessageAdditionalAttributes1::doTestStepL()
     {

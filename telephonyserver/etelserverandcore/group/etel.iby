@@ -19,7 +19,7 @@
 REM Epoc Telephony Layer
 
 #include <commdb.iby>
-#include <fax.iby>
+
 
 file=ABI_DIR\DEBUG_DIR\etel.dll           SYSTEM_BINDIR\ETel.dll
 data=EPOCROOT##epoc32\data\z\private\101F7988\etel.cmi private\101F7988\etel.cmi

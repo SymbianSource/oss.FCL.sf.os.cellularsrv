@@ -15,6 +15,10 @@
 
 #include "TE_smsmondsk.h"
 
+CSetDiskSpace::CSetDiskSpace()
+    {
+    iPartOfMultiStepTestCase = ETrue;
+    }
 
 /**
  *  Set free disk space to the required limit

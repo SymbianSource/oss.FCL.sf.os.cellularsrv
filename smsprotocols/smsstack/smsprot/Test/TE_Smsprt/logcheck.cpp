@@ -19,7 +19,7 @@
 
 #include "logcheck.h"
 
-CSmsLogChecker* CSmsLogChecker::NewL(RFs& aFs, CSmsPrtTestStep* aTest, TInt aPriority)
+CSmsLogChecker* CSmsLogChecker::NewL(RFs& aFs, CSmsBaseTestStep* aTest, TInt aPriority)
 	{
 	CSmsLogChecker* self = new (ELeave) CSmsLogChecker(aFs, aTest, aPriority);
 	CleanupStack::PushL(self);
@@ -42,7 +42,7 @@ void CSmsLogChecker::ConstructL()
 	iFilter->SetDirection(iDirection);
 	}
 
-CSmsLogChecker::CSmsLogChecker(RFs& aFs, CSmsPrtTestStep* aTest, TInt aPriority)
+CSmsLogChecker::CSmsLogChecker(RFs& aFs, CSmsBaseTestStep* aTest, TInt aPriority)
 	:CActive(aPriority), iFs(aFs), iTest(aTest)
 	{
 	CActiveScheduler::Add(this);

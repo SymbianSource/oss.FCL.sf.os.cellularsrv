@@ -15,7 +15,7 @@
 *
 */
 
-
+  
 
 #ifndef MMTSY_TIMEOUTDEFS_H
 #define MMTSY_TIMEOUTDEFS_H
@@ -44,6 +44,8 @@
 
     // All Calls Termination
     const TUint8 KMmPhoneTerminateAllCallsTimeOut = 30;
+    // Active Calls Termination
+    const TUint8 KMmPhoneTerminateActiveCallsTimeOut = 30;
     
     //NET
     const TUint8 KMmPhoneSelectNetworkTimeOut = 165;

@@ -84,22 +84,4 @@ private:
 		EHangUpCancelling
 		} iState;
 	};
-
-class CCallMobileFax;
-class CATHangUpFax : public CATCallAlterCommands
-/**
-@internalComponent
-*/
-	{
-public:
-	static CATHangUpFax* NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
-	~CATHangUpFax();
-	virtual void Start(TTsyReqHandle aTsyReqHandle, TAny* aParams);
-	virtual void Stop(TTsyReqHandle aTsyReqHandle);
-protected:
-	CATHangUpFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
-	virtual void EventSignal(TEventSource aSource);
-	virtual void Complete(TInt aError,TEventSource aSource);
-	};
-
 #endif

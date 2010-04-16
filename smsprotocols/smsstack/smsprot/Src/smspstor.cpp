@@ -559,7 +559,6 @@ TBool CSmsReassemblyStore::PassedToClient( TInt aIndex ) const
 
 
 void CSmsReassemblyStore::SetPassedToClientL(TInt aIndex, TBool aPassed)
-//TODO CommentThisFunction
 	{
 	LOGSMSPROT1("CSmsReassemblyStore::SetPassedToClientL()");
 
@@ -774,7 +773,6 @@ TBool CSmsSegmentationStore::AddCommandL(const TSmsAddr& aSmsAddr,const CSmsMess
 
 	BeginTransactionLC();
 
-	//TODO AA: What is it doing here? Please comment
 	for (TInt i=count-1; i>=0; --i)
 		{
 		if ((logid!=KLogNullId) && (logid==Entries()[i].LogServerId()))
@@ -818,7 +816,6 @@ TBool CSmsSegmentationStore::AddCommandL(const TSmsAddr& aSmsAddr,const CSmsMess
 				ChangeEntryL(j,entry);
 				}
 
-			//TODO What is happening here? Seems strange
 			RSmsSegmentationStoreRefStatusArray refStatusTemp;
 			CleanupClosePushL(refStatusTemp);
 
@@ -844,7 +841,6 @@ TBool CSmsSegmentationStore::AddCommandL(const TSmsAddr& aSmsAddr,const CSmsMess
 
 TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt aReference)
 	{
-	TSmsSegmentationEntry entry; // TODO const and inside loop
 	const TInt count=Entries().Count();
 	LOGSMSPROT3("CSmsSegmentationStore::AddReferenceL [count=%d, ref=%d]", count, aReference);
 	TInt i=0;
@@ -853,8 +849,7 @@ TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt a
 		{
 		for (i=0; i<count; i++)
 			{
-			entry = (TSmsSegmentationEntry&)Entries()[i];
-			if (logserverid==entry.LogServerId())
+            if (logserverid==((TSmsSegmentationEntry&)Entries()[i]).LogServerId())
 				break;
 			}
 		}
@@ -865,22 +860,25 @@ TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt a
 		TInt telLen;
 		for (i=0; i<count; i++)
 			{
-			entry = (TSmsSegmentationEntry&)Entries()[i];
-			telLen=Min(entry.Description2().Length(),parsedaddress.iTelNumber.Length());
-			const CSmsPDU::TSmsPDUType type=entry.PduType();
-			if ((type==aSmsMessage.Type()) && (!entry.IsComplete()) && (aSmsMessage.Time()==entry.Time()) && (entry.Description2().Right(telLen)==parsedaddress.iTelNumber.Right(telLen)))
-				break;
-			}
-		}
-//	__ASSERT_DEBUG(i<count,SmspPanic(KSmspPanicEntryWithLogServerIdNotFound)); TODO
+            TSAREntry tsareenty = Entries()[i];      
+            TSmsSegmentationEntry& entry = static_cast<TSmsSegmentationEntry&>(tsareenty);        
+            telLen=Min(entry.Description2().Length(),parsedaddress.iTelNumber.Length());
+            const CSmsPDU::TSmsPDUType type=entry.PduType();
+            if ((type==aSmsMessage.Type()) && (!entry.IsComplete()) && (aSmsMessage.Time()==entry.Time()) && (entry.Description2().Right(telLen)==parsedaddress.iTelNumber.Right(telLen)))
+                    break;
+                }
+            }
 	if(i>=count)
 		{
 		LOGSMSPROT3("WARNING! KSmspPanicEntryWithLogServerIdNotFound [i=%d, count=%d]", i, count);
+		return EFalse;
 		}
 
 	RSmsSegmentationStoreRefStatusArray refStatusArray;
 	CleanupClosePushL(refStatusArray);
 
+	TSAREntry tsareenty = Entries()[i];      
+	TSmsSegmentationEntry& entry = static_cast<TSmsSegmentationEntry&>(tsareenty);        
 	TStreamId streamid=entry.DataStreamId();
 	TSmsAddr smsaddr;
 	CSmsBuffer* buffer=CSmsBuffer::NewL();
@@ -923,7 +921,6 @@ TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt a
  */
 TBool CSmsSegmentationStore::AddReferenceStatusPairL(const CSmsMessage& aSmsMessage,TInt aReference, TUint aSegmentSequenceNumber)
  	{
-	TSmsSegmentationEntry entry; // TODO const and inside loop
 	const TInt count=Entries().Count();
 	LOGSMSPROT3("CSmsSegmentationStore::AddReferenceStatusPairL [count=%d, ref=%d]", count, aReference);
 	TInt i=0;
@@ -932,8 +929,7 @@ TBool CSmsSegmentationStore::AddReferenceStatusPairL(const CSmsMessage& aSmsMess
 		{
 		for (i=0; i<count; i++)
 			{
-			entry = (TSmsSegmentationEntry&)Entries()[i];
-			if (logserverid==entry.LogServerId())
+            if (logserverid==((TSmsSegmentationEntry&)Entries()[i]).LogServerId())
 				break;
 			}
 		}
@@ -944,21 +940,24 @@ TBool CSmsSegmentationStore::AddReferenceStatusPairL(const CSmsMessage& aSmsMess
 		TInt telLen;
 		for (i=0; i<count; i++)
 			{
-			entry = (TSmsSegmentationEntry&)Entries()[i];
+            TSAREntry tsareenty = Entries()[i];  
+            TSmsSegmentationEntry& entry = static_cast<TSmsSegmentationEntry&>(tsareenty);
 			telLen=Min(entry.Description2().Length(),parsedaddress.iTelNumber.Length());
 			const CSmsPDU::TSmsPDUType type=entry.PduType();
 			if ((type==aSmsMessage.Type()) && (!entry.IsComplete()) && (aSmsMessage.Time()==entry.Time()) && (entry.Description2().Right(telLen)==parsedaddress.iTelNumber.Right(telLen)))
 				break;
 			}
 		}
-//	__ASSERT_DEBUG(i<count,SmspPanic(KSmspPanicEntryWithLogServerIdNotFound)); TODO
 	if(i>=count)
 		{
 		LOGSMSPROT3("WARNING! KSmspPanicEntryWithLogServerIdNotFound [i=%d, count=%d]", i, count);
+		return EFalse;
 		}
 
 	RSmsSegmentationStoreRefStatusArray refStatusArray;
 	CleanupClosePushL(refStatusArray);
+    TSAREntry tsareenty = Entries()[i];  
+    TSmsSegmentationEntry& entry = static_cast<TSmsSegmentationEntry&>(tsareenty);
 
 	TStreamId streamid=entry.DataStreamId();
 	TSmsAddr smsaddr;
@@ -1059,7 +1058,6 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 	CleanupStack::PushL(smsmessage);
 	TGsmSmsTelNumber parsedaddress;
 	aStatusReport.ParsedToFromAddress(parsedaddress);
-	TSmsSegmentationEntry entry; // TODO const ref and inside loop
 
 	BeginTransactionLC();
 
@@ -1068,7 +1066,8 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 	TInt telLen;
 	while (!found && aIndex--)
 		{
-		entry = (TSmsSegmentationEntry&)Entries()[aIndex];
+        TSAREntry tsareenty = Entries()[aIndex]; 
+        TSmsSegmentationEntry& entry = static_cast<TSmsSegmentationEntry&>(tsareenty);  
 
 		// Remove leading zeros of national numbers
 		TPtrC trimmedTelNumber(TrimLeadingZeros(entry.Description2()));
@@ -1149,7 +1148,8 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 		TInt telLen;
 		for (aIndex=0; aIndex<count1; aIndex++)
 			{
-			entry = (TSmsSegmentationEntry&)Entries()[aIndex];
+            TSAREntry tsareenty = Entries()[aIndex]; 
+	        TSmsSegmentationEntry& entry = static_cast<TSmsSegmentationEntry&>(tsareenty);  
 			telLen=Min(entry.Description2().Length(),parsedaddress.iTelNumber.Length());
 			const CSmsPDU::TSmsPDUType type = entry.PduType();
 			if ((type==CSmsPDU::ESmsSubmit) &&
@@ -1176,7 +1176,6 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 				__ASSERT_DEBUG(count2 == refStatusArray2.Count(),SmspPanic(KSmspPanicBadReferenceArray));
 				for (TInt i=0; i<count2; i++)
 					{
-					//TODO What is this doing?
 					TSmsSegmentationStoreRefStatus& refStatus2 = refStatusArray2[i];
 					if (!IsPermanentStatus(refStatus2.Status()))
 						{
@@ -1321,7 +1320,7 @@ void CSmsSegmentationStore::PopulateEntry(TSmsSegmentationEntry& aEntry,
 		aEntry.SetReference(0);
 		aEntry.SetTotal(1);
 		CSmsSubmit& submit=(CSmsSubmit&) aSmsMessage.SmsPDU();
-		aEntry.SetValidityPeriod(submit.ValidityPeriod().Int()); // TODO use val per type
+		aEntry.SetValidityPeriod(submit.ValidityPeriod().Int());
 		
 		if (aSmsMessage.Scheme() == EDefaultScheme)
 		    {
@@ -1426,16 +1425,6 @@ TBool CSmsSegmentationStore::StatusArrayComplete(const RSmsSegmentationStoreRefS
 		if (ret)
 			permanent++;
 		}
-	/*
-	 *  
-	 *  TODO ahe - for release
-	 *  tested hack: the messagereceived function will be called right
-	 *  I did a lot of testing with multipart messages, the sms are
-	 *  almost always received and sent now, there might be only problems
-	 *  with the SR now - to wait for more logs to see what happens in this
-	 *  special cases - and the device crashes and is too slow of course
-	 *  
-	 */
 	return (permanent==count) && (permanent==aEntry.Total() );
 	} // CSmsSegmentationStore::StatusArrayComplete
 

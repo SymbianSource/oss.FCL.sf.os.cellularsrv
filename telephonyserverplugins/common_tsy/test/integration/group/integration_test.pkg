@@ -1,1 +1,61 @@
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\testdata\ctsyintegration_setup.ini"-"c:\testdata\configs\ctsyintegration_setup.ini"
+// note using NTN version of config data here:
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\testdata\ctsyintegration_ntn_data.ini"-"c:\testdata\configs\ctsyintegration_data.ini"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\testdata\uk_commdb.cfg"-"c:\testdata\configs\uk_commdb.cfg"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\testdata\testexecute.ini"-"c:\system\data\testexecute.ini"
+
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_airtimeduration_auto.script"-"c:\testdata\scripts\te_ctsyintegration_airtimeduration_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_alternatelineservice_auto.script"-"c:\testdata\scripts\te_ctsyintegration_alternatelineservice_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_apncontrollist_auto.script"-"c:\testdata\scripts\te_ctsyintegration_apncontrollist_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_broadcastmessaging_auto.script"-"c:\testdata\scripts\te_ctsyintegration_broadcastmessaging_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_callbarring_auto.script"-"c:\testdata\scripts\te_ctsyintegration_callbarring_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_callcontrol_auto.script"-"c:\testdata\scripts\te_ctsyintegration_callcontrol_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_callcost_auto.script"-"c:\testdata\scripts\te_ctsyintegration_callcost_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_callforwarding_auto.script"-"c:\testdata\scripts\te_ctsyintegration_callforwarding_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_callownership_auto.script"-"c:\testdata\scripts\te_ctsyintegration_callownership_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_callwaiting_auto.script"-"c:\testdata\scripts\te_ctsyintegration_callwaiting_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_conferencecallcontrol1_auto.script"-"c:\testdata\scripts\te_ctsyintegration_conferencecallcontrol1_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_conferencecallcontrol2_auto.script"-"c:\testdata\scripts\te_ctsyintegration_conferencecallcontrol2_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_conferencecallcontrol3_auto.script"-"c:\testdata\scripts\te_ctsyintegration_conferencecallcontrol3_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_customapi_auto.script"-"c:\testdata\scripts\te_ctsyintegration_customapi_auto.script"
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_dtmf_auto.script"-"c:\testdata\scripts\te_ctsyintegration_dtmf_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_enstore_auto.script"-"c:\testdata\scripts\te_ctsyintegration_enstore_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_fixeddialling_auto.script"-"c:\testdata\scripts\te_ctsyintegration_fixeddialling_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_indicator_auto.script"-"c:\testdata\scripts\te_ctsyintegration_indicator_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_mailboxnumbers_auto.script"-"c:\testdata\scripts\te_ctsyintegration_mailboxnumbers_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_networkcontrol_auto.script"-"c:\testdata\scripts\te_ctsyintegration_networkcontrol_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_networksecurity_auto.script"-"c:\testdata\scripts\te_ctsyintegration_networksecurity_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_onstore_auto.script"-"c:\testdata\scripts\te_ctsyintegration_onstore_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_packetcontext_auto.script"-"c:\testdata\scripts\te_ctsyintegration_packetcontext_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_packetservice_auto.script"-"c:\testdata\scripts\te_ctsyintegration_packetservice_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_phonebookstore_auto.script"-"c:\testdata\scripts\te_ctsyintegration_phonebookstore_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_phonecapability_auto.script"-"c:\testdata\scripts\te_ctsyintegration_phonecapability_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_phoneidentity_auto.script"-"c:\testdata\scripts\te_ctsyintegration_phoneidentity_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_phonepower_auto.script"-"c:\testdata\scripts\te_ctsyintegration_phonepower_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_phonesecurity_auto.script"-"c:\testdata\scripts\te_ctsyintegration_phonesecurity_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_phonestore_auto.script"-"c:\testdata\scripts\te_ctsyintegration_phonestore_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_signalstrength_auto.script"-"c:\testdata\scripts\te_ctsyintegration_signalstrength_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_smsmessaging_auto.script"-"c:\testdata\scripts\te_ctsyintegration_smsmessaging_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_smspstore_auto.script"-"c:\testdata\scripts\te_ctsyintegration_smspstore_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_smsstore_auto.script"-"c:\testdata\scripts\te_ctsyintegration_smsstore_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_subscriberinfo_auto.script"-"c:\testdata\scripts\te_ctsyintegration_subscriberinfo_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_supplementaryservicecaps_auto.script"-"c:\testdata\scripts\te_ctsyintegration_supplementaryservicecaps_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_usernetworkaccess_auto.script"-"c:\testdata\scripts\te_ctsyintegration_usernetworkaccess_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_usimapplication_auto.script"-"c:\testdata\scripts\te_ctsyintegration_usimapplication_auto.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\integration\scripts_implemented\te_ctsyintegration_ussdmessaging_auto.script"-"c:\testdata\scripts\te_ctsyintegration_ussdmessaging_auto.script"

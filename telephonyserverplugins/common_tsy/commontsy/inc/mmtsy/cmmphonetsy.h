@@ -202,6 +202,7 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
             EMultimodePhoneNotifyAllSendNetworkServiceRequest,
             EMultimodePhoneGetCurrentActiveUSimApplication,             
             EMultimodePhoneTerminateAllCalls,
+            EMultimodePhoneTerminateActiveCalls,
             EMultimodePhoneNotifyDtmfEvent, 
             // ATTENTION:: Declare constant for those requests that need
             // own request handle record in iTsyReqHandleStore above the
@@ -1201,14 +1202,6 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
         virtual CMmSupplServTsy* GetSupplServTsy();
 
         /**
-         * Returns req handle type
-         *          
-         *
-         * @return ReqHandleType
-         */
-        CMmPhoneTsy::TPhoneRequestTypes HandleType();
-
-        /**
          * Sets the message manager pointer
          *          
          *
@@ -1421,6 +1414,13 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
 		 * @param aErrorCode The result of the request
 		 */
         void CompleteTerminateAllCallsReq(TInt aErrorCode);
+        
+        /**
+         * Complete TerminateActiveCalls request
+         * 
+         * @param aErrorCode The result of the request
+         */
+        void CompleteTerminateActiveCallsReq(TInt aErrorCode);
         
         /**
         * Notify change of battery info
@@ -2183,6 +2183,14 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
           */
         TInt TerminateAllCallsL(const TTsyReqHandle aTsyReqHandle);
 
+        /**
+          * Terminate all active calls simultaneously
+          * 
+          * @param aTsyReqHandle TSY req handle
+          * @return Error value
+          */
+        TInt TerminateActiveCallsL(const TTsyReqHandle aTsyReqHandle);
+        
         /*
          * This function return availability of Hareware Resource Manager in the current ROM
          * 

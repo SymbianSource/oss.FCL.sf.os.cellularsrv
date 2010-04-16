@@ -16,19 +16,6 @@
 RUN_SCRIPT Z:\testdata\scripts\te_smsemsprt_setup.script
 LOAD_SUITE te_smsemsprt
 
-
-START_TESTCASE SMS-SMSStack-NA-7500
-//!@SYMTestCaseID SMS-SMSStack-NA-7500
-//!@SYMREQ REQ0000
-//!@SYMTestCaseDesc Test Init
-//!@SYMTestPriority critical
-//!@SYMTestActions Test Initialisation
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestInit
-
-END_TESTCASE SMS-SMSStack-NA-7500
-
 START_TESTCASE SMS-SMSStack-NA-7501
 //!@SYMTestCaseID SMS-SMSStack-NA-7501
 //!@SYMREQ REQ0000
@@ -37,7 +24,7 @@ START_TESTCASE SMS-SMSStack-NA-7501
 //!@SYMTestActions Test creationm of an Ems Format A
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatA
+RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatA z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber1
 
 END_TESTCASE SMS-SMSStack-NA-7501
 
@@ -49,7 +36,7 @@ START_TESTCASE SMS-SMSStack-NA-7502
 //!@SYMTestActions Test creation of an Ems Format B
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatB
+RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatB z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber2
 
 END_TESTCASE SMS-SMSStack-NA-7502
 
@@ -61,7 +48,7 @@ START_TESTCASE SMS-SMSStack-NA-7503
 //!@SYMTestActions Test cresation of an Ems Format C
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatC
+RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatC z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber3
 
 END_TESTCASE SMS-SMSStack-NA-7503
 
@@ -73,7 +60,7 @@ START_TESTCASE SMS-SMSStack-NA-7504
 //!@SYMTestActions Test creation of an Ems Format D
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatD
+RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatD z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber4
 
 END_TESTCASE SMS-SMSStack-NA-7504
 
@@ -85,7 +72,7 @@ START_TESTCASE SMS-SMSStack-NA-7505
 //!@SYMTestActions Test creation of an EMS Format E
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatE
+RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber5
 
 END_TESTCASE SMS-SMSStack-NA-7505
 
@@ -97,7 +84,7 @@ START_TESTCASE SMS-SMSStack-NA-7506
 //!@SYMTestActions Tests creation of an EMS Format F
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatF
+RUN_TEST_STEP 100 te_smsemsprt TestEmsFormatF z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber6
 
 END_TESTCASE SMS-SMSStack-NA-7506
 
@@ -109,7 +96,7 @@ START_TESTCASE SMS-SMSStack-NA-7507
 //!@SYMTestActions Test creation of an Ems sound A
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundA
+RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundA z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber7
 
 END_TESTCASE SMS-SMSStack-NA-7507
 
@@ -121,7 +108,7 @@ START_TESTCASE SMS-SMSStack-NA-7508
 //!@SYMTestActions Tests Creation of an Ems sound B
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundB
+RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundB z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber8
 
 END_TESTCASE SMS-SMSStack-NA-7508
 
@@ -133,7 +120,7 @@ START_TESTCASE SMS-SMSStack-NA-7509
 //!@SYMTestActions Test creation of an Ems Sound C
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundC
+RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundC z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber9
 
 END_TESTCASE SMS-SMSStack-NA-7509
 
@@ -145,7 +132,7 @@ START_TESTCASE SMS-SMSStack-NA-7510
 //!@SYMTestActions Test creation of an Ems Sound C
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundD
+RUN_TEST_STEP 100 te_smsemsprt TestEmsSoundD z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber10
 
 END_TESTCASE SMS-SMSStack-NA-7510
 
@@ -157,7 +144,7 @@ START_TESTCASE SMS-SMSStack-NA-7511
 //!@SYMTestActions Testcreation of an Ems Picture
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsPicture
+RUN_TEST_STEP 100 te_smsemsprt TestEmsPicture z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber11
 
 END_TESTCASE SMS-SMSStack-NA-7511
 
@@ -169,7 +156,7 @@ START_TESTCASE SMS-SMSStack-NA-7512
 //!@SYMTestActions Test creation of an Ems Animation
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsAnimation
+RUN_TEST_STEP 100 te_smsemsprt TestEmsAnimation z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber12
 
 END_TESTCASE SMS-SMSStack-NA-7512
 
@@ -181,7 +168,7 @@ START_TESTCASE SMS-SMSStack-NA-7513
 //!@SYMTestActions Test creation of an Ems User Prompt A
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsUserPromptA
+RUN_TEST_STEP 100 te_smsemsprt TestEmsUserPromptA z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber13
 
 END_TESTCASE SMS-SMSStack-NA-7513
 
@@ -193,7 +180,7 @@ START_TESTCASE SMS-SMSStack-NA-7514
 //!@SYMTestActions Test creation of an Ems User Prompt B
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsUserPromptB
+RUN_TEST_STEP 100 te_smsemsprt TestEmsUserPromptB z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber14
 
 END_TESTCASE SMS-SMSStack-NA-7514
 
@@ -205,7 +192,7 @@ START_TESTCASE SMS-SMSStack-NA-7515
 //!@SYMTestActions Test creation of an Ems Long Message A
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsLongMessageA
+RUN_TEST_STEP 100 te_smsemsprt TestEmsLongMessageA z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber15
 
 END_TESTCASE SMS-SMSStack-NA-7515
 
@@ -217,7 +204,7 @@ START_TESTCASE SMS-SMSStack-NA-7516
 //!@SYMTestActions Test creation of an Ems Long Message B
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsLongMessageB
+RUN_TEST_STEP 100 te_smsemsprt TestEmsLongMessageB z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber16
 
 END_TESTCASE SMS-SMSStack-NA-7516
 
@@ -229,7 +216,7 @@ START_TESTCASE SMS-SMSStack-NA-7517
 //!@SYMTestActions Test creation of Ems Long Message C
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsLongMessageC
+RUN_TEST_STEP 100 te_smsemsprt TestEmsLongMessageC z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber17
 
 END_TESTCASE SMS-SMSStack-NA-7517
 
@@ -241,7 +228,7 @@ START_TESTCASE SMS-SMSStack-NA-7518
 //!@SYMTestActions Tests Ems Unsupported IE api's in the TSY
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsUnsupportedIE
+RUN_TEST_STEP 100 te_smsemsprt TestEmsUnsupportedIE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber18
 
 END_TESTCASE SMS-SMSStack-NA-7518
 
@@ -253,7 +240,7 @@ START_TESTCASE SMS-SMSStack-NA-7519
 //!@SYMTestActions Test Ems Unsorted API's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsUnsorted
+RUN_TEST_STEP 100 te_smsemsprt TestEmsUnsorted z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber19
 
 END_TESTCASE SMS-SMSStack-NA-7519
 
@@ -265,7 +252,7 @@ START_TESTCASE SMS-SMSStack-NA-7520
 //!@SYMTestActions Test Ems ODIA api's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsODIA
+RUN_TEST_STEP 100 te_smsemsprt TestEmsODIA z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber20
 
 END_TESTCASE SMS-SMSStack-NA-7520
 
@@ -277,7 +264,7 @@ START_TESTCASE SMS-SMSStack-NA-7521
 //!@SYMTestActions Test Ems ODIB api's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsODIB
+RUN_TEST_STEP 100 te_smsemsprt TestEmsODIB z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber21
 
 END_TESTCASE SMS-SMSStack-NA-7521
 
@@ -289,7 +276,7 @@ START_TESTCASE SMS-SMSStack-NA-7522
 //!@SYMTestActions Test Ems ODIC api's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsODIC
+RUN_TEST_STEP 100 te_smsemsprt TestEmsODIC z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber22
 
 END_TESTCASE SMS-SMSStack-NA-7522
 
@@ -301,7 +288,7 @@ START_TESTCASE SMS-SMSStack-NA-7523
 //!@SYMTestActions Test Ems ODID api's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsODID
+RUN_TEST_STEP 100 te_smsemsprt TestEmsODID z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber23
 
 END_TESTCASE SMS-SMSStack-NA-7523
 
@@ -313,7 +300,7 @@ START_TESTCASE SMS-SMSStack-NA-7524
 //!@SYMTestActions Test Ems ODIE api's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsODIE
+RUN_TEST_STEP 100 te_smsemsprt TestEmsODIE z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber24
 
 END_TESTCASE SMS-SMSStack-NA-7524
 
@@ -325,6 +312,7 @@ START_TESTCASE SMS-SMSStack-NA-7525
 //!@SYMTestActions Test Ems ODIF api's
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_smsemsprt TestEmsODIF
+RUN_TEST_STEP 100 te_smsemsprt TestEmsODIF z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber25
 END_TESTCASE SMS-SMSStack-NA-7525
 
+RUN_SCRIPT  z:\testdata\scripts\smsstackcleanprivatedata.script

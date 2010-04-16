@@ -14,7 +14,8 @@
 //
 
 TARGET          te_wapprot.exe
-CAPABILITY      ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData AllFiles
+CAPABILITY      ReadDeviceData WriteDeviceData NetworkControl NetworkServices ReadUserData WriteUserData ProtServ AllFiles PowerMgmt
+
 TARGETTYPE      exe
 UID             0x1000008d 0x101F7784
 
@@ -26,7 +27,8 @@ SOURCE		WapIoctlSteps.cpp
 SOURCE		WapStatusReports.cpp
 
 USERINCLUDE   .
-USERINCLUDE   ../../../smsprot/inc
+USERINCLUDE	  ../../../test
+USERINCLUDE	  ../../../smsprot/Inc
 
 MW_LAYER_SYSTEMINCLUDE_SYMBIAN
 
@@ -41,6 +43,7 @@ LIBRARY		c32root.lib
 LIBRARY		efsrv.lib
 LIBRARY		sbeclient.lib
 LIBRARY		estor.lib
+LIBRARY     smsstacktestutilities.lib
 
 VENDORID 0x70000001
 

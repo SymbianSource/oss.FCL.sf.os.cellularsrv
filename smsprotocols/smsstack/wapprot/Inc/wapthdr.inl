@@ -66,7 +66,7 @@ inline TInt TWapTextMessage::SourcePort(TBool* aIs16Bit) const
     __ASSERT_DEBUG(iIsWapTextMessage, Panic(KPanicTextHeaderNotTextHeader));
     if (aIs16Bit)
         *aIs16Bit = iIs16Bit;
-    if (iSourcePort == (-1)) // TODO what does -1 mean?
+    if (iSourcePort == (-1))
         return iDestinationPort;
     return iSourcePort;
     }
@@ -141,7 +141,6 @@ inline TInt TWapTextMessage::SegmentNumber() const
 /**
  *  from WAP spec: other header specified by text mode of WAP spec
  *  
- *  TODO no idea what is it used for ?
  *  Descriptor lenght is set 0, if not present
  *  '//' is included
  */

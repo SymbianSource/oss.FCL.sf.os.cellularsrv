@@ -13,49 +13,14 @@
 // Description:
 //
 
-#include "TE_SMSEMSPRTBASE.h"
 #include "TE_SMSEMSPRT.h"
 
-#if defined (__WINS__)
-#define PDD_NAME _L("ECDRV")
-#define LDD_NAME _L("ECOMM")
-#else
-#define PDD_NAME _L("EUART1")
-#define LDD_NAME _L("ECOMM")
-#endif
-
-
-TVerdict CTestInit::doTestStepL()
-{
-	User::LeaveIfError(iFs.Connect());
-
-    TRAPD( ret, ParseSettingsFromFileL());
-	if (ret != KErrNone)
-		{
-		INFO_PRINTF2(_L("ParseSettingsFromFileL [err=%d]"), ret);
-		}
-
-	iSmsStackTestUtils = CSmsStackTestUtils::NewL(this, iFs);
-
-    INFO_PRINTF2(_L("TelNo: [%S]"), &iTelephoneNumber);
-    INFO_PRINTF2(_L("ScNo:  [%S]"), &iServiceCenterNumber);
-
-	CommInit();
-	iSmsStackTestUtils->CopyConfigFileL(KTSmsEmsPrtConfigFileName);
-
-    delete iSmsStackTestUtils;
-    iSmsStackTestUtils = NULL;
-
-	iFs.Close();
-
-	return TestStepResult();
-}
-
+_LIT(KBasicSmsText,"abcdefghijklmnopqrstuvwxyz"); // The basic text we send - 26 chars long
 
 TVerdict CTestEmsFormatA::doTestStepL()
 	{
 	// send a message 26 characters long
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// create the formatting object
 	CEmsFormatIE* object = CEmsFormatIE::NewL();
@@ -72,7 +37,6 @@ TVerdict CTestEmsFormatA::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsFormatB::doTestStepL()
 	{
 	TBuf<26*8> buf;
@@ -83,7 +47,7 @@ TVerdict CTestEmsFormatB::doTestStepL()
 		buf.Append(KBasicSmsText);
 		}
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// create the formatting object
 	CEmsFormatIE* object = CEmsFormatIE::NewL();
@@ -99,7 +63,6 @@ TVerdict CTestEmsFormatB::doTestStepL()
 	CleanupStack::PopAndDestroy(smsMessage);
 	return TestStepResult();
 	}
-
 
 TVerdict CTestEmsFormatC::doTestStepL()
 	{
@@ -111,7 +74,7 @@ TVerdict CTestEmsFormatC::doTestStepL()
 		buf.Append(KBasicSmsText);
 		}
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet7Bit);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet7Bit);
 
 	// create the formatting object
 	CEmsFormatIE* object = CEmsFormatIE::NewL();
@@ -128,7 +91,6 @@ TVerdict CTestEmsFormatC::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsFormatD::doTestStepL()
 	{
 	TBuf<26*4> buf;
@@ -139,7 +101,7 @@ TVerdict CTestEmsFormatD::doTestStepL()
 		buf.Append(KBasicSmsText);
 		}
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabetUCS2);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabetUCS2);
 
 	// create the formatting object
 	CEmsFormatIE* object = CEmsFormatIE::NewL();
@@ -156,10 +118,9 @@ TVerdict CTestEmsFormatD::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsFormatE::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// create the formatting object - set the start position to be out of range
 	CEmsFormatIE* object = CEmsFormatIE::NewL();
@@ -189,7 +150,6 @@ TVerdict CTestEmsFormatE::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsFormatF::doTestStepL()
 	{
 	TBuf<26*8> buf;
@@ -201,7 +161,7 @@ TVerdict CTestEmsFormatF::doTestStepL()
 		}
 
 	// send a message 26*8 characters long
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// create the formatting object
 	CEmsFormatIE* object = CEmsFormatIE::NewL();
@@ -218,10 +178,9 @@ TVerdict CTestEmsFormatF::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsSoundA::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// create the sound object - EChimes at pos 5
 	CEmsPreDefSoundIE* object =
@@ -244,14 +203,13 @@ TVerdict CTestEmsSoundA::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsSoundB::doTestStepL()
 	{
 	// User melody
 	_LIT8(KUserMelody, 	"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
 	  "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f");
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// create one melody at position 20
 	CEmsSoundIE* object =
@@ -274,7 +232,6 @@ TVerdict CTestEmsSoundB::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsSoundC::doTestStepL()
 	{
 	TBuf<26*4> buf;
@@ -285,7 +242,7 @@ TVerdict CTestEmsSoundC::doTestStepL()
 		buf.Append(KBasicSmsText);
 		}
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 128-byte sound - fill it with byte 0x02
 	TBuf8<128> soundBuf;
@@ -312,7 +269,6 @@ TVerdict CTestEmsSoundC::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsSoundD::doTestStepL()
 	{
 	// Create a 130-byte sound - fill it with byte 0x02
@@ -327,11 +283,10 @@ TVerdict CTestEmsSoundD::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsPicture::doTestStepL()
 	{
 	// Create a standard message
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	for (TInt i = 0; i < 3; ++i)
 		{
@@ -345,18 +300,16 @@ TVerdict CTestEmsPicture::doTestStepL()
 		CleanupStack::PopAndDestroy(picture);
 		}
 
-
 	// Send and receive message
 	SendReceiveMsgL(*smsMessage);
 	CleanupStack::PopAndDestroy(smsMessage);
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsAnimation::doTestStepL()
 	{
 	// Create a standard message
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	for (TInt i = 0; i < 2; ++i)
 		{
@@ -383,10 +336,9 @@ TVerdict CTestEmsAnimation::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsUserPromptA::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -420,10 +372,9 @@ TVerdict CTestEmsUserPromptA::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsUserPromptB::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -474,7 +425,7 @@ void CTestEmsLongMsgBase::StepWithCharSetL(TSmsDataCodingScheme::TSmsAlphabet aA
 		buf.Append(KBasicSmsText);
 		}
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf, aAlphabet);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, aAlphabet);
 
 	// Create the format object
 	CEmsFormatIE* format = CEmsFormatIE::NewL();
@@ -507,13 +458,11 @@ void CTestEmsLongMsgBase::StepWithCharSetL(TSmsDataCodingScheme::TSmsAlphabet aA
 	CleanupStack::PopAndDestroy(smsMessage);
 	}
 
-
 TVerdict CTestEmsLongMessageA::doTestStepL()
 	{
 	StepWithCharSetL(TSmsDataCodingScheme::ESmsAlphabet8Bit);
 	return TestStepResult();
 	}
-
 
 TVerdict CTestEmsLongMessageB::doTestStepL()
 	{
@@ -521,20 +470,18 @@ TVerdict CTestEmsLongMessageB::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsLongMessageC::doTestStepL()
 	{
 	StepWithCharSetL(TSmsDataCodingScheme::ESmsAlphabetUCS2);
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsUnsupportedIE::doTestStepL()
 	{
 	TBuf<10> buf;
 	buf.Fill('A', 10);
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 4-byte sound - fill it with byte 0x02
 	TBuf8<4> soundBuf;
@@ -555,13 +502,12 @@ TVerdict CTestEmsUnsupportedIE::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsUnsorted::doTestStepL()
 	{
 	TBuf<10> buf;
 	buf.Fill('A', 10);
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 4-byte sound - fill it with byte 0x02
 	TBuf8<4> soundBuf;
@@ -615,10 +561,9 @@ TVerdict CTestEmsUnsorted::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsODIA::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -652,10 +597,9 @@ TVerdict CTestEmsODIA::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsODIB::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -695,10 +639,9 @@ TVerdict CTestEmsODIB::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsODIC::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -752,10 +695,9 @@ TVerdict CTestEmsODIC::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsODID::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -788,7 +730,6 @@ TVerdict CTestEmsODID::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsODIE::doTestStepL()
 	{
 	TBuf<26*4> buf;
@@ -799,7 +740,7 @@ TVerdict CTestEmsODIE::doTestStepL()
 		buf.Append(KBasicSmsText);
 		}
 
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(buf, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create the format object
 	CEmsFormatIE* format = CEmsFormatIE::NewL();
@@ -847,10 +788,9 @@ TVerdict CTestEmsODIE::doTestStepL()
 	return TestStepResult();
 	}
 
-
 TVerdict CTestEmsODIF::doTestStepL()
 	{
-	CSmsMessage* smsMessage = ConfigCreateSmsMessageLC(KBasicSmsText);
+	CSmsMessage* smsMessage = CreateSmsMessageLC(KBasicSmsText, TSmsDataCodingScheme::ESmsAlphabet8Bit);
 
 	// Create a 32-byte sound - fill it with byte 0x02
 	TBuf8<32> soundBuf;
@@ -882,4 +822,3 @@ TVerdict CTestEmsODIF::doTestStepL()
 	CleanupStack::PopAndDestroy(smsMessage);
 	return TestStepResult();
 	}
-

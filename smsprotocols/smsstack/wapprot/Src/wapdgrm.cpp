@@ -432,8 +432,6 @@ void CWapDatagram::ConstructL(const CSmsMessage& aSms)
         else
             // This means that IEs with 7-bits are used
             // Happily we support it
-            // But what TODO if we are here due to an error, because
-            // 7-bit with IEs should never happen ?
             iIsComplete = ETrue;
 
         }

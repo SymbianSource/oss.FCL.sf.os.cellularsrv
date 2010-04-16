@@ -671,4 +671,5 @@
 	??0TMobileCallInfoV8@RMobileCall@@QAE@XZ @ 670 NONAME ; RMobileCall::TMobileCallInfoV8::TMobileCallInfoV8(void)
 	??0TMobileDataCallParamsV8@RMobileCall@@QAE@XZ @ 671 NONAME ; RMobileCall::TMobileDataCallParamsV8::TMobileDataCallParamsV8(void)
 	??0TMobileHscsdCallParamsV8@RMobileCall@@QAE@XZ @ 672 NONAME ; RMobileCall::TMobileHscsdCallParamsV8::TMobileHscsdCallParamsV8(void)
+	?TerminateActiveCalls@RMobilePhone@@QBEXAAVTRequestStatus@@@Z @ 673 NONAME ; void RMobilePhone::TerminateActiveCalls(class TRequestStatus &) const
 

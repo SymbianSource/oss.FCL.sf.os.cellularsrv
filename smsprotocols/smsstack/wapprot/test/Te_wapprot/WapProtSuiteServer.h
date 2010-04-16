@@ -15,23 +15,22 @@
 *
 */
 
-
-
 /**
- @file
+    @file
+    @test 
 */
 
-#if (!defined __WAPPROT_SUITE_SERVER_H__)
-#define __WAPPROT_SUITE_SERVER_H__
-#include <test/testexecuteserverbase.h>
+#ifndef WAPPROT_SUITE_SERVER_H
+#define WAPPROT_SUITE_SERVER_H
 
-class CWapProtSuite : public CTestServer
-	{
+#include "smsstackbasetestserver.h" 
+
+class CWapProtSuite : public CSmsStackTestServer
+    {
 public:
-	static CWapProtSuite* NewL();
-	// Base class pure virtual override
-	virtual CTestStep* CreateTestStep(const TDesC& aStepName);
-private:
-	};
+    static CWapProtSuite* NewL();
+    // Base class pure virtual override
+    virtual CTestStep* CreateTestStep(const TDesC& aStepName);
+    };
 
-#endif
+#endif  // WAPPROT_SUITE_SERVER_H

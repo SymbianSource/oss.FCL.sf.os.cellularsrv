@@ -15,22 +15,21 @@
 // 
 //
 
-#if (!defined __TE_SMSPRTSERVER_H__)
-#define __TE_SMSPRTSERVER_H__
-#include "TE_smsprtbase.h"
-#include <test/testexecuteserverbase.h>
+#ifndef TE_SMSPRTSERVER_H
+#define TE_SMSPRTSERVER_H
 
+#include <es_sock.h> 
 
-class CSmsPrtTestServer : public CTestServer
+#include "smsstackbasetestserver.h"
+
+class CSmsPrtTestServer : public CSmsStackTestServer
 	{
 public:
 	static CSmsPrtTestServer* NewL();
 	virtual CTestStep* CreateTestStep(const TDesC& aStepName);
-	~CSmsPrtTestServer();
 
+private:
 	RSocketServ iSocketServer;
-	RSocket iSocket;
-	
 	};
 
-#endif
+#endif // TE_SMSPRTSERVER_H

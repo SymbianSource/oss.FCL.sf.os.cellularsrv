@@ -19,6 +19,11 @@
 
 #include "Te_SmsTestSteps.h"
 
+CForwardSystemTime::CForwardSystemTime()
+    {
+    iPartOfMultiStepTestCase = ETrue;
+    }
+
 /**
   Forwards the system time in minutes.
 */

@@ -13,65 +13,64 @@
 // Description:
 //
 
-#ifndef __TE_SMSPRT_R6_H_
-#define __TE_SMSPRT_R6_H_
+#ifndef TE_SMSPRT_R6_H
+#define TE_SMSPRT_R6_H
 
 
-#include "TE_smsprt.h"
-#include "Gsmuelem.h"
-#include "gsmuieoperations.h"
+
+#include "smsstackbaseteststeps.h"
 
 
-class CTestSinglePDUHyperLinks : public CSmsPrtTestStep
+class CTestSinglePDUHyperLinks : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMultiplePDUHyperLinks : public CSmsPrtTestStep
+class CTestMultiplePDUHyperLinks : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSinglePDUReplyAddress : public CSmsPrtTestStep
+class CTestSinglePDUReplyAddress : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMultiplePDUReplyAddress : public CSmsPrtTestStep
+class CTestMultiplePDUReplyAddress : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSpecialMessageOperations : public CSmsPrtTestStep
+class CTestSpecialMessageOperations : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSinglePDUSpecialMessageWaiting : public CSmsPrtTestStep
+class CTestSinglePDUSpecialMessageWaiting : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMultiplePDUSpecialMessageWaiting : public CSmsPrtTestStep
+class CTestMultiplePDUSpecialMessageWaiting : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestEnhancedVoiceMail : public CSmsPrtTestStep
+class CSmsEnhancedVoiceMailTestStep : public CSmsBaseTestStep
 {
 protected:
 	CEnhancedVoiceMailNotification* CreateEnhancedVoiceMailNotificationL(TGsmSmsTelNumber aAccessAddress);
@@ -79,7 +78,7 @@ protected:
 };
 
 
-class CTestEnhancedVoiceMailOperations : public CTestEnhancedVoiceMail
+class CTestEnhancedVoiceMailOperations : public CSmsEnhancedVoiceMailTestStep
 	{
 public:
 	enum TBoundaries {EInside=0,EOn,EOutside};
@@ -94,122 +93,122 @@ protected:
 	};
 
 
-class CTestSinglePDUEnhancedVoiceMailInformation : public CTestEnhancedVoiceMail
+class CTestSinglePDUEnhancedVoiceMailInformation : public CSmsEnhancedVoiceMailTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMultiplePDUEnhancedVoiceMailInformation : public CTestEnhancedVoiceMail
+class CTestMultiplePDUEnhancedVoiceMailInformation : public CSmsEnhancedVoiceMailTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestEnhancedVoiceMailDeleteOperations : public CSmsPrtTestStep
+class CTestEnhancedVoiceMailDeleteOperations : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestSinglePDUEnhancedVoiceMailDeleteConfirmation : public CSmsPrtTestStep
+class CTestSinglePDUEnhancedVoiceMailDeleteConfirmation : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestMultiplePDUEnhancedVoiceMailDeleteConfirmation : public CSmsPrtTestStep
+class CTestMultiplePDUEnhancedVoiceMailDeleteConfirmation : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTest7BitDefaultAlphabet : public CSmsPrtTestStep
+class CTest7BitDefaultAlphabet : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestZeroLengthIE : public CSmsPrtTestStep
+class CTestZeroLengthIE : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestAutomaticDeletionInDCS : public CSmsPrtTestStep
+class CTestAutomaticDeletionInDCS : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestAutomaticDeletionInDCSAndInESK : public CSmsPrtTestStep
+class CTestAutomaticDeletionInDCSAndInESK : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestAutomaticDeletionTypeZeroSMS : public CSmsPrtTestStep
+class CTestAutomaticDeletionTypeZeroSMS : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestAutomaticDeletionTypeZeroAndSetInESK : public CSmsPrtTestStep
+class CTestAutomaticDeletionTypeZeroAndSetInESK : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CTestOOMSendR6Sms : public CSmsPrtTestStep
+class CTestOOMSendR6Sms : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CEnhancedVoiceMessageBoundaryTest : public CSmsPrtTestStep
+class CTestEnhancedVoiceMessageBoundary : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CEnhancedVoiceMessageBoundaryTest1 : public CSmsPrtTestStep
+class CTestEnhancedVoiceMessageBoundary1 : public CSmsBaseTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
 	};
 
 
-class CSubmitReportDefaultsTo7BitDecoding : public CSmsPrtTestStep
+class CTestSubmitReportDefaultsTo7BitDecoding : public CSmsBaseTestStep
     {
 public:
     virtual TVerdict doTestStepL();
     };
 
 
-class CDeliverReportDefaultsTo7BitDecoding : public CSmsPrtTestStep
+class CTestDeliverReportDefaultsTo7BitDecoding : public CSmsBaseTestStep
     {
 public:
     virtual TVerdict doTestStepL();
     };
 
 
-class CStatusReportDefaultsTo7BitDecoding : public CSmsPrtTestStep
+class CTestStatusReportDefaultsTo7BitDecoding : public CSmsBaseTestStep
     {
 public:
     virtual TVerdict doTestStepL();
     };
 
-#endif
+#endif // TE_SMSPRT_R6_H

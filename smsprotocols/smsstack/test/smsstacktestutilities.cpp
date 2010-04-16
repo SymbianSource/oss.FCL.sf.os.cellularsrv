@@ -19,25 +19,25 @@
  @file
 */
 
-#include <commsdattypesv1_1.h>
-#include <logcli.h>
-
 #include "smsstacktestutilities.h"
+
+#include <commsdattypesv1_1.h>
+#include <commsdattypesv1_1_internal.h>
+#include <logcli.h>
 #include <e32math.h>
+#include <e32test.h>
+#include <f32file.h>
+#include <logwraplimits.h>
+
 #include "smsustrm.h"
 #include "Gsmumsg.h"
 #include "smsuaddr.H"
 #include "gsmubuf.h"
-
 #include "smspdudb.h"
-#include <e32test.h>
-#include <f32file.h>
 #include "SmsuTimer.h"
 #include "smsstacklog.h"
-#include <logwraplimits.h>
 
 using namespace CommsDat;
-
 
 // Check a boolean is true
 #define LOCAL_CHECKPOINT(a) iTestStep->testBooleanTrue((a), (TText8*)__FILE__, __LINE__)
@@ -54,7 +54,6 @@ using namespace CommsDat;
 #define PRINTF5(p1, p2, p3, p4, p5)			iTestStep->Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo, (p1), (p2), (p3), (p4), (p5))
 #define PRINTF6(p1, p2, p3, p4, p5, p6)		iTestStep->Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo, (p1), (p2), (p3), (p4), (p5), (p6))
 #define PRINTF7(p1, p2, p3, p4, p5, p6, p7)	iTestStep->Logger().LogExtra(((TText8*)__FILE__), __LINE__, ESevrInfo, (p1), (p2), (p3), (p4), (p5), (p6), (p7))
-
 
 class CTSmsRegTstActive : public CActive
 	{
@@ -119,78 +118,6 @@ CSmsStackTestUtils::CSmsStackTestUtils(CTestStep* aTestStep, RFs& aFs)
 	{
 	}
 
-EXPORT_C void CSmsStackTestUtils::WaitForInitializeL()
-/**
- *  Initialize the phone for the tsy. This will prevent message sends from completing with KErrNotReady
- */
-	{
-#ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_2);
-#else
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
-#endif
-
-	CleanupStack::PushL(db);
-
-	TName tsy;
-	TUint32 modemId = 0;
-
-	CMDBField<TUint32>* globalSettingsField = new(ELeave) CMDBField<TUint32>(KCDTIdModemPhoneServicesSMS);
-	CleanupStack::PushL(globalSettingsField);
-	globalSettingsField->SetRecordId(1);
-	globalSettingsField->LoadL(*db);
-	modemId = *globalSettingsField;
-	CleanupStack::PopAndDestroy(globalSettingsField);
-
-	CMDBField<TDesC>* tsyField = new(ELeave) CMDBField<TDesC>(KCDTIdTsyName);
-	CleanupStack::PushL(tsyField);
-	tsyField->SetRecordId(modemId);
-	tsyField->SetMaxLengthL(KMaxTextLength);
-	tsyField->LoadL(*db);
-	tsy = *tsyField;
-	CleanupStack::PopAndDestroy(tsyField);
-
-	CleanupStack::PopAndDestroy(db);
-
-	PRINTF2(_L("Loading TSY \"%S\"..."), &tsy);
-
-	RTelServer server;
-	User::LeaveIfError(server.Connect());
-	CleanupClosePushL(server);
-	User::LeaveIfError(server.LoadPhoneModule(tsy));
-
-	// Find the phone corresponding to this TSY and open a number of handles on it
-	TInt numPhones;
-	User::LeaveIfError(server.EnumeratePhones(numPhones));
-	RPhone phone;
-	TBool found=EFalse;
-
-	while (numPhones--)
-		{
-		TName phoneTsy;
-		User::LeaveIfError(server.GetTsyName(numPhones,phoneTsy));
-		if (phoneTsy.CompareF(tsy)==KErrNone)
-			{
-			PRINTF1(_L("Found RPhone..."));
-			found = ETrue;
-			RTelServer::TPhoneInfo info;
-			User::LeaveIfError(server.GetPhoneInfo(numPhones,info));
-			User::LeaveIfError(phone.Open(server,info.iName));
-			CleanupClosePushL(phone);
-			PRINTF1(_L("Initializing..."));
-			const TInt err = phone.Initialise();
-			TTimeIntervalMicroSeconds32 InitPause=9000000;  //Required Pause to Allow SMSStack to Complete its Async Init
-			User::After(InitPause);							//call to the TSY and finish its StartUp.
-			PRINTF2(_L("Completed Initialize [err=%d]"), err);
-			User::LeaveIfError(err);
-			CleanupStack::PopAndDestroy(&phone);
-			break;
-			}
-		}
-
-	LOCAL_CHECKPOINT(found);
-	CleanupStack::PopAndDestroy(&server);
-	}
 
 EXPORT_C void CSmsStackTestUtils::OpenSmsSocketLC(RSocketServ& aSocketServer, RSocket& aSocket, TSmsAddrFamily aFamily)
 /**
@@ -231,7 +158,6 @@ EXPORT_C void CSmsStackTestUtils::OpenSmsSocketLC(RSocketServ& aSocketServer, RS
 	CleanupClosePushL(aSocket);
 	}
 
-
 EXPORT_C void CSmsStackTestUtils::OpenSmsSocketL(RSocketServ& aSocketServer, RSocket& aSocket, TSmsAddr& aSmsAddr)
 /**
  *  Initialise an RSocket for SMS, aSocket is NOT pushed to CleanupStack.
@@ -247,7 +173,14 @@ EXPORT_C void CSmsStackTestUtils::OpenSmsSocketL(RSocketServ& aSocketServer, RSo
 	ret=aSocket.Bind(aSmsAddr);
 	PRINTF2(_L("Socket Bind Return Value : %d"),ret);
 	LOCAL_CHECKPOINT(ret == KErrNone);
-	WaitForInitializeL();
+	
+	TProtocolDesc desc;
+	aSocket.Info(desc);
+	PRINTF2(_L("Protocol name: %S"), &desc.iName);
+	
+    TTimeIntervalMicroSeconds32 InitPause=9000000;  //Required Pause to Allow SMSStack to Complete its Async Init
+    User::After(InitPause);                         //call to the TSY and finish its StartUp.
+
 	CleanupStack::Pop(&aSocket);
 	}
 
@@ -267,27 +200,27 @@ EXPORT_C void CSmsStackTestUtils::SendSmsAndChangeBearerL(CSmsMessage* aSms, RSo
 	LOCAL_CHECKPOINT(ret == KErrNone);
 	TRAP(ret,writestream.CommitL());
 	LOCAL_CHECKPOINT(ret == KErrNone);
-
+	
     // Create comms database object
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
-	CleanupStack::PushL(db);
+    CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
+    CleanupStack::PushL(db);
 
  	//Send message and change bearer
 	TPckgBuf<TUint> sbuf;
 	TRequestStatus status;
-	aSocket.Ioctl(KIoctlSendSmsMessage,status,&sbuf, KSolSmsProv);
+	aSocket.Ioctl(KIoctlSendSmsMessage, status, &sbuf, KSolSmsProv);
 
 	//Wait couple of seconds to ensure first pdus of message have been sent
 	User::After(2500000);
 
-	// Change bearer
-	CMDBField<TUint32>* smsBearerField = new(ELeave) CMDBField<TUint32>(KCDTIdSMSBearer);
-	CleanupStack::PushL(smsBearerField);
-	smsBearerField->SetRecordId(1); //it's GlobalSettingsRecord
-	*smsBearerField = aBearer;
-	smsBearerField->ModifyL(*db);
-	CleanupStack::PopAndDestroy(smsBearerField);
-	CleanupStack::PopAndDestroy(db);
+    // Change bearer
+    CMDBField<TUint32>* smsBearerField = new(ELeave) CMDBField<TUint32>(KCDTIdSMSBearer);
+    CleanupStack::PushL(smsBearerField);
+    smsBearerField->SetRecordId(1); //it's GlobalSettingsRecord
+    *smsBearerField = aBearer;
+    smsBearerField->ModifyL(*db);
+    CleanupStack::PopAndDestroy(smsBearerField);
+    CleanupStack::PopAndDestroy(db);
 
 	User::WaitForRequest(status);
 	PRINTF2(_L("SendSmsL - sendSmsMessage returned %d"), status.Int());
@@ -310,28 +243,28 @@ Change the bearer in CommDB global settings.
 @return none
 */
 	{
-	// Start a CommDB session
+    // Start a CommDB session
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_2);
+    CMDBSession* db = CMDBSession::NewL(KCDVersion1_2);
 #else
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
+    CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
 #endif
-	CleanupStack::PushL(db);
-	
-	// Change bearer in global settings
-	CMDBRecordSet<CCDGlobalSettingsRecord> globalSettingsRecord(KCDTIdGlobalSettingsRecord);
-	TRAPD(err, globalSettingsRecord.LoadL(*db));
-	if (err != KErrNone)
-		{
-		PRINTF2(_L("Could not load global settings. Error = %d\n"), err);
-		User::Leave(err);
-		}
-	((CCDGlobalSettingsRecord*)globalSettingsRecord.iRecords[0])->iSMSBearer = aBearer;
-	globalSettingsRecord.ModifyL(*db);
-	
-	PRINTF2(_L("Setting bearer in global settings to %d\n"), aBearer); 
-	
-	CleanupStack::PopAndDestroy(db);
+    CleanupStack::PushL(db);
+    
+    // Change bearer in global settings
+    CMDBRecordSet<CCDGlobalSettingsRecord> globalSettingsRecord(KCDTIdGlobalSettingsRecord);
+    TRAPD(err, globalSettingsRecord.LoadL(*db));
+    if (err != KErrNone)
+        {
+        PRINTF2(_L("Could not load global settings. Error = %d\n"), err);
+        User::Leave(err);
+        }
+    ((CCDGlobalSettingsRecord*)globalSettingsRecord.iRecords[0])->iSMSBearer = aBearer;
+    globalSettingsRecord.ModifyL(*db);
+    
+    PRINTF2(_L("Setting bearer in global settings to %d\n"), aBearer); 
+    
+    CleanupStack::PopAndDestroy(db);
 	}
 
 EXPORT_C void CSmsStackTestUtils::GetBearerL(RMobileSmsMessaging::TMobileSmsBearer& aBearer)
@@ -341,29 +274,29 @@ Get the bearer from CommDB global settings.
 @param aBearer The bearer setting retrieved from global settings.
 @return none
 */
-	{
-	// Start a CommDB session
+    {
+    // Start a CommDB session
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_2);
+    CMDBSession* db = CMDBSession::NewL(KCDVersion1_2);
 #else
-	CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
+    CMDBSession* db = CMDBSession::NewL(KCDVersion1_1);
 #endif
-	CleanupStack::PushL(db);
-	
-	// Load global settings
-	CMDBRecordSet<CCDGlobalSettingsRecord> globalSettingsRecord(KCDTIdGlobalSettingsRecord);
-	TRAPD(err, globalSettingsRecord.LoadL(*db));
-	if (err != KErrNone)
-		{
-		PRINTF2(_L("Could not load global settings. Error = %d\n"), err);
-		User::Leave(err);
-		}
-	TInt tempBearer = ((CCDGlobalSettingsRecord*)globalSettingsRecord.iRecords[0])->iSMSBearer;
-	aBearer = static_cast<RMobileSmsMessaging::TMobileSmsBearer>(tempBearer);
-	PRINTF2(_L("Got bearer from CommDB. Bearer = %d\n"), aBearer);
-	
-	CleanupStack::PopAndDestroy(db);
-	}
+    CleanupStack::PushL(db);
+    
+    // Load global settings
+    CMDBRecordSet<CCDGlobalSettingsRecord> globalSettingsRecord(KCDTIdGlobalSettingsRecord);
+    TRAPD(err, globalSettingsRecord.LoadL(*db));
+    if (err != KErrNone)
+        {
+        PRINTF2(_L("Could not load global settings. Error = %d\n"), err);
+        User::Leave(err);
+        }
+    TInt tempBearer = ((CCDGlobalSettingsRecord*)globalSettingsRecord.iRecords[0])->iSMSBearer;
+    aBearer = static_cast<RMobileSmsMessaging::TMobileSmsBearer>(tempBearer);
+    PRINTF2(_L("Got bearer from CommDB. Bearer = %d\n"), aBearer);
+    
+    CleanupStack::PopAndDestroy(db);
+    }
 
 EXPORT_C void CSmsStackTestUtils::DisableLogging()
  	{
@@ -389,38 +322,35 @@ EXPORT_C void CSmsStackTestUtils::DisableLogging()
  	CActiveScheduler::Start();
  	LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
  	
- 	CleanupStack::PopAndDestroy(logWrapper);	
- 	CleanupStack::PopAndDestroy(testActive);
+ 	CleanupStack::PopAndDestroy(2, testActive); // testActive, logWrapper
 	}
  
  EXPORT_C void CSmsStackTestUtils::EnableLogging()
- 	{
- 	CTSmsRegTstActive* testActive = new(ELeave)CTSmsRegTstActive();
- 	CleanupStack::PushL(testActive);
- 	testActive->StartL();	
- 
- 	CLogWrapper* logWrapper=CLogWrapper::NewL(iFs);
- 	CleanupStack::PushL(logWrapper);
- 	CLogClient& logClient = static_cast<CLogClient&> (logWrapper->Log());
- 	TLogConfig config;
- 	logClient.GetConfig(config, testActive->iStatus);
- 	CActiveScheduler::Start();
- 	LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
- 
- 	// Enable logging
- 	config.iMaxEventAge = 10000;
- 	config.iMaxLogSize  = 10000; 
- 	config.iMaxRecentLogSize = 127; 
- 	
- 	testActive->StartL();	
- 	logClient.ChangeConfig(config, testActive->iStatus);
- 	CActiveScheduler::Start();
- 	LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
- 	
- 	CleanupStack::PopAndDestroy(logWrapper);	
- 	CleanupStack::PopAndDestroy(testActive);
- }		
-	
+    {
+    CTSmsRegTstActive* testActive = new(ELeave)CTSmsRegTstActive();
+    CleanupStack::PushL(testActive);
+    testActive->StartL();	
+    
+    CLogWrapper* logWrapper=CLogWrapper::NewL(iFs);
+    CleanupStack::PushL(logWrapper);
+    CLogClient& logClient = static_cast<CLogClient&> (logWrapper->Log());
+    TLogConfig config;
+    logClient.GetConfig(config, testActive->iStatus);
+    CActiveScheduler::Start();
+    LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
+    
+    // Enable logging - default values
+    config.iMaxEventAge = 2592000;
+    config.iMaxLogSize  = 1000; 
+    config.iMaxRecentLogSize = 20; 
+    
+    testActive->StartL();	
+    logClient.ChangeConfig(config, testActive->iStatus);
+    CActiveScheduler::Start();
+    LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
+    
+    CleanupStack::PopAndDestroy(2, testActive); // testActive, logWrapper
+    }		
 	
 EXPORT_C void CSmsStackTestUtils::GetLogEventL(CLogEvent& aLogEvent, TInt aLogServerId)
 /**
@@ -440,7 +370,8 @@ EXPORT_C void CSmsStackTestUtils::GetLogEventL(CLogEvent& aLogEvent, TInt aLogSe
 	logWrapper->Log().GetEvent(aLogEvent,testActive->iStatus);
 	CActiveScheduler::Start();
 	LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
-	CleanupStack::PopAndDestroy(2);	// testActive, logWrapper
+	
+    CleanupStack::PopAndDestroy(2, testActive); // testActive, logWrapper
 	}
 
 EXPORT_C TLogId CSmsStackTestUtils::AddLogEventL(CSmsMessage& aSmsMessage,TLogSmsPduData& aSmsPDUData)
@@ -478,15 +409,17 @@ EXPORT_C TLogId CSmsStackTestUtils::AddLogEventL(CSmsMessage& aSmsMessage,TLogSm
 		logevent->SetStatus(_L("status"));
 		TPckg<TLogSmsPduData> packeddata(aSmsPDUData);
 		logevent->SetDataL(packeddata);
-
+		
+		PRINTF2(_L("iStatus is %d"), testActive->iStatus.Int());
 		logWrapper->Log().AddEvent(*logevent,testActive->iStatus);
 		CActiveScheduler::Start();
+		PRINTF2(_L("iStatus is %d"), testActive->iStatus.Int());
 		LOCAL_CHECKPOINT(testActive->iStatus.Int() == KErrNone);
 		id=logevent->Id();
 		CleanupStack::PopAndDestroy(logevent);
 	}
 
-	CleanupStack::PopAndDestroy(2);	// testActive, logWrapper
+    CleanupStack::PopAndDestroy(2, testActive); // testActive, logWrapper
 	return id;
 	}
 
@@ -620,15 +553,12 @@ EXPORT_C void CSmsStackTestUtils::AddSmsTxL(CTestConfig& aConfigFile, TInt aTest
 		CTestConfigItem* item = CTestConfigItem::NewLC(section, KSmspTestUtilsSmsTx, *smsTx);
 
 		User::LeaveIfError(section.Items().Append(item));
-
+			
 		CleanupStack::Pop(item);
-		CleanupStack::PopAndDestroy(smsTx);
-		CleanupStack::PopAndDestroy(sc);
-		CleanupStack::PopAndDestroy(pduBuf);
+        CleanupStack::PopAndDestroy(3, pduBuf); // smsTx, sc, pduBuf
 		}
 
-	CleanupStack::PopAndDestroy(submitReport);
-	CleanupStack::PopAndDestroy(pdus);
+	CleanupStack::PopAndDestroy(2, pdus); // pdus, submitReport
 	}
 
 EXPORT_C HBufC8* CSmsStackTestUtils::ConvertToHexLC(const TDesC8& aDes) const
@@ -642,7 +572,6 @@ EXPORT_C HBufC8* CSmsStackTestUtils::ConvertToHexLC(const TDesC8& aDes) const
 		{
 		value.AppendFormat(_L8("%02X"), aDes[i]);
 		}
-
 	return hBuf;
 	}
 
@@ -701,7 +630,6 @@ EXPORT_C void CSmsStackTestUtils::DeliverWithoutUserDataL(TGsmSms& aPdu, TSmsFir
 
 	CleanupStack::PopAndDestroy(addr);
 	}
-
 
 /**
  *  This is a unit test for class TSmsServiceCenterTimeStamp.  It is added to this utility
@@ -1907,11 +1835,8 @@ EXPORT_C void CSmsStackTestUtils::PrintSmspList(CMobilePhoneSmspList& aSmspList)
         }
     }
 
-
-
-
 //
-//             CTestGetSmsList
+// CTestGetSmsList
 //
 
 EXPORT_C CTestGetSmsList* CTestGetSmsList::NewL(TInt aPriority, RSocketServ& aSocketServer, CSmsStackTestUtils& aTestUtils)
@@ -1923,12 +1848,7 @@ EXPORT_C CTestGetSmsList* CTestGetSmsList::NewL(TInt aPriority, RSocketServ& aSo
 	return smsListGetter;
 	}
 
-CTestGetSmsList::CTestGetSmsList(TInt aPriority, RSocketServ& aSocketServer, CSmsStackTestUtils& aTestUtils)
-/**
- *  Constructor
- *  
- *   *
- */
+EXPORT_C CTestGetSmsList::CTestGetSmsList(TInt aPriority, RSocketServ& aSocketServer, CSmsStackTestUtils& aTestUtils)
 : CSmsuActiveBase(aPriority), //parent construction
 iSocketServer(aSocketServer),
 iTestUtils(aTestUtils)

@@ -2393,8 +2393,6 @@ void CSmsInterTestStep::SendRecvEMSOn8BitPortL()
 	sendMessage->AddEMSInformationElementL(*object2);
 	CleanupStack::PopAndDestroy(object2);
 
-	iSmsStackTestUtils->WaitForInitializeL();      // load wapprot
-
 	// set SMS port addresing for 8 Bit ports
 	CSmsPDU& pdu = sendMessage->SmsPDU();
 	pdu.SetApplicationPortAddressingL(ETrue, port8, port8, EFalse);
@@ -2486,8 +2484,6 @@ void CSmsInterTestStep::SendRecvEMSOn16BitPortL()
 	object2->SetStartPosition(33);
 	sendMessage->AddEMSInformationElementL(*object2);
 	CleanupStack::PopAndDestroy(object2);
-
-	iSmsStackTestUtils->WaitForInitializeL();      // load wapprot
 
 	// set SMS port addresing for 8 Bit ports
 	CSmsPDU& pdu = sendMessage->SmsPDU();
@@ -3116,13 +3112,10 @@ void CSmsInterTestStep::TestSendAndReceiveConcatenatedMsgsL( const RPointerArray
 		SendSmsL(smsMessage,socket);
 		CleanupStack::PopAndDestroy(smsMessage);
 
-		INFO_PRINTF1(_L("waiting for incoming SMS...") );
 		WaitForRecvL(socket);
 		smsMessage = RecvSmsL(socket);
-
-		INFO_PRINTF1(_L("incoming SMS") );
-
 		CleanupStack::PushL(smsMessage);
+		
 		TestSmsContentsL(smsMessage,testText);
 		CleanupStack::PopAndDestroy(smsMessage);
 
@@ -5566,9 +5559,6 @@ void CSmsInterTestStep::PublishandSubscribeTestL()
     	}
 	while (phonePowerCheck==ESAPhoneOff);
 
-    // Wait phone initializing
-    iSmsStackTestUtils->WaitForInitializeL();
-
     INFO_PRINTF1(_L("Checking that Sms Stack will allow us to send an SMS"));
     TRAP(ret,SendSmsDontCheckReturnValueL(smsMessage,socket));
     TEST(ret==KErrNone);
@@ -5612,9 +5602,6 @@ void CSmsInterTestStep::PublishandSubscribeTestL()
     	User::LeaveIfError(phonePowerProperty.Get(phonePowerCheck));
     	}
 	while (phonePowerCheck==ESAPhoneOff);
-
-    // Wait phone initializing
-    iSmsStackTestUtils->WaitForInitializeL();
 
     INFO_PRINTF1(_L("Checking that Sms Stack will allow us to send an SMS"));
     TRAP(ret,SendSmsDontCheckReturnValueL(smsMessage,socket));
@@ -5693,10 +5680,6 @@ void CSmsInterTestStep::TestSendingReceivingViaAppPortPublishAndSubscribeL()
 	TEST(ret==KErrNone);
 	ret = socketany.Open(socketServer, KSMSAddrFamily, KSockDatagram, KSMSDatagramProtocol);
 	TEST(ret==KErrNone);
-
-	// Wait phone initializing
-	iSmsStackTestUtils->WaitForInitializeL();
-
 
 	// bind them to ports
 	ret = socket8.Bind(addr8);
@@ -7097,16 +7080,12 @@ void CSmsInterTestStep::RecvStatusReportL(TSmsServiceCenterAddress& aRecipientNu
  */
 	{
 	//Receive SMS
-	INFO_PRINTF1(_L("waiting for incoming SMS...") );
 	WaitForRecvL(aSocket);
 	CSmsMessage* smsMessage = RecvSmsL(aSocket);
-
-	INFO_PRINTF1(_L("incoming SMS") );
+    CleanupStack::PushL(smsMessage);
 
 	//Check the status report
-	CleanupStack::PushL(smsMessage);
 	TBool isSR = (smsMessage->Type()==CSmsPDU::ESmsStatusReport);
-
 	if (isSR)
 		{
 		INFO_PRINTF1(_L("Received status report"));
@@ -7117,7 +7096,7 @@ void CSmsInterTestStep::RecvStatusReportL(TSmsServiceCenterAddress& aRecipientNu
 	else
 		INFO_PRINTF1(_L("Received SMS is NOT a Status report!"));
 
-	TEST(isSR==1);
+	TEST(isSR);
 
 	CleanupStack::PopAndDestroy(smsMessage);
 	}
@@ -7575,13 +7554,10 @@ void CSmsInterTestStep::DoSendAndRecvSmsL(const TDesC& aDes, TSmsDataCodingSchem
 	SendSmsL(smsMessage, aSocket);
 	CleanupStack::PopAndDestroy(smsMessage); //destroyed because created again in RecvSmsL
 
-	INFO_PRINTF1(_L("waiting for incoming SMS...") );
 	WaitForRecvL( aSocket);
 	smsMessage = RecvSmsL( aSocket);
-
-	INFO_PRINTF1(_L("incoming SMS") );
-
 	CleanupStack::PushL(smsMessage);
+
 	TestSmsContentsL(smsMessage,aDes);
 
 	User::After(1000000);

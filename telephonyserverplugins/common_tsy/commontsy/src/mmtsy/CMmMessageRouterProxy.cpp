@@ -684,7 +684,11 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
       			static_cast<CMmPhoneTsy*>( mmObject )->
       				CompleteTerminateAllCallsReq( aResult );
       			break;
-      			
+            case ECtsyPhoneTerminateActiveCallsComp:
+                static_cast<CMmPhoneTsy*>( mmObject )->
+                    CompleteTerminateActiveCallsReq( aResult );
+                break;
+                
             // Conference call functionality
             case EMobileConferenceCallCreateConference:                
                 static_cast<CMmConferenceCallTsy*>( mmObject )->

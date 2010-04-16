@@ -134,7 +134,7 @@ public:
 public:
 	//Implementation of MSmsComm
 	TInt ProcessMessageL(const CSmsMessage& aSmsMessage,const TSmsAddr* aOriginalSmsAddr,const CSmsMessage* aOriginalSmsMessage,TDes& aDes);
-	void DeletePDUs(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray,MSmsMessageObserver* aObserver);
+	void DeletePDUs(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray, MSmsMessageObserver* aObserver);
 	void MessageSendCompleted(TInt aStatus);
 	void ModemNotificationCompleted(TInt aStatus,RPhone::TModemDetection aState);
 	void PhoneEnumerationCompleted(TInt aStatus);
@@ -262,13 +262,13 @@ private:
 		return EFalse;
 		};
 
-	virtual const RMobilePhone::TMobilePhoneNetworkInfoV1& NetworkInfo()const
-		{
-		User::Invariant();
-		return iDummyNetworkInfoV1;
-		};
-
-	virtual TBool NetworkInfoAvailable()const
+    virtual const RMobilePhone::TMobilePhoneNetworkInfoV1& NetworkInfo()const
+        {
+        User::Invariant();
+        return iDummyNetworkInfoV1;
+        };
+    
+    virtual TBool NetworkInfoAvailable()const
 		{
 		User::Invariant();
 		return EFalse;
@@ -280,10 +280,10 @@ private:
 		return EFalse;
 		};
 
-	virtual void DiskSpaceMonitorStateChange(TSmsDiskSpaceMonitorStatus /*aStatus*/)
-		{
-		User::Invariant();
-		};
+    virtual void DiskSpaceMonitorStateChange(TSmsDiskSpaceMonitorStatus /*aStatus*/)
+        {
+        User::Invariant();
+        };
 
 private:
 	RMobilePhone::TMobilePhoneNetworkInfoV1  iDummyNetworkInfoV1;

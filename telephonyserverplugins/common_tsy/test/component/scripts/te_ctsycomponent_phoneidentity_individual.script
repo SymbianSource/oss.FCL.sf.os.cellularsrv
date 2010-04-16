@@ -91,9 +91,9 @@ RUN_UTILS CopyFile \testdata\configs\TestGetPhoneId0001f.ini c:\versions\devicea
 START_TESTCASE BA-CTSY-PID-MGPI-0001f
 //!@SYMTestCaseID BA-CTSY-PID-MGPI-0001f
 //!@SYMComponent  telephony_ctsy
-//!@SYMTestCaseDesc test reading from deviceattributes.ini not encoded as UNICODE Little Endian
+//!@SYMTestCaseDesc test reading from deviceattributes.ini encoded in an invalid format
 //!@SYMTestPriority High
-//!@SYMTestActions Calls GetPhoneId when deviceattributes.ini not using the right encoding.
+//!@SYMTestActions Calls GetPhoneId when deviceattributes.ini not using a valid encoding.
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneIdentityFU.TestGetPhoneId0001fL

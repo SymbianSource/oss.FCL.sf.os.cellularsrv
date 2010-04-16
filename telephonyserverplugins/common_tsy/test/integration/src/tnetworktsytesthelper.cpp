@@ -562,50 +562,65 @@ void TNetworkTsyTestHelper::WaitForMobilePhoneNotifyNetworkSelectionSettingChang
  		{
  		reqResult = reqStatus.Int();
  		}
-	DEBUG_PRINTF2(_L("Current network is %S"), &(aPhoneNetwork().iShortName));
-	if( aPhoneNetwork().iShortName.Find(_L("O2")) >=0 )
-		{
-		aOperatorName = EOperatorO2;
-		}
-	else if ( aPhoneNetwork().iShortName.Find(_L("voda")) >=0 )
-		{
-		aOperatorName = EOperatorVodafone;
-		}
-	else if ( aPhoneNetwork().iShortName.Find(_L("Orange")) >=0 )
-		{
-		aOperatorName = EOperatorOrange;
-		}
-	else if ( aPhoneNetwork().iShortName.Find(_L("Elisa")) >=0 )
-		{
-		aOperatorName = EOperatorElisa;
-		}
-    else if ( aPhoneNetwork().iShortName.Find(_L("DNA")) >=0 )
-		{
-		aOperatorName = EOperatorDNA;
-		}
-	else if ( aPhoneNetwork().iShortName.Find(_L("dna")) >=0 )
-		{
-		aOperatorName = EOperatorDNA;
-		}
-	else if ( aPhoneNetwork().iShortName.Find(_L("SONERA")) >=0 )
-		{
-		aOperatorName = EOperatorSonera;
-		}
-	else if ( aPhoneNetwork().iShortName.Find(_L("T-Mobile")) >=0 
-			||	aPhoneNetwork().iShortName.Find(_L("One2One")) >=0)
-		{
-		aOperatorName = EOperatorTMobile;
-		}
-	else if( (aPhoneNetwork().iShortName.Find(_L("01")) >=0) || 
-			(aPhoneNetwork().iShortName.Find(_L("ANITE")) >=0) )
-		{
-		aOperatorName = EOperatorAnite;
-		}
-	else
-		{
-		aOperatorName = EOperatorUnknown;
-		}
-
+ 	
+ 	TPtrC ptrNetworkName;
+ 	if( aPhoneNetwork().iShortName.Size() > 0 )
+ 	    {
+        ptrNetworkName.Set(aPhoneNetwork().iShortName.Ptr(), aPhoneNetwork().iShortName.Length());
+ 	    }
+ 	else
+ 	    {
+        ptrNetworkName.Set(aPhoneNetwork().iDisplayTag.Ptr(), aPhoneNetwork().iDisplayTag.Length()); 	
+ 	    }
+ 	DEBUG_PRINTF2(_L("Current network is %S"), &ptrNetworkName);
+ 	
+    if( ptrNetworkName.Find(_L("O2")) >=0 )
+        {
+        aOperatorName = EOperatorO2;
+        }
+    else if ( ptrNetworkName.Find(_L("voda")) >=0 )
+        {
+        aOperatorName = EOperatorVodafone;
+        }
+    else if ( ptrNetworkName.Find(_L("Orange")) >=0 )
+        {
+        aOperatorName = EOperatorOrange;
+        }
+    else if ( ptrNetworkName.Find(_L("Elisa")) >=0 )
+        {
+        aOperatorName = EOperatorElisa;
+        }
+    else if ( ptrNetworkName.Find(_L("DNA")) >=0 )
+        {
+        aOperatorName = EOperatorDNA;
+        }
+    else if ( ptrNetworkName.Find(_L("dna")) >=0 )
+        {
+        aOperatorName = EOperatorDNA;
+        }
+    else if ( ptrNetworkName.Find(_L("SONERA")) >=0 )
+        {
+        aOperatorName = EOperatorSonera;
+        }
+    else if ( ptrNetworkName.Find(_L("T-Mobile")) >=0 
+            ||  ptrNetworkName.Find(_L("One2One")) >=0)
+        {
+        aOperatorName = EOperatorTMobile;
+        }
+    else if( (ptrNetworkName.Find(_L("01")) >=0) || 
+            (ptrNetworkName.Find(_L("ANITE")) >=0) )
+        {
+        aOperatorName = EOperatorAnite;
+        }
+    else if ( ptrNetworkName.Find(_L("NTN")) >=0 )
+        {
+        aOperatorName = EOperatorNTN;
+        }
+    else
+        {
+        aOperatorName = EOperatorUnknown;
+        }
+    
  	CleanupStack::PopAndDestroy(1);
 
  	return reqResult;
@@ -755,6 +770,9 @@ void TNetworkTsyTestHelper::GetNetworkPasswordsSectionL(RMobilePhone& aMobilePho
 		case EOperatorAnite:
 			aNetworkSection = &KIniSectionAnitePasswords;
 			break;
+		case EOperatorNTN:
+            aNetworkSection = &KIniSectionNTNPasswords;
+            break;
 		case EOperatorUnknown:
 		default:
 		    CHECK_TRUE_L( EFail, _L("Failed to identify current network"));

@@ -330,7 +330,9 @@ extern "C"
 EXPORT_C CPhoneFactoryBase* LibEntry()
     {
 TFLOGSTRING("TSY: CPhoneFactoryBase::LibEntry()...");
-    CMmPhoneFactoryTsy* factory = CMmPhoneFactoryTsy::NewL(); 
+    // return NULL if instantiation fails
+    CMmPhoneFactoryTsy* factory(NULL);
+    TRAP_IGNORE(factory = CMmPhoneFactoryTsy::NewL()); 
     return factory; 
     }
 

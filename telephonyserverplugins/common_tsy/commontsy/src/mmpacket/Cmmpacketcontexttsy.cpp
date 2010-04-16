@@ -27,7 +27,8 @@
 // ============================ MEMBER FUNCTIONS ===============================
 
 
-CMmPacketContextTsy::CMmPacketContextTsy()
+CMmPacketContextTsy::CMmPacketContextTsy():
+    iReqHandleType(EMultimodePacketContextReqHandleUnknown)
     {
     }
 
@@ -163,8 +164,18 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
 
+#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePacketContextReqHandleUnknown, User::Invariant());
+#else
     // Reset last tsy request type
     iReqHandleType = EMultimodePacketContextReqHandleUnknown;
+#endif
 
     // Trap the call of DoExtFuncL
     TRAP( trapError, ret = DoExtFuncL( aTsyReqHandle, aIpc, aPackage ) );
@@ -186,6 +197,11 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketContextReqHandleUnknown;
+#endif
         }
 
     return KErrNone;
@@ -539,8 +555,19 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::CancelService. IPC: %d Handle:%d",
 
     TInt ret( KErrNone );
 	TTsyReqHandle reqHandle( NULL );
+
+#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePacketContextReqHandleUnknown, User::Invariant());
+#else
     // Reset last tsy request type
     iReqHandleType = EMultimodePacketContextReqHandleUnknown;
+#endif
 
     switch ( aIpc )
         {
@@ -624,6 +651,11 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::CancelService. IPC: %d Handle:%d",
 
         // Complete request
         CMmPacketContextTsy::ReqCompleted( aTsyReqHandle, KErrCancel );
+#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketContextReqHandleUnknown;
+#endif
         }
 
     return ret;
@@ -1381,7 +1413,41 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteSetConfig. Error: %d", aError )
 		else
 			{       
 #ifdef USING_CTSY_DISPATCHER
-			// Distinguish between RemovePacketFilter and AddPacketFilter
+			// Distinguish between RemovePacketFilter and AddPacketFilter..
+			
+// There is a hang defect lurking here.
+//
+//	To show the defect, add and run the following test case (you could
+//         copy from CCTsyPacketServicesFU::TestUseCase0007L):
+//	- Add a packet filter. Wait for the request to complete.
+//  - Remove the packet filter. (don't wait for completion)
+//  - Add another packet filter.
+//  - Wait for removal to complete (WILL HANG but obviously shouldn't).
+//
+// The reason for this hang is that there's a single completion method
+// for both Add and Remove packet filter functions down in the CTSY
+// (dispatcher mode only).
+//
+// If a client calls RemovePacketFilter, then immediately
+// calls AddPacketFilter (before the RemovePacketFilter has
+// completed), the iReqHandleType data member will already have been
+// updated to be EMultimodePacketContextAddPacketFilter..
+// So the code under the else below (that searches for the
+// RemovePacketFilter reqHandle and completes it) will never get run.
+// Thus the RemovePacketFilter call will hang.
+//
+// Fixing this requires that some other variable (NOT iReqHandleType)
+//  is used to record that an add or a remove action is outstanding.
+//
+// When this defect has been addressed, please treat all the sections marked
+//  ADD_REMOVE_PACKETFILTER_DEFECT_FIXED above as defined, and delete any 
+//  else blocks. This will then assert that the iReqHandleType doesn't
+//  leak between calls. Which will protect us against any other such hang
+//  bugs in the future.
+// This is the change that I was trying to apply when I ran into this defect.
+//  See Perforce CL#1755436
+//     Rob Lundie Hill
+
 			if (iReqHandleType == EMultimodePacketContextRemovePacketFilter)
 				{
 				reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePacketContextRemovePacketFilter );

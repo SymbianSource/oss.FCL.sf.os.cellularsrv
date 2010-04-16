@@ -36,7 +36,7 @@ START_TESTCASE BA-CTSY-SMSM-SNRMC-0001
 //!@SYMTestActions Invokes RMobileSmsMessaging::NotifyReceiveModeChange
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-//RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsySmsMessagingFU.TestNotifyReceiveModeChange0001L
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsySmsMessagingFU.TestNotifyReceiveModeChange0001L
 END_TESTCASE BA-CTSY-SMSM-SNRMC-0001
 
 START_TESTCASE BA-CTSY-SMSM-SNRMC-0002

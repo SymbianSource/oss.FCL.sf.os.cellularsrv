@@ -30,6 +30,8 @@ CSmsEmsPrtTestServer* CSmsEmsPrtTestServer::NewL()
 	{
 	CSmsEmsPrtTestServer* server = new (ELeave) CSmsEmsPrtTestServer();
 	CleanupStack::PushL(server);
+	// CSmsStackTestServer intermediate base class call
+	server->InitializeTsyAndPhonesL();
 	// CServer base class call
 	server->StartL(KServerName);
 	CleanupStack::Pop(server);
@@ -86,11 +88,7 @@ CTestStep* CSmsEmsPrtTestServer::CreateTestStep(const TDesC& aStepName)
 	// the new could return NULL, but that is not a problem as it implies
 	// the test step is missing and this will be marked in the log file.
 	//
-	if (aStepName == _L("TestInit"))
-		{
-		testStep = new CTestInit;
-		}
-	else if (aStepName == _L("TestEmsFormatA"))
+	if (aStepName == _L("TestEmsFormatA"))
 		{
 		testStep = new CTestEmsFormatA ;
 		}

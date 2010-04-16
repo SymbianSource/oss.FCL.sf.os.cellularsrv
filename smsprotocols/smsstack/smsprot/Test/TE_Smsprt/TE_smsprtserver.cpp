@@ -21,7 +21,7 @@
 
 #include "TE_smsprtserver.h"
 #include "TE_smsprt.h"
-#include "Te_smsprttestcase.h"
+#include "smsstacktestcase.h"
 #include "te_smsprt_R6.h"
 #include "Te_StatusReportSchemeSteps.h"
 #include "Te_SmsTestSteps.h"
@@ -39,22 +39,14 @@ CSmsPrtTestServer* CSmsPrtTestServer::NewL()
 	{
 	CSmsPrtTestServer * server = new (ELeave) CSmsPrtTestServer();
 	CleanupStack::PushL(server);
+	// CSmsStackTestServer intermediate base class call
+	server->InitializeTsyAndPhonesL();
 	// CServer base class call
 	server->StartL(KServerName);
 	CleanupStack::Pop(server);
 	return server;
 	}
 
-/**
-	Server destructor ensures SocketServer and Socket session and subsession are closed
-*/
-CSmsPrtTestServer::~CSmsPrtTestServer()
-	{ 
-	iSocketServer.Close();
-
- 	}
-  
-  
 LOCAL_C void MainL()
 /**
  *  Much simpler, uses the new Rendezvous() call to sync with the client
@@ -186,6 +178,10 @@ CTestStep* CSmsPrtTestServer::CreateTestStep(const TDesC& aStepName)
 		{
 		testStep = new CTestDeleteSms ;	
 		}
+    else if (aStepName == _L("TestSmsAddr"))
+        {
+        testStep = new CTestSmsAddr; 
+        }
 	else if (aStepName == _L("TestSocketBinding"))
 		{
 		testStep = new CTestSocketBinding ;	
@@ -296,7 +292,7 @@ CTestStep* CSmsPrtTestServer::CreateTestStep(const TDesC& aStepName)
 		}
 	else if (aStepName == _L("SmsParamsErrorCases"))
 		{
-		testStep = new CSmsParamsErrorCases ;	
+		testStep = new CTestSmsParamsErrorCases ;	
 		}
 	else if (aStepName == _L("TestResendFailedConcatinatedMessage"))
 		{
@@ -493,23 +489,23 @@ CTestStep* CSmsPrtTestServer::CreateTestStep(const TDesC& aStepName)
 	    }
 	else if (aStepName== _L("EnhancedVoiceMessageBoundaryTest"))
 	    {
-	    testStep = new CEnhancedVoiceMessageBoundaryTest();
+	    testStep = new CTestEnhancedVoiceMessageBoundary();
 	    }
 	else if (aStepName== _L("EnhancedVoiceMessageBoundaryTest1"))
 	    {
-	    testStep = new CEnhancedVoiceMessageBoundaryTest1();
+	    testStep = new CTestEnhancedVoiceMessageBoundary1();
 	    }
 	else if (aStepName== _L("CSubmitReportDefaultsTo7BitDecoding"))
 	    {
-	    testStep = new CSubmitReportDefaultsTo7BitDecoding();
+	    testStep = new CTestSubmitReportDefaultsTo7BitDecoding();
 	    }
 	else if (aStepName== _L("CDeliverReportDefaultsTo7BitDecoding"))
 	    {
-	    testStep = new CDeliverReportDefaultsTo7BitDecoding();
+	    testStep = new CTestDeliverReportDefaultsTo7BitDecoding();
 	    }
 	else if (aStepName== _L("CStatusReportDefaultsTo7BitDecoding"))
 	    {
-	    testStep = new CStatusReportDefaultsTo7BitDecoding();
+	    testStep = new CTestStatusReportDefaultsTo7BitDecoding();
 	    }
 	else if (aStepName== _L("TestSendingTPSRRSchemeInAllPDUs"))
 	    {
@@ -639,10 +635,6 @@ CTestStep* CSmsPrtTestServer::CreateTestStep(const TDesC& aStepName)
 	    {
 	    testStep = new CEnumerateInOODCondition(iSocketServer);
 	    }	      
-	else if (aStepName== _L("ESockMemoryLeakTest"))
-	    {
-	    testStep = new CESockMemoryLeakTest();
-	    }	    
 	else if (aStepName== _L("TestEncodingPDUonBoundary"))
 		{
 		testStep = new CTestEncodingPDUonBoundary();

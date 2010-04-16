@@ -197,7 +197,7 @@ public:
 	inline RPhone::TMode Mode() const {return iMode; }
 
 	RMobilePhone::TMobilePhoneNetworkMode NetworkMode();
-	void ResetTestNumber();
+	void SetTestNumberAndReadConfigurationFileL();
 
 	// Methods added to allow indicator object to retrieve information
 	// from other objects owned by the phone
@@ -216,6 +216,10 @@ public:
 	// data  structures deriving from CBase (usually one-off cases)
 	TInt CheckSimTsyVersion(RMobilePhone::CImsAuthorizationInfoV5& aDataStruct);
 	TInt CheckSimTsyVersion(RPacketContext::CTFTMediaAuthorizationV3& aDataStruct);
+	
+	// Callback function invoked by the observer object
+	void HandleTestNumberChangedL();
+	TInt CheckConfigFile();
 	
 protected:
 	void ConstructL();
@@ -253,6 +257,7 @@ private:
 	TInt CopyServiceTable(RMobilePhone::TMobilePhoneServiceTableV1* aFrom, RMobilePhone::TMobilePhoneServiceTableV1* aTo);
 	TInt CopyServiceTableV8(RMobilePhone::TMobilePhoneServiceTableV8* aFrom, RMobilePhone::TMobilePhoneServiceTableV8* aTo);
 
+	void ReadConfigurationFileL();
 	TInt NotifyModeChange(const TTsyReqHandle aTsyReqHandle, RMobilePhone::TMobilePhoneNetworkMode* aCaps);
 	TInt NotifyModeChangeCancel(const TTsyReqHandle aTsyReqHandle);
 
@@ -296,6 +301,7 @@ private:
 	CSimONStore*								iONStore;
 	
 	CTestConfig*             					iConfigFile;        //< Pointer to the Configuration file reader
+	CTestConfigSection*                         iConfigSection;     //< Pointer to the Configuration section for current test. 
 	TBuf8<KMaxName>          					iSectionName;
 	CSimSat*                 					iSat;               //< Pointer to the Sat object
 	CSimPacketService*       					iPacketService;     //< Pointer to the Packet object
@@ -365,7 +371,31 @@ private:
 		CSimPhone *iPhone;
 		TTsyReqHandle iHandle;
 		};
-	CSetCallProcessingSuspendStateTimerCallBack iTimerCallBackSetCallProcessingSuspendState;
+	
+	// Observer class monitoring test number property
+	NONSHARABLE_CLASS(CSimTestNumberObserver) : public CActive
+	    {
+	public:
+	    static CSimTestNumberObserver* NewL(CSimPhone& aSimPhone);
+	    virtual ~CSimTestNumberObserver();
+	        
+	private:    // methods from CActive
+	    virtual void RunL();
+	    virtual void DoCancel();
+	        
+	private:
+	    CSimTestNumberObserver(CSimPhone& aSimPhone);
+	    void ConstructL();
+	    void Start();
+	    
+	private:
+	    CSimPhone& iSimPhone;   // Reference to sim phone object (owner object)
+	    RProperty iProperty;   // Property describing the event we require notification of
+	    };
+	
+private:
+    CSetCallProcessingSuspendStateTimerCallBack iTimerCallBackSetCallProcessingSuspendState;
+    CSimTestNumberObserver* iTestNumberObserver; 
 	};
 
 #endif

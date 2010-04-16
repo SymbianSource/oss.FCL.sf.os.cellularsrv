@@ -13,16 +13,10 @@
 // Description:
 //
 
+#ifndef TE_SMSPRTSTRESS_H
+#define TE_SMSPRTSTRESS_H
 
-#ifndef __TE_SMSPRTSTRESS_H_
-#define __TE_SMSPRTSTRESS_H_
-
-
-class CTestInit : public CSmsPrtStressTestStep
-	{
-public:
-	virtual TVerdict doTestStepL();
-	};
+#include "TE_smsprtstressbase.h"
 
 class CTestRxAndRead : public CSmsPrtStressTestStep
 	{
@@ -42,17 +36,14 @@ public:
 	virtual TVerdict doTestStepL();
 
 private:
+	// TODO: replace with one from CSmsBaseTestStep
 	TInt SendSmsL(RSocket& aSocket);
-	RSocketServ iSocketServer;
 	};
 
 class CTestSmsPrtBackupWhenPhoneIsOff : public CSmsPrtStressTestStep
 	{
 public:
 	virtual TVerdict doTestStepL();
-
-private:
-	RSocketServ iSocketServer;
 	};
 
-#endif
+#endif // TE_SMSPRTSTRESS_H

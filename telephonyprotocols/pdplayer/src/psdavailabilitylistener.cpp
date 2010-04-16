@@ -196,7 +196,7 @@ void CPsdAvailabilityListener::StartL()
 	User::LeaveIfError(iPhone.Open(iTelServer, phoneInfo.iName));
 
 	RPhone::TStatus phoneStatus;
-	iPhone.GetStatus(phoneStatus);
+	User::LeaveIfError(iPhone.GetStatus(phoneStatus));
 
 	if(phoneStatus.iMode==RPhone::EModeUnknown)
 		{

@@ -23,7 +23,6 @@
 #include <e32test.h>
 #include <mmretrieve.h>
 #include <etelmm.h>
-#include <faxstd.h>
 #include "Te_LoopBackcincall.h"
 #include "../../hayes/TSYCONFG.H" // for KInternetAccessPoint
 
@@ -58,7 +57,7 @@ TInt CTestDriveInCall::DriveETelApiL()
 	{
 	_LIT(KVoiceLineName, "Voice");
 	_LIT(KDataLineName,  "Data");
-	_LIT(KFaxLineName,   "Fax");
+	//_LIT(KFaxLineName,   "Fax");
 
 	RLine voiceLine;
 	INFO_PRINTF1(_L("Opening Voice Line\n"));
@@ -74,13 +73,6 @@ TInt CTestDriveInCall::DriveETelApiL()
 	INFO_PRINTF1(_L("Opening New Data Call\n"));
 	TESTL(dataCall.OpenNewCall(dataLine) == KErrNone);
 
-	RLine faxLine;
-	INFO_PRINTF1(_L("Opening Fax Line\n"));
-	TESTL(faxLine.Open(iPhone,KFaxLineName) == KErrNone);
-	RCall faxCall;
-	INFO_PRINTF1(_L("Opening New Fax Call\n"));
-	TESTL(faxCall.OpenNewCall(faxLine) == KErrNone);
-
 	TRequestStatus stat1, stat2, stat3, reqStatus;
 
 	RMobilePhone::TMMTableSettings tableSettings;
@@ -94,49 +86,30 @@ TInt CTestDriveInCall::DriveETelApiL()
 	INFO_PRINTF1(_L("Answering a Voice Call...\n"));
 	voiceCall.AnswerIncomingCall(stat1);
 	dataCall.AnswerIncomingCall(stat2);
-	faxCall.AnswerIncomingCall(stat3);
 	User::WaitForRequest(stat1);
 	TESTL(stat1 == KErrNone);
 	dataCall.AnswerIncomingCallCancel();
-	faxCall.AnswerIncomingCallCancel();
 	User::WaitForRequest(stat2);
-	User::WaitForRequest(stat3);
 	User::After(1000000L);
 	INFO_PRINTF1(_L("Hangup a Voice Call...\n"));
 	TESTL(voiceCall.HangUp() == KErrNone);
 
-// Now wait for an incoming fax call...
-	INFO_PRINTF1(_L("Answering a Fax Call...\n"));
-	RCall::TFaxSessionSettings faxSessionSettings;
-	faxSessionSettings.iMode = RCall::EReceive;
-	faxSessionSettings.iFaxRetrieveType = RCall::EFaxOnDemand;
-	faxSessionSettings.iFaxClass = EClassAuto;
-	faxSessionSettings.iFaxId.Zero();
-	faxSessionSettings.iMaxSpeed = 14400;
-	faxSessionSettings.iMinSpeed = 12000;
-	faxSessionSettings.iRxResolution = EFaxNormal;
-	faxSessionSettings.iRxCompression = EModifiedHuffman;
-	faxCall.SetFaxSettings(faxSessionSettings);
-
-	faxCall.AnswerIncomingCall(stat3);
-	User::WaitForRequest(stat3);
-	TESTL(stat3 == KFaxErrReceiveTimeout); 		// We don't actually send any data
-	User::After(300000L);
-	INFO_PRINTF1(_L("Hangup a Fax Call...\n"));
-	TESTL(faxCall.HangUp() == KErrNone);
-
 // Now wait for an incoming data call...
 	INFO_PRINTF1(_L("Answering a Data Call\n"));
-	TESTL(dataCall.AnswerIncomingCall() == KErrNone);
-	User::After(300000L);
+	TInt ret = dataCall.AnswerIncomingCall();
+	INFO_PRINTF2(_L("ret=%d "),ret);
+	if (ret == KErrNone)
+	    {
+	    SetTestStepResult(EPass);
+	    }
+	else
+	    SetTestStepResult(EFail);
+	    
+	 User::After(300000L);
 	TESTL(dataCall.HangUp() == KErrNone);
 
 //	Get the FaxSettings before closing the line and call
-	TInt ret = faxCall.GetFaxSettings(faxSessionSettings);
-	TEST_CHECKL(ret, KErrNone, _L("*** Failed to get fax setttings ***"));
 	
-	faxCall.Close();
-	faxLine.Close();
 	dataCall.Close();
 	dataLine.Close();
 	voiceCall.Close();

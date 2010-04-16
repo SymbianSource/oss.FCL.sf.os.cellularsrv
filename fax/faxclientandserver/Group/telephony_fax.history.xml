@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<relnotes name="Fax Client and Server">
-  <purpose>
-    Fax server side APIs and protocol stack, loaded (with Fax Client, its driver) by ETel Telephony Server, run as a thread within the Comms process. Drives the Fax Server, managing fax transmission and reception requests from potential application clients. Loaded (with Fax Server) by Etel.
-  </purpose>
-</relnotes>

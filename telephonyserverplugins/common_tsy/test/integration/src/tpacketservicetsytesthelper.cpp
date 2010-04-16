@@ -765,6 +765,11 @@ void TPacketServiceTsyTestHelper::GetGprsSettings(RMobilePhone::TMobilePhoneNetw
 		DEBUG_PRINTF1(_L("Retrieving Three GPRS settings"));
         section.Copy(KIniSectionThreeGprs);
         }
+    if(aInfo.iShortName.Find(_L("NTN")) != KErrNotFound)   // NTN
+        {
+        section.Copy(KIniSectionVodafoneGprs);
+        DEBUG_PRINTF1(_L("Retrieving NTN GPRS settings"));
+        }
 	else if( (aInfo.iShortName.Find(_L("01")) >=0) || 
 			(aInfo.iShortName.Find(_L("ANITE")) >=0) ) // Anite
 		{

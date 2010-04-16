@@ -16,19 +16,7 @@
 #ifndef __TE_SMSEMSPRT_H_
 #define __TE_SMSEMSPRT_H_
 
-
-//
-// Test Initialisation test object - Initializes the members
-//
-class CTestInit : public CSmsEmsPrtTestStep
-	{
-public:
-	virtual TVerdict doTestStepPreambleL() { return EPass; }
-	virtual TVerdict doTestStepPostambleL() { return EPass; }
-	TInt GetTestNumber() { return -1 ; /* return test order number */ } ;
-	virtual TVerdict doTestStepL();
-	};
-
+#include "TE_SMSEMSPRTBASE.h"
 
 //
 // Test EMS FormatA test object - basic Format IE test
@@ -36,7 +24,6 @@ public:
 class CTestEmsFormatA : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 1 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -48,7 +35,6 @@ public:
 class CTestEmsFormatB : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 2 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -60,7 +46,6 @@ public:
 class CTestEmsFormatC : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 3 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -72,7 +57,6 @@ public:
 class CTestEmsFormatD : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 4 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -84,7 +68,6 @@ public:
 class CTestEmsFormatE : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 5 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -96,7 +79,6 @@ public:
 class CTestEmsFormatF : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 6 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -107,7 +89,6 @@ public:
 class CTestEmsSoundA : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 7 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -118,7 +99,6 @@ public:
 class CTestEmsSoundB : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 8 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -129,7 +109,6 @@ public:
 class CTestEmsSoundC : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 9 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -140,7 +119,6 @@ public:
 class CTestEmsSoundD : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 10 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -151,7 +129,6 @@ public:
 class CTestEmsPicture : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 11 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -162,7 +139,6 @@ public:
 class CTestEmsAnimation : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 12 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -173,7 +149,6 @@ public:
 class CTestEmsUserPromptA : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 13 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -185,7 +160,6 @@ public:
 class CTestEmsUserPromptB : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 14 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -210,7 +184,6 @@ class CTestEmsLongMsgBase : public CSmsEmsPrtTestStep
 class CTestEmsLongMessageA : public CTestEmsLongMsgBase
 	{
 public:
-	TInt GetTestNumber() { return 15 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -218,7 +191,6 @@ public:
 class CTestEmsLongMessageB : public CTestEmsLongMsgBase
 	{
 public:
-	TInt GetTestNumber() { return 16 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -226,7 +198,6 @@ public:
 class CTestEmsLongMessageC : public CTestEmsLongMsgBase
 	{
 public:
-	TInt GetTestNumber() { return 17 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -238,7 +209,6 @@ public:
 class CTestEmsUnsupportedIE : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 18 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -251,7 +221,6 @@ public:
 class CTestEmsUnsorted : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 19 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -262,7 +231,6 @@ public:
 class CTestEmsODIA : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 20 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -274,7 +242,6 @@ public:
 class CTestEmsODIB : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 21 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -286,7 +253,6 @@ public:
 class CTestEmsODIC : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 22 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -297,7 +263,6 @@ public:
 class CTestEmsODID : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 23 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -308,7 +273,6 @@ public:
 class CTestEmsODIE : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 24 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 
@@ -319,7 +283,6 @@ public:
 class CTestEmsODIF : public CSmsEmsPrtTestStep
 	{
 public:
-	TInt GetTestNumber() { return 25 ; /* return test order number */ } ;
 	virtual TVerdict doTestStepL();
 	};
 

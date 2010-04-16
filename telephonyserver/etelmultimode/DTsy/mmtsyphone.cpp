@@ -491,6 +491,7 @@ CTelObject::TReqMode CPhoneDMmTsy::ReqModeL(const TInt aIpc)
 	case EMobilePhoneSetCallForwardingStatus:
 	case EMobilePhoneProgramFeatureCode:
 	case EMobilePhoneTerminateAllCalls:
+	case EMobilePhoneTerminateActiveCalls:
 		ret=KReqModeFlowControlObeyed;
 		break;
 	default:
@@ -1552,6 +1553,9 @@ TInt CPhoneDMmTsy::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt aIpc,
 		
 	case EMobilePhoneTerminateAllCalls:
 		return TerminateAllCalls(aTsyReqHandle);
+		
+    case EMobilePhoneTerminateActiveCalls:
+        return TerminateActiveCalls(aTsyReqHandle);
 			
 	case EMobilePhoneGetMailboxNumbers:
 		return GetMailboxNumbers (aTsyReqHandle, aPackage.Des1n());
@@ -2135,6 +2139,8 @@ TInt CPhoneDMmTsy::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHand
 		return NotifyAirTimeDurationChangeCancel(aTsyReqHandle);
 	case EMobilePhoneTerminateAllCalls:
 		return TerminateAllCallsCancel(aTsyReqHandle);
+    case EMobilePhoneTerminateActiveCalls:
+        return TerminateActiveCallsCancel(aTsyReqHandle);
 	case EMobilePhoneNotifySendNetworkServiceRequest:
 		return NotifySendNetworkServiceRequestCancel(aTsyReqHandle);
 	case EMobilePhoneNotifyAllSendNetworkServiceRequest:
@@ -6066,6 +6072,25 @@ TInt CPhoneDMmTsy::TerminateAllCallsCancel(const TTsyReqHandle aTsyReqHandle)
 	ReqCompleted(aTsyReqHandle,KErrCancel);
 	return KErrNone;
 	}
+
+TInt CPhoneDMmTsy::TerminateActiveCalls(const TTsyReqHandle aTsyReqHandle)
+    {
+    LOGTEXT(_L8("CPhoneDMmTsy::TerminateActiveCalls called"));
+    if (!iTerminateActiveCalls++)
+        {
+        //Just return KErrNone
+        ReqCompleted(aTsyReqHandle,KErrNone);
+        }
+    return KErrNone;
+    }
+    
+TInt CPhoneDMmTsy::TerminateActiveCallsCancel(const TTsyReqHandle aTsyReqHandle)
+    {
+    LOGTEXT(_L8("CPhoneDMmTsy::TerminateActiveCallsCancel called"));
+    RemoveDelayedReq(aTsyReqHandle);
+    ReqCompleted(aTsyReqHandle,KErrCancel);
+    return KErrNone;
+    }
 
  TInt CPhoneDMmTsy::NotifySendNetworkServiceRequest(const TTsyReqHandle aTsyReqHandle, RMobilePhone::TMobilePhoneNotifySendSSOperation* aOperation, TDes8* aRequestComplete)
  	{

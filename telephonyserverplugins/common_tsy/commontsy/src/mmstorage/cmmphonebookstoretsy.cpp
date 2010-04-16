@@ -32,7 +32,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmPhoneBookStoreTsy::CMmPhoneBookStoreTsy()
+CMmPhoneBookStoreTsy::CMmPhoneBookStoreTsy():
+    iReqHandleType(EMultimodePhoneBookStoreReqHandleUnknown)
     {
     }
 
@@ -487,8 +488,14 @@ TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyRe
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
 
-    // Reset last tsy request type
-    iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePhoneBookStoreReqHandleUnknown, User::Invariant());
+
 
     TRAP( trapError, ret = DoExtFuncL( aTsyReqHandle, aIpc, aPackage ); );
 
@@ -509,6 +516,9 @@ TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyRe
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
         }
 
     return KErrNone;
@@ -1161,7 +1171,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %i",aResult 
 #else
 	CArrayPtrSeg<CPhoneBookStoreEntry>* entryData;
 	aDataPackage->UnPackData(entryData);	
-	CopyLtsyCacheToCtsyCache(entryData);
+	CopyLtsyCacheToCtsyCacheL(entryData);
 #endif
 	
     CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
@@ -3163,7 +3173,7 @@ TFLOGSTRING2( "TSY: CMmPhoneBookStoreTsy::GetPhonebookType - iPhoneBookType: %d"
  	}
 
 // ---------------------------------------------------------------------------
-// CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache
+// CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCacheL
 // This method copies Ltsy Cache to Ctsy Cache
 // This is only done when NOT using the dispatcher as the Ltsy creates the array and destroys
 // the memory before CTSY is completely done with it. It now has to be copied over to CTSY domain
@@ -3171,7 +3181,7 @@ TFLOGSTRING2( "TSY: CMmPhoneBookStoreTsy::GetPhonebookType - iPhoneBookType: %d"
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache( CArrayPtrSeg<CPhoneBookStoreEntry>* aEntryData )
+void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCacheL( CArrayPtrSeg<CPhoneBookStoreEntry>* aEntryData )
 	{
 	if (iPBStoreCache!=NULL)
 		{
@@ -3231,7 +3241,7 @@ void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCache( CArrayPtrSeg<CPhoneBookStor
 					(phoneBookStoreEntry->iAnr)->AppendL((*anr)[anrCount]);
 					}	
 				}
-						
+			
 			iPBStoreCache->AppendL(phoneBookStoreEntry);
 			CleanupStack::Pop( phoneBookStoreEntry );
 			}

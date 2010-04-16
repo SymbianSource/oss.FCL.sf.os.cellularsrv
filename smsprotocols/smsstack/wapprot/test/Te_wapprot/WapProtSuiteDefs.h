@@ -15,21 +15,20 @@
 *
 */
 
-
-
 /**
- @file
+    @file
+    @test
 */
 
-#if (!defined __WAP_DEFS__)
-#define __WAP_DEFS__
+#ifndef WAPPROTSUITEDEFS_H
+#define WAPPROTSUITEDEFS_H
 
 // Keys in the configuration ini file
 _LIT(KSCNumber,"Service_Center");
 _LIT(KWapPort,"Wap_Port");
+_LIT(KWapPort2,"Wap_Port2");
 _LIT(KTestData1,"Test_Data1");
 _LIT(KTestData2,"Test_Data2");
-_LIT(KTSY,"SIM");
 
 // For test step panics
 _LIT(KWapProtSuitePanic,"WapProtSuite");
@@ -39,7 +38,6 @@ enum TDemoSuitePanicCodes{ETCPDataCorrupt = 1,EUDPDataCorrupt};
 // Port for the echo server
 // Could be read from the ini file
 const TInt KEchoPort = 7;
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Wap Address / Port Settings
@@ -59,5 +57,4 @@ enum TWapPortNumber
 	};
 */
 
-
-#endif
+#endif // WAPPROTSUITEDEFS_H

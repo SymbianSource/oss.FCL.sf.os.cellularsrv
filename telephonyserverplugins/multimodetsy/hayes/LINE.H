@@ -187,36 +187,6 @@ protected:
 	void ConstructL(const TName& aName);
 	};
 
-//
-// CLineMobileFax - Fax Specific Line Functionality
-//
-class CCallMobileFax;
-class CLineMobileFax : public CLineMobile
-/**
-@internalComponent
-*/
-	{
-public:
-	static CLineMobileFax* NewL(CATIO* aATIO,CATInit* aInit,CPhoneGlobals* aPhoneGlobals,const TName& aName);
-	CLineMobileFax(CATIO* aATIO,CATInit* aInit,CPhoneGlobals*);
-	~CLineMobileFax();
-
-// MTelObjectTSY pure virtuals
-	virtual CTelObject* OpenNewObjectByNameL(const TDesC& aName);
-	virtual CTelObject* OpenNewObjectL(TDes& aNewName);
-
-// MLineBaseTSY pure virtuals
-	virtual TInt GetCaps(const TTsyReqHandle aTsyReqHandle,RLine::TCaps* aCaps);
-    virtual TInt GetCallInfo(const TTsyReqHandle,TCallInfoIndex*);
-
-protected:
-	void GenerateName(TDes& aName);
-	void ConstructL(const TName& aName);
-
-public:
-	TBool iFaxOpened;	// so that a CCallHayes instance knows whether another CCallHayes has opened a CFaxHayes object
-	};
-
 class CCallEntry : public CBase
 /**
 @internalComponent

@@ -495,6 +495,8 @@ MMockMessHandlerBase* CMmMessageRouter::RouteRequest(const TInt aIpc )
 		case EMmTsyUpdateLifeTimeIPC:                     		
 		case ECtsyPhoneTerminateAllCallsReq:
 		case ECtsyPhoneTerminateAllCallsComp:
+        case ECtsyPhoneTerminateActiveCallsReq:
+        case ECtsyPhoneTerminateActiveCallsComp:
         case EMobilePhoneNotifyIccAccessCapsChange:
 
             messHandler = iPhoneMessHandler;

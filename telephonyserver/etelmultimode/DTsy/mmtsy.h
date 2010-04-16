@@ -633,6 +633,8 @@ private:
 	TInt NotifyAirTimeDurationChangeCancel(const TTsyReqHandle aTsyReqHandle);
 	TInt TerminateAllCalls(const TTsyReqHandle aTsyReqHandle);
 	TInt TerminateAllCallsCancel(const TTsyReqHandle aTsyReqHandle);
+    TInt TerminateActiveCalls(const TTsyReqHandle aTsyReqHandle);
+    TInt TerminateActiveCallsCancel(const TTsyReqHandle aTsyReqHandle);
 	TInt NotifySendNetworkServiceRequest(const TTsyReqHandle aTsyReqHandle, RMobilePhone::TMobilePhoneNotifySendSSOperation* aOperation, TDes8* aRequestComplete);
 	TInt NotifySendNetworkServiceRequestCancel(const TTsyReqHandle aTsyReqHandle);
 	TInt NotifyAllSendNetworkServiceRequest(const TTsyReqHandle aTsyReqHandle, RMobilePhone::TMobilePhoneNotifySendSSOperation* aOperation, TDes8* aRequestComplete);
@@ -806,6 +808,7 @@ private: // data
 	TInt iNotifyNetworkInvScanChange;
 	TInt iNotifyAirTimeChangeChange;
 	TInt iTerminateAllCalls;
+	TInt iTerminateActiveCalls;
 	TInt iNotifySendNetworkServiceRequest;
 	TInt iClearBlacklist;
 	TInt iNotifyDTMFEvent;

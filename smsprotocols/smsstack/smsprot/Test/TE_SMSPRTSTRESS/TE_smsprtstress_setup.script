@@ -15,4 +15,15 @@
 // 
 //
 
+RUN_UTILS  MakeReadWrite c:\config.txt
+RUN_UTILS  DeleteFile c:\config.txt
+
+RUN_SCRIPT  z:\testdata\scripts\smsstackcleanprivatedata.script
+
+RUN_UTILS  MkDir c:\sms\
+RUN_UTILS  CopyFile z:\sms\tsmsprtstress_config.txt c:\sms\tsmsprtstress_config.txt
+
+RUN_UTILS  CopyFile c:\sms\tsmsprtstress_config.txt c:\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
+
 ced -i z:\TestData\configs\te_smsprtstress_commdb.cfg ced.log

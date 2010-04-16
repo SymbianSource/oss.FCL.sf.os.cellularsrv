@@ -11,7 +11,7 @@
 // Contributors:
 //
 // Description:
-// TODO
+// This file define the classes for SMS message queues
 // 
 //
 

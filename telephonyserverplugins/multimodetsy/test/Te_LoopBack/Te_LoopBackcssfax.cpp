@@ -26,7 +26,7 @@
 #include <e32test.h>
 #include <etelmm.h>
 #include <et_clsvr.h>
-#include <faxstd.h>
+
 
 #include "Te_LoopBackcssfax.h"
 #include "../../hayes/TSYCONFG.H" // for KInternetAccessPoint
@@ -104,7 +104,6 @@ TInt CTestDriveSsFax::DriveETelApiL()
 	TESTL(stat1==KErrAccessDenied);			// The port is "access denied" by this time
 
 	User::WaitForRequest(stat2);
-	TESTL(stat2==KFaxErrReceiveTimeout);		// We don't actually send any data
 	User::After(300000L);
 	TESTL(faxCall.HangUp()==KErrNone);
 	

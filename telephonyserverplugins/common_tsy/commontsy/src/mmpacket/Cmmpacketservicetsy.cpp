@@ -36,7 +36,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmPacketServiceTsy::CMmPacketServiceTsy()
+CMmPacketServiceTsy::CMmPacketServiceTsy():
+    iReqHandleType(EMultimodePacketServiceReqHandleUnknown)
     {
     }
 
@@ -775,6 +776,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteDetachL. Error Value: %d", aErro
     if ( RPacketService::EAttachWhenPossible == iAttachMode )
         {
         SetAttachModeL( &iAttachMode );
+        iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
         }
     }
     
@@ -1966,9 +1968,14 @@ TFLOGSTRING2("TSY: CMmPacketServiceTsy::ExtFunc. IPC: %d", aIpc );
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
 
-    // Reset request handle type
-    iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
-
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePacketServiceReqHandleUnknown, User::Invariant());
+    
     // Set tsy request handle
     iTsyReqHandle = aTsyReqHandle;
 
@@ -1993,7 +2000,9 @@ TFLOGSTRING2("TSY: CMmPacketServiceTsy::ExtFunc. IPC: %d", aIpc );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, iTsyReqHandle );
 #endif // REQHANDLE_TIMER
-
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
         }
 
     return KErrNone;
@@ -2355,8 +2364,13 @@ TFLOGSTRING3("TSY: CMmPacketServiceTsy::CancelService. IPC: %d Tsy Req Handle:%d
 
     TInt ret( KErrNone );
     
-    // Reset last tsy request type
-    iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePacketServiceReqHandleUnknown, User::Invariant());
 
     // When the clients close their sub-sessions (eg. by calling
     // RPacketService::Close), they may not have cancelled all their
@@ -2368,7 +2382,6 @@ TFLOGSTRING3("TSY: CMmPacketServiceTsy::CancelService. IPC: %d Tsy Req Handle:%d
 
     switch ( aIpc )
         {
-
         case EPacketNotifyContextAdded:
             iNotifyDataPointers.iContextAdded = NULL;
             iReqHandleType = EMultimodePacketServiceNotifyContextAdded;
@@ -2471,6 +2484,10 @@ TFLOGSTRING3("TSY: CMmPacketServiceTsy::CancelService. IPC: %d Tsy Req Handle:%d
 
         // Complete request with KErrCancel
         CMmPacketServiceTsy::ReqCompleted( aTsyReqHandle, KErrCancel );
+        
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
         }
 
     return ret;

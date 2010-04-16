@@ -13,5 +13,15 @@
 // Description:
 //
 
+RUN_UTILS  MakeReadWrite c:\config.txt
+RUN_UTILS  DeleteFile c:\config.txt
+
+RUN_SCRIPT  z:\testdata\scripts\smsstackcleanprivatedata.script
+
+RUN_UTILS  MkDir c:\sms\
+RUN_UTILS  CopyFile z:\sms\tsmsemsprt_config.txt c:\sms\tsmsemsprt_config.txt
+
+RUN_UTILS  CopyFile c:\sms\tsmsemsprt_config.txt c:\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
+
 ced -i z:\TestData\configs\te_smsemsprt_commdb.cfg ced.log
-copyfile z:\sms\tsmsemsprt_config.txt c:\sms\tsmsemsprt_config.txt

@@ -356,14 +356,15 @@ TInt CMockPhoneMessHandler::ExtFuncL(TInt aIpc,const CMmDataPackage* aMmDataPack
 						   RMobilePhone::TMobilePhoneCBChangeV1> data(condition, *info);
 			return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc,data);
 			}
-		case ECtsyPhoneTerminateAllCallsReq:
+		case ECtsyPhoneTerminateAllCallsReq:		
 			{
 			TInt callId(0);
 			aMmDataPackage->UnPackData(callId);
 			TMockLtsyData1< TInt > data(callId);
 			return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc, data);
 			}
-    	case ECtsyPhoneCellInfoReq:
+        case ECtsyPhoneTerminateActiveCallsReq: 
+		case ECtsyPhoneCellInfoReq:
     	case ECtsyPhoneCellInfoIndReq:			
     	case EMobilePhoneSelectNetworkCancel:
     	case EMobilePhoneGetFdnStatus:
@@ -934,6 +935,7 @@ void CMockPhoneMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt aResu
 			}
 			break;
 		case ECtsyPhoneTerminateAllCallsComp:
+		case ECtsyPhoneTerminateActiveCallsComp:
 			{
 			// no parameter is required
 			}

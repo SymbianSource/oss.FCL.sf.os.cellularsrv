@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1273,7 +1273,16 @@ enum TVerdict CSpudSuspendContext::RunTestStepL()
 		
 		TInetAddr dstAddr;
 		dstAddr.SetPort(KConfiguredTftFilter1SrcPort);
-		dstAddr.Input(KConfiguredTftFilter1SrcAddr);
+
+		TPtrC ip6Addr;
+        if(GetStringFromConfig(ConfigSection(), _L("IP6Addr"), ip6Addr))
+            {
+            dstAddr.Input(ip6Addr);
+            }
+        else
+            {
+            dstAddr.Input(KConfiguredTftFilter1SrcAddr);
+            }
 		
 		iSocket.Connect(dstAddr, status);
 		User::WaitForRequest(status);

@@ -22,7 +22,8 @@
 
 // ======== MEMBER FUNCTIONS ========
 
-CMmSIMTsy::CMmSIMTsy()
+CMmSIMTsy::CMmSIMTsy():
+    iReqHandleType(ESIMTsyReqHandleUnknown)
     {
     }
 
@@ -152,8 +153,13 @@ TInt CMmSIMTsy::DoExtFuncL(
 TFLOGSTRING3("TSY: CMmSIMTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
     TInt ret( KErrGeneral );
 
-    // reset last tsy request type
-    iReqHandleType = ESIMTsyReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==ESIMTsyReqHandleUnknown, User::Invariant());
 
     switch ( aIpc )
         {
@@ -204,6 +210,9 @@ TFLOGSTRING3("TSY: CMmSIMTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandl
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = ESIMTsyReqHandleUnknown;
         }
 
     return ret;

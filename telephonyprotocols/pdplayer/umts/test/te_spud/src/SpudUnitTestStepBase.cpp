@@ -574,7 +574,7 @@ void CSpudFsmUnitTestStepBase::WaitForGivenContextStatus(RPacketContext& aPacket
 	RPacketContext::TContextStatus contextStatus1 = RPacketContext::EStatusUnknown;
 
 	aPacketContext.NotifyStatusChange(status, contextStatus);
-	aPacketContext.GetStatus(contextStatus1);
+	TEST(aPacketContext.GetStatus(contextStatus1) == KErrNone);
 	INFO_PRINTF2(_L("CSpudUnitTestStepBase::WaitForGivenContextStatus: contextStatus1 = %d"), contextStatus1);
 	if (contextStatus1 != RPacketContext::EStatusDeleted)
 		{

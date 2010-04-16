@@ -24,25 +24,24 @@ CEnumerateInOODCondition::CEnumerateInOODCondition(RSocketServ &aSocketServer)
 	Each test step initialises it's own name
 */
 	{
-	iSocketServer = &aSocketServer;
+    iSharedSocketServer = &aSocketServer;
+    iPartOfMultiStepTestCase = ETrue;
 	}
 
 /**
   Enumerates SIM messages.
-		*/
+ */
 TVerdict CEnumerateInOODCondition::doTestStepL()
 	{
 #ifndef _DEBUG
     INFO_PRINTF1(_L("This test can only be run when the SMS Stack is in debug mode."));
 #else   
 	
-	//PrepareRegTestLC(*iSocketServer, 17);
-	
 	//Open a socket 
-	INFO_PRINTF1(_L("Opening socket..."));
 	RSocket socket;
-	OpenSmsSocketL(*iSocketServer, socket, ESmsAddrRecvAny);
-
+	OpenSmsSocketL(*iSharedSocketServer, socket, ESmsAddrRecvAny);
+    CleanupClosePushL(socket);
+	
 	TRequestStatus status;
 	TPckgBuf<TUint> sbuf;
 	sbuf()=0;
@@ -50,21 +49,9 @@ TVerdict CEnumerateInOODCondition::doTestStepL()
 	//Now enumerate messages from store
 	socket.Ioctl(KIoctlEnumerateSmsMessages,status,&sbuf, KSolSmsProv);
 	User::WaitForRequest(status);
+	TESTCHECK(status.Int(), KErrDiskFull, "Checking the Enumeration was unsuccessful due to the disk being full");
 	
-	//The Enumeration should fail due to the disk being full and returns KErrDiskFull
-	if(status==KErrDiskFull)
-		{
-		INFO_PRINTF1(_L("Status = KErrDiskFull"));
-		}
-	else
-		{
-		TEST(EFalse);
-		}
-	
-	socket.Close();
+    CleanupStack::PopAndDestroy(&socket);
 #endif		
 	return TestStepResult();
 	}
-//----------------------------------------------------------------------------->
-
-

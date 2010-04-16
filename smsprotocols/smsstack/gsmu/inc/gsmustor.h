@@ -211,7 +211,7 @@ private:
 	TInt iTotal;     //< total number of PDUs in this SMS message
 	TInt iCount;     //< number of PDUs sent/received for this SMS message
 protected:
-	TInt iData1;     // TODO should be TUint32
+	TInt iData1;     
 	TInt iData2;     //< Log server ID
 	TInt iData3;
 	TInt iData4;

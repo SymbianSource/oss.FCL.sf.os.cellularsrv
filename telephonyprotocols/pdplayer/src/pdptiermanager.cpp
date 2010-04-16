@@ -287,7 +287,7 @@ TBool CContextStatusMonitor::StartL(const TName& aContextName)
 	{
 	iContextName.Copy(aContextName);
 	User::LeaveIfError(iPacketContext.OpenExistingContext(iPacketService, iContextName));
-	iPacketContext.GetStatus(iContextStatus);
+	User::LeaveIfError(iPacketContext.GetStatus(iContextStatus));
 
 	if (iContextStatus == RPacketContext::EStatusDeleted)
 		{

@@ -123,7 +123,8 @@ TFLOGSTRING2("TSY: CMmPhoneTsy::NewL - Phone model Id: %S", &KPhoneModelId);
     return mmPhoneTsy;
     }
 
-CMmPhoneTsy::CMmPhoneTsy()
+CMmPhoneTsy::CMmPhoneTsy():
+    iReqHandleType(EMultimodePhoneReqHandleUnknown)
     {
     }
 
@@ -1140,8 +1141,13 @@ TFLOGSTRING3("TSY: CMmPhoneTsy::ExtFunc, IPC:%d, Handle:%d", aIpc, aTsyReqHandle
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
 
-    //reset last tsy request type
-    iReqHandleType = EMultimodePhoneReqHandleUnknown;
+    // Ensure the ReqHandleType is unset.
+    // This will detect cases where this method indirectly calls itself
+    // (e.g. servicing a client call that causes a self-reposting notification to complete and thus repost).
+    // Such cases are not supported because iReqHandleType is in the context of this class instance,
+    // not this request, and we don't want the values set by the inner request and the outer request
+    // interfering with each other.
+    __ASSERT_DEBUG(iReqHandleType==EMultimodePhoneReqHandleUnknown, User::Invariant());
 
     //before processing further the request, check if offline mode status
     //is enabled and if the given request can be perfomed in that case.
@@ -1177,10 +1183,10 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
             iTsyReqHandleStore->SetTsyReqHandle( 
                 iReqHandleType, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
+            // We've finished with this value now. Clear it so it doesn't leak
+            //  up to any other instances of this method down the call stack
+            iReqHandleType = EMultimodePhoneReqHandleUnknown;
             }
-
-        //reset last tsy request type
-        iReqHandleType = EMultimodePhoneReqHandleUnknown;
         }
 
     return KErrNone;
@@ -1348,6 +1354,10 @@ TFLOGSTRING3("TSY: CMmPhoneTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHan
         case EMobilePhoneTerminateAllCalls:
             ret = TerminateAllCallsL( aTsyReqHandle );
             break;			
+        // Active calls termination
+        case EMobilePhoneTerminateActiveCalls:
+            ret = TerminateActiveCallsL( aTsyReqHandle );
+            break;          
       // DTMF
 		// forward request to the DTMF-specific Tsy
         case EMobilePhoneGetDTMFCaps:
@@ -1619,6 +1629,7 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
         //indicates that same method has been called and has not been 
         //completed, the method should return KErrServerBusy.
         case EMobilePhoneTerminateAllCalls:
+        case EMobilePhoneTerminateActiveCalls:
         case EMobilePhoneGetFdnStatus:
         case EMobilePhoneGetCustomerServiceProfile:
         case EMobilePhoneGetDetectedNetworksV2Phase1:
@@ -2024,6 +2035,7 @@ TFLOGSTRING3("TSY: CMmPhoneTsy::CancelService - IPC:%d, Handle:%d", aIpc, aTsyRe
         case EMobilePhoneNotifyDefaultPrivacyChange:
         case EMobilePhoneSetDefaultPrivacy:
         case EMobilePhoneTerminateAllCalls:
+        case EMobilePhoneTerminateActiveCalls:
         case EMobilePhoneSetNetworkSelectionSetting:        
             ret = KErrNone;
             break;
@@ -2478,7 +2490,7 @@ TFLOGSTRING("TSY: CMmPhoneTsy::TerminateAllCalls");
                 SetTypeOfResponse( EMultimodePhoneTerminateAllCalls, aTsyReqHandle );
 #else
                 iTsyReqHandleStore->SetTsyReqHandle( 
-                		iReqHandleType, aTsyReqHandle );
+                        EMultimodePhoneTerminateAllCalls, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
                 }
             else
@@ -2511,6 +2523,63 @@ void CMmPhoneTsy::CompleteTerminateAllCallsReq(TInt aErrorCode)
          ReqCompleted( reqHandle, aErrorCode );
 	     }	 
 	}
+
+
+// ---------------------------------------------------------------------------
+// CMmPhoneTsy::TerminateActiveCallsL
+// Terminates all active calls simultaneously.
+// ---------------------------------------------------------------------------
+//
+TInt CMmPhoneTsy::TerminateActiveCallsL(const TTsyReqHandle aTsyReqHandle)
+    {
+TFLOGSTRING("TSY: CMmPhoneTsy::TerminateActiveCalls");
+
+    // Check if some other client has already requested this
+    TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(EMultimodePhoneTerminateActiveCalls);
+    
+    if (EMultimodePhoneReqHandleUnknown >= reqHandle )
+        {
+        // The request is not already in processing because of a previous request
+
+        TInt err = iMessageManager->HandleRequestL(ECtsyPhoneTerminateActiveCallsReq);
+        if ( err == KErrNone )
+            {
+#ifdef REQHANDLE_TIMER
+            SetTypeOfResponse( EMultimodePhoneTerminateActiveCalls, aTsyReqHandle );
+#else
+            iTsyReqHandleStore->SetTsyReqHandle( 
+                    iReqHandleType, aTsyReqHandle );
+#endif //REQHANDLE_TIMER
+            }
+        else
+            {
+            // request failed, complete with error value
+            ReqCompleted( aTsyReqHandle, err );
+            } 
+        }
+    else
+        {
+TFLOGSTRING("TSY: CMmPhoneTsy::TerminatActiveCalls - Already requested");
+        ReqCompleted( aTsyReqHandle, KErrServerBusy );
+        }
+    return KErrNone;
+    }
+// ---------------------------------------------------------------------------
+// CMmPhoneTsy::CompleteTerminateActiveCallsReq
+// Description: Complete TerminateActiveCallsRequest
+// ---------------------------------------------------------------------------
+//
+void CMmPhoneTsy::CompleteTerminateActiveCallsReq(TInt aErrorCode)
+    {
+    // Reset req handle. Returns the deleted req handle
+     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
+         EMultimodePhoneTerminateActiveCalls );
+    
+     if ( EMultimodePhoneReqHandleUnknown != reqHandle )
+         {
+         ReqCompleted( reqHandle, aErrorCode );
+         }   
+    }
 
 // ---------------------------------------------------------------------------
 // CMmPhoneTsy::RegisterNotification
@@ -6067,6 +6136,10 @@ void CMmPhoneTsy::SetTypeOfResponse(
         case EMultimodePhoneTerminateAllCalls:
             timeOut = KMmPhoneTerminateAllCallsTimeOut;
             break;
+      // Active Calls Termination
+        case EMultimodePhoneTerminateActiveCalls:
+            timeOut = KMmPhoneTerminateActiveCallsTimeOut;
+            break;
       //NET
         case EMultimodePhoneSelectNetwork:
             timeOut = KMmPhoneSelectNetworkTimeOut;
@@ -6271,6 +6344,9 @@ TFLOGSTRING2("TSY: CMmPhoneTsy::Complete - ReqHandleType: %d", aReqHandleType);
         case EMultimodePhoneTerminateAllCalls:
         	CompleteTerminateAllCallsReq(aError);
         	break;
+        case EMultimodePhoneTerminateActiveCalls:
+            CompleteTerminateActiveCallsReq(aError);
+            break;
       //DTMF
         case EMultimodePhoneSendDTMFTones:
         case EMultimodePhoneStartDTMFTone:

@@ -13,20 +13,13 @@
 // Description:
 //
 
-#include <bautils.h>
 #include "TE_smsstor.h"
+
+#include <bautils.h>
+#include <smspproc.h>
+
 #include "gsmuieoperations.h"
-#include "smspclass0stor.h"
 #include "gsmunonieoperations.h"
-
-#if defined (__WINS__)
-#define PDD_NAME _L("ECDRV")
-#define LDD_NAME _L("ECOMM")
-#else
-#define PDD_NAME _L("EUART1")
-#define LDD_NAME _L("ECOMM")
-#endif
-
 
 TVerdict CSmsSegmentionStorePurge::doTestStepL()
 	{
@@ -303,6 +296,7 @@ TVerdict CReassemblystore3::doTestStepL()
 	// initialisation of the reassembly store
     iReassemblyStore=CSmsReassemblyStore::NewL(iFs);
 
+    // TODO: check if the correct file is opened (KReassemblyStoreName or KReassemblyStoreFileName)
     iReassemblyStore->OpenL(KReassemblyStoreName,KReassemblyStoreUid);
     iReassemblyStore->PurgeL(iSmsSettings.ReassemblyLifetime(), ETrue);
 
@@ -503,12 +497,12 @@ TVerdict CEncodePDUs::doTestStepL()
 
 /*  enum TSmsPDUType
         {
-        ESmsDeliver       = 0, //< Deliver, sent from SC to MS
-        ESmsDeliverReport = 1, //< Deliver report, sent from MS to SC
-        ESmsSubmit        = 2, //< Submit, sent from MS to SC
-        ESmsSubmitReport  = 3, //< Submit report, sent from SC to MS
-        ESmsStatusReport  = 4, //< Status report, sent from SC to MS
-        ESmsCommand       = 5  //< Command, sent from MS to SC
+        ESmsDeliver       = 0, ///< Deliver, sent from SC to MS
+        ESmsDeliverReport = 1, ///< Deliver report, sent from MS to SC
+        ESmsSubmit        = 2, ///< Submit, sent from MS to SC
+        ESmsSubmitReport  = 3, ///< Submit report, sent from SC to MS
+        ESmsStatusReport  = 4, ///< Status report, sent from SC to MS
+        ESmsCommand       = 5  ///< Command, sent from MS to SC
         };*/
 
 /*
@@ -563,7 +557,6 @@ TVerdict CEncodePDUs::doTestStepL()
     DoEncodePDUsL( 20, TSmsDataCodingScheme::ESmsAlphabet7Bit,CSmsPDU::ESmsCommand );
     DoEncodePDUsL( 20, TSmsDataCodingScheme::ESmsAlphabet8Bit,CSmsPDU::ESmsCommand );
     DoEncodePDUsL( 20, TSmsDataCodingScheme::ESmsAlphabetUCS2,CSmsPDU::ESmsCommand );
-
 
 /*
     CleanupStack::PopAndDestroy(); //socket
@@ -2913,7 +2906,7 @@ TInt CTestMSmsComm2::ProcessMessageL(const CSmsMessage& aSmsMessage,const TSmsAd
 	return KErrNone;
 	};
 
-void CTestMSmsComm2::DeletePDUs(const CArrayFix<TGsmSmsSlotEntry>& /*aSlotArray*/,MSmsMessageObserver* /*aObserver*/)
+void CTestMSmsComm2::DeletePDUs(const CArrayFix<TGsmSmsSlotEntry>& /*aSlotArray*/, MSmsMessageObserver* /*aObserver*/)
 	{
 	
 	}

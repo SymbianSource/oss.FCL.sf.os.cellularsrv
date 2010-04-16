@@ -14,527 +14,161 @@
 //
 
 /**
- @file
+    @file
+    @test
 */
 
-#include <sacls.h>
-#include <smspver.h>
 #include "WapProtSuiteStepBase.h"
+
+#include <Gsmumsg.h>
+#include <gsmubuf.h>
+
+#include "smspver.h"
 #include "WapProtSuiteDefs.h"
+#include "wap_sock.h"
+#include "smsstacktestconsts.h"
 
+TVerdict CWapProtSuiteStepBase::doTestStepPreambleL()
 /**
-Utility for setting the test number used by SIM TSY
-*/
-void CWapProtSuiteStepBase::SetTestNumberL()
-{
-	TInt testNumber;
-	GetIntFromConfig(ConfigSection(), _L("testNumber"), testNumber);
-
-	RProperty testNumberProperty;
-	User::LeaveIfError(testNumberProperty.Attach(KUidPSSimTsyCategory, KPSSimTsyTestNumber));
-	CleanupClosePushL(testNumberProperty);
-
-	TRequestStatus status;
-	testNumberProperty.Subscribe(status);
-	INFO_PRINTF1(_L("Setting Sim.Tsy test number P&S property"));
-	User::LeaveIfError(testNumberProperty.Set(KUidPSSimTsyCategory,KPSSimTsyTestNumber,testNumber));
-	User::WaitForRequest(status);
-	
-	TEST(status.Int() == KErrNone);
-	TInt testNumberCheck;
-	User::LeaveIfError(testNumberProperty.Get(testNumberCheck));
-	if (testNumber != testNumberCheck)
-		{
-	    INFO_PRINTF3(_L("Test number property set to [%d], but value returned is [%d]"),testNumber,testNumberCheck);
-		User::Leave(KErrNotFound);
-		}
-
-	CleanupStack::PopAndDestroy(&testNumberProperty);
-
-}
-
-
-void CWapProtSuiteStepBase::WaitForRecvL(RSocket& aSocket)
-/**
- * Wait for an Sms to be received
- * @param aSocket The status is return to this socket
- * @leave Leaves if receiving is completed with error code
+ *  @return - TVerdict
+ *  Implementation of CTestStep base class virtual
+ *  Do all initialisation common to derived classes in here.
  */
 	{
-	TPckgBuf<TUint> sbuf;
-	sbuf()=KSockSelectRead;
-	TRequestStatus status;
-	aSocket.Ioctl(KIOctlSelect,status,&sbuf,KSOLSocket);
-	User::WaitForRequest(status);
-	TEST(status.Int() == KErrNone);
+    //base class preamble - marks the heap
+    CSmsBaseTestStep::doTestStepPreambleL();
+    
+	return TestStepResult();
 	}
 
-
-CSmsMessage* CWapProtSuiteStepBase::RecvSmsL(RSocket& aSocket, TInt aIoctl)
-/**
- * Receive an Sms
- * @param aSocket is used to stream the sms message from the socket server
- * @return CSmsMessage* :Sms message from Sms stack
- * @leave Leaves if streaming the message from the socket server doesn't succeed
- */
+TVerdict CWapProtSuiteStepBase::doTestStepPostambleL()
 	{
-
-	RFs lFs;	
-	User::LeaveIfError(lFs.Connect());
+    //base class postamble - unmarks the heap
+    CSmsBaseTestStep::doTestStepPostambleL();
 	
-	CSmsBuffer* buffer=CSmsBuffer::NewL();
-	CSmsMessage* smsMessage=CSmsMessage::NewL(lFs, CSmsPDU::ESmsSubmit,buffer);
-	CleanupStack::PushL(smsMessage);
-
-	RSmsSocketReadStream readstream(aSocket);
-	TRAPD(ret,readstream >> *smsMessage);
-	TEST(ret == KErrNone);
-
-	TPckgBuf<TUint> sbuf;
-	TRequestStatus status;
-	aSocket.Ioctl(aIoctl, status, &sbuf, KSolSmsProv);
-	User::WaitForRequest(status);
-
-	CleanupStack::Pop(smsMessage);
-	
-	lFs.Close();
-	
-	return smsMessage;
+	return TestStepResult();
 	}
 
-
-
 /**
-Utility for setting up the WAP address - Port number and service center address
+	Set up and open socket
 */
-void CWapProtSuiteStepBase::SetWapAddrL()
-{
-	TInt port;
+void CWapProtSuiteStepBase::SetupWapSocketL()
+	{
+	SetupWapSocketL(iSocket, iWapAddr, KWapPort);
+	}
 
-	//Get the port number from the ini file
-	GetIntFromConfig(ConfigSection(),_L("port"), port);
+void CWapProtSuiteStepBase::SetupWapSocketL(RSocket& aSocket, TWapAddr& aWapAddr, const TDesC& aPort, TBool aNewStyleClient)
+    {
+    OpenSocketL(iSocketServer, aSocket);
+
+    //Read port and SC number from ini file
+    ReadWapPortSettingsL(aWapAddr, aPort);
+    
+    if (aNewStyleClient)
+        {
+        //  Indicating to the protocol that it's a new client
+        INFO_PRINTF1(_L("Socket set option for indicating new client"));
+        TInt ret = aSocket.SetOpt(KWapSmsOptionNewStyleClient,KWapSmsOptionLevel, 0);
+        TESTCHECKL(ret, KErrNone, "Indicating to the protocol that it's a new client")
+        }
+    
+    //  Bind
+    TInt ret = aSocket.Bind(aWapAddr);
+    TESTCHECKL(ret, KErrNone, "Socket bind");
+    
+    TProtocolDesc desc;
+    aSocket.Info(desc);
+    INFO_PRINTF2(_L("Protocol name: %S"), &desc.iName);
 	
-	iWapAddr.SetWapPort(TWapPortNumber(port));
+    TTimeIntervalMicroSeconds32 InitPause=9000000;  //Required Pause to Allow SMSStack to Complete its Async Init
+    User::After(InitPause);                         //call to the TSY and finish its StartUp.
 
-	//Get the service center number
-	TPtrC telNumber;
-	GetStringFromConfig(ConfigSection(),_L("telNumber"), telNumber);
-	TBuf8<100> scNumber;
-	scNumber.Copy(telNumber);
-	TPtrC8 scAddr(scNumber);
-	iWapAddr.SetWapAddress(scAddr);
-	
-	//	Bind
-	User::LeaveIfError(iSocket.Bind(iWapAddr));
-}
-
+    }
 
 /**
 Setup a socket for receiving status repots
 */
 void CWapProtSuiteStepBase::SetupStatusReportSocketL()
 {
-	//	Open the socket for receiving status reports
-    User::LeaveIfError(iStatusReportSocket.Open(iSocketServer,KSMSAddrFamily,KSockDatagram,KSMSDatagramProtocol));
-	
-	//Bind to the socket
-	//TSmsAddr smsAddr;
-	iSmsAddr.SetSmsAddrFamily(ESmsAddrStatusReport);
-	TInt ret=iStatusReportSocket.Bind(iSmsAddr);
-	INFO_PRINTF2(_L("Socket Bind Return Value : %d"),ret);
-	TESTL(ret == KErrNone);
-	
-	//	Waiting for the phone to be initialised
-	//WaitForInitializeL();
+    //  Open the socket for receiving status reports
+    OpenSocketL(iSocketServer, iStatusReportSocket, KSMSAddrFamily, KSMSDatagramProtocol);
+    
+    //Bind to the socket
+    iSmsAddr.SetSmsAddrFamily(ESmsAddrStatusReport);
+    TInt ret=iStatusReportSocket.Bind(iSmsAddr);
+    TESTCHECKL(ret, KErrNone, "Status Report Socket bind");
+
+    TProtocolDesc desc;
+    iStatusReportSocket.Info(desc);
+    INFO_PRINTF2(_L("Protocol name: %S"), &desc.iName);
+    
+    TTimeIntervalMicroSeconds32 InitPause=9000000;  //Required Pause to Allow SMSStack to Complete its Async Init
+    User::After(InitPause);                         //call to the TSY and finish its StartUp.
+
 }
-
-
-/**
-Get the coding of the message
-*/
-void CWapProtSuiteStepBase::SetCodingSchemeL()
-{
-	TInt dataCoding;
-
-	//Get the port number from the ini file
-	GetIntFromConfig(ConfigSection(),_L("dataCoding"), dataCoding);
-	
-	if(dataCoding==8)
-		iCodingScheme = EWapSms8BitDCS;
-	else
-		iCodingScheme = EWapSms7BitDCS;
-	
-	if(iCodingScheme==EWapSms8BitDCS)	
-		User::LeaveIfError(iSocket.SetOpt(KWapSmsOptionNameDCS,KWapSmsOptionLevel,EWapSms8BitDCS));
-	else
-		User::LeaveIfError(iSocket.SetOpt(KWapSmsOptionNameDCS,KWapSmsOptionLevel,EWapSms7BitDCS));
-}
-
-void CWapProtSuiteStepBase::SetMessageTypeL()
-{
-	//Get the type of message
-	TPtrC messageType;
-	GetStringFromConfig(ConfigSection(),_L("type"), messageType);
-
-	//Set the message type to WapDatagram
-	if(messageType.Compare(_L("Datagram")) ==0)
-		User::LeaveIfError(iSocket.SetOpt(KWapSmsOptionWapDatagram,KWapSmsOptionLevel));	
-//	else
-//		User::LeaveIfError(iSocket.SetOpt(KWapSmsOptionSmartMessage,KWapSmsOptionLevel));	
-			
-	//The creation of the message will set the type to SMART by default
-}
-	
-
-
-TVerdict CWapProtSuiteStepBase::doTestStepPreambleL()
-/**
- *  @return - TVerdict
- *  Implementation of CTestStep base class virtual
- *  Load serial drivers
- *  Do all initialisation common to derived classes in here.
- */
-	{
-	__UHEAP_MARK;
-	
-	iScheduler = new(ELeave) CActiveScheduler;
-	CActiveScheduler::Install(iScheduler);
-
-	iSecureBackupEngine = CSBEClient::NewL();
-	iSecureBackupEngine->SetBURModeL(TDriveList(_L8("C")),
-									 EBURNormal, ENoBackup);
-
-	TInt err;
-    err=User::LoadPhysicalDevice(PDD_NAME);
-    TESTL(err == KErrNone  ||  err == KErrAlreadyExists);
-
-    err=User::LoadLogicalDevice(LDD_NAME );
-    TESTL(err == KErrNone  ||  err == KErrAlreadyExists);
-
-    err = StartC32();
-    if(err != KErrNone && err != KErrAlreadyExists)
-        {
-        ERR_PRINTF2(TRefByValue<const TDesC>(_L("Start Comms Process Status = %d")), err);
-        SetTestStepResult(EFail);
-        }
-
-	INFO_PRINTF1(_L("Deleting segmentation and reassembly stores..."));
-
-	RFs fileServer;
-	User::LeaveIfError(fileServer.Connect());
-
-	// delete segmentation and reassembly store files before the test
-	_LIT(KReassemblyStoreName,"C:\\Private\\101F7989\\sms\\smsreast.dat");
-	_LIT(KSegmentationStoreName,"C:\\Private\\101F7989\\sms\\smssegst.dat");
-	_LIT(KWapReassemblyStoreName,"C:\\Private\\101F7989\\sms\\wapreast.dat");
-
-	fileServer.Delete(KWapReassemblyStoreName);
-	fileServer.Delete(KReassemblyStoreName);
-	fileServer.Delete(KSegmentationStoreName);
-
-	fileServer.Close();
-
-	return TestStepResult();
-	}
-
-TVerdict CWapProtSuiteStepBase::doTestStepPostambleL()
-	{
-	delete iSecureBackupEngine;
-	iSecureBackupEngine = NULL;
-
-	delete iScheduler;
-	iScheduler = NULL;
-
-	__UHEAP_MARKEND;
-	
-	return TestStepResult();
-	}
-
-void CWapProtSuiteStepBase::WaitForInitializeL()
-	{
-	TName tsy(KTSY);
-	RTelServer serverT;
-	User::LeaveIfError(serverT.Connect());
-	CleanupClosePushL(serverT);
-	User::LeaveIfError(serverT.LoadPhoneModule(tsy));
-
-	// Find the phone corresponding to this TSY and open a number of handles on it
-	TInt numPhones;
-	User::LeaveIfError(serverT.EnumeratePhones(numPhones));
-	RPhone phone;
-
-	while (numPhones--)
-		{
-		TName phoneTsy;
-		User::LeaveIfError(serverT.GetTsyName(numPhones,phoneTsy));
-		if (phoneTsy.CompareF(tsy)==KErrNone)
-			{
-			RTelServer::TPhoneInfo info;
-			User::LeaveIfError(serverT.GetPhoneInfo(numPhones,info));
-			User::LeaveIfError(phone.Open(serverT,info.iName));
-			CleanupClosePushL(phone);
-			const TInt err = phone.Initialise();
-			User::LeaveIfError(err);
-			CleanupStack::PopAndDestroy(&phone);
-			break;
-			}
-		}
-
-	CleanupStack::PopAndDestroy(&serverT);
-	}
-
-
-
-/**
-  *  Set high and low limits in .RSC file. When the SMS Stack starts the limits
-  *  will be loaded as if set by the licensee.
-  *
-  *  @param aLowLimit   Low limit value.
-  *  @param aHighLimit  High limit value.
-  *
-  *  @note Only works in debug mode for security reasons.
-  */ 
-void CWapProtSuiteStepBase::SetLowHighLimitsInSmsuRscL(TInt64 aLowLimit, TInt64 aHighLimit)
-	{
-	INFO_PRINTF3(_L("Setting high and low .RSC limits to %ld and %ld."),
-				 aHighLimit, aLowLimit);
-
-	__ASSERT_ALWAYS(aLowLimit  < 0x7fffffff, User::Leave(KErrArgument));
-	__ASSERT_ALWAYS(aHighLimit < 0x7fffffff, User::Leave(KErrArgument));
-	__ASSERT_ALWAYS(aLowLimit  < aHighLimit, User::Leave(KErrArgument));
-
-	RFs lFs;	
-	User::LeaveIfError(lFs.Connect());
-
-	//
-	// Data for the SMSU resource file. The low limit is written at position
-	// 20 and the high limit at position 24.
-	//
-	const TInt  smsuRscSize = 34;
-	TChar  smsuRscData[smsuRscSize] =
-				{0x6b, 0x4a, 0x1f, 0x10, 0x00, 0x00, 0x00, 0x00,
-   	 			 0x00, 0x00, 0x00, 0x00, 0x19, 0xfd, 0x48, 0xe8,
-				 0x01, 0x04, 0x00, 0x00, 0x78, 0x56, 0x34, 0x12,
-				 0x87, 0x65, 0x43, 0x21, 0x14, 0x00, 0x18, 0x00, 
-   		 		 0x1c, 0x00};
-    						  
-	smsuRscData[20] = (aLowLimit  >>  0) & 0xff;
-	smsuRscData[21] = (aLowLimit  >>  8) & 0xff;
-	smsuRscData[22] = (aLowLimit  >> 16) & 0xff;
-	smsuRscData[23] = (aLowLimit  >> 24) & 0xff;
-	smsuRscData[24] = (aHighLimit >>  0) & 0xff;
-	smsuRscData[25] = (aHighLimit >>  8) & 0xff;
-	smsuRscData[26] = (aHighLimit >> 16) & 0xff;
-	smsuRscData[27] = (aHighLimit >> 24) & 0xff;
-
-	TBuf8<smsuRscSize>  smsuRscBuffer;
-
-	for (TInt index = 0;  index < smsuRscSize;  index++)
-		{
-		smsuRscBuffer.Append(smsuRscData[index]);
-		}
-
-	//
-	// Ensure the target directory exists...
-	//
-	TInt  ret;
-	
-	ret = lFs.MkDir(KSMSUResourceDir);
-	if (ret != KErrNone  &&  ret != KErrAlreadyExists)
-		{
-		User::Leave(ret);
-		}
-
-	//
-	// Write the RSC file to the private C:\ directory...
-	//
-	RFile  file;
-
-	User::LeaveIfError(file.Replace(lFs, KSMSUResourceFile, EFileWrite));
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Write(smsuRscSize, smsuRscBuffer));
-	CleanupStack::PopAndDestroy(&file);
-	
-	lFs.Close();
-	}
-
-/**
- * Sets high and low limits in .RSC file and then reserves disk space to match requested levels.
- * 
- * Checks the current free space and then sets the high and low marks
- * to be aHighDrop MB and aLowDrop MB below the current free space 
- * level.
- * 
- * Then diskspace is reserved to aFreeDrop MB below the current free
- * space level.
- * 
- * If the current free space level is greater then aMax then the 
- * current free space level is set to aMax
- * 
- * If the current free space level is less than aLowDrop MB then this
- * method leaves with KErrArgument.
- * 
- * @param   aHighDrop   The number of MB below the current free space level for the high level mark (in the .RSC file)
- * @param   aLowDrop    The number of MB below the current free space level for the low level mark (in the .RSC file)  
- * @param   aFreeDrop   The number of MB below the current free space level to set the free space to ;
- *                      if aFreeDrop == 0, then SetFreeDiskSpaceL() is not called
- * @param   aMax        The maximum level for the high limit allowed
- * 
- * @return  The max current free space level used.
- * 
- * @leave   KErrArgument if the current free diskspace level is less than aLowDrop MB
- * @leave   KErrArgument if aMax is not greater than aLowDrop MB
- * @leave   KErrArgument if aHighDrop >= aLowDrop  
- */
-TUint64 CWapProtSuiteStepBase::SetHighLowLimitsAndDiskSpaceLevelL(TUint aHighDrop, TUint aLowDrop, TUint aFreeDrop, TUint64 aMax/*=0x7fffffff*/)
-    {
-    INFO_PRINTF5(_L("Setting High-Low limits and Diskspace levels [aHighDrop=%u, aLowDrop=%u, aFreeDrop=%u, aMax=%ld]"), 
-            aHighDrop, aLowDrop, aFreeDrop, aMax);
-    
-    __ASSERT_ALWAYS( (aMax > (aLowDrop*1024*1024)), User::Leave(KErrArgument));
-    __ASSERT_ALWAYS( (aLowDrop > aHighDrop), User::Leave(KErrArgument));
-    
-    ReleaseDiskSpaceL();
-   
-    TVolumeInfo  volumeInfo;
-    RFs fs;
-    User::LeaveIfError(fs.Connect());
-    CleanupClosePushL(fs);
-    User::LeaveIfError(fs.Volume(volumeInfo, EDriveC));
-    INFO_PRINTF2(_L("  Drive C currently has %ld bytes free."), volumeInfo.iFree);
-    
-    TUint64 current = volumeInfo.iFree;
-    if( current < (aLowDrop*1024*1024) )
-        {
-        INFO_PRINTF1(_L("  Drive C already has too little free space!"));
-        User::Leave(KErrArgument);
-        }
-    if( current > aMax )
-        {
-        current = aMax;
-        }
-    TUint64 high = current - (aHighDrop*1024*1024);
-    TUint64 low  = current - (aLowDrop*1024*1024);    
-        
-    SetLowHighLimitsInSmsuRscL(low, high);
-    
-    if( aFreeDrop > 0 )
-        {
-        TUint64 free = current - (aFreeDrop*1024*1024);    
-        SetFreeDiskSpaceL(free);
-        }
-    
-    CleanupStack::PopAndDestroy(&fs);   
-    return current;
-    }
-
-void CWapProtSuiteStepBase::SetFreeDiskSpaceFromDropLevelL(TUint aFreeDrop)
-    {
-    if( aFreeDrop == 0)
-        {
-        return;
-        }
-    
-    RFs fs;
-    User::LeaveIfError(fs.Connect());
-    CleanupClosePushL(fs);    
-    
-    TVolumeInfo  volumeInfo;
-    User::LeaveIfError(fs.Volume(volumeInfo, EDriveC));
-    TUint64 current = volumeInfo.iFree;
-    if( current > 0x7fffffff )
-        {
-        current = 0x7fffffff;
-        }    
-    TUint64 free = current - (aFreeDrop*1024*1024);
-    SetFreeDiskSpaceL(free);
-    CleanupStack::PopAndDestroy(&fs); 
-    }
-/**
- *  Reserves disk space so that a specified amount of free disk space is
- *  available.
- *
- *  @param aNewFreeValue  Amount of free space required.
- */
-void CWapProtSuiteStepBase::SetFreeDiskSpaceL(TInt64 aNewFreeValue)
-    {
-    
-#ifndef _DEBUG
-    ERR_PRINTF1(_L("Unexpected call: CWapProtSuiteStepBase::SetFreeDiskSpaceL() is expected to be called only in DEBUG mode."));
-    User::Leave(KErrNotSupported);
-#else
-
-    INFO_PRINTF2(_L("Setting Drive C free disk space to %ld bytes."), aNewFreeValue);
-    
-    __ASSERT_DEBUG( (aNewFreeValue <= 0x7fffffff), User::Leave(KErrArgument));
-            
-    TInt err = RProperty::Set(KUidPSSMSStackCategory, KUidPSSMSStackFreeDiskSpaceKey, (TInt)aNewFreeValue);
-    if (err != KErrNone)
-        {
-        ERR_PRINTF2(_L("RProperty::Set() failure [err=%d]"), err);
-        User::Leave(err);
-        }
-#endif               
-    } // CSMSTestSteps::SetFreeDiskSpaceL
-	
-/**
- *  Release all reserved disk space.
- */
-void CWapProtSuiteStepBase::ReleaseDiskSpaceL()
-	{
-	
-#ifndef _DEBUG
-    ERR_PRINTF1(_L("Unexpected call: CWapProtSuiteStepBase::ReleaseDiskSpaceL() is expected to be called only in DEBUG mode."));
-    User::Leave(KErrNotSupported);
-#else
-
-    INFO_PRINTF1(_L("CWapProtSuiteStepBase::ReleaseDiskSpaceL()"));
-    
-    RFs fs;
-    User::LeaveIfError(fs.Connect());
-    CleanupClosePushL(fs);
-    
-    TVolumeInfo  volumeInfo;
-    User::LeaveIfError(fs.Volume(volumeInfo, EDriveC));
-    TUint64 current = volumeInfo.iFree;
-    if( current > 0x7fffffff )
-        {
-        current = 0x7fffffff;
-        }         
-    
-    SetFreeDiskSpaceL(current);
-    CleanupStack::PopAndDestroy(&fs);
-#endif       
-	} // CSMSTestSteps::ReleaseDiskSpaceL
-
 
 /**
 	Get WAP Address from INI file
 */
-void CWapProtSuiteStepBase::ReadWapPortSettingsL(TWapAddr &aWapAddr)
+void CWapProtSuiteStepBase::ReadWapPortSettingsL(TWapAddr& aWapAddr, const TDesC& aPort)
 	{
 	//Local vars	
 	TPtrC16 telNumber;
 	TInt port;
 	
 	//Read Port and SC number from INI file
-	if(!GetStringFromConfig(ConfigSection(),KSCNumber,telNumber) ||
-	   !GetIntFromConfig(ConfigSection(),KWapPort,port)
-		)
-		{
-		// Leave if there's any error.
-		User::Leave(KErrNotFound);
-		}
-	  	
+	User::LeaveIfError(GetStringFromConfig(ConfigSection(),KSCNumber,telNumber));
+	User::LeaveIfError(GetIntFromConfig(ConfigSection(), aPort, port));
 
 	aWapAddr.SetWapPort(TWapPortNumber(port));
 	TBuf8<100> scNumber;
 	scNumber.Copy(telNumber);
 	TPtrC8 scAddr(scNumber);
-	aWapAddr.SetWapAddress(scAddr);	  	
+	aWapAddr.SetWapAddress(scAddr);	
 	}
 
+/**
+Get the coding of the message
+*/
+void CWapProtSuiteStepBase::SetCodingSchemeL()
+    {
+    TInt dataCoding;
+    TInt err = KErrNone;
 
+    //Get the port number from the ini file
+    GetIntFromConfig(ConfigSection(),_L("dataCoding"), dataCoding);
+
+    if(dataCoding==8)
+        {
+        err = iSocket.SetOpt(KWapSmsOptionNameDCS,KWapSmsOptionLevel,EWapSms8BitDCS);
+        }
+    else
+        {
+        err = iSocket.SetOpt(KWapSmsOptionNameDCS,KWapSmsOptionLevel,EWapSms7BitDCS);
+        }
+
+    TESTCHECKL(err, KErrNone, "Setting Data Coding Scheme");
+    }
+
+void CWapProtSuiteStepBase::SetMessageTypeL()
+    {
+    TInt err = KErrNone;
+    TPtrC messageType;
+
+    //Get the type of message
+    GetStringFromConfig(ConfigSection(),_L("type"), messageType);
+
+    //Set the message type to WapDatagram
+    if(messageType.Compare(_L("Datagram")) == 0)
+        {
+        err = iSocket.SetOpt(KWapSmsOptionWapDatagram,KWapSmsOptionLevel);
+        }
+    //The creation of the message will set the type to SMART by default
+    //  else
+    //      User::LeaveIfError(iSocket.SetOpt(KWapSmsOptionSmartMessage,KWapSmsOptionLevel));   
+    
+    TESTCHECKL(err, KErrNone, "Setting Message Type");
+    }
 
 /**
 Used to check the CSmsMessage, will also print details of values in CSmsMessage
@@ -583,13 +217,11 @@ Used to make call to get message parameters via Ioctl
 void CWapProtSuiteStepBase::GetMessageParameterL(RSocket& aSock, TPtr8& aParameterStorePtr)
 	{
 	TRequestStatus getParamStatus;
-	
-	// Get the message parameter and assign to TPtr8
-	INFO_PRINTF1(_L("Issue of IOCTL for KSOGetMessageParameters"));
+
+	INFO_PRINTF1(_L("Getting message parameter..."));
 	aSock.Ioctl(KSOGetMessageParameters, getParamStatus, &aParameterStorePtr, KSolWapProv);
 	User::WaitForRequest(getParamStatus);
-	INFO_PRINTF1(_L("KSOGetMessageParameters on Ioctl completed"));
-	TESTL(getParamStatus.Int()==KErrNone);
+	TESTCHECK(getParamStatus.Int(), KErrNone, "Getting message parameter");
 	}
 
 /**
@@ -607,15 +239,13 @@ void CWapProtSuiteStepBase::InternaliseSmsDataAndCheckL(TDes8& aBuffer, TPtrC8& 
 	CleanupClosePushL(rFs);
 	
 	smsMessageBuf = CSmsMessage::NewL(rFs, CSmsPDU::ESmsStatusReport, CSmsBuffer::NewL());
+	CleanupStack::PushL(smsMessageBuf);
 	smsMessageBuf->InternalizeWithoutBufferL(reader);
 	
 	INFO_PRINTF1(_L("Check the contents of the internalized sms message"));
 	CheckSmsMessageL(*smsMessageBuf, aScnumber);
 	
-	rFs.Close();
-	delete smsMessageBuf;
-	CleanupStack::PopAndDestroy(); // rFs.Close()
-	CleanupStack::PopAndDestroy(&reader);
+	CleanupStack::PopAndDestroy(3, &reader); // reader, rFs, smsMessageBuf
 	}
 
 void CWapProtSuiteStepBase::OpenSocketL(RSocketServ& aSocketServer, RSocket& aSocket, TUint aAddrFamily,TUint aProtocol)
@@ -632,8 +262,6 @@ void CWapProtSuiteStepBase::OpenSocketLC(RSocketServ& aSocketServer, RSocket& aS
          //If error == KErrNone, do nothing.
          //If error == KErrServerBusy, change the leave code to "84" to imply the failure otherwise the failed step will be started again.
          //Any other errors will leave with the error code.
-
-         
          if(error == KErrServerBusy)
              {
              error = TEST_ERROR_CODE;
@@ -645,7 +273,59 @@ void CWapProtSuiteStepBase::OpenSocketLC(RSocketServ& aSocketServer, RSocket& aS
              }
           User::Leave(error);
           }   
-  
     CleanupClosePushL(aSocket);
     }
 
+void CWapProtSuiteStepBase::ReceiveWapMessageFromSocket(TInt aLength, TPtrC& aData)
+    {
+    //  Receiving a message, length of which should be requested prior to calling
+    // this method from the socket and supplied thought aLength parameter
+    
+    TRequestStatus  status;
+    TWapAddr recvWapAddr;           
+    HBufC8* recvBuf = HBufC8::NewLC(aLength);
+    TPtr8 recvPtr = recvBuf->Des(); 
+
+    INFO_PRINTF1(_L("Receiving a message from the socket..."));
+    iSocket.RecvFrom(recvPtr, recvWapAddr, 0, status);
+    User::WaitForRequest(status);
+    TESTCHECKL(status.Int(), KErrNone, "Receiving a message");
+    
+    TBuf8<300> data;
+    data.Copy(aData);
+    TESTCHECK(recvPtr.Compare(data), 0, "Checking the received message matched expected");
+    
+    //  Confirm the receipt of the message to the client
+    INFO_PRINTF1(_L("Setting Socket option for indicating receipt of the message..."));
+    TInt ret = iSocket.SetOpt(KWapSmsOptionOKToDeleteMessage,KWapSmsOptionLevel, 0);
+    TESTCHECKL(ret, KErrNone, "Setting Socket option for indicating receipt of the message");
+    CleanupStack::PopAndDestroy(recvBuf);
+    }
+
+void CWapProtSuiteStepBase::ReceiveWapMessage(TPtrC& aData)
+    {
+    TRequestStatus ioctlStatus;
+    TPckgBuf<TInt> length;
+    
+    INFO_PRINTF1(_L("Issuing IOCTL for getting the length of the message..."));
+    iSocket.Ioctl(KSOGetLength, ioctlStatus, &length, KSolWapProv);
+    User::WaitForRequest(ioctlStatus);
+    TESTCHECKL(ioctlStatus.Int(), KErrNone, "Getting the length of the incoming message");
+    
+    //  Check if reported length is correct
+    TESTCHECK(length(), aData.Length(), "Check if reported length is correct");
+    
+    ReceiveWapMessageFromSocket(length(), aData);
+    }
+
+void CWapProtSuiteStepBase::SendWapMessage(TPtrC& aData)
+    {
+    TRequestStatus status;
+    TBuf8<300> data;
+    data.Copy(aData);
+
+    INFO_PRINTF1(_L("Sending a message..."));
+    iSocket.SendTo(data, iWapAddr, 0, status);
+    User::WaitForRequest(status);
+    TESTCHECKL(status.Int(), KErrNone, "Sending a message");
+    }

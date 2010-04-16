@@ -14,137 +14,11 @@
 //
 
 /**
- @file
+    @file
+    @test
 */
-#include <cfshared.h>
-#include <c32root.h>
-#include <sacls.h>
-#include <e32math.h>
 
 #include "TE_smsprtbase.h"
-
-
-/**
-	Preamble for all CSmsPrtTestStep
-*/
-TVerdict CSmsPrtTestStep::doTestStepPreambleL()
-	{
-	//base class preamble - marks the heap
-	CSMSTestSteps::doTestStepPreambleL();
-	
-	iScheduler = new(ELeave) CActiveScheduler;
-	CActiveScheduler::Install(iScheduler);
-	
-
-    TRAPD(ret, ParseSettingsFromFileL());
-	if (ret != KErrNone)
-		{
-		INFO_PRINTF2(_L("ParseSettingsFromFileL [err=%d]"), ret);
-		}
-	
-	iSmsStackTestUtils = CSmsStackTestUtils::NewL(this,  iFs);
-	
-	return TestStepResult() ;
-	}
-
-/**
-	Cleanup SmsStackTestUtils, close the filer server session and delete the scheduler
-*/
-TVerdict CSmsPrtTestStep::doTestStepPostambleL()
-	{
-	delete iSmsStackTestUtils;
-	iSmsStackTestUtils = NULL;
-	
-	delete iScheduler;
-	iScheduler = NULL;
-
-	//base class postamble - unmarks the heap
-	CSMSTestSteps::doTestStepPostambleL();
-	
-	//DoESockMemoryLeakTestL();
-
- 	return CSMSTestSteps::doTestStepPostambleL() ;
-	} // CSmsPrtTestStep::doTestStepPostambleL
-
-
-void CSmsPrtTestStep::DoESockMemoryLeakTestL()
-	{
-	//
-	// Find the current number of leaked cells in ESock...
-	//
-	TInt  ret, startLeakCounter;
-	
-	ret = RProperty::Get(KUidCommsProcess, KUidCommsModuleLeakCounter, startLeakCounter);
-	if (ret == KErrNotFound)
-		{
-		// No variable to monitor, ESock is probably not in debug mode.
-		return;
-		}
-	else
-		{
-		TESTL(ret == KErrNone);
-		}
-
-	//
-	// Connect to Rootserver...
-	//
-	RRootServ  rootserver;
-
-	User::LeaveIfError(rootserver.Connect());
-	CleanupClosePushL(rootserver);
-
-	//
-	// Shutdown all the ESock CPMs gracefully...
-	//
-	TRSIter  iter;
-	TCFModuleName  modName;
-	TRSModuleInfo  modInfo;
-	TRequestStatus  statusArray[16];
-	TInt  statusCount = 0;
-
-	while (rootserver.EnumerateModules(iter, modName) == KErrNone)
-		{
-		if (rootserver.GetModuleInfo(modName, modInfo) == KErrNone  &&
-		    modInfo.iParams.iDll.MatchF(_L("*ESOCKSVR.DLL")) >= 0)
-			{
-			rootserver.UnloadCpm(statusArray[statusCount++], modInfo.iParams.iName,
-			                     EGraceful);
-			}
-		}
-
-	while (statusCount > 0)
-		{
-		statusCount--;
-		User::WaitForRequest(statusArray[statusCount]);
-		TEST(statusArray[statusCount] == KErrNone);
-		}
-
-	//
-	// Close Rootserver session...
-	//
-	CleanupStack::PopAndDestroy(1, &rootserver);
-	
-	//
-	// Get the latest number of leaked cells in ESock...
-	//
-	TInt  finalLeakCounter;
-
-	ret = RProperty::Get(KUidCommsProcess, KUidCommsModuleLeakCounter, finalLeakCounter);
-	TESTL(ret == KErrNone);
-
-	if (finalLeakCounter > startLeakCounter)
-		{
-		INFO_PRINTF1(_L("<font size=2 color=FF0000><B>A memory leak has been detected inside ESock - Check SMS Stack!</B></font>"));
-		TEST(finalLeakCounter == startLeakCounter);
-		}
-
-	//
-	// Restart C32...
-	//
-	_LIT(KDummyCMI, "");
-	WarmBootC32(KDummyCMI);
-	} // CSmsPrtTestStep::DoESockMemoryLeakTestL
-
 
 /**
  *	Pre-test step function for Encoding tests.
@@ -153,13 +27,12 @@ void CSmsPrtTestStep::DoESockMemoryLeakTestL()
  */
 TVerdict CSmsPrtEncodingTestStep::doTestStepPreambleL()
 	{
-	CSmsPrtTestStep::doTestStepPreambleL();
+    CSmsBaseTestStep::doTestStepPreambleL();
 	
 	iTestAlphabet = CSmsPrtTestAlphabet::NewL();
 	
-	return TestStepResult() ;
-	} // CSmsPrtEncodingTestStep::doTestStepPreambleL
-
+	return TestStepResult();
+	}
 
 /**
  *	Post-test step function for Encoding tests.
@@ -174,8 +47,8 @@ TVerdict CSmsPrtEncodingTestStep::doTestStepPostambleL()
     iCharSets.Reset();
     iAdditionalCharSets.Reset();
 	
- 	return CSmsPrtTestStep::doTestStepPostambleL();
- 	} // CSmsPrtEncodingTestStep::doTestStepPostambleL
+ 	return CSmsBaseTestStep::doTestStepPostambleL();
+ 	}
 
 /**
  *  Computes the expected number of PDUs and expected number of free characters
@@ -474,7 +347,7 @@ void CSmsPrtEncodingTestStep::DoEncodingTestL(RSocket aSocket,
     TInt  charSetSize = 0;
     TInt countTestCharSetNames = aTestCharSetNames.Count();
     
-    for (TInt charSet = 0;  charSet < countTestCharSetNames;  ++charSet)
+    for (TInt charSet = 0; charSet < countTestCharSetNames ; ++charSet)
         {
         TInt  charactersInCharSet = iTestAlphabet->GetCharacterSetSizeL(aTestCharSetNames[charSet]);
         charSetSize += charactersInCharSet;
@@ -498,11 +371,13 @@ void CSmsPrtEncodingTestStep::DoEncodingTestL(RSocket aSocket,
                                               TSmsDataCodingScheme::TSmsAlphabet aAlphabet,
                                               TSmsEncoding aEncodingToUse,
                                               TSmsEncoding aEncodingExpected)
-    {          
+    {
+    
 	//
 	// Display the test name and details...
 	//
     TInt countTestCharSetNames = aTestCharSetNames.Count();
+    
     for (TInt charSet = 0;  charSet < countTestCharSetNames;  ++charSet)
         {
         TInt  charactersInCharSet = iTestAlphabet->GetCharacterSetSizeL(aTestCharSetNames[charSet]);
@@ -512,6 +387,7 @@ void CSmsPrtEncodingTestStep::DoEncodingTestL(RSocket aSocket,
 
     INFO_PRINTF2(_L("Testing encode functions starting with %d characters."), aTestCharacters);
     TInt countAdditionalTestCharSetNames = aAdditionalTestCharSetNames.Count();
+    
     for (TInt charSet = 0;  charSet < countAdditionalTestCharSetNames;  ++charSet)
         {
         TInt  charactersInCharSet = iTestAlphabet->GetCharacterSetSizeL(aAdditionalTestCharSetNames[charSet]);
@@ -591,11 +467,7 @@ void CSmsPrtEncodingTestStep::DoEncodingTestL(RSocket aSocket,
 
 		lastOctetCountTested = octetsCount;
 		
-		//
-		// Create a CSmsMessage...
-		//
-		CSmsMessage*  smsMessage = CreateSmsMessageL(originalPtr, aAlphabet);
-		CleanupStack::PushL(smsMessage);
+		CSmsMessage*  smsMessage = CreateSmsMessageLC(originalPtr, aAlphabet);
 
 		//
 		// Perform various character tests on the smsMessage
@@ -663,7 +535,7 @@ void CSmsPrtEncodingTestStep::DoEncodingTestL(RSocket aSocket,
 					     originalPtr.Length());
 
 			TRAPD(sendErr, SendSmsL(smsMessage, aSocket));
-			TESTCHECK(sendErr, KErrNone);
+		    TESTCHECK(sendErr, KErrNone, "Sending SMS");
 			}
 		
 		CleanupStack::PopAndDestroy(smsMessage);
@@ -678,18 +550,17 @@ void CSmsPrtEncodingTestStep::DoEncodingTestL(RSocket aSocket,
 		CSmsMessage*  smsMessage = RecvSmsL(aSocket);
 		CleanupStack::PushL(smsMessage);
 		TestSmsContentsL(smsMessage, expectedPtr);
-		TESTCHECK(smsMessage->Alternative7bitEncoding(), aEncodingExpected);
+		TESTCHECK(smsMessage->Alternative7bitEncoding(), aEncodingExpected, "Getting the Alternative7bitEncoding");
 		CleanupStack::PopAndDestroy(smsMessage);
 		}
 	else
 		{
-		INFO_PRINTF1(_L("<font color=FF0000>Failed: No SMS message received.</font>"));
+		ERR_PRINTF1(_L("<font color=FF0000>Failed: No SMS message received.</font>"));
         SetTestStepResult(EFail);
 		}
 
-	CleanupStack::PopAndDestroy(expectedBuf);
-	CleanupStack::PopAndDestroy(originalBuf);
-	} // CSmsPrtEncodingTestStep::DoEncodingTestL
+	CleanupStack::PopAndDestroy(2, originalBuf); // originalBuf, expectedBuf
+	}
 
 TInt CSmsPrtEncodingTestStep::PerformCharacterTestsL(
         CSmsMessage* aSmsMessage, 
@@ -701,10 +572,7 @@ TInt CSmsPrtEncodingTestStep::PerformCharacterTestsL(
         TBool aExtendedCharAdded
         )
     {
-    //
-    // Switch on Alternative 7Bit Encoding if required...
-    //
-    TESTCHECK(aSmsMessage->SetAlternative7bitEncoding(aEncodingToUse), KErrNone);
+    TESTCHECK(aSmsMessage->SetAlternative7bitEncoding(aEncodingToUse), KErrNone, "Switch on Alternative 7Bit Encoding if required");
 
     //
     // Find the expected number of supported characters that would have
@@ -727,9 +595,10 @@ TInt CSmsPrtEncodingTestStep::PerformCharacterTestsL(
     if (aAlphabet != TSmsDataCodingScheme::ESmsAlphabetUCS2)
         {
         TESTCHECKCONDITION(aSmsMessage->IsSupportedL(aOriginalPtr, numberOfUnconvertibleCharacters,
-                                                    indexOfFirstUnconvertibleCharacter) == msgSupported);
-        TESTCHECK(numberOfUnconvertibleCharacters, expectedUnconvertibleChars);
-        TESTCHECK(indexOfFirstUnconvertibleCharacter, expectedFirstUnconvertibleChar);
+                                                    indexOfFirstUnconvertibleCharacter) == msgSupported,
+                                                    "Checking if a buffer can be encoded without loss of information");
+        TESTCHECK(numberOfUnconvertibleCharacters, expectedUnconvertibleChars, "Checking number of unconvertable charachters");
+        TESTCHECK(indexOfFirstUnconvertibleCharacter, expectedFirstUnconvertibleChar, "Checking index of the first unconvertable charachter");
         }
 
     //
@@ -757,11 +626,12 @@ TInt CSmsPrtEncodingTestStep::PerformCharacterTestsL(
         TESTCHECKCONDITION(aSmsMessage->IsSupportedL(aOriginalPtr, numberOfUnconvertibleCharacters,
                                                     numberOfDowngradedCharacters,
                                                     numberRequiringAlternativeEncoding,
-                                                    indexOfFirstUnconvertibleCharacter) == msgSupported);        
-        TESTCHECK(numberOfUnconvertibleCharacters, expectedUnconvertibleChars);
-        TESTCHECK(numberOfDowngradedCharacters, expectedDowngradedChars);
-        TESTCHECK(numberRequiringAlternativeEncoding, expectedAlternativeEncodingChars);
-        TESTCHECK(indexOfFirstUnconvertibleCharacter, expectedFirstUnconvertibleChar);
+                                                    indexOfFirstUnconvertibleCharacter) == msgSupported,
+                                                    "Checking if a buffer can be encoded without loss of information");
+        TESTCHECK(numberOfUnconvertibleCharacters, expectedUnconvertibleChars, "Checking number of unconvertable charachters");
+        TESTCHECK(numberOfDowngradedCharacters, expectedDowngradedChars, "Checking number of Downgraded charachters");
+        TESTCHECK(numberRequiringAlternativeEncoding, expectedAlternativeEncodingChars, "Checking number requiring alternative encoding charachters");
+        TESTCHECK(indexOfFirstUnconvertibleCharacter, expectedFirstUnconvertibleChar, "Checking index of the first unconvertable charachter");
         }
 
     //
@@ -799,17 +669,16 @@ TInt CSmsPrtEncodingTestStep::PerformCharacterTestsL(
                                            expectedPDUs, expectedFreeUDUnitsInLastPDU);
         }
 
-    TESTCHECK(pdus, expectedPDUs);
-    TESTCHECK(numberOfUnconvertibleCharacters, expectedUnconvertibleChars);
-    TESTCHECK(numberOfDowngradedCharacters, expectedDowngradedChars);
-    TESTCHECK(freeUDUnitsInLastPDU, expectedFreeUDUnitsInLastPDU);
+    TESTCHECK(pdus, expectedPDUs, "Checking number of expected PDUs");
+    TESTCHECK(numberOfUnconvertibleCharacters, expectedUnconvertibleChars,  "Checking number of unconvertable charachters");
+    TESTCHECK(numberOfDowngradedCharacters, expectedDowngradedChars, "Checking number of Downgraded charachters");
+    TESTCHECK(freeUDUnitsInLastPDU, expectedFreeUDUnitsInLastPDU, "Checking freeUDUnitsInLastPDU");
 
     //
     // Check the old PDU count function...
     //
     pdus = aSmsMessage->NumMessagePDUsL();
-    TESTCHECK(pdus, expectedPDUs);
+    TESTCHECK(pdus, expectedPDUs, "Checking number of expected PDUs");
     
     return octetsCount;
     }
-

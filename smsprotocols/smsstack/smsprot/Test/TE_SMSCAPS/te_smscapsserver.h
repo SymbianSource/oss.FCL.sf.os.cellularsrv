@@ -15,13 +15,14 @@
 // 
 //
 
-#ifndef __TS_SMSCAPSSERVER_H__
+#ifndef TE_SMSCAPSSERVER_H
+#define TE_SMSCAPSSERVER_H
 
 #include <es_sock.h>
-#include <test/testexecuteserverbase.h>
-#include "te_smscapsstep.h"
 
-class CSmsCapsTestServer : public CTestServer
+#include "smsstackbasetestserver.h"
+
+class CSmsCapsTestServer : public CSmsStackTestServer
 	{
 public:
 	static CSmsCapsTestServer* NewL();
@@ -33,4 +34,4 @@ private:
 	RFs iFs;
 	};
 
-#endif
+#endif // TE_SMSCAPSSERVER_H

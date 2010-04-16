@@ -622,7 +622,7 @@ NONSHARABLE_CLASS( CMmPhoneBookStoreTsy ) : public CSubSessionExtBase
 		*
 		* @param aEntryData Array type to be filled
 		*/
-	   void CopyLtsyCacheToCtsyCache( CArrayPtrSeg<CPhoneBookStoreEntry>* aEntryData );
+	   void CopyLtsyCacheToCtsyCacheL( CArrayPtrSeg<CPhoneBookStoreEntry>* aEntryData );
         
         
 
