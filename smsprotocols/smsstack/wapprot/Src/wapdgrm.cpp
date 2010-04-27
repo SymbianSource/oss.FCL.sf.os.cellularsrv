@@ -162,6 +162,7 @@ void CWapDatagram::EncodeConcatenatedMessagesL(RFs& aFs, CArrayPtr<CSmsMessage>&
         CleanupStack::PushL(Segment);
         CArrayPtrFlat<HBufC8>* SegmentArray = new (ELeave) CArrayPtrFlat<HBufC8> (8);
         CleanupStack::PushL(SegmentArray);
+		// coverity[double_push]
         CleanupResetAndDestroyPushL(*SegmentArray);
 
         Segment->SetDestinationPort(iToPort,i16BitPorts);

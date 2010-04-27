@@ -76,6 +76,7 @@ PRJ_TESTEXPORTS
 #else
 // requires 399 config values
 ../configs/te_SpudNetworkSide.xml					z:/testdata/configs/te_spudnetworkside.xml
+../configs/te_spudnetworkside_promptforauth.xml		z:/testdata/configs/te_spudnetworkside_promptforauth.xml
 ../configs/te_SpudNetworkSide_ppp.xml				z:/testdata/configs/te_spudnetworkside_ppp.xml
 ../configs/TE_SpudNetworkSide_PppLoopback.xml			z:/testdata/configs/te_spudnetworkside_ppploopback.xml
 ../configs/te_SpudNetworkSide_nifman.xml				z:/testdata/configs/te_spudnetworkside_nifman.xml

@@ -1,9 +1,0 @@
-component	telephony_documentation
-
-source	\sf\os\cellularsrv\cellularsrv_info\telephonydocs\
-
-notes_source	\component_defs\release.src
-
-
-ipr D 
-

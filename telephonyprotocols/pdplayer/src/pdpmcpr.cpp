@@ -293,7 +293,7 @@ void CPdpMetaConnectionProvider::ContentionOccured()
 
 void CPdpMetaConnectionProvider::ContentionResolved(const Messages::TNodeId& aPendingCprId, TBool aResult)
 	{
-	TPdpContentionMessages::TPdpContentionResultMessage msg(aPendingCprId, aResult);
+	TPDPMessages::TPdpContentionResultMessage msg(aPendingCprId, aResult);
 	TRAP_IGNORE(ReceivedL(TNodeId(Id()), TNodeId(Id()), msg));
 	}
 

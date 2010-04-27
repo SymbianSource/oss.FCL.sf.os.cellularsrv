@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -50,9 +50,10 @@ namespace PDPDeftSCprDataClientStartActivity
 typedef MeshMachine::TAcceptErrorState<CoreNetStates::TAwaitingDataClientStarted> TAwaitingDataClientStartedOrError;
 
 DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStartDataClient, PDPDeftDataClientStart, TCFDataClient::TStart, PDPSCprStates::CStartActivity::NewL)
-    FIRST_NODEACTIVITY_ENTRY(CoreNetStates::TAwaitingDataClientStart, PDPSCprStates::TNoTagOrAlreadyStarted)
+    FIRST_NODEACTIVITY_ENTRY(CoreNetStates::TAwaitingDataClientStart, PDPSCprStates::TNoTagOrUserAuthenticateOrAlreadyStarted)
 	LAST_NODEACTIVITY_ENTRY(CoreNetStates::KAlreadyStarted, PRStates::TSendDataClientStarted)
 
+	NODEACTIVITY_ENTRY(PDPSCprStates::KUserAuthenticate, PDPSCprStates::TSendAuthenticate, PDPSCprStates::TAwaitingAuthenticateComplete, MeshMachine::TNoTagOrErrorTag)
 	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCreatePrimaryPDPCtx, PDPSCprStates::TAwaitingPrimaryPDPCtxCreated, PDPSCprStates::TNoTagOrSendErrorRecoveryRequestOrError)
 	NODEACTIVITY_ENTRY(PDPSCprStates::KSendErrorRecoveryRequest, PDPSCprStates::TSendErrorRecoveryRequest, MeshMachine::TAwaitingErrorRecoveryResponseOrError, PDPSCprStates::TNoTagBackwardOrErrorTag)
  	THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TFillInGrantedParamsAndImsExtParams, MeshMachine::TNoTag)
@@ -71,7 +72,7 @@ NODEACTIVITY_END()
 
 namespace PDPSCprNetworkStatusEventActivity
 {
-DECLARE_DEFINE_NODEACTIVITY(ECFActivityNotification, subConnStatusEvent, TPDPFSMMessages::TPDPFSMMessage)
+DECLARE_DEFINE_NODEACTIVITY(ECFActivityNotification, subConnStatusEvent, TPDPMessages::TPDPFSMMessage)
 	FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingNetworkStatusEvent, PDPSCprStates::TNetworkStatusEventTypeTag)
 	LAST_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TDoNothing)
 
@@ -101,7 +102,7 @@ typedef MeshMachine::TAcceptErrorState<CoreNetStates::TAwaitingApplyResponse> TA
 //           this scpr sends to the flow. The flow responds with a full swap
 //           to TRejoin, whereas TRejoin doesn't mean swap - suggesting to
 //           introduce PDP level msg: TRejoinAndSwap.
-DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityGoneDown, PDPDeftSCprGoneDown, TPDPFSMMessages::TPDPFSMMessage, PDPSCprStates::CPrimaryPDPGoneDownActivity::NewL)
+DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityGoneDown, PDPDeftSCprGoneDown, TPDPMessages::TPDPFSMMessage, PDPSCprStates::CPrimaryPDPGoneDownActivity::NewL)
 	FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
 	THROUGH_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TDoNothing, PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStoreOriginalDataClient, MeshMachine::TNoTag)
@@ -157,7 +158,8 @@ ACTIVITY_MAP_END_BASE(PDPSCprActivities, activityMap)
 //-=========================================================
 
 CPDPDefaultSubConnectionProvider::CPDPDefaultSubConnectionProvider(ESock::CSubConnectionProviderFactoryBase& aFactory)
-	: CPDPSubConnectionProvider(aFactory, PDPDefSCprActivities::activityMap::Self())
+	: CPDPSubConnectionProvider(aFactory, PDPDefSCprActivities::activityMap::Self()),
+	iAuthDialog(NULL)
     {
     LOG_NODE_CREATE1(KPDPSCprSubTag, CPDPDefaultSubConnectionProvider, " [factory=%08x]", &aFactory)
     __FLOG_OPEN(KCFNodeTag, KPDPSCprSubTag);
@@ -167,6 +169,7 @@ CPDPDefaultSubConnectionProvider::~CPDPDefaultSubConnectionProvider()
     {
 	LOG_NODE_DESTROY(KPDPSCprSubTag, CPDPDefaultSubConnectionProvider)
     __FLOG_CLOSE;
+	delete iAuthDialog;
     }
 
 CPDPDefaultSubConnectionProvider* CPDPDefaultSubConnectionProvider::NewL(CPDPSubConnectionProviderFactory& aFactory)
@@ -194,7 +197,7 @@ void CPDPDefaultSubConnectionProvider::PdpFsmAllContextEvent(TInt aNotification,
     {
     if (aNotification == KNetworkStatusEvent)
         {
-        TPDPFSMMessages::TPDPFSMMessage statusMsg(KNetworkStatusEvent, KErrNone);
+        TPDPMessages::TPDPFSMMessage statusMsg(KNetworkStatusEvent, KErrNone);
         TRAP_IGNORE(ReceivedL(TNodeId(Id()), TNodeCtxId(0, Id()), statusMsg)); //TODO - use trap assert?
         }
     }
@@ -263,3 +266,84 @@ void CPDPDefaultSubConnectionProvider::SendDataClientIdleIfNoSubconnsAndNoClient
 			}
 		}
 	}
+
+void CPDPDefaultSubConnectionProvider::AuthenticateL()
+    {
+    __ASSERT_DEBUG(iAuthDialog == NULL, User::Invariant());
+
+    //Update & send user name, password from commsdat; it is upto dialog server to decide which information to show to the user
+    RPacketContext::TProtocolConfigOptionV2* configOption = ProtocolConfigOptionL();
+
+    iUsername.Copy(configOption->iAuthInfo.iUsername);
+    iPassword.Copy(configOption->iAuthInfo.iPassword);
+
+    __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &iUsername));
+    __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &iPassword));
+    
+    iAuthDialog = CAuthenticationDialog::NewL();
+    iAuthDialog->Authenticate(*this, iUsername, iPassword);
+    }
+
+void CPDPDefaultSubConnectionProvider::AuthenticationCompleteL(TInt aError)
+    {
+    //Update user name & password
+    if (aError == KErrNone)
+        {
+        RPacketContext::TProtocolConfigOptionV2* configOption = ProtocolConfigOptionL();
+
+        configOption->iAuthInfo.iUsername.Copy(iUsername);
+        configOption->iAuthInfo.iPassword.Copy(iPassword);
+
+        __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &configOption->iAuthInfo.iUsername));
+        __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &configOption->iAuthInfo.iPassword));
+        }
+
+    //Send AuthenticateComplete message
+    RClientInterface::OpenPostMessageClose(Id(), Id(),
+            TPDPMessages::TAuthenticateComplete(aError).CRef());
+
+    delete iAuthDialog;
+    iAuthDialog = NULL;
+    }
+
+RPacketContext::TProtocolConfigOptionV2* CPDPDefaultSubConnectionProvider::ProtocolConfigOptionL()
+/**
+ * This function returns the pointer to TProtocolConfigOptionV2 parameter of ContextConfig.
+ */
+    {
+    CGPRSProvision* gprsProvision = const_cast<CGPRSProvision*>(static_cast<const CGPRSProvision*>(
+            AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CGPRSProvision::EUid,CGPRSProvision::ETypeId))));
+    
+    if (gprsProvision == NULL)
+        {
+        User::Leave(KErrCorrupt);
+        }
+
+    RPacketContext::TProtocolConfigOptionV2* configOption=NULL;
+
+    switch (gprsProvision->UmtsGprsRelease())
+        {
+        case TPacketDataConfigBase::KConfigGPRS:
+            {
+            RPacketContext::TContextConfigGPRS& contextGPRS = gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>();
+            configOption = &contextGPRS.iProtocolConfigOption;
+            }
+            break;
+        case TPacketDataConfigBase::KConfigRel99Rel4:
+            {
+            RPacketContext::TContextConfigR99_R4& contextUMTS = gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>();
+            configOption = &contextUMTS.iProtocolConfigOption;
+            }
+            break;
+        case TPacketDataConfigBase::KConfigRel5:
+            {
+            RPacketContext::TContextConfig_R5& contextR5 = gprsProvision->GetScratchContextAs<RPacketContext::TContextConfig_R5>();
+            configOption = &contextR5.iProtocolConfigOption;
+            }
+            break;
+        default:
+            User::Leave(KErrNotSupported);
+            break;
+        }
+    return configOption;
+    }

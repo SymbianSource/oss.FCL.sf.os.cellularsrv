@@ -35,7 +35,7 @@ namespace PdpMCprErrorRecoveryActivity
 DEFINE_SMELEMENT(CPdpErrorRecoveryActivity::TAwaitingContentionResult, NetStateMachine::MState, PdpMCprStates::TContext)
 TBool CPdpErrorRecoveryActivity::TAwaitingContentionResult::Accept()
 	{
-	TPdpContentionMessages::TPdpContentionResultMessage* msg = message_cast<TPdpContentionMessages::TPdpContentionResultMessage>(&iContext.iMessage);
+	TPDPMessages::TPdpContentionResultMessage* msg = message_cast<TPDPMessages::TPdpContentionResultMessage>(&iContext.iMessage);
 	CPdpErrorRecoveryActivity& activity = static_cast<CPdpErrorRecoveryActivity&>(*iContext.iNodeActivity);
 	if(msg && msg->iNodeId == activity.iPendingCprId)
 		{
@@ -116,7 +116,7 @@ void CPdpErrorRecoveryActivity::TProcessErrorRecoveryReq::DoL()
 DEFINE_SMELEMENT(CPdpErrorRecoveryActivity::TProcessContentionResult, NetStateMachine::MStateTransition, PdpMCprStates::TContext)
 void CPdpErrorRecoveryActivity::TProcessContentionResult::DoL()
 	{
-	TPdpContentionMessages::TPdpContentionResultMessage* msg = message_cast<TPdpContentionMessages::TPdpContentionResultMessage>(&iContext.iMessage);
+	TPDPMessages::TPdpContentionResultMessage* msg = message_cast<TPDPMessages::TPdpContentionResultMessage>(&iContext.iMessage);
 	CPdpErrorRecoveryActivity& activity = static_cast<CPdpErrorRecoveryActivity&>(*iContext.iNodeActivity);
 	if (msg->iValue != 0)
 		{

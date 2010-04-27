@@ -37,7 +37,8 @@ public:
 	// Individual test steps
 
 	void TestRead0001L();
-	void TestRead0001bL();
+    void TestRead0001bL();
+    void TestRead0001cL();
 	void TestRead0002L();
 	void TestRead0003L();
 	void TestRead0004L();

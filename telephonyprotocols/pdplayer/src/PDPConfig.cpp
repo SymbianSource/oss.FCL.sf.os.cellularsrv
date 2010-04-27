@@ -20,8 +20,6 @@
  @internalComponent
 */
 
-#include <hash.h>
-#include <e32math.h>
 #include <comms-infras/ss_log.h>
 #include <in_sock.h>
 #include <comms-infras/metadata.h>
@@ -37,9 +35,6 @@ using namespace ESock;
 #define KPDPMCprTag KESockMetaConnectionTag
 _LIT8(KPDPMCprSubTag, "pdpmcpr");
 #endif
-
-const TUint8 KGenericNifChallengeSize = 8;
-const TUint KGenericNifIdLength = 1;
 
 //
 // Attribute table for provisioning structure passed to CFProtocol
@@ -210,7 +205,7 @@ void CGPRSProvision::RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfig
     TInt getErr;
 
     __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL()"), this));
-    
+
     getErr = aIapView->GetText(KCDTIdWCDMAIfAuthName | KCDTIdOutgoingGprsRecord, buf);
     if ( getErr == KErrNone )
         {
@@ -218,110 +213,29 @@ void CGPRSProvision::RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfig
         aProtocolConfigOption.iAuthInfo.iUsername.Copy(*buf);
         delete buf;
         buf = NULL;
-
+        
         __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthName [%S] "), this, &aProtocolConfigOption.iAuthInfo.iUsername));
-
-        aProtocolConfigOption.iId = 1;
-
-        TBool isDisableAuth = EFalse;
-        getErr = aIapView->GetBool(KCDTIdWCDMADisablePlainTextAuth | KCDTIdOutgoingGprsRecord,isDisableAuth);
-        __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMADisablePlainTextAuth [%d]"), this, isDisableAuth));
-        if (getErr == KErrNone)
+        
+		aProtocolConfigOption.iId = 1;
+        getErr = aIapView->GetText(KCDTIdWCDMAIfAuthPass | KCDTIdOutgoingGprsRecord, buf);
+        if ( getErr == KErrNone )
             {
-            getErr = aIapView->GetText(KCDTIdWCDMAIfAuthPass | KCDTIdOutgoingGprsRecord, buf);
-            if ( getErr == KErrNone )
-                {
-                ASSERT(buf);
-                aProtocolConfigOption.iAuthInfo.iPassword.Copy(*buf);
-                delete buf;
-                buf = NULL;
-
-                __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthPass [%S]"), this, &aProtocolConfigOption.iAuthInfo.iPassword));
-
-                if (isDisableAuth)  //If Disable, CHAP will be used.
-                    {
-                    aProtocolConfigOption.iAuthInfo.iProtocol = RPacketContext::EProtocolCHAP;
-                    CreateChallengeAndResponseForChapL(aProtocolConfigOption);
-                    }
-                else
-                    {
-                    aProtocolConfigOption.iAuthInfo.iProtocol = RPacketContext::EProtocolPAP;
-                    }
-                }
-            else if (getErr == KErrNotFound)
-                {
-                if (isDisableAuth) //ERROR: CHAP used without password???
-                    {
-                    User::Leave(KErrArgument);
-                    }
-                else    //PAP used without password.
-                    {
-                    aProtocolConfigOption.iAuthInfo.iProtocol = RPacketContext::EProtocolPAP;
-                    }
-                }
-            else    //getErr != KErrNotFound
-                {
-                User::Leave(getErr);
-                }
+            ASSERT(buf);
+            aProtocolConfigOption.iAuthInfo.iPassword.Copy(*buf);
+            delete buf;
+            buf = NULL;
+            
+            __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthPass [%S]"), this, &aProtocolConfigOption.iAuthInfo.iPassword));
             }
-        else
+        else if (getErr != KErrNotFound)
             {
             User::Leave(getErr);
             }
         }
-    else if (getErr == KErrNotFound )   //No Authentication Required.
-        {
-        aProtocolConfigOption.iAuthInfo.iProtocol = RPacketContext::EProtocolNone;
-        }
-    else    //getErr != KErrNotFound
+    else if (getErr != KErrNotFound)
         {
         User::Leave(getErr);
         }
-    }
-
-void CGPRSProvision::CreateChallengeAndResponseForChapL(RPacketContext::TProtocolConfigOptionV2& aProtocolConfigOption)
-    {
-    //Challenge
-    TTime currentTime;
-    currentTime.UniversalTime();
-    
-    TInt64 seedValue = currentTime.Int64();
-
-    TUint8 challenge[KGenericNifChallengeSize] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    
-    TUint8 i=0;
-    while(i < KGenericNifChallengeSize)
-        {
-        challenge[i] = (TUint8)(Math::Rand(seedValue)%256);
-        aProtocolConfigOption.iChallenge.Append(challenge[i++]);
-        }
-
-    //Response
-    TBuf8<KGenericNifIdLength+KCommsDbSvrMaxColumnNameLength+KGenericNifChallengeSize> message;
-    message.Append(aProtocolConfigOption.iId);
-    message.Append(aProtocolConfigOption.iAuthInfo.iPassword);
-    message.Append(aProtocolConfigOption.iChallenge);
-    
-    TInt length = 1 /*iId length */ + aProtocolConfigOption.iAuthInfo.iPassword.Length() + KGenericNifChallengeSize;
-
-    HBufC8* buf = HBufC8::NewL(length);
-    
-    CleanupStack::PushL(buf);
-     
-    TPtr8 ptr((TUint8*)buf->Des().Ptr(),length);
-    
-    ptr.Copy(message);
-    
-    CMD5* md5=0;
-    md5 = CMD5::NewL();
-    
-    CleanupStack::PushL(md5);
-    
-    TPtrC8 Response = md5->Hash(ptr);
-    
-    aProtocolConfigOption.iResponse.Copy(Response);
-    
-    CleanupStack::PopAndDestroy(2);
     }
 
 void CGPRSProvision::RetrieveIPAndDnsSettingsL(TDes8& aPdpAddress, TDes8& aDns1, TDes8& aDns2, ESock::CCommsDatIapView* aIapView) const

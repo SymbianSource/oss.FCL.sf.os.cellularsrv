@@ -715,6 +715,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has faile
 #else
 				iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, getInfoHandle );
 #endif
+				iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
 				}
 			
 			}

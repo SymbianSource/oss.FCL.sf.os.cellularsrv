@@ -33,7 +33,8 @@ CTestSuite* CCTsyPhoneBookStoreFU::CreateSuiteL(const TDesC& aName)
 	{
 	SUB_SUITE;
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0001L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0001bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0001bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0001cL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPhoneBookStoreFU, TestRead0004L);
@@ -457,6 +458,114 @@ void CCTsyPhoneBookStoreFU::TestRead0001bL()
     AssertMockLtsyStatusL();
 
     CleanupStack::PopAndDestroy(7, this); // data, data2, data3, customAPI, bookStore, cache, this
+
+    }
+
+
+/**
+@SYMTestCaseID BA-CTSY-PBSTR-PBSR-0001c
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support for Read after GetInfo requested before phonebook is ready
+@SYMTestPriority High
+@SYMTestActions Invokes RMobilePhoneBookStore::Read for SDN phonebook
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPhoneBookStoreFU::TestRead0001cL()
+    {
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhone2L();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+    
+    RBuf8 data2;
+    CleanupClosePushL(data2);
+
+    TName name(KETelIccSdnPhoneBook);
+    RMobilePhoneBookStore bookStore;
+    CleanupClosePushL(bookStore);
+    
+    TMockLtsyPhoneBookData0 storeInitData(name);
+    storeInitData.SerialiseL(data);
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, data);   
+
+    TInt ret = bookStore.Open(iPhone, name);    
+    
+    ASSERT_EQUALS(KErrNone, ret);   
+    
+    TRequestStatus requestStatus;
+    TRequestStatus mockLtsyStatus;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 bookInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg bookPckg(bookInfo);
+    bookStore.GetInfo(requestStatus, bookPckg);     
+    
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());    
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());    
+    
+
+    CStorageInfoData storageData;
+    SetStorageInfoData(storageData);
+    storageData.iSDNNumOfEntries = 20;
+    
+    TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(name, storageData); 
+    retStoreInitC.SerialiseL(data2);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, data2, 0);
+
+    TInt usedEntries(12);
+    data.Close();
+    TMockLtsyPhoneBookData0 tsyData(name);           
+    tsyData.SerialiseL(data);
+
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreGetInfoIPC, data);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());    
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    TMockLtsyPhoneBookData1< TInt > styData2(name, usedEntries);
+    data2.Close();    
+    styData2.SerialiseL(data2);
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreGetInfoIPC, KErrNone, data2, 10);
+
+    User::WaitForRequest(requestStatus);        
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+
+    
+    AssertMockLtsyStatusL();
+    
+    // Read from the SIM
+    TInt index = 1;
+    TInt numEntries = 1;
+    RMobilePhoneBookStore::TPBIndexAndNumEntries indexAndEntries = {index, numEntries };
+    
+    TMockLtsyPhoneBookData1< RMobilePhoneBookStore::TPBIndexAndNumEntries>  ltsyData(name, indexAndEntries);
+    data.Close();
+    ltsyData.SerialiseL(data);
+
+    CArrayPtrSeg<CPhoneBookStoreEntry>* cache = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>( 1 );
+    CleanupStack::PushL(cache);  
+
+    
+    TMockLtsyPhoneBookData1< CArrayPtrSeg<CPhoneBookStoreEntry>* > ArrayData2(name, cache);
+    data2.Close();
+    ArrayData2.SerialiseL(data2);
+    
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreReadIPC, data);  
+    
+    
+    TBuf8<200> buf2;             
+    bookStore.Read(requestStatus, index, numEntries, buf2);
+    
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreReadIPC, KErrNone, data2, 0);
+    
+    User::WaitForRequest(requestStatus);        
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());   
+    
+
+    CleanupStack::PopAndDestroy(5, this); // data, data2, this...   
 
     }
 

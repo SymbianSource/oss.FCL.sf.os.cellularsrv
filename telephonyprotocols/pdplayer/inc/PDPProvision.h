@@ -66,7 +66,6 @@ protected:
 private:
     TInt InitialiseScratchContext(TUint32 aConfigRel) const;
     void RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfigOptionV2& aProtocolConfigOption, ESock::CCommsDatIapView* aIapView);
-    void CreateChallengeAndResponseForChapL(RPacketContext::TProtocolConfigOptionV2& aProtocolConfigOption);
 
 public:
     //RPacketContext::TContextConfigGPRS iGprsConfig;

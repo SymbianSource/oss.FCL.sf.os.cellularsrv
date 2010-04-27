@@ -53,7 +53,10 @@ public:
 	static TAny* operator new(TUint aSize,RHeap* aHeap) __NO_THROW;	// for a priority client request, the
 													// objects created must all be taken from
 												// the priority heap.
-	static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr, TLeave aLeave);
+    static void operator delete(TAny* aPtr, TUint aExtraSize);
+    static void operator delete(TAny* aPtr, RHeap* aHeap);
 
 public:
 	TTsyReqHandle iTsyReqHandle;
@@ -111,7 +114,10 @@ public:
 	static TAny* operator new(TUint aSize,TLeave aLeave);
 	static TAny* operator new(TUint aSize,TUint aExtraSize) __NO_THROW;
 	static TAny* operator new(TUint aSize,RHeap* aHeap) __NO_THROW;
-	static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr, TLeave aLeave);
+    static void operator delete(TAny* aPtr, TUint aExtraSize);
+    static void operator delete(TAny* aPtr, RHeap* aHeap);
 
 public:
 	HEtelBufC8* iBuf8;	// ptr to buffer if narrow

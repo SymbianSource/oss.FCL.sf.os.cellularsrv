@@ -43,3 +43,52 @@ inline TBool CBuffer::BufferFull() const
 	return iBufferFull;
 	}
 
+
+inline void CReqEntry::operator delete(TAny* aPtr, TLeave )
+//
+// overloaded delete - to prevent warning
+//
+    {
+    operator delete(aPtr);
+    }
+
+inline void CReqEntry::operator delete(TAny* aPtr, RHeap *)
+//
+// overloaded delete - to prevent warning
+//
+    {
+    operator delete(aPtr);
+    }
+
+inline void CReqEntry::operator delete(TAny* aPtr, TUint )
+//
+// overloaded delete - to prevent warning
+//
+    {
+    operator delete(aPtr);
+    }
+
+
+inline void CBuffer::operator delete(TAny* aPtr, TLeave )
+//
+// overloaded delete - to prevent warning
+//
+    {
+    operator delete(aPtr);
+    }
+
+inline void CBuffer::operator delete(TAny* aPtr, RHeap *)
+//
+// overloaded delete - to prevent warning
+//
+    {
+    operator delete(aPtr);
+    }
+
+inline void CBuffer::operator delete(TAny* aPtr, TUint )
+//
+// overloaded delete - to prevent warning
+//
+    {
+    operator delete(aPtr);
+    }

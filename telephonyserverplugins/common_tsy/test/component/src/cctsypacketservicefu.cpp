@@ -39,6 +39,8 @@
 #define MBMS_MONITORSERVICECOUNTONE							1
 #define MBMS_MONITORSERVICECOUNTMULTIPLE					3
 
+const TInt KOneSecond=1000000;  // Used in a time out function, 1 second (in microSeconds)
+
 CTestSuite* CCTsyPacketServiceFU::CreateSuiteL(const TDesC& aName)
 	{
 	SUB_SUITE;
@@ -50,7 +52,8 @@ CTestSuite* CCTsyPacketServiceFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyContextAdded0004L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyStatusChange0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyStatusChange0002L);
-	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyStatusChange0004L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyStatusChange0004L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyStatusChange0004aL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestNotifyStatusChange0001aL);	
 	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestSetPreferredBearer0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyPacketServiceFU, TestSetPreferredBearer0004L);
@@ -890,6 +893,97 @@ void CCTsyPacketServiceFU::TestNotifyStatusChange0004L()
 	CleanupStack::PopAndDestroy(2); // packetService, packetService2
 	CleanupStack::PopAndDestroy(4, this); // phone2, telServer2, data, this
 	}
+
+/**
+@SYMTestCaseID BA-CTSY-PKTS-PSNSC-0004a
+@SYMPREQ 1551
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for multiple client requests to RPacketService::NotifyStatusChange
+@SYMTestPriority High
+@SYMTestActions Invokes multiple client requests to RPacketService::NotifyStatusChange
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyPacketServiceFU::TestNotifyStatusChange0004aL()
+    {
+                    
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    // Open second client
+    RTelServer telServer2;
+    TInt ret = telServer2.Connect();
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(telServer2);
+
+    RMobilePhone phone2;
+    ret = phone2.Open(iTelServer,KMmTsyPhoneName);
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(phone2);
+    
+    RPacketService packetService;
+    OpenPacketServiceL(packetService);
+    CleanupClosePushL(packetService);
+
+    RPacketService packetService2;                
+    ret = packetService2.Open(phone2);
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(packetService2);
+
+    //-------------------------------------------------------------------------
+    // Test A: Test multiple clients requesting RPacketService::NotifyStatusChange
+    //-------------------------------------------------------------------------
+
+    // Data for CompleteL
+    RPacketService::TStatus sendStatus = RPacketService::EStatusAttached;
+    TBool isResumed = EFalse;
+    TMockLtsyData2 <RPacketService::TStatus, TBool > ltsyData(sendStatus, isResumed);
+    ltsyData.SerialiseL(data);  
+    
+    TRequestStatus requestStatus;
+    RPacketService::TStatus contextStatus;  
+    // sent first request
+    packetService.NotifyStatusChange(requestStatus, contextStatus);
+    
+    TRequestStatus requestStatus2;
+    RPacketService::TStatus contextStatus2;
+    // sent second request
+    packetService2.NotifyStatusChange(requestStatus2, contextStatus2);
+    
+    // Issue the Complete...    
+    iMockLTSY.CompleteL(EPacketNotifyStatusChange, KErrNone, data);     
+        
+    // wait for the first request
+    User::WaitForRequest(requestStatus);        
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+    ASSERT_EQUALS(sendStatus, contextStatus);   
+    // wait for the second request
+    User::WaitForRequest(requestStatus2);       
+    ASSERT_EQUALS(KErrNone, requestStatus2.Int());
+    ASSERT_EQUALS(sendStatus, contextStatus2);
+
+    AssertMockLtsyStatusL();
+    
+    // Activate both clients again
+    packetService.NotifyStatusChange(requestStatus, contextStatus);
+    User::After(KOneSecond);
+    packetService2.NotifyStatusChange(requestStatus2, contextStatus2);
+    User::After(KOneSecond);
+    
+    // Send cancel to the first client
+    packetService.CancelAsyncRequest(EPacketNotifyStatusChange);
+    User::WaitForRequest(requestStatus);       
+    ASSERT_EQUALS(KErrCancel, requestStatus.Int());
+    
+    AssertMockLtsyStatusL();
+    
+    CleanupStack::PopAndDestroy(2); // packetService, packetService2
+    CleanupStack::PopAndDestroy(4, this); // phone2, telServer2, data, this
+    }
 
 /**
 @SYMTestCaseID BA-CTSY-PKTS-PSNSC-0001a

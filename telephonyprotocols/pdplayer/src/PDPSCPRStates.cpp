@@ -40,6 +40,10 @@
 #include <comms-infras/sockmes.h> // for ioctl ipc
 #include <nifvar_internal.h>
 #include <elements/mm_activities.h>
+#include <comms-infras/ss_tiermanagerutils.h>
+#include <comms-infras/connectionsettings.h>
+#include <hash.h>
+#include <e32math.h>
 
 using namespace Messages;
 using namespace MeshMachine;
@@ -52,6 +56,9 @@ using namespace ConnectionServ;
 #ifdef _DEBUG
 _LIT (KPdpSCprPanic,"PpdScprPanic");
 #endif
+
+const TUint8 KGenericNifChallengeSize = 8;
+const TUint KGenericNifIdLength = 1;
 
 //-=========================================================
 //
@@ -66,14 +73,14 @@ namespace PDPSCprStates
 DEFINE_SMELEMENT(TAwaitingPDPFSMMessage, NetStateMachine::MState, PDPSCprStates::TContext)
 TBool TAwaitingPDPFSMMessage::Accept()
     {
-    return iContext.iMessage.IsMessage<TPDPFSMMessages::TPDPFSMMessage>();
+    return iContext.iMessage.IsMessage<TPDPMessages::TPDPFSMMessage>();
     }
 
 DEFINE_SMELEMENT(TNoTagOrError, NetStateMachine::MStateFork, PDPSCprStates::TContext)
 TInt TNoTagOrError::TransitionTag()
     {
     ASSERT(iContext.iNodeActivity);
-    TPDPFSMMessages::TPDPFSMMessage& msg = message_cast<TPDPFSMMessages::TPDPFSMMessage>(iContext.iMessage);
+    TPDPMessages::TPDPFSMMessage& msg = message_cast<TPDPMessages::TPDPFSMMessage>(iContext.iMessage);
     if (msg.iValue2 != KErrNone)
         {
         iContext.iNodeActivity->SetError(msg.iValue2);
@@ -82,8 +89,8 @@ TInt TNoTagOrError::TransitionTag()
     return KNoTag;
     }
 
-DEFINE_SMELEMENT(TNoTagOrAlreadyStarted, NetStateMachine::MStateFork, PDPSCprStates::TContext)
-TInt TNoTagOrAlreadyStarted::TransitionTag()
+DEFINE_SMELEMENT(TNoTagOrUserAuthenticateOrAlreadyStarted, NetStateMachine::MStateFork, PDPSCprStates::TDefContext)
+TInt TNoTagOrUserAuthenticateOrAlreadyStarted::TransitionTag()
     {
     ASSERT(iContext.iMessage.IsMessage<TCFDataClient::TStart>());
     ASSERT(iContext.iNodeActivity);
@@ -91,13 +98,18 @@ TInt TNoTagOrAlreadyStarted::TransitionTag()
         {
         return CoreNetStates::KAlreadyStarted;
         }
+
+    if (iContext.Node().PromptForAuth())
+        {
+        return PDPSCprStates::KUserAuthenticate;
+        }
+
     return KNoTag;
     }
 
-
 TBool TAwaitingPDPFSMMessage::Accept(TInt aExtensionId)
     {
-    TPDPFSMMessages::TPDPFSMMessage* pdpmsg = message_cast<TPDPFSMMessages::TPDPFSMMessage>(&iContext.iMessage);
+    TPDPMessages::TPDPFSMMessage* pdpmsg = message_cast<TPDPMessages::TPDPFSMMessage>(&iContext.iMessage);
     if ( pdpmsg )
         {
         if (pdpmsg->iValue1 == aExtensionId)
@@ -118,7 +130,7 @@ DEFINE_SMELEMENT(TNoTagOrSendErrorRecoveryRequestOrError, NetStateMachine::MStat
 TInt TNoTagOrSendErrorRecoveryRequestOrError::TransitionTag()
 	{
 	ASSERT(iContext.iNodeActivity);
-	TPDPFSMMessages::TPDPFSMMessage& msg = message_cast<TPDPFSMMessages::TPDPFSMMessage>(iContext.iMessage);
+	TPDPMessages::TPDPFSMMessage& msg = message_cast<TPDPMessages::TPDPFSMMessage>(iContext.iMessage);
 	if (msg.iValue2 == KErrUmtsMaxNumOfContextExceededByNetwork ||
 	    msg.iValue2 == KErrUmtsMaxNumOfContextExceededByPhone)
 		{
@@ -191,42 +203,30 @@ DEFINE_SMELEMENT(TSelfInit, NetStateMachine::MStateTransition, PDPSCprStates::TC
 // around for availability purposes.  In the future, this code (or something like it)
 // should be moved into the PDP.CPR when it exists.
 
-void TSelfInit::SetupProvisionCfgL()
+void TSelfInit::SetupProvisionCfgL(ESock::CCommsDatIapView* aIapView)
     {
     CPDPSubConnectionProvider &tNode = static_cast<CPDPSubConnectionProvider&>(iContext.Node());
-    
-    const TProviderInfoExt* providerInfoExt = static_cast<const TProviderInfoExt*>(tNode.AccessPointConfig().FindExtension(
-            STypeId::CreateSTypeId(TProviderInfoExt::EUid, TProviderInfoExt::ETypeId)));
-    
-    // this should always be here, however, a bit of defensive programming
-    // never hurt..
-    if (providerInfoExt == NULL)
-        {
-        User::Leave(KErrCorrupt);
-        }
     
     RMetaExtensionContainer mec;
     mec.Open(tNode.AccessPointConfig());
     CleanupClosePushL(mec);
-
-    CCommsDatIapView* iapView = CCommsDatIapView::NewLC(providerInfoExt->iProviderInfo.APId());
   
-    mec.AppendExtensionL(CIPConfig::NewFromGPRSOutLC(iapView));
+    mec.AppendExtensionL(CIPConfig::NewFromGPRSOutLC(aIapView));
     CleanupStack::Pop();
 
-    mec.AppendExtensionL(CBCAProvision::NewLC(iapView));
+    mec.AppendExtensionL(CBCAProvision::NewLC(aIapView));
     CleanupStack::Pop();
 
-    mec.AppendExtensionL(CImsExtProvision::NewLC(iapView));
+    mec.AppendExtensionL(CImsExtProvision::NewLC(aIapView));
     CleanupStack::Pop();
-    
-    CGPRSProvision* gprsProvision = CGPRSProvision::NewLC(iapView);
+
+    CGPRSProvision* gprsProvision = CGPRSProvision::NewLC(aIapView);
     mec.AppendExtensionL(gprsProvision);
     CleanupStack::Pop(gprsProvision);
     
     //It's not legal for the qos defaults to be absent.
     CDefaultPacketQoSProvision* defaultQoS = NULL;
-    TRAPD(ret, defaultQoS = CDefaultPacketQoSProvision::NewL(iapView));   
+    TRAPD(ret, defaultQoS = CDefaultPacketQoSProvision::NewL(aIapView));   
     if ((KErrNone == ret) && defaultQoS)           
         {
         CleanupStack::PushL(defaultQoS);
@@ -245,11 +245,10 @@ void TSelfInit::SetupProvisionCfgL()
             }          
         }    
     
-    CRawIpAgentConfig* rawIpAgentConfig = CRawIpAgentConfig::NewLC(iapView, &gprsProvision->GetScratchContextAs<TPacketDataConfigBase>());
+    CRawIpAgentConfig* rawIpAgentConfig = CRawIpAgentConfig::NewLC(aIapView, &gprsProvision->GetScratchContextAs<TPacketDataConfigBase>());
     mec.AppendExtensionL(rawIpAgentConfig);
     CleanupStack::Pop();
-    
-    CleanupStack::PopAndDestroy();          // CloseIapView();  
+
     tNode.AccessPointConfig().Close();
     tNode.AccessPointConfig().Open(mec);
     CleanupStack::PopAndDestroy(&mec); 
@@ -259,7 +258,19 @@ void TSelfInit::DoL()
     {
     CPDPSubConnectionProvider &tNode = static_cast<CPDPSubConnectionProvider&>(iContext.Node());
 
-    TRAP(tNode.iProvisionFailure,SetupProvisionCfgL());
+    const TProviderInfoExt* providerInfoExt = static_cast<const TProviderInfoExt*>(tNode.AccessPointConfig().FindExtension(
+            STypeId::CreateSTypeId(TProviderInfoExt::EUid, TProviderInfoExt::ETypeId)));
+
+    // this should always be here, however, a bit of defensive programming
+    // never hurt..
+    if (providerInfoExt == NULL)
+        {
+        User::Leave(KErrCorrupt);
+        }
+
+    CCommsDatIapView* iapView = CCommsDatIapView::NewLC(providerInfoExt->iProviderInfo.APId());
+
+    TRAP(tNode.iProvisionFailure,SetupProvisionCfgL(iapView));
 
     // Don't want any failure here to be masked by successful configuration later on.
     // A leave here will not cause a roll back of the connection but it will show an
@@ -337,7 +348,15 @@ void TSelfInit::DoL()
         TRAP(tNode.iProvisionFailure,tNode.iPdpFsmInterface->NewL(tsyProvision->iTsyName,configType));
         
         tNode.iDefaultSCPR = static_cast<CPDPDefaultSubConnectionProvider*>(&tNode);
+
+        TBool promptForAuth = EFalse;
+        iapView->GetBool(KCDTIdWCDMAIfPromptForAuth | KCDTIdOutgoingGprsRecord, promptForAuth);
+
+        //Default SCPR executing this code, so safe to cast.
+        CPDPDefaultSubConnectionProvider &tempNode = static_cast<CPDPDefaultSubConnectionProvider&>(iContext.Node());
+        tempNode.SetPromptForAuth(promptForAuth);        
         }
+    CleanupStack::PopAndDestroy();          // CloseIapView();
     }
 
 
@@ -536,6 +555,98 @@ TBool TCreatePrimaryPDPCtx::IsModeGsmL() const
 	return (networkMode == RMobilePhone::ENetworkModeGsm);
 	}
 
+void TCreatePrimaryPDPCtx::SetChapInformationL(RPacketContext::TProtocolConfigOptionV2& aPco)
+/*
+ * This function basically checks if secure authentication is required or not.
+ * If it is needed then it sets all secure authentication related information.
+ */
+    {
+    const TProviderInfoExt* providerInfoExt = static_cast<const TProviderInfoExt*>(iContext.Node().AccessPointConfig().FindExtension(
+            STypeId::CreateSTypeId(TProviderInfoExt::EUid, TProviderInfoExt::ETypeId)));
+
+    if (providerInfoExt == NULL)
+        {
+        User::Leave(KErrCorrupt);
+        }
+
+    CCommsDatIapView* iapView = CCommsDatIapView::NewLC(providerInfoExt->iProviderInfo.APId());
+
+    TBool isDisablePlainTextAuth = EFalse;
+    iapView->GetBool(KCDTIdWCDMADisablePlainTextAuth | KCDTIdOutgoingGprsRecord, isDisablePlainTextAuth);
+
+    //If user name is not available then no authentication Required.
+    if (aPco.iAuthInfo.iUsername.Length() == 0)
+        {
+        aPco.iAuthInfo.iProtocol = RPacketContext::EProtocolNone;
+        }
+    else if (isDisablePlainTextAuth)  //If Disable, CHAP will be used.
+        {
+        if (aPco.iAuthInfo.iPassword.Length() == 0)
+            {
+            User::Leave(KErrArgument);      //CHAP without password?
+            }
+        else
+            {
+            aPco.iAuthInfo.iProtocol = RPacketContext::EProtocolCHAP;
+            CreateChallengeAndResponseForChapL(aPco);
+            }
+        }
+    else
+        {
+        aPco.iAuthInfo.iProtocol = RPacketContext::EProtocolPAP;
+        }
+
+    CleanupStack::PopAndDestroy();          // CloseIapView();
+    }
+
+void TCreatePrimaryPDPCtx::CreateChallengeAndResponseForChapL(RPacketContext::TProtocolConfigOptionV2& aProtocolConfigOption)
+/*
+ * This function basically sets the CHAP protocol authentication such as (challenge) and (response) 
+ */
+    {
+    //Challenge
+    TTime currentTime;
+    currentTime.UniversalTime();
+    
+    TInt64 seedValue = currentTime.Int64();
+
+    TUint8 challenge[KGenericNifChallengeSize] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    
+    TUint8 i=0;
+    while(i < KGenericNifChallengeSize)
+        {
+        challenge[i] = (TUint8)(Math::Rand(seedValue)%256);
+        aProtocolConfigOption.iChallenge.Append(challenge[i++]);
+        }
+
+    //Response
+    TBuf8<KGenericNifIdLength+KCommsDbSvrMaxColumnNameLength+KGenericNifChallengeSize> message;
+    message.Append(aProtocolConfigOption.iId);
+    message.Append(aProtocolConfigOption.iAuthInfo.iPassword);
+    message.Append(aProtocolConfigOption.iChallenge);
+    
+    TInt length = 1 /*iId length */ + aProtocolConfigOption.iAuthInfo.iPassword.Length() + KGenericNifChallengeSize;
+
+    HBufC8* buf = HBufC8::NewL(length);
+    
+    CleanupStack::PushL(buf);
+     
+    TPtr8 ptr((TUint8*)buf->Des().Ptr(),length);
+    
+    ptr.Copy(message);
+    
+    CMD5* md5=0;
+    md5 = CMD5::NewL();
+    
+    CleanupStack::PushL(md5);
+    
+    TPtrC8 Response = md5->Hash(ptr);
+    
+    aProtocolConfigOption.iResponse.Copy(Response);
+    
+    CleanupStack::PopAndDestroy(2);		//buf, md5
+    }
+
 void TCreatePrimaryPDPCtx::DoL()
     {
     // if the provisionconfig failed, there is no way to inform the CPR of the failure
@@ -593,43 +704,43 @@ void TCreatePrimaryPDPCtx::DoL()
 	const CImsExtProvision* imsprov = static_cast<const CImsExtProvision*>(
 		iContext.Node().AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CImsExtProvision::EUid, CImsExtProvision::ETypeId)));
 
+	TRAP_IGNORE(iContext.Node().iIsModeGsm = IsModeGsmL());
 
 	switch (gprsProvision->UmtsGprsRelease())
 			{
 	    	case TPacketDataConfigBase::KConfigGPRS:
 				{
 				SetImsSignallingFlagL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption, imsprov->iImsSignalIndicator);
+
+				// Only request SIP server address retrieval when network not in GSM/GPRS mode
+			    // e.g. UMTS/WCDMA
+				if (!iContext.Node().iIsModeGsm)
+				    {
+				    SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
+				    }
+				
+				SetChapInformationL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
+
 				}
 				break;
+
 	    	case TPacketDataConfigBase::KConfigRel5:
 		    case TPacketDataConfigBase::KConfigRel99Rel4:
 				{
 				SetImsSignallingFlagL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption, imsprov->iImsSignalIndicator);
-				}
-				break;
-			}
 
-	TRAP_IGNORE(iContext.Node().iIsModeGsm = IsModeGsmL());
-
-	// Only request SIP server address retrieval when network not in GSM/GPRS mode
-	// e.g. UMTS/WCDMA
-	if (!iContext.Node().iIsModeGsm)
-		{
-		switch (gprsProvision->UmtsGprsRelease())
-			{
-	    	case TPacketDataConfigBase::KConfigGPRS:
-				{
-				SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
+			    // Only request SIP server address retrieval when network not in GSM/GPRS mode
+			    // e.g. UMTS/WCDMA
+				if (!iContext.Node().iIsModeGsm)
+                    {
+                    SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
+                    }
+				
+				SetChapInformationL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
+				
 				}
-				break;
-	    	case TPacketDataConfigBase::KConfigRel5:
-		    case TPacketDataConfigBase::KConfigRel99Rel4:
-				{
-				SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
-				}
-				break;
+				break;				
 			}
-		}
 	
 	iContext.Node().iPDPFsmContextId = iContext.Node().iPdpFsmInterface->NewFsmContextL(iContext.Node(),SpudMan::EPrimary);
 
@@ -706,7 +817,7 @@ void TOverrideProvision::DoL()
 DEFINE_SMELEMENT(TSendErrorRecoveryRequest, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
 void TSendErrorRecoveryRequest::DoL()
 	{
-	TPDPFSMMessages::TPDPFSMMessage* msg = message_cast<TPDPFSMMessages::TPDPFSMMessage>(&iContext.iMessage);
+	TPDPMessages::TPDPFSMMessage* msg = message_cast<TPDPMessages::TPDPFSMMessage>(&iContext.iMessage);
 
 	__ASSERT_DEBUG(msg, User::Panic(KPdpSCprPanic,  CorePanics::KPanicIncorrectMessage));
 	__ASSERT_DEBUG(iContext.iNodeActivity, User::Panic(KPdpSCprPanic, CorePanics::KPanicNoActivity));
@@ -773,7 +884,7 @@ void TModifyActivePDPContext::DoL()
    	else
    	    {
         RClientInterface::OpenPostMessageClose(TNodeCtxId(iContext.ActivityId(), iContext.NodeId()), iContext.NodeId(),
-            TPDPFSMMessages::TPDPFSMMessage(KContextModifyActiveEvent, KErrNone).CRef());
+                TPDPMessages::TPDPFSMMessage(KContextModifyActiveEvent, KErrNone).CRef());
    	    }
 
     //Expect Response
@@ -803,7 +914,7 @@ void TGetNegotiatedQoS::DoL()
     	RClientInterface::OpenPostMessageClose(
     			TNodeCtxId(iContext.ActivityId(), iContext.NodeId()),
     			iContext.NodeId(),
-    			TPDPFSMMessages::TPDPFSMMessage(KGetNegQoSEvent, KErrNone).CRef()
+    			TPDPMessages::TPDPFSMMessage(KGetNegQoSEvent, KErrNone).CRef()
     			);
     	}
     else
@@ -855,7 +966,7 @@ void TSetQoS::DoL()
         {
         //No QoS Requested. Complete this message locally to push yourself forward
         RClientInterface::OpenPostMessageClose(TNodeCtxId(iContext.ActivityId(), iContext.NodeId()), iContext.NodeId(),
-        	TPDPFSMMessages::TPDPFSMMessage(KContextQoSSetEvent, KErrNone).CRef());
+                TPDPMessages::TPDPFSMMessage(KContextQoSSetEvent, KErrNone).CRef());
         }
 
     //Expect Response
@@ -896,7 +1007,7 @@ void TSetTFT::DoL()
         {
         //No QoS Requested. Complete this message locally to push yourself forward
         RClientInterface::OpenPostMessageClose(TNodeCtxId(iContext.ActivityId(), iContext.NodeId()), iContext.NodeId(),
-        	TPDPFSMMessages::TPDPFSMMessage(KContextTFTModifiedEvent, KErrNone).CRef());
+                TPDPMessages::TPDPFSMMessage(KContextTFTModifiedEvent, KErrNone).CRef());
         }
 
     //Expect Response
@@ -948,7 +1059,7 @@ void TSetMbmsParameters::DoL()
 DEFINE_SMELEMENT(TBlockedOrUnblocked, NetStateMachine::MStateFork, PDPSCprStates::TContext)
 TInt TBlockedOrUnblocked::TransitionTag()
 	{
-	TPDPFSMMessages::TPDPFSMMessage& pdpmsg = message_cast<TPDPFSMMessages::TPDPFSMMessage>(iContext.iMessage);
+	TPDPMessages::TPDPFSMMessage& pdpmsg = message_cast<TPDPMessages::TPDPFSMMessage>(iContext.iMessage);
 	if (pdpmsg.iValue1 == KContextBlockedEvent)
 		return KBlocked;
 	else
@@ -972,7 +1083,7 @@ TBool TAwaitingContextBlockedOrUnblocked::Accept()
 DEFINE_SMELEMENT(TForwardContextBlockedOrUnblockedToDC, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
 void TForwardContextBlockedOrUnblockedToDC::DoL()
     {
-    TPDPFSMMessages::TPDPFSMMessage& pdpmsg = message_cast<TPDPFSMMessages::TPDPFSMMessage>(iContext.iMessage);
+    TPDPMessages::TPDPFSMMessage& pdpmsg = message_cast<TPDPMessages::TPDPFSMMessage>(iContext.iMessage);
 
 	RNodeInterface* theOnlyDataClient = iContext.iNode.GetFirstClient<TDefaultClientMatchPolicy>(TCFClientType::EData);
 	ASSERT(iContext.iNode.GetClientIter<TDefaultClientMatchPolicy>(TCFClientType::EData)[1] == NULL);
@@ -1217,7 +1328,7 @@ void TRaiseParamsRejectedL::DoL()
 
 	if (iContext.Node().iContextType == SpudMan::EMbms)
 		{
-		TPDPFSMMessages::TPDPFSMMessage& message = message_cast<TPDPFSMMessages::TPDPFSMMessage>(iContext.iMessage);
+		TPDPMessages::TPDPFSMMessage& message = message_cast<TPDPMessages::TPDPFSMMessage>(iContext.iMessage);
 		TInt prevOperationValue = message.iValue2;
 		if ((prevOperationValue == KErrNotFound) || (prevOperationValue == KErrNotSupported ) ||
 			 (prevOperationValue == KErrMbmsImpreciseServiceEntries ) ||(prevOperationValue == KErrMbmsServicePreempted) )
@@ -1241,7 +1352,7 @@ void TRaiseParamsRejectedL::DoL()
 DEFINE_SMELEMENT(TRaiseParamsChanged, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
 void TRaiseParamsChanged::DoL()
     {
-    TPDPFSMMessages::TPDPFSMMessage& message = message_cast<TPDPFSMMessages::TPDPFSMMessage>(iContext.iMessage);
+    TPDPMessages::TPDPFSMMessage& message = message_cast<TPDPMessages::TPDPFSMMessage>(iContext.iMessage);
 	TInt err=KErrNone;
     ASSERT(message.iValue2 == KErrNone);
     CSubConGenEventParamsChanged* event = NULL;
@@ -1707,6 +1818,31 @@ void TCancelDataClientStartInPDP::DoL()
         {
         RClientInterface::OpenPostMessageClose(TNodeCtxId(ECFActivityStart, iContext.NodeId()), iContext.NodeId(), TEBase::TCancel().CRef());
         }
+    }
+
+//===========================================================
+//   User Authentication
+//===========================================================
+
+DEFINE_SMELEMENT(TSendAuthenticate, NetStateMachine::MStateTransition, PDPSCprStates::TDefContext)
+void TSendAuthenticate::DoL()
+    {
+    iContext.Node().AuthenticateL();
+    }
+
+DEFINE_SMELEMENT(TAwaitingAuthenticateComplete, NetStateMachine::MState, PDPSCprStates::TDefContext)
+TBool TAwaitingAuthenticateComplete::Accept()
+    {
+    if (iContext.iMessage.IsMessage<TPDPMessages::TAuthenticateComplete>())
+        {
+        TPDPMessages::TAuthenticateComplete& msg = message_cast<TPDPMessages::TAuthenticateComplete>(iContext.iMessage);
+        if (msg.iValue != KErrNone)
+            {
+            iContext.iNodeActivity->SetError(msg.iValue);
+            }
+        return ETrue;
+        }
+    return EFalse;
     }
 
 } //namespace end

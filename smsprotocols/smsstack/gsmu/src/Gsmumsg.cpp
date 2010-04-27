@@ -1456,7 +1456,7 @@ TBool CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL(CSmsEMSBuffer
 			}
 		}
 
-		__ASSERT_DEBUG(ie !=NULL, User::Leave(KErrCorrupt));
+		__ASSERT_ALWAYS(ie !=NULL, User::Leave(KErrCorrupt));
 
 		if(startPosition <= msgLen)
 			{

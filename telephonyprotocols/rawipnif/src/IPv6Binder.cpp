@@ -26,7 +26,7 @@
 #include "IPv6Binder.h"
 #include <comms-infras/linkprovision.h>
 #include <e32hal.h>
-
+#include <u32hal.h>
 
 using namespace ESock;
 #ifdef WCDMA_STUB
@@ -35,6 +35,12 @@ using namespace ESock;
 
 #define LOG_IP_ADDRESS(desc,addr) _LOG_L2C5(_L8("    " desc " = %d:%d:%d:%d from context"), \
 			addr.u.iAddr32[3], addr.u.iAddr32[2], addr.u.iAddr32[1], addr.u.iAddr32[0]);
+
+#ifdef __EABI__
+// Patch data is used and KMtuIPv6 and KRMtuIPv6 can be modified to a different value in RawIpNif.iby file
+extern const TInt KMtuIPv6 = KDefaultMtu;
+extern const TInt KRMtuIPv6 = KDefaultMtu;
+#endif
 
 CIPv6Binder::CIPv6Binder(CRawIPFlow& aFlow, CBttLogger* aTheLogger)
 /**
@@ -164,8 +170,21 @@ TInt CIPv6Binder::GetConfig(TBinderConfig& aConfig)
 	config->iFamily = KAfInet6;		/* KAfInet6 - selects TBinderConfig6 */
 
 	config->iInfo.iFeatures = KIfCanBroadcast | KIfCanMulticast;		/* Feature flags */
-	config->iInfo.iMtu = KDefaultMtu;				/* Maximum transmission unit. */
-	config->iInfo.iRMtu = KDefaultMtu;				/* Maximum transmission unit for receiving. */
+	
+#if defined __EABI__
+    // Default value for Tx and Rx packet size
+    config->iInfo.iMtu = KMtuIPv6;
+    config->iInfo.iRMtu = KRMtuIPv6;
+#else // WINS
+    // Set default values in case patch is not present in epoc.ini
+    config->iInfo.iMtu = KDefaultMtu;
+    config->iInfo.iRMtu = KDefaultMtu;
+           
+    // for the emulator process is patched via the epoc.ini file
+    UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMtuIPv6",&(config->iInfo.iMtu));
+    UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KRMtuIPv6",&(config->iInfo.iRMtu));
+#endif
+    
 	config->iInfo.iSpeedMetric = iSpeedMetric;		/* approximation of the interface speed in Kbps. */
 	
 	TEui64Addr& localId = TEui64Addr::Cast(config->iLocalId);

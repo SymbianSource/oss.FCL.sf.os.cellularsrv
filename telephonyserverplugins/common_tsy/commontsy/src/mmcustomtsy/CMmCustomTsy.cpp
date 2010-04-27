@@ -1781,9 +1781,6 @@ TInt CMmCustomTsy::CreateRandDb()
     // local variable initialized to zero
     TInt counter = 0;
 
-    // empty tbuf for rand_db initialization
-    TBuf8<1> empty;
-    empty.Append( 0 );
 
     // fileSize is initialized to 2 because of filesize calculation method
     TInt fileSize = 2;
@@ -1824,11 +1821,22 @@ TFLOGSTRING( "TSY: CMmCustomTsy: 'rand_db.cur' creation failed!" );
 
                 ret = file.SetSize( fileSize + METADATA_SIZE );
 
+				// empty tbuf for rand_db initialization
+				TBuf8<1024> empty;
+				TInt chunkSize = 1024;
+				empty.FillZ( chunkSize );
+				
                 // reset every byte of newly created rand_db to zero
-                for ( counter = 0; counter < ( fileSize + METADATA_SIZE );
-                    counter++ )
+				TInt maxSize = ( fileSize + METADATA_SIZE );
+                for ( counter = 0; counter < maxSize;
+                    counter+=chunkSize )
                     {
-                    ret = file.Write( counter, empty );
+                    TInt writeSize = maxSize - counter;
+                    if(writeSize > chunkSize)
+                        {
+                        writeSize = chunkSize;
+                        }
+                    ret = file.Write( counter, empty, writeSize );
                     }
 
                 if ( KErrNone != ret )
