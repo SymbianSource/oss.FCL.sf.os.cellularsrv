@@ -279,7 +279,7 @@ void CCTsyCallInformationFU::TestGetCallParams0001L()
     
    	RMobileCall::TMobileCallInfoV8 callInfo;
 	callInfo.iDialledParty.iTelNumber.Copy(KNum);
-	callInfo.iRemoteParty.iDirection = RMobileCall::EMobileTerminated;
+	callInfo.iRemoteParty.iDirection = RMobileCall::EDirectionUnknown;
 	callInfo.iService = mobileService;
 	callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;
 	callInfo.iAlternatingCall = RMobilePhone::EAlternatingModeUnspecified;
@@ -1156,7 +1156,7 @@ void CCTsyCallInformationFU::TestGetCallParams00011L()
    
   	RMobileCall::TMobileCallInfoV8 callInfo;
   	callInfo.iDialledParty.iTelNumber.Copy(KNum);
-  	callInfo.iRemoteParty.iDirection = RMobileCall::EMobileTerminated;
+  	callInfo.iRemoteParty.iDirection = RMobileCall::EDirectionUnknown;
   	callInfo.iService = mobileService;
   	callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;
   	callInfo.iAlternatingCall = RMobilePhone::EAlternatingModeUnspecified;
@@ -2335,7 +2335,7 @@ void CCTsyCallInformationFU::TestNotifyCapsChange0001L()
 	RMobileCall::TMobileCallInfoV8 callInfo;
 	
 	callInfo.iDialledParty.iTelNumber.Copy(KNum);
-	callInfo.iRemoteParty.iDirection = RMobileCall::EMobileTerminated;
+	callInfo.iRemoteParty.iDirection = RMobileCall::EDirectionUnknown;
 	callInfo.iService = mobileService;
 	callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;
 	

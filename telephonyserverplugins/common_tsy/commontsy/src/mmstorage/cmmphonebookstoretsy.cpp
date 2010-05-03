@@ -80,7 +80,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - PB %S", &iPhoneBookName);
     iUsedEntries = 0;
 
     // Create bootState
-    CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+    CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 
     //Create Read Store
     iReadReqStore = new ( ELeave ) TReadRequestStore();
@@ -130,7 +130,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - PB %S", &iPhone
 
     if ( iMmPhoneTsy )
         {
-        CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+        CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
         
         if ( iMmPhoneTsy->GetCustomTsy() )
             {
@@ -660,20 +660,13 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneB
         // Reset initialization value
         iStoreInfoData->iIsPhonebookInitialized = ETrue;
         iStoreInfoData->iIsPhonebookInitializeFailed = EFalse;
-        // Set initialization flag for all phonebooks
-        for( TInt i = 0; i < iMmPhoneTsy->PBList()->GetNumberOfObjects(); i++ )
-            {
-            //Get pbStore object
-            CMmPhoneBookStoreTsy* pbStore = iMmPhoneTsy->PBList()->GetMmPBByIndex( i );
-            pbStore->iIsPBInitCompleted = ETrue;
-            pbStore->iInitError = aResult;
-            // Set max name & number length for the current phonebook
-            pbStore->SetMaxNameAndNumLenght();
-            // Just in case here, if cache request has been come
-            // before initialization is finished.
-            pbStore->CacheEntriesL();
-            }
-        }
+        iIsPBInitCompleted = ETrue;
+        iInitError = aResult;
+        SetMaxNameAndNumLenght();
+        // Just in case here, if cache request has been come
+        // before initialization is finished.
+        CacheEntriesL();       
+       }
     else
     //Initialisation has failed
         {
@@ -699,32 +692,35 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has faile
             iStoreInfoData->iIsPhonebookInitializeFailed = ETrue;
             }
         }
-		if( iStoreInfoData->iIsPhonebookInitialized )
+    
+    
+	if( iStoreInfoData->iIsPhonebookInitialized )
+		{
+		TTsyReqHandle getInfoHandle =
+			iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneStoreGetInfo );
+		if ( EMultimodePhoneBookStoreReqHandleUnknown != getInfoHandle )
 			{
-		    TTsyReqHandle getInfoHandle =
-				iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneStoreGetInfo );
-			if ( EMultimodePhoneBookStoreReqHandleUnknown != getInfoHandle )
+			iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
+			RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg info(*iPhoneBookInfoChanged);
+			TInt result = GetInfoL(getInfoHandle, &info);
+			if ( KErrNone != result )
 				{
-				iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
-				RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg info(*iPhoneBookInfoChanged);
-				TInt result = GetInfoL(getInfoHandle, &info);
-				if ( KErrNone != result )
-					{
-					ReqCompleted( getInfoHandle, result );
-					}
-					// Save request handle
-				if ( EMultimodePhoneBookStoreReqHandleUnknown != iReqHandleType )
-					{
-#ifdef REQHANDLE_TIMER
-					SetTypeOfResponse( iReqHandleType, getInfoHandle );
-#else
-					iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, getInfoHandle );
-#endif
-					}
-				
+				ReqCompleted( getInfoHandle, result );
 				}
+				// Save request handle
+			if ( EMultimodePhoneBookStoreReqHandleUnknown != iReqHandleType )
+				{
+#ifdef REQHANDLE_TIMER
+				SetTypeOfResponse( iReqHandleType, getInfoHandle );
+#else
+				iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, getInfoHandle );
+#endif
+				iReqHandleType = EMultimodePhoneBookStoreReqHandleUnknown;
+				}
+			
 			}
-		iMmPhoneTsy->PhoneBookStoreInitCompleteL(iInitError);
+		}
+	iMmPhoneTsy->PhoneBookStoreInitCompleteL(iInitError);
 
     }
 
@@ -1102,7 +1098,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
 TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", &iPhoneBookName);
 
 		TInt ret = KErrNone;
-		CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+		CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 		
               if ( !iCacheReady )
                 {
@@ -1174,7 +1170,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %i",aResult 
 	CopyLtsyCacheToCtsyCacheL(entryData);
 #endif
 	
-    CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+    CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 
     // If cache were successfully generated, update
     // the number of used entries
@@ -1775,6 +1771,12 @@ TInt CMmPhoneBookStoreTsy::WriteByIndexL(
     // - ANR/AAS
     // - GRP
 
+	if ( iWriteEntry != NULL )
+		{
+		delete iWriteEntry;
+		iWriteEntry = NULL;
+		}
+
     // NOTE: when this entry is created, it is always
     // put on the cache in succesfull case.
     iWriteEntry = new( ELeave )CPhoneBookStoreEntry();
@@ -2129,6 +2131,12 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::DeleteL - aIndex: %i",*aIndex );
             }
         else
             {
+			if ( iDeleteEntry == NULL )
+				{
+				delete iDeleteEntry;
+				iDeleteEntry = NULL;
+				}
+
             // These are done for updating cache
             iDeleteEntry = new ( ELeave ) CPhoneBookStoreEntry;
             iDeleteEntry->ConstructL();

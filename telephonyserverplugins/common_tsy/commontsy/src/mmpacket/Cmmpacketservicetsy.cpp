@@ -2892,7 +2892,7 @@ TInt CMmPacketServiceTsy::UpdateMbmsMonitorServiceListL( TMbmsAction aAction,
     }
 
 //----------------------------------------------------------------------------
-// CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceListL
+// CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceList
 // Completes update monitored service list request
 //----------------------------------------------------------------------------
 //
@@ -2903,14 +2903,16 @@ void CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceList(
 	TFLOGSTRING( "TSY: CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceListL." );
 
 	TInt result= aResult;
+	TInt err(KErrNone);
 	// Reset request handle. Returns the deleted request handle
 	const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
 	        EMultimodePacketServiceUpdateMBMSMonitorServiceList ) );
 	        
 	if( aResult == KErrNone )
 		{
-		result = iMBMSMonitoredList->ProcessEntriesL(NULL, iActionType);
-        CompleteNotifyMbmsServiceAvailabilityChangeL( NULL, aResult );		
+		TRAP( err, result = iMBMSMonitoredList->ProcessEntriesL( NULL, iActionType ) );
+		if ( !err )
+		    TRAP( err, CompleteNotifyMbmsServiceAvailabilityChangeL( NULL, aResult ) );		
 		}
 	//there were problem managing entries
 	else if( (aResult == KErrMbmsImpreciseServiceEntries) && (aDataPackage != NULL) )
@@ -2921,15 +2923,20 @@ void CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceList(
 		// Check failed entries exists and add succesful entries to main list
 		if( failedMonitorEntries != NULL )
 			{
-			iMBMSMonitoredList->ProcessEntriesL( failedMonitorEntries, iActionType );
+			TRAP( err, iMBMSMonitoredList->ProcessEntriesL( failedMonitorEntries, iActionType ) );
 			}
 		else // There was a general error, don't add anything to main list
 			{
-			iMBMSMonitoredList->ResetTempListL();
+			TRAP( err, iMBMSMonitoredList->ResetTempListL() );
 			}
 		}
 	 if( EMultimodePacketServiceReqHandleUnknown != reqHandle )
 		 {
+         // If there was an error due to a function leaving, complete to the client with that error.
+         if (err)
+             {
+             result = err;
+             }
 		 //complete with error to client
 		 CMmPacketServiceTsy::ReqCompleted( reqHandle, result );
 		 }

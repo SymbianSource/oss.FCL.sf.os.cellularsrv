@@ -59,4 +59,14 @@ data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6.cfg								testdat
 data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6_loopbackcsy.ini								testdata\configs\te_pdplayer_ip6_loopbackcsy.ini
 data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdplayer_ip6_simtsy_config.txt			testdata\configs\te_pdplayer_ip6_simtsy_config.txt
 
+//stress tests
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_pdpstresstestsparam.ini						testdata\configs\te_pdpstresstestsparam.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdpstresstest1.script 							testdata\scripts\te_pdpstresstest1.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdpstresstests.script 							testdata\scripts\te_pdpstresstests.script
+
+//sip tests
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_sipaddress_config.txt			testdata\configs\te_spudnetworkside_sipaddress_config.txt
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_sipaddress.ini					testdata\configs\te_spudnetworkside_sipaddress.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_sipaddress.script 		testdata\scripts\te_spudnetworkside_sipaddress.script
+
 #endif // TE_SPUD_NETWORK_SIDE_IBY

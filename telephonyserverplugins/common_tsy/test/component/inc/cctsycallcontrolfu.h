@@ -46,7 +46,8 @@ public:
 	void TestAnswerIncomingCall00010L();
 	void TestAnswerIncomingCall00011L();
 	void TestDial0001L();
-	void TestDial0001bL();
+    void TestDial0001bL();
+    void TestDial0001cL();
 	void TestDial0002L();
 	void TestDial0003L();
 	void TestDial0004L();

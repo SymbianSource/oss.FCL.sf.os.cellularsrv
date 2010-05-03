@@ -43,15 +43,14 @@ EXPORT_C void PanicStub2()
     BULLSEYE_RESTORE
     }
 
-BULLSEYE_OFF
-
 // Was CSmsMessage::CompressionSettings(TGsmCompressionSettings &) const
 EXPORT_C void PanicStub3()
     {
+    BULLSEYE_OFF
     // Ignore in code coverage - deprecated method
     Panic(KGsmuPanicDeprecatedMethod);
+    BULLSEYE_RESTORE
     }
-BULLSEYE_RESTORE
 
 // Was CSmsMessage::CompressionSupportedL(RFs &)
 EXPORT_C void PanicStub4()

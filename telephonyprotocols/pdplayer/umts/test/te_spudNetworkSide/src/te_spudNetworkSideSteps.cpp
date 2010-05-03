@@ -29,6 +29,8 @@
 #include <nifvar.h> // Nifman Progress notifications
 #include <in_sock.h>
 #include <es_enum.h> 
+#include <comms-infras/es_config.h>
+#include <nifman.h>
 
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 #include <networking/qoslib.h>
@@ -2246,4 +2248,73 @@ enum TVerdict CSpudMultiPrimary::RunTestStepL()
 	return EPass;
 	}
 
+enum TVerdict CIoctlAddressRetrieve::RunTestStepL()
+    {
+    StartPrimaryOnlyL();    
+    
+    TPtrC addresse;
+    TBool checkSipAddress = ETrue;
+    if(!GetStringFromConfig(ConfigSection(), _L("ExpectedAddress"), addresse))            
+        {
+        checkSipAddress = EFalse;
+        }
+    
+    TInt expectedError = KErrNone;
+    if(!GetIntFromConfig(ConfigSection(), _L("SipAddressExpectedError"), expectedError))            
+        {
+        expectedError = KErrNone;
+        }
+    
+    TInt sipAddressIndex = 0;
+    if(!GetIntFromConfig(ConfigSection(), _L("IndexOfTheSIPAddressToGet"), sipAddressIndex))            
+        {
+        User::Leave(KErrNotFound);
+        }
+    
+    //call ioctl
+    TRequestStatus status;
+    
+    INFO_PRINTF1(_L("Calling ioctl.."));
+    
+    // Request the Sip address available
+    TSipServerAddrBuf sipServerAddr;
+    sipServerAddr().index = sipAddressIndex;
+    iInterface.Ioctl(KCOLConfiguration, KConnGetSipServerAddr, status, &sipServerAddr);
+    User::WaitForRequest(status);
+    
+    INFO_PRINTF2(_L("SIP address retrieval completed with Err[%d]..."), status.Int());
+    if(status.Int() == expectedError)
+        {
+        if (expectedError == KErrNone && checkSipAddress)
+            {
+            THostName addr;
+            sipServerAddr().address.Output(addr);
+        
+            // Verify the retrieved address is correct
+            TPtrC addressToCompare;
+        
+            addressToCompare.Set(addresse);
+            
+            INFO_PRINTF2(_L("Received SIP address: %S"), &addr);
+            if(addr.CompareF(addressToCompare) != 0)
+                {
+                INFO_PRINTF2(_L("Expected SIP address %S!"), &addressToCompare);
+                TESTEL(0, KErrNotFound);
+                }
+            }
+        else
+            {
+            INFO_PRINTF1(_L("As Expected"));
+            }
+        }
+    else
+        {
+        INFO_PRINTF1(_L("Unexpected"));
+        User::Leave(status.Int());
+        }
+    
+    iInterface.Stop();
+    iInterface.Close(); 
 
+    return EPass;
+    }

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -26,7 +26,7 @@
 #include "IPv6Binder.h"
 #include <comms-infras/linkprovision.h>
 #include <e32hal.h>
-
+#include <u32hal.h>
 
 using namespace ESock;
 #ifdef WCDMA_STUB
@@ -35,6 +35,12 @@ using namespace ESock;
 
 #define LOG_IP_ADDRESS(desc,addr) _LOG_L2C5(_L8("    " desc " = %d:%d:%d:%d from context"), \
 			addr.u.iAddr32[3], addr.u.iAddr32[2], addr.u.iAddr32[1], addr.u.iAddr32[0]);
+
+#ifdef __EABI__
+// Patch data is used and KMtuIPv6 and KRMtuIPv6 can be modified to a different value in RawIpNif.iby file
+extern const TInt KMtuIPv6 = KDefaultMtu;
+extern const TInt KRMtuIPv6 = KDefaultMtu;
+#endif
 
 CIPv6Binder::CIPv6Binder(CRawIPFlow& aFlow, CBttLogger* aTheLogger)
 /**
@@ -164,8 +170,21 @@ TInt CIPv6Binder::GetConfig(TBinderConfig& aConfig)
 	config->iFamily = KAfInet6;		/* KAfInet6 - selects TBinderConfig6 */
 
 	config->iInfo.iFeatures = KIfCanBroadcast | KIfCanMulticast;		/* Feature flags */
-	config->iInfo.iMtu = KDefaultMtu;				/* Maximum transmission unit. */
-	config->iInfo.iRMtu = KDefaultMtu;				/* Maximum transmission unit for receiving. */
+	
+#if defined __EABI__
+    // Default value for Tx and Rx packet size
+    config->iInfo.iMtu = KMtuIPv6;
+    config->iInfo.iRMtu = KRMtuIPv6;
+#else // WINS
+    // Set default values in case patch is not present in epoc.ini
+    config->iInfo.iMtu = KDefaultMtu;
+    config->iInfo.iRMtu = KDefaultMtu;
+           
+    // for the emulator process is patched via the epoc.ini file
+    UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMtuIPv6",&(config->iInfo.iMtu));
+    UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KRMtuIPv6",&(config->iInfo.iRMtu));
+#endif
+    
 	config->iInfo.iSpeedMetric = iSpeedMetric;		/* approximation of the interface speed in Kbps. */
 	
 	TEui64Addr& localId = TEui64Addr::Cast(config->iLocalId);
@@ -329,7 +348,7 @@ MLowerDataSender::TSendResult CIPv6Binder::Send(RMBufChain& aPdu)
  * Called by the protocol to send an outgoing IP packet to the network.
  *
  * @param aPdu The outgoing packet
- * @return Standard error codes
+ * @return MLowerDataSender::ESendBlocked or ESendAccepted based on state of flow.
  */
 	{
 	_LOG_L1C1(_L8("CIPv6Binder::Send"));
@@ -338,10 +357,10 @@ MLowerDataSender::TSendResult CIPv6Binder::Send(RMBufChain& aPdu)
 	LogPacket(aPdu);
 #endif
 
-	// Return <0: an error occurred
-	// Return  0: no error, but don't send any more packets
-
-	return static_cast<MLowerDataSender::TSendResult>(GetFlow().SendPacket(aPdu, NULL, KIp4FrameType));
+    // Return ESendBlocked: flow cannot accept any more packets [blocked, queue full, etc]
+    // Return ESendAccepted: flow has accepted this packet and can accept another.
+	
+	return GetFlow().SendPacket(aPdu, NULL, KIp4FrameType);
 	}
 
 TInt CIPv6Binder::Notification(TAgentToNifEventType /*aEvent*/, 

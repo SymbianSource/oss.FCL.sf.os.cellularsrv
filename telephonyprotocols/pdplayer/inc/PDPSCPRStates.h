@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -25,24 +25,8 @@
 
 #include <comms-infras/corescprstates.h>
 #include <comms-infras/corescpractivities.h>
+#include "PDPMessageDefn.h"
 #include "PDPSCPR.h"
-
-class TPDPFSMMessages
-    {
-public:
-    enum { ERealmId = 0x102822EF };
-
-private:
-    enum
-    /**
-    Definition of generic Link Tier message ids
-    */
-    	{
-    	EPDPFSMMessage = Messages::KNullMessageId + 1,
-    	};
-public:
-    typedef Messages::TMessageSigNumberNumber<EPDPFSMMessage, TPDPFSMMessages::ERealmId> TPDPFSMMessage;
-    };
 
 //-=========================================================
 //
@@ -60,7 +44,7 @@ const TInt KBlocked = 2;
 const TInt KUnblocked = 3;
 const TInt KSendErrorRecoveryRequest = 4;
 const TInt KContentionTag = 5;
-
+const TInt KUserAuthenticate = 6;
 
 typedef MeshMachine::TNodeContext<CPDPSubConnectionProvider, SCprStates::TContext> TContext;
 typedef MeshMachine::TNodeContext<CPDPDefaultSubConnectionProvider, PDPSCprStates::TContext> TDefContext;
@@ -77,9 +61,9 @@ DECLARE_SMELEMENT_HEADER( TNoTagOrError, MeshMachine::TStateFork<TContext>, NetS
   	virtual TInt TransitionTag();
 DECLARE_SMELEMENT_FOOTER( TNoTagOrError )
 
-DECLARE_SMELEMENT_HEADER( TNoTagOrAlreadyStarted, MeshMachine::TStateFork<TContext>, NetStateMachine::MStateFork, TContext )
+DECLARE_SMELEMENT_HEADER( TNoTagOrUserAuthenticateOrAlreadyStarted, MeshMachine::TStateFork<TDefContext>, NetStateMachine::MStateFork, TDefContext )
   	virtual TInt TransitionTag();
-DECLARE_SMELEMENT_FOOTER( TNoTagOrAlreadyStarted )
+DECLARE_SMELEMENT_FOOTER( TNoTagOrUserAuthenticateOrAlreadyStarted )
 
 DECLARE_SMELEMENT_HEADER( TSendDataClientIdleIfNoSubconnsAndNoClients, MeshMachine::TStateTransition<TDefContext>, NetStateMachine::MStateTransition, TDefContext )
   	virtual void DoL();
@@ -102,7 +86,8 @@ DECLARE_SMELEMENT_FOOTER( TNoTagOrContentionTag )
 //Provision
 //-=========================================================
 DECLARE_SMELEMENT_HEADER( TSelfInit, MeshMachine::TStateTransition<TContext>, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
-	virtual void DoL();
+	virtual void SetupProvisionCfgL(ESock::CCommsDatIapView* aIapView);
+    virtual void DoL();
 DECLARE_SMELEMENT_FOOTER( TSelfInit)
 
 DECLARE_AGGREGATED_TRANSITION2(
@@ -130,6 +115,8 @@ DECLARE_SMELEMENT_HEADER( TCreatePrimaryPDPCtx, MeshMachine::TStateTransition<PD
     void SetupSipServerAddrRetrievalL(RPacketContext::TProtocolConfigOptionV2& aPco);
 	void SetImsSignallingFlagL(RPacketContext::TProtocolConfigOptionV2& aPco, TBool aImcn);
 	TBool IsModeGsmL() const;
+	void SetChapInformationL(RPacketContext::TProtocolConfigOptionV2& aPco);
+	void CreateChallengeAndResponseForChapL(RPacketContext::TProtocolConfigOptionV2& aPco);
 DECLARE_SMELEMENT_FOOTER( TCreatePrimaryPDPCtx)
 
 DECLARE_SMELEMENT_HEADER( TCreateSecondaryOrMbmsPDPCtx, MeshMachine::TStateTransition<TContext>, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
@@ -413,6 +400,17 @@ DECLARE_SMELEMENT_FOOTER( TAwaitingDataClientStopOrCancel )
 DECLARE_SMELEMENT_HEADER( TCancelDataClientStartInPDP, MeshMachine::TStateTransition<TContext>, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
     virtual void DoL();
 DECLARE_SMELEMENT_FOOTER( TCancelDataClientStartInPDP )
+
+//===========================================================
+//   User Authentication
+//===========================================================
+DECLARE_SMELEMENT_HEADER(TSendAuthenticate, MeshMachine::TStateTransition<PDPSCprStates::TDefContext>, NetStateMachine::MStateTransition, PDPSCprStates::TDefContext)
+    virtual void DoL();
+DECLARE_SMELEMENT_FOOTER(TSendAuthenticate)
+
+DECLARE_SMELEMENT_HEADER(TAwaitingAuthenticateComplete, MeshMachine::TState<PDPSCprStates::TDefContext>, NetStateMachine::MState, PDPSCprStates::TDefContext)
+    virtual TBool Accept();
+DECLARE_SMELEMENT_FOOTER(TAwaitingAuthenticateComplete)
 
 }
 

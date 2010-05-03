@@ -139,6 +139,7 @@ PRJ_MMPFILES
 PRJ_TESTMMPFILES
 // component tests
 #include "../test/component/group/bld.inf"
+
 // integration tests
 #include "../test/integration/group/bld.inf"
 

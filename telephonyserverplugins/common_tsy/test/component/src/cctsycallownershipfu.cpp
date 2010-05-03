@@ -38,6 +38,7 @@ CTestSuite* CCTsyCallOwnershipFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestLoanDataPort00011L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestRecoverDataPort0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestRecoverDataPort0006L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestRecoverDataPort0007L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestRecoverDataPort00011L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestAcquireOwnership0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyCallOwnershipFU, TestAcquireOwnership0006L);
@@ -721,16 +722,117 @@ void CCTsyCallOwnershipFU::TestRecoverDataPort0006L()
 	CleanupClosePushL(call2);
 
 	// test
-	err = call.RecoverDataPort();
+	err = call2.RecoverDataPort();
 	ERR_PRINTF2(_L("<font color=Orange>$CTSYKnownFailure: defect id = %d</font>"), 330203);
 	// Request passes to MockLTSY as though the client owns the call.
 	// So MockLtsy returns KErrCorrupt because there is no expected IPC.
 	ASSERT_EQUALS(KErrEtelNotCallOwner, err)
 	AssertMockLtsyStatusL();
+	
+    iMockLTSY.ExpectL(EEtelCallRecoverDataPort, data);
+	err = call.RecoverDataPort();
+    ASSERT_EQUALS(KErrNone, err)
 
 	CleanupStack::PopAndDestroy(8, this); // call2, line2, phone2, telServer2, call, line, data, this
 	
 	}
+
+
+/**
+@SYMTestCaseID BA-CTSY-COWN-CRDP-0007
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for RCall::RecoverDataPort for data call when the call become idle
+@SYMTestPriority High
+@SYMTestActions Invokes RCall::RecoverDataPort for data calls
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyCallOwnershipFU::TestRecoverDataPort0007L()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+    
+    RCall call;
+    RLine line;
+
+    TInt err = line.Open(iPhone, KMmTsyDataLineName);
+    ASSERT_EQUALS(KErrNone, err)
+    CleanupClosePushL(line);
+    
+    TName callName;
+    err = OpenNewCall(line, call, KMmTsyDataLineName, callName);
+    ASSERT_EQUALS(KErrNone, err)
+    CleanupClosePushL(call);
+
+    const TInt KCallId( 1 );
+    const RMobilePhone::TMobileService KMobileService( RMobilePhone::ECircuitDataService );
+    DialL(call, KCallId, KMobileService);
+
+    TRequestStatus mockLtsyStatus;
+    iMockLTSY.NotifyTerminated(mockLtsyStatus);
+    RMobilePhone::TMobileService mobileService = RMobilePhone::ECircuitDataService;
+    RMobileCall::TMobileCallStatus mobileCallStatus = RMobileCall::EStatusConnected; 
+    TMockLtsyCallData1<RMobileCall::TMobileCallStatus> mockData2(KCallId, 
+                                                    mobileService, mobileCallStatus);
+    data.Close();
+    mockData2.SerialiseL(data);
+    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrNone, data);
+    User::WaitForRequest(mockLtsyStatus);
+    
+    RCall::TCommPort dataPort;
+    dataPort.iCsy.Copy(_L("qwerty"));
+    dataPort.iPort.Copy(_L("asdfgh"));
+    TMockLtsyCallData1<RCall::TCommPort> expData(KCallId, KMobileService, dataPort);
+    expData.SerialiseL(data);
+    iMockLTSY.ExpectL(EEtelCallLoanDataPort, data);
+    err = call.LoanDataPort(dataPort);
+    ASSERT_EQUALS(KErrNone, err)
+    AssertMockLtsyStatusL();
+
+    //-------------------------------------------------------------------------
+    // Make the call idle
+    //-------------------------------------------------------------------------
+    iMockLTSY.NotifyTerminated(mockLtsyStatus);
+    
+
+    TInt hangUpCause = KErrGsmReleaseByUser;
+    TBool autoStChangeDisable = EFalse;
+    TMockLtsyCallData2<TInt, TBool> mockData1(KCallId, mobileService, hangUpCause, 
+                                             autoStChangeDisable);
+    data.Close();
+    mockData1.SerialiseL(data);                                               
+    iMockLTSY.ExpectL(EEtelCallHangUp, data, KErrNone);                                              
+    
+    TRequestStatus reqStatus;
+    call.HangUp(reqStatus);
+        
+    mobileCallStatus = RMobileCall::EStatusIdle; 
+    TMockLtsyCallData1<RMobileCall::TMobileCallStatus> mockData3(KCallId, 
+                                                    mobileService, mobileCallStatus);
+    data.Close();
+    mockData3.SerialiseL(data);
+    iMockLTSY.CompleteL(EMobileCallNotifyMobileCallStatusChange, KErrGsmReleaseByUser, data);   
+
+    data.Close();
+    expData.SerialiseL(data);
+	
+	// Expect to RecoverDataPort from CTSY
+    iMockLTSY.ExpectL(EEtelCallRecoverDataPort, data);
+        
+    User::WaitForRequest(reqStatus);
+    ASSERT_EQUALS(KErrNone, reqStatus.Int());   
+    User::WaitForRequest(mockLtsyStatus);
+    ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
+
+    AssertMockLtsyStatusL();
+    CleanupStack::PopAndDestroy(4, this); // call, line, data, this
+    
+    }
 
 
 /**

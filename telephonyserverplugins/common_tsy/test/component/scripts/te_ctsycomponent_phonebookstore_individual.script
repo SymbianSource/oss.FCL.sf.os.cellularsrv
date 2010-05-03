@@ -28,6 +28,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSD-0001
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestDelete0001L
 END_TESTCASE BA-CTSY-PBSTR-PBSD-0001
 
+START_TESTCASE BA-CTSY-PBSTR-PBSR-0001c
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSR-0001c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support for Read after GetInfo requested before phonebook is ready
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::Read for SDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestRead0001cL
+END_TESTCASE BA-CTSY-PBSTR-PBSR-0001c
+
 START_TESTCASE BA-CTSY-PBSTR-PBSD-0002
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSD-0002
 //!@SYMComponent telephony_ctsy
@@ -1257,6 +1268,17 @@ START_TESTCASE BA-CTSY-PBSTR-PBSGI-00011b
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00011bL
 END_TESTCASE BA-CTSY-PBSTR-PBSGI-00011b
+
+START_TESTCASE BA-CTSY-PBSTR-PBSGI-00011c
+//!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00011c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhoneBookStore::GetInfo for SDN phonebook when multiple phonebooks are opened simultaneously
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhoneBookStore::GetInfo for SDN phonebook
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPhoneBookStoreFU.TestGetInfo00011cL
+END_TESTCASE BA-CTSY-PBSTR-PBSGI-00011c
 
 START_TESTCASE BA-CTSY-PBSTR-PBSGI-00012
 //!@SYMTestCaseID BA-CTSY-PBSTR-PBSGI-00012

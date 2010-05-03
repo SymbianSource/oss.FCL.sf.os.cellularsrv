@@ -113,7 +113,7 @@ NODEACTIVITY_END()
 
 namespace PDPSCprGoneDownActivity
 {
-DECLARE_DEFINE_NODEACTIVITY(ECFActivityGoneDown, goneDown, TPDPFSMMessages::TPDPFSMMessage)
+DECLARE_DEFINE_NODEACTIVITY(ECFActivityGoneDown, goneDown, TPDPMessages::TPDPFSMMessage)
 	FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
 	THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TSendGoneDown, CoreNetStates::TNoTagOrNoDataClientsToStop)
 	NODEACTIVITY_ENTRY(KNoTag, SCprStates::TStopYourFlows, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KNoDataClientsToStop>)
@@ -153,7 +153,7 @@ NODEACTIVITY_END()
 
 namespace PDPSCprParamsChanged
 {
-DECLARE_DEFINE_NODEACTIVITY(ECFActivityParamRequest, paramsChanged, TPDPFSMMessages::TPDPFSMMessage)
+DECLARE_DEFINE_NODEACTIVITY(ECFActivityParamRequest, paramsChanged, TPDPMessages::TPDPFSMMessage)
 	FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingParamsChanged, PDPSCprStates::TNoTagOrError)
 	LAST_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TRaiseParamsChanged)
 	LAST_NODEACTIVITY_ENTRY(KErrorTag, PDPSCprStates::TRaiseParamsRejectedL)
@@ -162,7 +162,7 @@ NODEACTIVITY_END()
 
 namespace PDPSCprContextBlockedUnblockedActivity
 {
-DECLARE_DEFINE_NODEACTIVITY(ECFActivityParamRequest, ctxBlockedUnblocked, TPDPFSMMessages::TPDPFSMMessage)
+DECLARE_DEFINE_NODEACTIVITY(ECFActivityParamRequest, ctxBlockedUnblocked, TPDPMessages::TPDPFSMMessage)
     FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingContextBlockedOrUnblocked, MeshMachine::TNoTag)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TForwardContextBlockedOrUnblockedToDC, PDPSCprStates::TBlockedOrUnblocked)
     LAST_NODEACTIVITY_ENTRY(PDPSCprStates::KBlocked, PDPSCprStates::TSendDataTransferTemporarilyBlocked)
@@ -292,7 +292,7 @@ void CPDPSubConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const TN
 
 void CPDPSubConnectionProvider::Event(TInt aEvent, TInt aParam)
     {
-    TPDPFSMMessages::TPDPFSMMessage msg(aEvent, aParam);
+    TPDPMessages::TPDPFSMMessage msg(aEvent, aParam);
 
 	RClientInterface::OpenPostMessageClose(TNodeCtxId(iActivityAwaitingResponse, Id()), Id(), msg);
     iActivityAwaitingResponse = KActivityNull;

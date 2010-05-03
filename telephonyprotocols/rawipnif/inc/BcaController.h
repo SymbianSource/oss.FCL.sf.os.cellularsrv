@@ -104,7 +104,8 @@ private: // Unowned data.
     MControllerObserver& iObserver;
 protected:
 	CBttLogger* iTheLogger;
-	TInt iMaxPacketSise;
+	TInt iMaxTxPacketSize;
+	TInt iMaxRxPacketSize;
 	
 private:
 	// Flow control flags

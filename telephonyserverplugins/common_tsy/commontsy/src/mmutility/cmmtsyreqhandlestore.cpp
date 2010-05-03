@@ -209,7 +209,7 @@ TFLOGSTRING2("TSY:CMmTsyReqHandleStore::ResetTsyReqHandle aIndex=%d", aIndex);
     
         }
     }
-
+TFLOGSTRING3("TSY:CMmTsyReqHandleStore::ResetTsyReqHandle aIndex=%d, ret=%d", aIndex, ret);
     return ret;
 }
 

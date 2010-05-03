@@ -202,7 +202,7 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001L()
 	//-------------------------------------------------------------------------      
     
  	// data for ExpectL 		
- 	callInfo.iRemoteParty.iDirection = RMobileCall::EMobileTerminated; 	
+ 	callInfo.iRemoteParty.iDirection = RMobileCall::EDirectionUnknown; 	
  	
  	TMockLtsyCallData2< RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV1 >
     											 mockCallData2(callId, mobileService, callParams, callInfo);

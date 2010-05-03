@@ -31,9 +31,11 @@ PRJ_TESTEXPORTS
 ../configs/te_controlplanenetworksideloopbackcsy.ini      z:/testdata/configs/te_controlplanenetworksideloopbackcsy.ini
 
 
-../scripts/te_PDP-ControlPlane.script                     z:/testdata/scripts/te_PDP-ControlPlane.script
-../scripts/te_PDP-ControlPlane28.script                   z:/testdata/scripts/te_PDP-ControlPlane28.script
-../scripts/te_PDP-ControlPlane29.script                   z:/testdata/scripts/te_PDP-ControlPlane29.script
+../scripts/te_PDP_ControlPlane.script                     z:/testdata/scripts/te_PDP_ControlPlane.script
+../scripts/te_PDP_ControlPlane28.script                   z:/testdata/scripts/te_PDP_ControlPlane28.script
+../scripts/te_PDP_ControlPlane29.script                   z:/testdata/scripts/te_PDP_ControlPlane29.script
+
+te_PDPControlPlane.iby	/epoc32/rom/include/te_PDPControlPlane.iby
 
 PRJ_MMPFILES
 

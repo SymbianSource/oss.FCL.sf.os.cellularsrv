@@ -108,7 +108,7 @@
     const TUint8 KMmCallAnswerTimeOut = 50;
     const TUint8 KMmCallAnswerCallBackTimeOut = 180;
     const TUint8 KMmCallHangUpTimeOut = 60;
-    const TUint8 KMmCallHoldTimeOut = 3;
+    const TUint8 KMmCallHoldTimeOut = 30;
     const TUint8 KMmCallResumeTimeOut = 3;
     const TUint8 KMmCallSwapTimeOut = 3;
     const TUint8 KMmCallDeflectCallTimeOut = 10;

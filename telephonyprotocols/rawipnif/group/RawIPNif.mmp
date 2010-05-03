@@ -45,7 +45,6 @@ SOURCE  IPv4Binder.cpp
 SOURCE  IPv6Binder.cpp 
 SOURCE  BinderBase.cpp
 SOURCE  BcaIoController.cpp 
-SOURCE  BcaController.cpp 
 SOURCE  Sender.cpp 
 SOURCE  Receiver.cpp 
 SOURCE  IPTagHeader.cpp

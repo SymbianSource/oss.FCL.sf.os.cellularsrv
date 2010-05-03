@@ -238,6 +238,24 @@ TInt CMmCallGsmWcdmaExt::DialL(
     TInt aExtensionId )
     {
 TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::DialL extensionid %d", aExtensionId );
+
+    // Reset iCallParams extended members 
+    iCallParams.iAlphaId.Zero();
+    iCallParams.iIconId.iQualifier = RMobileCall::EIconQualifierNotSet;
+    iCallParams.iIconId.iIdentifier = 0x00;
+    iCallParams.iBCRepeatIndicator = RMobileCall::EBCAlternateMode;
+    iCallParams.iBearerCap2.Zero();
+    iCallParams.iBearerCap1.Zero();
+    iCallParams.iSubAddress.Zero();
+    iCallParams.iCallParamOrigin = RMobileCall::EOriginatorUnknown;
+    iCallParams.iBearerMode = RMobileCall::EMulticallNotSupported;
+    iCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
+    iCallParams.iCug.iExplicitInvoke = EFalse;
+    iCallParams.iCug.iCugIndex = 0xFFFF;
+    iCallParams.iCug.iSuppressPrefCug = EFalse;
+    iCallParams.iCug.iSuppressOA = EFalse;
+    iCallParams.iAutoRedial = EFalse;
+    
     //use base class to determine callparam version
     RCall::TCallParamsPckg* callParamsPckg = 
         reinterpret_cast<RCall::TCallParamsPckg*>(const_cast<TDesC8*>( aCallParams ) ); 
@@ -315,6 +333,10 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams version unknown");
     iMobileCallInfo.iValid |= RMobileCall::KCallAlternating;
     iMobileCallInfo.iAlternatingCall = 
         RMobilePhone::EAlternatingModeUnspecified;
+    
+    // Reset old info
+    iMobileCallInfo.iRemoteParty.iDirection = RMobileCall::EDirectionUnknown;
+    
     //Create package
     CCallDataPackage package;
     //Set call id and call mode

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,20 +20,22 @@
 */
 
 #include <ecom/registryinfo.rh>
+#include "pdp.hrh"
 
 RESOURCE REGISTRY_INFO theInfo
 {
-dll_uid =  0x102822EF;
+dll_uid =  PDPLayerDLLUid;
+
 interfaces = 
     {
     INTERFACE_INFO
         {
-        interface_uid =  0x10281DD7;
+        interface_uid =  TierManagerInterfaceUid;
         implementations =
             {
            IMPLEMENTATION_INFO
                 {
-                implementation_uid = 0x2001A35B;
+                implementation_uid = PDPTierManagerImplUid;
                 version_no = 1;
                 display_name = "PDP Tier Manager";
                 default_data = "PDPTierManager";
@@ -44,12 +46,12 @@ interfaces =
 
     INTERFACE_INFO
         {
-        interface_uid =  0x10274546;
+        interface_uid =  McprInterfaceUid;
         implementations = 
             {
            IMPLEMENTATION_INFO
                 {
-                implementation_uid = 0x102822F0;
+                implementation_uid = PDPMcprImplUid;
                 version_no = 1;
                 display_name = "PDP Meta Connection Provider Factory";
                 default_data = "PDPMCprFactory";
@@ -60,12 +62,12 @@ interfaces =
 #ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     INTERFACE_INFO
         {
-        interface_uid = 0x102070EE;
+        interface_uid = CprInterfaceUid;
         implementations = 
             {
            IMPLEMENTATION_INFO
                 {
-                implementation_uid = 0x102822E2;
+                implementation_uid = PDPCprImplUid;
                 version_no = 1;
                 display_name = "PDP Connection Provider Factory";
                 default_data = "PDPConnProvdFactory";
@@ -76,12 +78,12 @@ interfaces =
 #endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     INTERFACE_INFO
         {
-        interface_uid = 0x10204301;
+        interface_uid = ScprInterfaceUid;
         implementations = 
             {
            IMPLEMENTATION_INFO
                 {
-                implementation_uid = 0x102822E0;
+                implementation_uid = PDPScprImplUid;
                 version_no = 1;
                 display_name = "PDP Sub-Connection Provider Factory";
                 default_data = "PdpSubConnectionProviderFactory";

@@ -50,6 +50,7 @@ TBool CWapReassemblyStore::AddMessageL( TInt& aIndex, const CWapDatagram& aDatag
         (ELeave) CArrayPtrFlat<CWapDatagram::TSegmentData> (8);
 
     CleanupStack::PushL(segmentArray);
+	// coverity[double_push]
     CleanupResetAndDestroyPushL(*segmentArray);
     
     TBool isComplete = aDatagram.IsComplete();
@@ -205,6 +206,7 @@ void CWapReassemblyStore::GetDatagramL( TInt            aIndex,
     // here we need to push 'segmentArray' pointer to the cleanup stack, since it's a heap allocation (pointer must be deleted)
     // CleanupResetAndDestroyPushL() just trigers ResetAndDestroy() to be called on CleanupStack::PopAndDestroy()     
     CleanupStack::PushL(segmentArray);
+	// coverity[double_push]
     CleanupResetAndDestroyPushL(*segmentArray);
 
     // defect fix for EDNJJUN-4WYJGP

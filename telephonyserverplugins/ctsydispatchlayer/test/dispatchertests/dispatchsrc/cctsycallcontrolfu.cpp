@@ -982,7 +982,6 @@ void CCTsyCallControlFU::TestUseCase0012L()
 	mobileCall.NotifyMobileCallStatusChange(notifyStatus, callStatus);
 
 	// Swapping single call again, back to connected.
-	swapStatus;
 	mobileCall.Swap(swapStatus);
 	User::WaitForRequest(swapStatus);
 	ASSERT_EQUALS(KErrNone, swapStatus.Int());

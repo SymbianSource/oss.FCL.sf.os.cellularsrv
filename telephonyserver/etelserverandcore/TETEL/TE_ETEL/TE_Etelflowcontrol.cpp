@@ -348,8 +348,7 @@ enum TVerdict CTestFlowControl7::doTestStepL()
     TESTCHECK(ret, KErrNone);
     ret = server.ShareAuto();
     TESTCHECK(ret, KErrNone);
-    _LIT(KPhoneModuleName, "PhoneTsy");
-   	ret=server.LoadPhoneModule(KPhoneModuleName);
+   	ret=server.LoadPhoneModule(DSTD_MODULE_NAME);
     TESTCHECK(ret, KErrNone);
     
     TInt phoneIndx = 0;
@@ -372,7 +371,7 @@ enum TVerdict CTestFlowControl7::doTestStepL()
     TESTCHECK(ret, KErrNone);
     ret = server2.ShareAuto();
     TESTCHECK(ret, KErrNone);
-    ret=server2.LoadPhoneModule(KPhoneModuleName);
+    ret=server2.LoadPhoneModule(DSTD_MODULE_NAME);
     TESTCHECK(ret, KErrNone);
     
 	RPhone phone2;

@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,7 +23,10 @@
 #include "Constants.h"
 #include <es_ini.h>
 
-CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise)
+const TUint KBufferIncreaseStep=500;
+const TUint K64k=65535;
+
+CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize)
 /**
  * Constructor. Performs standard active object initialisation.
  *
@@ -33,12 +36,12 @@ CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt a
 	: CActive(EPriorityHigh), 
 	  iObserver(aObserver), 
 	  iTheLogger(aTheLogger),
-	  iMaxPacketSise(aMaxPacketSise)
+	  iMaxPacketSize(aMaxPacketSize)
 	{	
 	CActiveScheduler::Add(this);
 	}
 
-CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise)
+CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize)
 /**
  * Two-phase constructor. Creates a new CBcaIoController object, performs 
  * second-phase construction, then returns it.
@@ -48,7 +51,7 @@ CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, 
  * @return A newly constructed CBcaIoController object
  */
 	{
-	CReceiver* self = new (ELeave) CReceiver(aObserver, aTheLogger, aMaxPacketSise);
+	CReceiver* self = new (ELeave) CReceiver(aObserver, aTheLogger, aMaxPacketSize);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -61,7 +64,7 @@ void CReceiver::ConstructL()
  */
 	{
 	_LOG_L1C1(_L8("CReceiver::ConstructL"));
-	iData.CreateL(iMaxPacketSise);
+	iData.CreateL(iMaxPacketSize);
 	}
 
 CReceiver::~CReceiver()
@@ -81,14 +84,32 @@ void CReceiver::RunL()
 	{
 	_LOG_L1C2(_L8("CReceiver::RunL [iStatus=%d]"), iStatus.Int());
 
-	if (iStatus!=KErrNone)
+	if (iStatus != KErrNone)
 		{
-		if(iStatus == KErrNoMemory)
+		if (iStatus == KErrNoMemory)
 			{
 			_LOG_L2C1(
-				_L8("WARNING! CReceiver: Read failed with KErrNoMemory"));
-			// Read operation failed!! Nif will re-issue the read request.
-			StartListening();
+				_L8("WARNING! CReceiver: Read failed with KErrNoMemory. Increase buffer."));
+			// Read operation failed!! Nif will re-issue the read request. Increase buffer.			
+			if ((iMaxPacketSize + KBufferIncreaseStep) > K64k)
+			    {
+			    // In theory IP packet can't be bigger than 64k, so if we come here something is wrong so stop observer. 
+                iObserver.Stop(KErrNoMemory);
+			    }
+			else
+			    {
+                iMaxPacketSize += KBufferIncreaseStep;
+                TInt err = iData.ReAlloc(iMaxPacketSize);
+                if (KErrNoMemory == err)
+                    {                
+                    iObserver.Stop(KErrNoMemory);
+                    }
+                else
+                    {
+                    (iObserver.Bca())->Read(iStatus, iData);    
+                    SetActive();
+                    }
+			    }
 			}
 		else 
 			{
@@ -97,24 +118,29 @@ void CReceiver::RunL()
 			}
 		return;
 		}
-
-	_LOG_L1C1(_L8("CReceiver: Data Packet Received"));
-
-    iRMBufPacket.CreateL(iData);
-    iRMBufPacket.Pack();
-
-    // Immediately execute new read request.
-    StartListening();
-
+	else
+	    {
+        _LOG_L1C1(_L8("CReceiver: Data Packet Received"));
+    
+        iRMBufPacket.CreateL(iData);
+        
+        // Immediately execute new read request.
+        (iObserver.Bca())->Read(iStatus, iData);
+    
+        SetActive();
+        
+        iRMBufPacket.Pack();
+    
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
-    TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
+        TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
 #else
-    TUint16 protocolCode = 0;
+        TUint16 protocolCode = 0;
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
-
-    // Process the packet
-    iObserver.GetObserver().Process(iRMBufPacket, protocolCode);
-    iRMBufPacket.Free();
+    
+        // Process the packet
+        iObserver.GetObserver().Process(iRMBufPacket, protocolCode);
+        iRMBufPacket.Free();
+	    }
 	}
 
 void CReceiver::DoCancel()

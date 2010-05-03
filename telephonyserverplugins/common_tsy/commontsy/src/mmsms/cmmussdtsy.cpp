@@ -880,13 +880,37 @@ TFLOGSTRING2("TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorC
 				{
 				RMobileUssdMessaging::TMobileUssdAttributesV1* tempReturnNotifyUssdMessageAttributesPtr;
 				aDataPackage->UnPackData ( &tempReturnNotifyPtr, &tempReturnNotifyUssdMessageAttributesPtr );
-				*iReturnNotifyPtr = *tempReturnNotifyPtr;
-				*iReturnNotifyUssdMessageAttributesPtr = *tempReturnNotifyUssdMessageAttributesPtr;
+				if (tempReturnNotifyPtr != NULL)
+				    {
+				    *iReturnNotifyPtr = *tempReturnNotifyPtr;
+				    }
+				else
+				    {
+                    iReturnNotifyPtr->iOpCode = KErrNone;
+                    iReturnNotifyPtr->iAdditionalInfo.Append( KErrNone );
+				    }
+				if (tempReturnNotifyUssdMessageAttributesPtr != NULL)
+					{
+					*iReturnNotifyUssdMessageAttributesPtr = *tempReturnNotifyUssdMessageAttributesPtr;
+					}
+				else
+				    {
+                    iReturnNotifyUssdMessageAttributesPtr->iFormat = RMobileUssdMessaging::EFormatUnspecified;
+                    iReturnNotifyUssdMessageAttributesPtr->iType = RMobileUssdMessaging::EUssdUnknown;
+				    }
 				}
             else
 				{
 				aDataPackage->UnPackData ( &tempReturnNotifyPtr );
-				*iReturnNotifyPtr = *tempReturnNotifyPtr;
+				if(tempReturnNotifyPtr != NULL)
+				    {
+                    *iReturnNotifyPtr = *tempReturnNotifyPtr;
+				    }
+				else
+				    {
+                    iReturnNotifyPtr->iOpCode = KErrNone;
+                    iReturnNotifyPtr->iAdditionalInfo.Append( KErrNone );
+				    }
 				}
             }
          // Null ret pointers

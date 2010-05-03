@@ -23,22 +23,9 @@
 #define PDPMCPRSTATES_H
 
 #include <comms-infras/coremcprstates.h>
+#include "PDPMessageDefn.h"
 
 class CPdpMetaConnectionProvider;
-
-class TPdpContentionMessages
-	{
-public:
-	enum { ERealmId = 0x102822EF };
-
-private:
-	enum
-		{
-		EPDPContentionResultMessage = Messages::KNullMessageId + 100,
-		};
-public:
-	typedef Messages::TMessageSigNodeIdNumber<EPDPContentionResultMessage, TPdpContentionMessages::ERealmId> TPdpContentionResultMessage;
-	};
 
 namespace PdpMCprStates
 {

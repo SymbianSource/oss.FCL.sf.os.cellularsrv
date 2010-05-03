@@ -31,26 +31,23 @@ class CBttLogger;
 
 class CReceiver : public CActive
 	{
-public:
-	CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);	
-	static CReceiver* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
-	void ConstructL();
+public:	
+	static CReceiver* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize);
 	~CReceiver();
 
-public: // Inherited from CActive.
+	// Inherited from CActive.
 	virtual void RunL();
 	virtual void DoCancel();
-
-public:
 	void StartListening();
+	
+private:
+	CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize);
+	void ConstructL();
 
 private: // Unowned data.
 	CBcaIoController& iObserver;
 	CBttLogger* iTheLogger;
-	TInt iMaxPacketSise;
-	
-private:
-	
+	TUint iMaxPacketSize;
 	RBuf8 iData;
 	RMBufPacket iRMBufPacket;
 	};

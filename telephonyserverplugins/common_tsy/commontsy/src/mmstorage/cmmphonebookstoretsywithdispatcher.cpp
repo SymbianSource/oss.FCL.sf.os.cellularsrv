@@ -51,7 +51,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
         {
         TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", &iPhoneBookName);
         TInt ret = KErrNone;
-		CMmPhoneTsy::CNosBootState* bootState = iMmPhoneTsy->NosBootState();
+		CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 		
 		if ( !iCacheReady )
 			{

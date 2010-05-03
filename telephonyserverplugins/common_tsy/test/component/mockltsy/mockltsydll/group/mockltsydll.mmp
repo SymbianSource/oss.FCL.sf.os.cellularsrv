@@ -17,11 +17,6 @@ TARGET          mockltsydll.dll
 TARGETTYPE      DLL
 VENDORID 		0x70000001
 
-// Not supported under x86gcc target.
-#ifndef X86
-	exportunfrozen
-#endif
-
 CAPABILITY 		ALL -Tcb
 
 USERINCLUDE     ../inc

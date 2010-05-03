@@ -210,9 +210,8 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
             EMultimodePhoneMaxNumOfRequests
             };
 
-        class CNosBootState : public CBase
+        struct TNosBootState
             {
-            public:
                 TBool iSIMReady;
                 TBool iADNReady;
                 TBool iSecReady;
@@ -697,7 +696,7 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
          *
          * @return DOS boot state
          */
-        virtual CMmPhoneTsy::CNosBootState* NosBootState();
+        virtual CMmPhoneTsy::TNosBootState* NosBootState();
 
         /**
          * Returns current Phonebook state
@@ -707,13 +706,6 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
          */
         virtual CStorageInfoData* PhoneBookState();
 
-        /**
-         * Sets new DOS bootstate
-         *          
-         *
-         * @param aNewState new state
-         */
-        virtual void SetNosBootState( CMmPhoneTsy::CNosBootState* aNewState );
 
         /**
          * Returns a pointer to active phone extension.
@@ -2454,7 +2446,7 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
         /**
          * DOS BootState
          */         
-        CNosBootState iBootState;
+        TNosBootState iBootState;
 
         /**
          * Phonebook state

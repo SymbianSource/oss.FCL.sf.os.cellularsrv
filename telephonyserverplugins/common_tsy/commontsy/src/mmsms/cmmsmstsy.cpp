@@ -1336,6 +1336,17 @@ void CMmSmsTsy::CompleteAckSmsStored(
         {
         ReqCompleted( reqHandle, aError );
         }
+
+    if (aError != KErrNone)
+        {
+        // Ack error from LTSY. Need to reject receive messege request, to force the client to repost it.
+        reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(EMultimodeSmsReceiveMessage);
+        if( reqHandle != 0 )
+            {
+            ReqCompleted(reqHandle,  KErrGeneral);
+            }
+        iServerRoutingActivity = ERoutingNotActivated;
+        }
     }   
 
 //---------------------------------------------------------------------------- 
@@ -1471,6 +1482,17 @@ void CMmSmsTsy::CompleteNackSmsStored(
     if ( reqHandle )
         {
         ReqCompleted( reqHandle, aError );
+        }
+
+    if (aError != KErrNone)
+        {
+        // Nack error from LTSY. Need to reject receive messege request, to force the client to repost it.
+        reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(EMultimodeSmsReceiveMessage);
+        if( reqHandle != 0 )
+            {
+            ReqCompleted(reqHandle,  KErrGeneral);
+            }
+        iServerRoutingActivity = ERoutingNotActivated;
         }
     }
 

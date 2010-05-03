@@ -22,15 +22,19 @@
 #include <e32uid.h>
 #include <nifmbuf.h>
 #include <es_ini.h>
+#include <e32svr.h>
+#include <u32hal.h>
 #include "BcaController.h"
 
-_LIT(KRawIpIniFile, "rawip.ini");
-_LIT(KLinkLit, "link");
-_LIT(KHighmarkLit, "highmark");
-_LIT(KPacketLit, "packet");
-_LIT(KMaxPacketSizeLit, "maxippacketsize");
 //In order not to flow off SPUD everytime we set the default to 1
 const TUint KDefaultBufferSize=1;
+
+#ifdef __EABI__
+// Patch data is used and KMaxTxIPPacketSize and KMaxRxIPPacketSize can be modified to a different value in RawIpNif.iby file
+extern const TInt KMaxSendQueueLen = KDefaultBufferSize;
+extern const TInt KMaxTxIPPacketSize = KMaxIPPacket + KIPTagHeaderLength;
+extern const TInt KMaxRxIPPacketSize = KMaxIPPacket + KIPTagHeaderLength;
+#endif
 
 CBcaController::CBcaController(MControllerObserver& aObserver,
 	CBttLogger* aTheLogger)
@@ -42,7 +46,7 @@ CBcaController::CBcaController(MControllerObserver& aObserver,
 	  iTxFlowControl(EFlowControlOff), 
 	  iTxContextActive(ETrue), 
 	  iSendState(EIdle),
-	  iMaxSendQueueLen(1),
+	  iMaxSendQueueLen(KDefaultBufferSize),
 	  iNumPacketsInSendQueue(0)
 	{
 	iSendQueue.Init();
@@ -66,35 +70,27 @@ void CBcaController::BaseConstructL()
 	{
 	_LOG_L1C1(_L8("CBcaController::BaseConstructL"));
 	
-	// Default value for the pakcket size
-	iMaxPacketSise = KMaxIPPacket + KIPTagHeaderLength;
-
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
-	iIPTagHeader = new (ELeave) CIPTagHeader(iTheLogger);
+    iIPTagHeader = new (ELeave) CIPTagHeader(iTheLogger);
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
-
-	CESockIniData* iniData = NULL;
-	TRAPD(res, iniData = CESockIniData::NewL(KRawIpIniFile));
-	CleanupStack::PushL(iniData);
-	
-	if(res!=KErrNone)
-		{
-		_LOG_L1C2(_L8("RawIp ini file %S not found. Default values will be used."), &KRawIpIniFile);
-		CleanupStack::PopAndDestroy();
-		return;
-		}
-	
-	//here process the file
-	if(!iniData->FindVar(KLinkLit(), KHighmarkLit(), iMaxSendQueueLen))
-		{
-		iMaxSendQueueLen = KDefaultBufferSize;
-		}
-	if(!iniData->FindVar(KPacketLit(), KMaxPacketSizeLit(), iMaxPacketSise))
-		{
-		iMaxPacketSise = KMaxIPPacket + KIPTagHeaderLength;
-		}
-	
-	CleanupStack::PopAndDestroy();
+    
+#if defined (__EABI__)
+    // Default value for queue length
+    iMaxSendQueueLen = KMaxSendQueueLen;
+	// Default value for Tx and Rx packet size
+	iMaxTxPacketSize = KMaxTxIPPacketSize;
+	iMaxRxPacketSize = KMaxRxIPPacketSize;
+#else // WINS
+	// Set default values in case patch is not present in epocrawip.ini
+	iMaxSendQueueLen = KDefaultBufferSize;    
+	iMaxTxPacketSize = KMaxIPPacket + KIPTagHeaderLength;
+	iMaxRxPacketSize = KMaxIPPacket + KIPTagHeaderLength;
+	       
+	// for the emulator process is patched via the epocrawip.ini file
+	UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMaxSendQueueLen",&iMaxSendQueueLen);
+	UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMaxTxIPPacketSize",&iMaxTxPacketSize);
+	UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMaxRxIPPacketSize",&iMaxRxPacketSize);
+#endif
 	}
 
 void CBcaController::UpdateInternalFlowFlag(TFlowControl aValue)
@@ -404,7 +400,7 @@ TBool CBcaController::IsSendQueueFull()
  *  Indicator of whether the BufferQueue is full
  * @return TBool.  ETrue if bufferQueue is full, EFalse if queue is not full
  */
-	{
+	{    
 	iFullQueueFlag = iNumPacketsInSendQueue >= iMaxSendQueueLen;
 	return iFullQueueFlag;
 	}	

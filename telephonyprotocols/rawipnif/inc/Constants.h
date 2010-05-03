@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -52,7 +52,9 @@ enum TRawIPNifPanic
 	/** BCA not exist*/
 	KBcaNotExist,
     /** BCA not exist*/
-    KBcaAlreadyExists
+    KBcaAlreadyExists,
+    /** invalid packet size on uplink */
+    KFlowInvalidULPacketSize
     };
 
 
@@ -69,10 +71,6 @@ const TUint KDataPacketMaxSize = 4096;
 // BTT TSY contants
 const TInt KTsyPhone = 0;
 
-// Flow control constants
-const TInt KStopSending		= 0;
-const TInt KContinueSending	= 1;
-
 _LIT(KRawIPNifName, "RawIP");
 
 // constants for diagnostic logging
@@ -80,9 +78,9 @@ _LIT8(KNifSubDir, "RawIp");
 _LIT8(KRefFile, "RawIP"); 
 
 // Max size of IP packet 
-const TInt KMaxIPPacket = 1500;
-const TInt KIPTagHeaderLength = 2;
-const TInt KMaxIPPacketAndHeader = KMaxIPPacket + KIPTagHeaderLength;
+const TUint KMaxIPPacket = 1500;
+const TUint KIPTagHeaderLength = 2;
+const TUint KMaxIPPacketAndHeader = KMaxIPPacket + KIPTagHeaderLength;
 
 const TInt KIPTagHeaderByte1 = 0x00;
 const TInt KIPTagHeaderByte2 = 0x21;

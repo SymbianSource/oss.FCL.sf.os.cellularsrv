@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -26,8 +26,11 @@
 #include <c32comm.h>
 #include <networking/bca.h>
 #include <networking/bcafactory.h>
+// for the constants for sending/blocking
+#include <comms-infras/ss_flowbinders.h>
+#include "MControllerObserver.h"
+#include "Constants.h"
 
-#include "BcaController.h"
 using namespace BasebandChannelAdaptation;
 
 class CBttLogger;
@@ -51,24 +54,17 @@ typedef MBcaFactory* (*TNewBcaFactoryL)();
 /** 
 @internalComponent 
 */	
-class CBcaIoController : public CBcaController
+class CBcaIoController : public CBase
 	{
 public:
-	CBcaIoController(MControllerObserver& aObserver, CBttLogger* aTheLogger);
-	static CBcaIoController* NewL(MControllerObserver& aObserver, CBttLogger* aTheLogger);
-	void ConstructL();
+	static CBcaIoController* NewL(MControllerObserver& aObserver, CBttLogger* aTheLogger);	
 	~CBcaIoController();
 
-public:
 	void StartL();
 	void Stop(TInt aError = KErrNone);
-
-public:  // Process Down/Up stack data packets 
-	void BcaProcess(TDesC8& aPdu);
-	void BcaSend(RMBufChain& aPdu);
-	void BcaSendComplete();
-
-public:
+	ESock::MLowerDataSender::TSendResult Send(RMBufChain& aPdu);
+	void SendComplete();
+	
 	inline CSender& Sender();
 	inline CReceiver& Receiver();
 	inline TUint Nsapi();
@@ -81,32 +77,101 @@ public:
 	inline TPtrC Port() const;
 	inline void SetIapId(TUint32 aIapId);
 	inline TUint32 IapId();
-	TInt BcaSendBufferLength();
-	
+    inline void BlockSending(void) { iFlowBlocked = ETrue; }
+    void ResumeSending();
+    
+    // Get the NIF reference.
+    inline MControllerObserver& GetObserver() { return iObserver; }
+    
+#ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
+    // tag headers
+    void SetType(TUint16 aType);
+    void AddHeader(TDes8& aDes);
+    TUint16 RemoveHeader(RMBufChain& aPdu);
+#endif // RAWIP_HEADER_APPENDED_TO_PACKETS
+    
+protected:
+    CBttLogger* iTheLogger;
+    TUint iMaxTxPacketSize;
+    TUint iMaxRxPacketSize;
+    
 private:
-	void InitialiseBcaL();
+    
+    CBcaIoController(MControllerObserver& aObserver, CBttLogger* aTheLogger);
+    void ConstructL();
+    
+    enum TSendState
+        {
+        EIdle,
+        ESending,
+        EShuttingDown
+        };
+       
+    enum TInitialisationState
+        {
+        EStart,
+        EBcaController,
+        EInitialised
+        };
+    
+    // Flow control flags
+    TSendState iSendState;
+    
+    inline void SendState(TSendState aState) { iSendState = aState; }
+    
+    
+    // uplink flow control
+    TBool iFlowBlocked;
 
-private: // Flow Control
-	void ResumeSending();
+    // Buffer control
+    inline TBool IsSendQueueEmpty() { return iSendQueue.IsEmpty(); }
+    inline TBool IsSendQueueFull() { return (iNumPacketsInSendQueue >= iMaxSendQueueLen) ? ETrue : EFalse; }
 
-private: // Unowned data.
-	/** Pointer to the BCA */
-   	MBca* iMBca;
+    inline void AppendToSendQueue(RMBufChain& aPdu) 
+        {  
+        iSendQueue.Append(aPdu);
+        iNumPacketsInSendQueue++; 
+        }
+ 
+    inline TBool RemoveFromSendQueue(RMBufChain& aPdu) 
+        {
+        TBool ret = iSendQueue.Remove(aPdu);
+         if(ret)
+             {
+             iNumPacketsInSendQueue--;
+             }
+         return ret;
+        }
+    
+    /** The internal packet buffer */
+    RMBufPktQ iSendQueue;
+    /** The maximum number of packets that we want in an internal queue */
+    TUint iMaxSendQueueLen;
+    /** Current number of packets in the internal packet buffer */
+    TInt iNumPacketsInSendQueue;
+    
+    MControllerObserver& iObserver;
+    
+    // Unowned data.
+    /** Pointer to the BCA */
+    MBca* iMBca;
+    
+    /** used to send data*/
+    CSender* iSender;
+    /** used to receive data*/
+    CReceiver* iReceiver;
+    /** used to load, open and close the BCA*/
+    CBcaControl* iLoader;
+    /** IAP ID used to open CommDB*/
+    TUint32 iIapId;
+    /** Bca name*/
+    TPtrC iBcaName;
+    /** Bca Stack*/
+    TPtrC iBcaStack;
+    /** CommPort Name*/
+    TPtrC iCommPort;
 
-	/** used to send data*/
-	CSender* iSender;
-	/** used to receive data*/
-	CReceiver* iReceiver;
-	/** used to load, open and close the BCA*/
-	CBcaControl* iLoader;
-	/** IAP ID used to open CommDB*/
-	TUint32 iIapId;
-	/** Bca name*/
-	TPtrC iBcaName;
-	/** Bca Stack*/
-	TPtrC iBcaStack;
-	/** CommPort Name*/
-	TPtrC iCommPort;
+
 	};
 
 inline CSender& CBcaIoController::Sender()

@@ -789,7 +789,7 @@ TFLOGSTRING("TSY: CMmPhoneTsy::NotifyIndicatorChangeCancel");
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-CMmPhoneTsy::CNosBootState* CMmPhoneTsy::NosBootState()
+CMmPhoneTsy::TNosBootState* CMmPhoneTsy::NosBootState()
     {
     return &iBootState;
     }
@@ -803,21 +803,6 @@ CMmPhoneTsy::CNosBootState* CMmPhoneTsy::NosBootState()
 CStorageInfoData* CMmPhoneTsy::PhoneBookState()
     {
     return iPhoneBookState;
-    }
-
-// ---------------------------------------------------------------------------
-// CMmPhoneTsy::SetNosBootState
-// Returns current Phonebook state
-// (other items were commented in a header).
-// ---------------------------------------------------------------------------
-//
-void CMmPhoneTsy::SetNosBootState(
-    CMmPhoneTsy::CNosBootState* aNewState )
-    {
-    iBootState.iSIMReady = aNewState->iSIMReady;
-    iBootState.iADNReady = aNewState->iADNReady;
-    iBootState.iSecReady = aNewState->iSecReady;
-    iBootState.iCachingActive = aNewState->iCachingActive;
     }
 
 // ---------------------------------------------------------------------------

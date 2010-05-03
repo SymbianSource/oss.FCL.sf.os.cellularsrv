@@ -1761,6 +1761,10 @@ TVerdict CCTSYIntegrationTestAPNControlList0011::doTestStepL()
 	RMobilePhone::TAPNControlListServiceStatus serviceApnControlListStatus=RMobilePhone::EAPNControlListServiceEnabled;
 	TExtEtelRequestStatus setAPNControlListServiceStatus(mobilePhone, EMobilePhoneSetAPNControlListServiceStatus);
 	CleanupStack::PushL(setAPNControlListServiceStatus);
+
+	// Verify PIN2 before accessing APN function
+	iSimTestHelper.VerifyPin2L(mobilePhone, iNetworkTestHelper);
+
 	mobilePhone.SetAPNControlListServiceStatus(setAPNControlListServiceStatus, serviceApnControlListStatus);
 	
 	// Cancel request with RTelSubSessionBase.CancelAsyncRequest( EMobilePhoneSetAPNControlListServiceStatus ); 
@@ -1930,6 +1934,10 @@ TVerdict CCTSYIntegrationTestAPNControlList0013::doTestStepL()
 	RMobilePhone::TAPNEntryV3Pckg myAPnEntryPckg(myAPnEntry);
 	TExtEtelRequestStatus getAPNnameStatus(mobilePhone, EMobilePhoneGetAPNname);
 	CleanupStack::PushL(getAPNnameStatus);
+
+	// Verify PIN2 before accessing APN function
+	iSimTestHelper.VerifyPin2L(mobilePhone, iNetworkTestHelper);
+
 	mobilePhone.GetAPNname(getAPNnameStatus,index, myAPnEntryPckg);
 	
 	// Cancel request with RTelSubSession::CancelAsyncRequest( EMobilePhoneGetAPNname ); 
@@ -2016,6 +2024,10 @@ TVerdict CCTSYIntegrationTestAPNControlList0014::doTestStepL()
 	RMobilePhone::TAPNEntryV3Pckg myAPnEntryPckg(myAPnEntry);
 	TExtEtelRequestStatus appendAPNNameStatus(mobilePhone, EMobilePhoneAppendAPNName);
 	CleanupStack::PushL(appendAPNNameStatus);
+	
+	// Verify PIN2 before accessing APN function
+	iSimTestHelper.VerifyPin2L(mobilePhone, iNetworkTestHelper);
+
 	mobilePhone.AppendAPNName(appendAPNNameStatus, myAPnEntryPckg);
 	
 	// Cancel request with RTelSubSession::CancelAsyncRequest( EMobilePhoneAppendAPNName ); 
@@ -2099,6 +2111,10 @@ TVerdict CCTSYIntegrationTestAPNControlList0015::doTestStepL()
 	TUint32 index=0;
 	TExtEtelRequestStatus deleteAPNNameStatus(mobilePhone, EMobilePhoneDeleteAPNName);
 	CleanupStack::PushL(deleteAPNNameStatus);
+
+	// Verify PIN2 before accessing APN function
+	iSimTestHelper.VerifyPin2L(mobilePhone, iNetworkTestHelper);
+
 	mobilePhone.DeleteAPNName(deleteAPNNameStatus, index);
 	
 	// Cancel request with RTelSubSession::CancelAsyncRequest( EMobilePhoneDeleteAPNName ); 

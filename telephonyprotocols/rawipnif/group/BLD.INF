@@ -34,6 +34,11 @@ PRJ_EXPORTS
 
 RawIpNif.iby		/epoc32/rom/include/rawipnif.iby
 
+PRJ_TESTEXPORTS
+
+// epoc.ini alternative and batchfile for replacement
+../DATA/epocrawip.ini z:/testdata/configs/epocrawip.ini
+../DATA/replaceepocrawipini.bat z:/testdata/configs/replaceepocrawipini.bat
 
 PRJ_MMPFILES
 

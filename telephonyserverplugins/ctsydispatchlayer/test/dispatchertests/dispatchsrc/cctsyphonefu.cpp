@@ -1232,10 +1232,9 @@ void CCTsyPhoneFU::TestUnit0012L()
 	iPhone.GetFdnStatus(reqStatus,fdnStatus);
 	User::WaitForRequest(reqStatus);
 	ASSERT_EQUALS(reqStatus.Int(), KErrGeneral);
-	ASSERT_EQUALS(compFdnStatus,fdnStatus);
 	AssertMockLtsyStatusL();
 
-	//test the case where the LTSY returns KErrGeneral - synchronous call
+	//test the case where the LTSY returns KErrNone - synchronous call
 	iMockLTSY.ExpectL(MLtsyDispatchPhoneGetFdnStatus::KLtsyDispatchPhoneGetFdnStatusApiId);
 
 	compFdnStatus = RMobilePhone::EFdnNotActive;

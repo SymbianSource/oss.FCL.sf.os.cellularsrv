@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -25,12 +25,6 @@ PRJ_TESTEXPORTS
 ../testdata/ctsyintegration_trpstubbed_setup.ini	z:/testdata/configs/ctsyintegration_trpstubbed_setup.ini
 ../testdata/ctsyintegration_data.ini				z:/testdata/configs/ctsyintegration_data.ini
 ../testdata/uk_commdb.cfg					z:/testdata/configs/uk_commdb.cfg
-
-../../RPS/group/RPSSlave.oby    	/epoc32/rom/include/rpsslave.oby
-../../RPS/group/RPSSlave.iby   	/epoc32/rom/include/rpsslave.iby
-   
-../../RPS/group/RPSSlaveAutoexec.bat		/epoc32/data/z/rpsslaveautoexec.bat
-
 
 ./te_ctsyintegrationtestsuite.iby   				/epoc32/rom/include/te_ctsyintegrationtestsuite.iby
 
@@ -127,8 +121,7 @@ PRJ_MMPFILES
 
 PRJ_TESTMMPFILES
 //To resolve RPS dependency for integration tests
-../../RPS/group/RpsCommon.mmp
-../../RPS/group/RPSMaster.mmp
-../../RPS/group/RPSSlave.mmp
+// RPS
+#include "../../RPS/group/bld.inf"
 
 te_ctsyintegrationtestsuite.mmp

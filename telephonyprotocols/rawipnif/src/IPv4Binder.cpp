@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -25,6 +25,7 @@
 #include "RawIPFlow.h"
 #include "IPv4Binder.h"
 #include <comms-infras/linkprovision.h>
+#include <u32hal.h>
 
 using namespace ESock;
 #ifdef WCDMA_STUB
@@ -33,6 +34,12 @@ using namespace ESock;
 
 #define LOG_IP_ADDRESS(desc,addr) _LOG_L1C5(_L8("    " desc " = %d.%d.%d.%d"), \
 			addr >> 24, (addr >> 16) & 0xFF, (addr >> 8) & 0xFF, addr & 0xFF);
+
+#ifdef __EABI__
+// Patch data is used and KMtuIPv4 and KRMtuIPv4 can be modified to a different value in RawIpNif.iby file
+extern const TInt KMtuIPv4 = KDefaultMtu;
+extern const TInt KRMtuIPv4 = KDefaultMtu;
+#endif
 
 CIPv4Binder::CIPv4Binder(CRawIPFlow& aFlow, CBttLogger* aTheLogger)
 /**
@@ -164,8 +171,22 @@ TInt CIPv4Binder::GetConfig(TBinderConfig& aConfig)
 	config->iFamily = KAfInet;		/* KAfInet - selects TBinderConfig4 */
 	
 	config->iInfo.iFeatures = KIfCanBroadcast | KIfCanMulticast;		/* Feature flags */
-	config->iInfo.iMtu = KDefaultMtu;				/* Maximum transmission unit. */
-	config->iInfo.iRMtu = KDefaultMtu;				/* Maximum transmission unit for receiving. */
+	
+	
+#if defined __EABI__
+    // Default value for Tx and Rx packet size
+    config->iInfo.iMtu = KMtuIPv4;
+    config->iInfo.iRMtu = KRMtuIPv4;
+#else // WINS
+    // Set default values in case patch is not present in epoc.ini
+    config->iInfo.iMtu = KDefaultMtu;
+    config->iInfo.iRMtu = KDefaultMtu;
+           
+    // for the emulator process is patched via the epoc.ini file
+    UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMtuIPv4",&(config->iInfo.iMtu));
+    UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KRMtuIPv4",&(config->iInfo.iRMtu));
+#endif
+	
 	config->iInfo.iSpeedMetric = iSpeedMetric;		/* approximation of the interface speed in Kbps. */
 
     LOG_IP_ADDRESS("Local IP address from TBinderConfig", iSettings.iLocalAddr);
@@ -355,7 +376,7 @@ MLowerDataSender::TSendResult CIPv4Binder::Send(RMBufChain& aPdu)
  * Called by the protocol to send an outgoing IP packet to the network.
  *
  * @param aPdu The outgoing packet
- * @return Standard error codes
+ * @return MLowerDataSender::ESendBlocked or ESendAccepted based on state of flow.
  */
 	{
 	_LOG_L1C1(_L8("CIPv4Binder::Send"));
@@ -364,10 +385,10 @@ MLowerDataSender::TSendResult CIPv4Binder::Send(RMBufChain& aPdu)
 	LogPacket(aPdu);
 #endif
 
-	// Return <0: an error occurred
-	// Return  0: no error, but don't send any more packets
+	// Return ESendBlocked: flow cannot accept any more packets [blocked, queue full, etc]
+	// Return ESendAccepted: flow has accepted this packet and can accept another.
 
-	return static_cast<MLowerDataSender::TSendResult>(GetFlow().SendPacket(aPdu, NULL, KIp4FrameType));
+	return GetFlow().SendPacket(aPdu, NULL, KIp4FrameType);
 	}
 
 TInt CIPv4Binder::Notification(TAgentToNifEventType /*aEvent*/, 

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -105,7 +105,7 @@ public:
 	void LinkLayerDown(TInt aError);
 
 public:	// Send data to CBcaIoController
-	TInt SendPacket(RMBufChain& aPdu, TAny* /*aSource=0*/,
+	ESock::MLowerDataSender::TSendResult SendPacket(RMBufChain& aPdu, TAny* /*aSource=0*/,
 		TUint16 /*aType=KIp4FrameType*/);
 
 public:	// Context status retrieval.
