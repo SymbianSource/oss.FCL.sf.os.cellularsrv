@@ -14,11 +14,6 @@
 // cltsydispatchsimhandler.h
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CLTSYDISPATCHSIMHANDLER_H_
 #define __CLTSYDISPATCHSIMHANDLER_H_
 

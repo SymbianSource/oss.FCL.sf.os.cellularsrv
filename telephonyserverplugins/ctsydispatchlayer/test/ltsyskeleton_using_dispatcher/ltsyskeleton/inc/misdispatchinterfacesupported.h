@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef MISDISPATCHINTERFACESUPPORTED_H_
 #define MISDISPATCHINTERFACESUPPORTED_H_
 

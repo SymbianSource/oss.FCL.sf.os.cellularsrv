@@ -2482,12 +2482,12 @@ TFLOGSTRING3("TSY: CMmPacketServiceTsy::CancelService. IPC: %d Tsy Req Handle:%d
         // Reset tsy request handle
         iTsyReqHandleStore->ResetTsyReqHandle( iReqHandleType );
 
-        // Complete request with KErrCancel
-        CMmPacketServiceTsy::ReqCompleted( aTsyReqHandle, KErrCancel );
-        
         // We've finished with this value now. Clear it so it doesn't leak
         //  up to any other instances of this method down the call stack
         iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
+
+        // Complete request with KErrCancel
+        CMmPacketServiceTsy::ReqCompleted( aTsyReqHandle, KErrCancel );
         }
 
     return ret;

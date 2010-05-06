@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the Phone
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYPHONEFU_H
 #define CCTSYPHONEFU_H
 

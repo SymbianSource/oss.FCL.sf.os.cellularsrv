@@ -21,11 +21,6 @@
  @file The TEFUnit header file which tests the Sms
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYSMSFUNEGATIVE_H__
 #define CCTSYSMSFUNEGATIVE_H__
 

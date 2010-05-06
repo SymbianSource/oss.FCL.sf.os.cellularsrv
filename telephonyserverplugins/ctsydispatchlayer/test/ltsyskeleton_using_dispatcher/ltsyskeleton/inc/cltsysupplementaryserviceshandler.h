@@ -14,11 +14,6 @@
 // cltsydispatchsupplementaryserviceshandler.h
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CLTSYDISPATCHSUPPLEMENTARYSERVICESHANDLER_H_
 #define __CLTSYDISPATCHSUPPLEMENTARYSERVICESHANDLER_H_
 

@@ -14,10 +14,7 @@
 // Base class for CTSY component tests
 //
 
-/**
- @file
- @internalAll 
-*/
+
 
 #ifndef CCTSYCOMPONENTTESTBASE_H
 #define CCTSYCOMPONENTTESTBASE_H

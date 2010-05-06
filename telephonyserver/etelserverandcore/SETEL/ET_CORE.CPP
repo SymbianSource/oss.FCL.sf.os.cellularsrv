@@ -18,6 +18,7 @@
 #include <f32file.h>
 #include "etsvr_slots.h"
 #include "et_phone_util.h"
+#include "et_patchdata.h"
 //
 //
 // CFaxBase
@@ -134,8 +135,8 @@ EXPORT_C CTelObject::TReqMode CFaxBase::ReqModeL(const TInt aIpc)
 	switch (aIpc)
 		{
 	case EEtelFaxTerminateFaxSession:
-		mode=KReqModeMultipleCompletionEnabled;	// if two clients call this, only want the first to
-											// be acted upon
+		// if two clients call this, only want the first to be acted upon
+		mode=KReqModeMultipleCompletionEnabled;	
 		break;
 	case EEtelFaxRead:
 	case EEtelFaxWrite:
@@ -882,7 +883,7 @@ CReqEntry* CPhoneBase::ActivateNextWaitingReq()
 		return NULL;
 	reqEntry->iLink.Deque();
 	iReqActiveList.AddLast(*reqEntry);
-	if (reqEntry->iReqMode & KReqModeMultipleCompletionEnabled)
+	if (reqEntry->iReqMode & KReqModeMultipleCompletionEnabled | KReqModeMultipleCompletionWithInterestLevel)
 		{
 		CReqEntry* otherClientsEntry;
 		TDblQueIter<CReqEntry> iter(iReqWaitList);
@@ -928,6 +929,30 @@ CReqEntry* CPhoneBase::FindByTsyHandle(const TTsyReqHandle aTsyReqHandle)
 	return NULL;
 	}
 
+/*
+EXPORT_C TInt CPhoneBase::FindSessionByTsyHandle(const TTsyReqHandle aTsyReqHandle)
+	{
+	CReqEntry* reqEntry = FindByTsyHandle(aTsyReqHandle);
+	if (!reqEntry)
+		{
+		// TODO we'd need to ensure the subsession handle was positive
+		// to be able to return an error. Shifting the pointer >>1
+		// would ensure this.
+		return KErrNotFound;
+		}
+	return reinterpret_cast<TInt>(reqEntry->iSession);
+	}
+
+EXPORT_C TInt CPhoneBase::FindSubSessionByTsyHandle(const TTsyReqHandle aTsyReqHandle)
+	{
+	CReqEntry* reqEntry = FindByTsyHandle(aTsyReqHandle);
+	if (!reqEntry)
+		{
+		return KErrNotFound;
+		}
+	return reqEntry->iMessage.Int3();
+	}
+*/
 void CPhoneBase::UpdateBuffer(CReqEntry* aUpdatedReqEntry,CReqEntry* aReqEntry)
 //
 //	Is passed both the TSY-updated request entry (which may be multi-buffered or not)
@@ -1254,6 +1279,359 @@ void CPhoneBase::CheckAndCompleteAllActive(CReqEntry* aUpdatedReqEntry,const TRe
 			}
 		}
 	}
+
+
+// The delivery object performs the task of delivering the request to the
+// client. It loops through the clients in priority order and gives each
+// client a fixed amount of time to either accept or reject. At the end
+// the request will either be allocated or discarded (if no one wants it).
+
+CMmDeliveryObject* CMmDeliveryObject::NewL( CTelObject& aTelObject )
+	{
+	CMmDeliveryObject* self=new(ELeave) CMmDeliveryObject( aTelObject );
+	CleanupStack::PushL( self );
+	self->ConstructL();
+	CleanupStack::Pop( self );
+	return self;
+	}
+
+CMmDeliveryObject::CMmDeliveryObject( CTelObject& aTelObject ) :
+	CActive(EPriorityStandard), iTelObject(aTelObject)
+	{
+	CActiveScheduler::Add( this );
+	}
+
+void CMmDeliveryObject::ConstructL()
+	{
+	User::LeaveIfError( iDeliveryTimer.CreateLocal() );
+	}
+
+CMmDeliveryObject::~CMmDeliveryObject()
+	{
+	Cancel();
+	iDeliveryTimer.Close();
+	iPendingReqs.Close();
+	}
+
+void CMmDeliveryObject::DoCancel()
+	{
+	iDeliveryTimer.Cancel();
+	}
+
+// Called either when we need to attempt delivery of a request.
+// Can be due to:
+// 1) the start of the delivery process.
+// 2) a client rejecting the request which makes us try the next one.
+// 3) a client timing out which makes us try the next one.
+void CMmDeliveryObject::RunL()
+	{
+
+    if ( iStatus == KErrNone && iUpdatedReqEntry)
+		{
+		
+		TInterestCategory interestCategory;
+		iCurrentReq = NULL;
+		iCurrentReq = HighestPriorityReq(interestCategory);
+		
+		if ( iCurrentReq )
+			{
+			if (iUpdatedReqEntry!=iCurrentReq)
+				{
+				iTelObject.PhoneOwner()->UpdateBuffer(iUpdatedReqEntry,iCurrentReq);
+				}
+
+			// Offer incoming message to interested clients one at a time.
+			// Initially the priority client followed by Standard category clients.
+			OfferToClient( iCurrentReq );
+			
+			// Client will have a certain time in which to accept/reject the message.
+			// After which it will be offered to the next client.
+			switch ( interestCategory ) 
+			{
+			case EInterestCategoryPriority:
+				iDeliveryTimer.After( iStatus, (KUssdOfferDialogueTimeout * KUssdPriorityTimeoutPercentage)/100 );
+				SetActive();
+				break;
+			case EInterestCategoryStandard:
+				iDeliveryTimer.After( iStatus, iTimeSlice );
+				SetActive();
+				break;
+			case EInterestCategoryDefault:
+				// wait on default client (no timeout) //TODO: What if the default client doesn't respond? (Neil)
+				break;
+			default:
+                // No more clients
+                Clear();
+            } // end switch
+			}
+		else
+			{
+			iTelObject.RepostRequest( iUpdatedReqEntry, KErrNone );				
+
+			// No more clients left to check
+			Clear();
+			}
+		}
+	else
+		{
+		// Delivery has failed.
+		Clear();
+		}
+	}
+
+TInt CMmDeliveryObject::DeliverReqL( TDblQue<CReqEntry>& aArray, CReqEntry* aUpdatedReqEntry,
+                                                const CTelObject::TReqMode aReqMode, const TInt aIpc, TInt aError)
+	{
+	iPendingReqs.Reset();
+	
+	ASSERT(aUpdatedReqEntry != NULL);
+	iUpdatedReqEntry = aUpdatedReqEntry;
+	iReqMode = aReqMode;
+	iError = aError;
+	
+	CReqEntry* reqEntry = NULL;
+	TDblQueIter<CReqEntry> iter(aArray);
+	while(reqEntry = iter++, reqEntry!=NULL)
+		{
+		if(reqEntry->iFunction==aIpc 
+			&& reqEntry->iTelObject==iUpdatedReqEntry->iTelObject 
+			&& reqEntry->iBuffer->Size()==iUpdatedReqEntry->iBuffer->Size())	
+			{						
+			switch (reqEntry->iInterestCategory) 
+			{
+            case EInterestCategoryPriority:
+                {
+                // If we don't already have a priority client registered,
+                // then add this one as the priority client.
+                if (iPriorityReq == NULL)
+                    {
+                    iPriorityReq = reqEntry;
+                    }
+                // Otherwise if there is already a registered priority client,
+                // add this to the list of standard clients to be treated as such.
+                else
+                    {
+                    iPendingReqs.AppendL( reqEntry );
+                    }
+                break;
+                }
+            case EInterestCategoryDefault:
+                {
+                // If we don't already have a default client registered,
+                // then add this one as the default client.
+                if (iDefaultReq == NULL)
+                    {
+                    iDefaultReq = reqEntry;
+                    }
+                // Otherwise if there is already a registered default client,
+                // add this to the list of standard clients to be treated as such.
+                else
+                    {
+                    iPendingReqs.AppendL( reqEntry );
+                    }
+                break;
+                }
+			default:
+				{
+				iPendingReqs.AppendL( reqEntry );
+				}
+			} //end switch
+			} //end if 
+		}
+
+	// Calculate amount of time each client will get to accept the request
+	TInt count = iPendingReqs.Count();
+	if (count)
+	    {
+		if (iPriorityReq)
+			{
+			iTimeSlice = (KUssdOfferDialogueTimeout *  (100 - KUssdPriorityTimeoutPercentage)/(100 * count) );
+			}
+		else
+			{
+			iTimeSlice = KUssdOfferDialogueTimeout / count ;
+			}	
+	    }
+
+	// now start looping through clients...
+	DoStart();
+	return KErrNone;
+	}
+
+TBool CMmDeliveryObject::DeliveryInProgress() const
+	{
+	// In the case of delivery to the default client we won't be active when
+	// delivery is carried out as no timeout is used for the default client -
+	// TODO is it correct that the default client should have no timeout?
+	return (IsActive() || iCurrentReq);
+	}
+
+TInt CMmDeliveryObject::ClientsDecision( const RMessage2& aMessage, CTelSession* aSession, TBool aAccepted )
+	{
+	if (!DeliveryInProgress())
+        {
+        return KErrTimedOut;
+        }
+
+	const TInt currentreqsession = reinterpret_cast<TInt>(iCurrentReq->iSession);
+	const TInt currentreqsubsession = iCurrentReq->iMessage.Int3(); 
+	
+	const TInt clientsession = reinterpret_cast<TInt>(aSession);
+	const TInt clientsubsession = aMessage.Int3();
+	
+	if (currentreqsession != clientsession ||
+		currentreqsubsession != clientsubsession)
+		{
+		// do nothing - client took too long to reply and we've moved 
+		// onto another client now
+		return KErrTimedOut;
+		}
+	
+	if (aAccepted)
+		{
+		Cancel();
+		iTelObject.SetSessionOwner(clientsession, clientsubsession);
+		ASSERT(iUpdatedReqEntry != NULL);
+		// We repost the request so we don't miss the next message in the dialog
+		// in case the client is slow in calling ReceiveMessage again.
+		iTelObject.RepostRequest(iUpdatedReqEntry, KErrNone);
+		Clear();
+		}
+	else
+		{
+		Cancel();
+		DoStart();
+		}
+	return KErrNone;
+	}
+
+void CMmDeliveryObject::OfferToClient( CReqEntry* aReq )
+	{
+	iTelObject.OfferToClient(aReq, iUpdatedReqEntry, iReqMode, iError);
+	}
+
+
+// CMmDeliveryObject is being notified that a client has called cancel. 
+// The relevant CReqEntry is being passed as a parameter.
+// Need to remove it from our list of interested  (in Receiving messages) clients.	
+
+void CMmDeliveryObject::DeletedReqEntry( CReqEntry* aReqEntry )
+	{	
+	if (iCurrentReq == aReqEntry)
+	    {
+	    iCurrentReq = NULL;
+	    }
+
+	if (iPriorityReq == aReqEntry)
+		{
+		iPriorityReq = NULL;
+		}	
+		
+	if (iDefaultReq == aReqEntry)
+		{
+		iDefaultReq = NULL;
+ 		}
+		
+	if ( iPendingReqs.Count() )
+		{
+		for (TInt i = iPendingReqs.Count()-1; i>=0; --i)
+			{
+			if (aReqEntry == iPendingReqs[i])
+				{
+				iPendingReqs.Remove(i);
+				break;
+				}
+			}
+		}
+		
+    if (aReqEntry == iUpdatedReqEntry)
+        {
+        // iUpdatedReqEntry is the client which cancelled. 
+        // Copy data from the 'about to be destroyed' entry to 
+        // one owned by the next client.
+
+        CReqEntry*  req = NewUpdatedReqEntry();
+        if (req == NULL)
+            // No more clients left.
+            {
+            Cancel();
+            iPendingReqs.Close();
+            }
+        else
+            {
+            ASSERT(aReqEntry != req);
+            iTelObject.PhoneOwner()->UpdateBuffer(iUpdatedReqEntry,req);
+            iUpdatedReqEntry = req;	
+            }
+        }
+    }
+
+CReqEntry* CMmDeliveryObject::NewUpdatedReqEntry()
+	{
+	if (iCurrentReq)
+		return iCurrentReq;
+		
+	CReqEntry* req = NULL;
+	if (iPriorityReq)
+		{
+		req = iPriorityReq;
+		}
+	else if ( iPendingReqs.Count() )
+		{
+		req = iPendingReqs[0];
+		}
+	else if (iDefaultReq)
+		{
+		req = iDefaultReq;
+		}
+	return req;	
+	}
+
+	
+CReqEntry* CMmDeliveryObject::HighestPriorityReq( TInterestCategory& aInterestCategory )
+	{
+	aInterestCategory = EInterestCategoryStandard;
+	CReqEntry* req = NULL;
+	if (iPriorityReq)
+		{
+		req = iPriorityReq;
+		iPriorityReq = NULL;
+		aInterestCategory = EInterestCategoryPriority;
+		}
+	else if ( iPendingReqs.Count() )
+		{
+		req = iPendingReqs[0];
+		iPendingReqs.Remove(0);
+        aInterestCategory = EInterestCategoryStandard;
+		}
+	else if (iDefaultReq)
+		{
+		req = iDefaultReq;
+		iDefaultReq = NULL;
+        aInterestCategory = EInterestCategoryDefault;
+		}
+	return req;
+	}
+
+void CMmDeliveryObject::DoStart()
+	{
+	SetActive();
+	TRequestStatus* status = &iStatus;
+	User::RequestComplete( status, KErrNone );
+	}
+
+void CMmDeliveryObject::Clear()
+	{
+	iPendingReqs.Reset();	
+	iCurrentReq = NULL;
+	iPriorityReq = NULL;
+	iDefaultReq = NULL;
+	
+	iUpdatedReqEntry = NULL;
+	iReqMode = 0;
+	iError = KErrNone;
+	}
+
 //
 // CPhoneBase performs Flow Control
 //
@@ -1343,5 +1721,3 @@ TDblQue<CReqEntry>& CPhoneBase::ReqActiveList()
 	{
 	return iReqActiveList;
 	}
-
-

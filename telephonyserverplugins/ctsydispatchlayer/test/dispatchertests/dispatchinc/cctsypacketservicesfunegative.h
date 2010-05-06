@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the CallControl
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYPACKETSERVICESFUNEGATIVE_H
 #define CCTSYPACKETSERVICESFUNEGATIVE_H
 

@@ -377,6 +377,16 @@ DECLARE_SMELEMENT_HEADER( TNoTagOrProviderStopped, MeshMachine::TStateFork<TCont
   	virtual TInt TransitionTag();
 DECLARE_SMELEMENT_FOOTER( TNoTagOrProviderStopped )
 
+DECLARE_SMELEMENT_HEADER( TCleanupFSM, MeshMachine::TStateTransition<TContext>, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
+    virtual void DoL();
+DECLARE_SMELEMENT_FOOTER( TCleanupFSM)
+
+DECLARE_AGGREGATED_TRANSITION2(
+   TCleanupFSMAndDataClients,
+   PDPSCprStates::TCleanupFSM,
+   PRStates::TDestroyOrphanedDataClients
+   )    
+
 
 //===========================================================
 //   Sip Address retrieval

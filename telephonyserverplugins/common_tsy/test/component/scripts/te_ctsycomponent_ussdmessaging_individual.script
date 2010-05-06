@@ -131,11 +131,88 @@ START_TESTCASE BA-CTSY-USSDM-URM-0002
 //!@SYMComponent telephony_ctsy
 //!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::ReceiveMessage
 //!@SYMTestPriority High
-//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::ReceiveMessage (including via calling Close).
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002L
 END_TESTCASE BA-CTSY-USSDM-URM-0002
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002b
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, first client calls Cancel before message received.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002bL
+END_TESTCASE BA-CTSY-USSDM-URM-0002b
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002c
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, first client calls Cancel AFTER accepting dialogue.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002cL
+END_TESTCASE BA-CTSY-USSDM-URM-0002c
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002d
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, second client calls Cancel.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002dL
+END_TESTCASE BA-CTSY-USSDM-URM-0002d
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002e
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002e
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, second client calls Close().
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002eL
+END_TESTCASE BA-CTSY-USSDM-URM-0002e
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002f
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002f
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Cancel one of the clients in the middle of a delivery. 
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002fL
+END_TESTCASE BA-CTSY-USSDM-URM-0002f
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002g
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002g
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Have two clients. Request offered to 1st. 1st client cancels. 2nd client should now be offered request.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002gL
+END_TESTCASE BA-CTSY-USSDM-URM-0002g
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002h
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002h
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Have two clients. Request offered to 1st. 1st client cancels. 2nd client should now be offered request.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002hL
+END_TESTCASE BA-CTSY-USSDM-URM-0002h
 
 START_TESTCASE BA-CTSY-USSDM-URM-0003
 //!@SYMTestCaseID BA-CTSY-USSDM-URM-0003
@@ -159,6 +236,60 @@ START_TESTCASE BA-CTSY-USSDM-URM-0004
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004L
 END_TESTCASE BA-CTSY-USSDM-URM-0004
 
+START_TESTCASE BA-CTSY-USSDM-URM-0004b
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004bL
+END_TESTCASE BA-CTSY-USSDM-URM-0004b
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004c
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004cL
+END_TESTCASE BA-CTSY-USSDM-URM-0004c
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004d
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004dL
+END_TESTCASE BA-CTSY-USSDM-URM-0004d
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004e
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004e
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004eL
+END_TESTCASE BA-CTSY-USSDM-URM-0004e
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004f
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004f
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004fL
+END_TESTCASE BA-CTSY-USSDM-URM-0004f
 START_TESTCASE BA-CTSY-USSDM-UNNR-0001
 //!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001
 //!@SYMComponent telephony_ctsy
@@ -269,3 +400,201 @@ START_TESTCASE BA-CTSY-USSDM-UGC-0003
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestGetCaps0003L
 END_TESTCASE BA-CTSY-USSDM-UGC-0003
 
+// The USSD test client is copied into new executables with differing SIDs to differentiate
+//  between a priority/default/normal clients.
+//
+RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 11111111 ussdtestclient_priority.exe
+RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 55555555 ussdtestclient_normal.exe
+RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 22222222 ussdtestclient_default.exe
+
+START_TESTCASE BA-CTSY-USSDM-URM-0005
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0005
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client is offered dialogue first and accepts.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0001L
+END_TESTCASE BA-CTSY-USSDM-URM-0005
+
+START_TESTCASE BA-CTSY-USSDM-URM-0006
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0006
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client takes too long before accepting/rejecting dialogue. Next standard client to accept will get the dialogue
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0002L
+END_TESTCASE BA-CTSY-USSDM-URM-0006
+
+START_TESTCASE BA-CTSY-USSDM-URM-0007
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0007
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client rejects the dialogue. Next standard client to accept will get the dialogue.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0003L
+END_TESTCASE BA-CTSY-USSDM-URM-0007
+
+START_TESTCASE BA-CTSY-USSDM-URM-0008
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0008
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client rejects the dialogue. Standard client takes too long before accepting/rejecting the dialogue. Default client accepts the dialogue.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0004L
+END_TESTCASE BA-CTSY-USSDM-URM-0008
+
+START_TESTCASE BA-CTSY-USSDM-URM-0009
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0009
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client rejects the dialogue. Standard client rejects the dialogue. Default client accepts the dialogue.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0005L
+END_TESTCASE BA-CTSY-USSDM-URM-0009
+
+START_TESTCASE BA-CTSY-USSDM-URM-0010
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0010
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client waits for a period before accepting. The time period being greater than would be allowed for a default client.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0006L
+END_TESTCASE BA-CTSY-USSDM-URM-0010
+
+START_TESTCASE BA-CTSY-USSDM-URM-0011
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0011
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Priority client times out. Normal clients time out (with time-out period acceptable for a priority client). Default client accepts the dialogue./
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0007L
+END_TESTCASE BA-CTSY-USSDM-URM-0011
+
+START_TESTCASE BA-CTSY-USSDM-URM-0012
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0012
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Testing the timout mechanism. Priority client times out. Normal client accepts after waiting(short time) gets the dialogue.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0008L
+END_TESTCASE BA-CTSY-USSDM-URM-0012
+
+START_TESTCASE BA-CTSY-USSDM-URM-0013
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0013
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Dialogue rejected by the priority client. Then rejected/timed-out by remaining clients. Default client accepts the dialogue.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0009L
+END_TESTCASE BA-CTSY-USSDM-URM-0013
+
+START_TESTCASE BA-CTSY-USSDM-URM-0014
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0014
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Two clients, a priority and default client. Dialogue offered first to priority client which acceptit.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0010L
+END_TESTCASE BA-CTSY-USSDM-URM-0014
+
+START_TESTCASE BA-CTSY-USSDM-URM-0015
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0015
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Two clients, a priority and default client. The Priority client times out, dialogue is accepted by the default client.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage. 
+// Two clients, a priority and default client. 
+// The Priority client times out, dialogue is accepted by the default client.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0011L
+END_TESTCASE BA-CTSY-USSDM-URM-0015
+
+START_TESTCASE BA-CTSY-USSDM-URM-0018
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0018
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Testing multiple priority clients. The second Priority client should not be treated as such, should be added to the list of standard clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage. 
+// Four clients: 2 priority, 1 default and 1 standard client. 
+// The first Priority client should be offered the dialogue, not the second.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0013L
+END_TESTCASE BA-CTSY-USSDM-URM-0018
+
+START_TESTCASE BA-CTSY-USSDM-URM-0019
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0019
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Testing multiple default clients. The second default client should not be treated as such, should be added to the list of standard clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage. 
+// Four clients: 1 priority, 2 default and 1 standard client. 
+// The second default client added should act like a standard client and be offered the dialogue before the first default client.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0014L
+END_TESTCASE BA-CTSY-USSDM-URM-0019
+
+START_TESTCASE BA-CTSY-USSDM-URM-0020
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0020
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test ReceiveMessage with multiple clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients, both call ReceiveMessage. 
+// A message is received. First client offered message. Both clients call Close.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0016L
+END_TESTCASE BA-CTSY-USSDM-URM-0020
+
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test calling accept and reject before a session has been created
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::AcceptIncomingDialogue and RMobileUssdMessaging::RejectIncomingDialogue
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestAcceptRejectMisuse0001L
+END_TESTCASE BA-CTSY-USSDM-UARM-0001
+
+START_TESTCASE BA-CTSY-USSDM-UARM-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-UARM-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test calling accept and reject after a session has been created and then closed
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::AcceptIncomingDialogue and RMobileUssdMessaging::RejectIncomingDialogue
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestAcceptRejectMisuse0002L
+END_TESTCASE BA-CTSY-USSDM-UARM-0002
+
+START_TESTCASE BA-CTSY-USSDM-MIUM-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-MIUM-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Multiple incoming "network" USSD messages are received.
+//!@SYMTestPriority High
+//!@SYMTestActions Client calls ReceiveMessage. First USSD message arrives and is offered to client.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestMultipleIncomingUssdMessages0001L
+END_TESTCASE BA-CTSY-USSDM-MIUM-0001

@@ -672,4 +672,5 @@
 	??0TMobileDataCallParamsV8@RMobileCall@@QAE@XZ @ 671 NONAME ; RMobileCall::TMobileDataCallParamsV8::TMobileDataCallParamsV8(void)
 	??0TMobileHscsdCallParamsV8@RMobileCall@@QAE@XZ @ 672 NONAME ; RMobileCall::TMobileHscsdCallParamsV8::TMobileHscsdCallParamsV8(void)
 	?TerminateActiveCalls@RMobilePhone@@QBEXAAVTRequestStatus@@@Z @ 673 NONAME ; void RMobilePhone::TerminateActiveCalls(class TRequestStatus &) const
-
+	?AcceptIncomingDialogue@RMobileUssdMessaging@@QBEHXZ @ 674 NONAME ; int RMobileUssdMessaging::AcceptIncomingDialogue(void) const
+	?RejectIncomingDialogue@RMobileUssdMessaging@@QBEHXZ @ 675 NONAME ; int RMobileUssdMessaging::RejectIncomingDialogue(void) const

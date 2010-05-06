@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef MMMMESSHANDLERBASE_H
 #define MMMMESSHANDLERBASE_H
 

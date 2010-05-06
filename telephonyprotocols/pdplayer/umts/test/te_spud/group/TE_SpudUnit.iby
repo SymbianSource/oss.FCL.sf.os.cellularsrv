@@ -18,7 +18,7 @@
 #ifndef __TE_SPUD_UNIT_IBY__
 #define __TE_SPUD_UNIT_IBY__
 
-file=ABI_DIR\BUILD_DIR\TE_SpudUnit.exe		System\Libs\TE_SpudUnit.exe
+file=ABI_DIR\DEBUG_DIR\TE_SpudUnit.exe		System\Libs\TE_SpudUnit.exe
 
 data=EPOCROOT##epoc32\data\z\testdata\configs\Spud_config.txt 		TestData\configs\Spud_config.txt
 data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SpudUnitTest.script 	TestData\scripts\TE_SpudUnitTest.script

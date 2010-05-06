@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CTSYCELLBROADCASTUNEGATIVE_H_
 #define CTSYCELLBROADCASTUNEGATIVE_H_
 

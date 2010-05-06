@@ -45,6 +45,7 @@ SOURCE        ET_SVR.CPP
 SOURCE        ET_SES.CPP
 SOURCE        ET_UTIL.CPP
 SOURCE        ET_CORE.CPP
+SOURCE        et_patchdata.cpp
 // EtelRecorder
 SOURCE        et_record.cpp
 SOURCEPATH  	../EtelRecorder/recorder/src

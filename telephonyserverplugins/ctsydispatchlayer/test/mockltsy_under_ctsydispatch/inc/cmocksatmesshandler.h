@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CMOCKSATMESSHANDLER_H
 #define CMOCKSATMESSHANDLER_H
 

@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the Sms
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYSMSFU_H
 #define CCTSYSMSFU_H
 

@@ -33,6 +33,7 @@
 class CTelSession;
 class CTelObject;
 class CBuffer;
+
 class CReqEntry : public CBase	
 /**
 @publishedPartner
@@ -53,7 +54,10 @@ public:
 	static TAny* operator new(TUint aSize,RHeap* aHeap) __NO_THROW;	// for a priority client request, the
 													// objects created must all be taken from
 												// the priority heap.
-	static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr, TLeave aLeave);
+    static void operator delete(TAny* aPtr, TUint aExtraSize);
+    static void operator delete(TAny* aPtr, RHeap* aHeap);
 
 public:
 	TTsyReqHandle iTsyReqHandle;
@@ -69,6 +73,7 @@ public:
 	TBool iMessageNulled;
 	TBool iPlacedRequest;
 	MTelObjectTSY::TReqMode iReqMode;
+	TInterestCategory iInterestCategory;
 private:
 	TDblQueLink iLink;
 public:
@@ -111,7 +116,10 @@ public:
 	static TAny* operator new(TUint aSize,TLeave aLeave);
 	static TAny* operator new(TUint aSize,TUint aExtraSize) __NO_THROW;
 	static TAny* operator new(TUint aSize,RHeap* aHeap) __NO_THROW;
-	static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr);
+    static void operator delete(TAny* aPtr, TLeave aLeave);
+    static void operator delete(TAny* aPtr, TUint aExtraSize);
+    static void operator delete(TAny* aPtr, RHeap* aHeap);
 
 public:
 	HEtelBufC8* iBuf8;	// ptr to buffer if narrow
@@ -127,20 +135,41 @@ private:
 	TBool iBufferFull;
 	};
 
-//
-//	CTelObject
-//
 class CDestroyDummySubSession;
 class CTelServer;
 class CPhoneBase;
 class CPhoneManager;
+class CMmDeliveryObject;
+
+//
+// TPhoneClientId
+// 
+// 
+//
+NONSHARABLE_CLASS( TPhoneClientId )
+	{
+public:
+	TPhoneClientId();
+	TPhoneClientId(TInt aSessionId, TInt aSubSessionId);
+	TBool operator == (const TPhoneClientId& aClientId) const;
+	TBool operator != (const TPhoneClientId& aClientId) const;
+	TPhoneClientId& operator = (const TPhoneClientId& aClientId);
+
+public:	
+	TInt iSessionId;
+	TInt iSubSessionId;
+	};
+
+//
+//	CTelObject
+//
 class CTelObject : public CObject, public MTelObjectTSY
 /**
 @publishedPartner
 @released
 */
 	{
-public:
+public: 
 	IMPORT_C CTelObject();
 	IMPORT_C virtual ~CTelObject();
 	IMPORT_C virtual void ReqCompleted(const TTsyReqHandle aTsyReqHandle,const TInt aError);
@@ -151,10 +180,19 @@ public:
 	IMPORT_C virtual TInt ServerVersion() const;
 	IMPORT_C virtual TSecurityPolicy GetRequiredPlatSecCaps(const TInt aIpc);
 
+    IMPORT_C void SetSessionOwnerByTsyHandle(const TTsyReqHandle aTsyReqHandle);
+    IMPORT_C TInt ReserveSession();
+    IMPORT_C TBool IsSessionReserved() const;
+    IMPORT_C void CancelReserveSession();
+	IMPORT_C void EndSession();
+    IMPORT_C TBool IsSessionInProgress() const;
+
 	CPhoneBase* PhoneOwner() const;
 	void SetPhoneOwner(CPhoneBase* aPhoneOwner);
 	void FlushReqs(CTelSession* aSession,const TInt aSubSessionHandle);
 	void GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReqEntry* aNewReqEntry,TBool aFromFlowControlResume=EFalse);
+    void AcceptIncoming(const RMessage2& aMessage,CTelSession* aSession);
+    void RejectIncoming(const RMessage2& aMessage,CTelSession* aSession);
 
 	void TelObjectClose();
 	TDes8* BufferDes1(const CBuffer* aBuffer,CBuffer::TWhichSlot aWhichSlot) const;
@@ -171,8 +209,18 @@ public:
 	void CheckAndDestroyDummySubSession();
 	void RemoveDummySubSessionDestroyer();
 	TInt ResolveError(CTelSession* aSession, const TInt aError) const;
-	void CreateDummySessionObjectL(CTelSession* aTelSession);
+	void CreateDummySessionObjectL(CTelSession* aTelSession); 
+    
+    TInt DeliverReqL(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aIpc,const TInt aError);
+    void FindReq(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aIpc,const TInt aError);
+    void OfferToClient(CReqEntry* aReqEntry,CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aError);
+    void RepostRequest(CReqEntry* aUpdatedReqEntry, const TInt aError);
 	
+    void SetSessionOwner(TInt aSessionHandle, TInt aSubSessionHandle);
+    TBool IsSessionOwner(CReqEntry* aReqEntry) const;
+
+	TInterestCategory FindInterestCategory( const TSecureId aSid);
+
 //
 // Pure Virtual
 //
@@ -196,7 +244,6 @@ private:
 	void CancelActiveReq(CTelSession* aSession,const TInt aSubSessionHandle);
 	void CheckAndResize(TInt& aSizeOfData,const RMessage2& aMessage) const;
 
-
 	HEtelBufC8* CreateNarrowBufferLC(RHeap* aHeap,const RMessage2& aMessage,TUint aIndexOfClientPtr1,TUint aIndexOfClientPtr2,TInt& aSize1,TInt& aSize2,TInt aNoOfSlots) const;
 	HEtelBufC16* CreateUnicodeBufferLC(RHeap* aHeap,const RMessage2& aMessage,TUint aIndexOfClientPtr1,TUint aIndexOfClientPtr2,TInt& aSize1,TInt& aSize2,TInt aNoOfSlots) const;
 	TBool IsSameMessageType(const RMessage2& aMessage, CReqEntry* aReqEntry) const;
@@ -209,7 +256,64 @@ private:// data
 	TBool iCreateDummy;
 	IMPORT_C virtual void CTelObject_Reserved1();
 	TAny* iCTelObject_Reserved;
+	//TPhoneClientId iSessionOwner;
+	
+    CMmDeliveryObject* iDeliveryObject;
+	//TBool iSessionReserved;
 	};
+
+//
+// CMmDeliveryObject
+//
+NONSHARABLE_CLASS( CMmDeliveryObject ) : public CActive
+/**
+@internalComponent
+@released
+*/
+    {
+public:
+    static CMmDeliveryObject* NewL( CTelObject& aTelObject );
+    ~CMmDeliveryObject();
+    void RunL();
+    void DoCancel();
+    TInt DeliverReqL( TDblQue<CReqEntry>& aArray, CReqEntry* aUpdatedReqEntry, 
+                                        CTelObject::TReqMode aReqMode, const TInt aIpc, TInt aError);	
+    TBool DeliveryInProgress() const;
+    TInt ClientsDecision( const RMessage2& aMessage, CTelSession* aSession, TBool aAccepted );
+	void DeletedReqEntry( CReqEntry* aReqEntry );
+	CReqEntry* NewUpdatedReqEntry();
+        
+private:
+    void ConstructL();
+    CMmDeliveryObject( CTelObject& aTelObject );
+    
+    CReqEntry* HighestPriorityReq(  TInterestCategory& aInterestCategory );
+    void OfferToClient( CReqEntry* aReq );
+  
+    void DoStart();
+    void Clear();
+
+public:
+	// TODO temp for testing. Is delivery manager the correct place for these
+	// or should there be a separate data storage object?
+	TPhoneClientId iSessionOwner;
+	TBool iSessionReserved;
+
+private:
+    
+    RTimer iDeliveryTimer;
+    TTimeIntervalMicroSeconds32 iTimeSlice;
+ 	
+    CReqEntry* iCurrentReq; 
+    CReqEntry* iPriorityReq;
+    CReqEntry* iDefaultReq;
+    RPointerArray<CReqEntry> iPendingReqs;
+    CTelObject& iTelObject;
+
+    CReqEntry* iUpdatedReqEntry;
+    CTelObject::TReqMode iReqMode;
+    TInt iError; 
+    };
 
 //
 // CSubSessionExtBase
@@ -351,6 +455,9 @@ public:
 	IMPORT_C virtual TInt NumberOfSlotsL(const TInt aIpc);
 	IMPORT_C virtual TInt CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHandle);
 	IMPORT_C TBool CheckEmergencyClient(const TTsyReqHandle aTsyReqHandle) const;
+    IMPORT_C TInt FindSessionByTsyHandle(const TTsyReqHandle aTsyReqHandle);
+    IMPORT_C TInt FindSubSessionByTsyHandle(const TTsyReqHandle aTsyReqHandle);
+	
 	
 	void FlowControlInc();
 	void FlowControlDec();

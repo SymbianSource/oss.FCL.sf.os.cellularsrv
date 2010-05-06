@@ -520,42 +520,42 @@ END_TESTCASE            NET-BasebandAdaptation-c32bca-0132
 
 START_TESTCASE          NET-BasebandAdaptation-c32bca-0133
 //! @SYMTestCaseID      NET-BasebandAdaptation-c32bca-0133
-//! @SYMTestCaseDesc Tests C32Bca Ioctl for serial port.
+//! @SYMTestCaseDesc Tests C32Bca Ioctl for serial port (using packetloopback.csy as current phone hardware does not support a serial driver).
 //! @SYMFssID NETWORKING/BCA
 //! @SYMTestActions Refer to SGL.GT0233.603.C32Bca_Unit_test_spec.doc
 //! @SYMTestExpectedResults Refer to SGL.GT0233.603.C32Bca_Unit_test_spec.doc.
 //! @SYMTestPriority High 
 //! @SYMTestStatus Implemented
 //! @SYMTestType UT
-RUN_TEST_STEP 100 TE_C32BcaSvr CIoctlSerialPort1 z:\TestData\Configs\TE_C32BcaUnit.ini SerialPortConfig0
+RUN_TEST_STEP 100 TE_C32BcaSvr CIoctlSerialPort1 z:\TestData\Configs\TE_C32BcaUnit.ini CommRoleDTE
 DELAY 1000
 
 END_TESTCASE            NET-BasebandAdaptation-c32bca-0133
 
 START_TESTCASE          NET-BasebandAdaptation-c32bca-0134
 //! @SYMTestCaseID      NET-BasebandAdaptation-c32bca-0134
-//! @SYMTestCaseDesc Tests C32Bca Ioctl for serial port.
+//! @SYMTestCaseDesc Tests C32Bca Ioctl for serial port (using packetloopback.csy as current phone hardware does not support a serial driver).
 //! @SYMFssID NETWORKING/BCA
 //! @SYMTestActions Refer to SGL.GT0233.603.C32Bca_Unit_test_spec.doc
 //! @SYMTestExpectedResults Refer to SGL.GT0233.603.C32Bca_Unit_test_spec.doc.
 //! @SYMTestPriority Critical 
 //! @SYMTestStatus Implemented
 //! @SYMTestType UT
-RUN_TEST_STEP 100 TE_C32BcaSvr CIoctlSerialPort2 z:\TestData\Configs\TE_C32BcaUnit.ini SerialPortConfig0
+RUN_TEST_STEP 100 TE_C32BcaSvr CIoctlSerialPort2 z:\TestData\Configs\TE_C32BcaUnit.ini CommRoleDTE
 DELAY 1000
 
 END_TESTCASE            NET-BasebandAdaptation-c32bca-0134
 
 START_TESTCASE          NET-BasebandAdaptation-c32bca-0135
 //! @SYMTestCaseID      NET-BasebandAdaptation-c32bca-0135
-//! @SYMTestCaseDesc Tests C32Bca Ioctl for serial port.
+//! @SYMTestCaseDesc Tests C32Bca Ioctl for serial port (using packetloopback.csy as current phone hardware does not support a serial driver).
 //! @SYMFssID NETWORKING/BCA
 //! @SYMTestActions Refer to SGL.GT0233.603.C32Bca_Unit_test_spec.doc
 //! @SYMTestExpectedResults Refer to SGL.GT0233.603.C32Bca_Unit_test_spec.doc.
 //! @SYMTestPriority High 
 //! @SYMTestStatus Implemented
 //! @SYMTestType UT
-RUN_TEST_STEP 100 TE_C32BcaSvr CIoctlSerialPort3 z:\TestData\Configs\TE_C32BcaUnit.ini SerialPortConfig0
+RUN_TEST_STEP 100 TE_C32BcaSvr CIoctlSerialPort3 z:\TestData\Configs\TE_C32BcaUnit.ini CommRoleDTE
 DELAY 1000
 
 END_TESTCASE            NET-BasebandAdaptation-c32bca-0135

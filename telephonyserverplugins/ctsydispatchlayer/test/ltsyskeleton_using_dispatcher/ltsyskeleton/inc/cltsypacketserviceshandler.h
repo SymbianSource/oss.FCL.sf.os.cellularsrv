@@ -14,11 +14,6 @@
 // cltsydispatchpacketserviceshandler.h
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CLTSYDISPATCHPACKETSERVICESHANDLER_H_
 #define __CLTSYDISPATCHPACKETSERVICESHANDLER_H_
 

@@ -234,6 +234,17 @@ enum
 	EEtelFlushInterfaceQueue = 92							// 92
 	};
 
+
+//
+// NetworkControl ReadUserData
+//
+enum
+    {
+    EEtelServerAcceptIncoming = 93,                         // 93
+    EEtelServerRejectIncoming,                              // 94
+    };
+
+
 enum
 	{
 	EMobileCallDialCallControlCancel = EMobileCallDialCallControl + EMobileCancelOffset	// 591

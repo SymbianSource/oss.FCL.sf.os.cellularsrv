@@ -13,10 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
 
 #ifndef CMOCKLTSYENGINE_H
 #define CMOCKLTSYENGINE_H

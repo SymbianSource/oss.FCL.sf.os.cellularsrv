@@ -1076,8 +1076,10 @@ EXPORT_C RMobileUssdMessaging::TMobileUssdAttributesV1::TMobileUssdAttributesV1(
 
 EXPORT_C void RMobileUssdMessaging::ReceiveMessage(TRequestStatus& aReqStatus, TDes8& aMsgData, TDes8& aMsgAttributes) const
 /**
-	This member function enables the client to receive the next incoming USSD message 
-	from the network. The request will be completed when a new message arrives.
+	This member function enables the client to declare an interest in receiving the next 
+	incoming USSD message from the network. The request will be completed when the message is
+	offered to the client. The client must then decide to either accept or reject the USSD
+	session/dialogue.
 	
 	Use RTelSubSessionBase::CancelAsyncRequest(EMobileUssdMessagingReceiveMessage) 
 	to cancel a previously placed asynchronous ReceiveMessage() request.
@@ -1090,6 +1092,7 @@ EXPORT_C void RMobileUssdMessaging::ReceiveMessage(TRequestStatus& aReqStatus, T
 	message attributes.
  
 	@see TMobileUssdAttributesV1
+	@see AcceptIncomingDialogue RejectIncomingDialogue
 
 @capability ReadDeviceData
 @capability NetworkControl
@@ -1097,6 +1100,63 @@ EXPORT_C void RMobileUssdMessaging::ReceiveMessage(TRequestStatus& aReqStatus, T
 	{
 	Get(EMobileUssdMessagingReceiveMessage, aReqStatus, aMsgData, aMsgAttributes);
 	}
+
+EXPORT_C TInt RMobileUssdMessaging::AcceptIncomingDialogue() const
+/**
+	This member function enables the client to accept an incoming USSD message
+	and thereby the rest of the session/dialogue with the network. 
+	
+	It would be called when ReceiveMessage has completed and the client is not 
+	currently in a dialogue/session. The alternative would be to call RejectIncomingDialogue
+	if the client was not interested in the dialogue (after examining the message data)
+	
+	If the client calls this function within the time limit allowed 
+	further network USSD messages will be sent to this client only. And
+	the client can use SendMessage to send USSD messages. This will continue until the session 
+	is terminated or there is a session timeout.
+	
+	@return KErrTimedOut if exceeded allocated time period fir accepting/rejecting. Else KErrNone.
+	
+	@see ReceiveMessage
+	@see RejectIncomingDialogue
+	
+@capability ReadUserData
+@capability NetworkControl
+*/
+	{
+    TPckgC<TBool> accept(ETrue);
+    TPckgC<TInt> type(RTelServer::EUssdType);
+    return Set(EEtelServerAcceptIncoming, type);
+    }
+
+EXPORT_C TInt RMobileUssdMessaging::RejectIncomingDialogue() const
+/**
+	This member function enables the client to to reject an incoming USSD message.
+	This indicates the client (having examined the data) is not interested in
+	receiving further messages in this dialogue/session. 
+	
+	It would be called when ReceiveMessage has completed and the client is not 
+	currently in a dialogue/session. The alternative would be to call AcceptIncomingDialogue
+	if the client was interested in the dialogue (after examining the message data)
+	
+	If the client calls this function within the time limit allowed 
+	further network USSD messages will be sent to this client only and
+	the client can use SendMessage to send USSD messages. 
+	This will continue until the session is terminated or there is a session timeout.
+	
+	@return KErrTimedOut if exceeded allocated time period for accepting/rejecting. Else KErrNone.
+	
+	@see ReceiveMessage
+	@see RejectIncomingDialogue
+	
+@capability ReadUserData
+@capability NetworkControl
+*/
+    {
+    TPckgC<TBool> accept(ETrue);
+    TPckgC<TInt> type(RTelServer::EUssdType);
+    return Set(EEtelServerRejectIncoming, type);
+    }
 
 EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, const TDesC8& aMsgData, const TDesC8& aMsgAttributes) const
 /**

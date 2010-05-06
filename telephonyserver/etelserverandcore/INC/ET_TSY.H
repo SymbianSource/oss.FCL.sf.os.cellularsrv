@@ -50,6 +50,9 @@ const TInt KETelServerVersion = 1;
 const TUint KReqModeMultipleCompletionEnabled=0x00000001;
 const TUint KReqModeFlowControlObeyed=0x00000002;
 const TUint KReqModeRePostImmediately=0x00000004;
+const TUint KReqModeMultipleCompletionWithInterestLevel=0x00000008;
+const TUint KReqModeSessionBased=0x00000010;
+
 
 class CTelObject;
 class MTelObjectTSY

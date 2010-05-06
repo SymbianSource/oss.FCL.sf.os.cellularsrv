@@ -50,7 +50,8 @@ public:
 	void TestNotifyContextAdded0004L();	
 	void TestNotifyStatusChange0001L();
 	void TestNotifyStatusChange0002L();	
-	void TestNotifyStatusChange0004L();
+    void TestNotifyStatusChange0004L();
+    void TestNotifyStatusChange0004aL();
 	void TestNotifyStatusChange0001aL();
 	void TestSetPreferredBearer0001L();
 	void TestSetPreferredBearer0004L();

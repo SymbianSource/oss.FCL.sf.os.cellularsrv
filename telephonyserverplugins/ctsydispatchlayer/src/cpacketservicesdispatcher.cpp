@@ -2411,11 +2411,11 @@ TInt CPacketServicesDispatcher::EtelPcktR99R4NegToEtelPcktR97NegQoS(const RPacke
         {
         aQoSGPRSNegotiated.iPeakThroughput = RPacketQoS::EPeakThroughput128000;
         }        
-    else 
+    else
         {
         aQoSGPRSNegotiated.iPeakThroughput = RPacketQoS::EPeakThroughput256000;
         }
-  
+
     /* Traffic handling priority to precedence */
     switch (aQoSR99_R4Negotiated.iTrafficHandlingPriority)
     	{
@@ -2632,21 +2632,19 @@ void CPacketServicesDispatcher::ConvertDNSToPCOBuffer
 	(const TDes8& aPrimaryDNS, const TDes8& aSecondaryDNS, const TUint8 aRequestID, TDes8& aFormatPcoBufferAddr)
 	{
 
-    // Handle Primary DNS address
-    TInetAddr netPrimaryDNS;
-    TBuf<32> netPrimaryDNSConv;
-    netPrimaryDNSConv.Copy(aPrimaryDNS);
-    // coverity[check_return]
-    netPrimaryDNS.Input(netPrimaryDNSConv);
-    TUint32 primDNSaddr =  netPrimaryDNS.Address();
+	// Handle Primary DNS address
+	TInetAddr netPrimaryDNS;
+	TBuf<32> netPrimaryDNSConv;
+	netPrimaryDNSConv.Copy(aPrimaryDNS);
+	netPrimaryDNS.Input(netPrimaryDNSConv);
+	TUint32 primDNSaddr =  netPrimaryDNS.Address();
 
-    // Handle Secondary DNS address
-    TInetAddr netSecondaryDNS;
-    TBuf<32> netSecondaryDNSConv;
-    netSecondaryDNSConv.Copy(aSecondaryDNS);
-    // coverity[check_return]
-    netSecondaryDNS.Input(netSecondaryDNSConv);
-    TUint32 secondaryDNSaddr =  netSecondaryDNS.Address();
+	// Handle Secondary DNS address
+	TInetAddr netSecondaryDNS;
+	TBuf<32> netSecondaryDNSConv;
+	netSecondaryDNSConv.Copy(aSecondaryDNS);
+	netSecondaryDNS.Input(netSecondaryDNSConv);
+	TUint32 secondaryDNSaddr =  netSecondaryDNS.Address();
 
 	aFormatPcoBufferAddr[0] = KPrimaryAndSecondaryDNSLength;		// Length
 	aFormatPcoBufferAddr[1] = KIPCRequestCode; 					// IPC PRequest Code

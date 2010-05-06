@@ -65,7 +65,7 @@ DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStartDataClient, PDPDeftDataClient
     NODEACTIVITY_ENTRY(KNoTag, SCprStates::TStopYourFlows, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KNoDataClientsToStop>)
     THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KNoDataClientsToStop, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrProviderStopped)
     NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TDestroyPDPContext, PDPSCprStates::TAwaitingPDPContextDestroyed, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
-    THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PRStates::TDestroyOrphanedDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
+    THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TCleanupFSMAndDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, MeshMachine::TRaiseActivityError)
 NODEACTIVITY_END()
 }
@@ -103,21 +103,21 @@ typedef MeshMachine::TAcceptErrorState<CoreNetStates::TAwaitingApplyResponse> TA
 //           to TRejoin, whereas TRejoin doesn't mean swap - suggesting to
 //           introduce PDP level msg: TRejoinAndSwap.
 DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityGoneDown, PDPDeftSCprGoneDown, TPDPMessages::TPDPFSMMessage, PDPSCprStates::CPrimaryPDPGoneDownActivity::NewL)
-	FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
-	THROUGH_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TDoNothing, PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
+    FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
+    THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCleanupFSM, PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStoreOriginalDataClient, MeshMachine::TNoTag)
-	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TRejoinDataClient, CoreNetStates::TAwaitingRejoinDataClientComplete, MeshMachine::TNoTag)
-	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TApplyNewDefault, TAwaitingApplyResponseOrError, MeshMachine::TNoTag)
-	THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TSwitchToNewDefault, MeshMachine::TNoTag)
-	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStopOriginalDataClient, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TNoTag)
-
-	LAST_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TClearError)
-	THROUGH_NODEACTIVITY_ENTRY(KActiveTag, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrContentionTag)
-	//Awaiting for contention result, do not stop the start activity.
-	LAST_NODEACTIVITY_ENTRY(PDPSCprStates::KContentionTag, MeshMachine::TDoNothing)
-
-	LAST_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCancelDataClientStartInPDP)
-
+    NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TRejoinDataClient, CoreNetStates::TAwaitingRejoinDataClientComplete, MeshMachine::TNoTag)
+    NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TApplyNewDefault, TAwaitingApplyResponseOrError, MeshMachine::TNoTag)
+    THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TSwitchToNewDefault, MeshMachine::TNoTag)
+    NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStopOriginalDataClient, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TNoTag)
+    
+    LAST_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TClearError)
+    THROUGH_NODEACTIVITY_ENTRY(KActiveTag, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrContentionTag)
+    //Awaiting for contention result, do not stop the start activity.
+    LAST_NODEACTIVITY_ENTRY(PDPSCprStates::KContentionTag, MeshMachine::TDoNothing)
+    
+    LAST_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCancelDataClientStartInPDP)
+    
     NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, CoreNetStates::TStopSelf, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TSendGoneDown)
 NODEACTIVITY_END()

@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the PhonebookEn
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYPhonebookEnFU_H
 #define CCTSYPhonebookEnFU_H
 

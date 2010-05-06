@@ -226,7 +226,9 @@ void TSelfInit::SetupProvisionCfgL(ESock::CCommsDatIapView* aIapView)
     
     //It's not legal for the qos defaults to be absent.
     CDefaultPacketQoSProvision* defaultQoS = NULL;
+    
     TRAPD(ret, defaultQoS = CDefaultPacketQoSProvision::NewL(aIapView));   
+    
     if ((KErrNone == ret) && defaultQoS)           
         {
         CleanupStack::PushL(defaultQoS);
@@ -658,115 +660,192 @@ void TCreatePrimaryPDPCtx::DoL()
     User::LeaveIfError(tNode.iProvisionFailure);
     
     ASSERT(tNode.iPdpFsmInterface);
-
-    iContext.Node().PostToClients<TDefaultClientMatchPolicy>(
+    
+    tNode.PostToClients<TDefaultClientMatchPolicy>(
             iContext.NodeId(),
             TCFMessage::TStateChange(
                     Elements::TStateChange(KPsdStartingConfiguration, KErrNone)).CRef(),
             TClientType(TCFClientType::ECtrlProvider));
-
-	CGPRSProvision* gprsProvision = const_cast<CGPRSProvision*>(static_cast<const CGPRSProvision*>(
-	    iContext.Node().AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CGPRSProvision::EUid,CGPRSProvision::ETypeId))));
-
-	//retrieve QoS (should be provisioned, but can also be overriden with SetParams).
-	RPacketQoS::TQoSR5Requested qosOverridenParams;
-	const RPacketQoS::TQoSR5Requested* qosParams = NULL;
-	if (! iContext.Node().iParameterBundle.IsNull() && ! iContext.Node().iParameterBundle.FindFamily(KSubConQoSFamily).IsNull())
-    	{
-    	MPDPParamMapper::MapQosParamBundleToEtelL(iContext.Node().iParameterBundle, qosOverridenParams);
-    	qosParams = &qosOverridenParams;
-    	}
-	else
-    	{
-    	const CDefaultPacketQoSProvision* defaultQoSProvision = static_cast<const CDefaultPacketQoSProvision*>(
-    	    iContext.Node().AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CDefaultPacketQoSProvision::EUid,CDefaultPacketQoSProvision::ETypeId)));
-    	qosParams = defaultQoSProvision ? &defaultQoSProvision->iParams : NULL;
-
+    
+    CGPRSProvision* gprsProvision = const_cast<CGPRSProvision*>(static_cast<const CGPRSProvision*>(
+        tNode.AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CGPRSProvision::EUid,CGPRSProvision::ETypeId))));
+    
+    if (gprsProvision == NULL)
+        {
+        User::Leave(KErrCorrupt);
+        }
+    
+    //retrieve QoS (should be provisioned, but can also be overriden with SetParams).
+    RPacketQoS::TQoSR5Requested qosOverridenParams;
+    
+    const RPacketQoS::TQoSR5Requested* qosParams = NULL;
+    
+    if ((!tNode.iParameterBundle.IsNull()) &&\
+            (!tNode.iParameterBundle.FindFamily(KSubConQoSFamily).IsNull()))
+        {
+        MPDPParamMapper::MapQosParamBundleToEtelL(tNode.iParameterBundle, qosOverridenParams);
+        qosParams = &qosOverridenParams;
+        }
+    else
+        {
+        const CDefaultPacketQoSProvision* defaultQoSProvision = static_cast<const CDefaultPacketQoSProvision*>(
+            tNode.AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CDefaultPacketQoSProvision::EUid,CDefaultPacketQoSProvision::ETypeId)));
+        
+        if (defaultQoSProvision)
+            {
+            qosParams = &defaultQoSProvision->iParams;
+            }
+        else
+            {
+            User::Leave(KErrCorrupt);
+            }
+    
         //Here we're taking the qos defaults from the provision info, hence skipping the iParameterBundle.
         //The lack of iParameterBundle however and the respective ERequested params is badly tolerated by the rest
         //of the code (e.g.: when subsequently raising granted params it is assumed something has been requested).
-        //Let's create a phoney requested params.
-        //iContext.Node().CreateParameterBundleL();
-		//RParameterFamily family = iContext.Node().iParameterBundle.CreateFamilyL(KSubConQoSFamily); //PJLEFT
+ 
+        // These parameter bundles are also used in a situation when a context has failed to create because of a lack
+        // of modem / network resources, as the SCPR isn't torn down, the parameter bundles need to hold the 
+        // information of the default QoS otherwise bad things happen [bad QoS].
+        
+        RCFParameterFamilyBundle newBundle;
+        newBundle.CreateL();
+        tNode.iParameterBundle.Open(newBundle);
+        RParameterFamily family = newBundle.CreateFamilyL(KSubConQoSFamily);
+       
+        TInt tRelease = gprsProvision->UmtsGprsRelease();
+     
+        CSubConQosR99ParamSet* extRequestedR99  = NULL;
+        CSubConQosR99ParamSet* extAcceptableR99 = NULL;
+        CSubConQosR5ParamSet* extRequestedR5    = NULL;
+        CSubConQosR5ParamSet* extAcceptableR5   = NULL;
+        
+        if (tRelease == TPacketDataConfigBase::KConfigRel5)
+            {
+            // R5 - basically R4 + a few parameters
+        
+            extRequestedR5 = CSubConQosR5ParamSet::NewL(family,RParameterFamily::ERequested);        
+            extAcceptableR5 = CSubConQosR5ParamSet::NewL(family,RParameterFamily::EAcceptable);
 
-		RCFParameterFamilyBundle newBundle;
-		newBundle.CreateL();
-		iContext.Node().iParameterBundle.Open(newBundle);
-		RParameterFamily family = newBundle.CreateFamilyL(KSubConQoSFamily);
-		CSubConQosGenericParamSet::NewL(family, RParameterFamily::ERequested);
-    	}
-	TTFTInfo tft; //We'll use empty/thus default TFT
-	if (gprsProvision == NULL || qosParams == NULL)
-    	{
-    	User::Leave(KErrCorrupt);
-    	}
-
-	const CImsExtProvision* imsprov = static_cast<const CImsExtProvision*>(
-		iContext.Node().AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CImsExtProvision::EUid, CImsExtProvision::ETypeId)));
-
-	TRAP_IGNORE(iContext.Node().iIsModeGsm = IsModeGsmL());
-
-	switch (gprsProvision->UmtsGprsRelease())
-			{
-	    	case TPacketDataConfigBase::KConfigGPRS:
-				{
-				SetImsSignallingFlagL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption, imsprov->iImsSignalIndicator);
-
-				// Only request SIP server address retrieval when network not in GSM/GPRS mode
-			    // e.g. UMTS/WCDMA
-				if (!iContext.Node().iIsModeGsm)
-				    {
-				    SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
-				    }
-				
-				SetChapInformationL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
-
-				}
-				break;
-
-	    	case TPacketDataConfigBase::KConfigRel5:
-		    case TPacketDataConfigBase::KConfigRel99Rel4:
-				{
-				SetImsSignallingFlagL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption, imsprov->iImsSignalIndicator);
-
-			    // Only request SIP server address retrieval when network not in GSM/GPRS mode
-			    // e.g. UMTS/WCDMA
-				if (!iContext.Node().iIsModeGsm)
-                    {
-                    SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
-                    }
-				
-				SetChapInformationL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
-				
-				}
-				break;				
-			}
-	
-	iContext.Node().iPDPFsmContextId = iContext.Node().iPdpFsmInterface->NewFsmContextL(iContext.Node(),SpudMan::EPrimary);
-
-    iContext.Node().PostToClients<TDefaultClientMatchPolicy>(
+            // Requested QoS Parameters
+            extRequestedR5->SetSourceStatisticsDescriptor(qosParams->iSourceStatisticsDescriptor);
+            extRequestedR5->SetSignallingIndicator(qosParams->iSignallingIndication);
+            
+            extRequestedR99 = dynamic_cast<CSubConQosR99ParamSet*>(extRequestedR5);
+                 
+            // Acceptable QoS Parameters
+            
+            extAcceptableR5->SetSourceStatisticsDescriptor(qosParams->iSourceStatisticsDescriptor);
+            extAcceptableR5->SetSignallingIndicator(qosParams->iSignallingIndication);
+            
+            extAcceptableR99 = dynamic_cast<CSubConQosR99ParamSet*>(extAcceptableR5);
+                      
+            }
+        else
+            {
+            // R4 and R99
+            extRequestedR99  = CSubConQosR99ParamSet::NewL(family,RParameterFamily::ERequested);
+            extAcceptableR99 = CSubConQosR99ParamSet::NewL(family,RParameterFamily::EAcceptable);
+            }
+        
+        // Requested QoS Parameters
+        extRequestedR99->SetTrafficClass(qosParams->iReqTrafficClass);
+        extRequestedR99->SetDeliveryOrder(qosParams->iReqDeliveryOrderReqd);
+        extRequestedR99->SetErroneousSDUDelivery(qosParams->iReqDeliverErroneousSDU);
+        extRequestedR99->SetResidualBitErrorRatio(qosParams->iReqBER);
+        extRequestedR99->SetSDUErrorRatio(qosParams->iReqSDUErrorRatio);
+        extRequestedR99->SetTrafficHandlingPriority(qosParams->iReqTrafficHandlingPriority);
+        extRequestedR99->SetTransferDelay(qosParams->iReqTransferDelay);
+        extRequestedR99->SetMaxSduSize(qosParams->iReqMaxSDUSize);
+        extRequestedR99->SetMaxBitrateUplink(qosParams->iReqMaxRate.iUplinkRate);
+        extRequestedR99->SetMaxBitrateDownlink(qosParams->iReqMaxRate.iDownlinkRate);
+        extRequestedR99->SetGuaBitrateUplink(qosParams->iReqGuaranteedRate.iUplinkRate);
+        extRequestedR99->SetGuaBitrateDownlink(qosParams->iReqGuaranteedRate.iDownlinkRate);    
+        
+        // Acceptable QoS Parameters
+        extAcceptableR99->SetTrafficClass(qosParams->iMinTrafficClass);
+        extAcceptableR99->SetDeliveryOrder(qosParams->iMinDeliveryOrderReqd);
+        extAcceptableR99->SetErroneousSDUDelivery(qosParams->iMinDeliverErroneousSDU);
+        extAcceptableR99->SetResidualBitErrorRatio(qosParams->iMaxBER);
+        extAcceptableR99->SetSDUErrorRatio(qosParams->iMaxSDUErrorRatio);
+        extAcceptableR99->SetTrafficHandlingPriority(qosParams->iMinTrafficHandlingPriority);
+        extAcceptableR99->SetTransferDelay(qosParams->iMaxTransferDelay);
+        extAcceptableR99->SetMaxSduSize(qosParams->iMinAcceptableMaxSDUSize);
+        extAcceptableR99->SetMaxBitrateUplink(qosParams->iMinAcceptableMaxRate.iUplinkRate);
+        extAcceptableR99->SetMaxBitrateDownlink(qosParams->iMinAcceptableMaxRate.iDownlinkRate);
+        extAcceptableR99->SetGuaBitrateUplink(qosParams->iMinGuaranteedRate.iUplinkRate);
+        extAcceptableR99->SetGuaBitrateDownlink(qosParams->iMinGuaranteedRate.iDownlinkRate);               
+        
+        }
+        
+    TTFTInfo tft; //We'll use empty/thus default TFT
+    
+    const CImsExtProvision* imsprov = static_cast<const CImsExtProvision*>(
+        tNode.AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CImsExtProvision::EUid, CImsExtProvision::ETypeId)));
+    
+    TRAP_IGNORE(tNode.iIsModeGsm = IsModeGsmL());
+    
+    switch (gprsProvision->UmtsGprsRelease())
+        {
+        case TPacketDataConfigBase::KConfigGPRS:
+            {
+            SetImsSignallingFlagL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption, imsprov->iImsSignalIndicator);
+        
+            // Only request SIP server address retrieval when network not in GSM/GPRS mode
+            // e.g. UMTS/WCDMA
+            if (!tNode.iIsModeGsm)
+                {
+                SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
+                }
+            
+            SetChapInformationL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigGPRS>().iProtocolConfigOption);
+        
+            }
+            break;
+        
+        case TPacketDataConfigBase::KConfigRel5:
+        case TPacketDataConfigBase::KConfigRel99Rel4:
+            {
+            SetImsSignallingFlagL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption, imsprov->iImsSignalIndicator);
+        
+            // Only request SIP server address retrieval when network not in GSM/GPRS mode
+            // e.g. UMTS/WCDMA
+            if (!tNode.iIsModeGsm)
+                {
+                SetupSipServerAddrRetrievalL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
+                }
+            
+            SetChapInformationL(gprsProvision->GetScratchContextAs<RPacketContext::TContextConfigR99_R4>().iProtocolConfigOption);
+            
+            }
+            break;				
+        }
+    
+    tNode.iPDPFsmContextId = tNode.iPdpFsmInterface->NewFsmContextL(tNode,SpudMan::EPrimary);
+    
+    tNode.PostToClients<TDefaultClientMatchPolicy>(
             iContext.NodeId(),
             TCFMessage::TStateChange(
                     Elements::TStateChange(KPsdFinishedConfiguration, KErrNone)).CRef(),
             TClientType(TCFClientType::ECtrlProvider));
-
-    iContext.Node().PostToClients<TDefaultClientMatchPolicy>(
+    
+    tNode.PostToClients<TDefaultClientMatchPolicy>(
             iContext.NodeId(),
             TCFMessage::TStateChange(
                     Elements::TStateChange(KPsdStartingActivation, KErrNone)).CRef(),
             TClientType(TCFClientType::ECtrlProvider));
-
-	ASSERT(iContext.Node().iPDPFsmContextId == KPrimaryContextId);
-	iContext.Node().iContextType=SpudMan::EPrimary;
-	iContext.Node().iPdpFsmInterface->Set(KPrimaryContextId, gprsProvision->GetScratchContextAs<TPacketDataConfigBase>());
-	//Set default QoS
-	iContext.Node().iPdpFsmInterface->Set(KPrimaryContextId, *qosParams);
+    
+    ASSERT(tNode.iPDPFsmContextId == KPrimaryContextId);
+    tNode.iContextType=SpudMan::EPrimary;
+    tNode.iPdpFsmInterface->Set(KPrimaryContextId, gprsProvision->GetScratchContextAs<TPacketDataConfigBase>());
+    //Set default QoS
+    tNode.iPdpFsmInterface->Set(KPrimaryContextId, *qosParams);
     //Set default TFTs
-    iContext.Node().iPdpFsmInterface->Set(KPrimaryContextId,  tft); // ignore any error
+    tNode.iPdpFsmInterface->Set(KPrimaryContextId, tft); // ignore any error
     //Start the primary.
-    User::LeaveIfError(iContext.Node().iPdpFsmInterface->Input(KPrimaryContextId, SpudMan::ECreatePrimaryPDPContext));
+    User::LeaveIfError(tNode.iPdpFsmInterface->Input(KPrimaryContextId, SpudMan::ECreatePrimaryPDPContext));
     iContext.iNodeActivity->ClearPostedTo();
-    iContext.Node().iActivityAwaitingResponse = iContext.iNodeActivity->ActivityId();
+    tNode.iActivityAwaitingResponse = iContext.iNodeActivity->ActivityId();
     }
 
 DEFINE_SMELEMENT(TOverrideProvision, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
@@ -1464,33 +1543,48 @@ void TDestroyPDPContext::DoL()
     iContext.Node().iActivityAwaitingResponse = iContext.iNodeActivity->ActivityId();
     }
 
+DEFINE_SMELEMENT(TCleanupFSM, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
+void TCleanupFSM::DoL()
+    {
+    CPDPSubConnectionProvider &tNode = static_cast<CPDPSubConnectionProvider &>(iContext.Node());
+    
+    if (tNode.iPDPFsmContextId != CPDPSubConnectionProvider::EInvalidContextId)
+        {
+    
+        // removing the memory associated with the context - this should hopefully
+        // ensure that the memory allocations that happen afterwards can be
+        // accomplished without OOM errors
+    
+        tNode.iPdpFsmInterface->DeleteFsmContext(tNode.iPDPFsmContextId);
+
+        if (tNode.ContentionRequested() == EFalse)
+            {
+            CSubConGenEventSubConDown* event = CSubConGenEventSubConDown::NewL();
+            CleanupStack::PushL(event);
+            tNode.NotifyClientsL(*event);
+            CleanupStack::Pop(event);
+            }
+
+        if (tNode.iPDPFsmContextId == KPrimaryContextId)
+            {
+            tNode.PostToClients<TDefaultClientMatchPolicy>(
+                    iContext.NodeId(),
+                    TCFMessage::TStateChange(
+                            Elements::TStateChange(KPsdFinishedDeactivation, KErrNone)).CRef(),
+                            TClientType(TCFClientType::ECtrlProvider));
+            }   
+
+        tNode.iPDPFsmContextId = CPDPSubConnectionProvider::EInvalidContextId;
+        
+        }
+    }
+
+
 DEFINE_SMELEMENT(TAwaitingPDPContextDestroyed, NetStateMachine::MState, PDPSCprStates::TContext)
 TBool TAwaitingPDPContextDestroyed::Accept()
     {
     if (TAwaitingPDPFSMMessage::Accept(KContextDeleteEvent))
         {
-        if (iContext.Node().iPDPFsmContextId != CPDPSubConnectionProvider::EInvalidContextId)
-            {
-			if (!iContext.Node().ContentionRequested())
-				{
-				CSubConGenEventSubConDown* event = CSubConGenEventSubConDown::NewL();
-				CleanupStack::PushL(event);
-				iContext.Node().NotifyClientsL(*event);
-				CleanupStack::Pop(event);
-				}
-
-			if (iContext.Node().iPDPFsmContextId == KPrimaryContextId)
-                {
-                iContext.Node().PostToClients<TDefaultClientMatchPolicy>(
-                        iContext.NodeId(),
-                        TCFMessage::TStateChange(
-                                Elements::TStateChange(KPsdFinishedDeactivation, KErrNone)).CRef(),
-                                TClientType(TCFClientType::ECtrlProvider));
-                }
-
-            iContext.Node().iPdpFsmInterface->DeleteFsmContext(iContext.Node().iPDPFsmContextId);
-            iContext.Node().iPDPFsmContextId = CPDPSubConnectionProvider::EInvalidContextId;            
-            }
         return ETrue;
         }
     return EFalse;

@@ -147,6 +147,8 @@ void CTelSchedulerStop::RunL()
 	CActiveScheduler::Stop();
 	}
 
+	
+	
 //
 // CTelServer class definitions
 //
@@ -411,7 +413,7 @@ TBool CTelServer::IsEmergencyClient(const CTelSession* aSession) const
 	return EFalse;
 	}
 
-
+	
 //
 // CTelScheduler class definitions
 //
@@ -490,7 +492,7 @@ EXPORT_C TInt EtelServerThread(TAny* aArg)
 //Definition of ETel's policy table -
 //Dicates what capability checking takes place for any given IPC request
 
-const TUint CTelServer::iRangeCount = 332;
+const TUint CTelServer::iRangeCount = 334;
 const TInt CTelServer::iRanges[iRangeCount] = 
 	{
 	0,		//range is 0-61 inclusive
@@ -505,8 +507,8 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	86,		//range is 86
 	87,		//range is 87
 	88,		//range is 88
-	89,		//range is 89-91 inclusive
-	92,		//range is 92-505 inclusive
+	89,		//range is 89-95 inclusive
+	96,		//range is 96-505 inclusive
 	506,		//range is 506
 	507,		//range is 507-507 inclusive
 	508,		//range is 508
@@ -676,7 +678,9 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	28500,		//range is 28500-28502 inclusive
 	28503,		//range is 28503-28999 inclusive
 	29000,		//range is 29000-29004 inclusive
-	29005,		//range is 29005-29499 inclusive
+	29005,		//range is 29005-29005 inclusive
+	29006,		//range is 29006
+	29007,		//range is 29007-29499 inclusive
 	29500,		//range is 29500
 	29501,		//range is 29501-29501 inclusive
 	29502,		//range is 29502-29504 inclusive
@@ -783,14 +787,14 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	63002,		//range is 63002-63499 inclusive
 	63500,		//range is 63500
 	63501,		//range is 63501-63999 inclusive
-	64000,		//range is 64000-64004 inclusive
-	64005,		//range is 64005-64499 inclusive
-	64500,		//range is 64500-64504 inclusive
-	64505,		//range is 64505-64999 inclusive
-	65000,		//range is 65000-65004 inclusive
-	65005,		//range is 65005-65500 inclusive
-	65501,		//range is 65501-65504 inclusive
-	65505,		//range is 65505-65999 inclusive
+	64000,		//range is 64000-64006 inclusive
+	64007,		//range is 64007-64499 inclusive
+	64500,		//range is 64500-64506 inclusive
+	64507,		//range is 64507-64999 inclusive
+	65000,		//range is 65000-65003 inclusive
+	65004,		//range is 65004-65500 inclusive
+	65501,		//range is 65501-65503 inclusive
+	65504,		//range is 65504-65999 inclusive
 	66000,		//range is 66000
 	66001,		//range is 66001-66499 inclusive
 	66500,		//range is 66500
@@ -833,8 +837,8 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	88002,		//range is 88002-88499 inclusive
 	88500,		//range is 88500-88501 inclusive
 	88502,		//range is 88502-999999 inclusive
-	1000000,		//range is 1000000-1000999 inclusive
-	1001000,		//range is 1001000-KMaxTInt inclusive
+	1000000,	//range is 1000000-1000999 inclusive
+	1001000,	//range is 1001000-KMaxTInt inclusive
 	};
 
 
@@ -853,7 +857,7 @@ const TUint8 CTelServer::iElementsIndex[iRangeCount] =
 	10,
 	11,
 	14,
-	CPolicyServer::ECustomCheck,
+	3,
 	CPolicyServer::ENotSupported,
 	11,
 	CPolicyServer::ENotSupported,
@@ -1022,6 +1026,8 @@ const TUint8 CTelServer::iElementsIndex[iRangeCount] =
 	2,
 	CPolicyServer::ENotSupported,
 	2,
+	CPolicyServer::ENotSupported,
+	3,
 	CPolicyServer::ENotSupported,
 	3,
 	CPolicyServer::ENotSupported,

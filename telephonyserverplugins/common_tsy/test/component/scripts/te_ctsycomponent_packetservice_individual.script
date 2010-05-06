@@ -112,6 +112,18 @@ START_TESTCASE BA-CTSY-PKTS-PSNSC-0004
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPacketServiceFU.TestNotifyStatusChange0004L
 END_TESTCASE BA-CTSY-PKTS-PSNSC-0004
 
+START_TESTCASE BA-CTSY-PKTS-PSNSC-0004a
+//!@SYMTestCaseID BA-CTSY-PKTS-PSNSC-0004a
+//!@SYMPREQ 1551
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests and cancel to RPacketService::NotifyStatusChange
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests and cancel to RPacketService::NotifyStatusChange
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyPacketServiceFU.TestNotifyStatusChange0004aL
+END_TESTCASE BA-CTSY-PKTS-PSNSC-0004a
+
 START_TESTCASE BA-CTSY-PKTS-PSNSC-0001a
 //!@SYMTestCaseID BA-CTSY-PKTS-PSNSC-0001a
 //!@SYMPREQ 1551

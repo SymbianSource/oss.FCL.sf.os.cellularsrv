@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CMOCKSECURITYMESSHANDLER_H
 #define CMOCKSECURITYMESSHANDLER_H
 

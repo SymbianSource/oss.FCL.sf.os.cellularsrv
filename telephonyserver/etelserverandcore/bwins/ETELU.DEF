@@ -258,4 +258,10 @@ EXPORTS
 	?CheckEmergencyClient@CPhoneBase@@QBEHK@Z @ 257 NONAME ; int CPhoneBase::CheckEmergencyClient(unsigned long) const
 	?SetEmergencyClient@RPhone@@QBEHK@Z @ 258 NONAME ; int RPhone::SetEmergencyClient(unsigned long) const
 	?SetPriorityClientV2@RTelServer@@QBEHXZ @ 259 NONAME ; int RTelServer::SetPriorityClientV2(void) const
+	?IsSessionReserved@CTelObject@@QBEHXZ @ 260 NONAME ; int CTelObject::IsSessionReserved(void) const
+	?CancelReserveSession@CTelObject@@QAEXXZ @ 261 NONAME ; void CTelObject::CancelReserveSession(void)
+	?ReserveSession@CTelObject@@QAEHXZ @ 262 NONAME ; int CTelObject::ReserveSession(void)
+	?SetSessionOwnerByTsyHandle@CTelObject@@QAEXK@Z @ 263 NONAME ; void CTelObject::SetSessionOwnerByTsyHandle(unsigned long)
+	?EndSession@CTelObject@@QAEXXZ @ 264 NONAME ; void CTelObject::EndSession(void)
+	?IsSessionInProgress@CTelObject@@QBEHXZ @ 265 NONAME ; int CTelObject::IsSessionInProgress(void) const
 

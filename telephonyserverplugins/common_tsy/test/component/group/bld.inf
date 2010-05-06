@@ -28,7 +28,6 @@ PRJ_TESTEXPORTS
 ../cenrep_ini/10200C8D.txt /epoc32/data/z/private/10202be9/10200c8d.txt
 ../cenrep_ini/10200C8D.txt /epoc32/release/winscw/udeb/z/private/10202be9/10200c8d.txt
 ../cenrep_ini/10200C8D.txt /epoc32/release/winscw/urel/z/private/10202be9/10200c8d.txt
-
 // Alternatives for deviceattributes.ini
 ../testdata/standard.ini 		z:/testdata/configs/standard.ini
 ../testdata/TestGetPhoneId0001b.ini	z:/testdata/configs/testgetphoneid0001b.ini
@@ -135,6 +134,9 @@ te_ctsy_component.iby          /epoc32/rom/include/te_ctsy_component.iby
 // include MockHwrm
 #include "../MockHwrmSY/group/bld.inf"
   
+// include USSD test client
+#include "../ussdtestclient/group/bld.inf"
+
 PRJ_TESTMMPFILES
 //build test components
 ./te_ctsy_component.mmp

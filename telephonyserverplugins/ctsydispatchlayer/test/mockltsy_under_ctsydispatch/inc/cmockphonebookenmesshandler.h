@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CMOCKPHONEBOOKENMESSHANDLER_H
 #define CMOCKPHONEBOOKENMESSHANDLER_H
 

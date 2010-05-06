@@ -1172,9 +1172,29 @@ This class is not intended for user derivation.
 // Set this session as Priority client
 //
 	IMPORT_C TInt SetPriorityClientV2() const;
-	
+
+//
+// Type of incoming request offered for clients to accept/reject. 
+//
+    enum TIncomingEventType
+        {
+        EUssdType
+        };	
 	};
 
+/** Registering interest in new incoming dialogues.
 
+    Interest Category flags. */
+    enum TInterestCategory
+        {
+    /** Priority client. Only one can be registered with this category */
+        EInterestCategoryPriority=0x00000001,
+    /** Standard client */
+        EInterestCategoryStandard=0x00000002,
+    /** Default client. Only one can be registered with this category */
+        EInterestCategoryDefault=0x00000004,
+        };
+		
+	
 #include <etel.inl>
 #endif

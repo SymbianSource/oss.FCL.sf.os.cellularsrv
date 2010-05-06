@@ -289,7 +289,7 @@ void CTelSession::ServiceL(const RMessage2 &aMessage)
 	case EEtelServerEnumeratePhones:
 		EnumeratePhones();
 		return;
-
+		
 	case EEtelServerSetPriorityClient:
 		SetPriorityClient();
 		return;
@@ -342,6 +342,30 @@ void CTelSession::ServiceL(const RMessage2 &aMessage)
 	case EEtelServerSetPriorityClientV2:
 		SetPriorityClientV2();
 		return;
+
+    case EEtelServerAcceptIncoming:
+        {
+        CTelObject* theObj=CObjectFromHandle(aMessage.Int3());
+        if (theObj==NULL)
+            {
+            PanicClient(EEtelPanicBadPhoneHandle,aMessage);     
+            return;
+            }
+        theObj->AcceptIncoming(aMessage,this);
+        return;
+        }
+        
+    case EEtelServerRejectIncoming:
+        {
+        CTelObject* theObj=CObjectFromHandle(aMessage.Int3());
+        if (theObj==NULL)
+            {
+            PanicClient(EEtelPanicBadPhoneHandle,aMessage);     
+            return;
+            }
+        theObj->RejectIncoming(aMessage,this);
+        return;
+        }
 		
 	case EEtelFlushInterfaceQueue:
 		{
@@ -475,7 +499,7 @@ void CTelSession::EnumeratePhones()
 	RECORD_COMPLETE(m.Session(), m.Function(), ret);
 	m.Complete(ret);
 	}
-
+	
 void CTelSession::GetTsyNameByPhone(const TInt aIndexOfPhone) 
 //
 // get the TSY name a particular phone belongs to
@@ -1184,6 +1208,9 @@ void CTelSession::SetPriorityClientV2()
 		iMessage.Complete(ret);
 		}
 	}
+
+
+
 
 
 

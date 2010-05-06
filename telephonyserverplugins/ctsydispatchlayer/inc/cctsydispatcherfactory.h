@@ -13,10 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
 
 #ifndef CCTSYDISPATCHERFACTORY_H
 #define CCTSYDISPATCHERFACTORY_H

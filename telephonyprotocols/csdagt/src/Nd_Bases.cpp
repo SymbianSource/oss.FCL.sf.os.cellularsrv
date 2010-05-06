@@ -29,7 +29,8 @@
 // Netdial SM base class 
 
 CNetdialSM::CNetdialSM(MAgentNotify& aControllerObserver, CDialogProcessor* aDlgPrc, CCommsDbAccess& aDbAccess)
-	: CAgentSMBase(aControllerObserver,aDlgPrc,aDbAccess)
+	: CAgentSMBase(aControllerObserver,aDlgPrc,aDbAccess),
+	  iNdScript(NULL)
 /**
 Constructor.
 

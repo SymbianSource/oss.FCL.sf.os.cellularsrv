@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CSATDISPATCHER_H_
 #define __CSATDISPATCHER_H_
 

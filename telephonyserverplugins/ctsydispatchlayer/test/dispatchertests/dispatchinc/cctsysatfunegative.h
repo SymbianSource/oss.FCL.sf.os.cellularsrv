@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the Sim
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYSATNEGATIVEFU_H_
 #define CCTSYSATNEGATIVEFU_H_
 

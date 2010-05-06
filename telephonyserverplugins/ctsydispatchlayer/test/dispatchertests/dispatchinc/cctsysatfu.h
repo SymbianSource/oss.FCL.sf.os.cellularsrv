@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the Sat
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYSATFU_H
 #define CCTSYSATFU_H
 

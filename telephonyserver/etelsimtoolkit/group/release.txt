@@ -27,7 +27,7 @@ Also add some extra doxygen comments.
 07/03/2001
 ==========
 Add TIconId iIconId element to TGetInkeyV1
-Add related test code in test client and dummy TSY
+Add related test code in test client and dummy TSY
 Create new API document version 3.2
 
 17/01/2001

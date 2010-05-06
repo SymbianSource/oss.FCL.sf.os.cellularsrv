@@ -25,6 +25,9 @@ TARGETTYPE     PLUGIN
 UID            0x10009D8D 0x102822EF
 VENDORID       0x70000001
 
+//PDP logging in commsdbg.ini is enabled with  'LOG SPUD *'
+MACRO 	_INFO_LOG
+MACRO 	_ERROR_LOG
 
 SOURCEPATH     	../src
 SOURCE		PDPSCPRStates.cpp 

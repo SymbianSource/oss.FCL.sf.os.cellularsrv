@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CPACKETSERVICESDISPATCHER_H_
 #define __CPACKETSERVICESDISPATCHER_H_
 

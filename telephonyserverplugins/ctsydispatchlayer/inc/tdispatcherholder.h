@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __TDISPATCHERHOLDER_H_
 #define __TDISPATCHERHOLDER_H_
 

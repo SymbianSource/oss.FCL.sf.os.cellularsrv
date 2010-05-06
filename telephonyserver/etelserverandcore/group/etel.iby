@@ -33,4 +33,42 @@ patchdata etel.dll@KLocationServicesNetworkGatewaySid 0x10281806
 // patch data for RMobileCall::DialCallControl API
 patchdata etel.dll@KSatEngineSid 0x10281806
 
+// Patchable constant KUssdPriorityClientSid.
+// This constant lets licensees specify which client they want as a
+// priority USSD dialogue handler. I.e. the specified client will have
+// first refusal on offered dialogues.
+//
+// To patch this constant, remove the comment characters and replace 0x11111111
+// with the desired value.
+
+patchdata etel.dll@KUssdPriorityClientSid 0x11111111
+
+// Patchable constant KUssdDefaultClientSid.
+// This constant lets licensees specify which client they want as a
+// default USSD dialogue handler. I.e. the specified client will be
+// given the dialogue should no other client accept the offer.
+//
+// To patch this constant, remove the comment characters and replace 0x22222222
+// with the desired value.
+
+patchdata etel.dll@KUssdDefaultClientSid 0x22222222
+
+// Patchable constant KUssdOfferDialogueTimeout.
+// This constant specifies the total timeout in microseconds that a dialogue
+// will be offered to all registered clients.
+//
+// To patch this constant, remove the comment characters and replace 1000000
+// with the desired value.
+
+patchdata etel.dll@KUssdOfferDialogueTimeout 1000000
+
+// Patchable constant KUssdPriorityTimeoutPercentage.
+// This constant specifies the percentage of the total timeout which
+// will be reserved for the priority client.
+//
+// To patch this constant, remove the comment characters and replace 40
+// with the desired value.
+
+patchdata etel.dll@KUssdPriorityTimeoutPercentage 40
+
 #endif // __ETEL_IBY__

@@ -14,11 +14,6 @@
 // cltsydispatchcellbroadcasthandler.h
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CLTSYDISPATCHCELLBROADCASTHANDLER_H_
 #define __CLTSYDISPATCHCELLBROADCASTHANDLER_H_
 

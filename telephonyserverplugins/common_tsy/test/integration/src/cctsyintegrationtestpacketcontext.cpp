@@ -12426,11 +12426,11 @@ TVerdict CCTSYIntegrationTestPacketContext0056::doTestStepL()
 	// ===  Send and receive some data and check data transferred advances ===
 	
 	// Activate context with ESOCK server
-	TBuf<140> host(_L("developer.symbian.com"));
-    TBuf<140> page(_L("/main/downloads/papers/IMS_Introduction_Part_1.pdf"));
+	TBuf<140> host(_L("developer.symbian.org"));
+    TBuf<140> page(_L("/wiki/images/1/12/Common_Design_Patterns_for_Symbian_OS_Sample_Chapter.pdf"));
     CHTTPDownload *download = new (ELeave) CHTTPDownload(this);
     CleanupStack::PushL(download);
-    ASSERT_TRUE(download->StartDownloadL(host,page),_L("Download Failed"));
+    ASSERT_TRUE(download->StartDownloadL(host,page),_L("Download Failed - perhaps page has moved!"));
     
     // Check RPacketService::GetNifInfo with aCount = 0 returns valid name in iContextName 
 	TInt nifInfoCount = 0;

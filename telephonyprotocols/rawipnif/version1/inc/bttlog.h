@@ -77,15 +77,21 @@
 #endif // __BTT_LOG_3__
 
 #ifdef __BTT_LOG_1__
+#ifndef __BTT_LOGGING__
 #define __BTT_LOGGING__
+#endif
 #endif
 
 #ifdef __BTT_LOG_2__
+#ifndef __BTT_LOGGING__
 #define __BTT_LOGGING__
+#endif
 #endif
 
 #ifdef __BTT_LOG_3__
+#ifndef __BTT_LOGGING__
 #define __BTT_LOGGING__
+#endif
 #endif
 
 #ifdef __BTT_LOGGING__

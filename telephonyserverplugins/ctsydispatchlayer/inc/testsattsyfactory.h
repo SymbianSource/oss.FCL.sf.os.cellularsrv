@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef TESTSATTSYFACTORY_H_
 #define TESTSATTSYFACTORY_H_
 

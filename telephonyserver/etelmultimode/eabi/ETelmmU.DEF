@@ -994,4 +994,5 @@ EXPORTS
 	_ZN11RMobileCall24TMobileHscsdCallParamsV8C1Ev @ 993 NONAME
 	_ZN11RMobileCall24TMobileHscsdCallParamsV8C2Ev @ 994 NONAME
 	_ZNK12RMobilePhone20TerminateActiveCallsER14TRequestStatus @ 995 NONAME
-
+	_ZNK20RMobileUssdMessaging22AcceptIncomingDialogueEv @ 996 NONAME
+	_ZNK20RMobileUssdMessaging22RejectIncomingDialogueEv @ 997 NONAME

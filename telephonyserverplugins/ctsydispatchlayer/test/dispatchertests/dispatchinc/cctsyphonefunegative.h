@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the CallControl
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYPHONEFUNEGATIVE_H
 #define CCTSYPHONEFUNEGATIVE_H
 

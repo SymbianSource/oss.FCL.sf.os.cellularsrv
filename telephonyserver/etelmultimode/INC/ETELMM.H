@@ -505,7 +505,7 @@ enum TMultimodeETel3rdPartyV1Api
 	KETelExt3rdPartyV1 = 40000
 	};
 
-	
+
 /*********************************************************/
 //
 // Phone based functionality (RMobilePhone)
@@ -10488,7 +10488,6 @@ Modes: GSM/WCDMA */
 		EUssdMOAcknowledgement
 		};
 
-	
 
 	class TMobileUssdAttributesV1 : public RMobilePhone::TMultimodeType
 	/** Defines attributes of a USSD message. 
@@ -10544,6 +10543,9 @@ API member function. */
 
 	IMPORT_C void ReceiveMessage(TRequestStatus& aReqStatus, TDes8& aMsgData, TDes8& aMsgAttributes) const;
 
+    IMPORT_C TInt AcceptIncomingDialogue() const;
+    IMPORT_C TInt RejectIncomingDialogue() const;
+    
 	/***********************************************************************************/
 	//
 	// Sending USSD messages

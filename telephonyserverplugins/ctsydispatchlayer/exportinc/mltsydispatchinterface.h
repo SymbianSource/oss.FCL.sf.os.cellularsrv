@@ -17,7 +17,8 @@
 
 /**
  @file
- @internalAll 
+ @publishedPartner
+ @released
 */
 
 #ifndef MLTSYDISPATCHINTERFACE_H_

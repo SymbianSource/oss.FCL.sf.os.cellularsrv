@@ -20,7 +20,7 @@
 #include "ET_SSTD.H"
 #include "et_record.h"
 #include "et_phone_util.h"
-
+#include "et_patchdata.h"
 //
 // CReqEntry class definitions
 //
@@ -336,6 +336,7 @@ EXPORT_C CTelObject::~CTelObject()
 // Destructor
 //
 	{
+	delete iDeliveryObject;
 	delete iDestroyDummySubSession;
 	}
 
@@ -468,6 +469,8 @@ void CTelObject::CancelActiveReq(CTelSession* aSession,const TInt aSubSessionHan
 			__ASSERT_ALWAYS(iActiveReqCount>=0,Fault(EEtelFaultNegativeActiveReqCount));
 			if (reqEntry->iCancelFnCalled==FALSE)
 				{
+			    TReqMode reqMode = reqEntry->iReqMode;
+				
 				if (reqEntry->iPlacedRequest)
 					{
 					LOGTEXT2("Calling Cancel Service ActiveReq TsyReq=%d", reqEntry->iTsyReqHandle);
@@ -489,16 +492,20 @@ void CTelObject::CancelActiveReq(CTelSession* aSession,const TInt aSubSessionHan
 						iter.Set(*PhoneOwner()->ReqActiveList().First());
 						}
 					else
-
 						{
 						break;
 						}
 					}
-				else
+				else 
 					{
-					LOGTEXT("Destroying request");
-					DestroyReq(reqEntry);
-					CheckAndDestroyDummySubSession();
+		            if (reqMode&KReqModeMultipleCompletionWithInterestLevel && iDeliveryObject)
+		                {
+		                iDeliveryObject->DeletedReqEntry(reqEntry);
+		                }
+					
+                        LOGTEXT("Destroying request");
+                        DestroyReq(reqEntry);
+                        CheckAndDestroyDummySubSession();
 					}
 				}
 			}
@@ -838,7 +845,7 @@ CReqEntry* CTelObject::ReqAnalyserL(const RMessage2& aMessage,CTelSession* aSess
 	HEtelBufC8* buf8=NULL;
 	HEtelBufC16* buf16=NULL;
 	CReqEntry* reqEntry=NULL;
-	
+
 	reqEntry = PhoneOwner()->FindSameClientEntry(aSession,aMessage.Int3(),aMessage.Function());
 	if (reqEntry) 
 		{	
@@ -915,11 +922,13 @@ CReqEntry* CTelObject::ReqAnalyserL(const RMessage2& aMessage,CTelSession* aSess
 	//
 	reqEntry=PhoneOwner()->NewReqL(aMessage,aSession,buffer,this,aMessage.Function());
 	CleanupStack::Pop();
-	if (aReqMode&KReqModeMultipleCompletionEnabled)
-				// this client has not currently got this request outstanding
-				// but another client may have 
+
+	reqEntry->iInterestCategory = FindInterestCategory(aMessage.SecureId());
+
+    if ( aReqMode & (KReqModeMultipleCompletionEnabled | KReqModeMultipleCompletionWithInterestLevel) )
+		// this client has not currently got this request outstanding but another client may have 
 		{
-		CReqEntry* previousReq=NULL;
+        CReqEntry* previousReq=NULL;
 		previousReq=PhoneOwner()->FindByIpcAndTelObject(aMessage.Function(),this, buffer->Size());	// search in active list
 		if (previousReq)
 			{
@@ -982,6 +991,18 @@ void CTelObject::GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReq
 			aMessage.Complete(res);
 			return;
 			}
+
+        // If a call is session based then it can only be used
+        // when the client is the session owner.
+        if (reqMode&KReqModeSessionBased && IsSessionInProgress() 
+                /*&& aMessage.Int3() != iSessionOwner.iSubSessionId TODO*/)
+            {
+            // Each type of session only allowed to have one ongoing 'session/dialogue'.
+			RECORD_COMPLETE_SUB(aMessage.Session(), this, aMessage.Int3(), aMessage.Function(), res);
+            aMessage.Complete(KErrServerBusy);
+            return;
+            }
+			
 		if (aNewReqEntry==NULL)
 			{
 			TRAP(res,reqEntry=ReqAnalyserL(aMessage,aSession,reqMode));
@@ -1070,8 +1091,13 @@ void CTelObject::GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReq
 				return;
 				}
 				// so now we know the client must have the request outstanding
-			if (reqMode&KReqModeMultipleCompletionEnabled && !(reqEntry->iPlacedRequest))
+            if ((reqMode&KReqModeMultipleCompletionEnabled || reqMode&KReqModeMultipleCompletionWithInterestLevel) && !(reqEntry->iPlacedRequest))
 				{
+				if (iDeliveryObject)
+				    {
+					iDeliveryObject->DeletedReqEntry(reqEntry);
+				    }
+
 				CompleteAndDestroyReq(reqEntry,KErrCancel);	// the request hadn't been passed to the TSY
 				RECORD_COMPLETE_SUB(aMessage.Session(), this, aMessage.Int3(), aMessage.Function(), KErrNone);
 				aMessage.Complete(KErrNone);
@@ -1106,6 +1132,35 @@ void CTelObject::GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReq
 		}
 	}
 
+void CTelObject::AcceptIncoming(const RMessage2& aMessage,CTelSession* aSession)
+    {
+    TInt status = KErrNotReady;
+    if (iDeliveryObject)
+        {
+        status = iDeliveryObject->ClientsDecision(aMessage, aSession, ETrue);
+        }
+    aMessage.Complete(status);
+    }
+
+void CTelObject::RejectIncoming(const RMessage2& aMessage,CTelSession* aSession)
+    {
+    TInt status = KErrNotReady;
+    if (iDeliveryObject)
+        {
+        if (iDeliveryObject->DeliveryInProgress())
+            {
+            status = iDeliveryObject->ClientsDecision(aMessage, aSession, EFalse);
+            }
+        else
+            {
+            // Rejecting when the time out has occurred will lead to a KErrNone
+            // error rather than KErrTimedOut.
+            status = KErrNone;
+            }
+        }
+    aMessage.Complete(status);
+    }
+
 EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const TInt aError)
 //
 // General complete function for all CTelObject derived classes
@@ -1132,8 +1187,31 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 		//  each client that has called it. In that case, 
 		//  TSY will fill in the appropriate client's buffer and complete each separately.
 		if (reqMode&KReqModeMultipleCompletionEnabled)
+		    {
+			
 			PhoneOwner()->CheckAndCompleteAllActive(updatedReqEntry,reqMode,ipc,aError);
+		    }
+        else if (reqMode&KReqModeMultipleCompletionWithInterestLevel && error ==KErrNone)
+            {
+            // TODO if delivery is active for this req then return 
+            // KErrInUse / KErrServerBusy?
+            // TODO what if one CTelObject has multiple requests which are 
+            // KReqModeMultipleCompletionWithInterestLevel. Would we need multiple
+            // delivery managers?
+            if (!IsSessionInProgress())
+                {
+                // Find an owner for the new session by offering it to the 
+                // interested clients one by one.
+                DeliverReqL(updatedReqEntry,reqMode, ipc, aError);
+                }
+            else
+                {
+                // Route response direct to session owner
+				FindReq(updatedReqEntry, reqMode, ipc, aError);
+               }
 
+            }
+			
 		if (reqMode&KReqModeRePostImmediately && error==KErrNone)
 			nextPostedReqEntry = updatedReqEntry;					
 		updatedReqEntry->iBuffer->IncWrite();
@@ -1142,8 +1220,13 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 			// there may be other clients who have also called the notification and who 
 			// have entries in active list, so one of these must be re-posted.
 		{
-		if (reqMode&KReqModeMultipleCompletionEnabled)
-			nextPostedReqEntry = PhoneOwner()->FindThisReqByAnotherClient(updatedReqEntry->iSession,updatedReqEntry->iMessage.Int3(),ipc,updatedReqEntry->iBuffer->Size(),this);
+
+		if ( reqMode&KReqModeMultipleCompletionEnabled || reqMode&KReqModeMultipleCompletionWithInterestLevel)
+		    {
+			nextPostedReqEntry = PhoneOwner()->FindThisReqByAnotherClient(updatedReqEntry->iSession,
+			        updatedReqEntry->iMessage.Int3(),ipc,updatedReqEntry->iBuffer->Size(),this);
+			}
+			
 		if (!nextPostedReqEntry)
 			// then we don't want to post any other client's requests in place of this one
 			{
@@ -1158,14 +1241,27 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 				}
 			}
 		}
+		
+	if (error && reqMode&KReqModeMultipleCompletionWithInterestLevel && iDeliveryObject)
+        {
+        // We need to do this before the updatedReqEntry is destroyed
+        iDeliveryObject->DeletedReqEntry(updatedReqEntry);
+        }
+	
 	if (reqMode & KReqModeRePostImmediately)
-		UpdateAndCompleteIfNecessary(updatedReqEntry,error);	// this will destroy the reqEntry
-																// if an error occurred.
+		{
+		// this will destroy the reqEntry if an error occurred.
+		UpdateAndCompleteIfNecessary(updatedReqEntry,error);	
+		}														
 	else
+		{
 		WriteBackAndCompleteReq(updatedReqEntry,error);
+		}
+	
 	if (nextPostedReqEntry)	// will be NULL if no following request for TSY
 		{
-		if(nextPostedReqEntry->iReqMode&KReqModeFlowControlObeyed)
+		if(nextPostedReqEntry->iReqMode&KReqModeFlowControlObeyed && 
+								!(nextPostedReqEntry->iReqMode&KReqModeMultipleCompletionWithInterestLevel))
 			{ // since the request mode is flow control obeyed, increment the flow control counter
 			FlowControlSuspend();
 			}
@@ -1174,17 +1270,204 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 
 	
 	if (!(reqMode&KReqModeFlowControlObeyed)) // If flow control not enabled, go home
+		{
 		ret=ETrue;
-
+		}
+		
 // So everything below assumes it obeyed flow control
 // Resume Flow control ...
 	if (!ret)
+		{
 		FlowControlResume();
+		}
 //
 // Check and destroying the dummy session
 //
 	CheckAndDestroyDummySubSession();
 	}
+
+TInt CTelObject::DeliverReqL(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aIpc, const TInt aError)
+    {
+    // There is no active session therefore we have to work out who to deliver it to. 
+    if (!iDeliveryObject)
+        {
+		iDeliveryObject = CMmDeliveryObject::NewL(*this); 
+        }
+    
+    if (iDeliveryObject->DeliveryInProgress())
+        {
+		// Session in progress.
+        return KErrPermissionDenied;
+        }
+
+	return iDeliveryObject->DeliverReqL(PhoneOwner()->ReqActiveList(), aUpdatedReqEntry, aReqMode, aIpc, aError);
+    }
+	
+void CTelObject::FindReq(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aIpc,const TInt aError)
+    {
+	CReqEntry* reqEntry;
+	TDblQueIter<CReqEntry> iter(PhoneOwner()->ReqActiveList());
+	while(reqEntry = iter++, reqEntry!=NULL)
+		{
+		if(reqEntry->iFunction==aIpc 
+			&& reqEntry->iTelObject==aUpdatedReqEntry->iTelObject 
+			&& reqEntry->iBuffer->Size()==aUpdatedReqEntry->iBuffer->Size()
+			/*&& IsSessionOwner(reqEntry)*/)    
+			{
+			if (aUpdatedReqEntry != reqEntry)
+				{
+				// Copy data from the 'placed' request to the one
+				// that is owned by the client.
+				PhoneOwner()->UpdateBuffer(aUpdatedReqEntry,reqEntry);
+				}
+			OfferToClient(reqEntry, aUpdatedReqEntry, aReqMode, aError);
+			RepostRequest(aUpdatedReqEntry, aError);
+			}
+		}   
+	}
+	
+void CTelObject::OfferToClient(CReqEntry* aReqEntry,CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aError)
+    {
+   if (aReqEntry == aUpdatedReqEntry)
+        {
+        aUpdatedReqEntry->iBuffer->IncWrite();
+        if (aReqMode&KReqModeRePostImmediately)
+			{
+			// this will destroy the reqEntry if an error occurred.
+            UpdateAndCompleteIfNecessary(aUpdatedReqEntry,aError);                         
+			}
+        else
+			{
+            WriteBackAndCompleteReq(aUpdatedReqEntry,aError);
+			}
+        }
+    else
+        {
+        TInt error = ResolveError(aReqEntry->iSession,aError); // set error as either low or high byte
+        if (aReqMode&KReqModeRePostImmediately)
+			{
+            UpdateAndCompleteIfNecessary(aReqEntry,error);    
+			}			
+        else
+			{
+            WriteBackAndCompleteReq(aReqEntry,error);
+			}
+        }
+    
+    CheckAndDestroyDummySubSession(); //TODO
+    }
+
+void CTelObject::RepostRequest(CReqEntry* aUpdatedReqEntry, const TInt aError)
+    {
+	TReqMode reqMode = aUpdatedReqEntry->iReqMode;
+    TBool ret=EFalse;
+    
+    CReqEntry* nextPostedReqEntry = NULL;
+    if (reqMode&KReqModeRePostImmediately && aError==KErrNone) 
+		{
+		nextPostedReqEntry = aUpdatedReqEntry;
+		}
+		
+    if (nextPostedReqEntry) // will be NULL if no following request for TSY
+        {
+        if(nextPostedReqEntry->iReqMode&KReqModeFlowControlObeyed)
+            { // since the request mode is flow control obeyed, increment the flow control counter
+            FlowControlSuspend();
+            }
+        Service(nextPostedReqEntry->iMessage,nextPostedReqEntry);
+        }
+    
+    if (!(reqMode&KReqModeFlowControlObeyed && aError == KErrNone)) // If flow control not enabled, go home
+            ret=ETrue;
+
+    // So everything below assumes it obeyed flow control
+    // Resume Flow control ...
+        if (!ret)
+            FlowControlResume();
+    }
+
+void CTelObject::SetSessionOwner(TInt aSessionHandle, TInt aSubSessionHandle)
+    {
+	iDeliveryObject->iSessionOwner = TPhoneClientId(aSessionHandle, aSubSessionHandle);
+    // TODO notify TSY that the session owner has changed 
+    }
+
+// TODO can be used by the TSY to set the session owner to the current request.
+// For each request the CTSY is given a TsyReqHandle so this is a sensible thing
+// for it to be dealing with.
+// TODO note that once a session has an owner the reserved state is irrelevant.
+
+EXPORT_C void CTelObject::SetSessionOwnerByTsyHandle(const TTsyReqHandle aTsyReqHandle)
+    {
+//    const TInt owningsession = PhoneOwner()->FindSessionByTsyHandle( aTsyReqHandle );
+//    const TInt owningsubsession = PhoneOwner()->FindSubSessionByTsyHandle( aTsyReqHandle );
+	
+//	iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
+    // TODO notify TSY that the session owner has changed 
+    }
+
+
+TBool CTelObject::IsSessionOwner(CReqEntry* aReqEntry) const
+    {
+	// TODO Neil's experimental update
+    TPhoneClientId clientId(reinterpret_cast<TInt>(aReqEntry->iSession),aReqEntry->iMessage.Int3());
+	return (clientId == iDeliveryObject->iSessionOwner);
+    }
+
+TInterestCategory CTelObject::FindInterestCategory( const TSecureId aSid)
+	{
+	if (aSid == KUssdPriorityClientSid)
+	    {
+	    return EInterestCategoryPriority;
+	    }
+	else if(aSid == KUssdDefaultClientSid)
+	    {
+	    return EInterestCategoryDefault;
+	    }
+	else
+	    return EInterestCategoryStandard;
+	}	
+
+EXPORT_C TBool CTelObject::IsSessionInProgress() const
+    {
+	// TODO Neil's experimental update
+	if (iDeliveryObject)
+		{
+		return iDeliveryObject->iSessionOwner != TPhoneClientId();
+		}
+	return EFalse;
+    }
+
+EXPORT_C TInt CTelObject::ReserveSession()
+    {
+	// TODO Neil's experimental update
+	ASSERT(iDeliveryObject);
+    if (iDeliveryObject->iSessionReserved)
+        {
+        return KErrInUse;
+        }
+    iDeliveryObject->iSessionReserved = ETrue;
+	return KErrNone;
+    }
+
+EXPORT_C TBool CTelObject::IsSessionReserved() const
+    {
+	// TODO Neil's experimental update
+    return iDeliveryObject->iSessionReserved;
+    }
+
+EXPORT_C void CTelObject::CancelReserveSession()
+    {
+	// TODO Neil's experimental update
+    iDeliveryObject->iSessionReserved = EFalse;
+    }
+
+EXPORT_C void CTelObject::EndSession()
+    {
+	// TODO Neil's experimental update
+    iDeliveryObject->iSessionOwner = TPhoneClientId();
+    iDeliveryObject->iSessionReserved = EFalse;
+    }
 
 TInt CTelObject::ResolveError(CTelSession* aSession, const TInt aError) const
 /**
@@ -1555,7 +1838,6 @@ void CTelObject::WriteBackAndCompleteReq(CReqEntry* aReqEntry,const TInt aError)
 			if (basicMessageType==EIsaUnicodeDoubleDesTobeRead)
 				{
 				TDes16* dataDes2=BufferDes2u(aReqEntry->iBuffer,CBuffer::ESlotRead);
-				__ASSERT_ALWAYS(dataDes2!=NULL,Fault(EEtelFaultDes2DoesNotExist));
 
 				TRAP(ret,aReqEntry->iMessage.WriteL(2,*dataDes2));
 				if(ret!=KErrNone)
@@ -1805,7 +2087,7 @@ void CTelObject::RemoveDummySubSessionDestroyer()
 	{
 	iDestroyDummySubSession = NULL;
 	}
-
+	
 //
 //
 // CSubSessionExtBase

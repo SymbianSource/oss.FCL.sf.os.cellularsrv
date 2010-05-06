@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the Security
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYSECURITYFU_H
 #define CCTSYSECURITYFU_H
 

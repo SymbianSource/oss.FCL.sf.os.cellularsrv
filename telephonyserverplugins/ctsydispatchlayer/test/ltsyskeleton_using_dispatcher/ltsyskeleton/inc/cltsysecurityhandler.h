@@ -14,11 +14,6 @@
 // cltsydispatchsecurityhandler.h
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CLTSYDISPATCHSECURITYHANDLER_H_
 #define __CLTSYDISPATCHSECURITYHANDLER_H_
 

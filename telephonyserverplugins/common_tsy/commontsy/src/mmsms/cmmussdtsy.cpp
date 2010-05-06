@@ -137,11 +137,20 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
         {
         // Original code continues here.
         TRAP( trapError, ret = DoExtFuncL( aTsyReqHandle, aIpc, aPackage ); );
-
+        TInt reqMode = 0;
+        TRAP_IGNORE( reqMode = ReqModeL(aIpc) );
         if ( trapError != KErrNone )
             {
             // Object cannot be created. 
             ReqCompleted( aTsyReqHandle, trapError );
+            }
+        else if ( ret != KErrNone && reqMode&KReqModeMultipleCompletionWithInterestLevel )
+            {
+            // As the error has occured in the synchronous part of the client call
+            // we want the error to go directly back to the client which made the
+            // call. We don't want to be offering the error to all clients as part
+            // of our deliver mechanism.
+            return ret;
             }
         else if ( ret != KErrNone )
             {
@@ -285,15 +294,21 @@ CTelObject::TReqMode CMmUssdTsy::ReqModeL(
 
         // Immediate Server Repost
         case EMobileUssdMessagingReceiveMessage:
-        case EMobileUssdMessagingNotifyNetworkRelease:
             ret = KReqModeRePostImmediately | 
-                KReqModeMultipleCompletionEnabled;
+                KReqModeMultipleCompletionWithInterestLevel;
             break;
         // Services handled by TSY
         case EMobileUssdMessagingSendMessage:
         case EMobileUssdMessagingSendMessageNoFdnCheck:
         case EMobileUssdMessagingSendRelease:
+            //ret = KReqModeSessionBased;
             ret = 0;
+            break;
+        case EMobileUssdMessagingNotifyNetworkRelease:
+            // Multiple completion because the clients don't have to own the
+            // session in order to be notified that the session has been
+            // released.
+            ret = KReqModeMultipleCompletionEnabled;
             break;
         default:
             User::Leave( KErrNotSupported );
@@ -476,6 +491,11 @@ TInt CMmUssdTsy::ReceiveMessage(
     	return KErrArgument;
     	}
 
+    if (RMobileUssdMessaging::TGsmUssdMessageData().MaxLength() > aData->MaxLength()) 
+        {
+        return KErrArgument;
+        }
+    
     TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1>* ussdAttributesPckg =
          reinterpret_cast<TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1>*>
          ( aAttributes );
@@ -516,6 +536,9 @@ void CMmUssdTsy::CompleteReceiveMessage(
     TInt aError, 
 	CMmDataPackage* aDataPackage )
     {
+    // TODO if a session is in progress and this is a notification then we need to send back
+    // a USSD busy code.
+    
 TFLOGSTRING("TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeUssdReceiveMessage );
@@ -598,6 +621,19 @@ TFLOGSTRING2("TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFd
         }
     else
     	{
+/* TODO
+        if (!IsSessionInProgress())
+            {
+            // If a session isn't in progress then reserve the session to
+            // prevent any other attempts at opening a dialogue. If the send
+            // succeeds then the session is opened. If the send fails or the
+            // user cancels the send then we cancel it.
+            // If the session is already in progress then no reservation is
+            // necessary and the success or failure of this send does not
+            // affect the session or dialogue state.
+            (void)ReserveSession();
+            }
+*/    	
 #ifdef REQHANDLE_TIMER       
         // Check if NoFdnCheck is used or not
         if ( iUssdNoFdnCheckFlag == EUssdNoFdnCheckUsed )
@@ -634,7 +670,7 @@ TFLOGSTRING2("TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFd
     }
 
 // ---------------------------------------------------------------------------
-// CMmCustomTsy::SendMessageCancel
+// CmmUssdTsy::SendMessageCancel
 // Cancels cancelling of USSD session.
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
@@ -644,6 +680,8 @@ TInt CMmUssdTsy::SendMessageCancel(
     {
     // reset the req handle
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeUssdSendMessage );
+
+//    CancelReserveSession(); TODO
     
     // complete with cancel
     ReqCompleted( aTsyReqHandle, KErrCancel );
@@ -672,7 +710,22 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
         // reset req handle. Returns the deleted req handle
         reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
             EMultimodeUssdSendMessage );
-        
+/* TODO        
+        // If the session is already in progress then no session management
+        // action is required. Otherwise we either promote the reserved
+        // session to an open session or cancel the reservation.
+        if ( !IsSessionInProgress() && IsSessionReserved() )
+            {
+            if ( KErrNone == aError )
+                {
+                SetSessionOwnerByTsyHandle( reqHandle );
+                }
+            else
+                {
+                CancelReserveSession();
+                }
+            }
+*/        
         ReqCompleted( reqHandle, aError );
         iSsTransactionOngoing = EFalse;
         iUssdNoFdnCheckFlag = EUssdNoFdnCheckUnknown;
@@ -689,6 +742,13 @@ TInt CMmUssdTsy::SendReleaseL(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8* aReturnResult )
     {
+/* TODO
+    if ( !IsSessionInProgress() )
+        {
+        // You can't release a dialogue that isn't in progress.
+        return KErrDisconnected;
+        }
+*/    
     TTsyReqHandle sendReleaseHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EMultimodeUssdSendRelease );
 
@@ -769,12 +829,13 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendRelease" );
             {
             aDataPackage->UnPackData ( *iReturnResultPtr );
             }
+//        EndSession();     TODO   
         ReqCompleted( reqHandle, aErrorCode );
         }  
     }
 
 // ---------------------------------------------------------------------------
-// CMmCustomTsy::SendReleaseCancel
+// CmmUssdTsy::SendReleaseCancel
 // Cancels cancelling of USSD session.
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
@@ -806,7 +867,7 @@ TInt CMmUssdTsy::NotifyNetworkRelease(
     TDes8* aMsgAttributes) // aMsgAttributes may be NULL
     {
 TFLOGSTRING("TSY: CMmUssdTsy::NotifyNetworkRelease" );
-    
+
 	if (aMsgData->MaxLength() < sizeof(RMobilePhone::TMobilePhoneSendSSRequestV3Pckg))
 		{
 	    TFLOGSTRING ("TSY: CMmNetTsy::NotifyNetworkRelease Bad size argument (arg1)");
@@ -865,6 +926,7 @@ void CMmUssdTsy::CompleteNotifyNetworkRelease(
     TInt aErrorCode,
     CMmDataPackage* aDataPackage )
     {
+//    EndSession(); TODO
 
 TFLOGSTRING2("TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorCode );
     // reset req handle. Returns the deleted req handle
@@ -923,7 +985,7 @@ TFLOGSTRING2("TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorC
     } 
 
 // ---------------------------------------------------------------------------
-// CMmCustomTsy::NotifyNetworkReleaseCancel
+// CmmUssdTsy::NotifyNetworkReleaseCancel
 // Cancels notify network release request.
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------

@@ -14,11 +14,6 @@
 // cltsydispatchphonehandler.h
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef __CLTSYDISPATCHPHONEHANDLER_H_
 #define __CLTSYDISPATCHPHONEHANDLER_H_
 

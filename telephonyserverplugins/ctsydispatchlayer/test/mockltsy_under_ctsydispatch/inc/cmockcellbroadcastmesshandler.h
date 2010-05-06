@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CMOCKCELLBROADCASTMESSHANDLER_H
 #define CMOCKCELLBROADCASTMESSHANDLER_H
 

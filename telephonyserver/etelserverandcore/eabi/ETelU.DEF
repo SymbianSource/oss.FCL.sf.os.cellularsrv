@@ -7,7 +7,7 @@ EXPORTS
 	_ZN10CPhoneBase28CloseSubSessionPreProcessingEP11CTelSessioni @ 6 NONAME
 	_ZN10CPhoneBase7ServiceERK9RMessage2P9CReqEntry @ 7 NONAME
 	_ZN10CPhoneBase8ReqModeLEi @ 8 NONAME
-	_ZThn60_NK9CCallBase19CheckPriorityClientEm @ 9 NONAME ; #<thunk>#
+	_ZThn60_NK9CCallBase19CheckPriorityClientEm @ 9 NONAME ABSENT ; #<thunk>#
 	_ZN10CPhoneBaseC2Ev @ 10 NONAME
 	_ZN10CPhoneBaseD0Ev @ 11 NONAME
 	_ZN10CPhoneBaseD1Ev @ 12 NONAME
@@ -18,7 +18,7 @@ EXPORTS
 	_ZN10CTelObject17FlowControlResumeEv @ 17 NONAME
 	_ZN10CTelObject18FlowControlSuspendEv @ 18 NONAME
 	_ZN10CTelObject20CTelObject_Reserved1Ev @ 19 NONAME
-	_ZThn60_NK9CCallBase14CheckOwnershipEm @ 20 NONAME ; #<thunk>#
+	_ZThn60_NK9CCallBase14CheckOwnershipEm @ 20 NONAME ABSENT ; #<thunk>#
 	_ZN10CTelObjectC2Ev @ 21 NONAME
 	_ZN10CTelObjectD0Ev @ 22 NONAME
 	_ZN10CTelObjectD1Ev @ 23 NONAME
@@ -31,7 +31,7 @@ EXPORTS
 	_ZN10RTelServerC1Ev @ 30 NONAME
 	_ZN10RTelServerC2Ev @ 31 NONAME
 	_ZN17CPhoneFactoryBase27CPhoneFactoryBase_Reserved1Ev @ 32 NONAME
-	_ZThn60_N9CCallBase46RecoverDataPortAndRelinquishOwnershipCompletedEi @ 33 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase46RecoverDataPortAndRelinquishOwnershipCompletedEi @ 33 NONAME ABSENT ; #<thunk>#
 	_ZN17CPhoneFactoryBaseC2Ev @ 34 NONAME
 	_ZN17CPhoneFactoryBaseD0Ev @ 35 NONAME
 	_ZN17CPhoneFactoryBaseD1Ev @ 36 NONAME
@@ -40,7 +40,7 @@ EXPORTS
 	_ZN18CSubSessionExtBase18OpenPostProcessingEP11CTelSessioni @ 39 NONAME
 	_ZN18CSubSessionExtBase28CloseSubSessionPreProcessingEP11CTelSessioni @ 40 NONAME
 	_ZN18CSubSessionExtBase7ServiceERK9RMessage2P9CReqEntry @ 41 NONAME
-	_ZThn60_N9CCallBase28RelinquishOwnershipCompletedEi @ 42 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase28RelinquishOwnershipCompletedEi @ 42 NONAME ABSENT ; #<thunk>#
 	_ZN18CSubSessionExtBaseC2Ev @ 43 NONAME
 	_ZN18CSubSessionExtBaseD0Ev @ 44 NONAME
 	_ZN18CSubSessionExtBaseD1Ev @ 45 NONAME
@@ -126,7 +126,7 @@ EXPORTS
 	_ZN8CFaxBase4InitEv @ 125 NONAME
 	_ZN8CFaxBase7ServiceERK9RMessage2P9CReqEntry @ 126 NONAME
 	_ZN8CFaxBase8ReqModeLEi @ 127 NONAME
-	_ZThn60_N9CCallBase23ResolveSubSessionHandleEmi @ 128 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase23ResolveSubSessionHandleEmi @ 128 NONAME ABSENT ; #<thunk>#
 	_ZN8CFaxBaseC2Ev @ 129 NONAME
 	_ZN8CFaxBaseD0Ev @ 130 NONAME
 	_ZN8CFaxBaseD1Ev @ 131 NONAME
@@ -145,7 +145,7 @@ EXPORTS
 	_ZN9CCallBase4InitEv @ 144 NONAME
 	_ZN9CCallBase7ServiceERK9RMessage2P9CReqEntry @ 145 NONAME
 	_ZN9CCallBase8ReqModeLEi @ 146 NONAME
-	_ZThn60_N9CCallBase22DeleteFaxProgressChunkEv @ 147 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase22DeleteFaxProgressChunkEv @ 147 NONAME ABSENT ; #<thunk>#
 	_ZN9CCallBaseC2Ev @ 148 NONAME
 	_ZN9CCallBaseD0Ev @ 149 NONAME
 	_ZN9CCallBaseD1Ev @ 150 NONAME
@@ -157,7 +157,7 @@ EXPORTS
 	_ZN9CLineBase4InitEv @ 156 NONAME
 	_ZN9CLineBase7ServiceERK9RMessage2P9CReqEntry @ 157 NONAME
 	_ZN9CLineBase8ReqModeLEi @ 158 NONAME
-	_ZThn60_N9CCallBase22CreateFaxProgressChunkEv @ 159 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase22CreateFaxProgressChunkEv @ 159 NONAME ABSENT ; #<thunk>#
 	_ZN9CLineBaseC2Ev @ 160 NONAME
 	_ZN9CLineBaseD0Ev @ 161 NONAME
 	_ZN9CLineBaseD1Ev @ 162 NONAME
@@ -314,8 +314,8 @@ EXPORTS
 	_ZThn28_N9CLineBase8ReqModeLEi @ 313 NONAME ; #<thunk>#
 	_ZThn28_NK10CTelObject13ServerVersionEv @ 314 NONAME ; #<thunk>#
 	_ZThn28_NK17CPhoneFactoryBase21QueryVersionSupportedERK8TVersion @ 315 NONAME ; #<thunk>#
-	_ZThn60_N9CCallBase10SetUnownedEv @ 316 NONAME ; #<thunk>#
-	_ZThn60_N9CCallBase12SetOwnershipEm @ 317 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase10SetUnownedEv @ 316 NONAME ABSENT ; #<thunk>#
+	_ZThn60_N9CCallBase12SetOwnershipEm @ 317 NONAME ABSENT ; #<thunk>#
 	_ZN18CSubSessionExtBase24GlobalKernelObjectHandleEv @ 318 NONAME
 	_ZN9CCallBase24GlobalKernelObjectHandleEv @ 319 NONAME
 	_ZThn28_N18CSubSessionExtBase24GlobalKernelObjectHandleEv @ 320 NONAME ; #<thunk>#
@@ -357,7 +357,7 @@ EXPORTS
 	_ZNK5RCall24AdoptFaxSharedHeaderFileERK5RFile @ 356 NONAME
 	_ZTI21CFaxSharedFileHandles @ 357 NONAME ; #<TI>#
 	_ZTV21CFaxSharedFileHandles @ 358 NONAME ; #<VT>#
-	_ZThn60_N9CCallBase22SetFaxSharedHeaderFileEmP21CFaxSharedFileHandles @ 359 NONAME ; #<thunk>#
+	_ZThn60_N9CCallBase22SetFaxSharedHeaderFileEmP21CFaxSharedFileHandles @ 359 NONAME ABSENT ; #<thunk>#
 	_ZN36CAsyncRetrieveVariableLengthBufferV210FreeBufferEv @ 360 NONAME
 	_ZN36CAsyncRetrieveVariableLengthBufferV212RestoreListLEv @ 361 NONAME
 	_ZN36CAsyncRetrieveVariableLengthBufferV215CompleteIfInUseER14TRequestStatus @ 362 NONAME
@@ -381,4 +381,20 @@ EXPORTS
 	_ZNK10CPhoneBase20CheckEmergencyClientEm @ 380 NONAME
 	_ZNK6RPhone18SetEmergencyClientEm @ 381 NONAME
 	_ZNK10RTelServer19SetPriorityClientV2Ev @ 382 NONAME
+	_ZThn64_N9CCallBase10SetUnownedEv @ 383 NONAME
+	_ZThn64_N9CCallBase12SetOwnershipEm @ 384 NONAME
+	_ZThn64_N9CCallBase22CreateFaxProgressChunkEv @ 385 NONAME
+	_ZThn64_N9CCallBase22DeleteFaxProgressChunkEv @ 386 NONAME
+	_ZThn64_N9CCallBase22SetFaxSharedHeaderFileEmP21CFaxSharedFileHandles @ 387 NONAME
+	_ZThn64_N9CCallBase23ResolveSubSessionHandleEmi @ 388 NONAME
+	_ZThn64_N9CCallBase28RelinquishOwnershipCompletedEi @ 389 NONAME
+	_ZThn64_N9CCallBase46RecoverDataPortAndRelinquishOwnershipCompletedEi @ 390 NONAME
+	_ZThn64_NK9CCallBase14CheckOwnershipEm @ 391 NONAME
+	_ZThn64_NK9CCallBase19CheckPriorityClientEm @ 392 NONAME
+	_ZN10CTelObject14ReserveSessionEv @ 393 NONAME
+	_ZN10CTelObject20CancelReserveSessionEv @ 394 NONAME
+	_ZN10CTelObject26SetSessionOwnerByTsyHandleEm @ 395 NONAME
+	_ZNK10CTelObject17IsSessionReservedEv @ 396 NONAME
+	_ZN10CTelObject10EndSessionEv @ 397 NONAME
+	_ZNK10CTelObject19IsSessionInProgressEv @ 398 NONAME
 

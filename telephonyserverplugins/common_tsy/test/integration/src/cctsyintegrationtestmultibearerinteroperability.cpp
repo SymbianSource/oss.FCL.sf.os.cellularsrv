@@ -489,11 +489,11 @@ TVerdict CCTSYIntegrationTestMultiBearerInteroperability0003::doTestStepL()
 
 
 	// Start downloading a file via HTTP. 
-	TBuf<140> host(_L("developer.symbian.com"));
-    TBuf<140> page(_L("/main/downloads/papers/IMS_Introduction_Part_1.pdf"));
+	TBuf<140> host(_L("developer.symbian.org"));
+	TBuf<140> page(_L("/wiki/images/1/12/Common_Design_Patterns_for_Symbian_OS_Sample_Chapter.pdf"));
     CHTTPDownload* download = new (ELeave) CHTTPDownload(this);
     CleanupStack::PushL(download);
-    ASSERT_TRUE(download->StartDownloadL(host,page), _L("Download Failed"));
+    ASSERT_TRUE(download->StartDownloadL(host,page), _L("Download Failed - perhaps page has moved!"));
     
  	// Get context info	
 	TExtEtelRequestStatus getContextInfo(packetService, EPacketGetContextInfo);
@@ -800,11 +800,11 @@ TVerdict CCTSYIntegrationTestMultiBearerInteroperability0004::doTestStepL()
 	ASSERT_EQUALS(dialStatus.Int(), KErrNone,  _L("RCall::Dial returned with an error"));
 
 	// Start downloading a file e.g. via HTTP. 
-	TBuf<140> host(_L("developer.symbian.com"));
-    TBuf<140> page(_L("/main/downloads/papers/IMS_Introduction_Part_1.pdf"));
-    CHTTPDownload *download = new (ELeave) CHTTPDownload(this);
+	TBuf<140> host(_L("developer.symbian.org"));
+	TBuf<140> page(_L("/wiki/images/1/12/Common_Design_Patterns_for_Symbian_OS_Sample_Chapter.pdf"));
+    CHTTPDownload* download = new (ELeave) CHTTPDownload(this);
     CleanupStack::PushL(download);
-    ASSERT_TRUE(download->StartDownloadL(host,page),_L("CHTTPDownload::StartDownloadL failed"));
+    ASSERT_TRUE(download->StartDownloadL(host,page), _L("Download Failed - perhaps page has moved!"));
     
 	// Verify file is downloading. 
 	ASSERT_TRUE(download->VerifyDownloading(), _L("CHTTPDownload::VerifyDownloading did not return ETrue as expected. File is not downloaded."));

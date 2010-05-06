@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CMOCKCALLCONTROLMULTIPARTYMESSHANDLER_H
 #define CMOCKCALLCONTROLMULTIPARTYMESSHANDLER_H
 

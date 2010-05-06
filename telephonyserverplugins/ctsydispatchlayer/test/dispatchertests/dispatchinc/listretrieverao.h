@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef LISTRETRIEVERAO_H
 #define LISTRETRIEVERAO_H
 

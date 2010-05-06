@@ -13,13 +13,13 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYDISPATCHERCALLBACK_H
 #define CCTSYDISPATCHERCALLBACK_H
+
+/** @file
+@publishedPartner
+@released
+*/
 
 // INCLUDES
 #include <ctsy/serviceapi/cmmutility.h>

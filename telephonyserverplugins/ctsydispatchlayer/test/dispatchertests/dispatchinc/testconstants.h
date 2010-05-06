@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef TESTCONSTANTS_H_
 #define TESTCONSTANTS_H_
 

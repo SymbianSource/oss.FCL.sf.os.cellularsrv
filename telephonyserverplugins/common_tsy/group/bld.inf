@@ -95,9 +95,10 @@ PRJ_EXPORTS
 #endif
 
 // variant information. c32.exe SID is 101F7989
-../commontsy/inc/operatorVariants.ini	/epoc32/data/z/private/101f7989/operatorvariants.ini
-../commontsy/inc/operatorVariants.ini	/epoc32/release/winscw/udeb/z/private/101f7989/operatorvariants.ini
-../commontsy/inc/operatorVariants.ini	/epoc32/release/winscw/urel/z/private/101f7989/operatorvariants.ini
+../commontsy/inc/operatorVariants.ini	z:/private/101f7989/operatorvariants.ini
+
+// by default load the non-dispatcher LTSY
+../phonetsy/data/ltsydata.ini 			z:/private/101f7989/ltsydata.ini
 
 // ROM
 

@@ -14,28 +14,29 @@
 // INCLUDE FILES
 //
 
-
-
 #include <featmgr/featurecontrol.h>
 #include <featureuids.h>
 
-#include "cmmphonefactorytsy.h"
-#include "cmmphonetsy.h"
 #include <ctsy/mmtsy_names.h>
-#include "MmTsy_conf.h"
-#include "cmmmessagemanagerbase.h"
 #include <ctsy/serviceapi/ctsysatmessagingbase.h>
 
-#ifdef USING_CTSY_DISPATCHER
-_LIT(KLicenseeTsyDllName, "licenseetsy.dll");
-_LIT(KCtsyDispatcherDllName, "ctsydispatcher.dll");
+#include "cmmmessagemanagerbase.h"
+#include "cmmphonefactorytsy.h"
+#include "cmmphonetsy.h"
+#include "MmTsy_conf.h"
 
-const TInt KLicenseeTsyUID3 = 0x2000BEE4;
-const TInt KCtsyDispatcherUID3 =  0x10285C38;
+_LIT(KLtsyIniFile, "ltsydata.ini");
+
+#ifdef USING_CTSY_DISPATCHER
+_LIT(KDefaultLicenseeTsyDllName, "ctsydispatcher.dll");
+const TInt KDefaultLicenseeTsyUID3 =  0x10285C38;
+#else
+_LIT(KDefaultLicenseeTsyDllName, "licenseetsy.dll");
+const TInt KDefaultLicenseeTsyUID3 = 0x2000BEE4;
+#endif //USING_CTSY_DISPATCHER
 
 typedef MLtsyFactoryBase*(*TFactoryBaseNewL)();
 
-#endif //USING_CTSY_DISPATCHER
 // ======== MEMBER FUNCTIONS ========
 
 CMmPhoneFactoryTsy::CMmPhoneFactoryTsy()
@@ -62,10 +63,8 @@ void CMmPhoneFactoryTsy::ConstructL()
 
 CMmPhoneFactoryTsy::~CMmPhoneFactoryTsy()
     {
-#ifdef USING_CTSY_DISPATCHER
     iLoadedLib.Close();
-#endif //USING_CTSY_DISPATCHER
-	}
+    }
 
 // ---------------------------------------------------------------------------
 // CMmPhoneFactoryTsy::NewPhoneL
@@ -82,24 +81,24 @@ TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - NEW LOG");
     // In case of debug build, print flag info.
 #ifdef TF_LOGGING_ENABLED
     
-	RFeatureControl featureControl;
-	TInt err = featureControl.Open();
-	if (err != KErrNone)
-		{
+    RFeatureControl featureControl;
+    TInt err = featureControl.Open();
+    if (err != KErrNone)
+        {
 TFLOGSTRING("CMmPhoneFactoryTsy::NewPhoneL - failed to connect to FeatMgr");
-		}
-	else if (featureControl.FeatureSupported(NFeature::KCsVideoTelephony) == KFeatureSupported) 
+        }
+    else if (featureControl.FeatureSupported(NFeature::KCsVideoTelephony) == KFeatureSupported) 
         {
 TFLOGSTRING("TSY: __CS_VIDEO_TELEPHONY -flag is on");
         }
-	else if (featureControl.FeatureSupported(NFeature::KEmergencyCallsEnabledInOfflineMode) == KFeatureSupported)
+    else if (featureControl.FeatureSupported(NFeature::KEmergencyCallsEnabledInOfflineMode) == KFeatureSupported)
         {
 TFLOGSTRING("TSY: __COMMON_TSY__EMERGENCY_CALLS_ENABLED_IN_OFFLINE_MODE -flag is on");
         }
 
-	featureControl.Close();
+    featureControl.Close();
 #endif
-	
+    
     // Check if the Phone Name is OK
     if ( KErrNone == aName.CompareF( KMmTsyPhoneName ) )
         {
@@ -107,58 +106,48 @@ TFLOGSTRING("TSY: __COMMON_TSY__EMERGENCY_CALLS_ENABLED_IN_OFFLINE_MODE -flag is
 
         // Create Message Manager (the 'core' of the LTSY Plug-in API)
         CMmMessageManagerBase* messageManager = CMmMessageManagerBase::NewL();
-        if ( messageManager )
-            {
-	        CleanupStack::PushL( messageManager );
+        User::LeaveIfNull(messageManager);
+        CleanupStack::PushL( messageManager );
         
-            // LTSY Plug-in API successfully created
+        // LTSY Plug-in API successfully created
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open LicenceeTSY");
-            
-            // get TSY message manager callback object
-            MmMessageManagerCallback* callBack = 
-                messageManager->GetMessageManagerCallback();
-            
-#ifdef USING_CTSY_DISPATCHER
-            iLtsyFactory = LoadLibraryL();
-#else
-            // library entry for LTSY, get base factory object
-            iLtsyFactory = LTsyFactoryL();
-            
-#endif //USING_CTSY_DISPATCHER
-
-            if( iLtsyFactory )
-                {
-                // Get message router from LTSY. All current interface versions
-                // have the same GetMessageRouter defined in version 1.
-                MLtsyFactoryV1* ptr_v1 = 
-                	static_cast<MLtsyFactoryV1*>( iLtsyFactory );
-                        
-                iMessageRouter = ptr_v1->GetMessageRouter( *callBack );
-		        User::LeaveIfNull( iMessageRouter );
         
-		        // Licencee Tsy successfully created
+        // get TSY message manager callback object
+        MmMessageManagerCallback* callBack = 
+            messageManager->GetMessageManagerCallback();
+        
+        // Dynamic loading of LTSY
+        MLtsyFactoryBase* ltsyFactory = LoadLibraryL();
+        
+        // Get message router from LTSY. All current interface versions
+        // have the same GetMessageRouter defined in version 1.
+        MLtsyFactoryV1* ptr_v1 = 
+            static_cast<MLtsyFactoryV1*>( ltsyFactory );
+                
+        iMessageRouter = ptr_v1->GetMessageRouter( *callBack );
+        User::LeaveIfNull( iMessageRouter );
+
+        // Licencee Tsy successfully created
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL -  LicenceeTSY successfully opened");
 
-	            // set the pointer to the message router object
-	            messageManager->SetMessageRouter( iMessageRouter );
+        // set the pointer to the message router object
+        messageManager->SetMessageRouter( iMessageRouter );
 
-	            // Ownership of messageManager passed to iPhoneTsy.
-                CleanupStack::Pop( messageManager );
-	            // Create Phone Tsy (which creates the whole Common TSY)
+        // Ownership of messageManager to be passed to iPhoneTsy.
+        CleanupStack::Pop( messageManager );
+        
+        // Create Phone Tsy (which creates the whole Common TSY)
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open CommonTSY");
-	            iPhoneTsy = CMmPhoneTsy::NewL( 
-	                messageManager, this, iLtsyFactory );
+        iPhoneTsy = CMmPhoneTsy::NewL(messageManager, this, ltsyFactory);
 
-	            if ( iPhoneTsy )
-	                {
+        if ( iPhoneTsy )
+            {
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - CommonTSY successfully opened");
-	                messageManager->SetPhoneTsy( iPhoneTsy );
-	                }
-                }
-            else
-            	{
-    	        CleanupStack::PopAndDestroy( messageManager );
-            	}
+            messageManager->SetPhoneTsy( iPhoneTsy );
+            }
+        else
+            {
+TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - CommonTSY not opened");
             }
         }
 
@@ -289,19 +278,20 @@ CTsySatMessagingBase* CMmPhoneFactoryTsy::NewSimAtk( const TDesC& aName )
         {
 TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewSimAtk - Starting to open SimAtkTSY");
 
-        if( iLtsyFactory )
+        // Dynamic loading of LTSY
+        MLtsyFactoryBase* ltsyFactory = NULL;
+        TRAPD(ret, ltsyFactory = LoadLibraryL());
+        if (ret == KErrNone)
             {
             // Get SIM ATK TSY messaging service from LicenseeTsy
-            MLtsyFactoryV1* ptr_v1 = 
-            	static_cast<MLtsyFactoryV1*>( iLtsyFactory );
+            MLtsyFactoryV1* ptr_v1 = static_cast<MLtsyFactoryV1*>( ltsyFactory );
      
-#ifdef USING_CTSY_DISPATCHER     	
-           	satMessaging = ptr_v1->GetSatMessagingService( 
-            	iPhoneTsy->SmsService() );
+#ifdef USING_CTSY_DISPATCHER        
+            satMessaging = ptr_v1->GetSatMessagingService(iPhoneTsy->SmsService());
 #else
-           	satMessaging = ptr_v1->GetSatMessagingService( );
+            satMessaging = ptr_v1->GetSatMessagingService( );
 #endif
-            }
+            }        
         }
 
     return satMessaging;
@@ -338,48 +328,155 @@ TFLOGSTRING("TSY: CPhoneFactoryBase::LibEntry()...");
 
 #ifdef USING_CTSY_DISPATCHER
 TBool CMmPhoneFactoryTsy::UsingCtsyDispatcher()
-	{
-	//function to determine whether the setup is using the CTSY Dispatcher layer.
+    {
+    //function to determine whether the setup is using the CTSY Dispatcher layer.
 #ifdef USING_CTSY_DISPATCHER 
-	return ETrue; 
+    return ETrue; 
 #else
-	return EFalse;
+    return EFalse;
 #endif
-	}
-
-MLtsyFactoryBase* CMmPhoneFactoryTsy::LoadLibraryL()
-	{
-	//load library.  This can either be LicenseeTsy or CtsyDispatcher dlls
-	TPtrC dllname;
-	TInt uid3_int;
-	if(UsingCtsyDispatcher())
-		{
-		dllname.Set(KCtsyDispatcherDllName);
-		uid3_int = KCtsyDispatcherUID3;
-		}
-	else
-		{
-		dllname.Set(KLicenseeTsyDllName);
-		uid3_int = KLicenseeTsyUID3;
-		}
-	
-	TFLOGSTRING3("TSY: CMmPhoneFactoryTsy::LoadLibraryL - Loading Dll=%S, UID3=0x%x", &dllname, uid3_int);
-	
-	TUidType uid(KNullUid, KNullUid, TUid::Uid(uid3_int));
-	
-	User::LeaveIfError(iLoadedLib.Load(dllname));
-	
-	// Check the Uid3 is as expected
-	if(iLoadedLib.Type()[2]!=TUid::Uid(uid3_int))
-		User::Leave(KErrBadLibraryEntryPoint);
-	
-	TFactoryBaseNewL libEntry=(TFactoryBaseNewL)iLoadedLib.Lookup(1);	
-	MLtsyFactoryBase* factory=(*libEntry)();	// libEntry may leave.
-	
-	return factory;
-	}
+    }
 #endif //USING_CTSY_DISPATCHER
 
-//  End of File
+// ---------------------------------------------------------------------------
+// CMmPhoneFactoryTsy::LoadLibraryL
+// Dynamically loads a LTSY.
+// ---------------------------------------------------------------------------
+//
+MLtsyFactoryBase* CMmPhoneFactoryTsy::LoadLibraryL()
+    {
+    TPtrC ltsyDllName(0, NULL);
+    TUint ltsyDllUid = 0;
+    
+#ifdef USING_CTSY_DISPATCHER 
+    ltsyDllName.Set(KDefaultLicenseeTsyDllName);
+    ltsyDllUid = KDefaultLicenseeTsyUID3; 
+#else
+    RBuf configData;
+    CleanupClosePushL(configData);
+    ReadConfigFileL(&configData);
+    
+    TRAPD(ret,
+          {
+          ltsyDllName.Set(ReadDllNameFromConfigL(configData));
+          ltsyDllUid = ReadDllUidFromConfigL(configData);
+          });
+    
+    if (ret != KErrNone)
+        {
+        ltsyDllName.Set(KDefaultLicenseeTsyDllName);
+        ltsyDllUid = KDefaultLicenseeTsyUID3;
+        TFLOGSTRING2("TSY: Failed to load LTSY dll details from ini (error: %d), using defaults", ret);
+        }
+#endif
+    
+    TFLOGSTRING3("TSY: CMmPhoneFactoryTsy::LoadLibraryL - Loading Dll=%S, UID3=0x%x", &ltsyDllName, ltsyDllUid);
+    User::LeaveIfError(iLoadedLib.Load(ltsyDllName));
+    
+#ifndef USING_CTSY_DISPATCHER
+    CleanupStack::PopAndDestroy();  // configData
+#endif
+    
+    // Check the Uid3 is as expected
+    if (iLoadedLib.Type()[2] != TUid::Uid(ltsyDllUid))
+        {
+        User::Leave(KErrBadLibraryEntryPoint);
+        }
+    
+    TFactoryBaseNewL libEntry = REINTERPRET_CAST(TFactoryBaseNewL, iLoadedLib.Lookup(1));   
+    MLtsyFactoryBase* factory = (*libEntry)();    // libEntry may leave.
+    
+    User::LeaveIfNull(factory);
+    TFLOGSTRING("TSY: Loaded LTSY");
+    return factory;
+    }
 
+TPtrC CMmPhoneFactoryTsy::ReadDllNameFromConfigL(const TDesC& aConfigData)
+    {
+    _LIT(KLicenseeTsyDllKeyName, "LicenseeTsyDllName");
+    TPtrC dllName = GetValueForKeyL(aConfigData, KLicenseeTsyDllKeyName);
+    TFLOGSTRING2("TSY: Config file: LTSY DLL name = %S", &dllName);
+    return dllName;
+    }
 
+TUint CMmPhoneFactoryTsy::ReadDllUidFromConfigL(const TDesC& aConfigData)
+    {
+    _LIT(KLicenseeTsyUid3, "LicenseeTsyUid3");
+
+    const TDesC& rawUid = GetValueForKeyL(aConfigData, KLicenseeTsyUid3);
+    // only take the right 8 characters (ie discard the "0x")
+    ASSERT(rawUid.Length() >= 8);
+    TLex lex(rawUid.Right(8));   
+    TUint uid;
+    User::LeaveIfError(lex.Val(uid, EHex));
+    TFLOGSTRING2("TSY: Config file: LTSY UID3 = 0x%x", uid);
+    return uid;
+    }
+
+/*static*/
+void CMmPhoneFactoryTsy::ReadConfigFileL(RBuf* aConfigData)
+/**
+ * Reads config file from system drive or, if not present, from ROM
+ *
+ * @param aConfigData This buffer gets created and has the ini file contents loaded into it
+ */
+    {
+    RFs fs;
+    User::LeaveIfError(fs.Connect());
+    CleanupClosePushL(fs);
+
+    fs.SetSessionToPrivate(fs.GetSystemDrive());
+
+    RFile configFile;
+    TFLOGSTRING2("TSY: Reading ini file %S", &KLtsyIniFile);
+    TInt ret = configFile.Open(fs, KLtsyIniFile, EFileShareExclusive);
+    if (ret == KErrNotFound)
+        {
+        User::LeaveIfError(fs.SetSessionToPrivate(EDriveZ));
+        User::LeaveIfError(configFile.Open(fs, KLtsyIniFile, EFileShareExclusive));
+        }
+    CleanupClosePushL(configFile);
+
+    TInt configFileSize;
+    User::LeaveIfError(configFile.Size(configFileSize));
+
+    RBuf8 fileBuf;
+    fileBuf.Create(configFileSize);
+    CleanupClosePushL(fileBuf);
+    User::LeaveIfError(configFile.Read(fileBuf));
+
+    aConfigData->CreateL(configFileSize);
+    aConfigData->Copy(fileBuf);
+
+    CleanupStack::PopAndDestroy(3, &fs); // fs, configFile, fileBuf
+    }
+
+/*static*/
+TPtrC CMmPhoneFactoryTsy::GetValueForKeyL(const TDesC& aKeysValues, const TDesC& aKey)
+/**
+ * Gets the value for a specified key. The expected format is
+ * <pre>
+ * key1 value1
+ * key2 value2
+ * </pre>
+ * 
+ * However the parsing is flexible enough to allow "key1 =value1" as it allows an equals separator and extra whitespace
+ * The value cannot include whitespace, even if quoted.
+ */
+    {
+    // this matches the bracket expression in this regexp: \w+\s*=?\s*(\w+)[\s$]
+    TInt startOfKey = aKeysValues.Find(aKey);
+    TLex valueExtractor(aKeysValues);
+    valueExtractor.Inc(startOfKey + aKey.Length());
+    valueExtractor.SkipSpaceAndMark();
+    // allow equals separating key and value
+    if (valueExtractor.Peek() == '=')
+        {
+        valueExtractor.Inc();
+        valueExtractor.SkipSpaceAndMark();
+        }
+    
+    TPtrC value = valueExtractor.NextToken();
+    __ASSERT_ALWAYS(value.Length() > 0, User::Leave(KErrCorrupt));
+    return value;
+    }

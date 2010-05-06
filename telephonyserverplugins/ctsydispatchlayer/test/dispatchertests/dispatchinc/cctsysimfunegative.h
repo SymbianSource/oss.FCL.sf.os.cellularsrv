@@ -13,10 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
 
 #ifndef CCTSYSIMFUNEGATIVE_H_
 #define CCTSYSIMFUNEGATIVE_H_

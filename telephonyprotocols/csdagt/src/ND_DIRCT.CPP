@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -90,10 +90,18 @@ Sets up script for direct connection
 	iDbAccess->GetCommPortRoleL(role);
 	TInt len;
 	iDbAccess->GetScriptDetailsL(iUseScript,len);
+	
 	if (!iUseScript || len==0)	
 		{		// set them consistently
 		iUseScript=EFalse;
 		}
+	
+	if (iNdScript != NULL)
+	    {
+        delete iNdScript;
+        iNdScript = NULL;
+	    }
+	
 	iNdScript=CNetDialScript::NewL(iDbAccess,iDlgPrc,commPort,role,len);	// create it whatever because we need other stuff
 	}
 

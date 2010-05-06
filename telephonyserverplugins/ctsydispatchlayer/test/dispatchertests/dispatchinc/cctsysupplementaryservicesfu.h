@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the SupplementaryServices
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYSUPPLEMENTARYSERVICESFU_H
 #define CCTSYSUPPLEMENTARYSERVICESFU_H
 

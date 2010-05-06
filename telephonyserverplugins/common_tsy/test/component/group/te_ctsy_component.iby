@@ -19,6 +19,7 @@
 #include <testexecute.iby>
 #include <ctsy.iby>
 #include <mocksy.iby>
+#include <ussdtestclient.iby>
 
 // patch data for RTelServer::SetPriorityClient and RTelServer::SetPriorityClientV2 APIs
 patchdata etel.dll@KPriorityClientSid 0x101F777C
@@ -45,7 +46,6 @@ data=ZPRIVATE/10202be9/102029A2.txt 	private\10202be9\102029A2.txt
 data=ZPRIVATE/10202be9/10282DFE.txt 	private\10202be9\10282DFE.txt
 data=ZPRIVATE/10202be9/10282826.txt 	private\10202be9\10282826.txt
 data=ZPRIVATE/10202be9/10282827.txt 	private\10202be9\10282827.txt
-
 #ifdef HWRM_IS_SUPPORTED
 // central repository config files for HWRM
 data=ZPRIVATE/10202be9/10200C8D.txt 	private\10202be9\10200C8D.txt

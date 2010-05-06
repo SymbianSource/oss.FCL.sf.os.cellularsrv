@@ -20,11 +20,6 @@
  @file The TEFUnit header file which tests the CallControlMultiparty
 */
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CCTSYCALLCONTROLMULTIPARTYFU_H
 #define CCTSYCALLCONTROLMULTIPARTYFU_H
 

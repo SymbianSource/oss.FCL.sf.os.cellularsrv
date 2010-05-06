@@ -17,7 +17,8 @@
 
 /**
  @file
- @internalAll 
+ @publishedPartner
+ @released
 */
 
 #ifndef SAT_DEFS_H_

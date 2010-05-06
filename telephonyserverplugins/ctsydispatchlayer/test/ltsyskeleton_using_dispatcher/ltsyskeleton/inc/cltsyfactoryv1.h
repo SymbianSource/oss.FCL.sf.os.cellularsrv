@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef CLTSYFACTORYV1_H
 #define CLTSYFACTORYV1_H
 

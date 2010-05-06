@@ -13,11 +13,6 @@
 // Description:
 //
 
-/**
- @file
- @internalAll 
-*/
-
 #ifndef DIALISVAO_H
 #define DIALISVAO_H
 

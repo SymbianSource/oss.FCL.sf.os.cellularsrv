@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -477,7 +477,7 @@ TInt CSimMbmsPacketContext::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt
 			return GetStatus(aTsyReqHandle,
 					REINTERPRET_CAST(RPacketContext::TContextStatus*, dataPtr));
 		case EPacketContextUpdateMbmsSessionList:
-			return UpdateMbmsSessionListL(aTsyReqHandle,
+			return UpdateMbmsSessionList(aTsyReqHandle,
 					REINTERPRET_CAST(TMbmsAction*, dataPtr),
 					REINTERPRET_CAST(TUint*, dataPtr2));	
 		case EPacketContextInitialiseContext:
@@ -1130,7 +1130,7 @@ TInt CSimMbmsPacketContext::NotifyStatusChangeCancel(const TTsyReqHandle aTsyReq
 	return KErrNone;
 	}
 
-TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHandle,TMbmsAction* aAction, TUint* aSessionId)
+TInt CSimMbmsPacketContext::UpdateMbmsSessionList(const TTsyReqHandle aTsyReqHandle,TMbmsAction* aAction, TUint* aSessionId)
 /**
 * client's interest in updating the MBMS session's list.
 * This is achieved  by updating the list maintained internally by the context
@@ -1141,7 +1141,7 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHa
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL called");
+	LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionList called");
 
 	TInt error=KErrNone;
 	iUpdateSessionHandle = aTsyReqHandle;
@@ -1151,29 +1151,34 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHa
 	switch(*aAction)
 		{
 		case SIMTSY_PACKET_MBMS_ADD_ENTRIES:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: ADD ");
-			TRAP(error,iSessionIdList->AppendL(*aSessionId));
-			if(error == KErrNone)
-				{
-				//iSessionIdList->At(0) = ++iNumOfSessionId;
-				iSessionIdList->Delete(0);
-				iSessionIdList->InsertL(0,++iNumOfSessionId);
-				iMbmsUpdateSessionTimer->Start(RandTime(),this,ETimerIdMbmsUpdateSessionId);
-				}
-			else
+			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionList Action: ADD ");
+			
+			// TRAP can contain multiple statments
+			TRAP(error,iSessionIdList->AppendL(*aSessionId);
+                    //iSessionIdList->At(0) = ++iNumOfSessionId;
+                    iSessionIdList->Delete(0);
+                    iSessionIdList->InsertL(0,++iNumOfSessionId));
+			
+            iMbmsUpdateSessionTimer->Start(RandTime(),this,ETimerIdMbmsUpdateSessionId);
+
+			if(error != KErrNone)
 				{
 				ReqCompleted(iUpdateSessionHandle,error);
 				}
 			break;
 
 		case SIMTSY_PACKET_MBMS_REM_ENTRIES:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: REMOVE ");
+			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionList Action: REMOVE ");
 			iSessionIdList->Find(*aSessionId,key,position);
 			if(position != -1)
 				{
 				iSessionIdList->Delete(position);
 				//iSessionIdList->At(0) = --iNumOfSessionId;
-				iSessionIdList->InsertL(0,--iNumOfSessionId);
+				TRAP(error, iSessionIdList->InsertL(0,--iNumOfSessionId));
+	            if(error != KErrNone)
+	                {
+	                ReqCompleted(iUpdateSessionHandle,error);
+	                }
 				iMbmsUpdateSessionTimer->Start(RandTime(),this,ETimerIdMbmsUpdateSessionId);
 				}
 			else
@@ -1184,16 +1189,20 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHa
 			break;
 
 		case SIMTSY_PACKET_MBMS_REM_ALL_ENTRIES:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: REMOVE_ALL ");
+			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionList Action: REMOVE_ALL ");
 			iNumOfSessionId=0;
 			//iSessionIdList->At(0) = iNumOfSessionId;
-			iSessionIdList->InsertL(0,iNumOfSessionId);
+			TRAP(error, iSessionIdList->InsertL(0,iNumOfSessionId));
+            if(error != KErrNone)
+                {
+                ReqCompleted(iUpdateSessionHandle,error);
+                }
 			iSessionIdList->Delete(1,iSessionIdList->Count()); // removing all session ids from the list
 			ReqCompleted(aTsyReqHandle, KErrNone);
 			break;
 
 		default:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: Default ");
+			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionList Action: Default ");
 			ReqCompleted(aTsyReqHandle,KErrNotFound);
 			break;
 		}
