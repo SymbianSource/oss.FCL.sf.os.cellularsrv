@@ -175,16 +175,11 @@ void CPrimaryContextsMonitor::DeleteContextStatusMonitor(const CContextStatusMon
 	iContextMonitors.Remove(monitorIndex);
 	}
 
-void CPrimaryContextsMonitor::ProcessError(
-    #if (OST_TRACE_CATEGORY_DEBUG)
-        TInt aError
-    #else   //remove compilation warning in release builds
-        TInt /*aError*/
-    #endif
-        )
+void CPrimaryContextsMonitor::ProcessError(TInt aError)
 	{
 	__ASSERT_DEBUG(aError != KErrNone, User::Invariant());
 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPRIMARYCONTEXTSMONITOR_PROCESSERROR_1, ("PDP context monitoring error: %d"), aError);
+	(void)aError;  //needed for debug builds 
 	}
 
 void CPrimaryContextsMonitor::RunL()

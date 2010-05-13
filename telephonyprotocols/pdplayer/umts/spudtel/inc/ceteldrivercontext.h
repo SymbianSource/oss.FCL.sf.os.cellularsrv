@@ -110,7 +110,7 @@ public:
 
     inline RPacketContext::TContextStatus& ContextStatus();	
 	
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
     void DumpReqProfileParameters ();
     void DumpNegProfileParameters ();
 #endif
