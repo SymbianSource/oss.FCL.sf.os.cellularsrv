@@ -20,7 +20,7 @@
 REM Feature QoS is not included in this ROM
 REM Temporary patch
 #else
-file=ABI_DIR\BUILD_DIR\TE_SpudNetworkSide.exe		System\Libs\TE_SpudNetworkSide.exe
+file=ABI_DIR\DEBUG_DIR\TE_SpudNetworkSide.exe		System\Libs\TE_SpudNetworkSide.exe
 #endif
 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SpudNetworkSide.script 		testdata\scripts\TE_SpudNetworkSide.script 
