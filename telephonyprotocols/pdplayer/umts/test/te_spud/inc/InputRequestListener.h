@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -162,7 +162,7 @@ public:
 		};
 
 public:
-static CInputRequestListener* NewL(TBool aUseTestPdpFsmInterface, TInt aUmtsRelease);
+static CInputRequestListener* NewL(TBool aUseTestPdpFsmInterface, TThreadId aParentThreadId, TInt aUmtsRelease);
 	virtual ~CInputRequestListener();
 	void Activate();
 	void RunL();
@@ -173,7 +173,7 @@ static CInputRequestListener* NewL(TBool aUseTestPdpFsmInterface, TInt aUmtsRele
 
 private:
 	CInputRequestListener(TBool aUseTestPdpFsmInterface, TInt aUmtsRelease);	
-	void ConstructL();
+	void ConstructL(TThreadId aParentThreadId);
 	void CreateEtelDriverL();
 	void CreatePdpFsmL();
 
@@ -256,7 +256,6 @@ class TActiveSchedulerThreadParams
 	{
 	public:
 	CInputRequestListener* iListener;
-	TThreadId iThreadId;
 	};
 
 /** The start-up method for the thread running the active objects */

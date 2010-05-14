@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -31,11 +31,11 @@
 #include "cpdpfsmfactory.h"
 #include "DefaultContextParameters.h"
 
-CInputRequestListener* CInputRequestListener::NewL(TBool aUseTestPdpInterface, TInt aUmtsRelease)
+CInputRequestListener* CInputRequestListener::NewL(TBool aUseTestPdpInterface, TThreadId aParentThreadId, TInt aUmtsRelease)
 	{
 	CInputRequestListener *me = new(ELeave) CInputRequestListener(aUseTestPdpInterface, aUmtsRelease);
 	CleanupStack::PushL(me);
-	me->ConstructL();
+	me->ConstructL(aParentThreadId);
 	CleanupStack::Pop(me);
 	return me;
 	}
@@ -62,8 +62,10 @@ CInputRequestListener::CInputRequestListener(TBool aUseTestPdpFsmInterface, TInt
     iUmtsRelease = aUmtsRelease;
 	}
 	
-void CInputRequestListener::ConstructL()
-	{ }
+void CInputRequestListener::ConstructL(TThreadId aParentThreadId)
+	{
+    User::LeaveIfError(iParentThread.Open(aParentThreadId));
+	}
 
 CInputRequestListener::~CInputRequestListener()
 	{
@@ -90,6 +92,7 @@ CInputRequestListener::~CInputRequestListener()
 		}
 
 	iEventHandlers.ResetAndDestroy();
+	iParentThread.Close();
 	}
 	
 void CInputRequestListener::DoCancel()
