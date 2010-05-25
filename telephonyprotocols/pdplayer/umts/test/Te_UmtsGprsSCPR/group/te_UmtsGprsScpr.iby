@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -63,6 +63,7 @@ data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_cap_umtsgprsscpr.script Testdat
 data=EPOCROOT##epoc32\data\z\TestData\Configs\te_simtsy.ini	Testdata\configs\te_simtsy.ini
 data=EPOCROOT##epoc32\data\z\TestData\Configs\te_umtsgprsscpr_config.txt	Testdata\configs\te_umtsgprsscpr_config.txt
 data=EPOCROOT##epoc32\data\z\TestData\Configs\te_umtsgprsscpr_config2.txt	Testdata\configs\te_umtsgprsscpr_config2.txt
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_umtsgprsscpr_config_noqostestnif.txt	Testdata\configs\te_umtsgprsscpr_config_noqostestnif.txt
 
 
 data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_UmtsGprsSCPRConfig1Case1.script Testdata\scripts\te_UmtsGprsSCPRConfig1Case1.script

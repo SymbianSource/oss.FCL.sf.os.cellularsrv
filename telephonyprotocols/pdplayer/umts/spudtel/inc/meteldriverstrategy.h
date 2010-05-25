@@ -63,6 +63,7 @@ public:
 		EMbmsSetSession,
 		EUpdateMbmsSessionList,
 		EPrepareSessionList,
+		ENotifyStatusChange,
 			
 		EFinishStep
 		};

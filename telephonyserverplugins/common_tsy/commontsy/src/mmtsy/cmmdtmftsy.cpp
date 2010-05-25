@@ -764,7 +764,8 @@ TInt CMmDtmfTsy::ActiveCalls() const
             {
             // get call status
             RCall::TStatus  callStatus = mmCall->Status();
-            if ( RCall::EStatusConnected == callStatus)
+            // Check if the call state is one that suggests that someone will listen to a DTMF. 
+            if (( RCall::EStatusConnected == callStatus ) || ( RCall::EStatusDialling == callStatus )|| ( RCall::EStatusConnecting == callStatus ))
                 {
                 // get service type of call
                 RMobileCall::TMobileCallInfoV1 info;

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -59,6 +59,8 @@ START_TESTCASE			NET-UMTS-UmtsGprsSCPR-0201
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
 
+RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  CopyFile z:\TestData\Configs\te_umtsgprsscpr_config_noqostestnif.txt c:\simtsy\config.txt
@@ -68,6 +70,8 @@ RUN_SCRIPT Z:\TestData\scripts\te_esock_test_unloadesockForced.script
 CED -i z:\testdata\configs\te_umtsgprsscpr_captest.cfg ced.log
 RUN_SCRIPT  Z:\TestData\Scripts\te_Cap_UmtsGprsScprConfig1Case1.script
 
+RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  CopyFile z:\TestData\Configs\te_umtsgprsscpr_config.txt c:\simtsy\config.txt
@@ -105,6 +109,8 @@ START_TESTCASE			NET-UMTS-UmtsGprsSCPR-0203
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
 
+RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  CopyFile z:\TestData\Configs\te_umtsgprsscpr_config_noqostestnif.txt c:\simtsy\config.txt
@@ -114,6 +120,8 @@ RUN_SCRIPT Z:\TestData\scripts\te_esock_test_unloadesockForced.script
 CED -i z:\testdata\configs\te_umtsgprsscpr_captest.cfg ced.log
 RUN_SCRIPT  Z:\TestData\Scripts\te_Cap_UmtsGprsScprConfig1Case1.script
 
+RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  CopyFile z:\TestData\Configs\te_umtsgprsscpr_config.txt c:\simtsy\config.txt
@@ -152,6 +160,8 @@ START_TESTCASE			NET-UMTS-UmtsGprsSCPR-0205
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
 
+RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  CopyFile z:\TestData\Configs\te_umtsgprsscpr_config_noqostestnif.txt c:\simtsy\config.txt
@@ -161,6 +171,8 @@ RUN_SCRIPT Z:\TestData\scripts\te_esock_test_unloadesockForced.script
 CED -i z:\testdata\configs\te_umtsgprsscpr_captest.cfg ced.log
 RUN_SCRIPT  Z:\TestData\Scripts\te_Cap_UmtsGprsScprConfig1Case1.script
 
+RUN_UTILS  MakeReadWrite c:\simtsy\config.txt
+RUN_UTILS  MakeReadWrite c:\config.txt
 RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  CopyFile z:\TestData\Configs\te_umtsgprsscpr_config.txt c:\simtsy\config.txt
@@ -179,7 +191,7 @@ START_TESTCASE			NET-UMTS-UmtsGprsSCPR-0206
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
 RUN_SCRIPT Z:\TestData\scripts\te_esock_test_unloadesockForced.script
-CED -i z:\testdata\configs\te_umtsgprsscpr_captest.xml ced.log
+CED -i z:\testdata\configs\te_umtsgprsscpr_captest.cfg ced.log
 RUN_SCRIPT  Z:\TestData\Scripts\te_Cap_UmtsGprsScprConfig1Case2.script
 END_TESTCASE			NET-UMTS-UmtsGprsSCPR-0206
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -454,8 +454,8 @@ void TCreate1ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aConte
 			}
 			
 		case EInitialiseContextStep:
-		    SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextActivate"));
-		    aContext.PacketContext().CancelAsyncRequest(EPacketContextActivateCancel);
+		    SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextInitialiseContext"));
+		    aContext.PacketContext().CancelAsyncRequest(EPacketContextInitialiseContext);
 		    break;
 			
 		default:
@@ -1095,13 +1095,16 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 		{
 		case EStartStep:
 			{
+			SPUDTEL_INFO_LOG(_L("RPacketContext::Activate()"));
 			aContext.PacketContext().Activate(*aStatus);
 			aContext.SetStrategyStep (EActivateStep);
 			break;
 			}
 		
 		case EActivateStep:
+		case ENotifyStatusChange:
 			{
+            SPUDTEL_INFO_LOG(_L("RPacketContext::GetStatus()"));
             if (aContext.PacketContext().GetStatus(aContext.ContextStatus()) != KErrNone)
                 {
                 aContext.ContextStatus() = RPacketContext::EStatusInactive;
@@ -1112,6 +1115,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	case RPacketContext::EStatusActive:
                 	// Context is now active
     	            aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextPacketDataConfigBase());
+    	            SPUDTEL_INFO_LOG(_L("RPacketContext::GetConfig()"));
     				aContext.PacketContext().GetConfig (*aStatus, aContext.ContextConfig());
     				aContext.SetStrategyStep (EGetConfigStep);
     				break;
@@ -1152,8 +1156,9 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	
             	default:
             		// Not active, not inactive. Re-request the status and try again
+            	    SPUDTEL_INFO_LOG(_L("RPacketContext::NotifyStatusChange()"));
                     aContext.PacketContext().NotifyStatusChange(*aStatus, aContext.ContextStatus());
-                    aContext.SetStrategyStep (EActivateStep);
+                    aContext.SetStrategyStep (ENotifyStatusChange);
                     break;
                 }
 			break;
@@ -1253,31 +1258,31 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case EActivateStep:
 			{
+            SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextActivate"));
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextActivate);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextActivate"));
 			break;
 			}
 			
 		case EGetConfigStep:
 			{
-			aContext.PacketContext().CancelAsyncRequest(EGetConfigStep);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EGetConfigStep"));
+	        SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextGetConfig"));
+			aContext.PacketContext().CancelAsyncRequest(EPacketContextGetConfig);
 			break;
 			}
-		
-		case EInitialiseContextStep:
-			{
-			aContext.PacketContext().CancelAsyncRequest(EPacketContextInitialiseContext);	
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextInitialiseContext"));
-			break;
-			}
-			
+					
+		case ENotifyStatusChange:
+		    {
+            SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextNotifyStatusChange"));
+            aContext.PacketContext().CancelAsyncRequest(EPacketContextNotifyStatusChange);
+            break;
+		    }
+		    
 		case EGetProfileParamsStep:
 			{
 			if(KPrimaryContextId == aContext.Id())
 				{
+                SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketQoSGetProfileParams"));
 				aContext.PacketContext().CancelAsyncRequest(EPacketQoSGetProfileParams);	
-				SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketQoSGetProfileParams"));
 				break;
 				}
 			}
@@ -1745,8 +1750,8 @@ void TActivateMbmsPdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		
 		case EGetConfigStep:
 			{
-			aContext.MbmsPacketContext().CancelAsyncRequest(EGetConfigStep);
-			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EGetConfigStep"));
+			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextGetConfig);
+			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EPacketContextGetConfig"));
 			break;
 			}
 		

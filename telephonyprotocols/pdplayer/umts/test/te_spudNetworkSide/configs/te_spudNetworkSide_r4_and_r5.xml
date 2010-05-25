@@ -848,6 +848,21 @@
 		<IapId>2</IapId>
 		<Priority>1</Priority>
 	</PolicySelector>
+	
+	<PolicySelector operation ="add">
+		<PolicyId>3</PolicyId>
+		<SrcAddress>0.0.0.0</SrcAddress>
+		<SrcMask>255.255.255.255</SrcMask>
+		<DstAddress>192.168.1.1</DstAddress>
+		<DstMask>255.255.255.255</DstMask>
+		<SrcPort>1031</SrcPort>
+		<SrcPortMax>1031</SrcPortMax>
+		<DstPort>3461</DstPort>
+		<DstPortMax>3461</DstPortMax>
+		<ProtocolId>17</ProtocolId>
+		<IapId>11</IapId>
+		<Priority>1</Priority>
+	</PolicySelector>
 </PolicySelectorTable>
 
 </CommDB:Config>
