@@ -179,7 +179,7 @@ START_TESTCASE			NET-UMTS-UmtsGprsSCPR-0206
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
 RUN_SCRIPT Z:\TestData\scripts\te_esock_test_unloadesockForced.script
-CED -i z:\testdata\configs\te_umtsgprsscpr_captest.xml ced.log
+CED -i z:\testdata\configs\te_umtsgprsscpr_captest.cfg ced.log
 RUN_SCRIPT  Z:\TestData\Scripts\te_Cap_UmtsGprsScprConfig1Case2.script
 END_TESTCASE			NET-UMTS-UmtsGprsSCPR-0206
 

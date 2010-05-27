@@ -108,8 +108,8 @@ ctsy.iby          /epoc32/rom/include/ctsy.iby
 
 // ConfML files
 ../conf/ctsy.confml              	 OS_LAYER_EXPORTS_CONFML(ctsy.confml)
-../conf/ctsy_10282DFE.crml           OS_LAYER_EXPORTS_CRML(ctsy_10282DFE.crml)
-../conf/ctsy_102029A2.crml           OS_LAYER_EXPORTS_CRML(ctsy_102029A2.crml)
+../conf/ctsy_10282DFE.crml           OS_LAYER_EXPORTS_CRML(ctsy_10282dfe.crml)
+../conf/ctsy_102029A2.crml           OS_LAYER_EXPORTS_CRML(ctsy_102029a2.crml)
 ../conf/ctsy_10282826.crml           OS_LAYER_EXPORTS_CRML(ctsy_10282826.crml)
 ../conf/ctsy_10282827.crml           OS_LAYER_EXPORTS_CRML(ctsy_10282827.crml)
 

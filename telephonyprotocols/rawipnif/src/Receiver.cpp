@@ -143,6 +143,13 @@ void CReceiver::RunL()
 	    }
 	}
 
+TInt CReceiver::RunError(TInt aError)
+    {
+    _LOG_L2C1(_L8("WARNING! CReceiver::RunError Read failed"));
+    iObserver.Stop(aError); 
+    return KErrNone;  
+    }
+
 void CReceiver::DoCancel()
 /**
  *	Cancel active request

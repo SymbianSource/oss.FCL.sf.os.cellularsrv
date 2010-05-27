@@ -31,7 +31,6 @@
 // UDEB BUILD:
 #define TF_LOGGING_METHOD  3   // 0 = No logging, 
                                // 1 = Flogger, 
-                               // 2 = RDebug
                                // 3 = CommsDebug
 #endif
 
@@ -46,10 +45,6 @@
 #include <flogger.h>
 _LIT(KTfLogFolder,"TF");
 _LIT(KTfLogFile,"TFLOG.TXT");
-
-#elif TF_LOGGING_METHOD == 2    // RDebug
-
-#include <e32svr.h>
 
 #elif TF_LOGGING_METHOD == 3    // CommsDebug
 
@@ -77,15 +72,6 @@ _LIT(KTfLogFile,"TFLOG.TXT");
 #define TFLOGSTRING4(AAA,BBB,CCC,DDD) /*lint --e{717}, --e{1534} */ do { _LIT(tempLogDes,AAA); RFileLogger::WriteFormat(KTfLogFolder(),KTfLogFile(),EFileLoggingModeAppend,TRefByValue<const TDesC>(tempLogDes()),BBB,CCC,DDD); } while (0)
 
 
-#elif TF_LOGGING_METHOD == 2    // RDebug
-
-#define TFLOGTEXT(AAA)                RDebug::Print(AAA)
-#define TFLOGSTRING(AAA)              /*lint --e{717}, --e{1534} */ do { _LIT(tempLogDes,AAA); RDebug::Print(tempLogDes); } while (0)
-#define TFLOGSTRING2(AAA,BBB)         /*lint --e{717}, --e{1534} */ do { _LIT(tempLogDes,AAA); RDebug::Print(tempLogDes, BBB); } while (0)
-#define TFLOGSTRING3(AAA,BBB,CCC)     /*lint --e{717}, --e{1534} */ do { _LIT(tempLogDes,AAA); RDebug::Print(tempLogDes, BBB, CCC); } while (0)
-#define TFLOGSTRING4(AAA,BBB,CCC,DDD) /*lint --e{717}, --e{1534} */ do { _LIT(tempLogDes,AAA); RDebug::Print(tempLogDes, BBB, CCC, DDD); } while (0)
-
-
 #elif TF_LOGGING_METHOD == 3    // CommsDebug
 _LIT8(KTSYSubSystem, "tsy");
 #ifdef TF_SAT_LOGGING
@@ -110,7 +96,7 @@ _LIT8(KTSYCompnt, "ctsy");
 
 #endif  // TF_LOGGING_METHOD
 
-#if TF_LOGGING_METHOD == 1 || TF_LOGGING_METHOD == 2 
+#if TF_LOGGING_METHOD == 1
 
 // Note, #x and __FILE__ must be stored to char string first, making them 16bit 
 // strings with _LIT will not work in all compilers. 
@@ -130,7 +116,7 @@ _LIT8(KTSYCompnt, "ctsy");
 #define TF_ASSERT(x) 
 #define TF_ASSERT_NOT_REACHED() 
 
-#endif  // TF_LOGGING_METHOD == 1 || TF_LOGGING_METHOD == 2
+#endif  // TF_LOGGING_METHOD == 1
 
 
 #endif	// __TFLOGGER_H__

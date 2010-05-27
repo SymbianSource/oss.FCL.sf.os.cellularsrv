@@ -1049,7 +1049,7 @@ void CPhonebookDispatcher::CallbackStoreResetCache(TInt aError, DispatcherPhoneb
  * @param aPhonebook The phonebook to reset the cache for.
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d"), aError, aPhonebook);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d"), aError, aPhonebook);
 
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));
 	
@@ -1071,8 +1071,8 @@ void CPhonebookDispatcher::CallbackStoreSetFdnPhonebookInfoInd(TInt aError, TInt
  * @param aMaxNumberLength The maximum number length in the Fdn phonebook.
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aTotalEntries=%d,aMaxTextLength=%d,aMaxNumberLength=%d"), 
-							aError,aTotalEntries,aMaxTextLength,aMaxNumberLength);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aTotalEntries=%d, aMaxTextLength=%d, aMaxNumberLength=%d"), 
+							aError, aTotalEntries, aMaxTextLength, aMaxNumberLength);
 
 	TName phoneBookName(KETelIccFdnPhoneBook);
 	CPhoneBookDataPackage phoneBookDataPackage;
@@ -1104,7 +1104,7 @@ void CPhonebookDispatcher::CallbackStoreReadEntry(TInt aError, DispatcherPhonebo
  * @see CPhoneBookEntry::ExternalizeToTlvEntry()
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d"), aError, aPhonebook);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d"), aError, aPhonebook);
 	
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));	
 	
@@ -1115,11 +1115,11 @@ void CPhonebookDispatcher::CallbackStoreReadEntry(TInt aError, DispatcherPhonebo
 	
 	if((aError == KErrNone) && (aPhonebook != DispatcherPhonebook::EUnknown))
 		{
-		//fill the CTSY pointer		
-		CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
-		iPhonebookReadPtrs[aPhonebook] = readEntries;
-		
-		TRAP(aError,FillCtsyPhoneBookStoreL(aPhonebookEntries,*(iPhonebookReadPtrs[aPhonebook])));
+		//fill the CTSY pointer
+        TRAP ( aError, 
+                CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
+                iPhonebookReadPtrs[aPhonebook] = readEntries;
+                FillCtsyPhoneBookStoreL(aPhonebookEntries,*(iPhonebookReadPtrs[aPhonebook])));
 		}
 	
 	CPhoneBookDataPackage phoneBookDataPackage;
@@ -1174,7 +1174,7 @@ void CPhonebookDispatcher::CallbackStoreCache(TInt aError, DispatcherPhonebook::
  * @see CPhoneBookEntry::ExternalizeToTlvEntry()
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d"), aError, aPhonebook);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d"), aError, aPhonebook);
 	
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));
 	
@@ -1185,10 +1185,10 @@ void CPhonebookDispatcher::CallbackStoreCache(TInt aError, DispatcherPhonebook::
 	
 	if((aError == KErrNone) && (aPhonebook != DispatcherPhonebook::EUnknown)/* && (iPhonebookCachePtrs[aPhonebook])*/)
 		{
-		CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
-		iPhonebookCachePtrs[aPhonebook] = readEntries;
-			
-		TRAP(aError,FillCtsyPhoneBookStoreL(aPhonebookEntries, *(iPhonebookCachePtrs[aPhonebook])));
+        TRAP(aError,
+                CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
+                iPhonebookCachePtrs[aPhonebook] = readEntries;
+                FillCtsyPhoneBookStoreL(aPhonebookEntries, *(iPhonebookCachePtrs[aPhonebook])));
 		
 		if(aError)
 			{
@@ -1337,7 +1337,7 @@ void CPhonebookDispatcher::CallbackStoreWriteEntry(TInt aError, DispatcherPhoneb
  * @see RMobilePhoneBookStore::Write() 
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d,aIndex=%d,aMaxNumberLength=%d"), aError, aPhonebook, aIndex, aMaxNumberLength);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d, aIndex=%d, aMaxNumberLength=%d"), aError, aPhonebook, aIndex, aMaxNumberLength);
 
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));
 	
