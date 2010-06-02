@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef MMOCKMESSHANDLERBASE_H
 #define MMOCKMESSHANDLERBASE_H
 

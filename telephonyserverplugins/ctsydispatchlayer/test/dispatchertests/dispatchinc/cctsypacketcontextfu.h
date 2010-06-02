@@ -14,6 +14,11 @@
 // functional unit of the Common TSY Dispatcher.
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CCTSYPACKETCONTEXTFU_H_
 #define CCTSYPACKETCONTEXTFU_H_
 

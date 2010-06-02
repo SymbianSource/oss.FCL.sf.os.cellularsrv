@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CMESSAGEROUTER_H_
 #define __CMESSAGEROUTER_H_
 

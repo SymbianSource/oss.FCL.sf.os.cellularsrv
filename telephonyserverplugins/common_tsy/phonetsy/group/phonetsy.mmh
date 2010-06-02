@@ -50,14 +50,13 @@ LIBRARY         etel.lib        // ETel Server
 LIBRARY         etelmm.lib      // ETel Multimode API
 #ifndef	CTSY_DISPATCHER
 	//LIBRARY         licenseetsy.lib // LTSY 
-	LIBRARY         commontsy.lib   // Common TSY
+LIBRARY         commontsy.lib   // Common TSY
 #else
 	LIBRARY         commontsyfordispatcher.lib   // Common TSY for Dispatcher
 #endif //CTSY_DISPATCHER
 LIBRARY         flogger.lib     // Logging
 LIBRARY         licenseetsy.lib // LTSY 
 LIBRARY         featmgr.lib     // for featuremanager
-LIBRARY			efsrv.lib		// config file reading
 
 #include <comms-infras/commsdebugutility.mmh>
 

@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CRECEIVETHREADMAN_H
 #define CRECEIVETHREADMAN_H
 

@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef MDISPATCHERCALLBACK_H_
 #define MDISPATCHERCALLBACK_H_
 

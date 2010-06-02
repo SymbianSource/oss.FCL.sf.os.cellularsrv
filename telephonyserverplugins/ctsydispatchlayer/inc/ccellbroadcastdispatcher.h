@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CCELLBROADCASTDISPATCHER_H_
 #define __CCELLBROADCASTDISPATCHER_H_
 

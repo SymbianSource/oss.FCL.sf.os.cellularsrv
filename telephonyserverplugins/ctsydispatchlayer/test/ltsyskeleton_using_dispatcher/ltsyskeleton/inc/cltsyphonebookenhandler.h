@@ -14,6 +14,11 @@
 // cltsydispatchphonebookenhandler.h
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CLTSYDISPATCHPHONEBOOKENHANDLER_H_
 #define __CLTSYDISPATCHPHONEBOOKENHANDLER_H_
 

@@ -17,8 +17,7 @@
 
 /**
  @file
- @publishedPartner
- @released
+ @internalAll 
 */
 
 #ifndef CPHONEBOOKENTRY_H_

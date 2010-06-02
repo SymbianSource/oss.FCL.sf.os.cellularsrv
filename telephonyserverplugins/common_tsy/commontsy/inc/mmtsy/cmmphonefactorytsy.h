@@ -103,17 +103,10 @@ NONSHARABLE_CLASS( CMmPhoneFactoryTsy ) : public CPhoneFactoryBase
         TBool IsSupported( const TInt aFunctionalUnit );    
 #ifdef USING_CTSY_DISPATCHER     
     protected:
-        
-        TBool UsingCtsyDispatcher();
+    	
+    	TBool UsingCtsyDispatcher();
+    	MLtsyFactoryBase* LoadLibraryL();
 #endif // #endif USING_CTSY_DISPATCHER
-        MLtsyFactoryBase* LoadLibraryL();
-        
-    private:
-        TPtrC ReadDllNameFromConfigL(const TDesC& aConfigData);
-        TUint ReadDllUidFromConfigL(const TDesC& aConfigData);
-        static void ReadConfigFileL(RBuf* aConfigData);
-        static TPtrC GetValueForKeyL(const TDesC& aKeysValues, const TDesC& aKey);
-
     private:    // Data
     
         /**
@@ -127,8 +120,17 @@ NONSHARABLE_CLASS( CMmPhoneFactoryTsy ) : public CPhoneFactoryBase
          * Not owned.
          */
         MMessageRouter* iMessageRouter;
-
+                
+        /**
+         * Pointer to LTSY factory, used to retrieve LTSY and SIM ATK TSY
+         * Not owned.
+         */
+        MLtsyFactoryBase* iLtsyFactory;
+#ifdef USING_CTSY_DISPATCHER        
         RLibrary iLoadedLib; //can either be LicenseeTsy or CtsyDispatcher dlls
+#endif // #ifdef USING_CTSY_DISPATCHER
     };
 
 #endif // CMMPHONEFACTORYTSY_H
+
+// End of File

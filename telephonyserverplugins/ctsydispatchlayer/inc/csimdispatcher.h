@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CSIMDISPATCHER_H_
 #define __CSIMDISPATCHER_H_
 

@@ -107,6 +107,7 @@ TFLOGSTRING("TSY: CMmLineList::GetMmLineByMode");
     if ( iObjectContainer  && iInitialised)
         {
 TFLOGSTRING2("TSY: CMmLineList::GetMmLineByMode::iObjectContainer->Count()=%d", iObjectContainer->Count());        
+       
         for ( TInt i = 0; i < iObjectContainer->Count(); i++ )
             {
             if ( iIsLineInUse[ i ] != EFalse )
@@ -144,6 +145,7 @@ TFLOGSTRING("TSY: CMmLineList::GetMmLineByIndex");
     if ( iObjectContainer && iInitialised )
         {
 TFLOGSTRING2("TSY: CMmLineList::GetMmLineByIndex:iObjectContainer->Count()=%d", iObjectContainer->Count());        
+
         if ( aIndex >= 0 && aIndex < iObjectContainer->Count() )
             {
             if( iObjectContainer->At( aIndex ) != tempObject )
@@ -176,6 +178,8 @@ TFLOGSTRING("TSY: CMmLineList::AddLineObject");
     if ( iObjectContainer )
         {
 TFLOGSTRING2("TSY: CMmLineList::AddLineObject:iObjectContainer->Count()=%d", iObjectContainer->Count());            
+
+        
         TInt trapError( KErrNone );    
 
         if ( 0 == aLineName.CompareF( KMmTsyVoice1LineName ) )
@@ -295,6 +299,7 @@ TFLOGSTRING2("TSY: CMmLineList::GetObjectByIndex. aIndex=%d", aIndex );
     if ( iObjectContainer )
         {
 TFLOGSTRING2("TSY: CMmLineList::GetObjectByIndex. iObjectContainer->Count()=%d", iObjectContainer->Count()); 
+
         if ( iIsLineInUse[ aIndex ] )
             {
             mmObject = iObjectContainer->At( static_cast<TInt>( aIndex ) );

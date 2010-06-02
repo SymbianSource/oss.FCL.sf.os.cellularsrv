@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CMOCKPACKETSERVICESMESSHANDLER_H
 #define CMOCKPACKETSERVICESMESSHANDLER_H
 

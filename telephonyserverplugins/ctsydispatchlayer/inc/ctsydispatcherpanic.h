@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CTSYDISPATCHERPANIC_H_
 #define CTSYDISPATCHERPANIC_H_
 

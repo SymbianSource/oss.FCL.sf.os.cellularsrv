@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1301,13 +1301,17 @@ TVerdict CNoChannelIdNoIapId::RunTestStepL()
 	}
 
 /** 
-Tests C32Bca can read hidden records from the Comms database.           
+Tests C32Bca can read hidden records from the Comms database.
+The test creates an entry in CommsDat for a valid CSY using an invalid (unknown) Port Id.
+The C32Bca reads this entry and tries to connect to the Comms Server, load the packet loopback csy and open channel UNKNOWN:0.
+The Comms Server returns -46, which indicates that it managed to load the packetloop bca csy but returns -46 indicating that
+port is invalid.         
 */
 TVerdict CHiddenIAPRecord::RunTestStepL()
 	{
 		
-	_LIT(KCsyName, "ECUART");
-	_LIT(KCsyPortName, "ECUART::0");
+	_LIT(KCsyName, "PKTLOOPBACK");
+	_LIT(KCsyPortName, "UNKNOWN::0");
 	_LIT(KCsyRecordName, "DummyRecordName");
 	
 	_LIT(KIAPRecordName, "DummyHiddenIAP");

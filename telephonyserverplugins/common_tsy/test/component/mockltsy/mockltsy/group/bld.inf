@@ -18,8 +18,7 @@
 PRJ_PLATFORMS
 DEFAULT
 
-PRJ_TESTEXPORTS
-../data/ltsydata_mock.ini 			c:/private/101f7989/ltsydata.ini
+PRJ_EXPORTS
 
 PRJ_TESTMMPFILES
 mockltsy.mmp

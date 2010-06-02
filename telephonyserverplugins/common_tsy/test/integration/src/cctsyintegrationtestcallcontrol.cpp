@@ -2016,25 +2016,25 @@ TVerdict CCTSYIntegrationTestCallControl0009::doTestStepL()
 	
 	// Populate RMobileCall::TMobileCallParamsV1 with  
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
-	// • iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
+	// ?iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlAlwaysOff;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeOff 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeOff 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeOff;
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;	
-	// • iExplicitInvoke = TRUE 
+	// ?iExplicitInvoke = TRUE 
 	mobileCallParams.iCug.iExplicitInvoke = TRUE ;
-	// • iCugIndex = 0x0000 
+	// ?iCugIndex = 0x0000 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = TRUE 
+	// ?iSuppressPrefCug = TRUE 
 	mobileCallParams.iCug.iSuppressPrefCug = TRUE;
-	// • iAutoRedial = TRUE 
+	// ?iAutoRedial = TRUE 
 	mobileCallParams.iAutoRedial = TRUE;
 	
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
@@ -2450,25 +2450,25 @@ TVerdict CCTSYIntegrationTestCallControl0010::doTestStepL()
 	// Populate RMobileCall::TMobileCallParamsV1 with  
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
-	// • iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
+	// ?iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlAlwaysOff;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeHigh 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeHigh 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeHigh;
-	// • iInterval = 0x02 
+	// ?iInterval = 0x02 
 	mobileCallParams.iInterval = 0x02;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = ESendMyId 
+	// ?iIdRestrict = ESendMyId 
 	mobileCallParams.iIdRestrict = RMobileCall::ESendMyId;	
-	// • iExplicitInvoke = FALSE 
+	// ?iExplicitInvoke = FALSE 
 	mobileCallParams.iCug.iExplicitInvoke = FALSE ;
-	// • iCugIndex = 0x0000 
+	// ?iCugIndex = 0x0000 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	//=========Post Notifiers===============
@@ -2880,25 +2880,25 @@ TVerdict CCTSYIntegrationTestCallControl0011::doTestStepL()
 	// Populate RMobileCall::TMobileCallParamsV1 with  
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
-	// • iSpeakerControl = EMonitorSpeakerControlUnknown 
+	// ?iSpeakerControl = EMonitorSpeakerControlUnknown 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlUnknown;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeUnknown 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeUnknown 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeUnknown;
-	// • iInterval = 0x03 
+	// ?iInterval = 0x03 
 	mobileCallParams.iInterval = 0x03;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = EDontSendMyId 
+	// ?iIdRestrict = EDontSendMyId 
 	mobileCallParams.iIdRestrict = RMobileCall::EDontSendMyId;
-	// • iExplicitInvoke = TRUE 
+	// ?iExplicitInvoke = TRUE 
 	mobileCallParams.iCug.iExplicitInvoke = TRUE;
-	// • iCugIndex = 0x9c40 
+	// ?iCugIndex = 0x9c40 
 	mobileCallParams.iCug.iCugIndex = 0x9c40 ;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = TRUE 
+	// ?iSuppressPrefCug = TRUE 
 	mobileCallParams.iCug.iSuppressPrefCug = TRUE;
-	// • iAutoRedial = TRUE 
+	// ?iAutoRedial = TRUE 
 	mobileCallParams.iAutoRedial = TRUE;
 
 
@@ -3310,25 +3310,25 @@ TVerdict CCTSYIntegrationTestCallControl0012::doTestStepL()
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
 
-	// • iSpeakerControl = EMonitorSpeakerControlOnExceptDuringDialling 
+	// ?iSpeakerControl = EMonitorSpeakerControlOnExceptDuringDialling 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlOnExceptDuringDialling;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeUnknown 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeUnknown 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeUnknown;
-	// • iInterval = 0x02 
+	// ?iInterval = 0x02 
 	mobileCallParams.iInterval = 0x02;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = ESendMyId 
+	// ?iIdRestrict = ESendMyId 
 	mobileCallParams.iIdRestrict = RMobileCall::ESendMyId;	
-	// • iExplicitInvoke = FALSE 
+	// ?iExplicitInvoke = FALSE 
 	mobileCallParams.iCug.iExplicitInvoke = FALSE ;
-	// • iCugIndex = 0x00 
+	// ?iCugIndex = 0x00 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	//=========Post Notifiers===============
@@ -3739,25 +3739,25 @@ TVerdict CCTSYIntegrationTestCallControl0013::doTestStepL()
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
 
-	// • iSpeakerControl = EMonitorSpeakerControlUnknown 
+	// ?iSpeakerControl = EMonitorSpeakerControlUnknown 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlUnknown;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeHigh 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeHigh 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeHigh;
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;	
-	// • iExplicitInvoke = FALSE 
+	// ?iExplicitInvoke = FALSE 
 	mobileCallParams.iCug.iExplicitInvoke = FALSE ;
-	// • iCugIndex = 0x00 
+	// ?iCugIndex = 0x00 
 	mobileCallParams.iCug.iCugIndex = 0x00;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	//=========Post Notifiers===============
@@ -4167,25 +4167,25 @@ TVerdict CCTSYIntegrationTestCallControl0014::doTestStepL()
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
 
-	// • iSpeakerControl = EMonitorSpeakerControlUnknown 
+	// ?iSpeakerControl = EMonitorSpeakerControlUnknown 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlUnknown;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeHigh 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeHigh 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeHigh;
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;	
-	// • iExplicitInvoke = FALSE 
+	// ?iExplicitInvoke = FALSE 
 	mobileCallParams.iCug.iExplicitInvoke = FALSE ;
-	// • iCugIndex = 0xffff 
+	// ?iCugIndex = 0xffff 
 	mobileCallParams.iCug.iCugIndex = 0xffff;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	//=========Post Notifiers===============
@@ -5599,25 +5599,25 @@ TVerdict CCTSYIntegrationTestCallControl0018::doTestStepL()
 
 	// Populate a RMobileCall::TMobileCallParamsV1 with: 
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
-	// • iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
+	// ?iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlAlwaysOff;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeOff 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeOff 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeOff;
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
-	// • iExplicitInvoke = TRUE 
+	// ?iExplicitInvoke = TRUE 
 	mobileCallParams.iCug.iExplicitInvoke = TRUE ;
-	// • iCugIndex = 0x0000 
+	// ?iCugIndex = 0x0000 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 	
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPckg(mobileCallParams);
@@ -6104,25 +6104,25 @@ TVerdict CCTSYIntegrationTestCallControl0019::doTestStepL()
 
 	// Populate a RMobileCall::TMobileCallParamsV1 with: 
 	RMobileCall::TMobileCallParamsV1 mobileCallParams;
-	// • iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
+	// ?iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlAlwaysOff;
-	// • iSpeakerVolume = EMonitorSpeakerVolumeOff 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeOff 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeOff;
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
-	// • iExplicitInvoke = TRUE 
+	// ?iExplicitInvoke = TRUE 
 	mobileCallParams.iCug.iExplicitInvoke = TRUE ;
-	// • iCugIndex = 0x0000 
+	// ?iCugIndex = 0x0000 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPkg(mobileCallParams);
@@ -16076,31 +16076,31 @@ TVerdict CCTSYIntegrationTestCallControl0054::doTestStepL()
 	// ? iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlAlwaysOff;
 	
-	// • iSpeakerVolume = EMonitorSpeakerVolumeOff 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeOff 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeOff;
 	
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
 	
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
 	
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
 	
-	// • iExplicitInvoke = TRUE 
+	// ?iExplicitInvoke = TRUE 
 	mobileCallParams.iCug.iExplicitInvoke = TRUE;
 	
-	// • iCugIndex = 0x0000 
+	// ?iCugIndex = 0x0000 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
 
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
 
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
 
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	// post a notifier for RMobileLine::NotifyMobileLineStatusChange
@@ -16403,34 +16403,34 @@ TVerdict CCTSYIntegrationTestCallControl0055::doTestStepL()
     RMobileCall::TMobileCallParamsV1 mobileCallParams;
     RMobileCall::TMobileCallParamsV1Pckg mobileCallParamsPckg(mobileCallParams);
 
-	// • iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
+	// ?iSpeakerControl = EMonitorSpeakerControlAlwaysOff 
 	mobileCallParams.iSpeakerControl = RCall::EMonitorSpeakerControlAlwaysOff;
 
-	// • iSpeakerVolume = EMonitorSpeakerVolumeOff 
+	// ?iSpeakerVolume = EMonitorSpeakerVolumeOff 
 	mobileCallParams.iSpeakerVolume = RCall::EMonitorSpeakerVolumeOff;
 
-	// • iInterval = 0x01 
+	// ?iInterval = 0x01 
 	mobileCallParams.iInterval = 0x01;
 
-	// • iWaitForDialTone = EDialToneWait 
+	// ?iWaitForDialTone = EDialToneWait 
 	mobileCallParams.iWaitForDialTone = RCall::EDialToneWait;
 
-	// • iIdRestrict = EIdRestrictDefault 
+	// ?iIdRestrict = EIdRestrictDefault 
 	mobileCallParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
 
-	// • iExplicitInvoke = TRUE 
+	// ?iExplicitInvoke = TRUE 
 	mobileCallParams.iCug.iExplicitInvoke = TRUE;
 
-	// • iCugIndex = 0x0000 
+	// ?iCugIndex = 0x0000 
 	mobileCallParams.iCug.iCugIndex = 0x0000;
 
-	// • iSuppressOA = FALSE 
+	// ?iSuppressOA = FALSE 
 	mobileCallParams.iCug.iSuppressOA = FALSE;
 
-	// • iSuppressPrefCug = FALSE 
+	// ?iSuppressPrefCug = FALSE 
 	mobileCallParams.iCug.iSuppressPrefCug = FALSE;
 
-	// • iAutoRedial = FALSE 
+	// ?iAutoRedial = FALSE 
 	mobileCallParams.iAutoRedial = FALSE;
 
 	// Post a notifier for RMobileLine::NotifyMobileLineStatusChange

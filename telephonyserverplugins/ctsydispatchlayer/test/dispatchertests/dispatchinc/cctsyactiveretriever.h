@@ -19,6 +19,11 @@
  @file
 */
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CCTSYACTIVERETRIEVER_H
 #define CCTSYACTIVERETRIEVER_H
 

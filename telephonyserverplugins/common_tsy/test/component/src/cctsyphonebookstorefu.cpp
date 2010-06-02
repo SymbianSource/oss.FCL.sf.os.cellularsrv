@@ -7151,7 +7151,7 @@ void CCTsyPhoneBookStoreFU::Test3Read0002L()
 	AssertMockLtsyStatusL();	
 	ASSERT_EQUALS(KErrNone, requestStatus.Int());	
 
-    //
+    ///////////////////////////////////////////////////
 	
 	CleanupStack::PopAndDestroy(10, this); 		//this, data, customAPI, data1, data2, completeData, completeData2, cache1, bookStore, data4
 	

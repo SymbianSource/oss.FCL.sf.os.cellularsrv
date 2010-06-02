@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CSMSDISPATCHER_H_
 #define __CSMSDISPATCHER_H_
 

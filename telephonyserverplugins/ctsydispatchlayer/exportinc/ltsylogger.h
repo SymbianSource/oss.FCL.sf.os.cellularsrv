@@ -19,8 +19,7 @@
 
 /**
  @file
- @publishedPartner
- @released
+ @internalAll 
 */
 
 #ifndef __LTSYLOGGER_H_

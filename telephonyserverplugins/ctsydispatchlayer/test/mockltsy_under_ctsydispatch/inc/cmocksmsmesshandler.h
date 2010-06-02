@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CMOCKSMSMESSHANDLER_H
 #define CMOCKSMSMESSHANDLER_H
 

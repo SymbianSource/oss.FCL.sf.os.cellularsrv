@@ -14,6 +14,11 @@
 // cltsydispatchcallcontrolmultipartyhandler.h
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CLTSYDISPATCHCALLCONTROLMULTIPARTYHANDLER_H_
 #define __CLTSYDISPATCHCALLCONTROLMULTIPARTYHANDLER_H_
 

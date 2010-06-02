@@ -13,6 +13,9 @@
 // Description:
 //
 
+//To resolve RPS dependency for integration tests
+// RPS
+#include "../../RPS/group/bld.inf"
 
 PRJ_EXPORTS
 
@@ -120,8 +123,6 @@ PRJ_MMPFILES
 
 
 PRJ_TESTMMPFILES
-//To resolve RPS dependency for integration tests
-// RPS
-#include "../../RPS/group/bld.inf"
+
 
 te_ctsyintegrationtestsuite.mmp

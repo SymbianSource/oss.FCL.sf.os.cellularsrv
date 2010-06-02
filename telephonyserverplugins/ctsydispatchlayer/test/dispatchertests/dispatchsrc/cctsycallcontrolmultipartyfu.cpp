@@ -146,6 +146,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0001L()
 	User::WaitForRequest(hangupStatus);
 	ASSERT_EQUALS(KErrNone, hangupStatus.Int());
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -227,6 +231,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0002L()
 	ASSERT_EQUALS(KErrNone, mobileCall2.GetMobileCallStatus(callStatus));
 	ASSERT_EQUALS(RMobileCall::EStatusConnected, callStatus);
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -307,6 +315,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0003L()
 	ASSERT_EQUALS(KErrNone, mobileCall2.GetMobileCallStatus(callStatus));
 	ASSERT_EQUALS(RMobileCall::EStatusConnected, callStatus);
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -395,6 +407,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0004L()
 	ASSERT_EQUALS(KErrNone, notifyConfStatus.Int());
 	ASSERT_EQUALS(RMobileConferenceCall::EConferenceIdle, confStatus);
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -646,6 +662,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0006L()
 	ASSERT_EQUALS(KErrNone, confCall.GetConferenceStatus(confStatus));
 	ASSERT_EQUALS(RMobileConferenceCall::EConferenceHold, confStatus);
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -742,6 +762,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0007L()
 	User::WaitForRequest(addCallStatus);
 	ASSERT_EQUALS(KErrGeneral, addCallStatus.Int());
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -870,6 +894,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0008L()
 	ASSERT_EQUALS(KErrNone, mobileCall2.GetMobileCallStatus(callStatus));
 	ASSERT_EQUALS(RMobileCall::EStatusConnected, callStatus);
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	mobileCall.Close();
 	User::After(50000);
 	mobileCall2.Close();
@@ -1012,6 +1040,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0009L()
 	ASSERT_EQUALS(KErrNone, mobileCall3.GetMobileCallStatus(callStatus));
 	ASSERT_EQUALS(RMobileCall::EStatusHold, callStatus);
 		
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	mobileCall.Close();
 	User::After(50000);
 	mobileCall2.Close();
@@ -1180,6 +1212,10 @@ void CCTsyCallControlMultipartyFU::TestUseCase0011L()
 	User::WaitForRequest(sendStatus);
 	ASSERT_EQUALS(KErrNone, sendStatus.Int());
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 	
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();
@@ -1307,6 +1343,10 @@ void CCTsyCallControlMultipartyFU::TestUnit0001L()
 	// Clean up when subsessions are closed
 	DriverCloseTwoRemotePartyConferenceAndCallSubsessionsL(callId1, callId2, callIds);
 
+// NOTE: Adopting User::After(50000) in here is because of test harness failure in the SMP (naviengine).
+//       The ETel server is closing a tel object by an Active Object (CAsyncOneShot), there can be out of ordered closes in SMP.
+//       Since the MockLtsy is expecting exact order of test procedure, this can be regarded as an error but it is not a part of intended testing. 
+//       Therefore this waiting function calls are required to close the tel objects in perfect order. 
 	confCall.Close();
 	User::After(50000);
 	mobileCall.Close();

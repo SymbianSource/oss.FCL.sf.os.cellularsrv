@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CLTYSRECEIVETHREADEVENTSTATEHANDLER_H
 #define CLTYSRECEIVETHREADEVENTSTATEHANDLER_H
 

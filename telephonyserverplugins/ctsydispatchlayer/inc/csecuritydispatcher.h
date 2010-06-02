@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CSECURITYDISPATCHER_H_
 #define __CSECURITYDISPATCHER_H_
 

@@ -1838,6 +1838,7 @@ void CTelObject::WriteBackAndCompleteReq(CReqEntry* aReqEntry,const TInt aError)
 			if (basicMessageType==EIsaUnicodeDoubleDesTobeRead)
 				{
 				TDes16* dataDes2=BufferDes2u(aReqEntry->iBuffer,CBuffer::ESlotRead);
+				__ASSERT_ALWAYS(dataDes2!=NULL,Fault(EEtelFaultDes2DoesNotExist));
 
 				TRAP(ret,aReqEntry->iMessage.WriteL(2,*dataDes2));
 				if(ret!=KErrNone)

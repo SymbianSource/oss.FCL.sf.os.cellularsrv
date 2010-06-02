@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CPHONEBOOKONDISPATCHER_H_
 #define __CPHONEBOOKONDISPATCHER_H_
 

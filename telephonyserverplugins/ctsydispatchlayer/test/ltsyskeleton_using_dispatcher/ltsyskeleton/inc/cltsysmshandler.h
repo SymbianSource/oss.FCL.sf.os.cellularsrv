@@ -14,6 +14,11 @@
 // cltsydispatchsmshandler.h
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CLTSYDISPATCHSMSHANDLER_H_
 #define __CLTSYDISPATCHSMSHANDLER_H_
 

@@ -3631,7 +3631,9 @@ void CCTsyCallInformationFU::TestNotifyStatusChange0001L()
     User::WaitForRequest(requestStatus);
     AssertMockLtsyStatusL();
     ASSERT_EQUALS(KErrNone, requestStatus.Int());
+    
     CleanupStack::PopAndDestroy(&call);
+    
     //---------------------------------------------------------
 
     RMobileCall emerCall;
@@ -3741,9 +3743,10 @@ void CCTsyCallInformationFU::TestNotifyStatusChange0001L()
     User::WaitForRequest(mRequestStatus);
 
     CloseCallL(call2, callId, mobileService);
+
     AssertMockLtsyStatusL();
     CleanupStack::PopAndDestroy(&call2);
-
+    
 
 	//-- EStatusIdle --------------------------------------------
 	callId = 3;

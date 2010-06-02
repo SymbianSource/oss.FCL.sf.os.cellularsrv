@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CCALLCONTROLMULTIPARTYDISPATCHER_H_
 #define __CCALLCONTROLMULTIPARTYDISPATCHER_H_
 

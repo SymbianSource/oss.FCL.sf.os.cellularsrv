@@ -495,7 +495,7 @@ void CMockPhoneMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt aResu
 			break;
 		case EMobilePhoneGetPhoneId:
 			{
-			//CTSY does not expect the full TMobilePhoneIdentityV1 but just a TBuf8<15> containing serial id.
+			//CTSY does not expect the full TMobilePhoneIdentityV1 but just a TBuf8<KSerialNumberLength> containing serial id.
 			TMockLtsyData1Buf<TBuf8<KSerialNumberLength> > serialIdData;
 			serialIdData.DeserialiseL(aData);
 			dataPackage.PackData(serialIdData.Data1Ptr()); //<<<how to know how to pack up data to send to CTSY??

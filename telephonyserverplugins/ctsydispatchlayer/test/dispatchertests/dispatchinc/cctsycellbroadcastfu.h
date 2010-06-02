@@ -20,6 +20,11 @@
  @file The TEFUnit header file which tests the CellBroadcast
 */
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CCTSYCellBroadcastFU_H
 #define CCTSYCellBroadcastFU_H
 

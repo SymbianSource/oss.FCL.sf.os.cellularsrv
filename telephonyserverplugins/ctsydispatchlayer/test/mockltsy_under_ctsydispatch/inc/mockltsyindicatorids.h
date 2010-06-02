@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef MOCKLTSYINDICATORIDS_H_
 #define MOCKLTSYINDICATORIDS_H_
 

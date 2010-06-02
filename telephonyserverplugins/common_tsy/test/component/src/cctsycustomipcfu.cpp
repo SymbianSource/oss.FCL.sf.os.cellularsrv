@@ -5365,7 +5365,7 @@ void CCTsyCustomIPCFU::TestWriteViagHomeZoneCache0002L()
 */
 void CCTsyCustomIPCFU::TestWriteViagHomeZoneCache0003L()
 	{
-	
+
 	OpenEtelServerL(EUseExtendedError);
 	CleanupStack::PushL(TCleanupItem(Cleanup,this));
 	OpenPhoneL();

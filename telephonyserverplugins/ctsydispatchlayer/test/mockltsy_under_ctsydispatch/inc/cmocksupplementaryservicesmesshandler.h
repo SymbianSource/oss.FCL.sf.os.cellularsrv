@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CMOCKSUPPLEMENTARYSERVICESMESSHANDLER_H
 #define CMOCKSUPPLEMENTARYSERVICESMESSHANDLER_H
 

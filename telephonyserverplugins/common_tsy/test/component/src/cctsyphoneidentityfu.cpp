@@ -153,7 +153,7 @@ void CCTsyPhoneIdentityFU::TestGetPhoneId0001L()
 
 	// Note: For this API
 	// LTSY does not return the whole TMobilePhoneIdentityV1 but just the
-	// serial no. as a TBuf8<15>
+	// serial no. as a TBuf8<KSerialNumberLength>
 
 	iPhone.GetPhoneId(requestStatus, phoneId);
 	User::WaitForRequest(requestStatus);

@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef __CSUPPLEMENTARYSERVICESDISPATCHER_H_
 #define __CSUPPLEMENTARYSERVICESDISPATCHER_H_
 

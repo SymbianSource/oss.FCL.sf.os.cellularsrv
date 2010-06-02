@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -28,13 +28,13 @@ PRJ_TESTEXPORTS
 ../scripts/version1/TE_spudNetworkSide.script				z:/testdata/scripts/te_spudnetworkside.script
 ../scripts/version1/TE_spudNetworkSide_nifman.script			z:/testdata/scripts/te_spudnetworkside_nifman.script
 ../scripts/version1/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
-../scripts/version1/TE_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
+../scripts/version1/TE_SpudNetworkside_Channel.script					z:/testdata/scripts/te_spudnetworkside_channel.script
 #else
 // script files
 ../scripts/TE_spudNetworkSide.script				z:/testdata/scripts/te_spudnetworkside.script
 ../scripts/TE_spudNetworkSide_nifman.script			z:/testdata/scripts/te_spudnetworkside_nifman.script
 ../scripts/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
-../scripts/TE_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
+../scripts/TE_SpudNetworkside_Channel.script					z:/testdata/scripts/te_spudnetworkside_channel.script
 ../scripts/TE_spudNetworkSide_R4_and_R5.script				z:/testdata/scripts/te_spudnetworkside_r4_and_r5.script
 #endif
 
@@ -59,7 +59,7 @@ PRJ_TESTEXPORTS
 ../configs/version1/TE_PppSize_spud.xml						z:/testdata/configs/te_pppsize_spud.xml
 ../configs/version1/TE_PppSize_config.txt					z:/testdata/configs/te_pppsize_config.txt
 
-../configs/version1/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/TE_SpudNetworkSide_Channel_config.txt
+../configs/version1/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/te_spudnetworkside_channel_config.txt
 
 // Some error codes are platsec dependent
 ../configs/version1/TE_SpudNetworkSide_9x.ini 	z:/testdata/configs/te_spudnetworkside_platsec.ini
@@ -81,7 +81,7 @@ PRJ_TESTEXPORTS
 ../configs/TE_PppSize_spud.xml						z:/testdata/configs/te_pppsize_spud.xml
 ../configs/TE_PppSize_config.txt					z:/testdata/configs/te_pppsize_config.txt
 
-../configs/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/TE_SpudNetworkSide_Channel_config.txt
+../configs/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/te_spudnetworkside_channel_config.txt
 
 // Some error codes are platsec dependent
 ../configs/TE_SpudNetworkSide_9x.ini 	z:/testdata/configs/te_spudnetworkside_platsec.ini

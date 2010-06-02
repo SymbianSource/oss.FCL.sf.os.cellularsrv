@@ -13,6 +13,11 @@
 // Description:
 //
 
+/**
+ @file
+ @internalAll 
+*/
+
 #ifndef CMOCKSIMMESSHANDLER_H
 #define CMOCKSIMMESSHANDLER_H
 

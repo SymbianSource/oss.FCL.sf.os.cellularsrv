@@ -15,7 +15,10 @@
 // the Mock LTSY.
 //
 
-
+/**
+ @file
+ @internalAll 
+*/
 
 #ifndef __LTSYMACROS_H_
 #define __LTSYMACROS_H_
