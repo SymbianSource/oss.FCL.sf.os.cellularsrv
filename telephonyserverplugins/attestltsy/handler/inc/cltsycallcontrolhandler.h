@@ -123,6 +123,9 @@ public:
     // From MLtsyDispatchCallControlSwap
     virtual TInt HandleSwapReqL(TInt aHeldCallId, TInt aConnectedCallId);
 
+    // From MLtsyDispatchCallControlSwap 
+    virtual TInt HandleSwapReqL(TInt aCallId);
+
     // From MLtsyDispatchCallControlLoanDataPort
     virtual TInt HandleLoanDataPortSyncL(TInt aCallId, RCall::TCommPort& aCommPort);
 

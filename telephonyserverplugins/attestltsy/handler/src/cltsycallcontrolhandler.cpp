@@ -788,6 +788,46 @@ TInt CLtsyCallControlHandler::HandleSwapReqL(TInt aHeldCallId, TInt aConnectedCa
 	return nRet;
 	} // CLtsyCallControlHandler::HandleSwapReqL
 
+TInt CLtsyCallControlHandler::HandleSwapReqL(TInt aCallId)
+/**
+ * This request is completed by invoking
+ * CCtsyDispatcherCallback::CallbackCallControlSwapComp()
+ *
+ * @param aCallId The Call ID of the held call to swap.
+ * 
+ * This request is to toggle the status of a call (conected<->held)
+ * 
+ * @return KErrNone on success, KErrNotSupported if this request is not supported,
+ * or another error code to indicate the failure otherwise.
+ */
+	{
+	LOGTEXT(_L8("[Ltsy CallControl]  ***Implement me correctly*** Starting CLtsyCallControlHandler::HandleSwapReqL "));
+	LOGTEXT2(_L8("[Ltsy CallControl] aCallId = %d"), aCallId);
+//@todo implement me, this function is a patch only
+
+/*	
+	TInt nRet = iGloblePhone->CheckGlobalPhoneStatus();
+	if (nRet == KErrNone)
+		{
+		//Setting Port active
+		iGloblePhone->iEventSignalActive = ETrue;
+		
+		//Create DTMF 
+		CATChld* cToggleCall = CATChld::NewL((*iGloblePhone), iCtsyDispatcherCallback);
+		iGloblePhone->SetActiveRequest(cToggleCall);
+//		cToggleCall->SetCallId(aHeldCallId);
+//		cSwapCall->SetConnectedCallId(aConnectedCallId);
+		cSwapCall->SetIpcType(CATChld::ELtsyReqCallSwap);
+		cSwapCall->SetChldType(CATChld::EHeldAllActiveCallAndAcceptHeldWaiting);
+		cSwapCall->StartRequest();			
+		}
+	
+	return nRet;
+*/
+
+//@todo implement me, this function is a patch only
+	return KErrNone;
+	} // CLtsyCallControlHandler::HandleSwapReqL
 TInt CLtsyCallControlHandler::HandleLoanDataPortSyncL(TInt /*aCallId*/, RCall::TCommPort& /*aCommPort*/)
 /**
  * This request is part of
