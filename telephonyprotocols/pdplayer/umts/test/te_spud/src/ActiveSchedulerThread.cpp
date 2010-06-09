@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -29,13 +29,11 @@
 /**
  Creates and starts the active scheduler, and initializes the units under test
  */
-void ActiveSchedulerMainL(CInputRequestListener* aListener, TThreadId aParentThreadId)
+void ActiveSchedulerMainL(CInputRequestListener* aListener)
 	{
 	CActiveScheduler *sched = new(ELeave) CActiveScheduler;
 	CleanupStack::PushL(sched);
 	CActiveScheduler::Install(sched);
-	
-	aListener->iParentThread.Open(aParentThreadId);
 	
 	__UHEAP_MARK;
 
@@ -63,9 +61,8 @@ void ActiveSchedulerMainL(CInputRequestListener* aListener, TThreadId aParentThr
 	CleanupStack::PopAndDestroy(sched);	
 
 	// inform the main test thread that this thread is finished and that there are no memory leaks
-	TRequestStatus *destuctedStatus = &aListener->iThreadDestructed;
-	aListener->iParentThread.RequestComplete(destuctedStatus, KErrNone);
-	aListener->iParentThread.Close();
+	TRequestStatus *destructedStatus = &aListener->iThreadDestructed;
+	aListener->iParentThread.RequestComplete(destructedStatus, KErrNone);	
 	}
 	
 /**
@@ -80,7 +77,7 @@ TInt ActiveSchedulerThread(TAny* aActiveSchedulerParams)
 		}
 	
 	TActiveSchedulerThreadParams *params = (TActiveSchedulerThreadParams*)aActiveSchedulerParams;
-	TRAPD(err, ActiveSchedulerMainL(params->iListener, params->iThreadId));
+	TRAPD(err, ActiveSchedulerMainL(params->iListener));
 	
 	delete cleanup;
 	

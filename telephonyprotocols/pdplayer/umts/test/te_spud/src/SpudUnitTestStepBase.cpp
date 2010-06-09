@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -66,20 +66,19 @@ TVerdict CSpudUnitTestStepBase::doTestStepPreambleL()
 		{
 		case KSimTsyTestNumberR5OrR99R4:
 #ifdef SYMBIAN_NETWORKING_UMTSR5
-			iListener = CInputRequestListener::NewL(iUseTestPdpFsmInterface, TPacketDataConfigBase::KConfigRel5);
+			iListener = CInputRequestListener::NewL(iUseTestPdpFsmInterface, RThread().Id(), TPacketDataConfigBase::KConfigRel5);
 #else
-            iListener = CInputRequestListener::NewL(iUseTestPdpFsmInterface, TPacketDataConfigBase::KConfigRel99Rel4);
+            iListener = CInputRequestListener::NewL(iUseTestPdpFsmInterface, RThread().Id(), TPacketDataConfigBase::KConfigRel99Rel4);
 #endif
 			break;
 		default:
-			iListener = CInputRequestListener::NewL(iUseTestPdpFsmInterface, TPacketDataConfigBase::KConfigGPRS);
+			iListener = CInputRequestListener::NewL(iUseTestPdpFsmInterface, RThread().Id(), TPacketDataConfigBase::KConfigGPRS);
 			break;
 		}
 
 	// creating and start the thread that will run the active scheduler containing SPUD or SPUDTEL
 	TActiveSchedulerThreadParams params;
-	params.iListener = iListener;
-	params.iThreadId = RThread().Id();
+	params.iListener = iListener;	
  	_LIT(activeSchedulerThreadName, "ActiveSchedulerThread_");
  	TBuf<255> buf(activeSchedulerThreadName);
  	buf.AppendNum(iTestNumber);
@@ -103,10 +102,8 @@ TVerdict CSpudUnitTestStepBase::doTestStepPostambleL()
 	TRequestStatus *status = &iListener->iStatus;
 	iActiveSchedulerThread.RequestComplete(status, KErrCancel);
 
-	// wait until the thread has cleaned up then kill it
-	// if the iThreadDestructed is never completed, this is probably the result of the UHEAP_MARKEND macro failing
-	User::WaitForRequest(iListener->iThreadDestructed);
-	iActiveSchedulerThread.Kill(KErrNone);
+	// wait until the thread has cleaned up (don't kill the thread, it will die by itself)
+	User::WaitForRequest(iListener->iThreadDestructed);	
 	iActiveSchedulerThread.Close();
 	
 	delete iListener;
