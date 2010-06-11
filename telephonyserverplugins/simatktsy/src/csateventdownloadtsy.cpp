@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,12 +19,17 @@
 
 
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "csateventdownloadtsyTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatDataPackage.h"        // Parameter packing 
 #include "CSatEventDownloadTsy.h"   // Class header
 #include "CSatTsy.h"                // Sat Tsy class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "CBerTlv.h"                // Ber Tlv
 #include "TTlv.h"					// TTlv class
 #include "MSatTsy_IPCDefs.h"        // Sat Tsy internal request types
@@ -40,14 +45,14 @@ CSatEventDownloadTsy* CSatEventDownloadTsy::NewL
         CSatTsy* aSatTsy  
         )
     { 
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::NewL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_NEWL_1,  "CSAT: CSatEventDownloadTsy::NewL" );
     CSatEventDownloadTsy* const satEventDownloadTsy = 
         new ( ELeave ) CSatEventDownloadTsy();
     CleanupStack::PushL( satEventDownloadTsy );
     satEventDownloadTsy->iSatTsy = aSatTsy;
     satEventDownloadTsy->ConstructL();
     CleanupStack::Pop( satEventDownloadTsy );
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::NewL, end of method" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_NEWL_2,  "CSAT: CSatEventDownloadTsy::NewL, end of method" );
     return satEventDownloadTsy;
     }
 
@@ -61,7 +66,7 @@ CSatEventDownloadTsy::~CSatEventDownloadTsy
         void   
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::~CSatEventDownloadTsy" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_DTOR_1,  "CSAT: CSatEventDownloadTsy::~CSatEventDownloadTsy" );
     // Unregister.
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatEventDownloadTsyObjType, NULL );
@@ -77,7 +82,7 @@ CSatEventDownloadTsy::CSatEventDownloadTsy
         void
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CSatEventDownloadTsy" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CTOR_1,  "CSAT: CSatEventDownloadTsy::CSatEventDownloadTsy" );
     }
 
 // -----------------------------------------------------------------------------
@@ -90,7 +95,7 @@ void CSatEventDownloadTsy::ConstructL
         void
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::ConstructL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CONSTRUCTL_1,  "CSAT: CSatEventDownloadTsy::ConstructL" );
     // Register .
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatEventDownloadTsyObjType, this );
@@ -110,8 +115,7 @@ TInt CSatEventDownloadTsy::DoExtFuncL
         const TDataPackage& aPackage 
         )
     {
-    TFLOGSTRING2( "CSAT: CSatEventDownloadTsy::DoExtFuncL\
-        . Handle:%d", aTsyReqHandle );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_DOEXTFUNCL_1,  "CSAT: CSatEventDownloadTsy::DoExtFuncL. Handle:%d", aTsyReqHandle );
 
     TInt ret ( KErrNotSupported );
 
@@ -182,7 +186,7 @@ TInt CSatEventDownloadTsy::DoExtFuncL
             default:
                 {
                 ret = KErrNotSupported;
-                TFLOGSTRING( "CSAT: CSatEventDownloadTsy::DoExtFuncL, not supported" );
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_DOEXTFUNCL_2,  "CSAT: CSatEventDownloadTsy::DoExtFuncL, not supported" );
                 break;
                 }
             } // End switch  
@@ -205,7 +209,7 @@ void CSatEventDownloadTsy::SetUpEventList
         TUint32 aEvents        // Bit mask of enabled events
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::SetUpEventList" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_SETUPEVENTLIST_1,  "CSAT: CSatEventDownloadTsy::SetUpEventList" );
     iEventList.SetEventList( aEvents );
         
     // Force sending of envelope at least once, if location status event set
@@ -230,7 +234,7 @@ void CSatEventDownloadTsy::SetSetUpCallStatus
         const TBool aStatus // SetUpCall status
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::SetSetUpCallStatus" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_SETSETUPCALLSTATUS_1,  "CSAT: CSatEventDownloadTsy::SetSetUpCallStatus" );
     iSetUpCallOngoing = aStatus;
     }
 
@@ -246,7 +250,7 @@ TInt CSatEventDownloadTsy::CancelService
         const TTsyReqHandle /*aTsyReqHandle*/
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CancelService" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CANCELSERVICE_1,  "CSAT: CSatEventDownloadTsy::CancelService" );
     // Since event download is served at once, there's anything to do here
     return KErrNone;
     }
@@ -262,7 +266,7 @@ TInt CSatEventDownloadTsy::CompleteMTCallL
         const CSatDataPackage* aDataPackage
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteMTCallL" );    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEMTCALLL_1,  "CSAT: CSatEventDownloadTsy::CompleteMTCallL" );
     TInt ret( KErrNone );
 
     if ( iEventList.IsEnabled( RSat::KMTCall ) )
@@ -304,14 +308,12 @@ TInt CSatEventDownloadTsy::CompleteMTCallL
                 }
             else
             	{
-            	TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteMTCallL,\
-            	    Dialling number missing" );
+            	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEMTCALLL_2,  "CSAT: CSatEventDownloadTsy::CompleteMTCallL, Dialling number missing" );
             	}
             }            
 		else
         	{	
-        	TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteMTCallL,\
-            	TON and NPI missing" );
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEMTCALLL_3,  "CSAT: CSatEventDownloadTsy::CompleteMTCallL, TON and NPI missing" );
         	}
         	
         // If subaddress present
@@ -323,8 +325,7 @@ TInt CSatEventDownloadTsy::CompleteMTCallL
             }
         else
         	{
-        	TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteMTCallL,\
-            	Subaddress missing" );
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEMTCALLL_4,  "CSAT: CSatEventDownloadTsy::CompleteMTCallL, Subaddress missing" );
         	}
 
         // Prepare data
@@ -338,8 +339,7 @@ TInt CSatEventDownloadTsy::CompleteMTCallL
         }
 	else
     	{
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteMTCallL\
-            Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEMTCALLL_5,  "CSAT: CSatEventDownloadTsy::CompleteMTCallL Event not enabled" );
         }
 
     return ret;
@@ -355,7 +355,7 @@ TInt CSatEventDownloadTsy::CompleteCallConnectedL
         const CSatDataPackage* aDataPackage
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteCallConnectedL" );    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLCONNECTEDL_1,  "CSAT: CSatEventDownloadTsy::CompleteCallConnectedL" );
     TInt ret = KErrNone;
     
     if ( iEventList.IsEnabled( RSat::KCallConnected ) )
@@ -364,8 +364,7 @@ TInt CSatEventDownloadTsy::CompleteCallConnectedL
 	    TBool nearEnd;
 	    aDataPackage->UnPackData( cmdNumber, nearEnd );
 	    
-	    TFLOGSTRING2( "CSAT: CSatEventDownloadTsy::CompleteCallConnectedL \
-	        ( cmdNumber=%d )", ( TInt )cmdNumber ); 
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLCONNECTEDL_2,  "CSAT: CSatEventDownloadTsy::CompleteCallConnectedL ( cmdNumber=%d )", ( TInt )cmdNumber );
 	               
         // Create envelope
         TTlv envelope;
@@ -402,8 +401,7 @@ TInt CSatEventDownloadTsy::CompleteCallConnectedL
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteCallConnectedL,\
-            Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLCONNECTEDL_3,  "CSAT: CSatEventDownloadTsy::CompleteCallConnectedL, Event not enabled" );
         }
     return ret;
     }
@@ -418,7 +416,7 @@ TInt CSatEventDownloadTsy::CompleteCallDisconnectedL
         const CSatDataPackage* aDataPackage
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLDISCONNECTEDL_1,  "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL" );
     TInt ret = KErrNone;
 
     if ( iEventList.IsEnabled( RSat::KCallDisconnected ) )
@@ -431,8 +429,7 @@ TInt CSatEventDownloadTsy::CompleteCallDisconnectedL
     	TBool nearEnd = callDisconnectedEnvelope->iNearEnd;
     	TBool causeGiven = callDisconnectedEnvelope->iCauseGiven;
     	const TDesC8& cause = callDisconnectedEnvelope->iCause; 
-    	TFLOGSTRING2( "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL \
-        	( cmdNumber=%d )", ( TInt )cmdNumber );    	       
+    	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLDISCONNECTEDL_2,  "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL ( cmdNumber=%d )", ( TInt )cmdNumber );
         // Create envelope
         TTlv envelope;
         envelope.Begin  ( KBerTlvEventDownloadTag );
@@ -454,8 +451,7 @@ TInt CSatEventDownloadTsy::CompleteCallDisconnectedL
             }
         else
             {
-            TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-                CompleteCallDisconnectedL, cause not given" );
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLDISCONNECTEDL_3,  "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL, cause not given" );
             }
         // Prepare data
         TPtrC8 data = envelope.End();
@@ -468,8 +464,7 @@ TInt CSatEventDownloadTsy::CompleteCallDisconnectedL
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL,\
-            Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETECALLDISCONNECTEDL_4,  "CSAT: CSatEventDownloadTsy::CompleteCallDisconnectedL, Event not enabled" );
         }
     return ret;
     }
@@ -485,7 +480,7 @@ TInt CSatEventDownloadTsy::CompleteLocationStatusL
         const CSatDataPackage* aDataPackage
         )
 	{
-	TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CompleteLocationStatusL" );	       	
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETELOCATIONSTATUSL_1,  "CSAT: CSatEventDownloadTsy::CompleteLocationStatusL" );
     TInt ret( KErrNone );
 
     if ( iEventList.IsEnabled( RSat::KLocationStatus ) )
@@ -500,8 +495,7 @@ TInt CSatEventDownloadTsy::CompleteLocationStatusL
 	    TUint16 locationAreaCode = locationStatusEnvelope->iLocationAreaCode;
 	    TUint16 cellId = locationStatusEnvelope->iCellId;
 
-	    TFLOGSTRING2( "CSAT: CSatEventDownloadTsy::CompleteLocationStatusL \
-	        ( locationStatus=%d )", ( TInt )locationStatus );
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETELOCATIONSTATUSL_2,  "CSAT: CSatEventDownloadTsy::CompleteLocationStatusL ( locationStatus=%d )", ( TInt )locationStatus );
                 
         // Send location status envelope only if there
         // have been changes or we're sending first
@@ -512,8 +506,7 @@ TInt CSatEventDownloadTsy::CompleteLocationStatusL
              ( iCellId != cellId ) || 
              iForceLocationStatusEnvelope ) 
             {
-            TFLOGSTRING( "CSAT: CSatEventDownload::\
-                CompleteLocationStatusEnvelopeL, -- saving" );
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETELOCATIONSTATUSL_3,  "CSAT: CSatEventDownload::CompleteLocationStatusEnvelopeL, -- saving" );
 
             // Cache values
             iLocationStatus = locationStatus;
@@ -539,8 +532,7 @@ TInt CSatEventDownloadTsy::CompleteLocationStatusL
             // normal service
             if ( KLocationStatusNormalService == locationStatus )
                 {
-                TFLOGSTRING( "CSAT: CSatEventDownload::CompleteLocationStatusEnvelopeL\
-                    -- sending" );
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETELOCATIONSTATUSL_4,  "CSAT: CSatEventDownload::CompleteLocationStatusEnvelopeL -- sending" );
                 envelope.AddTag ( KTlvLocationInformationTag );
                 envelope.AddData( operatorCode );        
                 // Mobile country & network codes
@@ -573,8 +565,7 @@ TInt CSatEventDownloadTsy::CompleteLocationStatusL
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-            CompleteLocationStatusEnvelopeL, Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETELOCATIONSTATUSL_5,  "CSAT: CSatEventDownloadTsy::CompleteLocationStatusEnvelopeL, Event not enabled" );
         }             
 
     return ret;
@@ -590,8 +581,7 @@ TInt CSatEventDownloadTsy::CompleteAccessTechnologyChangeL
 		const CSatDataPackage* aDataPackage
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-    		CompleteAccessTechnologyChangeEnvelopeL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEACCESSTECHNOLOGYCHANGEL_1,  "CSAT: CSatEventDownloadTsy::CompleteAccessTechnologyChangeEnvelopeL" );
     TInt ret( KErrNone );
 
     if ( iEventList.IsEnabled( RSat::KAccessTechnologyChange ) )
@@ -626,8 +616,7 @@ TInt CSatEventDownloadTsy::CompleteAccessTechnologyChangeL
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-            CompleteAccessTechnologyChangeL, Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_COMPLETEACCESSTECHNOLOGYCHANGEL_2,  "CSAT: CSatEventDownloadTsy::CompleteAccessTechnologyChangeL, Event not enabled" );
         }        
 
     return ret;
@@ -642,7 +631,7 @@ TInt CSatEventDownloadTsy::CreateUserActivityEnvelopeL
         // None
         )
     {
-    TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CreateUserActivityEnvelopeL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEUSERACTIVITYENVELOPEL_1,  "CSAT: CSatEventDownloadTsy::CreateUserActivityEnvelopeL" );
     TInt ret = KErrNone;
     if ( iEventList.IsEnabled( RSat::KUserActivity ) )
         {
@@ -670,8 +659,7 @@ TInt CSatEventDownloadTsy::CreateUserActivityEnvelopeL
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CreateUserActivityEnvelopeL,\
-            Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEUSERACTIVITYENVELOPEL_2,  "CSAT: CSatEventDownloadTsy::CreateUserActivityEnvelopeL, Event not enabled" );
         }
     return ret;
     }
@@ -686,8 +674,7 @@ TInt CSatEventDownloadTsy::CreateIdleScreenAvailableEnvelopeL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatEventDownloadTsy::\
-        CreateIdleScreenAvailableEnvelopeL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEIDLESCREENAVAILABLEENVELOPEL_1, "CSAT: CSatEventDownloadTsy::CreateIdleScreenAvailableEnvelopeL");
     TInt ret = KErrNone;
 
     if ( iEventList.IsEnabled( RSat::KIdleScreenAvailable ) )
@@ -718,14 +705,12 @@ TInt CSatEventDownloadTsy::CreateIdleScreenAvailableEnvelopeL
             }
         else
             {
-            TFLOGSTRING("CSAT: CSatEventDownloadTsy::\
-                CreateIdleScreenAvailableEnvelopeL, Error in forwarding req.");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEIDLESCREENAVAILABLEENVELOPEL_2, "CSAT: CSatEventDownloadTsy::CreateIdleScreenAvailableEnvelopeL, Error in forwarding req.");
             }
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-            CreateIdleScreenAvailableEnvelopeL, Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEIDLESCREENAVAILABLEENVELOPEL_3,  "CSAT: CSatEventDownloadTsy::CreateIdleScreenAvailableEnvelopeL, Event not enabled" );
         }
     return ret;
     }
@@ -740,8 +725,7 @@ TInt CSatEventDownloadTsy::CreateBrowserTerminationEnvelopeL
         const RSat::TBrowserTerminationCause aCause
         )
     {
-    TFLOGSTRING2( "CSAT: CSatEventDownloadTsy::\
-        CreateBrowserTerminationEnvelopeL, ( cause=%d )",( TInt )aCause );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEBROWSERTERMINATIONENVELOPEL_1,  "CSAT: CSatEventDownloadTsy::CreateBrowserTerminationEnvelopeL, ( cause=%d )",( TInt )aCause );
 
     TInt ret = KErrNone;
 
@@ -773,8 +757,7 @@ TInt CSatEventDownloadTsy::CreateBrowserTerminationEnvelopeL
         }
     else
         {
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-            CreateBrowserTerminationEnvelopeL, Event not enabled" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEBROWSERTERMINATIONENVELOPEL_2,  "CSAT: CSatEventDownloadTsy::CreateBrowserTerminationEnvelopeL, Event not enabled" );
         }
 
     return ret;
@@ -791,8 +774,7 @@ TInt CSatEventDownloadTsy::CreateLanguageSelectionEnvelopeL
         const TUint16 aLanguage
         )
     {
-    TFLOGSTRING2( "CSAT: CSatEventDownloadTsy::\
-        CreateLanguageSelectionEnvelopeL, (language=%d)", ( TInt )aLanguage );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATELANGUAGESELECTIONENVELOPEL_1,  "CSAT: CSatEventDownloadTsy::CreateLanguageSelectionEnvelopeL, (language=%d)", ( TInt )aLanguage );
     
     TInt ret = KErrNone;
 
@@ -824,8 +806,7 @@ TInt CSatEventDownloadTsy::CreateLanguageSelectionEnvelopeL
         }
     else
     	{
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::\
-            CreateLanguageSelectionEnvelopeL, Event not enabled" );	
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATELANGUAGESELECTIONENVELOPEL_2,  "CSAT: CSatEventDownloadTsy::CreateLanguageSelectionEnvelopeL, Event not enabled" );
     	}
     return ret;
     }
@@ -841,7 +822,7 @@ TInt CSatEventDownloadTsy::CreateDataAvailableEnvelopeL
 		const TInt8 aLength    
         )
     {
-    TFLOGSTRING("CSAT: CSatEventDownload::CreateDataAvailableEnvelopeL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEDATAAVAILABLEENVELOPEL_1, "CSAT: CSatEventDownload::CreateDataAvailableEnvelopeL");
 
     TInt ret = KErrNone;
 
@@ -874,8 +855,7 @@ TInt CSatEventDownloadTsy::CreateDataAvailableEnvelopeL
         }
     else
     	{
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CreateDataAvailableEnvelopeL\
-            Event not enabled" );	
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATEDATAAVAILABLEENVELOPEL_2,  "CSAT: CSatEventDownloadTsy::CreateDataAvailableEnvelopeL Event not enabled" );
     	}
     return ret;
     }
@@ -890,7 +870,7 @@ TInt CSatEventDownloadTsy::CreateChannelStatusEnvelopeL
         const RSat::TChannelStatus aStatus
         )
     {
-    TFLOGSTRING("CSAT: CSatEventDownloadTsy::CreateChannelStatusEnvelopeL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATECHANNELSTATUSENVELOPEL_1, "CSAT: CSatEventDownloadTsy::CreateChannelStatusEnvelopeL");
     
     TInt ret( KErrNone );
 
@@ -920,8 +900,7 @@ TInt CSatEventDownloadTsy::CreateChannelStatusEnvelopeL
         }
     else
     	{
-        TFLOGSTRING( "CSAT: CSatEventDownloadTsy::CreateChannelStatusEnvelopeL\
-            Event not enabled" );	
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATEVENTDOWNLOADTSY_CREATECHANNELSTATUSENVELOPEL_2,  "CSAT: CSatEventDownloadTsy::CreateChannelStatusEnvelopeL Event not enabled" );
     	}        
 
     return ret;

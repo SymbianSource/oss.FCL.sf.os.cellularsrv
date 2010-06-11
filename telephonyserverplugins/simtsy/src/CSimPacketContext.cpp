@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,7 +19,13 @@
  @file
 */
 
-#include "Simlog.h"
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimPacketContextTraces.h"
+#endif
+
 #include "CSimPhone.h"
 #include "CSimPacketContext.h"
 #include "CSimPacketService.h"
@@ -122,7 +128,7 @@ void CSimPacketContext::ConstructL()
 * @leave Leaves no memory or any data member does not construct for any reason.
 */
 	{
-	LOGPACKET1("CSimPacketContext: Entered constructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_1, "CSimPacketContext: Entered constructor");
 
 	iSetConfigData = new (ELeave) CArrayFixFlat<TSetConfigData>(1);
 	iNotifyContextConfigChangeArray = new (ELeave) CArrayFixFlat<TNotifyContextConfigChangeData>(1);
@@ -139,7 +145,7 @@ void CSimPacketContext::ConstructL()
 	iNotifyContextConfigChangeTimer= CSimTimer::NewL(iPhone);
 	iContextStatusChange = CSimPubSubChange::NewL(this, CSimPubSub::TPubSubProperty(KUidPSSimTsyCategory, KPSSimtsyPacketContextStatusChange, KPSSimtsyPacketContextStatusChangeKeyType));
 
-	LOGPACKET1("Starting to Load and Parse Packet Context the Config File");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_2, "Starting to Load and Parse Packet Context the Config File");
 
 	GetCommSetupSettingsL();
 	GetContextConfigParamSettingsL(KSetContextConfigGPRS());
@@ -177,7 +183,7 @@ void CSimPacketContext::ConstructL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("CTFTMediaAuthorizationV3::authorizationToken",ret,0,&KAuthorizationToken);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CTFTMEDIAAUTHORIZATIONV3::AUTHORIZATIONTOKEN returned %d (element no. %d) from tag %s.",ret,0,KAuthorizationToken);
             CleanupStack::PopAndDestroy(mediaAuthorization);			
 			continue;
 			}
@@ -191,7 +197,7 @@ void CSimPacketContext::ConstructL()
 
 		if(ret!=KErrNone || desiredResponse > 0)
 			{
-			LOGPARSERR("desiredResponse",ret,1,&KAuthorizationToken);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element DESIREDRESPONSE returned %d (element no. %d) from tag %s.",ret,1,KAuthorizationToken);
 	        CleanupStack::PopAndDestroy(mediaAuthorization);
 			continue;
 			}
@@ -219,7 +225,7 @@ void CSimPacketContext::ConstructL()
 
 			if(ret!=KErrNone || mediaComponentNumber < 0)
 				{
-				LOGPARSERR("CTFTMediaAuthorizationV3::mediaComponentNumber",ret,0,&KFlowIdentifier);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element CTFTMEDIAAUTHORIZATIONV3::MEDIACOMPONENTNUMBER returned %d (element no. %d) from tag %s.",ret,0,KFlowIdentifier);
 				continue;
 				}
 			else
@@ -231,7 +237,7 @@ void CSimPacketContext::ConstructL()
 
 			if(ret!=KErrNone || IPFlowNumber < 0)
 				{
-				LOGPARSERR("CTFTMediaAuthorizationV3::IPFlowNumber",ret,1,&KFlowIdentifier);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element CTFTMEDIAAUTHORIZATIONV3::IPFLOWNUMBER returned %d (element no. %d) from tag %s.",ret,1,KFlowIdentifier);
 				continue;
 				}
 			else
@@ -246,7 +252,7 @@ void CSimPacketContext::ConstructL()
         CleanupStack::Pop(mediaAuthorization);		
 		}
 
-	LOGPACKET1("...Finished parsing Packet Context config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTL_7, "...Finished parsing Packet Context config parameters...");
 	}	
 
 void CSimPacketContext::GetCommSetupSettingsL()
@@ -283,7 +289,7 @@ void CSimPacketContext::GetCommSetupSettingsL()
 			TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,csyName);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("CommSetUp::csyName",ret,0,&KCommSetup);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCOMMSETUPSETTINGSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element COMMSETUP::CSYNAME returned %d (element no. %d) from tag %s.",ret,0,KCommSetup);
 				comm.iCsyName.Copy(KDefaultCsyName);
 				}
 			else
@@ -292,7 +298,7 @@ void CSimPacketContext::GetCommSetupSettingsL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,portName);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("CommSetUp::portName",ret,1,&KCommSetup);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCOMMSETUPSETTINGSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element COMMSETUP::PORTNAME returned %d (element no. %d) from tag %s.",ret,1,KCommSetup);
 				comm.iPortName.Copy(KDefaultPortName);
 				}
 			else
@@ -302,7 +308,7 @@ void CSimPacketContext::GetCommSetupSettingsL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,dataRate);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("CommSetUp::dataRate",ret,2,&KCommSetup);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCOMMSETUPSETTINGSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element COMMSETUP::DATARATE returned %d (element no. %d) from tag %s.",ret,2,KCommSetup);
 				comm.iConfig.iRate=KDefaultCommPortRate;
 				}
 			else
@@ -311,7 +317,7 @@ void CSimPacketContext::GetCommSetupSettingsL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,handshake);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("CommSetUp::handShake",ret,3,&KCommSetup);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCOMMSETUPSETTINGSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element COMMSETUP::HANDSHAKE returned %d (element no. %d) from tag %s.",ret,3,KCommSetup);
 				comm.iConfig.iHandshake=KDefaultHandshake;
 				}
 			else
@@ -321,7 +327,7 @@ void CSimPacketContext::GetCommSetupSettingsL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,contextName);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("CommSetUp::contextName",ret,4,&KCommSetup);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCOMMSETUPSETTINGSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element COMMSETUP::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,4,KCommSetup);
 				comm.iContextName=KDefaultSetting;
 				}
 			else
@@ -330,7 +336,7 @@ void CSimPacketContext::GetCommSetupSettingsL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,commReset);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("CommSetUp::commReset",ret,5,&KCommSetup);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCOMMSETUPSETTINGSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element COMMSETUP::COMMRESET returned %d (element no. %d) from tag %s.",ret,5,KCommSetup);
 				comm.iCommReset=EFalse;
 				}
 			else
@@ -422,7 +428,7 @@ void CSimPacketContext::GetSetConfigSettings()
 
 		if(ret != KErrNone || delay < 0)
 			{
-			LOGPARSERR("SetConfigDelay",ret,0,&KSetConfigDelay);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETSETCONFIGSETTINGS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGDELAY returned %d (element no. %d) from tag %s.",ret,0,KSetConfigDelay);
 			}
 		else
 			{
@@ -439,7 +445,7 @@ void CSimPacketContext::GetSetConfigSettings()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::contextName",ret,0,&KSetConfigFail);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETSETCONFIGSETTINGS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KSetConfigFail);
 			}
 		else
 			{
@@ -449,7 +455,7 @@ void CSimPacketContext::GetSetConfigSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,numberOfTimes);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::numberOfTimes",ret,1,&KSetConfigFail);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETSETCONFIGSETTINGS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::NUMBEROFTIMES returned %d (element no. %d) from tag %s.",ret,1,KSetConfigFail);
 			}
 		else
 			{
@@ -460,7 +466,7 @@ void CSimPacketContext::GetSetConfigSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,failErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::failErrorCode",ret,2,&KSetConfigFail);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETSETCONFIGSETTINGS_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::FAILERRORCODE returned %d (element no. %d) from tag %s.",ret,2,KSetConfigFail);
 			}
 		else
 			{
@@ -491,7 +497,7 @@ void CSimPacketContext::GetContextConfigChangeSettingsL()
 					configChangeData.iDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("NotifyContextConfigChange::delay",ret,0,&KNotifyContextConfigChange);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGCHANGESETTINGSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element NOTIFYCONTEXTCONFIGCHANGE::DELAY returned %d (element no. %d) from tag %s.",ret,0,KNotifyContextConfigChange);
 			continue;
 			}
 			
@@ -500,8 +506,7 @@ void CSimPacketContext::GetContextConfigChangeSettingsL()
 					configChangeData.iNewContextConfigIndex);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("NotifyContextConfigChange::NewContextConfigIndex",
-						ret,0,&KNotifyContextConfigChange);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGCHANGESETTINGSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element NOTIFYCONTEXTCONFIGCHANGE::NEWCONTEXTCONFIGINDEX returned %d (element no. %d) from tag %s.",ret,0,KNotifyContextConfigChange);
 			continue;		
 			}
 	
@@ -521,7 +526,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::contextName",ret,0,&KDeleteTftFail);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KDeleteTftFail);
 			}
 		else
 			{
@@ -531,7 +536,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,numberOfTimes);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::numberOfTimes",ret,1,&KDeleteTftFail);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::NUMBEROFTIMES returned %d (element no. %d) from tag %s.",ret,1,KDeleteTftFail);
 			}
 		else
 		{
@@ -542,7 +547,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,failErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::failErrorCode",ret,2,&KDeleteTftFail);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::FAILERRORCODE returned %d (element no. %d) from tag %s.",ret,2,KDeleteTftFail);
 			}
 		else
 			{
@@ -560,7 +565,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::contextName",ret,0,&KCreateTftConfig);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KCreateTftConfig);
 			}
 		else
 			{
@@ -570,7 +575,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,numberOfTimes);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::numberOfTimes",ret,1,&KCreateTftConfig);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_5, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::NUMBEROFTIMES returned %d (element no. %d) from tag %s.",ret,1,KCreateTftConfig);
 			}
 		else
 			{
@@ -581,7 +586,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,failErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::failErrorCode",ret,2,&KCreateTftConfig);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_6, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::FAILERRORCODE returned %d (element no. %d) from tag %s.",ret,2,KCreateTftConfig);
 			}
 		else
 			{
@@ -592,7 +597,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,delay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::failErrorCode",ret,3,&KCreateTftConfig);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_7, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::FAILERRORCODE returned %d (element no. %d) from tag %s.",ret,3,KCreateTftConfig);
 			}
 		else
 			{
@@ -609,7 +614,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::contextName",ret,0,&KAddPacketFilter);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_8, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KAddPacketFilter);
 			}
 		else
 			{
@@ -619,7 +624,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,numberOfTimes);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::numberOfTimes",ret,1,&KAddPacketFilter);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_9, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::NUMBEROFTIMES returned %d (element no. %d) from tag %s.",ret,1,KAddPacketFilter);
 			}
 		else
 			{
@@ -630,7 +635,7 @@ void CSimPacketContext::GetPacketFilterSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,failErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("SetConfigFail::failErrorCode",ret,2,&KAddPacketFilter);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETPACKETFILTERSETTINGS_10, "WARNING - CONFIGURATION FILE PARSING - Reading element SETCONFIGFAIL::FAILERRORCODE returned %d (element no. %d) from tag %s.",ret,2,KAddPacketFilter);
 			}
 		else
 			{
@@ -662,7 +667,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::contextName",ret,0,KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KContextConfigRel99);
 			}
 		else
 			{
@@ -672,7 +677,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,activatePause);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::activatePause",ret,1,&KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::ACTIVATEPAUSE returned %d (element no. %d) from tag %s.",ret,1,KContextConfigRel99);
 			continue;
 			}
 		else
@@ -681,7 +686,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,activateErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::activateErrorCode",ret,2,&KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::ACTIVATEERRORCODE returned %d (element no. %d) from tag %s.",ret,2,KContextConfigRel99);
 			continue;
 			}
 		else
@@ -690,7 +695,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,aDeactivatePause);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::deactivatePause",ret,3,&KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::DEACTIVATEPAUSE returned %d (element no. %d) from tag %s.",ret,3,KContextConfigRel99);
 			continue;
 			}
 		else
@@ -699,7 +704,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,deactivateErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::deactivateErrorCode",ret,4,&KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::DEACTIVATEERRORCODE returned %d (element no. %d) from tag %s.",ret,4,KContextConfigRel99);
 			continue;
 			}
 		else
@@ -708,7 +713,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,deletionPause);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::deletetionPause",ret,5,&KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::DELETETIONPAUSE returned %d (element no. %d) from tag %s.",ret,5,KContextConfigRel99);
 			continue;
 			}
 		else
@@ -717,7 +722,7 @@ void CSimPacketContext::GetContextConfigRel99SettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6, deletionErrorCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigRel99::deletionErrorCode",ret,6,&KContextConfigRel99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTCONFIGREL99SETTINGSL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGREL99::DELETIONERRORCODE returned %d (element no. %d) from tag %s.",ret,6,KContextConfigRel99);
 			continue;
 			}
 		else
@@ -808,7 +813,7 @@ void CSimPacketContext::GetContextStatusChangeSettingsL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("NotifyContextStatusChange::contextName",ret,0,&KNotifyContextStatusChange);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTSTATUSCHANGESETTINGSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element NOTIFYCONTEXTSTATUSCHANGE::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KNotifyContextStatusChange);
 			continue;
 			}
 		else
@@ -819,7 +824,7 @@ void CSimPacketContext::GetContextStatusChangeSettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("NotifyContextStatusChange::duration",ret,1,&KNotifyContextStatusChange);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTSTATUSCHANGESETTINGSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element NOTIFYCONTEXTSTATUSCHANGE::DURATION returned %d (element no. %d) from tag %s.",ret,1,KNotifyContextStatusChange);
 			continue;
 			}
 		else
@@ -828,7 +833,7 @@ void CSimPacketContext::GetContextStatusChangeSettingsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,contextStatus);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("NotifyContextStatusChange::duration",ret,2,&KNotifyContextStatusChange);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONTEXTSTATUSCHANGESETTINGSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element NOTIFYCONTEXTSTATUSCHANGE::DURATION returned %d (element no. %d) from tag %s.",ret,2,KNotifyContextStatusChange);
 			continue;
 			}
 		else
@@ -879,7 +884,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::id",ret,0,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::ID returned %d (element no. %d) from tag %s.",ret,0,KPacketFilterInfo);
 			continue;	
 			}
 		else
@@ -891,7 +896,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::evaluationPrecedenceIndex",ret,1,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::EVALUATIONPRECEDENCEINDEX returned %d (element no. %d) from tag %s.",ret,1,KPacketFilterInfo);
 			continue;	
 			}
 		else
@@ -903,7 +908,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::srcAddr",ret,2,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::SRCADDR returned %d (element no. %d) from tag %s.",ret,2,KPacketFilterInfo);
 			continue;
 			}
 		else
@@ -1014,7 +1019,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::srcAddrSubnetMask",ret,3,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::SRCADDRSUBNETMASK returned %d (element no. %d) from tag %s.",ret,3,KPacketFilterInfo);
 			continue;
 			}
 		else
@@ -1124,7 +1129,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::protocolNumberOrNextNumber",ret,4,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::PROTOCOLNUMBERORNEXTNUMBER returned %d (element no. %d) from tag %s.",ret,4,KPacketFilterInfo);
 			packetFilter.iProtocolNumberOrNextHeader = KUnsetInteger;				
 			}
 		else
@@ -1136,7 +1141,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::srcPortMin",ret,5,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::SRCPORTMIN returned %d (element no. %d) from tag %s.",ret,5,KPacketFilterInfo);
 			packetFilter.iSrcPortMin = KUnsetInteger;
 			}
 		else
@@ -1148,7 +1153,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::srcPortMax",ret,6,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::SRCPORTMAX returned %d (element no. %d) from tag %s.",ret,6,KPacketFilterInfo);
 			packetFilter.iSrcPortMax = KUnsetInteger;
 			}
 		else
@@ -1160,7 +1165,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::destPortMin",ret,7,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::DESTPORTMIN returned %d (element no. %d) from tag %s.",ret,7,KPacketFilterInfo);
 			packetFilter.iDestPortMin = KUnsetInteger;
 			}
 		else
@@ -1172,7 +1177,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::srcPortMax",ret,8,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::SRCPORTMAX returned %d (element no. %d) from tag %s.",ret,8,KPacketFilterInfo);
 			packetFilter.iDestPortMax = KUnsetInteger;
 			}
 		else
@@ -1184,7 +1189,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::ipSecSPI",ret,9,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::IPSECSPI returned %d (element no. %d) from tag %s.",ret,9,KPacketFilterInfo);
 			packetFilter.iIPSecSPI = KUnsetInteger;
 			}
 		else
@@ -1196,7 +1201,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::toSorTrafficClass",ret,10,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::TOSORTRAFFICCLASS returned %d (element no. %d) from tag %s.",ret,10,KPacketFilterInfo);
 			continue;
 			}
 		else
@@ -1208,7 +1213,7 @@ void CSimPacketContext::ConstructPacketFiltersL()
 
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("PacketFilterInfo::flowLabel",ret,11,&KPacketFilterInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::FLOWLABEL returned %d (element no. %d) from tag %s.",ret,11,KPacketFilterInfo);
 			packetFilter.iFlowLabel = KUnsetInteger;
 			}
 		else
@@ -1222,12 +1227,12 @@ void CSimPacketContext::ConstructPacketFiltersL()
 			{
 			if(ret == KErrNotFound)
 				{
-				LOGCONFIG1("CONFIGURATION FILE PARSING - PacketFilterInfo::TPacketFilterV2 info encountered");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_13, "CONFIGURATION FILE PARSING - PacketFilterInfo::TPacketFilterV2 info encountered");
 				packetFilter.iFilterType = RPacketContext::EPacketFilterTypeUnknown;
 				}
 			else
 				{
-				LOGPARSERR("PacketFilterInfo::filterType",ret,12,&KPacketFilterInfo);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CONSTRUCTPACKETFILTERSL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element PACKETFILTERINFO::FILTERTYPE returned %d (element no. %d) from tag %s.",ret,12,KPacketFilterInfo);
 				continue;	
 				}
 			}
@@ -1248,7 +1253,7 @@ CSimPacketContext::~CSimPacketContext()
 *
 */
 	{
-	LOGPACKET1("CSimPacketContext: Entered destructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DTOR_1, "CSimPacketContext: Entered destructor");
 	
 	if (iContextConfigParams != NULL)
 	{
@@ -1451,7 +1456,7 @@ TInt CSimPacketContext::RegisterNotification(const TInt aIpc)
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimPacketContext: Register error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_REGISTERNOTIFICATION_1, "CSimPacketContext: Register error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -1474,11 +1479,11 @@ TInt CSimPacketContext::DeregisterNotification(const TInt aIpc)
 		case EPacketContextNotifyConfigChanged:
 		case EPacketContextNotifyStatusChange:
 		case EPacketContextNotifyDataTransferred:
-			LOGPACKET1("CSimPacketContext: DeregisterNotification");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DEREGISTERNOTIFICATION_1, "CSimPacketContext: DeregisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimPacketContext: Deregister error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DEREGISTERNOTIFICATION_2, "CSimPacketContext: Deregister error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -1499,12 +1504,12 @@ TInt CSimPacketContext::NumberOfSlotsL(const TInt aIpc)
 		case EPacketContextNotifyConfigChanged:
 		case EPacketContextNotifyStatusChange:
 		case EPacketContextNotifyDataTransferred:
-			LOGPACKET1("CGprsDGprsTsy: Registered with 5 slots");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_NUMBEROFSLOTSL_1, "CGprsDGprsTsy: Registered with 5 slots");
 			numberOfSlots=5;
 			break;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimPacketContext: Number of Slots error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_NUMBEROFSLOTSL_2, "CSimPacketContext: Number of Slots error, unknown IPC");
 			User::Leave(KErrNotSupported);
 			break;
 		}  
@@ -1553,7 +1558,7 @@ TInt CSimPacketContext::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt aIp
 					TRAPD(ret, iSetConfigData->AppendL(setConfigData) );
 					if (ret != KErrNone)
                 		{
-                		LOGPACKET1("CSimPacketContext::ExtFunc AppendL call fail");
+                		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_EXTFUNC_1, "CSimPacketContext::ExtFunc AppendL call fail");
                 		return ret;
                 		}
                 		
@@ -1703,7 +1708,7 @@ TInt CSimPacketContext::CancelService(const TInt aIpc,const TTsyReqHandle aTsyRe
 * @return err KErrNone if request completes ok
 */
 	{
-	LOGPACKET1("CSimPacketContext: - CancelService called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CANCELSERVICE_1, "CSimPacketContext: - CancelService called");
 	switch (aIpc)
 		{
 		case EPacketContextSetConfig:
@@ -1777,7 +1782,7 @@ TInt CSimPacketContext::SetConfig(const TTsyReqHandle aTsyReqHandle,const TDesC8
 
 */
 	{
-	LOGPACKET1("CSimPacketContext::SetConfig called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_SETCONFIG_1, "CSimPacketContext::SetConfig called");
 
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
@@ -1897,7 +1902,7 @@ TInt CSimPacketContext::GetConfig(const TTsyReqHandle aTsyReqHandle,TDes8* aConf
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::GetConfig called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETCONFIG_1, "CSimPacketContext::GetConfig called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 	
@@ -2002,7 +2007,7 @@ TInt CSimPacketContext::NotifyConfigChangedCancel(const TTsyReqHandle aTsyReqHan
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::NotifyConfigChangedCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_NOTIFYCONFIGCHANGEDCANCEL_1, "CSimPacketContext::NotifyConfigChangedCancel called");
 	if(iNotifyConfigGPRS.iNotifyPending &&
 		iNotifyConfigGPRS.iNotifyHandle == aTsyReqHandle)
 		{
@@ -2109,7 +2114,7 @@ TInt CSimPacketContext::Deactivate(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::Deactivate called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DEACTIVATE_1, "CSimPacketContext::Deactivate called");
 	iDeactivateRequestHandle = aTsyReqHandle;
 	TInt ret;
 	ret = ActionEvent(EContextEventDeactivate,KErrNone);
@@ -2126,7 +2131,7 @@ TInt CSimPacketContext::DeactivateCancel(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::DeactivateCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DEACTIVATECANCEL_1, "CSimPacketContext::DeactivateCancel called");
 	if(((iState == RPacketContext::EStatusInactive) || (iState == RPacketContext::EStatusDeactivating)) && 
 					(iCurrentEvent==EContextEventDeactivate))
 		{
@@ -2226,7 +2231,7 @@ TInt CSimPacketContext::ActivateCancel(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::ActivateCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_ACTIVATECANCEL_1, "CSimPacketContext::ActivateCancel called");
 	if(((iState == RPacketContext::EStatusInactive) || (iState == RPacketContext::EStatusActivating)) && 
 					(iCurrentEvent==EContextEventActivate))
 		{
@@ -2277,7 +2282,7 @@ TInt CSimPacketContext::Delete(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::Delete called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DELETE_1, "CSimPacketContext::Delete called");
 	iDeleteRequestHandle = aTsyReqHandle;
 	TInt ret;
 	ret = ActionEvent(EContextEventDelete,KErrNone);
@@ -2294,7 +2299,7 @@ TInt CSimPacketContext::DeleteCancel(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::DeleteCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_DELETECANCEL_1, "CSimPacketContext::DeleteCancel called");
 	if((iState == RPacketContext::EStatusInactive) && (iCurrentEvent==EContextEventDelete))
 		{
 		iTimer->Cancel();
@@ -2313,7 +2318,7 @@ TInt CSimPacketContext::LoanCommPort(const TTsyReqHandle aTsyReqHandle,RCall::TC
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::LoanCommPort called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_LOANCOMMPORT_1, "CSimPacketContext::LoanCommPort called");
 
 	if(iState != RPacketContext::EStatusActive)
 		{
@@ -2343,7 +2348,7 @@ TInt CSimPacketContext::LoanCommPortCancel(const TTsyReqHandle /*aTsyReqHandle*/
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::LoanCommPortCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_LOANCOMMPORTCANCEL_1, "CSimPacketContext::LoanCommPortCancel called");
 	return KErrNone;
 	}
 
@@ -2355,7 +2360,7 @@ TInt CSimPacketContext::RecoverCommPort(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::RecoverCommPort called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_RECOVERCOMMPORT_1, "CSimPacketContext::RecoverCommPort called");
 	if (!iCommPortLoaned)
 		{
 		ReqCompleted(aTsyReqHandle, KErrEtelPortNotLoanedToClient);
@@ -2375,7 +2380,7 @@ TInt CSimPacketContext::RecoverCommPortCancel(const TTsyReqHandle /*aTsyReqHandl
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::RecoverCommPortCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_RECOVERCOMMPORTCANCEL_1, "CSimPacketContext::RecoverCommPortCancel called");
 	return KErrNone;
 	}
 
@@ -2388,7 +2393,7 @@ TInt CSimPacketContext::GetStatus(const TTsyReqHandle aTsyReqHandle,RPacketConte
 * @return KerrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::GetStatus called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETSTATUS_1, "CSimPacketContext::GetStatus called");
 	*aContextStatus = iState;
 	ReqCompleted(aTsyReqHandle,KErrNone);
 	return KErrNone;
@@ -2406,7 +2411,7 @@ TInt CSimPacketContext::NotifyStatusChange(const TTsyReqHandle aTsyReqHandle,RPa
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::NotifyStatusChange called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_NOTIFYSTATUSCHANGE_1, "CSimPacketContext::NotifyStatusChange called");
 	__ASSERT_ALWAYS(!iNotifyStatusChange.iNotifyPending,SimPanic(ENotificationAlreadyPending));
 	iNotifyStatusChange.iNotifyPending = ETrue;
 	iNotifyStatusChange.iNotifyHandle = aTsyReqHandle;
@@ -2425,7 +2430,7 @@ TInt CSimPacketContext::NotifyStatusChangeCancel(const TTsyReqHandle aTsyReqHand
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::NotifyStatusChangeCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_NOTIFYSTATUSCHANGECANCEL_1, "CSimPacketContext::NotifyStatusChangeCancel called");
 	if(iNotifyStatusChange.iNotifyPending)
 		{
 		iNotifyStatusChange.iNotifyPending=EFalse;
@@ -2444,7 +2449,7 @@ TInt CSimPacketContext::GetDataVolumeTransferred(const TTsyReqHandle aTsyReqHand
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::GetDataVolumeTransferred called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETDATAVOLUMETRANSFERRED_1, "CSimPacketContext::GetDataVolumeTransferred called");
 	ReqCompleted(aTsyReqHandle,KErrNotSupported);
 	return KErrNone;
 	}
@@ -2472,7 +2477,7 @@ TInt CSimPacketContext::NotifyDataTransferredCancel(const TTsyReqHandle /*aTsyRe
 * @return KerrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::NotifyDataTransferredCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_NOTIFYDATATRANSFERREDCANCEL_1, "CSimPacketContext::NotifyDataTransferredCancel called");
 	return KErrNone;
 	}
 
@@ -2485,7 +2490,7 @@ TInt CSimPacketContext::GetLastErrorCause(const TTsyReqHandle aTsyReqHandle, TIn
 * @return KerrNone
 */
 	{
-	LOGPACKET1("CSimPacketContext::GetLastErrorCause called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETLASTERRORCAUSE_1, "CSimPacketContext::GetLastErrorCause called");
 	*aError = iLastError;
 	ReqCompleted(aTsyReqHandle,iErrorCodeForGetLastErrorCause);
 	iErrorCodeForGetLastErrorCause = KErrNone;
@@ -2547,7 +2552,7 @@ void CSimPacketContext::TimerCallBack(TInt aId)
 
 			else
 				{
-				LOGMISC1(">>CSimPacketContext.cpp: Invalid new context config param index");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_TIMERCALLBACK_1, ">>CSimPacketContext.cpp: Invalid new context config param index");
 				}
 				
 			//Delete the current NotifyContextConfigChange item and set the next one if possible
@@ -2568,10 +2573,10 @@ void CSimPacketContext::TimerCallBack(TInt aId)
 			break;
 		default:
 			{
-			LOGPACKET1(">>CSimPacketContext::TimerCallBack");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_TIMERCALLBACK_2, ">>CSimPacketContext::TimerCallBack");
 			TInt ret=ActionEvent(EContextEventTimeOut,KErrNone);
 			__ASSERT_ALWAYS(ret==KErrNone,SimPanic(ETimeOutEventActionFailed));	// Note: this is very crude error handling and should be replaced by something rather more elegant.
-			LOGPACKET1("<<CSimPacketContext::TimerCallBack");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_TIMERCALLBACK_3, "<<CSimPacketContext::TimerCallBack");
 			iTFTChangeBool = EFalse;
 			break;
 			}		
@@ -2680,7 +2685,7 @@ TInt CSimPacketContext::ChangeState(RPacketContext::TContextStatus aNewState)
 * @return Error indication if change of state is successful or not
 */
 	{
-	LOGPACKET2(">>CSimPacketContext::ChangeState [newState=%d]", aNewState);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CHANGESTATE_1, ">>CSimPacketContext::ChangeState [newState=%d]", aNewState);
 	__ASSERT_ALWAYS(aNewState!=RPacketContext::EStatusUnknown,SimPanic(ECallStatusUnknownIllegal));
 
 	if(iState==aNewState)
@@ -2718,7 +2723,7 @@ TInt CSimPacketContext::ChangeState(RPacketContext::TContextStatus aNewState)
 		}
 
 
-	LOGPACKET1("<<CSimPacketContext::ChangeState");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_CHANGESTATE_2, "<<CSimPacketContext::ChangeState");
 	return KErrNone;
 	}
 
@@ -2751,7 +2756,7 @@ TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
 	switch(aEvent)
 		{
 		case EContextEventActivate:
-			LOGPACKET1(">>CSimPacketContext::ActionEvent = [EContextEventActivate]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_ACTIONEVENT_1, ">>CSimPacketContext::ActionEvent = [EContextEventActivate]");
 			if(iState==RPacketContext::EStatusInactive)
 				{
 				iCurrentEvent=EContextEventActivate;
@@ -2771,7 +2776,7 @@ TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
 			break;
 
 		case EContextEventDeactivate:
-			LOGPACKET1(">>CSimPacketContext::ActionEvent = [EContextEventDeactivate]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_ACTIONEVENT_2, ">>CSimPacketContext::ActionEvent = [EContextEventDeactivate]");
 			if(iState==RPacketContext::EStatusActive)
 				{
 				iCurrentEvent=EContextEventDeactivate;
@@ -2791,7 +2796,7 @@ TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
 			break;
 
 		case EContextEventDelete:
-			LOGPACKET1(">>CSimPacketContext::ActionEvent = [EContextEventDelete]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_ACTIONEVENT_3, ">>CSimPacketContext::ActionEvent = [EContextEventDelete]");
 			if(iState==RPacketContext::EStatusInactive)
 				{
 				iCurrentEvent=EContextEventDelete;
@@ -2827,7 +2832,7 @@ TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
 			break;
 
 		case EContextEventTimeOut:
-			LOGPACKET1(">>CSimPacketContext::ActionEvent = [EContextEventTimeOut]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_ACTIONEVENT_4, ">>CSimPacketContext::ActionEvent = [EContextEventTimeOut]");
 			switch(iCurrentEvent)
 				{
 			case EContextEventNone:
@@ -3598,7 +3603,7 @@ TInt CSimPacketContext::GetAddMediaAuthorization(const TTsyReqHandle aTsyReqHand
 	TRAPD(ret, mediaAuthV3 = RPacketContext::CTFTMediaAuthorizationV3::NewL());
 	if (ret != KErrNone)
 		{
-		LOGPACKET1("CSimPacketContext::GetAddMediaAuthorization NewL call fail");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETADDMEDIAAUTHORIZATION_1, "CSimPacketContext::GetAddMediaAuthorization NewL call fail");
 		return ret;
 		}		
 
@@ -3606,7 +3611,7 @@ TInt CSimPacketContext::GetAddMediaAuthorization(const TTsyReqHandle aTsyReqHand
 	if (ret != KErrNone)
 		{
 		delete mediaAuthV3;
-		LOGPACKET1("CSimPacketContext::GetAddMediaAuthorization InternalizeL call fail");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETCONTEXT_GETADDMEDIAAUTHORIZATION_2, "CSimPacketContext::GetAddMediaAuthorization InternalizeL call fail");
 		return ret;
 		}
 

@@ -1,0 +1,36 @@
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Test SPUD
+// 
+//
+
+/**
+ @file
+*/
+
+PRJ_EXPORTS
+
+PRJ_TESTEXPORTS
+
+// script files required to run tests
+..\scripts\TE_SpudUnitTest.script	z:\testdata\scripts\TE_SpudUnitTest.script
+..\testdata\Spud_config.txt			z:\TestData\Configs\Spud_config.txt
+
+..\group\TE_SpudUnit.iby	\epoc32\rom\include\TE_SpudUnit.iby 
+
+PRJ_MMPFILES
+
+PRJ_TESTMMPFILES
+
+..\group\TE_SpudUnit.mmp

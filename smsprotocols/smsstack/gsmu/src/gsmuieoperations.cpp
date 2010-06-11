@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "gsmuieoperationsTraces.h"
+#endif
 
 #include "Gsmumain.h"
 #include "gsmuieoperations.h"
@@ -40,7 +46,7 @@
  */
 CSmsIEOperation*  CSmsIEOperation::NewL(CSmsInformationElement::TSmsInformationElementIdentifier aId, CSmsMessage& aMessage, CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs)
 	{
-	LOGGSMU1("CSmsIEOperation::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSIEOPERATION_NEWL_1, "CSmsIEOperation::NewL()");
 
 	CSmsIEOperation* iEOperation = NULL;
 
@@ -82,7 +88,7 @@ CSmsIEOperation*  CSmsIEOperation::NewL(CSmsInformationElement::TSmsInformationE
  */
 EXPORT_C CSmsInformationElement::TSmsInformationElementIdentifier CSmsIEOperation::Id() const
 	{
-	LOGGSMU1("CSmsIEOperation::Id()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSIEOPERATION_ID_1, "CSmsIEOperation::Id()");
 
 	return iId;
 	} // CSmsInformationElement::TSmsInformationElementIdentifier
@@ -97,7 +103,7 @@ EXPORT_C CSmsInformationElement::TSmsInformationElementIdentifier CSmsIEOperatio
  */
 TBool CSmsIEOperation::MessageTypeSupported() const
 	{
-	LOGGSMU1("CSmsIEOperation::MessageTypeSupported()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSIEOPERATION_MESSAGETYPESUPPORTED_1, "CSmsIEOperation::MessageTypeSupported()");
 
 	CSmsPDU::TSmsPDUType type = iMessage.Type();
 
@@ -124,7 +130,7 @@ void CSmsIEOperation::operator=(const CSmsIEOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsIEOperation::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSIEOPERATION_OPERATOR_1, "CSmsIEOperation::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -141,7 +147,7 @@ TBool CSmsIEOperation::operator==(const CSmsIEOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsIEOperation::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSIEOPERATION_OPERATOR1_1, "CSmsIEOperation::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -159,7 +165,7 @@ void CSmsCtrlOperation::operator=(const CSmsCtrlOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsCtrlOperation::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCTRLOPERATION_OPERATOR_1, "CSmsCtrlOperation::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -176,7 +182,7 @@ TBool CSmsCtrlOperation::operator==(const CSmsCtrlOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsCtrlOperation::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCTRLOPERATION_OPERATOR1_1, "CSmsCtrlOperation::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -196,7 +202,7 @@ CSmsHyperLinkOperations::CSmsHyperLinkOperations(CSmsInformationElement::TSmsInf
 
 void CSmsIEOperation::ConstructL()
 	{
-	LOGGSMU1("CSmsIEOperation::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSIEOPERATION_CONSTRUCTL_1, "CSmsIEOperation::ConstructL()");
 	} // CSmsIEOperation::ConstructL
 
 
@@ -212,7 +218,7 @@ void CSmsHyperLinkOperations::operator=(const CSmsHyperLinkOperations&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsHyperLinkOperations::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSHYPERLINKOPERATIONS_OPERATOR_1, "CSmsHyperLinkOperations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -229,7 +235,7 @@ TBool CSmsHyperLinkOperations::operator==(const CSmsHyperLinkOperations&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsHyperLinkOperations::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSHYPERLINKOPERATIONS_OPERATOR1_1, "CSmsHyperLinkOperations::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -245,17 +251,17 @@ TBool CSmsHyperLinkOperations::operator==(const CSmsHyperLinkOperations&)
  */
 void CSmsHyperLinkOperations::ValidateOperationL() const
 	{
-	LOGGSMU1("CSmsHyperLinkOperations::ValidateOperationL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSHYPERLINKOPERATIONS_VALIDATEOPERATIONL_1, "CSmsHyperLinkOperations::ValidateOperationL()");
 
 	if (iMessage.Version() < CSmsMessage::ESmsMessageV1)
 	    {
-	    LOGGSMU2("CSmsHyperLinkOperations::AddHyperLinkL, Operation not supported, Msg Version %d", iMessage.Version());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSHYPERLINKOPERATIONS_VALIDATEOPERATIONL_2, "CSmsHyperLinkOperations::AddHyperLinkL, Operation not supported, Msg Version %d", iMessage.Version());
 	    User::Leave(KErrNotSupported);
 	    }
 
 	if (!MessageTypeSupported())
 	    {
-	    LOGGSMU2("CSmsHyperLinkOperations::AddHyperLinkL, Operation not supported by this PDU type, type = %d", iMessage.Type());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSHYPERLINKOPERATIONS_VALIDATEOPERATIONL_3, "CSmsHyperLinkOperations::AddHyperLinkL, Operation not supported by this PDU type, type = %d", iMessage.Type());
 	    User::Leave(KErrNotSupported);
 	    }
 	} // CSmsHyperLinkOperations::ValidateOperationL
@@ -278,7 +284,7 @@ void CSmsHyperLinkOperations::ValidateOperationL() const
  */
 EXPORT_C void CSmsHyperLinkOperations::AddHyperLinkL(TUint aPosition, TUint8 aTitleLength,  TUint8  aURLLength) const
 	{
-	LOGGSMU1("CSmsHyperLinkOperations::AddHyperLinkL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSHYPERLINKOPERATIONS_ADDHYPERLINKL_1, "CSmsHyperLinkOperations::AddHyperLinkL()");
 
 	ValidateOperationL();
 
@@ -310,7 +316,7 @@ EXPORT_C void CSmsHyperLinkOperations::AddHyperLinkL(TUint aPosition, TUint8 aTi
  */
 EXPORT_C TUint CSmsHyperLinkOperations::NumberOfHyperLinksL() const
 	{
-	LOGGSMU1("CSmsHyperLinkOperations::NumberOfHyperLinks");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSHYPERLINKOPERATIONS_NUMBEROFHYPERLINKSL_1, "CSmsHyperLinkOperations::NumberOfHyperLinks");
 
 	ValidateOperationL();
 
@@ -367,7 +373,7 @@ EXPORT_C TUint CSmsHyperLinkOperations::NumberOfHyperLinksL() const
  */
 EXPORT_C void  CSmsHyperLinkOperations::CopyHyperLinkAtIndexL(TUint aIndex, TUint& aPosition, TUint8& aTitleLength,  TUint8&  aURLLength) const
 	{
-	LOGGSMU2("CSmsHyperLinkOperations::CopyHyperLinkAtIndexL(): aIndex=%d", aIndex);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSHYPERLINKOPERATIONS_COPYHYPERLINKATINDEXL_1, "CSmsHyperLinkOperations::CopyHyperLinkAtIndexL(): aIndex=%d", aIndex);
 
 	ValidateOperationL();
 
@@ -419,7 +425,7 @@ EXPORT_C void  CSmsHyperLinkOperations::CopyHyperLinkAtIndexL(TUint aIndex, TUin
  */
 EXPORT_C void  CSmsHyperLinkOperations::RemoveAllHyperLinksL() const
 	{
-	LOGGSMU1("CSmsHyperLinkOperations::RemoveAllHyperLinks");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSHYPERLINKOPERATIONS_REMOVEALLHYPERLINKSL_1, "CSmsHyperLinkOperations::RemoveAllHyperLinks");
 
 	ValidateOperationL();
 
@@ -464,7 +470,7 @@ EXPORT_C void  CSmsHyperLinkOperations::RemoveAllHyperLinksL() const
  */
 EXPORT_C void  CSmsHyperLinkOperations::RemoveHyperLinkL(TUint aIndex) const
 	{
-	LOGGSMU1("CSmsHyperLinkOperations::RemoveHyperLink");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSHYPERLINKOPERATIONS_REMOVEHYPERLINKL_1, "CSmsHyperLinkOperations::RemoveHyperLink");
 
 	ValidateOperationL();
 
@@ -514,7 +520,7 @@ void CSmsReplyAddressOperations::operator=(const CSmsReplyAddressOperations&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsReplyAddressOperations::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREPLYADDRESSOPERATIONS_OPERATOR_1, "CSmsReplyAddressOperations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -531,7 +537,7 @@ TBool CSmsReplyAddressOperations::operator==(const CSmsReplyAddressOperations&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsReplyAddressOperations::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREPLYADDRESSOPERATIONS_OPERATOR1_1, "CSmsReplyAddressOperations::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -547,17 +553,17 @@ TBool CSmsReplyAddressOperations::operator==(const CSmsReplyAddressOperations&)
  */
 void CSmsReplyAddressOperations::ValidateOperationL() const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::ValidateOperationL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREPLYADDRESSOPERATIONS_VALIDATEOPERATIONL_1, "CSmsReplyAddressOperations::ValidateOperationL()");
 
 	if (iMessage.Version() < CSmsMessage::ESmsMessageV1)
 	    {
-	    LOGGSMU2("CSmsReplyAddressOperations::AddReplyAddressL, Operation not supported, Msg Version %d", iMessage.Version());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREPLYADDRESSOPERATIONS_VALIDATEOPERATIONL_2, "CSmsReplyAddressOperations::AddReplyAddressL, Operation not supported, Msg Version %d", iMessage.Version());
 	    User::Leave(KErrNotSupported);
 	    }
 
 	if (!MessageTypeSupported())
 	    {
-	    LOGGSMU2("CSmsReplyAddressOperations::AddReplyAddressL, Operation not supported by this PDU type, type = %d", iMessage.Type());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREPLYADDRESSOPERATIONS_VALIDATEOPERATIONL_3, "CSmsReplyAddressOperations::AddReplyAddressL, Operation not supported by this PDU type, type = %d", iMessage.Type());
 	    User::Leave(KErrNotSupported);
 	    }
 	} // CSmsReplyAddressOperations::ValidateOperationL
@@ -578,13 +584,13 @@ void CSmsReplyAddressOperations::ValidateOperationL() const
  */
 EXPORT_C void  CSmsReplyAddressOperations::AddReplyAddressL(const TDesC& aAddress) const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::AddReplyAddressL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_ADDREPLYADDRESSL_1, "CSmsReplyAddressOperations::AddReplyAddressL()");
 
 	ValidateOperationL();
 
 	if (ContainsReplyAddressIEL())
 	    {
-	    LOGGSMU1("CSmsReplyAddressOperations::AddReplyAddressL, Already Exists");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_ADDREPLYADDRESSL_2, "CSmsReplyAddressOperations::AddReplyAddressL, Already Exists");
 	    User::Leave(KErrAlreadyExists);
 	    }
 
@@ -624,13 +630,13 @@ EXPORT_C void  CSmsReplyAddressOperations::AddReplyAddressL(const TDesC& aAddres
  */
 EXPORT_C void  CSmsReplyAddressOperations::AddParsedReplyAddressL(const TGsmSmsTelNumber& aParsedAddress) const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::AddParsedReplyAddressL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_ADDPARSEDREPLYADDRESSL_1, "CSmsReplyAddressOperations::AddParsedReplyAddressL");
 
 	ValidateOperationL();
 
 	if (ContainsReplyAddressIEL())
 	    {
-	    LOGGSMU1("CSmsReplyAddressOperations::AddParsedReplyAddressL, Already Exists");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_ADDPARSEDREPLYADDRESSL_2, "CSmsReplyAddressOperations::AddParsedReplyAddressL, Already Exists");
 	    User::Leave(KErrAlreadyExists);
 	    }
 
@@ -669,7 +675,7 @@ EXPORT_C void  CSmsReplyAddressOperations::AddParsedReplyAddressL(const TGsmSmsT
  */
 EXPORT_C TBool CSmsReplyAddressOperations::ContainsReplyAddressIEL() const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::ContainsReplyAddressIEL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_CONTAINSREPLYADDRESSIEL_1, "CSmsReplyAddressOperations::ContainsReplyAddressIEL()");
 
 	TBool rc = EFalse;
 
@@ -720,7 +726,7 @@ EXPORT_C TBool CSmsReplyAddressOperations::ContainsReplyAddressIEL() const
  */
 EXPORT_C HBufC* CSmsReplyAddressOperations::GetReplyAddressL() const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::GetReplyAddressL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_GETREPLYADDRESSL_1, "CSmsReplyAddressOperations::GetReplyAddressL");
 
 	ValidateOperationL();
 
@@ -796,7 +802,7 @@ EXPORT_C HBufC* CSmsReplyAddressOperations::GetReplyAddressL() const
  */
 EXPORT_C TInt  CSmsReplyAddressOperations::GetParsedReplyAddressL(TGsmSmsTelNumber& aParsedAddress) const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::GetParsedReplyAddressL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_GETPARSEDREPLYADDRESSL_1, "CSmsReplyAddressOperations::GetParsedReplyAddressL");
 
 	ValidateOperationL();
 
@@ -870,7 +876,7 @@ EXPORT_C TInt  CSmsReplyAddressOperations::GetParsedReplyAddressL(TGsmSmsTelNumb
  */
 EXPORT_C void  CSmsReplyAddressOperations::RemoveReplyAddressL() const
 	{
-	LOGGSMU1("CSmsReplyAddressOperations::RemoveReplyAddress");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSREPLYADDRESSOPERATIONS_REMOVEREPLYADDRESSL_1, "CSmsReplyAddressOperations::RemoveReplyAddress");
 
 	ValidateOperationL();
 
@@ -918,17 +924,17 @@ CSmsReplyAddressOperations::CSmsReplyAddressOperations(CSmsInformationElement::T
  */
 void CSmsSpecialSMSMessageOperations::ValidateOperationL() const
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::ValidateOperationL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSPECIALSMSMESSAGEOPERATIONS_VALIDATEOPERATIONL_1, "CSmsSpecialSMSMessageOperations::ValidateOperationL()");
 
 	if (iMessage.Version() < CSmsMessage::ESmsMessageV1)
 	    {
-	    LOGGSMU2("CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL, Operation not supported, version %d", iMessage.Version());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSPECIALSMSMESSAGEOPERATIONS_VALIDATEOPERATIONL_2, "CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL, Operation not supported, version %d", iMessage.Version());
 	    User::Leave(KErrNotSupported);
 	    }
 
 	if (!MessageTypeSupported())
 	    {
-	    LOGGSMU2("CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL, Operation not supported by this PDU type, type = %d", iMessage.Type());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSPECIALSMSMESSAGEOPERATIONS_VALIDATEOPERATIONL_3, "CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL, Operation not supported by this PDU type, type = %d", iMessage.Type());
 	    User::Leave(KErrNotSupported);
 	    }
 	} // CSmsSpecialSMSMessageOperations::ValidateOperationL
@@ -946,7 +952,7 @@ void CSmsSpecialSMSMessageOperations::operator=(const CSmsSpecialSMSMessageOpera
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsSpecialSMSMessageOperations::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSPECIALSMSMESSAGEOPERATIONS_OPERATOR_1, "CSmsSpecialSMSMessageOperations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -961,7 +967,7 @@ void CSmsSpecialSMSMessageOperations::operator=(const CSmsSpecialSMSMessageOpera
  */
 TBool CSmsSpecialSMSMessageOperations::operator==(const CSmsSpecialSMSMessageOperations&)
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::operator==");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSPECIALSMSMESSAGEOPERATIONS_OPERATOR1_1, "CSmsSpecialSMSMessageOperations::operator==");
 	Panic(KGsmuPanicMethodBodyNotImplemented1);
 	return EFalse;
 	} // CSmsSpecialSMSMessageOperations::operator
@@ -992,7 +998,7 @@ EXPORT_C void CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL(TBoo
                                                                             TSmsMessageProfileType aProfile,
                                                                             TUint8 aMessageCount) const
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSPECIALSMSMESSAGEOPERATIONS_ADDSPECIALMESSAGEINDICATIONL_1, "CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL");
 
 	ValidateOperationL();
 
@@ -1049,7 +1055,7 @@ EXPORT_C void CSmsSpecialSMSMessageOperations::AddSpecialMessageIndicationL(TBoo
  */
 EXPORT_C TUint CSmsSpecialSMSMessageOperations::GetCountOfSpecialMessageIndicationsL() const
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::GetCountOfSpecialMessageIndicationsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSPECIALSMSMESSAGEOPERATIONS_GETCOUNTOFSPECIALMESSAGEINDICATIONSL_1, "CSmsSpecialSMSMessageOperations::GetCountOfSpecialMessageIndicationsL()");
 
 	ValidateOperationL();
 
@@ -1095,7 +1101,7 @@ EXPORT_C void CSmsSpecialSMSMessageOperations::GetMessageIndicationIEL(TUint aIn
                                                                        TSmsMessageProfileType&  aProfile,
                                                                        TUint8& aMessageCount) const
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::GetMessageIndicationIEL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSPECIALSMSMESSAGEOPERATIONS_GETMESSAGEINDICATIONIEL_1, "CSmsSpecialSMSMessageOperations::GetMessageIndicationIEL()");
 
 	ValidateOperationL();
 
@@ -1139,7 +1145,7 @@ EXPORT_C void CSmsSpecialSMSMessageOperations::GetMessageIndicationIEL(TUint aIn
  */
 EXPORT_C void CSmsSpecialSMSMessageOperations::RemoveSpecialMessageIndicationL(TSmsMessageIndicationType aMessageIndicationType, TExtendedSmsIndicationType aExtendedType) const
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::RemoveAllSpecialMessageIndications");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSPECIALSMSMESSAGEOPERATIONS_REMOVESPECIALMESSAGEINDICATIONL_1, "CSmsSpecialSMSMessageOperations::RemoveAllSpecialMessageIndications");
 
 	ValidateOperationL();
 
@@ -1181,7 +1187,7 @@ EXPORT_C void CSmsSpecialSMSMessageOperations::RemoveSpecialMessageIndicationL(T
  */
 EXPORT_C void CSmsSpecialSMSMessageOperations::RemoveAllSpecialMessageIndicationsL() const
 	{
-	LOGGSMU1("CSmsSpecialSMSMessageOperations::RemoveAllSpecialMessageIndicationsL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSPECIALSMSMESSAGEOPERATIONS_REMOVEALLSPECIALMESSAGEINDICATIONSL_1, "CSmsSpecialSMSMessageOperations::RemoveAllSpecialMessageIndicationsL");
 
 	ValidateOperationL();
 
@@ -1220,7 +1226,7 @@ void CSmsEnhancedVoiceMailOperations::operator=(const CSmsEnhancedVoiceMailOpera
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsEnhancedVoiceMailOperations::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSENHANCEDVOICEMAILOPERATIONS_OPERATOR_1, "CSmsEnhancedVoiceMailOperations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -1237,7 +1243,7 @@ TBool CSmsEnhancedVoiceMailOperations::operator==(const CSmsEnhancedVoiceMailOpe
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsEnhancedVoiceMailOperations::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSENHANCEDVOICEMAILOPERATIONS_OPERATOR1_1, "CSmsEnhancedVoiceMailOperations::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -1253,17 +1259,17 @@ TBool CSmsEnhancedVoiceMailOperations::operator==(const CSmsEnhancedVoiceMailOpe
  */
 void CSmsEnhancedVoiceMailOperations::ValidateOperationL() const
 	{
-	LOGGSMU1("CSmsEnhancedVoiceMailOperations::ValidateOperationL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSENHANCEDVOICEMAILOPERATIONS_VALIDATEOPERATIONL_1, "CSmsEnhancedVoiceMailOperations::ValidateOperationL()");
 
 	if (iMessage.Version() < CSmsMessage::ESmsMessageV1)
 	    {
-	    LOGGSMU2("CSmsEnhancedVoiceMailInformation::AddEnhancedVoiceMailIEL, Operation not supported, Msg Version %d", iMessage.Version());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSENHANCEDVOICEMAILOPERATIONS_VALIDATEOPERATIONL_2, "CSmsEnhancedVoiceMailInformation::AddEnhancedVoiceMailIEL, Operation not supported, Msg Version %d", iMessage.Version());
 	    User::Leave(KErrNotSupported);
 	    }
 
 	if (!MessageTypeSupported())
 	    {
-	    LOGGSMU2("CSmsSpecialSMSMessageOperations::AddEnhancedVoiceMailIEL, Operation not supported by this PDU type, type = %d", iMessage.Type());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSENHANCEDVOICEMAILOPERATIONS_VALIDATEOPERATIONL_3, "CSmsSpecialSMSMessageOperations::AddEnhancedVoiceMailIEL, Operation not supported by this PDU type, type = %d", iMessage.Type());
 	    User::Leave(KErrNotSupported);
 	    }
 	} // CSmsEnhancedVoiceMailOperations::ValidateOperationL
@@ -1289,13 +1295,13 @@ void CSmsEnhancedVoiceMailOperations::ValidateOperationL() const
  */
 EXPORT_C void CSmsEnhancedVoiceMailOperations::AddEnhancedVoiceMailIEL(const CEnhancedVoiceMailBoxInformation& aEVMI) const
 	{
-	LOGGSMU1("CSmsEnhancedVoiceMailInformation::AddEnhancedVoiceMailIEL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSENHANCEDVOICEMAILOPERATIONS_ADDENHANCEDVOICEMAILIEL_1, "CSmsEnhancedVoiceMailInformation::AddEnhancedVoiceMailIEL");
 
 	ValidateOperationL();
 
 	if (ContainsEnhancedVoiceMailIEL())
 	    {
-	    LOGGSMU1("CSmsEnhancedVoiceMailInformation::AddEnhancedVoiceMailIEL, Already Exists");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSENHANCEDVOICEMAILOPERATIONS_ADDENHANCEDVOICEMAILIEL_2, "CSmsEnhancedVoiceMailInformation::AddEnhancedVoiceMailIEL, Already Exists");
 	    User::Leave(KErrAlreadyExists);
 	    }
 
@@ -1333,7 +1339,7 @@ EXPORT_C void CSmsEnhancedVoiceMailOperations::AddEnhancedVoiceMailIEL(const CEn
  */
 EXPORT_C CEnhancedVoiceMailBoxInformation* CSmsEnhancedVoiceMailOperations::RemoveEnhancedVoiceMailIEL() const
 	{
-	LOGGSMU1("CSmsEnhancedVoiceMailInformation::RemoveEnhancedVoiceMailIE");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSENHANCEDVOICEMAILOPERATIONS_REMOVEENHANCEDVOICEMAILIEL_1, "CSmsEnhancedVoiceMailInformation::RemoveEnhancedVoiceMailIE");
 
 	ValidateOperationL();
 
@@ -1360,7 +1366,7 @@ EXPORT_C CEnhancedVoiceMailBoxInformation* CSmsEnhancedVoiceMailOperations::Remo
  */
 EXPORT_C CEnhancedVoiceMailBoxInformation* CSmsEnhancedVoiceMailOperations::CopyEnhancedVoiceMailIEL() const
 	{
-	LOGGSMU1("CSmsEnhancedVoiceMailInformation::CopyEnhancedVoiceMailIEL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSENHANCEDVOICEMAILOPERATIONS_COPYENHANCEDVOICEMAILIEL_1, "CSmsEnhancedVoiceMailInformation::CopyEnhancedVoiceMailIEL");
 
 	ValidateOperationL();
 
@@ -1386,7 +1392,7 @@ EXPORT_C CEnhancedVoiceMailBoxInformation* CSmsEnhancedVoiceMailOperations::Copy
  */
 CEnhancedVoiceMailBoxInformation* CSmsEnhancedVoiceMailOperations::GetEnhancedVoiceMailIEL(TBool aRemove) const
 	{
-	LOGGSMU1("CSmsEnhancedVoiceMailOperations::GetEnhancedVoiceMailIEL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSENHANCEDVOICEMAILOPERATIONS_GETENHANCEDVOICEMAILIEL_1, "CSmsEnhancedVoiceMailOperations::GetEnhancedVoiceMailIEL()");
 
 	TBool found = EFalse;
 
@@ -1455,7 +1461,7 @@ CEnhancedVoiceMailBoxInformation* CSmsEnhancedVoiceMailOperations::GetEnhancedVo
  */
 EXPORT_C TBool CSmsEnhancedVoiceMailOperations::ContainsEnhancedVoiceMailIEL() const
 	{
-	LOGGSMU1("CSmsEnhancedVoiceMailInformation::ContainsEnhancedVoiceMailIEL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSENHANCEDVOICEMAILOPERATIONS_CONTAINSENHANCEDVOICEMAILIEL_1, "CSmsEnhancedVoiceMailInformation::ContainsEnhancedVoiceMailIEL");
 
 	ValidateOperationL();
 
@@ -1523,7 +1529,7 @@ void CSmsSMSCCtrlParameterOperations::operator=(const CSmsSMSCCtrlParameterOpera
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsSMSCCtrlParameterOperations::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSMSCCTRLPARAMETEROPERATIONS_OPERATOR_1, "CSmsSMSCCtrlParameterOperations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -1540,7 +1546,7 @@ TBool CSmsSMSCCtrlParameterOperations::operator==(const CSmsSMSCCtrlParameterOpe
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsSMSCCtrlParameterOperations::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSMSCCTRLPARAMETEROPERATIONS_OPERATOR1_1, "CSmsSMSCCtrlParameterOperations::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -1558,13 +1564,13 @@ void CSmsSMSCCtrlParameterOperations::ValidateOperationL() const
 	{
 	if (iMessage.Version() < CSmsMessage::ESmsMessageV2)
 	    {
-	    LOGGSMU2("CSmsSMSCCtrlParameterOperations Operation not supported, Msg Version %d", iMessage.Version());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSMSCCTRLPARAMETEROPERATIONS_VALIDATEOPERATIONL_1, "CSmsSMSCCtrlParameterOperations Operation not supported, Msg Version %d", iMessage.Version());
 	    User::Leave(KErrNotSupported); 
 	    }
 
 	if (!MessageTypeSupported())
 	    {
-	    LOGGSMU2("CSmsSMSCCtrlParameterOperations Operation not supported by this PDU type, type = %d", iMessage.Type());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSMSCCTRLPARAMETEROPERATIONS_VALIDATEOPERATIONL_2, "CSmsSMSCCtrlParameterOperations Operation not supported by this PDU type, type = %d", iMessage.Type());
 	    User::Leave(KErrNotSupported);
 	    }
 	} // CSmsSMSCCtrlParameterOperations::ValidateOperationL()

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,14 @@
  @file Sscrexec.cpp 
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "SSCREXECTraces.h"
+#endif
+
 #include "SSCREXEC.H"
 #include "SIO.H"
-#include "SLOGGER.H"
 #include "ND_SCR.H"
 
 _LIT(KPPPProtocolName,"PPP.");
@@ -173,8 +178,7 @@ Sets script.
 	__ASSERT_DEBUG(iLastCommand==NULL, NetDialPanic(ELastCommandNotNull));
 	__ASSERT_DEBUG(iScriptReader!=NULL, NetDialPanic(ENullScriptReader));
 
-	__FLOG_STMT(_LIT8(logString,"Script:\tBeginning");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_SETSCRIPT_1,"Script:\tBeginning");
 	iScriptReader->SetScript(aScript);
 	iLoopCommand->Loop(EFalse);
 	}
@@ -184,8 +188,7 @@ void CScriptExecutor::ScanScriptL()
 Scans script for READ command.
 */
 	{
-	__FLOG_STMT(_LIT8(logString1,"Script:\tScanning");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_SCANSCRIPTL_1,"Script:\tScanning");
 
 	__ASSERT_DEBUG(iScriptReader!=NULL, NetDialPanic(ENullScriptReader));
 
@@ -202,13 +205,11 @@ Scans script for READ command.
 
 	if (iReadFound)
 		{
-		__FLOG_STMT(_LIT8(logString2,"Script:\tFound Read");)
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_SCANSCRIPTL_2,"Script:\tFound Read");
 		}
 	else
 		{
-		__FLOG_STMT(_LIT8(logString3,"Script:\tDid Not Find Read");)
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString3());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_SCANSCRIPTL_3,"Script:\tDid Not Find Read");
 		}
 
 	User::LeaveIfError(iScriptReader->Reset());
@@ -397,8 +398,7 @@ Convert internal error to public error and finish.
 	
 		TInt error=aStatus;
 
-		__FLOG_STMT(_LIT8(logString,"Script:\tScript Completed With Error %d");)
-		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()),error);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_COMPLETEDSCRIPT_1,"Script:\tScript Completed With Error %d",error);
 
 		ConvertScriptError(error);
 		PctCancelAndClose();
@@ -456,8 +456,7 @@ void CScriptExecutor::CloseScript()
 Close script.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tClosing");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_CLOSESCRIPT_1, "Script:\tClosing");
 	if (iScriptReader!=NULL)
 		iScriptReader->Reset();		// ignore error
 	}
@@ -596,12 +595,7 @@ PCT uses).  Pass to the Script IO as 8 bit.
 		return;
 		}
 	TPtr8 eightBitBuf(buf->Des());
-#ifdef __FLOG_ACTIVE
-	_LIT(logString,"Script:\tRead %S from PCT");
-	TBuf16<KLogBufferSize> temp;
-	temp.Copy(eightBitBuf.Left(Min(eightBitBuf.Length(),KLogBufferSize)));
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString()),&temp);
-#endif
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTEXECUTOR_READPCTCOMPLETE_1, "Script:\tRead %s from PCT",eightBitBuf);
 	TInt end=iReadBuffer.Locate(KCarriageReturn);
 	TInt spaceInBuffer=iDataToWrite.MaxLength()-iDataToWrite.Length();
 	

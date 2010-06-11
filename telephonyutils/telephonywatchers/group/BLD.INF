@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -28,29 +28,4 @@ telwatcherbase.mmp
 signalstrengthwatcher.mmp
 indicatorwatcher.mmp
 
-PRJ_TESTMMPFILES
-../Test/TE_TelWatchers/TE_TelWatchersInt.mmp
-../Test/TE_TelWatchers/TE_TelWatchersUnit.mmp
-
-PRJ_TESTEXPORTS
-../Test/TE_TelWatchers/TE_TelWatchers.iby           /epoc32/rom/include/te_telwatchers.iby
-
-../Test/TE_TelWatchers/TE_TelWatchers.script        /epoc32/release/wins/udeb/z/testdata/scripts/te_telwatchers.script
-../Test/TE_TelWatchers/TE_TelWatchers.script        /epoc32/release/wins/urel/z/testdata/scripts/te_telwatchers.script
-../Test/TE_TelWatchers/TE_TelWatchers.script        /epoc32/release/winscw/udeb/z/testdata/scripts/te_telwatchers.script
-../Test/TE_TelWatchers/TE_TelWatchers.script        /epoc32/release/winscw/urel/z/testdata/scripts/te_telwatchers.script
-
-../Test/TE_TelWatchers/TE_TelWatchers_setup.script  /epoc32/release/wins/udeb/z/testdata/scripts/te_telwatchers_setup.script
-../Test/TE_TelWatchers/TE_TelWatchers_setup.script  /epoc32/release/wins/urel/z/testdata/scripts/te_telwatchers_setup.script
-../Test/TE_TelWatchers/TE_TelWatchers_setup.script  /epoc32/release/winscw/udeb/z/testdata/scripts/te_telwatchers_setup.script
-../Test/TE_TelWatchers/TE_TelWatchers_setup.script  /epoc32/release/winscw/urel/z/testdata/scripts/te_telwatchers_setup.script
-
-../Test/TE_TelWatchers/TE_TelWatchers_config.txt    /epoc32/release/wins/udeb/z/testdata/configs/te_telwatchers_config.txt
-../Test/TE_TelWatchers/TE_TelWatchers_config.txt    /epoc32/release/wins/urel/z/testdata/configs/te_telwatchers_config.txt
-../Test/TE_TelWatchers/TE_TelWatchers_config.txt    /epoc32/release/winscw/udeb/z/testdata/configs/te_telwatchers_config.txt
-../Test/TE_TelWatchers/TE_TelWatchers_config.txt    /epoc32/release/winscw/urel/z/testdata/configs/te_telwatchers_config.txt
-
-../Test/TE_TelWatchers/TE_TelWatchers.cfg           /epoc32/release/wins/udeb/z/testdata/configs/te_telwatchers.cfg
-../Test/TE_TelWatchers/TE_TelWatchers.cfg           /epoc32/release/wins/urel/z/testdata/configs/te_telwatchers.cfg
-../Test/TE_TelWatchers/TE_TelWatchers.cfg           /epoc32/release/winscw/udeb/z/testdata/configs/te_telwatchers.cfg
-../Test/TE_TelWatchers/TE_TelWatchers.cfg           /epoc32/release/winscw/urel/z/testdata/configs/te_telwatchers.cfg
+#include "../Test/group/bld.inf"

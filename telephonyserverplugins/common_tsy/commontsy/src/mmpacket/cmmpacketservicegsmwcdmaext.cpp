@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmpacketservicegsmwcdmaextTraces.h"
+#endif
+
 #include "cmmpacketservicegsmwcdmaext.h"
 #include "Cmmpacketcontexttsy.h"
 #include "Cmmpacketcontextlist.h"
@@ -46,7 +52,7 @@ CMmPacketServiceGsmWcdmaExt* CMmPacketServiceGsmWcdmaExt::NewL(
     packetServiceGsmWcdmaExt->ConstructL( aFactory );
     CleanupStack::Pop();
 
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::NewL.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_NEWL_1, "TSY: CMmPacketServiceGsmWcdmaExt::NewL.\n" );
     return packetServiceGsmWcdmaExt;
 
     }
@@ -77,7 +83,7 @@ void CMmPacketServiceGsmWcdmaExt::ConstructL( MLtsyFactoryBase* aFactory )
     
 CMmPacketServiceGsmWcdmaExt::~CMmPacketServiceGsmWcdmaExt()
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::~CMmPacketServiceGsmWcdmaExt.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_DTOR_1, "TSY: CMmPacketServiceGsmWcdmaExt::~CMmPacketServiceGsmWcdmaExt.\n" );
     }
     
 //----------------------------------------------------------------------------
@@ -129,7 +135,7 @@ void CMmPacketServiceGsmWcdmaExt::InitInternalAttributesL( MLtsyFactoryBase* aFa
 //
 TInt CMmPacketServiceGsmWcdmaExt::AttachL()
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::AttachL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_ATTACHL_1, "TSY: CMmPacketServiceGsmWcdmaExt::AttachL." );
 
 	// Call and return
 	return iMmPacketServiceTsy->MessageManager()->HandleRequestL( 
@@ -145,7 +151,7 @@ TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::AttachL." );
 void CMmPacketServiceGsmWcdmaExt::CompleteAttach( 
 		TInt aErrorValue ) const
     {
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteAttach.\n  \t ErrorValue:%d\n", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETEATTACH_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteAttach.\n  \t ErrorValue:%d\n", aErrorValue );
 
 	if ( KErrNone == aErrorValue )
 		{
@@ -174,7 +180,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteAttach.\n  \t ErrorValue
 //
 TInt CMmPacketServiceGsmWcdmaExt::DetachL()
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::DetachL.\n  ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_DETACHL_1, "TSY: CMmPacketServiceGsmWcdmaExt::DetachL.\n  ");
 
 	return iMmPacketServiceTsy->MessageManager()->
                                            HandleRequestL( EPacketDetach );
@@ -190,7 +196,7 @@ TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::DetachL.\n  ");
 void CMmPacketServiceGsmWcdmaExt::CompleteDetachL( 
 		TInt aErrorValue ) const
     {
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteDetachL\n  \t ErrorValue:%d\n", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETEDETACHL_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteDetachL\n  \t ErrorValue:%d\n", aErrorValue );
 
 	if ( KErrNone == aErrorValue )
 		{
@@ -217,7 +223,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteDetachL\n  \t ErrorValue
 //
 TInt CMmPacketServiceGsmWcdmaExt::GetNtwkRegStatusL()
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::GetNtwkRegStatusL.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_GETNTWKREGSTATUSL_1, "TSY: CMmPacketServiceGsmWcdmaExt::GetNtwkRegStatusL.\n" );
 
 	return iMmPacketServiceTsy->MessageManager()->HandleRequestL( 
 		EPacketGetNtwkRegStatus );
@@ -238,7 +244,7 @@ void CMmPacketServiceGsmWcdmaExt::CompleteGetNtwkRegStatus(
     //Unpack data
 	aDataPackage->UnPackData( regStatusClient );
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetNtwkRegStatus.\n  \t", regStatusClient);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETEGETNTWKREGSTATUS_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetNtwkRegStatus.\n RegStatusClient = %d \t", regStatusClient);
 
     // Call CompleteGetNtwkRegStatus() from service tsy
 	iMmPacketServiceTsy->CompleteGetNtwkRegStatus( regStatusClient, 
@@ -254,7 +260,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetNtwkRegStatus.\n  \t"
 TInt CMmPacketServiceGsmWcdmaExt::SetAttachModeL(
 		RPacketService::TAttachMode aMode )
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::SetAttachModeL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_SETATTACHMODEL_1, "TSY: CMmPacketServiceGsmWcdmaExt::SetAttachModeL." );
 
 	TInt ret( KErrNone );
 	CMmDataPackage data;
@@ -276,7 +282,7 @@ void CMmPacketServiceGsmWcdmaExt::CompleteSetAttachMode(
 		const TInt aErrorValue ) const
     {
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteSetAttachMode.\n  \t  Error Value:%d\n", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETESETATTACHMODE_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteSetAttachMode.\n  \t  Error Value:%d\n", aErrorValue );
 
     iMmPacketServiceTsy->CompleteSetAttachMode( aErrorValue );
 
@@ -289,7 +295,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteSetAttachMode.\n  \t  Er
 //
 TInt CMmPacketServiceGsmWcdmaExt::GetAttachModeL() 
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::GetAttachModeL.\n\t " );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_GETATTACHMODEL_1, "TSY: CMmPacketServiceGsmWcdmaExt::GetAttachModeL.\n\t " );
 
 	TBool calledOnInitPhase = EFalse;
 	CMmDataPackage data;
@@ -313,7 +319,7 @@ void CMmPacketServiceGsmWcdmaExt::CompleteGetAttachMode(CMmDataPackage* aDataPac
 
 	aDataPackage->UnPackData( attachMode );
 
-    TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetAttachMode.\n  \t Status:%d\n\t ", attachMode );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETEGETATTACHMODE_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetAttachMode.\n  \t Status:%d\n\t ", attachMode );
 
     iMmPacketServiceTsy->CompleteGetAttachMode( attachMode, aResult);
 
@@ -330,7 +336,7 @@ TInt CMmPacketServiceGsmWcdmaExt::SetPreferredBearerL(
 	TInt ret( KErrNone );
 	TDataPackage package = aPackage;
 
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::SetPreferredBearerL.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_SETPREFERREDBEARERL_1, "TSY: CMmPacketServiceGsmWcdmaExt::SetPreferredBearerL.");
 
 	ret = iMmPacketServiceTsy->MessageManager()->HandleRequestL( 
 		 EPacketSetPrefBearer, &package );
@@ -347,7 +353,7 @@ void CMmPacketServiceGsmWcdmaExt::CompleteSetPreferredBearer(
 		TInt aErrorValue ) const  
     {
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteSetPreferredBearer.\n\t Error Value:%d\n", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETESETPREFERREDBEARER_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteSetPreferredBearer.\n\t Error Value:%d\n", aErrorValue );
 
     iMmPacketServiceTsy->CompleteSetPreferredBearer( aErrorValue );
 
@@ -366,7 +372,7 @@ void CMmPacketServiceGsmWcdmaExt::GetDynamicCaps(
     // Set caps
     *aCaps = iDynamicCaps;
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::GetDynamicCaps.\n\t Dynamic Caps:%b\n", *aCaps );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_GETDYNAMICCAPS_1, "TSY: CMmPacketServiceGsmWcdmaExt::GetDynamicCaps.\n\t Dynamic Caps:0x%08x\n", (TUint)*aCaps );
 
     }
 
@@ -449,7 +455,7 @@ void CMmPacketServiceGsmWcdmaExt::SetDynamicCapsFlag(
         // Call complete notify dynamic caps change from service tsy
         iMmPacketServiceTsy->CompleteNotifyDynamicCapsChange( iDynamicCaps );
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::SetDynamicCapsFlag.\n\t Dynamic Caps:%b\n", iDynamicCaps );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_SETDYNAMICCAPSFLAG_1, "TSY: CMmPacketServiceGsmWcdmaExt::SetDynamicCapsFlag.\n\t Dynamic Caps:%u\n", (TUint)iDynamicCaps );
 
         }
     }
@@ -543,7 +549,7 @@ void CMmPacketServiceGsmWcdmaExt::CompleteDynamicCapsChange(
         // Call complete notify dynamic caps change from service tsy
         iMmPacketServiceTsy->CompleteNotifyDynamicCapsChange( iDynamicCaps );
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteDynamicCapsChange.\n\t Dynamic Caps:%b\n", iDynamicCaps );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETEDYNAMICCAPSCHANGE_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteDynamicCapsChange.\n\t Dynamic Caps:%x\n", (TUint)iDynamicCaps );
         }
     }
 
@@ -555,7 +561,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteDynamicCapsChange.\n\t D
 void CMmPacketServiceGsmWcdmaExt::GetStaticCaps(
         TUint* const aCaps )const 
     {
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::GetStaticCaps.\n\t Static Caps:%b\n", iStaticCaps );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_GETSTATICCAPS_1, "TSY: CMmPacketServiceGsmWcdmaExt::GetStaticCaps.\n\t Static Caps:%u\n", iStaticCaps );
 
     *aCaps = iStaticCaps;
 
@@ -700,7 +706,7 @@ TInt CMmPacketServiceGsmWcdmaExt::GetDefaultContextParams(
 //
 TBool CMmPacketServiceGsmWcdmaExt::EGprsSupportInCell()
     {
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::EGprsSupportInCell.\n\t Last Edge Support:%b\n", iLastEdgeGprsSupport );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_EGPRSSUPPORTINCELL_1, "TSY: CMmPacketServiceGsmWcdmaExt::EGprsSupportInCell.\n\t Last Edge Support:%u\n", (TUint)iLastEdgeGprsSupport );
 
     return iLastEdgeGprsSupport;  
     }
@@ -715,7 +721,7 @@ void CMmPacketServiceGsmWcdmaExt::SetEdgeGprsSupport(
 	{
 	iLastEdgeGprsSupport = aLastEdgeGprsSupport;
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::SetEdgeGprsSupport.\n\t Last Edge Support:%b\n", iLastEdgeGprsSupport );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_SETEDGEGPRSSUPPORT_1, "TSY: CMmPacketServiceGsmWcdmaExt::SetEdgeGprsSupport.\n\t Last Edge Support:%u\n", (TUint)iLastEdgeGprsSupport );
 	}
 
 //----------------------------------------------------------------------------
@@ -727,7 +733,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::SetEdgeGprsSupport.\n\t Last Edg
 void CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange(
         CMmDataPackage* aPackage )	
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETETRANSFERCAPSCHANGE_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange" );
 
     // create temporary variable to hold the tranfer capabilities
     TDynamicTransferCapsFlags transferCaps;
@@ -735,7 +741,7 @@ TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange" );
     // unpack the data form the adaptation layer, contains the transfer caps
     aPackage->UnPackData( transferCaps );
 
-TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange.\n\t Dynamic Caps:%b\n", transferCaps );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETETRANSFERCAPSCHANGE_2, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange.\n\t Dynamic Caps:%u\n", (TUint)transferCaps );
 	
     // create temporary dynamic capability variable from the member variable
     RPacketService::TDynamicCapsFlags dynamicCaps( iDynamicCaps );
@@ -772,7 +778,7 @@ TFLOGSTRING2("TSY: CMmPacketServiceGsmWcdmaExt::CompleteTransferCapsChange.\n\t 
 //
 void CMmPacketServiceGsmWcdmaExt::CompleteGetStaticCaps( CMmDataPackage* aDataPackage, TInt aError  )
     {
-TFLOGSTRING("TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetStaticCaps.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICEGSMWCDMAEXT_COMPLETEGETSTATICCAPS_1, "TSY: CMmPacketServiceGsmWcdmaExt::CompleteGetStaticCaps.");
 
 	//Unpack necessary data from datapackage
 	if (KErrNone == aError)

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmmbmscontextlistTraces.h"
+#endif
+
 #include "cmmmbmscontextlist.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -32,7 +38,7 @@ CMmMBMSContextList::CMmMBMSContextList()
 CMmMBMSContextList* CMmMBMSContextList::NewL()
     {
 
-TFLOGSTRING("TSY: CMmMBMSContextList* CMmMBMSContextList::NewL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_NEWL_1, "TSY: CMmMBMSContextList* CMmMBMSContextList::NewL." );
 
     CMmMBMSContextList* const contextList =
         new ( ELeave ) CMmMBMSContextList();
@@ -69,7 +75,7 @@ CMmMBMSContextList::~CMmMBMSContextList()
 //
 TInt CMmMBMSContextList::AddContext( CMmMBMSContextTsy* aContext )      
     {
-TFLOGSTRING("TSY: CMmMBMSContextList::AddContext.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_ADDCONTEXT_1, "TSY: CMmMBMSContextList::AddContext.");
 
     TInt ret( KErrArgument );
     
@@ -88,7 +94,7 @@ TFLOGSTRING("TSY: CMmMBMSContextList::AddContext.");
 TInt CMmMBMSContextList::RemoveContext( CMmMBMSContextTsy* aContext )
     {
 
-TFLOGSTRING("TSY: CMmMBMSContextList::RemoveContext." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_REMOVECONTEXT_1, "TSY: CMmMBMSContextList::RemoveContext." );
 
     TInt ret = RemoveObject(aContext);
 
@@ -104,7 +110,7 @@ TFLOGSTRING("TSY: CMmMBMSContextList::RemoveContext." );
 //
 CMmMBMSContextTsy* CMmMBMSContextList::ContextByIndex( TInt aIndex ) const
     {
-TFLOGSTRING2("TSY: CMmMBMSContextList::ContextByIndex. aIndex: %d", aIndex );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_CONTEXTBYINDEX_1, "TSY: CMmMBMSContextList::ContextByIndex. aIndex: %d", aIndex );
 	return (CMmMBMSContextTsy*)GetObjectByIndex(aIndex);
     }
 
@@ -117,7 +123,7 @@ TFLOGSTRING2("TSY: CMmMBMSContextList::ContextByIndex. aIndex: %d", aIndex );
 CMmMBMSContextTsy* CMmMBMSContextList::ContextByName(
         const TInfoName& aName ) //name of the context
     {
-TFLOGSTRING2("TSY: CMmMBMSContextList::ContextByName. Context Name: %S ", &aName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_CONTEXTBYNAME_1, "TSY: CMmMBMSContextList::ContextByName. Context Name: %S ", aName );
     // Find name from context info list
     TInt size = NumberOfContexts();    
     for ( TInt i = 0; i < size; i++ )
@@ -158,7 +164,7 @@ TInt CMmMBMSContextList::GenerateNewContextName(
         TUint8& aProxyId,     //proxy id of the context
         TInt aMaxContexts )
     {
-TFLOGSTRING("TSY: CMmMBMSContextList::GenerateNewContextName." );    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_GENERATENEWCONTEXTNAME_1, "TSY: CMmMBMSContextList::GenerateNewContextName." );
     
 	if(aMaxContexts <= NumberOfContexts() )
 		{
@@ -189,7 +195,7 @@ TFLOGSTRING("TSY: CMmMBMSContextList::GenerateNewContextName." );
 //
 TBool CMmMBMSContextList::IsMbmsContextReceiving()
 	{
-TFLOGSTRING("TSY: CMmMBMSContextList::IsMbmsContextReceiving." );  	
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTLIST_ISMBMSCONTEXTRECEIVING_1, "TSY: CMmMBMSContextList::IsMbmsContextReceiving." );
 	TInt size = NumberOfContexts();
 	for( TInt i = 0; i < size; i++ )
         {

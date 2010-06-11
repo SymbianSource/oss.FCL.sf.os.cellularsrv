@@ -45,7 +45,7 @@ PRJ_MMPFILES
 RawIPNif.mmp
 
 #ifdef SYMBIAN_ZERO_COPY_NETWORKING
-RawIPNif2.mmp
+#include "../rawipnif2/group/bld.inf"
 #endif
 
 #endif // SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY

@@ -19,20 +19,24 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "SenderTraces.h"
+#endif
+
 #include "Sender.h"
 #include "Constants.h"
 #include <es_ini.h>
 
 
-CSender::CSender(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise)
+CSender::CSender(CBcaIoController& aObserver, TInt aMaxPacketSise)
 /**
  * Constructor. Performs standard active object initialisation.
- *
  * @param aObserver Reference to the observer of this state machine
  */
 	: CActive(EPriorityUserInput), 
 	  iObserver(aObserver),
-	  iTheLogger(aTheLogger),
 	  iMaxPacketSize(aMaxPacketSise)
 	{
     // EPriorityUserInput is higher than the default priority but lower than
@@ -42,17 +46,16 @@ CSender::CSender(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxP
 	CActiveScheduler::Add(this);
 	}
 
-CSender* CSender::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise)
+CSender* CSender::NewL(CBcaIoController& aObserver, TInt aMaxPacketSise)
 /**
  * Two-phase constructor. Creates a new CBcaIoController object, performs 
  * second-phase construction, then returns it.
  *
  * @param aObserver The observer, to which events will be reported
- * @param aTheLogger The logging object
  * @return A newly constructed CBcaIoController object
  */
 	{
-	CSender* self = new (ELeave) CSender(aObserver, aTheLogger, aMaxPacketSise);
+	CSender* self = new (ELeave) CSender(aObserver, aMaxPacketSise);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -64,7 +67,7 @@ void CSender::ConstructL()
  * Second-phase constructor. Creates all the state objects it owns.
  */
 	{
-	_LOG_L1C1(_L8("CSender::ConstructL"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_CONSTRUCTL_1, "CSender::ConstructL");
 	iSendBuffer.CreateL(iMaxPacketSize);
 	}
 
@@ -82,27 +85,27 @@ void CSender::RunL()
  * This method checks if any error occured in the write operation.  
  */
 	{
-	_LOG_L1C2(_L8("CSender::RunL [iStatus=%d]"), iStatus.Int());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_1, "CSender::RunL [iStatus=%d]", iStatus.Int());
 
 	if (iStatus!=KErrNone)
 		{
 		if(iStatus == KErrNoMemory)
 			{
-			_LOG_L2C1(_L8("WARNING! CSender: Write failed with KErrNoMemory"));
-			_LOG_L2C1(_L8("WARNING! CSender: Ignoring packet!!!!"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_2, "WARNING! CSender: Write failed with KErrNoMemory");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_3, "WARNING! CSender: Ignoring packet!!!!");
 			// Write operation failed!! Nif will ignore this packet.
 			iObserver.SendComplete();
 			}
 		else if (iStatus == KErrNotReady)
 			{
-			_LOG_L2C1(_L8("WARNING! CSender: Write failed with KErrNotReady"));
-			_LOG_L2C1(_L8("WARNING! CSender: Ignoring packet!!!!"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_4, "WARNING! CSender: Write failed with KErrNotReady");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_5, "WARNING! CSender: Ignoring packet!!!!");
 			// Write operation failed!! Nif will ignore this packet.
 			iObserver.SendComplete();
 			}
 		else
 			{
-			_LOG_L2C1(_L8("ERROR! CSender: Write failed!!!!"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_6, "ERROR! CSender: Write failed!!!!");
 			// Nif will shut down
 			iObserver.Stop(iStatus.Int());
 			}
@@ -112,7 +115,7 @@ void CSender::RunL()
 	else
 		{
 		// The Ip packet was sent successfuly
-		_LOG_L1C1(_L8("***** CSender: Packet Sent."));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_RUNL_7, "***** CSender: Packet Sent.");
 		iObserver.SendComplete();
 		}
 	}
@@ -122,7 +125,7 @@ void CSender::DoCancel()
  *	Cancel active request
  */
 	{
-	_LOG_L1C1(_L8("CSender::DoCancel"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_DOCANCEL_1, "CSender::DoCancel");
 
 	(iObserver.Bca())->CancelWrite(); 
 	}
@@ -135,7 +138,7 @@ void CSender::Send(RMBufChain& aPdu)
  * @return KStopSending, or KErrArgument if the packet is too large.
  */
 	{
-	_LOG_L1C1(_L8("CSender::Send"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDER_SEND_1, "CSender::Send");
 
 	// Copy the IP portion of the RMBufChain to the buffer.
 	iSendBuffer.SetMax();
@@ -148,7 +151,5 @@ void CSender::Send(RMBufChain& aPdu)
 	aPdu.Free();
 
 	(iObserver.Bca())->Write(iStatus, iSendBuffer);
-	
 	SetActive();
 	}
-

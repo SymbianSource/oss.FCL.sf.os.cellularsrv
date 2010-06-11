@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ws_prtclTraces.h"
+#endif
 
 #include <e32base.h>
 #include <f32file.h>
@@ -48,7 +54,7 @@ CWapSmsProtocol::CWapSmsProtocol()
 //
 CWapSmsProtocol* CWapSmsProtocol::NewL()
 	{
-	LOGWAPPROT1("CWapSmsProtocol::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_NEWL_1, "CWapSmsProtocol::NewL()");
 
 	CWapSmsProtocol* p=new(ELeave) CWapSmsProtocol;
 	CleanupStack::PushL(p);
@@ -66,14 +72,14 @@ CWapSmsProtocol* CWapSmsProtocol::NewL()
 
 void CWapSmsProtocol::HandleBackupOrRestoreStartingL()
 	{
-	LOGWAPPROT1("CWapSmsProtocol::HandleBackupOrRestoreStartingL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_HANDLEBACKUPORRESTORESTARTINGL_1, "CWapSmsProtocol::HandleBackupOrRestoreStartingL");
 	iWapStore->Close();
 	} // CWapSmsProtocol::HandleBackupOrRestoreStartingL
 
 
 void CWapSmsProtocol::HandleBackupOrRestoreCompleteL()
 	{
-	LOGWAPPROT1("CWapSmsProtocol::HandleBackupOrRestoreCompleteL ");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_HANDLEBACKUPORRESTORECOMPLETEL_1, "CWapSmsProtocol::HandleBackupOrRestoreCompleteL ");
 	iWapStore->DoOpenL();
 	} // CWapSmsProtocol::HandleBackupOrRestoreCompleteL
 
@@ -105,7 +111,7 @@ CWapSmsProtocol::~CWapSmsProtocol()
 //
 CServProviderBase *CWapSmsProtocol::NewSAPL(TUint aSocketType)
 	{
-        LOGWAPPROT1("*CWapSmsProtocol::NewSAPL");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_NEWSAPL_1, "*CWapSmsProtocol::NewSAPL");
 
 	if (aSocketType!=KSockDatagram)
 		User::Leave(KErrNotSupported);
@@ -130,7 +136,7 @@ void CWapSmsProtocol::BindL(CProtocolBase* /*aProtocol*/, TUint /*aId*/)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSmsProtocol::BindL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_BINDL_1, "CWapSmsProtocol::BindL");
     Panic(EWapSmsCantBind);
     BULLSEYE_RESTORE
     }
@@ -149,7 +155,7 @@ void CWapSmsProtocol::StartL()
 //
 void CWapSmsProtocol::Identify(TServerProtocolDesc *aDes) const
 	{
-    LOGWAPPROT1("CWapSmsProtocol::Identify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_IDENTIFY_1, "CWapSmsProtocol::Identify");
 
 	aDes->iName=KWAPSMSProtocolId;
 	aDes->iAddrFamily=KWAPSMSAddrFamily;
@@ -172,7 +178,7 @@ void CWapSmsProtocol::Identify(TServerProtocolDesc *aDes) const
 //
 void CWapSmsProtocol::BindToL(CProtocolBase* aProtocol)
 	{
-    LOGWAPPROT1("CWapSmsProtocol::BindToL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_BINDTOL_1, "CWapSmsProtocol::BindToL");
 
 	TServerProtocolDesc info;
 	aProtocol->Identify(&info);
@@ -198,7 +204,7 @@ void CWapSmsProtocol::BindToL(CProtocolBase* aProtocol)
 //
 void CWapSmsProtocol::BindObserversToSmsL()
 	{
-    LOGWAPPROT1("CWapSmsProtocol::BindObserversToSmsL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_BINDOBSERVERSTOSMSL_1, "CWapSmsProtocol::BindObserversToSmsL");
 
 	iNextSapPort=KMinWapPortNumber;
 	TSmsAddr addr0;
@@ -231,7 +237,7 @@ void CWapSmsProtocol::BindObserversToSmsL()
 //
 void CWapSmsProtocol::RemoveObserversFromSmsProtocol()
 	{
-        LOGWAPPROT1("CWapSmsProtocol::RemoveObserversFromSmsProtocol");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_REMOVEOBSERVERSFROMSMSPROTOCOL_1, "CWapSmsProtocol::RemoveObserversFromSmsProtocol");
 
 	if (iSmsProtocol==NULL)
 		return;
@@ -250,7 +256,7 @@ TInt CWapSmsProtocol::Send(TDes8 &, TSockAddr* /*to*/,TSockAddr* /*from*/,CProto
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSmsProtocol::Send");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_SEND_1, "CWapSmsProtocol::Send");
     Panic(EWapSmsSendCallCantBind);
     return KErrNone;
     BULLSEYE_RESTORE
@@ -261,7 +267,7 @@ TInt CWapSmsProtocol::Send(TDes8 &, TSockAddr* /*to*/,TSockAddr* /*from*/,CProto
 //
 void CWapSmsProtocol::ProcessSmsL(const CSmsMessage& aSmsMessage)
 	{
-    LOGWAPPROT1("CWapSmsProtocol::ProcessSmsL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_PROCESSSMSL_1, "CWapSmsProtocol::ProcessSmsL");
 	TInt index=0;
 	TBool storeDatagramComplete = EFalse;
 	TBool isNewStyleClient = EFalse;
@@ -326,7 +332,7 @@ void CWapSmsProtocol::ProcessSmsL(const CSmsMessage& aSmsMessage)
 //
 TInt CWapSmsProtocol::GetOption(TUint aLevel, TUint aName, TDes8& aOption, CProtocolBase* /*aSourceProtocol*/)
 	{
-    LOGWAPPROT1("CWapSmsProtocol::GetOption");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_GETOPTION_1, "CWapSmsProtocol::GetOption");
 
 	TInt ret = iSmsProtocol->GetOption(aLevel, aName, aOption,this);
 	return ret;
@@ -339,7 +345,7 @@ TInt CWapSmsProtocol::GetOption(TUint aLevel, TUint aName, TDes8& aOption, CProt
 //
 TInt CWapSmsProtocol::SetOption(TUint aLevel, TUint aName, const TDesC8& aOption, CProtocolBase* /*aSourceProtocol*/)
     {
-    LOGWAPPROT1("CWapSmsProtocol::SetOption");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_SETOPTION_1, "CWapSmsProtocol::SetOption");
     
     TInt ret= iSmsProtocol->SetOption(aLevel,aName,aOption,this);
     return ret;
@@ -351,7 +357,7 @@ TInt CWapSmsProtocol::SetOption(TUint aLevel, TUint aName, const TDesC8& aOption
 //
 void CWapSmsProtocol::Error(TInt aError, CProtocolBase* /*aSourceProtocol*/)
     {
-    LOGWAPPROT1("CWapSmsProtocol::Error");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_ERROR_1, "CWapSmsProtocol::Error");
     
     TDblQueIter<CWapSmsProvider> iter(iSAPList);
     CWapSmsProvider* sap;
@@ -366,7 +372,7 @@ CHostResolvProvdBase *CWapSmsProtocol::NewHostResolverL()
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF
-    LOGWAPPROT1("*CWapSmsProtocol::NewHostResolverL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_NEWHOSTRESOLVERL_1, "*CWapSmsProtocol::NewHostResolverL");
     Panic(EWapSmsCantCreateHostResolver);
     return NULL;
     BULLSEYE_RESTORE
@@ -379,7 +385,7 @@ CServiceResolvProvdBase *CWapSmsProtocol::NewServiceResolverL()
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF
-    LOGWAPPROT1("*CWapSmsProtocol::NewServiceResolverL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_NEWSERVICERESOLVERL_1, "*CWapSmsProtocol::NewServiceResolverL");
     Panic(EWapSmsCantCreateServiceResolver);
     return NULL;
     BULLSEYE_RESTORE
@@ -392,7 +398,7 @@ CNetDBProvdBase* CWapSmsProtocol::NewNetDatabaseL()
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSmsProtocol::NewNetDatabaseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_NEWNETDATABASEL_1, "CWapSmsProtocol::NewNetDatabaseL");
     Panic(EWapSmsCantCreateNetDatabase);
     return NULL;
     BULLSEYE_RESTORE
@@ -403,7 +409,7 @@ CNetDBProvdBase* CWapSmsProtocol::NewNetDatabaseL()
 //
 void CWapSmsProtocol::AddSAP(CWapSmsProvider* aSAP, TUint /*aSockType*/)
 	{
-    LOGWAPPROT1("CWapSmsProtocol::AddSAP");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_ADDSAP_1, "CWapSmsProtocol::AddSAP");
 
 	iSAPList.AddLast(*aSAP);
 	} // CWapSmsProtocol::AddSAP
@@ -414,7 +420,7 @@ void CWapSmsProtocol::AddSAP(CWapSmsProvider* aSAP, TUint /*aSockType*/)
 //
 TBool CWapSmsProtocol::AllocateLocalAddress(TWapAddr& aAddr)
 	{
-    LOGWAPPROT1("CWapSmsProtocol::AllocateLocalAddressL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_ALLOCATELOCALADDRESS_1, "CWapSmsProtocol::AllocateLocalAddressL");
 	//
 	TBool found=EFalse;
 	TUint count=0,attempts=0;
@@ -441,7 +447,7 @@ TBool CWapSmsProtocol::AllocateLocalAddress(TWapAddr& aAddr)
 //
 CWapSmsProvider* CWapSmsProtocol::LookupSAP(CWapDatagram* aMsg)
 	{
-	LOGWAPPROT1("CWapSmsProtocol::LookupSAP");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_LOOKUPSAP_1, "CWapSmsProtocol::LookupSAP");
 
 	TBuf8<KMaxSockAddrSize> addrBuf;
 	addrBuf.Copy(aMsg->FromAddress());
@@ -477,7 +483,7 @@ CWapSmsProvider* CWapSmsProtocol::LookupSAP(CWapDatagram* aMsg)
 //
 TInt CWapSmsProtocol::AddrAlreadyUsedByWAP(const TWapAddr &aAddr, const CWapSmsProvider* aSap)
 	{
-    LOGWAPPROT1("CWapSmsProtocol::AddrAlreadyUsedByWAP");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_ADDRALREADYUSEDBYWAP_1, "CWapSmsProtocol::AddrAlreadyUsedByWAP");
 
 	TDblQueIter<CWapSmsProvider> iter(iSAPList);
 	CWapSmsProvider* sap;
@@ -492,7 +498,7 @@ TInt CWapSmsProtocol::AddrAlreadyUsedByWAP(const TWapAddr &aAddr, const CWapSmsP
 				return KErrInUse;
 			}
 		}
-	LOGWAPPROT1("CWapSmsProtocol::AddrAlreadyUsedByWAP not used by WAP");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_ADDRALREADYUSEDBYWAP_2, "CWapSmsProtocol::AddrAlreadyUsedByWAP not used by WAP");
 	return KErrNone;
 	} // CWapSmsProtocol::AddrAlreadyUsedByWAP
 
@@ -502,7 +508,7 @@ TInt CWapSmsProtocol::AddrAlreadyUsedByWAP(const TWapAddr &aAddr, const CWapSmsP
 //
 CSmsProtocol* CWapSmsProtocol::SmsProtocol()
     {
-    LOGWAPPROT1("CWapSmsProtocol::SmsProtocol()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_SMSPROTOCOL_1, "CWapSmsProtocol::SmsProtocol()");
 
     return iSmsProtocol;
     } // CWapSmsProtocol::SmsProtocol
@@ -513,7 +519,7 @@ CSmsProtocol* CWapSmsProtocol::SmsProtocol()
 //
 TBool CWapSmsProtocol::FindAndDeleteMsg(CWapDatagram& aDatagram)
 	{
-	LOGWAPPROT1("CWapSmsProtocol::FindAndDeleteMsg()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_FINDANDDELETEMSG_1, "CWapSmsProtocol::FindAndDeleteMsg()");
 
 	TInt err;
 	TInt ret = EFalse;
@@ -533,7 +539,7 @@ TBool CWapSmsProtocol::FindAndDeleteMsg(CWapDatagram& aDatagram)
 //
 TInt CWapSmsProtocol::CheckSarL(const TWapAddr& aAddr,CWapSmsProvider* aSap)
 	{
-	LOGWAPPROT1("CWapSmsProtocol::CheckSarL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOL_CHECKSARL_1, "CWapSmsProtocol::CheckSarL()");
 
 	TInt count=0;
 	TInt err = KErrNone;

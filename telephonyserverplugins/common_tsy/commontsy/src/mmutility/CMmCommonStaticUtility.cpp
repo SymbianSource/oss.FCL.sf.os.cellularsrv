@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,13 +16,18 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CMmCommonStaticUtilityTraces.h"
+#endif
+
 #include <etelmm.h>
 #include <etelmmerr.h>
 #include <exterror.h>
 #include <ctsy/serviceapi/gsmerror.h>
 #include "CMmCommonStaticUtility.h"
 
-#include <ctsy/tflogger.h>
 #include <in_sock.h>
 
 // ======== MEMBER FUNCTIONS ========
@@ -39,14 +44,12 @@ TInt CMmCommonStaticUtility::EpocErrorCode(
     TInt aCoreErrorCode, // core error
     TInt aExtendedErrorCode ) // extended error
     {
-TFLOGSTRING3("TSY: CMmStaticUtility::EpocErrorCode, Error mapping done, \
-Core error: %d, Extended error: %d", aCoreErrorCode, aExtendedErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCOMMONSTATICUTILITY_EPOCERRORCODE_1, "TSY: CMmStaticUtility::EpocErrorCode, Error mapping done, \Core error: %d, Extended error: %d", aCoreErrorCode, aExtendedErrorCode );
 
     TInt errorCode = ( aCoreErrorCode & 0x0000FFFF ) |
                      ( aExtendedErrorCode << 16 );
 
-TFLOGSTRING2("TSY: CMmStaticUtility::EpocErrorCode. It was mapped \
-to the following Symbian OS error: %d", errorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCOMMONSTATICUTILITY_EPOCERRORCODE_2, "TSY: CMmStaticUtility::EpocErrorCode. It was mapped \to the following Symbian OS error: %d", errorCode );
 
     return errorCode;
     }

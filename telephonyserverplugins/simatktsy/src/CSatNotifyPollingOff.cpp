@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyPollingOffTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyPollingOff.h"   // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h" 	// Message manager class for forwarding req.
@@ -43,13 +48,13 @@ CSatNotifyPollingOff* CSatNotifyPollingOff::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPollingOff::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_NEWL_1, "CSAT: CSatNotifyPollingOff::NewL");
    	CSatNotifyPollingOff* const satNotifyPollingOff = 
         new ( ELeave ) CSatNotifyPollingOff( aNotificationsTsy );
     CleanupStack::PushL( satNotifyPollingOff );
     satNotifyPollingOff->ConstructL();
     CleanupStack::Pop( satNotifyPollingOff );
-    TFLOGSTRING("CSAT: CSatNotifyPollingOff::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_NEWL_2, "CSAT: CSatNotifyPollingOff::NewL, end of method");
     return satNotifyPollingOff;
     }
 
@@ -63,7 +68,7 @@ CSatNotifyPollingOff::~CSatNotifyPollingOff
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPollingOff::~CSatNotifyPollingOff");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_DTOR_1, "CSAT: CSatNotifyPollingOff::~CSatNotifyPollingOff");
     }
     
 // -----------------------------------------------------------------------------
@@ -89,7 +94,7 @@ void CSatNotifyPollingOff::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPollingOff::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_CONSTRUCTL_1, "CSAT: CSatNotifyPollingOff::ConstructL");
     }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +109,7 @@ TInt CSatNotifyPollingOff::CompleteNotifyL
         TInt /*aErrorCode*/  
         ) 
     {
-    TFLOGSTRING("CSAT: CSatNotifyPollingOff::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_COMPLETENOTIFYL_1, "CSAT: CSatNotifyPollingOff::CompleteNotifyL");
     TPtrC8* data;
     TBuf<1> additionalInfo;
     aDataPackage->UnPackData( &data );
@@ -151,7 +156,7 @@ TInt CSatNotifyPollingOff::CreateTerminalRespL
         TDesC16& aAdditionalInfo            
 		)
     {
-    TFLOGSTRING("CSAT: CSatNotifyPollingOff::CreateTerminalRespL");    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_CREATETERMINALRESPL_1, "CSAT: CSatNotifyPollingOff::CreateTerminalRespL");
     
     TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );
@@ -173,9 +178,7 @@ TInt CSatNotifyPollingOff::CreateTerminalRespL
                 }
             default:
                 {
-                TFLOGSTRING2("CSAT: CSatNotifyPollingOff::\
-                    CreateTerminalRespL, Additional Info: %d", 
-                    aAdditionalInfo[0]);
+                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINGOFF_CREATETERMINALRESPL_2, "CSAT: CSatNotifyPollingOff::CreateTerminalRespL, Additional Info: %d", aAdditionalInfo[0]);
                 tlvSpecificData.AddByte( static_cast<TUint8>( 
                 	aAdditionalInfo[0] ) );
                 break;

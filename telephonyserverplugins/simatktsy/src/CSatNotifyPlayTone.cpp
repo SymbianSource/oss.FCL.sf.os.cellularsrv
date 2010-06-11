@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyPlayToneTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyPlayTone.h"     // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifyPlayTone* CSatNotifyPlayTone::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPlayTone::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_NEWL_1, "CSAT: CSatNotifyPlayTone::NewL");
    	CSatNotifyPlayTone* const satNotifyPlayTone = 
         new ( ELeave ) CSatNotifyPlayTone( aNotificationsTsy );
     CleanupStack::PushL( satNotifyPlayTone );
     satNotifyPlayTone->ConstructL();
     CleanupStack::Pop( satNotifyPlayTone );
-    TFLOGSTRING("CSAT: CSatNotifyPlayTone::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_NEWL_2, "CSAT: CSatNotifyPlayTone::NewL, end of method");
     return satNotifyPlayTone;
     }
 
@@ -62,7 +67,7 @@ CSatNotifyPlayTone::~CSatNotifyPlayTone
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPlayTone::~CSatNotifyPlayTone");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_DTOR_1, "CSAT: CSatNotifyPlayTone::~CSatNotifyPlayTone");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ void CSatNotifyPlayTone::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPlayTone::ConstructL, does nothing");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_CONSTRUCTL_1, "CSAT: CSatNotifyPlayTone::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -102,7 +107,7 @@ TInt CSatNotifyPlayTone::Notify
         const TDataPackage& aPackage
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPlayTone::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_NOTIFY_1, "CSAT: CSatNotifyPlayTone::Notify");
     // Save data pointer to client side for completion
     iPlayToneV2Pckg = reinterpret_cast<RSat::TPlayToneV2Pckg*>( 
         aPackage.Des1n() );
@@ -127,7 +132,7 @@ TInt CSatNotifyPlayTone::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyPlayTone::CancelNotification");    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_CANCELNOTIFICATION_1, "CSAT: CSatNotifyPlayTone::CancelNotification");
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyPlayTonePCmdReqType );
@@ -150,7 +155,7 @@ TInt CSatNotifyPlayTone::CompleteNotifyL
 		TInt aErrorCode  
         ) 
     {
-	TFLOGSTRING("CSAT: CSatNotifyPlayTone::CompleteNotifyL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_COMPLETENOTIFYL_1, "CSAT: CSatNotifyPlayTone::CompleteNotifyL");
 	TInt returnValue( KErrNone );
     TInt ret( KErrNone );
     
@@ -191,8 +196,7 @@ TInt CSatNotifyPlayTone::CompleteNotifyL
             
 			if ( KErrNotFound != returnValue )
 				{
-				TFLOGSTRING("CSAT: CSatNotifyPlayTone::CompleteNotifyL,\
-				    Alpha ID present");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_COMPLETENOTIFYL_2, "CSAT: CSatNotifyPlayTone::CompleteNotifyL, Alpha ID present");
 				TUint16 alphaIdLength = alphaIdentifier.GetLength();
 				if ( alphaIdLength )
 					{
@@ -212,8 +216,7 @@ TInt CSatNotifyPlayTone::CompleteNotifyL
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifyPlayTone::CompleteNotifyL,\
-					    Alpha ID is NULL");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_COMPLETENOTIFYL_3, "CSAT: CSatNotifyPlayTone::CompleteNotifyL, Alpha ID is NULL");
 					playToneV2.iAlphaId.iStatus = RSat::EAlphaIdNull;
 					}
 				}
@@ -226,8 +229,7 @@ TInt CSatNotifyPlayTone::CompleteNotifyL
 				{
 				playToneV2.iTone = ( RSat::TTone ) tone.GetShortInfo( 
 				    ETLV_Tone );
-			    TFLOGSTRING2("CSAT: CSatNotifyPlayTone::CompleteNotifyL,\
-				    Tone Selection: %d", playToneV2.iTone);
+			    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_COMPLETENOTIFYL_4, "CSAT: CSatNotifyPlayTone::CompleteNotifyL, Tone Selection: %d", playToneV2.iTone);
 				}
         
 			// Duration of the tone (optional)
@@ -248,8 +250,7 @@ TInt CSatNotifyPlayTone::CompleteNotifyL
 		}// End of if ( CSatTsy::ESatReqHandleUnknown != reqHandle )			
 	else 
 		{
-		TFLOGSTRING("CSAT: CSatNotifyPlayTone::CompleteNotifyL,\
-		    Request not ongoing");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_COMPLETENOTIFYL_5, "CSAT: CSatNotifyPlayTone::CompleteNotifyL, Request not ongoing");
 		// Request not on, returning response immediately
 		additionalInfo.Zero();
 		additionalInfo.Append( KNoCause );
@@ -272,7 +273,7 @@ TInt CSatNotifyPlayTone::TerminalResponseL
         TDes8* aRsp
         )
 	{    
-	TFLOGSTRING( "CSAT: CSatNotifyPlayTone::TerminalResponseL" );
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_TERMINALRESPONSEL_1,  "CSAT: CSatNotifyPlayTone::TerminalResponseL" );
 
     TInt ret( KErrNone );
     TBuf<1>additionalInfo;
@@ -293,8 +294,7 @@ TInt CSatNotifyPlayTone::TerminalResponseL
 		 ( RSat::KCmdBeyondMeCapabilities != rspV1.iGeneralResult ) && 
 		 ( RSat::KCmdDataNotUnderstood != rspV1.iGeneralResult ) )
         {
-        TFLOGSTRING( "CSAT: CSatNotifyPlayTone::TerminalResponseL,\
-            Invalid General Result" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_TERMINALRESPONSEL_2,  "CSAT: CSatNotifyPlayTone::TerminalResponseL, Invalid General Result" );
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -310,14 +310,12 @@ TInt CSatNotifyPlayTone::TerminalResponseL
 			}
         else
             {
-            TFLOGSTRING( "CSAT: CSatNotifyPlayTone::TerminalResponseL,\
-                Invalid Additional Info" );
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_TERMINALRESPONSEL_3,  "CSAT: CSatNotifyPlayTone::TerminalResponseL, Invalid Additional Info" );
             // Invalid additional info field
             ret = KErrCorrupt;
             }
         }
-	TFLOGSTRING2( "CSAT: CSatNotifyPlayTone::TerminalResponseL: \
-		AdditionalInfo: %s", &additionalInfo );
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_TERMINALRESPONSEL_4,  "CSAT: CSatNotifyPlayTone::TerminalResponseL: AdditionalInfo: %S", additionalInfo );
 
     CreateTerminalRespL( pCmdNumber, static_cast< TUint8 >( 
     	rspV1.iGeneralResult ), additionalInfo );                            
@@ -338,7 +336,7 @@ TInt CSatNotifyPlayTone::CreateTerminalRespL
         TDesC16&  aAdditionalInfo            
 	    )    	
 	{
-	TFLOGSTRING("CSAT: CSatNotifyPlayTone::CreateTerminalRespL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPLAYTONE_CREATETERMINALRESPL_1, "CSAT: CSatNotifyPlayTone::CreateTerminalRespL");
     TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );
 	//General result

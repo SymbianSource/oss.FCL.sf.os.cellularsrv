@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smsprecvmodeTraces.h"
+#endif
 
 #include <commsdattypesv1_1.h>
 #include <cdbcols.h>
@@ -61,7 +67,7 @@ CSmspReceiveMode::~CSmspReceiveMode()
  */
 CSmspReceiveMode* CSmspReceiveMode::NewL(const TSmsSettings& aSmsSettings, RMobileSmsMessaging& aSmsMessaging, const RMobileSmsMessaging::TMobileSmsCapsV1& aSmsCaps, TInt aPriority)
 	{
-	LOGSMSPROT1("CSmspReceiveMode::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_NEWL_1, "CSmspReceiveMode::NewL()");
 
 	CSmspReceiveMode* self = new (ELeave) CSmspReceiveMode(aSmsSettings, aSmsMessaging, aSmsCaps, aPriority);
 	CleanupStack::PushL(self);
@@ -73,7 +79,7 @@ CSmspReceiveMode* CSmspReceiveMode::NewL(const TSmsSettings& aSmsSettings, RMobi
 
 void CSmspReceiveMode::ConstructL()
 	{
-	LOGSMSPROT1("CSmspReceiveMode::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_CONSTRUCTL_1, "CSmspReceiveMode::ConstructL()");
 
 	CSmspCommDbEvent::ConstructL();
 	User::LeaveIfError(iCommDbRetryTimer.CreateLocal());
@@ -86,7 +92,7 @@ void CSmspReceiveMode::ConstructL()
  */
 void CSmspReceiveMode::Start(TRequestStatus& aStatus)
 	{
-	LOGSMSPROT1("CSmspReceiveMode::Start()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_START_1, "CSmspReceiveMode::Start()");
 
 	Cancel();
 	Queue(aStatus);
@@ -121,7 +127,7 @@ void CSmspReceiveMode::Start(TRequestStatus& aStatus)
  */
 void CSmspReceiveMode::NotifyOnEvent()
 	{
-	LOGSMSPROT1("CSmspReceiveMode::NotifyOnEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_NOTIFYONEVENT_1, "CSmspReceiveMode::NotifyOnEvent()");
 
 	iState = ESmspReceiveModeNotifyOnEvent;
 	CSmspCommDbEvent::NotifyOnEvent();
@@ -135,7 +141,7 @@ void CSmspReceiveMode::NotifyOnEvent()
  */
 void CSmspReceiveMode::SetReceiveMode(RMobileSmsMessaging::TMobileSmsReceiveMode aReceiveMode)
 	{
-	LOGSMSPROT1("CSmspReceiveMode::SetReceiveMode()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_SETRECEIVEMODE_1, "CSmspReceiveMode::SetReceiveMode()");
 
 	aReceiveMode = SelectReceiveMode(aReceiveMode);
 	iSmsReceiveModeLastSet = aReceiveMode;
@@ -148,7 +154,7 @@ void CSmspReceiveMode::SetReceiveMode(RMobileSmsMessaging::TMobileSmsReceiveMode
 
 void CSmspReceiveMode::DoCancel()
 	{
-	LOGSMSPROT1("CSmspReceiveMode::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_DOCANCEL_1, "CSmspReceiveMode::DoCancel()");
 
 	TimedSetActiveCancel();
 	switch (iState)
@@ -207,7 +213,7 @@ void CSmspReceiveMode::DoCancel()
  */
 void CSmspReceiveMode::GetCommDbReceiveModeL(RMobileSmsMessaging::TMobileSmsReceiveMode& aReceiveMode)
 	{
-	LOGSMSPROT1("CSmspReceiveMode::GetCommDbReceiveModeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_GETCOMMDBRECEIVEMODEL_1, "CSmspReceiveMode::GetCommDbReceiveModeL()");
 
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	CMDBSession* sess = CMDBSession::NewL(KCDVersion1_2);
@@ -230,7 +236,7 @@ void CSmspReceiveMode::GetCommDbReceiveModeL(RMobileSmsMessaging::TMobileSmsRece
 
 void CSmspReceiveMode::DoRunL()
 	{
-	LOGSMSPROT1("CSmspReceiveMode::DoRunL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_DORUNL_1, "CSmspReceiveMode::DoRunL()");
 
 	switch (iState)
 		{
@@ -263,7 +269,7 @@ void CSmspReceiveMode::DoRunL()
 				else
 					{
 					// Failed to read CommDB even after retries. Set the receive mode to the last known setting
-					LOGSMSPROT2("CSmspReceiveMode::DoRunL in ESmspReceiveModeRetryCommDb state, failed to read CommDb, using mode #%d", iSmsReceiveModeLastSet );
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_DORUNL_2, "CSmspReceiveMode::DoRunL in ESmspReceiveModeRetryCommDb state, failed to read CommDb, using mode #%d", iSmsReceiveModeLastSet );
 					SetReceiveMode(iSmsReceiveModeLastSet);
 					}
 				}
@@ -308,7 +314,7 @@ void CSmspReceiveMode::DoRunL()
  */
 RMobileSmsMessaging::TMobileSmsReceiveMode CSmspReceiveMode::SelectReceiveMode() const
 	{
-	LOGSMSPROT1("CSmspReceiveMode::SelectReceiveMode()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_SELECTRECEIVEMODE_1, "CSmspReceiveMode::SelectReceiveMode()");
 
 	const TUint32 smsControl = iSmsCaps.iSmsControl;
 	RMobileSmsMessaging::TMobileSmsReceiveMode recvMode = RMobileSmsMessaging::EReceiveModeUnspecified;
@@ -342,7 +348,7 @@ RMobileSmsMessaging::TMobileSmsReceiveMode CSmspReceiveMode::SelectReceiveMode()
  */
 RMobileSmsMessaging::TMobileSmsReceiveMode CSmspReceiveMode::SelectReceiveMode(RMobileSmsMessaging::TMobileSmsReceiveMode aPreferredMode) const
 	{
-	LOGSMSPROT1("CSmspReceiveMode::SelectReceiveMode()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPRECEIVEMODE_SELECTRECEIVEMODE1_1, "CSmspReceiveMode::SelectReceiveMode()");
 
 	const TUint32 smsControl = iSmsCaps.iSmsControl;
 	TBool usePreferred = EFalse;

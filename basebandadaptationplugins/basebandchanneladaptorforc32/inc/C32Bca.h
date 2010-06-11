@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -29,7 +29,6 @@
 #include <e32def.h>
 #include <commsdattypesv1_1.h>
 using namespace CommsDat;
-#include <comms-infras/commsdebugutility.h>
 
 /** This namespace includes the BCA component names.*/
 namespace BasebandChannelAdaptation
@@ -42,9 +41,7 @@ namespace BasebandChannelAdaptation
 	
 	_LIT(KChannelIdNotOverridden, "");
 	
-	_LIT8(KC32BcaLogFolder, "C32Bca");
-	_LIT8(KC32BcaLogFile, "C32Bca.txt");
-	
+		
 		
 	
 	
@@ -96,8 +93,7 @@ namespace BasebandChannelAdaptation
 			Serial port we service for the iUser */
 			RComm& iPort;
 	
-			/** CommsDebug logger  */
-			__FLOG_DECLARATION_MEMBER;			
+	
 		};
 	
 	/**
@@ -192,10 +188,6 @@ namespace BasebandChannelAdaptation
 		virtual void CommWriteComplete(TInt aErr);
 		virtual void CommLinkDown(TInt aErr);
 				
-#ifdef __FLOG_ACTIVE
-		void LogCommConfig(TCommConfig& c);
-#endif // __FLOG_ACTIVE
-
 	private:
 		void CloseCommPort();	
 	
@@ -242,8 +234,6 @@ namespace BasebandChannelAdaptation
 		/** Should the next write be errored with this error  code? */
 		TInt iErrorOnNextWrite;
 		
-		/** Comms Debug Utility logger. */
-		__FLOG_DECLARATION_MEMBER;
 		};
 	/**
 	* C32BCA Panic.

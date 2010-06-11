@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,6 +15,12 @@
 //
 
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmphonefactorytsyTraces.h"
+#endif
 
 #include <featmgr/featurecontrol.h>
 #include <featureuids.h>
@@ -75,7 +81,7 @@ CMmPhoneFactoryTsy::~CMmPhoneFactoryTsy()
 //
 CPhoneBase* CMmPhoneFactoryTsy::NewPhoneL( const TDesC& aName )
     {
-TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - NEW LOG");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_1, "TSY: CMmPhoneFactoryTsy::NewL - NEW LOG");
 
     iPhoneTsy = NULL;
 
@@ -86,15 +92,15 @@ TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - NEW LOG");
 	TInt err = featureControl.Open();
 	if (err != KErrNone)
 		{
-TFLOGSTRING("CMmPhoneFactoryTsy::NewPhoneL - failed to connect to FeatMgr");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_2, "CMmPhoneFactoryTsy::NewPhoneL - failed to connect to FeatMgr");
 		}
 	else if (featureControl.FeatureSupported(NFeature::KCsVideoTelephony) == KFeatureSupported) 
         {
-TFLOGSTRING("TSY: __CS_VIDEO_TELEPHONY -flag is on");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_3, "TSY: __CS_VIDEO_TELEPHONY -flag is on");
         }
 	else if (featureControl.FeatureSupported(NFeature::KEmergencyCallsEnabledInOfflineMode) == KFeatureSupported)
         {
-TFLOGSTRING("TSY: __COMMON_TSY__EMERGENCY_CALLS_ENABLED_IN_OFFLINE_MODE -flag is on");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_4, "TSY: __COMMON_TSY__EMERGENCY_CALLS_ENABLED_IN_OFFLINE_MODE -flag is on");
         }
 
 	featureControl.Close();
@@ -112,7 +118,7 @@ TFLOGSTRING("TSY: __COMMON_TSY__EMERGENCY_CALLS_ENABLED_IN_OFFLINE_MODE -flag is
 	        CleanupStack::PushL( messageManager );
         
             // LTSY Plug-in API successfully created
-TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open LicenceeTSY");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_5, "TSY: CMmPhoneFactoryTsy::NewL - Starting to open LicenceeTSY");
             
             // get TSY message manager callback object
             MmMessageManagerCallback* callBack = 
@@ -137,7 +143,7 @@ TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open LicenceeTSY");
 		        User::LeaveIfNull( iMessageRouter );
         
 		        // Licencee Tsy successfully created
-TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL -  LicenceeTSY successfully opened");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_6, "TSY: CMmPhoneFactoryTsy::NewL -  LicenceeTSY successfully opened");
 
 	            // set the pointer to the message router object
 	            messageManager->SetMessageRouter( iMessageRouter );
@@ -145,13 +151,13 @@ TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL -  LicenceeTSY successfully opened");
 	            // Ownership of messageManager passed to iPhoneTsy.
                 CleanupStack::Pop( messageManager );
 	            // Create Phone Tsy (which creates the whole Common TSY)
-TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - Starting to open CommonTSY");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_7, "TSY: CMmPhoneFactoryTsy::NewL - Starting to open CommonTSY");
 	            iPhoneTsy = CMmPhoneTsy::NewL( 
 	                messageManager, this, iLtsyFactory );
 
 	            if ( iPhoneTsy )
 	                {
-TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewL - CommonTSY successfully opened");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWPHONEL_8, "TSY: CMmPhoneFactoryTsy::NewL - CommonTSY successfully opened");
 	                messageManager->SetPhoneTsy( iPhoneTsy );
 	                }
                 }
@@ -287,7 +293,7 @@ CTsySatMessagingBase* CMmPhoneFactoryTsy::NewSimAtk( const TDesC& aName )
     
     if ( KErrNone == aName.CompareF( KSatToolkit ) )
         {
-TFLOGSTRING("TSY: CMmPhoneFactoryTsy::NewSimAtk - Starting to open SimAtkTSY");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_NEWSIMATK_1, "TSY: CMmPhoneFactoryTsy::NewSimAtk - Starting to open SimAtkTSY");
 
         if( iLtsyFactory )
             {
@@ -329,7 +335,7 @@ extern "C"
 //
 EXPORT_C CPhoneFactoryBase* LibEntry()
     {
-TFLOGSTRING("TSY: CPhoneFactoryBase::LibEntry()...");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LIBENTRY_1, "TSY: CPhoneFactoryBase::LibEntry()...");
     // return NULL if instantiation fails
     CMmPhoneFactoryTsy* factory(NULL);
     TRAP_IGNORE(factory = CMmPhoneFactoryTsy::NewL()); 
@@ -363,7 +369,7 @@ MLtsyFactoryBase* CMmPhoneFactoryTsy::LoadLibraryL()
 		uid3_int = KLicenseeTsyUID3;
 		}
 	
-	TFLOGSTRING3("TSY: CMmPhoneFactoryTsy::LoadLibraryL - Loading Dll=%S, UID3=0x%x", &dllname, uid3_int);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_LOADLIBRARYL_1, "TSY: CMmPhoneFactoryTsy::LoadLibraryL - Loading Dll=%S, UID3=0x%8X", dllname, (TUint)uid3_int);
 	
 	TUidType uid(KNullUid, KNullUid, TUid::Uid(uid3_int));
 	

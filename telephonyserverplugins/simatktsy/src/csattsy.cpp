@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "csattsyTraces.h"
+#endif
+
 #include <etelsat.h>                // Etel SAT API
 #include <satcs.h>                  // Etel SAT API
 //#include "CMmPhoneTsy.h"			// Phone Tsy class
@@ -42,7 +48,6 @@
 #include "CSatDataDownloadTsy.h"    // SatDataDownload class
 
 #include "msattsy_ipcdefs.h"		// Sat Tsy specific request types
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"		    // Sat Tsy Utility class
 #include "TTlv.h"					// TTlv class
 #include "CSatTsyReqHandleStore.h"  // Request handle storage
@@ -60,7 +65,7 @@ CSatTsy* CSatTsy::NewL
 		MCtsySatService& aSatService
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_NEWL_1, "CSAT: CSatTsy::NewL");
 
 	// Create subsession
     CSatTsy* subsession = new ( ELeave ) CSatTsy( aMmMessageRouter, aSatService );
@@ -69,7 +74,7 @@ CSatTsy* CSatTsy::NewL
     subsession->ConstructL();
     CleanupStack::Pop();
 
-	TFLOGSTRING("CSAT: CSatTsy::NewL, end of method");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_NEWL_2, "CSAT: CSatTsy::NewL, end of method");
     return subsession;
     }
 
@@ -83,7 +88,7 @@ CSatTsy::~CSatTsy
 		// None
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::~CSatTsy");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_DTOR_1, "CSAT: CSatTsy::~CSatTsy");
 
     // Unregister.
     iMessageManager->RegisterTsyObject(
@@ -99,7 +104,7 @@ CSatTsy::~CSatTsy
     delete iMessageManager;
     // Request handle store
     delete iSatReqHandleStore;
-    TFLOGSTRING("CSAT: CSatTsy::~CSatTsy, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_DTOR_2, "CSAT: CSatTsy::~CSatTsy, end of method");
     }
 
 // -----------------------------------------------------------------------------
@@ -127,7 +132,7 @@ void CSatTsy::ConstructL
 		( 
         )
     { 
-    TFLOGSTRING("CSAT: CSatTsy::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_CONSTRUCTL_1, "CSAT: CSatTsy::ConstructL");
     
     // Set pointer to the message router 
     iMessageManager = CMmMessageManagerBase::NewL(iMessageRouter);
@@ -182,7 +187,7 @@ void CSatTsy::ConstructL
 	// Get SMS Point to Point Data Download support status
     iMessageManager->HandleRequestL( ESatTsySmsPpDdlStatus );
 	
-	TFLOGSTRING("CSAT: CSatTsy::ConstructL, end of method");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_CONSTRUCTL_2, "CSAT: CSatTsy::ConstructL, end of method");
     }
     
 // -----------------------------------------------------------------------------
@@ -197,8 +202,7 @@ TInt CSatTsy::ExtFunc
 		const TDataPackage& aPackage        
 		)
     {
-    TFLOGSTRING3("CSAT: CSatTsy::ExtFunc ReqHandle=%d IPC=%d", aTsyReqHandle, 
-        aIpc);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_EXTFUNC_1, "CSAT: CSatTsy::ExtFunc ReqHandle=0x%08x IPC=%d", (TUint)aTsyReqHandle, aIpc);
 	TInt ret( KErrNone );
 
     // Some SAT functions need trapping so we use two level function where 
@@ -215,12 +219,12 @@ TInt CSatTsy::ExtFunc
 
     if ( KErrNone != trapError )
         {
-        TFLOGSTRING2("CSAT: CSatTsy::ExtFunc, trapError: %d", trapError );
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_EXTFUNC_2, "CSAT: CSatTsy::ExtFunc, trapError: %d", trapError );
         ReqCompleted( aTsyReqHandle, trapError );
         }
 	else if ( KErrNone != ret )
         {
-        TFLOGSTRING2("CSAT: CSatTsy::ExtFunc, ret: %d", ret);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_EXTFUNC_3, "CSAT: CSatTsy::ExtFunc, ret: %d", ret);
         ReqCompleted( aTsyReqHandle, ret );
         }
     else										
@@ -243,8 +247,7 @@ void CSatTsy::SaveReqHandle
         const TSatRequestTypes aSatRequestType
 		)
     {
-    TFLOGSTRING3("CSAT: CSatTsy::SaveReqHandle ReqHandle=%d ReqHandleType=%d", 
-        aTsyReqHandle, aSatRequestType);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SAVEREQHANDLE_1, "CSAT: CSatTsy::SaveReqHandle ReqHandle=0x%08x ReqHandleType=%d", (TUint)aTsyReqHandle, aSatRequestType);
     
     // Don't save the request handle if the type is unknown.
     if ( ESatReqHandleUnknown != aSatRequestType )
@@ -265,7 +268,7 @@ CTelObject::TReqMode CSatTsy::ReqModeL
 		const TInt aIpc    
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::ReqModeL.");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_REQMODEL_1, "CSAT: CSatTsy::ReqModeL.");
     CTelObject::TReqMode ret = 0;
 
     switch ( aIpc )
@@ -319,7 +322,7 @@ CTelObject::TReqMode CSatTsy::ReqModeL
             }
         default:
             {
-            TFLOGSTRING2("CSAT: CSatTsy::ReqModeL unsupported IPC %d", aIpc);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_REQMODEL_2, "CSAT: CSatTsy::ReqModeL unsupported IPC %d", aIpc);
             User::Leave( KErrNotSupported );
             break;
             }
@@ -338,8 +341,7 @@ TInt CSatTsy::CancelService
 		const TTsyReqHandle aTsyReqHandle   
 		)
     {
-    TFLOGSTRING3("CSAT: CSatTsy::CancelService ReqHandle=%d IPC=%d", 
-        aTsyReqHandle, aIpc);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_CANCELSERVICE_1, "CSAT: CSatTsy::CancelService ReqHandle=0x%08x IPC=%d", (TUint)aTsyReqHandle, aIpc);
     TInt ret( KErrNotSupported );
 
 	// When the clients close their sub-sessions (eg. by calling RLine::Close), 
@@ -408,7 +410,7 @@ TInt CSatTsy::CancelService
 
         default:
             {
-            TFLOGSTRING2("CSAT: CSatTsy::CancelService invalid IPC %d", aIpc);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_CANCELSERVICE_2, "CSAT: CSatTsy::CancelService invalid IPC %d", aIpc);
             ret = KErrGeneral; 
             break;           	
             }
@@ -430,7 +432,7 @@ TInt CSatTsy::RegisterNotification
 		const TInt aIpc    // IPC number of request
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::RegisterNotification.");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_REGISTERNOTIFICATION_1, "CSAT: CSatTsy::RegisterNotification.");
     // Initialize return value
     TInt ret( KErrNone );
 
@@ -470,8 +472,7 @@ TInt CSatTsy::RegisterNotification
         default:
             {
             // Unknown or invalid IPC
-            TFLOGSTRING2("CSAT: CSatTsy::RegisterNotification, \
-                Unsupported IPC %d", aIpc);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_REGISTERNOTIFICATION_2, "CSAT: CSatTsy::RegisterNotification, Unsupported IPC %d", aIpc);
             ret = KErrNotSupported;
             break;
             }
@@ -493,7 +494,7 @@ TInt CSatTsy::DeregisterNotification
 		const TInt aIpc    // IPC number of request
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::DeregisterNotification.");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_DEREGISTERNOTIFICATION_1, "CSAT: CSatTsy::DeregisterNotification.");
     // Initialize return value
     TInt ret( KErrNone );
 
@@ -533,8 +534,7 @@ TInt CSatTsy::DeregisterNotification
         default:
             {
             // Unknown or invalid IPC
-            TFLOGSTRING2("CSAT: CSatTsy::DeregisterNotification, \
-                Unsupported IPC %d", aIpc);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_DEREGISTERNOTIFICATION_2, "CSAT: CSatTsy::DeregisterNotification, Unsupported IPC %d", aIpc);
             ret = KErrNotSupported;
             break;            	
             }
@@ -555,7 +555,7 @@ TInt CSatTsy::NumberOfSlotsL
 		const TInt aIpc    // IPC number of request
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::NumberOfSlotsL.");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_NUMBEROFSLOTSL_1, "CSAT: CSatTsy::NumberOfSlotsL.");
     TInt numberOfSlots( 1 );
 
     switch ( aIpc )
@@ -670,8 +670,7 @@ TInt CSatTsy::NumberOfSlotsL
         default:
             {
             // Unknown or invalid IPC
-            TFLOGSTRING2("CSAT: CSatTsy::NumberOfSlotsL, Unsupported IPC %d", 
-                aIpc);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_NUMBEROFSLOTSL_2, "CSAT: CSatTsy::NumberOfSlotsL, Unsupported IPC %d", aIpc);
             User::Leave( KErrNotSupported );
             break;
             }
@@ -690,7 +689,7 @@ void CSatTsy::ReqCompleted
         TInt aRet 
         )
 	{
-	TFLOGSTRING2("CSAT: CSatTsy::ReqCompleted, ReqHandle=%d ", aReqHandle);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_REQCOMPLETED_1, "CSAT: CSatTsy::ReqCompleted, ReqHandle=%d ", aReqHandle);
 #ifdef USING_CTSY_DISPATCHER
 	CTelObject::ReqCompleted( aReqHandle, aRet );
 #else
@@ -708,7 +707,7 @@ void CSatTsy::StoreCallConnectedEvent
         const TDesC8& aEnvelope
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::StoreCallConnectedEvent");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_STORECALLCONNECTEDEVENT_1, "CSAT: CSatTsy::StoreCallConnectedEvent");
     iSatNotificationsTsy->SatNotifySetUpCall()->StoreCallConnectedEvent( 
         aEnvelope );
     }
@@ -723,7 +722,7 @@ void CSatTsy::SetSetUpCallStatus
         const TBool aStatus
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::SetSetUpCallStatus");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SETSETUPCALLSTATUS_1, "CSAT: CSatTsy::SetSetUpCallStatus");
     iSatEventDownloadTsy->SetSetUpCallStatus( aStatus );
     }
 
@@ -737,7 +736,7 @@ void CSatTsy::SetUpEventList
         TUint32 aEvents     // events to be monitored
         ) 
     {
-    TFLOGSTRING("CSAT: CSatTsy::SetUpEventList");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SETUPEVENTLIST_1, "CSAT: CSatTsy::SetUpEventList");
     iSatEventDownloadTsy->SetUpEventList( aEvents );
     }
 
@@ -751,7 +750,7 @@ CMmMessageManagerBase* CSatTsy::MessageManager
         // none
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::MessageManager");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_MESSAGEMANAGER_1, "CSAT: CSatTsy::MessageManager");
     return iMessageManager;
     }
 
@@ -765,7 +764,7 @@ CSatCCTsy* CSatTsy::SatCCTsy
         // none
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::SatCCTsy");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SATCCTSY_1, "CSAT: CSatTsy::SatCCTsy");
     return iSatCCTsy;
     }  
 
@@ -779,7 +778,7 @@ CSatTsyReqHandleStore* CSatTsy::GetSatReqHandleStore
 	    //none
 	    )
 	{
-    TFLOGSTRING("CSAT: CSatTsy::GetSatReqHandleStore");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_GETSATREQHANDLESTORE_1, "CSAT: CSatTsy::GetSatReqHandleStore");
 	return iSatReqHandleStore;
 	}
 
@@ -793,7 +792,7 @@ CSatTsy::TSatRequestTypes* CSatTsy::GetReqHandleType
 	    //none
 	    )
 	{
-    TFLOGSTRING("CSAT: CSatTsy::GetReqHandleType");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_GETREQHANDLETYPE_1, "CSAT: CSatTsy::GetReqHandleType");
 	return &iReqHandleType;
 	}
 
@@ -807,7 +806,7 @@ TInt CSatTsy::CompleteSendSmsMessage
         TInt aStatus 
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::CompleteSendSmsMessage");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_COMPLETESENDSMSMESSAGE_1, "CSAT: CSatTsy::CompleteSendSmsMessage");
     
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iSatNotificationsTsy->RequestHandleStore()->
@@ -832,7 +831,7 @@ TBool CSatTsy::IsMoSmControlBySimActivated
 		void
 		)
     {
-    TFLOGSTRING("CSAT: CSatTsy::IsMoSmControlBySimActivated");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_ISMOSMCONTROLBYSIMACTIVATED_1, "CSAT: CSatTsy::IsMoSmControlBySimActivated");
     return iSatNotificationsTsy->IsMoSmControlActivated();
     }
 
@@ -849,7 +848,7 @@ TBool CSatTsy::IsSimOriginatedCall
 			const TDesC8& aAddress
 			)
 	{
-	TFLOGSTRING("CSAT: CSatTsy::IsSimOriginatedCall");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_ISSIMORIGINATEDCALL_1, "CSAT: CSatTsy::IsSimOriginatedCall");
 	TBool ret = EFalse;
 	if (iSatCCTsy)
 		{
@@ -871,7 +870,7 @@ void CSatTsy::StoreProactiveAddress
         const TDesC8* aAddress 
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::StoreProactiveAddress");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_STOREPROACTIVEADDRESS_1, "CSAT: CSatTsy::StoreProactiveAddress");
     iSatCCTsy->StoreAddressForCC( *aAddress );
     }  
     
@@ -885,7 +884,7 @@ void CSatTsy::SetTonNpi
         const TUint8 aTonNpi 
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::SetTonNpi");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SETTONNPI_1, "CSAT: CSatTsy::SetTonNpi");
     iSatCCTsy->SetTonNpiForSS( aTonNpi );
     }  
     
@@ -901,8 +900,7 @@ TInt CSatTsy::DoExtFuncL
 		const TDataPackage& aPackage	
 		)
     {
-    TFLOGSTRING3("CSAT: CSatTsy::DoExtFuncL\t IPC:%d,\t Handle:%d",
-           aIpc, aTsyReqHandle);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_DOEXTFUNCL_1, "CSAT: CSatTsy::DoExtFuncL\t IPC:%d,\t Handle:%d",aIpc, aTsyReqHandle);
 	TInt ret( KErrNone );
 
 	// Add here ALL supported Sat request types, and call either the correct 
@@ -1000,7 +998,7 @@ TInt CSatTsy::DoExtFuncL
 		// Complete with KErrNotSupported, function not supported
 		default:
 			{
-			TFLOGSTRING2("CSAT: CSatTsy::DoExtFuncL unsupported IPC %d", aIpc);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_DOEXTFUNCL_2, "CSAT: CSatTsy::DoExtFuncL unsupported IPC %d", aIpc);
 			ReqCompleted( aTsyReqHandle, KErrNotSupported );
 			break;
 			}
@@ -1020,15 +1018,14 @@ TInt CSatTsy::MenuSelectionL
 		RSat::TMenuSelectionV1Pckg* aSelection	
 		) 
     {
-    TFLOGSTRING("CSAT: CSatTsy::MenuSelection");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_MENUSELECTIONL_1, "CSAT: CSatTsy::MenuSelection");
     TInt ret( KErrNone );
 
 	// It should not be possible that the request is asked more than once at 
 	// time, therefore we do not need to check whether it is already ongoing
 
 	RSat::TMenuSelectionV1& selectionV1 = ( *aSelection ) ();
-	TFLOGSTRING3("CSAT:MenuSelection, iItemId %x, Help: %c", 
-		selectionV1.iItemId, selectionV1.iHelp );
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_MENUSELECTIONL_2, "CSAT:MenuSelection, iItemId %x, Help: %c", selectionV1.iItemId, selectionV1.iHelp );
 
     TTlv tlvSpecificData;
     
@@ -1073,7 +1070,7 @@ TInt CSatTsy::SendMessageNoLogging
         TTsyReqHandle   aTsyReqHandle   
         )
     {
-    TFLOGSTRING("CSAT: CSatTsy::SendMessageNoLogging");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SENDMESSAGENOLOGGING_1, "CSAT: CSatTsy::SendMessageNoLogging");
     TInt ret( KErrNone );
 	
 	// Save the request handle
@@ -1185,23 +1182,21 @@ TInt CSatTsy::SendMessageNoLogging
         // Call SMS sending function from MMSMS
         ret = iSatService.SendSatMessage( *this, pdu, sca, &numberType, 
                 &numberPlan, EFalse, aTsyReqHandle );
-        TFLOGSTRING2("CSAT: CSatTsy::SendMessageNoLogging, \
-                SendSmsMessage done, ret: %x", ret);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SENDMESSAGENOLOGGING_2, "CSAT: CSatTsy::SendMessageNoLogging, SendSmsMessage done, ret: %x", ret);
        
        
         }
     else // SCA missing
         {
         ret = KErrGeneral;
-        TFLOGSTRING("CSAT: CSatTsy::SendMessageNoLogging, SCA missing");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SENDMESSAGENOLOGGING_3, "CSAT: CSatTsy::SendMessageNoLogging, SCA missing");
         }
 
     // Failure in sending of SAT SMS, call complete method
     if ( KErrNone != ret )
         {
         CompleteSendSmsMessage( ret ); 
-        TFLOGSTRING("CSAT: CSatTsy::SendMessageNoLogging, \
-            failure sending SAT SMS, complete");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSY_SENDMESSAGENOLOGGING_4, "CSAT: CSatTsy::SendMessageNoLogging, failure sending SAT SMS, complete");
         }
     
     return KErrNone;

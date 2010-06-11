@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,14 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "SmsuAddrTraces.h"
+#endif
+
 #include "smsumain.h"
 #include "smsuaddr.H"
-#include "smsstacklog.h"
 
 
 /**
@@ -42,7 +47,7 @@ EXPORT_C TSmsAddr::TSmsAddr()
  */
 EXPORT_C TSmsAddrFamily TSmsAddr::SmsAddrFamily() const
 	{
-	LOGSMSU1("TSmsAddr::SmsAddrFamily()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_SMSADDRFAMILY_1, "TSmsAddr::SmsAddrFamily()");
 
 	return static_cast<TSmsAddrFamily>(Family());
 	} // TSmsAddr::SmsAddrFamily
@@ -56,7 +61,7 @@ EXPORT_C TSmsAddrFamily TSmsAddr::SmsAddrFamily() const
  */
 EXPORT_C void TSmsAddr::SetSmsAddrFamily(TSmsAddrFamily aFamily)
 	{
-	LOGSMSU1("TSmsAddr::SetSmsAddrFamily()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_SETSMSADDRFAMILY_1, "TSmsAddr::SetSmsAddrFamily()");
 
 	SetFamily(static_cast<TUint>(aFamily));
 	} // TSmsAddr::SetSmsAddrFamily
@@ -70,7 +75,7 @@ EXPORT_C void TSmsAddr::SetSmsAddrFamily(TSmsAddrFamily aFamily)
  */
 EXPORT_C TInt TSmsAddr::IdentifierMatch() const
 	{
-	LOGSMSU1("TSmsAddr::IdentifierMatch()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_IDENTIFIERMATCH_1, "TSmsAddr::IdentifierMatch()");
 
 	__ASSERT_DEBUG(SmsAddrFamily()==ESmsAddrMatchIEI,SmsuPanic(ESmsuPanicWrongSmsAddressFamily));
 	return (TInt) Port();
@@ -85,7 +90,7 @@ EXPORT_C TInt TSmsAddr::IdentifierMatch() const
  */
 EXPORT_C void TSmsAddr::SetIdentifierMatch(TInt aIdentifier)
 	{
-	LOGSMSU1("TSmsAddr::SetIdentifierMatch()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_SETIDENTIFIERMATCH_1, "TSmsAddr::SetIdentifierMatch()");
 
 	__ASSERT_DEBUG(SmsAddrFamily()==ESmsAddrMatchIEI,SmsuPanic(ESmsuPanicWrongSmsAddressFamily));
 	SetPort((TUint) aIdentifier);
@@ -100,7 +105,7 @@ EXPORT_C void TSmsAddr::SetIdentifierMatch(TInt aIdentifier)
  */
 EXPORT_C TPtrC8 TSmsAddr::TextMatch() const
 	{
-	LOGSMSU1("TSmsAddr::TextMatch()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_TEXTMATCH_1, "TSmsAddr::TextMatch()");
 
 	__ASSERT_DEBUG(SmsAddrFamily()==ESmsAddrMatchText,SmsuPanic(ESmsuPanicWrongSmsAddressFamily));
 	return TPtrC8(UserPtr(),const_cast<TSmsAddr*>(this)->GetUserLen());
@@ -115,7 +120,7 @@ EXPORT_C TPtrC8 TSmsAddr::TextMatch() const
  */
 EXPORT_C void TSmsAddr::SetTextMatch(const TDesC8& aText)
 	{
-	LOGSMSU1("TSmsAddr::SetTextMatch()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_SETTEXTMATCH_1, "TSmsAddr::SetTextMatch()");
 
 	__ASSERT_DEBUG(SmsAddrFamily()==ESmsAddrMatchText,SmsuPanic(ESmsuPanicWrongSmsAddressFamily));
 	TUint8* target = UserPtr();
@@ -134,7 +139,7 @@ EXPORT_C void TSmsAddr::SetTextMatch(const TDesC8& aText)
  */
 EXPORT_C TBool TSmsAddr::operator==(const TSmsAddr& aAddr) const
 	{
-	LOGSMSU1("TSmsAddr::operator=()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSADDR_OPERATOR_1, "TSmsAddr::operator=()");
 
 	TSmsAddrFamily family=aAddr.SmsAddrFamily();
 	TBool same=(SmsAddrFamily()==family);

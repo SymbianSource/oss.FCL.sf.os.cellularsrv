@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,11 +22,15 @@
  @internalComponent
 */
 
-#include <ctsy/ltsy/ltsylogger.h>
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ltsyloggerTraces.h"
+#endif
 
-#ifdef _DEBUG
-#include <e32debug.h>
-#include <comms-infras/commsdebugutility.h>
+#include <ctsy/ltsy/ltsylogger.h>
+//#include <e32debug.h>
+
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 
 const TInt KLineLength = 255;
 
@@ -36,7 +40,7 @@ Constructor: log the function name entry
 */
 	:iFnName(aFnName), iLayer(aLayer), iErr(KErrNone)
 	{
-	RFileLogger::WriteFormat(KTsySubSystem, iLayer, _L8(">>%S"), &iFnName);
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT_1, "%s", iFnName);
 	};
 
 EXPORT_C TLogEntryExit::TLogEntryExit(const TDesC8& aFnName, const TDesC8& aLayer, TRefByValue<const TDesC8> aFmt, ...)
@@ -52,7 +56,9 @@ Write the function name entry plus plus 8 bits formated list
 	line.Append(iFnName);
 	line.Append(' ');
 	line.Append(aFmt);
-	RFileLogger::WriteFormat(KTsySubSystem, iLayer, line, list);
+	TBuf8<KLineLength> evaluatedLine;
+	evaluatedLine.FormatList(line,list);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT1_1, "%s", evaluatedLine);
 	};
 
 EXPORT_C TLogEntryExit::TLogEntryExit(const TDesC8& aFnName, const TDesC8& aLayer, TRefByValue<const TDesC16> aFmt, ...)
@@ -69,7 +75,9 @@ Write the function name entry plus 16 bits formated list
 	line.Insert(0,_L(">>"));
 	line.Append(' ');
 	line.Append(aFmt);
-	RFileLogger::WriteFormat(KTsySubSystem, iLayer, line, list);
+	TBuf<KLineLength> evaluatedLine;
+	evaluatedLine.FormatList(line,list);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT2_1, "%S", evaluatedLine);
 	};
 			
 EXPORT_C TLogEntryExit::~TLogEntryExit()
@@ -79,11 +87,11 @@ Write the function name exit
 	{
 	if (iErr == KErrNone)
 		{
-		RFileLogger::WriteFormat(KTsySubSystem, iLayer, _L8("<<%S"), &iFnName);
+        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT_DTOR_1, "%s",iFnName);
 		}
 	else
 		{
-		RFileLogger::WriteFormat(KTsySubSystem, iLayer, _L8("<<%S [err=%d]"), &iFnName, iErr);
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT_DTOR_2, "%s [err=%d]",iFnName, iErr);
 		}
 	};
 
@@ -95,4 +103,4 @@ EXPORT_C TLogEntryExit::TLogEntryExit(const TDesC8& /*aFnName*/, const TDesC8& /
 EXPORT_C TLogEntryExit::TLogEntryExit(const TDesC8& /*aFnName*/, const TDesC8& /*aLayer*/, TRefByValue<const TDesC16> /*aFmt*/, ...){};
 EXPORT_C TLogEntryExit::~TLogEntryExit() {};
 
-#endif // #ifdef _DEBUG
+#endif // #ifdef OST_TRACE_COMPILER_IN_USE

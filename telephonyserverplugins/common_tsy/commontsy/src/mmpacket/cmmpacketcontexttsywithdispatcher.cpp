@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,6 +22,11 @@
 
 // INCLUDE FILES
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CmmpacketcontexttsywithdispatcherTraces.h"
+#endif
+
 #include "cmmpacketservicegsmwcdmaext.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -35,7 +40,7 @@
 TInt CMmPacketContextTsy::RemovePacketFilter(
         TInt *aID )    
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::RemovePacketFilter. RemovedFilter:%d", *aID );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REMOVEPACKETFILTER1_1,  "TSY: CMmPacketContextTsy::RemovePacketFilter. RemovedFilter:%d", *aID );
 
     // id must be value from 1 to 8
     if ( 0 < *aID && 8 >= *aID )

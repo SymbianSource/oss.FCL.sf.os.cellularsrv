@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CmmpacketqostsyTraces.h"
+#endif
+
 #include "Cmmpacketservicetsy.h"
 #include "Cmmpacketqostsy.h"
 #include "Cmmpacketcontexttsy.h"
@@ -36,7 +42,7 @@ CMmPacketQoSTsy* CMmPacketQoSTsy::NewL(
         CMmPacketServiceTsy* aMmPacketService,
         CMmPacketContextTsy* aMmPacketContext ) 
     {
-TFLOGSTRING("TSY: CMmPacketQoSTsy::NewL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_NEWL_1, "TSY: CMmPacketQoSTsy::NewL." );
 
     CMmPacketQoSTsy* mmPacketQoS = new ( ELeave ) CMmPacketQoSTsy();
     CleanupClosePushL( *mmPacketQoS );
@@ -70,7 +76,7 @@ void CMmPacketQoSTsy::ConstructL()
 
 CMmPacketQoSTsy::~CMmPacketQoSTsy()
     {
-TFLOGSTRING("TSY: CMmPacketQoSTsy::~CMmPacketQoSTsy." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DTOR_1, "TSY: CMmPacketQoSTsy::~CMmPacketQoSTsy." );
     if( iMmPacketContext )
 	    {
 	    iMmPacketContext->RemoveQoS();	
@@ -118,7 +124,7 @@ TInt CMmPacketQoSTsy::ExtFunc(
         const TInt aIpc,     
         const TDataPackage& aPackage )      
     {
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_EXTFUNC_1, "TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %d", aIpc );
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
 
@@ -168,7 +174,7 @@ TInt CMmPacketQoSTsy::DoExtFuncL(
         const TInt aIpc,        
         const TDataPackage& aPackage )  
     {
-TFLOGSTRING3("TSY: CMmPacketQoSTsy::DoExtFuncL. IPC: %d  Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DOEXTFUNCL_1, "TSY: CMmPacketQoSTsy::DoExtFuncL. IPC: %d  Handle:%u", aIpc, (TUint)aTsyReqHandle);
     TInt ret( KErrNotSupported );
 
     switch ( aIpc )
@@ -201,7 +207,7 @@ TFLOGSTRING3("TSY: CMmPacketQoSTsy::DoExtFuncL. IPC: %d  Handle:%d", aIpc, aTsyR
 CTelObject::TReqMode CMmPacketQoSTsy::ReqModeL(    
         const TInt aIpc ) 
     {
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::ReqModeL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQMODEL_1, "TSY: CMmPacketQoSTsy::ReqModeL. IPC: %d", aIpc );
     CTelObject::TReqMode reqMode( 0 );
 
     switch ( aIpc )
@@ -235,7 +241,7 @@ TInt CMmPacketQoSTsy::NumberOfSlotsL(
         const TInt aIpc ) 
     {
 
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::NumberOfSlotsL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_NUMBEROFSLOTSL_1, "TSY: CMmPacketQoSTsy::NumberOfSlotsL. IPC: %d", aIpc );
 
     TInt numberOfSlots( 0 );
 
@@ -263,7 +269,7 @@ TInt CMmPacketQoSTsy::CancelService(
         const TInt aIpc,   
         const TTsyReqHandle aTsyReqHandle ) 
     {
-TFLOGSTRING3("TSY: CMmPacketQoSTsy::CancelService. IPC: %d  Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_CANCELSERVICE_1, "TSY: CMmPacketQoSTsy::CancelService. IPC: %d  Handle:%u", aIpc, (TUint)aTsyReqHandle);
      TInt ret( KErrNone );
 
      switch ( aIpc )
@@ -301,7 +307,7 @@ TFLOGSTRING3("TSY: CMmPacketQoSTsy::CancelService. IPC: %d  Handle:%d", aIpc, aT
 TInt CMmPacketQoSTsy::RegisterNotification(    
         const TInt aIpc ) 
     {
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::RegisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REGISTERNOTIFICATION_1, "TSY: CMmPacketQoSTsy::RegisterNotification. IPC: %d", aIpc );
 
     if ( EPacketQoSNotifyProfileChanged == aIpc )
         {
@@ -321,7 +327,7 @@ TFLOGSTRING2("TSY: CMmPacketQoSTsy::RegisterNotification. IPC: %d", aIpc );
 TInt CMmPacketQoSTsy::DeregisterNotification(
         const TInt aIpc )    
     {
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::DeregisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DEREGISTERNOTIFICATION_1, "TSY: CMmPacketQoSTsy::DeregisterNotification. IPC: %d", aIpc );
 
     if ( EPacketQoSNotifyProfileChanged == aIpc )
         {
@@ -341,7 +347,7 @@ TFLOGSTRING2("TSY: CMmPacketQoSTsy::DeregisterNotification. IPC: %d", aIpc );
 CTelObject* CMmPacketQoSTsy::OpenNewObjectL(    
         TDes& /* aNewName*/ ) 
     {
-TFLOGSTRING("TSY: CMmPacketQoSTsy::OpenNewObjectL. Leaves with:KErrNotSupported" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_OPENNEWOBJECTL_1, "TSY: CMmPacketQoSTsy::OpenNewObjectL. Leaves with:KErrNotSupported" );
     User::Leave( KErrNotSupported );
     return NULL;
     }
@@ -358,7 +364,7 @@ TFLOGSTRING("TSY: CMmPacketQoSTsy::OpenNewObjectL. Leaves with:KErrNotSupported"
 CTelObject* CMmPacketQoSTsy::OpenNewObjectByNameL(    
         const TDesC& /* aName */ )  
     {
-TFLOGSTRING("TSY: CMmPacketQoSTsy::OpenNewObjectByNameL. Leaves with:KErrNotSupported" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_OPENNEWOBJECTBYNAMEL_1, "TSY: CMmPacketQoSTsy::OpenNewObjectByNameL. Leaves with:KErrNotSupported" );
     // Otherwise we can leave...
     User::Leave( KErrNotSupported );
     return NULL;
@@ -388,7 +394,7 @@ TInt CMmPacketQoSTsy::GetProfileCapabilities(
         const TTsyReqHandle aTsyReqHandle,   
         TDes8* aProfileCaps )   
     {
-TFLOGSTRING3("TSY: CMmPacketQoSTsy::GetProfileCapabilities. TsyReqHandle: %d  aProfileCaps: %d", aTsyReqHandle, aProfileCaps );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_GETPROFILECAPABILITIES_1, "TSY: CMmPacketQoSTsy::GetProfileCapabilities. TsyReqHandle: %u  aProfileCaps: 0x%08x", (TUint)aTsyReqHandle, (TUint)aProfileCaps);
      
     // Call GetProfileCapabilities from GSM/WCDMA extension
     TInt ret = iMmPacketQoSGsmWcdmaExt->GetProfileCapabilities( 
@@ -409,7 +415,7 @@ TInt CMmPacketQoSTsy::GetProfileParameters(
         const TTsyReqHandle aTsyReqHandle,
         TDes8* aProfile )      
     {
-TFLOGSTRING3("TSY: CMmPacketQoSTsy::GetProfileParameters. TsyReqHandle: %d   aProfile: %d", aTsyReqHandle, aProfile );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_GETPROFILEPARAMETERS_1, "TSY: CMmPacketQoSTsy::GetProfileParameters. TsyReqHandle: %u  aProfile: 0x%08x", (TUint)aTsyReqHandle, (TUint)aProfile );
   
     // Call GetProfileParameters method from GSM/WCDMA extension
     TInt ret = iMmPacketQoSGsmWcdmaExt->GetProfileParameters( aProfile );
@@ -430,7 +436,7 @@ TFLOGSTRING3("TSY: CMmPacketQoSTsy::GetProfileParameters. TsyReqHandle: %d   aPr
 TInt CMmPacketQoSTsy::NotifyProfileChanged(
         TDes8* aProfile )  
     {
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::NotifyProfileChanged. aProfile: %d", aProfile );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_NOTIFYPROFILECHANGED_1, "TSY: CMmPacketQoSTsy::NotifyProfileChanged. aProfile: 0x%08x", (TUint)aProfile);
 
     // Set Req Handle
     iReqHandleType = EMultimodePacketQoSNotifyParameterChanged;
@@ -448,7 +454,7 @@ TFLOGSTRING2("TSY: CMmPacketQoSTsy::NotifyProfileChanged. aProfile: %d", aProfil
 
 void CMmPacketQoSTsy::CompleteNotifyProfileChanged()
     {
-TFLOGSTRING("TSY: CMmPacketQoSTsy::CompleteNotifyProfileChanged." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_COMPLETENOTIFYPROFILECHANGED_1, "TSY: CMmPacketQoSTsy::CompleteNotifyProfileChanged." );
    
     // Reset tsy request handle. 
     TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -472,7 +478,7 @@ TInt CMmPacketQoSTsy::SetProfileParametersL(
         const TTsyReqHandle aTsyReqHandle, 
         TDes8* aProfile )                
     {
-TFLOGSTRING3("TSY: CMmPacketQoSTsy::SetProfileParametersL. TsyReqHandle: %d  aProfile: %d", aTsyReqHandle, &aProfile );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_SETPROFILEPARAMETERSL_1, "TSY: CMmPacketQoSTsy::SetProfileParametersL. TsyReqHandle: %u  aProfile: 0x%08x", (TUint)aTsyReqHandle, (TUint)aProfile );
 
     // Call SetProfileParametersL from GSM/WCDMA extension
     TInt ret = iMmPacketQoSGsmWcdmaExt->SetProfileParametersL( aProfile );
@@ -512,7 +518,7 @@ TFLOGSTRING3("TSY: CMmPacketQoSTsy::SetProfileParametersL. TsyReqHandle: %d  aPr
 void CMmPacketQoSTsy::CompleteSetProfileParameters(
         const TInt aError )     
     {
-TFLOGSTRING2("TSY: CMmPacketQoSTsy::CompleteSetProfileParameters. Error: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_COMPLETESETPROFILEPARAMETERS_1, "TSY: CMmPacketQoSTsy::CompleteSetProfileParameters. Error: %d", aError );
 
     // Reset the request handle. 
     TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -603,7 +609,7 @@ void CMmPacketQoSTsy::ReqCompleted(
         const TInt aError )     
        
     {
-TFLOGSTRING3("TSY: CMmPacketQoSTsy::Request Completed.  Handle: %d Error:%d", aTsyReqHandle, aError ); 
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQCOMPLETED_1, "TSY: CMmPacketQoSTsy::Request Completed.  Handle: %d Error:%d", aTsyReqHandle, aError );
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );  
     }

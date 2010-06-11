@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,15 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimSerCommTraces.h"
+#endif
+
 #include "CSimSerComm.h"
 #include "CSimPhone.h"
-#include "Simlog.h"
 
 MComm::MComm()
 /**
@@ -112,7 +118,7 @@ TInt MComm::CommOpen(const TDesC& aName, TCommAccess aMode)
  * @return TInt		Standard error value.
  */
 	{
-	LOGDATA1("Attempting to Open Serial Port");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, MCOMM_COMMOPEN1_1, "Attempting to Open Serial Port");
 	TInt err;
 	if (err = iCommServer.Connect(), err!=KErrNone)
 		return err;
@@ -132,7 +138,7 @@ TInt MComm::CommOpen(const TDesC& aName, TCommAccess aMode)
 			return err;
 			}
 		}
-	LOGDATA1("Sucessfully Opened Serial Port");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, MCOMM_COMMOPEN1_2, "Sucessfully Opened Serial Port");
 	return KErrNone;
 	}
 

@@ -757,7 +757,7 @@ void CSpudNetSideTestBase::StartSecondaryL()
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"),_L("SecondaryActivationEvent2Reason"));
 #else
-	User::After(KTimeToStartSecondary);
+	User::After(KTimeToStartSecondary*4);
 	VerifySubconnectionCountL(_L("SubConnectionCount2"), iap);
 #endif
 	}
@@ -1145,7 +1145,7 @@ enum TVerdict CSpudPrimaryEvent::RunTestStepL()
 		}
 	
 	StartPrimaryOnlyL();	
-	
+	User::After(KTimeToStartSecondary);
 
 	TRequestStatus progressReqSt;	
 	iInterface.ProgressNotification(iProgressBuf, progressReqSt, static_cast<TUint>(expProgress));
@@ -1961,9 +1961,18 @@ TBool CSpudNetSideTestBase::SpudDeletePrimaryPdpL()
 	// start a secondary context with QoS parameters connected to the same address as above
 	// it will use the iSocket member variable to connect to the address
 	
+
+	TInt defaultIapID = 2;
+	//the default IapID is usually defined in commsdb with value of 2.
+	//this allows us to change the default IapID, as in R4_and_R5 test the default ID is 11.
+	if(!GetIntFromConfig(ConfigSection(), _L("DefaultIapId"), defaultIapID))
+        	{
+	        defaultIapID = PDPIAP;
+        	}
+
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	User::After(10*KTimeToStartSecondary);
-	VerifySubconnectionCountL(_L("SubConnectionCount1"), PDPIAP);
+	VerifySubconnectionCountL(_L("SubConnectionCount1"), defaultIapID);
 #endif
 	InitiateSecondaryStartL();
 	
@@ -1976,7 +1985,7 @@ TBool CSpudNetSideTestBase::SpudDeletePrimaryPdpL()
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));
 #else
 	User::After(KTimeToStartSecondary);
-	VerifySubconnectionCountL(_L("SubConnectionCount2"), PDPIAP);
+	VerifySubconnectionCountL(_L("SubConnectionCount2"), defaultIapID);
 #endif
 	
 	RSocket oppositeSecondarySocket;

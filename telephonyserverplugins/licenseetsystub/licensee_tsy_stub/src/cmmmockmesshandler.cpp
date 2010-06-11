@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,10 +12,15 @@
 //
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmmockmesshandlerTraces.h"
+#endif
+
 #include "cmmmockmesshandler.h"
 #include "cmmmessagerouter.h"
 #include "cmmcustomstubext.h"
-#include "tflogger.h"
 #include <pcktcs.h>
 #include <ctsy/rmmcustomapi.h>
 
@@ -36,7 +41,7 @@ void CMmMockMessHandler::ConstructL( CMmMessageRouter* aMessageRouter )
     if ( !iTimer )
         {
         iTimer = CPeriodic::NewL( CActive::EPriorityStandard );
- TFLOGSTRING("TSY: CMmMockMessHandler::ConstructL: timer created" );
+ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_CONSTRUCTL_1, "TSY: CMmMockMessHandler::ConstructL: timer created" );
         }
     }
 
@@ -66,7 +71,7 @@ TInt CMmMockMessHandler::ExtFuncL(
     TInt aIpc, 
     const CMmDataPackage* /*aDataPackage*/)
     {
-TFLOGSTRING2("TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_EXTFUNCL_1, "TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
     
     // callback indicators
     TInt ret( KErrNotSupported );
@@ -322,7 +327,7 @@ TFLOGSTRING2("TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
 //
 void CMmMockMessHandler::GetHomeNetwork()
     {
-TFLOGSTRING("TSY: CMmMockMessHandler::GetHomeNetwork."); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_GETHOMENETWORK_1, "TSY: CMmMockMessHandler::GetHomeNetwork.");
     
     iMyNetworkInfo.iMode = RMobilePhone::ENetworkModeGsm,
     iMyNetworkInfo.iStatus = RMobilePhone::ENetworkStatusCurrent,
@@ -351,7 +356,7 @@ TFLOGSTRING("TSY: CMmMockMessHandler::GetHomeNetwork.");
 //
 void CMmMockMessHandler::GetHomeNetworkInfo()
     {
-TFLOGSTRING("TSY: CMmMockMessHandler::GetHomeNetworkInfo.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_GETHOMENETWORKINFO_1, "TSY: CMmMockMessHandler::GetHomeNetworkInfo.");
     // call for completion 
     TRAP_IGNORE( ExtFuncL( EMobilePhoneGetHomeNetwork, NULL ); );
     }
@@ -364,7 +369,7 @@ TFLOGSTRING("TSY: CMmMockMessHandler::GetHomeNetworkInfo.");
 //
 TInt CMmMockMessHandler::TimerCallback( TAny* aThis )
     {
-TFLOGSTRING("TSY: CMmMockMessHandler::TimerCallback.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMERCALLBACK_1, "TSY: CMmMockMessHandler::TimerCallback.");
 
     // cancel the callback timer
     ( ( CMmMockMessHandler* )aThis )->iTimer->Cancel();
@@ -381,7 +386,7 @@ TFLOGSTRING("TSY: CMmMockMessHandler::TimerCallback.");
     data.PackData( &tmp );
     package = &data; 
     
-TFLOGSTRING2("TSY: CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetPhoneId  Phone Id : %d", phoneid );    
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMERCALLBACK_2, "TSY: CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetPhoneId  Phone Id : %s", phoneid );
     ( ( CMmMockMessHandler* ) aThis )->iMessageRouter->MessageManager()->
         Complete( EMobilePhoneGetPhoneId, package, KErrNone );    
     
@@ -392,7 +397,7 @@ TFLOGSTRING2("TSY: CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetPhoneId
     data.PackData( &temp );
     package = &data;
     
-TFLOGSTRING2("TSY:CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetSubscriberId  Dummy imsi : %d", imsi );    
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMERCALLBACK_3, "TSY:CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetSubscriberId  Dummy imsi : %s", imsi );
     ( ( CMmMockMessHandler* ) aThis )->iMessageRouter->MessageManager()->
         Complete( EMobilePhoneGetSubscriberId, package, KErrNone );
     

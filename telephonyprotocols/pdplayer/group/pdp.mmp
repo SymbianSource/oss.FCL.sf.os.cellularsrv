@@ -101,6 +101,7 @@ END
 USERINCLUDE    	../inc
 USERINCLUDE		../umts/spudtel/inc
 USERINCLUDE		../umts/spudfsm/inc
+USERINCLUDE    	../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 

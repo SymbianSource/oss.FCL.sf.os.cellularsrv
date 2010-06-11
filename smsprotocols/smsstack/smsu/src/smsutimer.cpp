@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smsutimerTraces.h"
+#endif
+
 #include "SmsuTimer.h"
 
 #include <e32std.h>
@@ -33,7 +39,7 @@
  */
 CSmsuTimeout* CSmsuTimeout::NewL(CSmsuActiveBase& aActive)
     {
-    LOGSMSU1("CSmsuTimeout::NewL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUTIMEOUT_NEWL_1, "CSmsuTimeout::NewL()");
     
     CSmsuTimeout* self = new(ELeave) CSmsuTimeout(aActive);
     CleanupStack::PushL(self);
@@ -56,7 +62,7 @@ CSmsuTimeout::~CSmsuTimeout()
  */
 void CSmsuTimeout::Start(const TTimeIntervalMicroSeconds32& aTimeIntervalMicroSeconds32)
 	{
-	LOGSMSU1("CSmsuTimeout::Start()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUTIMEOUT_START_1, "CSmsuTimeout::Start()");
 
 	iTimedOut = EFalse;
 	After(aTimeIntervalMicroSeconds32);
@@ -72,7 +78,7 @@ CSmsuTimeout::CSmsuTimeout(CSmsuActiveBase& aActive)
 	iTimedOut(EFalse),
 	iCompleteMyselfRequested(EFalse)
 	{
-	LOGSMSU1("CSmsuTimeout::CSmsuTimeout()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUTIMEOUT_CTOR_1, "CSmsuTimeout::CSmsuTimeout()");
 
 	CActiveScheduler::Add(this);
 	} // CSmsuTimeout::CSmsuTimeout
@@ -83,7 +89,7 @@ CSmsuTimeout::CSmsuTimeout(CSmsuActiveBase& aActive)
  */
 void CSmsuTimeout::RunL()
 	{
-	LOGSMSU2("CSmsuTimeout::RunL [iStatus=%d]", iStatus.Int() );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUTIMEOUT_RUNL_1, "CSmsuTimeout::RunL [iStatus=%d]", iStatus.Int() );
 	iTimedOut = ETrue;
 	iActive.Cancel();
 

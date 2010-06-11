@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,15 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimPhBkStoreTraces.h"
+#endif
+
 #include "CSimPhBkStore.h"
 #include "CSimPhone.h"
-#include "Simlog.h"
 #include <testconfigfileparser.h>
 
 const TUint16 KNpiTonInternational=145;		// < The Number Plan Identifier and Type of Number for an international telephone number.
@@ -74,7 +80,7 @@ void CSimPhBkStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots, TInt aMax
  * @param aMaxTextLen	The maximum length of an alpha tag.
  */
 	{
-	LOGPHBK1("Starting to parse Phonebook store additional config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CONSTRUCTL_1, "Starting to parse Phonebook store additional config parameters...");
 	__ASSERT_ALWAYS(aMaxNumLen<=KPhBkMaxTelNumSize,SimPanic(EPhonebookNameOrNumberTooLarge));
 	__ASSERT_ALWAYS(aMaxTextLen<=KPhBkMaxAlphaTagSize,SimPanic(EPhonebookNameOrNumberTooLarge));
 
@@ -100,7 +106,7 @@ void CSimPhBkStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots, TInt aMax
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,ipc);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ipc",ret,0,&KTriggerEventIPC);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element IPC returned %d (element no. %d) from tag %s.",ret,0,KTriggerEventIPC);
 			}
 		else
 			iTriggerEventIPC.iIPC=ipc;
@@ -108,7 +114,7 @@ void CSimPhBkStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots, TInt aMax
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,cnt);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("cnt",ret,1,&KTriggerEventIPC);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CNT returned %d (element no. %d) from tag %s.",ret,1,KTriggerEventIPC);
 			}
 		else
 			iTriggerEventIPC.iIPCCnt=cnt;
@@ -116,7 +122,7 @@ void CSimPhBkStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots, TInt aMax
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,event);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("event",ret,2,&KTriggerEventIPC);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element EVENT returned %d (element no. %d) from tag %s.",ret,2,KTriggerEventIPC);
 			}
 		else
 			iTriggerEventIPC.iEvent=RMobilePhone::TMobilePhoneSecurityEvent(event);
@@ -133,7 +139,7 @@ void CSimPhBkStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots, TInt aMax
 		if(ret0!=KErrNone)
 			{
 			iPhBkStoreCaps=KDefaultPhBkPhoneStoreCaps;
-			LOGPARSERR("value0",ret0,0,&KPhBkPhoneStoreCaps);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element VALUE0 returned %d (element no. %d) from tag %s.",ret0,0,KPhBkPhoneStoreCaps);
 			}	
 		else
 			{
@@ -149,7 +155,7 @@ void CSimPhBkStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots, TInt aMax
 		iPhBkStoreCaps=KDefaultPhBkPhoneStoreCaps;
 
 
-	LOGPHBK1("...Finished parsing Phonebook store additional config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CONSTRUCTL_6, "...Finished parsing Phonebook store additional config parameters...");
 	}
 
 void CSimPhBkStore::PopulateStoreFromConfigFileL()
@@ -162,7 +168,7 @@ void CSimPhBkStore::PopulateStoreFromConfigFileL()
  * "PhBkStoreEntry = <store name>, <slot number>, <telephone number>, <alphatag>"
  */
 	{
-	LOGPHBK1("Starting to read Phonebook store entries...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_1, "Starting to read Phonebook store entries...");
 	iPhBkIndividualPause=CfgFile()->ItemValue(KPhBkStoreIndividualReqPause,KDefaultPhBkStoreIndividualReqPause);
 	iPhBkBatchPause=CfgFile()->ItemValue(KPhBkStoreBatchReqPause,KDefaultPhBkStoreBatchReqPause);
 
@@ -183,7 +189,7 @@ void CSimPhBkStore::PopulateStoreFromConfigFileL()
 		ret=GetPhBkEntry(item,0,phonebookName,index,telNum,alphaTag,npiTon);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Phonebook Entry",ret,index,&KPhBkStoreEntry);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOK ENTRY returned %d (element no. %d) from tag %s.",ret,index,KPhBkStoreEntry);
 			continue;
 			}
 		if(phonebookName.MatchF(iPhBkStoreName)!=0)// Not this phonebook
@@ -209,25 +215,25 @@ void CSimPhBkStore::PopulateStoreFromConfigFileL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,count);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("count",ret,0,&KPhBkError);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element COUNT returned %d (element no. %d) from tag %s.",ret,0,KPhBkError);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,error);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("error",ret,1,&KPhBkError);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element ERROR returned %d (element no. %d) from tag %s.",ret,1,KPhBkError);
 			continue;
 			}	
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,phonebookName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("phonebookName",ret,2,&KPhBkError);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOKNAME returned %d (element no. %d) from tag %s.",ret,2,KPhBkError);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,phonebookStore);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("phonebookStore",ret,3,&KPhBkError);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOKSTORE returned %d (element no. %d) from tag %s.",ret,3,KPhBkError);
 			}
 		else  //not for the global phonebook
 			continue;
@@ -243,7 +249,7 @@ void CSimPhBkStore::PopulateStoreFromConfigFileL()
 		}
 	PopulateOOBWrite();
 	PopulateOOBDelete();
-	LOGPHBK1("...Finished reading Phonebook store entries...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATESTOREFROMCONFIGFILEL_7, "...Finished reading Phonebook store entries...");
 
 	if(iPhBkOOBWriteDuration!=-1)
 		iOOBWriteTimer->Start(iPhBkOOBWriteDuration,this,ETimerIdPhBkStorOOBWrite);
@@ -268,7 +274,7 @@ void CSimPhBkStore::PopulateOOBWrite()
 	TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,count);
 	if(ret!=KErrNone)
 		{
-		LOGPARSERR("count",ret,0,&KOOBPhBkWrite);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATEOOBWRITE_1, "WARNING - CONFIGURATION FILE PARSING - Reading element COUNT returned %d (element no. %d) from tag %s.",ret,0,KOOBPhBkWrite);
 		return;
 		}
 
@@ -278,7 +284,7 @@ void CSimPhBkStore::PopulateOOBWrite()
 	ret=GetPhBkEntry(item,1,phonebookName,index,telNum,alphaTag,npiTon);
 	if(ret!=KErrNone)
 		{
-		LOGPARSERR("npiTon",ret,index,&KOOBPhBkWrite);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATEOOBWRITE_2, "WARNING - CONFIGURATION FILE PARSING - Reading element NPITON returned %d (element no. %d) from tag %s.",ret,index,KOOBPhBkWrite);
 		return;
 		}
 	if(phonebookName.MatchF(iPhBkStoreName)!=0)
@@ -308,7 +314,7 @@ void CSimPhBkStore::PopulateOOBDelete()
 	TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,count);
 	if(ret!=KErrNone)
 		{
-		LOGPARSERR("count",ret,0,&KOOBPhBkDelete);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATEOOBDELETE_1, "WARNING - CONFIGURATION FILE PARSING - Reading element COUNT returned %d (element no. %d) from tag %s.",ret,0,KOOBPhBkDelete);
 		return;
 		}
 
@@ -316,7 +322,7 @@ void CSimPhBkStore::PopulateOOBDelete()
 	ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,phonebookName);
 	if(ret!=KErrNone)
 		{
-		LOGPARSERR("phonebookName",ret,1,&KOOBPhBkDelete);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATEOOBDELETE_2, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOKNAME returned %d (element no. %d) from tag %s.",ret,1,KOOBPhBkDelete);
 		return;
 		}
 	if(phonebookName.MatchF(iPhBkStoreName)!=0)
@@ -326,7 +332,7 @@ void CSimPhBkStore::PopulateOOBDelete()
 	ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,index);
 	if(ret!=KErrNone)
 		{
-		LOGPARSERR("index",ret,2,&KOOBPhBkDelete);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_POPULATEOOBDELETE_3, "WARNING - CONFIGURATION FILE PARSING - Reading element INDEX returned %d (element no. %d) from tag %s.",ret,2,KOOBPhBkDelete);
 		return;
 		}
 
@@ -979,10 +985,10 @@ TInt CSimPhBkStore::Write(TTsyReqHandle aReqHandle,TDes8* aPckg1,TDes8* aPckg2)
 		return KErrNone;
 		}
 
-	LOGPHBK2("alphaTag Length = (%d)",alphaTag.Length());
-	LOGPHBK2("Phonebook Max Text Length = (%d)",iPhBkMaxTextLen);
-	LOGPHBK2("TelNum Length = (%d)",telNum.Length());
-	LOGPHBK2("TelNum Max Length = (%d)",iPhBkMaxTelNumLen);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_WRITE_1, "alphaTag Length = (%d)",alphaTag.Length());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_WRITE_2, "Phonebook Max Text Length = (%d)",iPhBkMaxTextLen);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_WRITE_3, "TelNum Length = (%d)",telNum.Length());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_WRITE_4, "TelNum Max Length = (%d)",iPhBkMaxTelNumLen);
 
 	if(alphaTag.Length()>iPhBkMaxTextLen)
 		{
@@ -1290,6 +1296,6 @@ const CTestConfigSection* CSimPhBkStore::CfgFile()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	LOGPHBK1(">>CSimPhBkStore::CfgFile");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHBKSTORE_CFGFILE_1, ">>CSimPhBkStore::CfgFile");
 	return iPhone->CfgFile();
 	}

@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -45,6 +45,12 @@
  @internalComponent 
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspmondskTraces.h"
+#endif
+
 #include <barsc.h>
 #include <bautils.h>
 
@@ -68,7 +74,7 @@ _LIT(KSmsResourceFile, "sms\\smsu.rsc");
  */
 CSmsMonitorDiskSpace* CSmsMonitorDiskSpace::NewL(MSmsComm& aSmsComm, RMobileSmsMessaging& aSmsMessaging,RFs& aFs)
 	{
-	LOGSMSPROT1("CSmsMonitorDiskSpace::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_NEWL_1, "CSmsMonitorDiskSpace::NewL()");
 
 	CSmsMonitorDiskSpace*  self = new(ELeave) CSmsMonitorDiskSpace(aSmsComm, aSmsMessaging, aFs);
 	CleanupStack::PushL(self);
@@ -157,15 +163,12 @@ void CSmsMonitorDiskSpace::ConstructL()
 	//
 	// Log the filename in use and whether it is ROM based...
 	//
-#ifdef _SMS_LOGGING_ENABLED
-	TBuf8<KMaxFileName>  buf8;
-	buf8.Copy(fileName);
-	LOGSMSPROT2("CSmsMonitorDiskSpace::ConstructL(): fileName=\"%S\"", &buf8);
-#endif
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_CONSTRUCTL_1, "CSmsMonitorDiskSpace::ConstructL(): fileName=\"%S\"", fileName);
+
 
     if (iFs.IsFileInRom(fileName) == NULL)
     	{
-     	LOGSMSPROT1("CSmsMonitorDiskSpace::ConstructL(): Smsu.rsc not in ROM");
+     	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_CONSTRUCTL_2, "CSmsMonitorDiskSpace::ConstructL(): Smsu.rsc not in ROM");
      	}
 
 	//
@@ -199,14 +202,13 @@ void CSmsMonitorDiskSpace::ConstructL()
         TInt ret = iFreeDiskSpaceProperty.Attach(KUidPSSMSStackCategory, KUidPSSMSStackFreeDiskSpaceKey);
         if (ret != KErrNone)
             {
-            LOGSMSPROT2("iFreeDiskSpaceProperty.Attach(): error=%d", ret);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_CONSTRUCTL_3, "iFreeDiskSpaceProperty.Attach(): error=%d", ret);
             User::Leave(ret);
             }                        
         }   
 #endif        
     
-	LOGSMSPROT3("CSmsMonitorDiskSpace::ConstructL(): iLowLimit=%d, iHighLimit=%d",
-			    iLowLimit, iHighLimit);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_CONSTRUCTL_4, "CSmsMonitorDiskSpace::ConstructL(): iLowLimit=%u, iHighLimit=%u",iLowLimit, iHighLimit);
 	} // CSmsMonitorDiskSpace::ConstructL
 
 
@@ -215,8 +217,7 @@ void CSmsMonitorDiskSpace::ConstructL()
  */
 void CSmsMonitorDiskSpace::RunL()
 	{
-	LOGSMSPROT3("CSmsMonitorDiskSpace:RunL(): iStatus=%d, iState=%d",
-	            iStatus.Int(), iState );
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_RUNL_1, "CSmsMonitorDiskSpace:RunL(): iStatus=%d, iState=%d",iStatus.Int(), iState );
 
 	switch (iState)
 		{
@@ -300,7 +301,7 @@ void CSmsMonitorDiskSpace::RunL()
  */
 void CSmsMonitorDiskSpace::DoCancel()
 	{
-	LOGSMSPROT2("CSmsMonitorDiskSpace::DoCancel(): iState=%d", iState);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_DOCANCEL_1, "CSmsMonitorDiskSpace::DoCancel(): iState=%d", iState);
 
     switch (iState)
 		{
@@ -348,8 +349,7 @@ void CSmsMonitorDiskSpace::DoCancel()
  */
 void CSmsMonitorDiskSpace::CheckDiskSpaceForPDUL(TBool aPDUIsClass0)
 	{
-	LOGSMSPROT2("CSmsMonitorDiskSpace::CheckDiskSpaceForPDUL(): aPDUIsClass0=%d",
-				aPDUIsClass0);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_CHECKDISKSPACEFORPDUL_1, "CSmsMonitorDiskSpace::CheckDiskSpaceForPDUL(): aPDUIsClass0=%d",aPDUIsClass0);
 
 	//
 	// First check the actual disk space before working out what to do.
@@ -438,8 +438,7 @@ void CSmsMonitorDiskSpace::CheckDiskSpaceForPDUL(TBool aPDUIsClass0)
 void CSmsMonitorDiskSpace::NotifyDiskSpace(TInt aLimit,
 										   TSmsMonitorDiskSpaceState aState)
 	{
-	LOGSMSPROT3("CSmsMonitorDiskSpace::NotifyDiskSpace(): aLimit=%d, aState=%d",
-				aLimit, aState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_NOTIFYDISKSPACE_1, "CSmsMonitorDiskSpace::NotifyDiskSpace(): aLimit=%d, aState=%d",aLimit, aState);
 
 	//
 	// Cancel any previously outstanding requests...
@@ -513,7 +512,7 @@ void CSmsMonitorDiskSpace::NotifyDiskSpace(TInt aLimit,
  */
 void CSmsMonitorDiskSpace::ResumeSmsReception()
 	{
-	LOGSMSPROT1("CSmsMonitorDiskSpace::ResumeSmsReception");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_RESUMESMSRECEPTION_1, "CSmsMonitorDiskSpace::ResumeSmsReception");
 
 	//
 	// Cancel any previously outstanding requests...
@@ -569,7 +568,7 @@ TInt CSmsMonitorDiskSpace::GetFreeDiskSpace()
     
 	if (ret != KErrNone) 
 		{
-		LOGSMSPROT2("CSmsMonitorDiskSpace::GetFreeDiskSpace(): error=%d", ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_GETFREEDISKSPACE_1, "CSmsMonitorDiskSpace::GetFreeDiskSpace(): error=%d", ret);
 		return KErrGeneral;
 		}
 
@@ -587,7 +586,7 @@ TInt CSmsMonitorDiskSpace::GetFreeDiskSpace()
 		freeSpace = (TInt) volumeInfo.iFree;
 		}
 
-	LOGSMSPROT2("CSmsMonitorDiskSpace::GetFreeDiskSpace(): freeSpace=%d", freeSpace);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMONITORDISKSPACE_GETFREEDISKSPACE_2, "CSmsMonitorDiskSpace::GetFreeDiskSpace(): freeSpace=%d", freeSpace);
 
 	return freeSpace;
 	} // CSmsMonitorDiskSpace::GetFreeDiskSpace

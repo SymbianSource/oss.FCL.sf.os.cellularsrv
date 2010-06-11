@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,10 +19,16 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimPhoneSmartCardAppTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 #include <etelmmerr.h>
 #include "CSimPhone.h"
-#include "Simlog.h"
 
 //
 // CSimPhoneSmartCardApp
@@ -61,11 +67,11 @@ void CSimPhoneSmartCardApp::ConstructL()
 * @leave Leaves due to not enough memory or if any data member does not construct for any reason.
 */
 	{
-	LOGPHONE1("Starting to parse Phone Smart Card applications additional config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_CONSTRUCTL_1, "Starting to parse Phone Smart Card applications additional config parameters...");
 	ParseSmartCardApplicationInfoL();
 	ParseSmartCardFileInfoL();
 	MapUSimAppsL();
-	LOGPHONE1("Finished parsing Phone Smart Card applications additional config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_CONSTRUCTL_2, "Finished parsing Phone Smart Card applications additional config parameters...");
 	}
 
 
@@ -295,7 +301,7 @@ TInt CSimPhoneSmartCardApp::NumberOfSlotsL(const TInt aIpc)
 		numberOfSlots = KDefaultNumberOfSlots;
 		break;
 	default:
-		LOGPHONE1("CSimPhoneSmartCardApp: Number of Slots error, unknown IPC");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_NUMBEROFSLOTSL_1, "CSimPhoneSmartCardApp: Number of Slots error, unknown IPC");
 		User::Leave(KErrNotSupported);
 		break;
 		}
@@ -373,7 +379,7 @@ const CTestConfigSection* CSimPhoneSmartCardApp::CfgFile()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	LOGPHONE1(">>CSimPhoneSmartCardApp::CfgFile");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_CFGFILE_1, ">>CSimPhoneSmartCardApp::CfgFile");
 	return iPhone->CfgFile();
 	}
 
@@ -486,7 +492,7 @@ TInt CSimPhoneSmartCardApp::TCyclicSmartCardFile::ReadFile(
 	//check that the client has specified a valid start offset
 	else if(aFilePathOffsets.iStartOffset < 1 || aFilePathOffsets.iStartOffset > iNumberRecords)
 		{
-		LOGPHONE1("ERROR: File start offset information invalid.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TCYCLICSMARTCARDFILE_READFILE_1, "ERROR: File start offset information invalid.");
 		return KErrMMEtelScRecordNotFound;	
 		}
 		
@@ -585,7 +591,7 @@ TInt CSimPhoneSmartCardApp::TLinearSmartCardFile::ReadFile(
 	//check that the client has specified a valid start offset
 	else if(aFilePathOffsets.iStartOffset < 1 || aFilePathOffsets.iStartOffset > iNumberRecords)
 		{
-		LOGPHONE1("ERROR: File start offset information invalid.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TLINEARSMARTCARDFILE_READFILE_1, "ERROR: File start offset information invalid.");
 		return KErrMMEtelScRecordNotFound;	
 		}
 	else
@@ -626,7 +632,7 @@ TInt CSimPhoneSmartCardApp::TLinearSmartCardFile::UpdateFile(
 	//check that the client has specified a valid start offset
 	else if(aFilePathOffsets.iStartOffset < 1 || aFilePathOffsets.iStartOffset > iNumberRecords)
 		{
-		LOGPHONE1("ERROR: File start offset information invalid.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TLINEARSMARTCARDFILE_UPDATEFILE_1, "ERROR: File start offset information invalid.");
 		return KErrMMEtelScRecordNotFound;	
 		}
 	else
@@ -665,7 +671,7 @@ TInt CSimPhoneSmartCardApp::TTransparentSmartCardFile::ReadFile(
 	//check that the client has specified a valid start offset
 	else if(aFilePathOffsets.iStartOffset >= (TUint)iTotalLength)
 		{
-		LOGPHONE1("ERROR: File start offset information invalid.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TTRANSPARENTSMARTCARDFILE_READFILE_1, "ERROR: File start offset information invalid.");
 		return KErrMMEtelScReferencedDataNotFound;	
 		}
 	
@@ -673,7 +679,7 @@ TInt CSimPhoneSmartCardApp::TTransparentSmartCardFile::ReadFile(
 	//off the end of the file
 	else if((bytesToRead + filePointer) > iTotalLength)
 		{
-		LOGPHONE1("ERROR: Path offset information results in reading off the end of the file");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TTRANSPARENTSMARTCARDFILE_READFILE_2, "ERROR: Path offset information results in reading off the end of the file");
 		return KErrMMEtelScEofReached;
 		}
 	else
@@ -717,7 +723,7 @@ TInt CSimPhoneSmartCardApp::TTransparentSmartCardFile::UpdateFile(
 	//check that the client has specified a valid start offset
 	else if(aFilePathOffsets.iStartOffset >= (TUint)iTotalLength)
 		{
-		LOGPHONE1("ERROR: File start offset information invalid.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TTRANSPARENTSMARTCARDFILE_UPDATEFILE_1, "ERROR: File start offset information invalid.");
 		return KErrMMEtelScReferencedDataNotFound;	
 		}
 	
@@ -725,7 +731,7 @@ TInt CSimPhoneSmartCardApp::TTransparentSmartCardFile::UpdateFile(
 	//off the end of the file
 	else if((bytesToWrite + filePointer) > iTotalLength)
 		{
-		LOGPHONE1("ERROR: Path offset information results in reading off the end of the file");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TTRANSPARENTSMARTCARDFILE_UPDATEFILE_2, "ERROR: Path offset information results in reading off the end of the file");
 		return KErrMMEtelScEofReached;
 		}
 	else
@@ -1354,7 +1360,7 @@ TInt CSimPhoneSmartCardApp::GetScFileInfo(const TTsyReqHandle aTsyReqHandle,
 */
 	{
 	
-	LOGPHONE1("CSimPhoneSmartCardApp::GetScFileInfo called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_GETSCFILEINFO_1, "CSimPhoneSmartCardApp::GetScFileInfo called");
 
 	RMobilePhone::TScFileInfoV5Pckg *scFileInfoPckg = reinterpret_cast<RMobilePhone::TScFileInfoV5Pckg*>(aInfo);
 	RMobilePhone::TScFileInfoV5 &scFileInfo = (*scFileInfoPckg)();
@@ -1397,7 +1403,7 @@ TInt CSimPhoneSmartCardApp::GetScFileInfoCancel(const TTsyReqHandle aTsyReqHandl
 *
 */
 	{
-	LOGPHONE1("CSimPhoneSmartCardApp::GetScFileInfoCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_GETSCFILEINFOCANCEL_1, "CSimPhoneSmartCardApp::GetScFileInfoCancel called");
 
 	iPhone->ReqCompleted(aTsyReqHandle, KErrNone);
 	return KErrNone;
@@ -1432,7 +1438,7 @@ TInt CSimPhoneSmartCardApp::ReadScFileCancel(const TTsyReqHandle aTsyReqHandle)
 *
 */
 	{
-	LOGPHONE1("CSimPhoneSmartCardApp::ReadScFileInfoCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_READSCFILECANCEL_1, "CSimPhoneSmartCardApp::ReadScFileInfoCancel called");
 
 	iPhone->ReqCompleted(aTsyReqHandle, KErrNone);
 	return KErrNone;
@@ -1467,7 +1473,7 @@ TInt CSimPhoneSmartCardApp::UpdateScFileCancel(const TTsyReqHandle aTsyReqHandle
 *
 */
 	{
-	LOGPHONE1("CSimPhoneSmartCardApp::UpdateScFileInfoCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_UPDATESCFILECANCEL_1, "CSimPhoneSmartCardApp::UpdateScFileInfoCancel called");
 
 	iPhone->ReqCompleted(aTsyReqHandle, KErrNone);
 	return KErrNone;
@@ -1491,22 +1497,22 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 	TRAP_IGNORE(iTimer=CSimTimer::NewL(iPhone));
 	
 
-	LOGPHONE1("Starting to Parse MaxActiveSmartCardApp Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_1, "Starting to Parse MaxActiveSmartCardApp Info");
 	iMaxActiveSmartCardApps = CfgFile()->ItemValue(KMaxActiveSmartCardApps ,KDefaultMaxActiveSmartCardApps);
 
 
-	LOGPHONE1("Starting to Parse ActiveUSIMApp Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_2, "Starting to Parse ActiveUSIMApp Info");
 	activeUSimApp.Set(CfgFile()->ItemValue(KActiveUSIMApp, KEmptyString));
 	if(activeUSimApp.Length() == 0)
 		{
-		LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: ACTIVE USIM APP NOT SPECIFIED!");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_3, "ERROR IN CONFIGURATION FILE PARSING: ACTIVE USIM APP NOT SPECIFIED!");
 		}
 
 
 	TInt count = CfgFile()->ItemCount(KSmartCardAppInfo);
 	iSmartCardAppList=new(ELeave) CArrayFixFlat<TSmartCardApplication>(count+1);
 
-	LOGPHONE1("Starting to Load and Parse Smart Card Application Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_4, "Starting to Load and Parse Smart Card Application Info");
 	for(index=0;index<count;index++)
 		{
 		item=CfgFile()->Item(KSmartCardAppInfo,index);
@@ -1518,7 +1524,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,aid);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD APP INFO TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_5, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD APP INFO TAG");
 			continue;
 			}
 		else
@@ -1529,7 +1535,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,label);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD APP INFO TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_6, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD APP INFO TAG");
 			continue;
 			}
 		else 
@@ -1540,7 +1546,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,type);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD APP INFO TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_7, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD APP INFO TAG");
 			continue;
 			}
 		else
@@ -1563,7 +1569,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 3, eap);
 		if (ret != KErrNone)
 			{
-			LOGPHONE2("CONFIGURATION FILE PARSING: BAD OR NO (OPTIONAL) EAP LIST @ SMARTCARD APP INFO TAG [%d]", index);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_8, "CONFIGURATION FILE PARSING: BAD OR NO (OPTIONAL) EAP LIST @ SMARTCARD APP INFO TAG [%d]", index);
 			_LIT8(emptyEapList, "");
 			eap.Set(emptyEapList);
 			}
@@ -1576,7 +1582,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		
 	if(iActiveUSimApp.Length() == 0)
 		{
-		LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: AID FOR ACTIVE USIM APP NOT FOUND!");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_9, "ERROR IN CONFIGURATION FILE PARSING: AID FOR ACTIVE USIM APP NOT FOUND!");
 		}
 		
 
@@ -1585,7 +1591,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 	TSmartCardAppEvent appEvent;
 	TInt duration, action;
 	
-	LOGPHONE1("Starting to Load and Parse Smart Card Application Event Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_10, "Starting to Load and Parse Smart Card Application Event Info");
 
 	for(index=0;index<count;index++)
 		{
@@ -1598,7 +1604,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0, duration);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMART CARD APP EVENT TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_11, "ERROR IN CONFIGURATION FILE PARSING: BAD SMART CARD APP EVENT TAG");
 			continue;
 			}
 		else
@@ -1609,7 +1615,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1, aid);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING; BAD SMART CARD APP EVENT TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_12, "ERROR IN CONFIGURATION FILE PARSING; BAD SMART CARD APP EVENT TAG");
 			continue;
 			}
 		else 
@@ -1620,7 +1626,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardApplicationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2, action);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING; BAD SMART CARD APP EVENT TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDAPPLICATIONINFOL_13, "ERROR IN CONFIGURATION FILE PARSING; BAD SMART CARD APP EVENT TAG");
 			continue;
 			}
 		else
@@ -1645,7 +1651,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 	TInt aidIndex, fileType, fileLength, recordLength, numRecords, index;
 	TSmartCardFile* file = NULL;
 	
-	LOGPHONE1("Starting to Parse Smart Card File Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_1, "Starting to Parse Smart Card File Info");
 	TInt count = CfgFile()->ItemCount(KSmartCardFile);
 	iSmartCardFileList = new(ELeave) CArrayPtrFlat<TSmartCardFile>(count+1);
 
@@ -1661,7 +1667,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,fileType);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_2, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			continue;
 			}
 		else
@@ -1678,8 +1684,8 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 				file = new(ELeave) TTransparentSmartCardFile;
 				break;
 			default:
-				LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING:");
-				LOGPHONE1("ENCOUNTERED UNKNOWN SMART CARD FILE TYPE.");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_3, "ERROR IN CONFIGURATION FILE PARSING:");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_4, "ENCOUNTERED UNKNOWN SMART CARD FILE TYPE.");
 				continue;				
 				}
 			file->iType = (RMobilePhone::TScFileType)fileType;
@@ -1689,14 +1695,14 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,fileId);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_5, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
 		//check that the FID is precisely 4 bytes long	
 		else if(fileId.Length() != KMaxHexFIDLen)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE FID");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_6, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE FID");
 			delete file;
 			continue;
 			}
@@ -1711,7 +1717,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,aidIndex);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_7, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
@@ -1724,7 +1730,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,filePath);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_8, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
@@ -1737,7 +1743,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,fileLength);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_9, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
@@ -1750,7 +1756,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,recordLength);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_10, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
@@ -1763,7 +1769,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,numRecords);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_11, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
@@ -1776,8 +1782,8 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		//Check that record Length * number of records = Total length of file
 		if((fileType != RMobilePhone::ETransparent) && ((recordLength*numRecords) != fileLength))
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING:...");
-			LOGPHONE1("...Record Length * Number of Records != File Length");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_12, "ERROR IN CONFIGURATION FILE PARSING:...");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_13, "...Record Length * Number of Records != File Length");
 			delete file;
 			continue;
 			}
@@ -1786,13 +1792,13 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,fileData);
 		if(ret!=KErrNone)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_14, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE TAG");
 			delete file;
 			continue;
 			}
 		else if((fileData.Length() % 2 ) != 0)
 			{
-			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE DATA");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_15, "ERROR IN CONFIGURATION FILE PARSING: BAD SMARTCARD FILE DATA");
 			continue;
 			}
 		else
@@ -1801,7 +1807,7 @@ void CSimPhoneSmartCardApp::ParseSmartCardFileInfoL()
 			TextToBin(fileData, fileDataBuffer);
 			if(fileDataBuffer.Length() != fileLength)
 				{
-				LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING:INCONSISTANT DATA FILE LENGTH");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_PARSESMARTCARDFILEINFOL_16, "ERROR IN CONFIGURATION FILE PARSING:INCONSISTANT DATA FILE LENGTH");
 				delete file;
 				continue;		
 				}
@@ -1940,13 +1946,13 @@ TInt CSimPhoneSmartCardApp::ActivateSmartCardApp(const RMobilePhone::TAID aAID, 
 				{
 				if(smartCardApp->iAppStatus == CSimPhoneSmartCardApp::EActive)
 					{
-					LOGPHONE1("REACTIVATING AN ALREADY ACTIVE APPLICATION");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_ACTIVATESMARTCARDAPP_1, "REACTIVATING AN ALREADY ACTIVE APPLICATION");
 					return KErrNone;
 					}
 				else
 					{
 					//iMaxActiveSmartCardApps will be exceeded
-					LOGPHONE1("WARNING: CANNOT PROCESS ACTIVATING APPLICATION");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_ACTIVATESMARTCARDAPP_2, "WARNING: CANNOT PROCESS ACTIVATING APPLICATION");
 					return KErrMMEtelScMaxApplicationsActive;
 					}
 				}
@@ -1954,7 +1960,7 @@ TInt CSimPhoneSmartCardApp::ActivateSmartCardApp(const RMobilePhone::TAID aAID, 
 			}
 		}//end for loop
 		
-		LOGPHONE1("WARNING: AID NOT FOUND. CANNOT PROCESS EVENT");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_ACTIVATESMARTCARDAPP_3, "WARNING: AID NOT FOUND. CANNOT PROCESS EVENT");
 		return KErrNotFound;
 	}
 
@@ -1988,13 +1994,13 @@ TInt CSimPhoneSmartCardApp::TerminateSmartCardApp(const RMobilePhone::TAID aAID,
 				}
 			else
 				{
-				LOGPHONE1("ATTEMPTED TO TERMINATE NON-ACTIVE APPLICATION");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TERMINATESMARTCARDAPP_1, "ATTEMPTED TO TERMINATE NON-ACTIVE APPLICATION");
 				return KErrMMEtelScApplicationNotActive;
 				}
 			}
 	
 		}//end for loop
-	LOGPHONE1("WARNING: AID NOT FOUND. CANNOT PROCESS EVENT");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESMARTCARDAPP_TERMINATESMARTCARDAPP_2, "WARNING: AID NOT FOUND. CANNOT PROCESS EVENT");
 	return KErrNotFound;
 	}
 	

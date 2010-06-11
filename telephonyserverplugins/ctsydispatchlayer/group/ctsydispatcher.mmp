@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -22,8 +22,6 @@ UID             0x1000008D 0x10285C38
 CAPABILITY	       all -tcb
 VENDORID        0x70000001
 
-// For logging
-#include <comms-infras/commsdebugutility.mmh>
 
 MACRO USING_CTSY_DISPATCHER
 
@@ -32,7 +30,7 @@ OS_LAYER_ESTLIB_SYSTEMINCLUDE
 
 USERINCLUDE     ../inc 
 USERINCLUDE     ../../common_tsy/commontsy/exportinc/serviceapi
-
+USERINCLUDE		../traces
 
 SOURCEPATH      ../src
 
@@ -76,6 +74,5 @@ LIBRARY         insock.lib
 LIBRARY			bafl.lib //needed for CPhoneBookStoreEntry
 LIBRARY         customapi.lib
 
-//DEBUGLIBRARY    ComsDbgUtil.lib
 
 

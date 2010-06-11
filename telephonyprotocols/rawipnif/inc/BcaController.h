@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -26,14 +26,11 @@
 #include <c32comm.h>
 
 #include "MControllerObserver.h"
-#include "bttlog.h"
 #include "Constants.h"
 
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
 #include "IPTagHeader.h"
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
-
-class CBttLogger;
 
 /** 
 @internalComponent 
@@ -41,7 +38,7 @@ class CBttLogger;
 class CBcaController : public CBase
 	{
 public:
-	CBcaController(MControllerObserver& aObserver, CBttLogger* aTheLogger);
+	CBcaController(MControllerObserver& aObserver);
 	void BaseConstructL();
 	~CBcaController();
 
@@ -103,7 +100,6 @@ private: // Flow Control
 private: // Unowned data.
     MControllerObserver& iObserver;
 protected:
-	CBttLogger* iTheLogger;
 	TInt iMaxTxPacketSize;
 	TInt iMaxRxPacketSize;
 	

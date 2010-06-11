@@ -20,6 +20,11 @@
  @internalComponent
 */
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "rawipmcprTraces.h"
+#endif
+
 #include <comms-infras/ss_log.h>
 #include "rawipmcpr.h"
 #include <comms-infras/linkprovision.h>
@@ -93,8 +98,7 @@ CRawIpMetaConnectionProvider::~CRawIpMetaConnectionProvider()
 
 void CRawIpMetaConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipient, TSignatureBase& aMessage)
     {
-	__CFLOG_VAR((KRawIPMCprTag, KRawIPMCprSubTag, _L8("CRawIpMetaConnectionProvider [this=%08x]::ReceivedL() aCFMessage=%d"),
-	   this, aCFMessage.MessageId()));
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPMETACONNECTIONPROVIDER_RECEIVEDL_1, "CRawIpMetaConnectionProvider [this=%08x]::ReceivedL() aCFMessage=%u",(TUint)this, aMessage.MessageId().MessageId());
 
 	ESOCK_DEBUG_MESSAGE_INTERCEPT(aSender, aMessage, aRecipient);
 

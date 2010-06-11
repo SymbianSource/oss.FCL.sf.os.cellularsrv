@@ -31,6 +31,7 @@
 #include "pdpfsmnmspace.h"
 
 
+
 class CPdpFsm;
 //class REtelDriverInput;
 class CPdpFsmFactory;
@@ -53,8 +54,10 @@ protected:
 	void SpudManNotify (CPdpFsm& aFsm, TInt aNotification, TInt aParam);
 	
 public:
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 	TBuf<100> iName;
+#else
+	TBuf<1> iName;
 #endif		
 
 protected:

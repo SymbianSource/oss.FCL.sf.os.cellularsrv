@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmbroadcasttsyTraces.h"
+#endif
+
 #include <mmlist.h>
 #include <etelmm.h>
 #include "cmmbroadcasttsy.h"
@@ -25,7 +31,6 @@
 #include "MmTsy_numberOfSlots.h"
 #include "cmmtsyreqhandlestore.h"
 #include <ctsy/pluginapi/cmmdatapackage.h>
-#include <ctsy/tflogger.h>
 #include "cmmnettsy.h"
 
 // ======== MEMBER FUNCTIONS ========
@@ -46,7 +51,7 @@ CMmBroadcastTsy::CMmBroadcastTsy():
 
 void CMmBroadcastTsy::ConstructL()
     {
-TFLOGSTRING("TSY: CMmBroadcastTsy::ConstructL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_CONSTRUCTL_1, "TSY: CMmBroadcastTsy::ConstructL");
 #ifdef REQHANDLE_TIMER   
     // create req handle store
     iTsyReqHandleStore = CMmTsyReqHandleStore::NewL( this, iMmPhone, 
@@ -82,7 +87,7 @@ CMmBroadcastTsy* CMmBroadcastTsy::NewL(
 
 CMmBroadcastTsy::~CMmBroadcastTsy()
     {     
-TFLOGSTRING("TSY: CMmBroadcastTsy::~CMmBroadcastTsy");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_DTOR_1, "TSY: CMmBroadcastTsy::~CMmBroadcastTsy");
     if ( iMmPhone )
         {
         // deregister tsy object from message manager
@@ -469,7 +474,7 @@ TInt CMmBroadcastTsy::GetCaps(
             // TSY supports only "accept all" and "reject all" filtering.
             cbsCaps.iFilterCaps = RMobileBroadcastMessaging::KCapsSimpleFilter;
             
-            TFLOGSTRING3("TSY:CMmBroadcastTsy::GetCaps:Mode caps=0x%x, Filter caps=0x%x",cbsCaps.iModeCaps,cbsCaps.iFilterCaps);
+            OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_GETCAPS_1, "TSY:CMmBroadcastTsy::GetCaps:Mode caps=0x%08x, Filter caps=0x%08x",cbsCaps.iModeCaps,cbsCaps.iFilterCaps);
             
             ret = KErrNone;
             ReqCompleted( aTsyReqHandle, ret );
@@ -528,7 +533,7 @@ TInt CMmBroadcastTsy::ReceiveMessageL(
     		    else if ( !iCbRoutingActivated )
     		        {
     		        // DOS's CB routing is not activated
-    		TFLOGSTRING("TSY:CMmBroadcastTsy::ReceiveMessageL:DOS's CB routing is not activated, sending activation request.");    
+    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_RECEIVEMESSAGEL_1, "TSY:CMmBroadcastTsy::ReceiveMessageL:DOS's CB routing is not activated, sending activation request.");
 
     		        //Create package
     		        CMmDataPackage package;
@@ -557,7 +562,7 @@ TInt CMmBroadcastTsy::ReceiveMessageL(
     		        }
 		        else
 		            {
-		    TFLOGSTRING("TSY:CMmBroadcastTsy::ReceiveMessageL:DOS's CB routing is activated, waiting for messages.");    
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_RECEIVEMESSAGEL_2, "TSY:CMmBroadcastTsy::ReceiveMessageL:DOS's CB routing is activated, waiting for messages.");
 		            // routing is active, wait for messages from DOS
 		            iReqHandleType = EMultimodeBroadcastReceiveMessage;
 					
@@ -580,7 +585,7 @@ TInt CMmBroadcastTsy::ReceiveMessageL(
 void CMmBroadcastTsy::InternalCompleteCbRoutingRequest( 
     TInt aError )
     {
-TFLOGSTRING2("TSY:CMmBroadcastTsy::InternalCompleteCbRoutingRequest:error=%d.", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_INTERNALCOMPLETECBROUTINGREQUEST_1, "TSY:CMmBroadcastTsy::InternalCompleteCbRoutingRequest:error=%d.", aError);
     if ( KErrNone == aError )
         {
         iCbRoutingActivated = ETrue;
@@ -617,7 +622,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::InternalCompleteCbRoutingRequest:error=%d.", 
 //
 void CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft()
     {
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft:Delivering page %d to client.", iWcdmaCbsMsgPageIndex);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEDWCDMACBSMESSAGEPAGELEFT_1, "TSY:CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft:Delivering page %d to client.", iWcdmaCbsMsgPageIndex);
 	RMobileBroadcastMessaging::TMobileBroadcastAttributesV2Pckg* 
 		attrPckg = reinterpret_cast
 		< RMobileBroadcastMessaging::TMobileBroadcastAttributesV2Pckg* >
@@ -638,7 +643,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft:Deliv
 	cbAttrib.iNumberOfPages = ( *iCbsMsg )[iWcdmaCbsMsgPageIndex]
 		->iNumberOfPages;
 
-	TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: cbAttrib.iNumberOfPages %x .", cbAttrib.iNumberOfPages);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEDWCDMACBSMESSAGEPAGELEFT_2, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: cbAttrib.iNumberOfPages %d .", cbAttrib.iNumberOfPages);
 
 	// Message Type
 	cbAttrib.iMessageType = ( *iCbsMsg )[iWcdmaCbsMsgPageIndex]
@@ -656,7 +661,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft:Deliv
 	iReceiveCbMessagePtr->Copy( ( *iCbsMsg )[iWcdmaCbsMsgPageIndex]->iWcdmaCbsData.Ptr(), 
 						( *iCbsMsg )[iWcdmaCbsMsgPageIndex]->iInfoLength );
 	
-	TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft: AppendFormat in use iWcdmaCurrentPage: %d.", iWcdmaCurrentPage );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEDWCDMACBSMESSAGEPAGELEFT_3, "TSY:CMmBroadcastTsy::CompleteReceivedWcdmaCbsMessagePageLeft: AppendFormat in use iWcdmaCurrentPage: %d.", iWcdmaCurrentPage );
 	_LIT8(KFormat, "%c");
 
 	// Append pagenumber to end of CBS message     
@@ -690,7 +695,7 @@ void CMmBroadcastTsy::CompleteReceiveMessageGsmCbs(
     TInt aError, 
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageGsmCbs:error=%d.",aError);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEGSMCBS_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageGsmCbs:error=%d.",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastReceiveMessage );
 
@@ -735,7 +740,7 @@ void CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs(
     TInt aError, 
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aError);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aError);
 	TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastReceiveMessage );
 
@@ -766,7 +771,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aE
 
 				if ( KErrNone == trapError )
 					{
-	TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: %d pages received.",iWcdmaPageNumber);    
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_2, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: %d pages received.",iWcdmaPageNumber);
 					// first page. index is 0
 					iWcdmaCbsMsgPageIndex = 0;
 					
@@ -794,7 +799,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aE
 					cbAttrib.iNumberOfPages = ( *iCbsMsg )[iWcdmaCbsMsgPageIndex]
 						->iNumberOfPages;
 
-					TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: cbAttrib.iNumberOfPages %x .", cbAttrib.iNumberOfPages);
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_3, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: cbAttrib.iNumberOfPages %d.", cbAttrib.iNumberOfPages);
 				
 					// Message Type
 					cbAttrib.iMessageType = ( *iCbsMsg )
@@ -817,7 +822,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aE
 					
 					_LIT8(KFormat, "%c");
 
-					TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: 1st Page - AppendFormat in use iWcdmaCurrentPage: %d.", iWcdmaCurrentPage );
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_4, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs: 1st Page - AppendFormat in use iWcdmaCurrentPage: %d.", iWcdmaCurrentPage );
 					// insert current pagenumber end of CBS message
 					iReceiveCbMessagePtr->AppendFormat(KFormat, iWcdmaCurrentPage);
 					
@@ -852,7 +857,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aE
 				aError = KErrCorrupt;
 				}			
 			}
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:Completing with error=%d.", aError);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_5, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:Completing with error=%d.", aError);
 			
 		ReqCompleted( reqHandle, aError );		
 		}		
@@ -875,7 +880,7 @@ TInt CMmBroadcastTsy::ReceiveMessageCancelL(
 
     if ( iCbRoutingActivated )
         {
-TFLOGSTRING("TSY:CMmBroadcastTsy::ReceiveMessageCancelL:Routing was active, sending de-activation request.");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_RECEIVEMESSAGECANCELL_1, "TSY:CMmBroadcastTsy::ReceiveMessageCancelL:Routing was active, sending de-activation request.");
         // Create package
         CMmDataPackage package;
 
@@ -916,7 +921,7 @@ TFLOGSTRING("TSY:CMmBroadcastTsy::ReceiveMessageCancelL:Routing was active, send
         }
     else
         {
-TFLOGSTRING("TSY:CMmBroadcastTsy::ReceiveMessageCancelL:Routing was not active.");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_RECEIVEMESSAGECANCELL_2, "TSY:CMmBroadcastTsy::ReceiveMessageCancelL:Routing was not active.");
         ReqCompleted( aTsyReqHandle, KErrCancel );
         }
 
@@ -932,7 +937,7 @@ TFLOGSTRING("TSY:CMmBroadcastTsy::ReceiveMessageCancelL:Routing was not active."
 void CMmBroadcastTsy::CompleteReceiveMessageCancel( 
     TInt aError )
     {
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteReceiveMessageCancel:error=%d.",aError);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGECANCEL_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageCancel:error=%d.",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastReceiveMessageCancel );
 
@@ -965,7 +970,7 @@ TInt CMmBroadcastTsy::GetFilterSetting(
     RMobileBroadcastMessaging::TMobilePhoneBroadcastFilter* aSetting )
     {
     *aSetting = iCbFilterSetting;
-TFLOGSTRING2("TSY:CMmBroadcastTsy::GetFilterSetting:Filter setting=0x%x.",iCbFilterSetting);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_GETFILTERSETTING_1, "TSY:CMmBroadcastTsy::GetFilterSetting:Filter setting=0x%08x.",iCbFilterSetting);
 
     ReqCompleted( aTsyReqHandle, KErrNone );
 
@@ -983,7 +988,7 @@ TInt CMmBroadcastTsy::SetFilterSettingL(
     const TTsyReqHandle aTsyReqHandle, 
     RMobileBroadcastMessaging::TMobilePhoneBroadcastFilter const* aSetting )
     {
-TFLOGSTRING3("TSY:CMmBroadcastTsy::SetFilterSettingL:Old filter setting=0x%x, setting to 0x%x.",iCbFilterSetting,*aSetting);    
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_SETFILTERSETTINGL_1, "TSY:CMmBroadcastTsy::SetFilterSettingL:Old filter setting=0x%08x, setting to 0x%08x.",iCbFilterSetting,(TUint)*aSetting);
     if ( ( RMobileBroadcastMessaging::EBroadcastAcceptAll == *aSetting ) ||
          ( RMobileBroadcastMessaging::EBroadcastAcceptNone == *aSetting ) )
        {
@@ -1051,7 +1056,7 @@ TFLOGSTRING3("TSY:CMmBroadcastTsy::SetFilterSettingL:Old filter setting=0x%x, se
 void CMmBroadcastTsy::CompleteSetFilterSetting( 
     TInt aError )
     {
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteSetFilterSetting:error=%d.",aError);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETESETFILTERSETTING_1, "TSY:CMmBroadcastTsy::CompleteSetFilterSetting:error=%d.",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastSetFilterSetting );
 
@@ -1094,7 +1099,7 @@ TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteSetFilterSetting:error=%d.",aError);
 TInt CMmBroadcastTsy::NotifyFilterSettingChange( 
     RMobileBroadcastMessaging::TMobilePhoneBroadcastFilter* aSetting )
     {
-TFLOGSTRING("TSY:CMmBroadcastTsy::NotifyFilterSettingChange.");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_NOTIFYFILTERSETTINGCHANGE_1, "TSY:CMmBroadcastTsy::NotifyFilterSettingChange.");
     iReqHandleType = EMultimodeBroadcastNotifyFilterSetting;
     iNotifyFilterSettingChangePtr = aSetting;
 
@@ -1111,7 +1116,7 @@ TFLOGSTRING("TSY:CMmBroadcastTsy::NotifyFilterSettingChange.");
 TInt CMmBroadcastTsy::NotifyFilterSettingChangeCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY:CMmBroadcastTsy::NotifyFilterSettingChangeCancel.");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_NOTIFYFILTERSETTINGCHANGECANCEL_1, "TSY:CMmBroadcastTsy::NotifyFilterSettingChangeCancel.");
     iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastNotifyFilterSetting );
     ReqCompleted( aTsyReqHandle, KErrCancel );
@@ -1128,7 +1133,7 @@ TFLOGSTRING("TSY:CMmBroadcastTsy::NotifyFilterSettingChangeCancel.");
 //
 void CMmBroadcastTsy::CompleteNotifyFilterSettingChange()
     {
-TFLOGSTRING("TSY:CMmBroadcastTsy::CompleteNotifyFilterSettingChange.");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETENOTIFYFILTERSETTINGCHANGE_1, "TSY:CMmBroadcastTsy::CompleteNotifyFilterSettingChange.");
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastNotifyFilterSetting );
 
@@ -1137,7 +1142,7 @@ TFLOGSTRING("TSY:CMmBroadcastTsy::CompleteNotifyFilterSettingChange.");
 		if ( iNotifyFilterSettingChangePtr )
 			{
 			*iNotifyFilterSettingChangePtr = iCbFilterSetting;
-TFLOGSTRING2("TSY:CMmBroadcastTsy::CompleteNotifyFilterSettingChange.New filter setting is 0x%x.",iCbFilterSetting);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETENOTIFYFILTERSETTINGCHANGE_2, "TSY:CMmBroadcastTsy::CompleteNotifyFilterSettingChange.New filter setting is 0x%08x.",iCbFilterSetting);
 			}
 
         ReqCompleted( reqHandle, KErrNone );
@@ -1157,7 +1162,7 @@ TInt CMmBroadcastTsy::GetBroadcastIdListPhase1L(
     TInt*  )
     {
     // not supported.
-TFLOGSTRING("TSY: CMmBroadcastTsy::GetBroadcastIdListPhase1L");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_GETBROADCASTIDLISTPHASE1L_1, "TSY: CMmBroadcastTsy::GetBroadcastIdListPhase1L");
     return KErrNotSupported;
     }
 
@@ -1174,7 +1179,7 @@ TInt CMmBroadcastTsy::GetBroadcastIdListPhase2(
     RMobilePhone::TClientId const* , 
     TDes8*  )
     {
-    TFLOGSTRING("TSY:CMmBroadcastTsy::GetBroadcastIdListPhase2.List returned to client.");    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_GETBROADCASTIDLISTPHASE2_1, "TSY:CMmBroadcastTsy::GetBroadcastIdListPhase2.List returned to client.");
     return KErrNotSupported;
     }
 
@@ -1189,7 +1194,7 @@ TInt CMmBroadcastTsy::StoreBroadcastIdListL(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8 const* /*aBuffer*/ )
     {
-TFLOGSTRING("TSY:CMmBroadcastTsy::StoreBroadcastIdListL.");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_STOREBROADCASTIDLISTL_1, "TSY:CMmBroadcastTsy::StoreBroadcastIdListL.");
     ReqCompleted( aTsyReqHandle, KErrNotSupported );
 
     return KErrNone;

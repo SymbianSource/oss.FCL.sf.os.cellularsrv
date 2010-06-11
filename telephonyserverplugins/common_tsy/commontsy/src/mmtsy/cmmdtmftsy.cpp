@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,9 +16,14 @@
 
 
 //INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmdtmftsyTraces.h"
+#endif
+
 #include "cmmdtmftsy.h"
 #include <etelmmcs.h> 
-#include <ctsy/tflogger.h> 
 
 // include internal Tsy classes
 #include "cmmphonetsy.h"
@@ -59,7 +64,7 @@ CMmDtmfTsy* CMmDtmfTsy::NewL(
     
 CMmDtmfTsy::~CMmDtmfTsy()
     {
-    TFLOGSTRING("TSY: CMmDtmfTsy::~CMmDtmfTsy");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_DTOR_1, "TSY: CMmDtmfTsy::~CMmDtmfTsy");
     if (iMmPhone )
         {
         // deregister tsy object from message manager
@@ -145,7 +150,7 @@ TInt CMmDtmfTsy::DoExtFuncL(
 // ---------------------------------------------------------------------------
 TInt CMmDtmfTsy::NotifyDTMFEvent( TInt* aInfo )
 	{
-TFLOGSTRING("TSY: CMmDtmfTsy::NotifyDTMFEvent");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_NOTIFYDTMFEVENT_1, "TSY: CMmDtmfTsy::NotifyDTMFEvent");
 
 	iDtmfInfo = aInfo; // save pointer to client data
 
@@ -162,7 +167,7 @@ TFLOGSTRING("TSY: CMmDtmfTsy::NotifyDTMFEvent");
 //
 void CMmDtmfTsy::CompleteNotifyDTMFEvent( TInt aInfo )
      {
-TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyDtmfEvent");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_COMPLETENOTIFYDTMFEVENT_1, "TSY: CMmCustomTsy::CompleteNotifyDtmfEvent");
     // reset request handle. Returns the deleted req handle.
 	TTsyReqHandle reqHandle =	
 		iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -183,7 +188,7 @@ TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyDtmfEvent");
 // ---------------------------------------------------------------------------
 TInt CMmDtmfTsy::NotifyDTMFEventCancel( const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmDtmfTsy::NotifyDtmfEventCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_NOTIFYDTMFEVENTCANCEL_1, "TSY: CMmDtmfTsy::NotifyDtmfEventCancel");
 
 	iDtmfInfo = NULL;
 	TTsyReqHandle reqHandle =	
@@ -452,7 +457,7 @@ void CMmDtmfTsy::CompleteSendDTMFTones(
 //
 TInt CMmDtmfTsy::SendDTMFTonesCancelL()
     {
-TFLOGSTRING("TSY: CMmDtmfTsy::SendDTMFTonesCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_SENDDTMFTONESCANCELL_1, "TSY: CMmDtmfTsy::SendDTMFTonesCancel");
 
     TTsyReqHandle sendDTMFTonesHandle =
         iMmPhone->iTsyReqHandleStore->GetTsyReqHandle( 
@@ -486,7 +491,7 @@ TFLOGSTRING("TSY: CMmDtmfTsy::SendDTMFTonesCancel");
 void CMmDtmfTsy::CompleteSendDTMFTonesCancel( 
     TInt aResult ) 
     {
-TFLOGSTRING("TSY: CMmDtmfTsy::CompleteSendDTMFTonesCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_COMPLETESENDDTMFTONESCANCEL_1, "TSY: CMmDtmfTsy::CompleteSendDTMFTonesCancel");
 
     // Get req handle. 
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->GetTsyReqHandle( 
@@ -608,7 +613,7 @@ TInt CMmDtmfTsy::StopDTMFToneL(
 //
 TInt CMmDtmfTsy::NotifyStopInDTMFString()
     {
-TFLOGSTRING("TSY: CMmDtmfTsy::NotifyStopInDTMFString");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_NOTIFYSTOPINDTMFSTRING_1, "TSY: CMmDtmfTsy::NotifyStopInDTMFString");
     //Set TSY request handle type
     iMmPhone->iReqHandleType = 
         CMmPhoneTsy::EMultimodePhoneNotifyStopInDTMFString;
@@ -643,7 +648,7 @@ TInt CMmDtmfTsy::NotifyStopInDTMFStringCancel(
 void CMmDtmfTsy::CompleteNotifyStopInDTMFString( 
 	CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmDtmfTsy::CompleteNotifyStopInDTMFString");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_COMPLETENOTIFYSTOPINDTMFSTRING_1, "TSY: CMmDtmfTsy::CompleteNotifyStopInDTMFString");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
         CMmPhoneTsy::EMultimodePhoneNotifyStopInDTMFString );
@@ -670,7 +675,7 @@ TInt CMmDtmfTsy::ContinueDTMFStringSendingL(
      TBool aContinue )                  
                                            
     {
-TFLOGSTRING2("TSY: CMmDtmfTsy::ContinueDTMFStringSendingL aContinue:%d",aContinue);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_CONTINUEDTMFSTRINGSENDINGL_1, "TSY: CMmDtmfTsy::ContinueDTMFStringSendingL aContinue:%d",aContinue);
     TInt ret( KErrNone );
 
     TTsyReqHandle sendDTMFTonesHandle = 
@@ -764,7 +769,8 @@ TInt CMmDtmfTsy::ActiveCalls() const
             {
             // get call status
             RCall::TStatus  callStatus = mmCall->Status();
-            if ( RCall::EStatusConnected == callStatus)
+            // Check if the call state is one that suggests that someone will listen to a DTMF. 
+            if (( RCall::EStatusConnected == callStatus ) || ( RCall::EStatusDialling == callStatus )|| ( RCall::EStatusConnecting == callStatus ))
                 {
                 // get service type of call
                 RMobileCall::TMobileCallInfoV1 info;

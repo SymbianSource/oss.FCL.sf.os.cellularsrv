@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspqueueTraces.h"
+#endif
 
 #include "smspqueue.h"
 #include "smspcomm.h"
@@ -79,7 +85,7 @@ CSmspMessageQueue::~CSmspMessageQueue()
 
 void CSmspMessageQueue::DoRunL()
 	{
-	LOGSMSPROT1("CSmspMessageQueue::DoRunL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_DORUNL_1, "CSmspMessageQueue::DoRunL()");
 
 	CompleteFirst(iStatus.Int());
 	Start();
@@ -90,7 +96,7 @@ void CSmspMessageQueue::Queue(CSmsMessage* aMessage, MSmsMessageObserver& aObser
 	{
 	TRAPD(err, DoQueueL(aMessage, aObserver, aOptions));
 
-	LOGSMSPROT4("*** CSmspMessageQueue::Queue [err=%d aObserver=0x%08x IsActive=%d]", err, &aObserver, IsActive());
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_QUEUE_1, "*** CSmspMessageQueue::Queue [err=%d aObserver=0x%08x IsActive=%d]", err, (TUint) &aObserver, IsActive());
 
 	if (err != KErrNone)
 		{
@@ -105,7 +111,7 @@ void CSmspMessageQueue::Queue(CSmsMessage* aMessage, MSmsMessageObserver& aObser
 
 void CSmspMessageQueue::DoQueueL(CSmsMessage* aMessage, MSmsMessageObserver& aObserver, TUint aOptions)
 	{
-	LOGSMSPROT1("CSmspMessageQueue::DoQueueL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_DOQUEUEL_1, "CSmspMessageQueue::DoQueueL()");
 
 	CleanupStack::PushL(aMessage);
 
@@ -132,7 +138,7 @@ CSmspMessageQueue::CSmspMessageQueue(MSmsComm& aSmsComm, TInt aPriority)
  */
 void CSmspMessageQueue::DoCancel()
 	{
-	LOGSMSPROT1("*** CSmspMessageQueue::DoCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_DOCANCEL_1, "*** CSmspMessageQueue::DoCancel");
 
 	TSglQueIter<CQueuedSmsMessage> iter(iMessageQueue);
 	CQueuedSmsMessage* queuedsmsmessage = iter;
@@ -146,7 +152,7 @@ void CSmspMessageQueue::DoCancel()
 
 void CSmspMessageQueue::CompleteFirst(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmspMessageQueue::CompleteFirst()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_COMPLETEFIRST_1, "CSmspMessageQueue::CompleteFirst()");
 
 	CompleteRequest(iMessageQueue.First(), aStatus);
 	} // CSmspMessageQueue::CompleteFirst
@@ -154,7 +160,7 @@ void CSmspMessageQueue::CompleteFirst(TInt aStatus)
 
 void CSmspMessageQueue::CompleteRequest(CQueuedSmsMessage* aQueuedMessage, TInt aStatus)
 	{
-	LOGSMSPROT4("*** CSmspMessageQueue::CompleteRequest [aStatus=%d aObserver=0x%X IsFirst=%d]", aStatus, &aQueuedMessage->iObserver, iMessageQueue.IsFirst(aQueuedMessage));
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_COMPLETEREQUEST_1, "*** CSmspMessageQueue::CompleteRequest [aStatus=%d aObserver=0x%X IsFirst=%d]", aStatus,(TUint) &aQueuedMessage->iObserver, iMessageQueue.IsFirst(aQueuedMessage));
 
 	// From defect HOE-563KLY, need to cancel request if active and remove from queue
 	// before observer has chance to manipulate queue
@@ -167,7 +173,7 @@ void CSmspMessageQueue::CompleteRequest(CQueuedSmsMessage* aQueuedMessage, TInt 
 
 void CSmspMessageQueue::CancelObserver(MSmsMessageObserver& aObserver)
 	{
-	LOGSMSPROT2("*** CSmspMessageQueue::CancelObserver [aObserver=0x%X]", &aObserver);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPMESSAGEQUEUE_CANCELOBSERVER_1, "*** CSmspMessageQueue::CancelObserver [aObserver=0x%X]", &aObserver);
 
 	TSglQueIter<CQueuedSmsMessage> iter(iMessageQueue);
 	CQueuedSmsMessage* queuedsmsmessage = iter;
@@ -220,7 +226,7 @@ CSmspProtocolQueue::CSmspProtocolQueue(MSmsComm& aSmsComm, TInt aPriority)
  */
 CQueuedPDUDelete* CQueuedPDUDelete::NewL(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray,MSmsMessageObserver* aObserver)
 	{
-	LOGSMSPROT1("CQueuedPDUDelete::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQUEUEDPDUDELETE_NEWL_1, "CQueuedPDUDelete::NewL()");
 
 	CQueuedPDUDelete* queuedpdudelete=new(ELeave) CQueuedPDUDelete(aObserver);
 	CleanupStack::PushL(queuedpdudelete);
@@ -249,7 +255,7 @@ CQueuedPDUDelete::CQueuedPDUDelete(MSmsMessageObserver* aObserver)
  */
 void CQueuedPDUDelete::ConstructL(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray)
 	{
-	LOGSMSPROT1("CQueuedPDUDelete::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQUEUEDPDUDELETE_CONSTRUCTL_1, "CQueuedPDUDelete::ConstructL()");
 
 	TInt count=aSlotArray.Count();
 	for (TInt i=0; i<count; i++)
@@ -278,7 +284,7 @@ void CQueuedPDUDelete::ConstructL(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray)
  */
 void CSmspDeleteQueue::RunL()
 	{
-	LOGSMSPROT1("CSmspDeleteQueue::RunL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_RUNL_1, "CSmspDeleteQueue::RunL()");
 
 	CompleteFirst(iStatus.Int());
 
@@ -299,7 +305,7 @@ void CSmspDeleteQueue::DoRunL()
     {
     // Ignore in code coverage - the delete queue implements its own RunL.
     BULLSEYE_OFF
-    LOGSMSPROT1("CSmspDeleteQueue::DoRunL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_DORUNL_1, "CSmspDeleteQueue::DoRunL()");
 
 // This CSmspDeleteQueue::DoRunL() function would be called by
 // CSmsuActiveBase::RunL().  However, CSmspDeleteQueue::RunL() now
@@ -313,7 +319,7 @@ void CSmspDeleteQueue::Queue(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray, MSms
 	{
 	TRAPD(err, DoQueueL(aSlotArray, aObserver));
 
-	LOGSMSPROT4("*** CSmspDeleteQueue::Queue [err=%d aObserver=0x%X IsActive=%d]", err, aObserver, IsActive());
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_QUEUE_1, "*** CSmspDeleteQueue::Queue [err=%d aObserver=0x%X IsActive=%d]", err, (TUint)aObserver, IsActive());
 
 	if (err != KErrNone)
 		{
@@ -329,7 +335,7 @@ void CSmspDeleteQueue::Queue(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray, MSms
 
 void CSmspDeleteQueue::DoQueueL(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray, MSmsMessageObserver* aObserver)
 	{
-	LOGSMSPROT1("CSmspDeleteQueue::DoQueueL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_DOQUEUEL_1, "CSmspDeleteQueue::DoQueueL()");
 
 	CQueuedPDUDelete* queuedDelete= CQueuedPDUDelete::NewL(aSlotArray, aObserver);
 	iDeleteQueue.AddLast(*queuedDelete);
@@ -339,7 +345,7 @@ void CSmspDeleteQueue::DoQueueL(const CArrayFix<TGsmSmsSlotEntry>& aSlotArray, M
 CSmspDeleteQueue::CSmspDeleteQueue(MSmsComm& aSmsComm, TInt aPriority)
 : CSmspProtocolQueue(aSmsComm, aPriority)
 	{
-	LOGSMSPROT1("CSmspDeleteQueue::CSmspDeleteQueue()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_CTOR_1, "CSmspDeleteQueue::CSmspDeleteQueue()");
 
 	iDeleteQueue.SetOffset(_FOFF(CQueuedPDUDelete,iLink));
 	} // CSmspDeleteQueue::CSmspDeleteQueue
@@ -350,7 +356,7 @@ CSmspDeleteQueue::CSmspDeleteQueue(MSmsComm& aSmsComm, TInt aPriority)
  */
 void CSmspDeleteQueue::DoCancel()
 	{
-	LOGSMSPROT1("*** CSmspDeleteQueue::DoCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_DOCANCEL_1, "*** CSmspDeleteQueue::DoCancel");
 
 	iSmsPDUDelete->Cancel();
 
@@ -364,7 +370,7 @@ void CSmspDeleteQueue::DoCancel()
 
 void CSmspDeleteQueue::CompleteFirst(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmspDeleteQueue::CompleteFirst()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_COMPLETEFIRST_1, "CSmspDeleteQueue::CompleteFirst()");
 
 	CompleteRequest(iDeleteQueue.First(), aStatus);
 	} // CSmspDeleteQueue::CompleteFirst
@@ -372,7 +378,7 @@ void CSmspDeleteQueue::CompleteFirst(TInt aStatus)
 
 void CSmspDeleteQueue::CompleteRequest(CQueuedPDUDelete* aQueuedDelete, TInt aStatus)
 	{
-	LOGSMSPROT4("*** CSmspDeleteQueue::CompleteRequest [aStatus=%d aObserver=0x%X IsFirst=%d]", aStatus, aQueuedDelete->iObserver, iDeleteQueue.IsFirst(aQueuedDelete));
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_COMPLETEREQUEST_1, "*** CSmspDeleteQueue::CompleteRequest [aStatus=%d aObserver=0x%X IsFirst=%d]", aStatus, (TUint)aQueuedDelete->iObserver, iDeleteQueue.IsFirst(aQueuedDelete));
 
 	if (aQueuedDelete->iObserver != NULL)
 		CompleteObserver(*aQueuedDelete->iObserver, aStatus);
@@ -384,7 +390,7 @@ void CSmspDeleteQueue::CompleteRequest(CQueuedPDUDelete* aQueuedDelete, TInt aSt
 
 void CSmspDeleteQueue::CancelObserver(MSmsMessageObserver& aObserver)
 	{
-	LOGSMSPROT2("*** CSmspDeleteQueue::CancelObserver [aObserver=0x%X]", &aObserver);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_CANCELOBSERVER_1, "*** CSmspDeleteQueue::CancelObserver [aObserver=0x%X]", &aObserver);
 
 	TSglQueIter<CQueuedPDUDelete> iter(iDeleteQueue);
 	CQueuedPDUDelete* queuedDelete = iter;
@@ -409,7 +415,7 @@ void CSmspDeleteQueue::CancelObserver(MSmsMessageObserver& aObserver)
 
 CSmspDeleteQueue* CSmspDeleteQueue::NewL(MSmsComm& aSmsComm, const TSmsSettings& aSmsSettings, RMobileSmsMessaging& aSmsMessaging, TInt aPriority)
 	{
-	LOGSMSPROT1("CSmspDeleteQueue::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_NEWL_1, "CSmspDeleteQueue::NewL()");
 
 	CSmspDeleteQueue* self = new (ELeave) CSmspDeleteQueue(aSmsComm, aPriority);
 	CleanupStack::PushL(self);
@@ -421,7 +427,7 @@ CSmspDeleteQueue* CSmspDeleteQueue::NewL(MSmsComm& aSmsComm, const TSmsSettings&
 
 void CSmspDeleteQueue::Start()
 	{
-	LOGSMSPROT3("*** CSmspDeleteQueue::Start [IsActive=%d IsEmpty=%d]", IsActive(), iDeleteQueue.IsEmpty());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_START_1, "*** CSmspDeleteQueue::Start [IsActive=%d IsEmpty=%d]", IsActive(), iDeleteQueue.IsEmpty());
 
 	if (!IsActive() && !iDeleteQueue.IsEmpty())
 		{
@@ -449,7 +455,7 @@ CSmspDeleteQueue::~CSmspDeleteQueue()
 
 void CSmspDeleteQueue::ConstructL(const TSmsSettings& aSmsSettings, RMobileSmsMessaging& aSmsMessaging)
 	{
-	LOGSMSPROT1("CSmspDeleteQueue::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_CONSTRUCTL_1, "CSmspDeleteQueue::ConstructL()");
 
 	iSmsPDUDelete = CSmsPDUDelete::NewL(aSmsSettings, aSmsMessaging);
 	} // CSmspDeleteQueue::ConstructL
@@ -457,7 +463,7 @@ void CSmspDeleteQueue::ConstructL(const TSmsSettings& aSmsSettings, RMobileSmsMe
 
 void CSmspDeleteQueue::CompleteObserver(MSmsMessageObserver& aObserver, TInt aError, const CSmsMessage*)
 	{
-	LOGSMSPROT4("*** CSmspDeleteQueue::CompleteObserver [aObserver=0x%X aError=%d IsActive=%d]", &aObserver, aError, IsActive());
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDELETEQUEUE_COMPLETEOBSERVER_1, "*** CSmspDeleteQueue::CompleteObserver [aObserver=0x%X aError=%d IsActive=%d]", (TUint)&aObserver, aError, IsActive());
 
 	if (iSmsComm.ObserverIsPresent(aObserver))
 		{
@@ -473,7 +479,7 @@ void CSmspDeleteQueue::CompleteObserver(MSmsMessageObserver& aObserver, TInt aEr
 
 CSmspSendQueue* CSmspSendQueue::NewL(MSmsComm& aSmsComm, CSmsSegmentationStore& aSegmentationStore, const TSmsSettings& aSmsSettings, const RMobileSmsMessaging::TMobileSmsCapsV1& aMobileSmsCaps, RMobileSmsMessaging& aSmsMessaging, TInt aPriority, CSmspSetBearer& aSmspSetBearer)
 	{
-	LOGSMSPROT1("CSmspSendQueue::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSENDQUEUE_NEWL_1, "CSmspSendQueue::NewL()");
 
 	CSmspSendQueue* self = new (ELeave) CSmspSendQueue(aSmsComm, aPriority);
 	CleanupStack::PushL(self);
@@ -485,7 +491,7 @@ CSmspSendQueue* CSmspSendQueue::NewL(MSmsComm& aSmsComm, CSmsSegmentationStore& 
 
 void CSmspSendQueue::Start()
 	{
-	LOGSMSPROT3("*** CSmspSendQueue::Start [IsActive=%d IsEmpty=%d]", IsActive(), iMessageQueue.IsEmpty());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSENDQUEUE_START_1, "*** CSmspSendQueue::Start [IsActive=%d IsEmpty=%d]", IsActive(), iMessageQueue.IsEmpty());
 
 	if (!IsActive() && !iMessageQueue.IsEmpty())
 		{
@@ -511,7 +517,7 @@ CSmspSendQueue::~CSmspSendQueue()
 
 void CSmspSendQueue::ConstructL(CSmsSegmentationStore& aSegmentationStore, const TSmsSettings& aSmsSettings, const RMobileSmsMessaging::TMobileSmsCapsV1& aMobileSmsCaps, RMobileSmsMessaging& aSmsMessaging, CSmspSetBearer& aSmspSetBearer)
 	{
-	LOGSMSPROT1("CSmspSendQueue::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSENDQUEUE_CONSTRUCTL_1, "CSmspSendQueue::ConstructL()");
 
 	iSmsMessageSend = CSmsMessageSend::NewL(aSegmentationStore, aSmsSettings, aMobileSmsCaps, aSmsMessaging, Priority(), aSmspSetBearer);
 	} // CSmspSendQueue::ConstructL
@@ -519,7 +525,7 @@ void CSmspSendQueue::ConstructL(CSmsSegmentationStore& aSegmentationStore, const
 
 void CSmspSendQueue::CancelRequestIfObserved(MSmsMessageObserver& aObserver)
 	{
-	LOGSMSPROT1("CSmspSendQueue::CancelRequestIfObserved()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSENDQUEUE_CANCELREQUESTIFOBSERVED_1, "CSmspSendQueue::CancelRequestIfObserved()");
 
 	if (IsActive() && &iMessageQueue.First()->iObserver == &aObserver)
 		{
@@ -530,7 +536,7 @@ void CSmspSendQueue::CancelRequestIfObserved(MSmsMessageObserver& aObserver)
 
 void CSmspSendQueue::CompleteObserver(MSmsMessageObserver& aObserver, TInt aError, const CSmsMessage*)
 	{
-	LOGSMSPROT4("*** CSmspSendQueue::CompleteObserver [aObserver=0x%X aError=%d IsActive=%d]", &aObserver, aError, IsActive());
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSENDQUEUE_COMPLETEOBSERVER_1, "*** CSmspSendQueue::CompleteObserver [aObserver=0x%X aError=%d IsActive=%d]", (TUint)&aObserver, aError, IsActive());
 
 	if (iSmsComm.ObserverIsPresent(aObserver))
 		{
@@ -541,7 +547,7 @@ void CSmspSendQueue::CompleteObserver(MSmsMessageObserver& aObserver, TInt aErro
 
 void CSmspSendQueue::Complete(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmspSendQueue::Complete()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSENDQUEUE_COMPLETE_1, "CSmspSendQueue::Complete()");
 
 	iSmsComm.MessageSendCompleted(aStatus);
 	} // CSmspSendQueue::Complete
@@ -555,7 +561,7 @@ void CSmspSendQueue::Complete(TInt aStatus)
 
 CSmspWriteQueue* CSmspWriteQueue::NewL(MSmsComm& aSmsComm, const TSmsSettings& aSmsSettings, RMobilePhone& aGsmPhone, CSmsSegmentationStore& aSegmentationStore, TInt aPriority)
 	{
-	LOGSMSPROT1("CSmspWriteQueue::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPWRITEQUEUE_NEWL_1, "CSmspWriteQueue::NewL()");
 
 	CSmspWriteQueue* self = new (ELeave) CSmspWriteQueue(aSmsComm, aPriority);
 	CleanupStack::PushL(self);
@@ -567,7 +573,7 @@ CSmspWriteQueue* CSmspWriteQueue::NewL(MSmsComm& aSmsComm, const TSmsSettings& a
 
 void CSmspWriteQueue::Start()
 	{
-	LOGSMSPROT3("*** CSmspWriteQueue::Start [IsActive=%d IsEmpty=%d]", IsActive(), iMessageQueue.IsEmpty());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPWRITEQUEUE_START_1, "*** CSmspWriteQueue::Start [IsActive=%d IsEmpty=%d]", IsActive(), iMessageQueue.IsEmpty());
 
 	if (!IsActive() && !iMessageQueue.IsEmpty())
 		{
@@ -593,7 +599,7 @@ CSmspWriteQueue::~CSmspWriteQueue()
 
 void CSmspWriteQueue::ConstructL(const TSmsSettings& aSmsSettings, RMobilePhone& aGsmPhone, CSmsSegmentationStore& aSegmentationStore)
 	{
-	LOGSMSPROT1("CSmspWriteQueue::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPWRITEQUEUE_CONSTRUCTL_1, "CSmspWriteQueue::ConstructL()");
 
 	iSmsMessageWrite = CSmsMessageWrite::NewL(iSmsComm, aSmsSettings, aGsmPhone, aSegmentationStore);
 	} // CSmspWriteQueue::ConstructL
@@ -601,7 +607,7 @@ void CSmspWriteQueue::ConstructL(const TSmsSettings& aSmsSettings, RMobilePhone&
 
 void CSmspWriteQueue::CancelRequestIfObserved(MSmsMessageObserver& aObserver)
 	{
-	LOGSMSPROT1("CSmspWriteQueue::CancelRequestIfObserved()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPWRITEQUEUE_CANCELREQUESTIFOBSERVED_1, "CSmspWriteQueue::CancelRequestIfObserved()");
 
 	if (IsActive() && &iMessageQueue.First()->iObserver == &aObserver)
 		{
@@ -612,7 +618,7 @@ void CSmspWriteQueue::CancelRequestIfObserved(MSmsMessageObserver& aObserver)
 
 void CSmspWriteQueue::CompleteObserver(MSmsMessageObserver& aObserver, TInt aError, const CSmsMessage* aSmsMessage)
 	{
-	LOGSMSPROT4("*** CSmspWriteQueue::CompleteObserver [aObserver=0x%X aError=%d IsActive=%d]", &aObserver, aError, IsActive());
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPWRITEQUEUE_COMPLETEOBSERVER_1, "*** CSmspWriteQueue::CompleteObserver [aObserver=0x%X aError=%d IsActive=%d]", (TUint)&aObserver, aError, IsActive());
 	if (iSmsComm.ObserverIsPresent(aObserver))
 		{
 		aObserver.MessageWriteCompleted(aError, aSmsMessage);
@@ -622,7 +628,7 @@ void CSmspWriteQueue::CompleteObserver(MSmsMessageObserver& aObserver, TInt aErr
 
 void CSmspWriteQueue::Complete(TInt)
 	{
-	LOGSMSPROT1("CSmspWriteQueue::Complete()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPWRITEQUEUE_COMPLETE_1, "CSmspWriteQueue::Complete()");
 
 	//Do Nothing :o)
 	} // CSmspWriteQueue::Complete

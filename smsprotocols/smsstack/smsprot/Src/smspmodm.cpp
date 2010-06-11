@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspmodmTraces.h"
+#endif
 
 #include "smspmodm.h"
 #include "smsuset.h"
@@ -45,7 +51,7 @@ CSmsPhoneInitialization::~CSmsPhoneInitialization()
  */
 void CSmsPhoneInitialization::Start()
 	{
-	LOGSMSPROT1("CSmsPhoneInitialization::Start  Start initializing the phone");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_START_1, "CSmsPhoneInitialization::Start  Start initializing the phone");
 
 	Cancel();
 
@@ -60,7 +66,7 @@ void CSmsPhoneInitialization::Start()
 
 void CSmsPhoneInitialization::DoRunL()
 	{
-	LOGSMSPROT3("CSmsPhoneInitialization::DoRunL [iStatus=%d, iState=%d]", iStatus.Int(), iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_1, "CSmsPhoneInitialization::DoRunL [iStatus=%d, iState=%d]", iStatus.Int(), iState);
 
 	switch (iState)
 		{
@@ -74,7 +80,7 @@ void CSmsPhoneInitialization::DoRunL()
 			{
 			if (iStatus.Int() != KErrNone)
 				{
-				LOGSMSPROT1("ERROR - TSY failed to set bearer but initialisation will continue; bearer setting may be successful during send");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_2, "ERROR - TSY failed to set bearer but initialisation will continue; bearer setting may be successful during send");
 				}
 
 			iState=ESmsPhoneInitializationGettingRegistrationStatus;
@@ -87,7 +93,7 @@ void CSmsPhoneInitialization::DoRunL()
 			{
 			if(iStatus == KErrNone)
 				{
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL registration status  : >%d<",iRegistrationStatus);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_3, "CSmsPhoneInitialization::DoRunL registration status  : >%d<",iRegistrationStatus);
 				if (iRegistrationStatus==RMobilePhone::ERegisteredOnHomeNetwork  ||
 					iRegistrationStatus == RMobilePhone::ERegisteredRoaming)
 					{
@@ -106,7 +112,7 @@ void CSmsPhoneInitialization::DoRunL()
 				{
 				iState=ESmsPhoneInitializationCompleted;
 				iNetworkInfoAvailable =EFalse;
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL NETWORK INFO NOT available due %d",iStatus.Int());
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_4, "CSmsPhoneInitialization::DoRunL NETWORK INFO NOT available due %d",iStatus.Int());
 				iSmsPDURead.Start();
 				}
 			}
@@ -124,7 +130,7 @@ void CSmsPhoneInitialization::DoRunL()
 				{
 				iState=ESmsPhoneInitializationCompleted;
 				iNetworkInfoAvailable =EFalse;
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL NETWORK INFO NOT available due %d",iStatus.Int());
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_5, "CSmsPhoneInitialization::DoRunL NETWORK INFO NOT available due %d",iStatus.Int());
 				iSmsPDURead.Start();
 				}
 			}
@@ -136,14 +142,14 @@ void CSmsPhoneInitialization::DoRunL()
 			if(iStatus == KErrNone)
 				{
 				iNetworkInfoAvailable =ETrue;
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL network longname : >%S<",&iNetworkInfo.iLongName);
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL network shortname : >%S<",&iNetworkInfo.iShortName);
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL network shortname : >%S<",&iNetworkInfo.iDisplayTag);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_6, "CSmsPhoneInitialization::DoRunL network longname : >%S<",iNetworkInfo.iLongName);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_7, "CSmsPhoneInitialization::DoRunL network shortname : >%S<",iNetworkInfo.iShortName);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_8, "CSmsPhoneInitialization::DoRunL network shortname : >%S<",iNetworkInfo.iDisplayTag);
 				}
 			else
 				{
 				iNetworkInfoAvailable =EFalse;
-				LOGSMSPROT2("CSmsPhoneInitialization::DoRunL NETWORK INFO NOT available due %d",iStatus.Int());
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DORUNL_9, "CSmsPhoneInitialization::DoRunL NETWORK INFO NOT available due %d",iStatus.Int());
 				}
 			iSmsPDURead.Start();
 			}
@@ -168,7 +174,7 @@ void CSmsPhoneInitialization::DoRunL()
  */
 void CSmsPhoneInitialization::DoCancel()
 	{
-	LOGSMSPROT1("CSmsPhoneInitialization::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_DOCANCEL_1, "CSmsPhoneInitialization::DoCancel()");
 
 	switch (iState)
 		{
@@ -227,7 +233,7 @@ void CSmsPhoneInitialization::DoCancel()
  */
 void CSmsPhoneInitialization::Complete(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmsPhoneInitialization::Complete()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_COMPLETE_1, "CSmsPhoneInitialization::Complete()");
 
 	//
 	// Call the base function to perform the actual complete...
@@ -245,7 +251,7 @@ void CSmsPhoneInitialization::Complete(TInt aStatus)
  */
 void CSmsPhoneInitialization::AfterPhoneInitialize(TInt aStatus)
 	{
-    LOGSMSPROT2("CSmsPhoneInitialization::AfterPhoneIntialize [status=%d]", aStatus);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_AFTERPHONEINITIALIZE_1, "CSmsPhoneInitialization::AfterPhoneIntialize [status=%d]", aStatus);
 
 	if (aStatus == KErrNone)
 		{
@@ -257,7 +263,7 @@ void CSmsPhoneInitialization::AfterPhoneInitialize(TInt aStatus)
 		{
 		if (iMobileSmsCaps.iSmsMode != RMobileSmsMessaging::KCapsGsmSms)
 			{
-		    LOGSMSPROT1("TSY does not support GsmSms");
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_AFTERPHONEINITIALIZE_2, "TSY does not support GsmSms");
 			aStatus = KErrNotSupported;
 			}
 		else
@@ -273,13 +279,13 @@ void CSmsPhoneInitialization::AfterPhoneInitialize(TInt aStatus)
 		{
 	    if (++iNumberOfAttempts < iMaxNumberOfAttempts)
 			{
-			LOGSMSPROT2("CSmsPhoneInitialization Restarting [aStatus=%d]", aStatus);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_AFTERPHONEINITIALIZE_3, "CSmsPhoneInitialization Restarting [aStatus=%d]", aStatus);
 			iGsmPhone.Initialise(iStatus);
 			SetActive();
 			}
 		else
 			{
-			LOGSMSPROT3("CSmsPhoneInitialization Failed after %d attempts [aStatus=%d]", iNumberOfAttempts, aStatus);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEINITIALIZATION_AFTERPHONEINITIALIZE_4, "CSmsPhoneInitialization Failed after %d attempts [aStatus=%d]", iNumberOfAttempts, aStatus);
 			}
 		}
 
@@ -314,7 +320,7 @@ CSmsPhoneInitialization::CSmsPhoneInitialization(RMobileSmsMessaging& aSmsMessag
  */
 CSmsModemNotification* CSmsModemNotification::NewL(MSmsComm& aSmsComm)
 	{
-	LOGSMSPROT1("CSmsModemNotification::NewL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_NEWL_1, "CSmsModemNotification::NewL");
 
 	CSmsModemNotification*	self=new(ELeave) CSmsModemNotification(aSmsComm);
 	CleanupStack::PushL(self);
@@ -327,7 +333,7 @@ CSmsModemNotification* CSmsModemNotification::NewL(MSmsComm& aSmsComm)
 
 void CSmsModemNotification::ConstructL()
 	{
-	LOGSMSPROT1("CSmsModemNotification::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_CONSTRUCTL_1, "CSmsModemNotification::ConstructL()");
 
 	User::LeaveIfError(iPhonePowerProperty.Attach(KUidSystemCategory, KUidPhonePwr.iUid));
 	
@@ -347,7 +353,7 @@ CSmsModemNotification::~CSmsModemNotification()
 
 RPhone::TModemDetection CSmsModemNotification::ModemState()
 	{
-	LOGSMSPROT1("CSmsModemNotification::ModemState()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_MODEMSTATE_1, "CSmsModemNotification::ModemState()");
 
 	//
 	// Get the phone power state.
@@ -375,7 +381,7 @@ RPhone::TModemDetection CSmsModemNotification::ModemState()
  */
 void CSmsModemNotification::Start()
 	{
-	LOGSMSPROT1("CSmsModemNotification::Start");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_START_1, "CSmsModemNotification::Start");
 
 	__ASSERT_DEBUG(iState==ESmsModemNotificationIdle,SmspPanic(KSmspPanicUnexpectedState));
 
@@ -394,7 +400,7 @@ void CSmsModemNotification::Start()
  */
 void CSmsModemNotification::DoRunL()
 	{
-    LOGSMSPROT2("CSmsModemNotification::RunL [iStatus=%d]", iStatus.Int() );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_DORUNL_1, "CSmsModemNotification::RunL [iStatus=%d]", iStatus.Int() );
 
 	__ASSERT_DEBUG(iState==ESmsModemNotificationWaitingForNotification,SmspPanic(KSmspPanicUnexpectedState));
 
@@ -410,7 +416,7 @@ void CSmsModemNotification::DoRunL()
  */
 void CSmsModemNotification::DoCancel()
 	{
-	LOGSMSPROT1("CSmsModemNotification::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_DOCANCEL_1, "CSmsModemNotification::DoCancel()");
 
 	__ASSERT_DEBUG(iState==ESmsModemNotificationWaitingForNotification,SmspPanic(KSmspPanicUnexpectedState));
 	
@@ -450,7 +456,7 @@ CSmsModemNotification::CSmsModemNotification(MSmsComm& aSmsComm)
  */
 void CSmsModemNotification::Complete(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmsModemNotification::Complete()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMODEMNOTIFICATION_COMPLETE_1, "CSmsModemNotification::Complete()");
 
 	//
 	// Call the base function to perform the actual complete...

@@ -21,6 +21,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "RawIPFlowTraces.h"
+#endif
+
 #include <f32file.h>
 #include <nifman.h>
 #include <nifmbuf.h>
@@ -40,21 +46,19 @@ using namespace Messages;
 using namespace MeshMachine;
 using namespace ESock;
 
-#ifdef __FLOG_ACTIVE
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 //These variables are used only if flog is active.
 _LIT8(KTcpDumpFirstTag,"TcpDump");
 static const TUint16 KTcpDumpLinkType = 12;
 #endif
 
-CRawIPFlow::CRawIPFlow(CSubConnectionFlowFactoryBase& aFactory, const TNodeId& aSubConnId, CProtocolIntfBase* aProtocolIntf, CBttLogger* aTheLogger)
+CRawIPFlow::CRawIPFlow(CSubConnectionFlowFactoryBase& aFactory, const TNodeId& aSubConnId, CProtocolIntfBase* aProtocolIntf)
 /**
  * Constructor.
  *
  * @param aFactory Reference to the factory which created this object.
- * @param aTheLogger The logging object, ownership is passed to this object
  */
 	: CSubConnectionFlowBase(aFactory, aSubConnId, aProtocolIntf),
-	  iTheLogger(aTheLogger),
 	  iInitError(KErrNone),
 	  iStarted(EFalse),
 	  iStopping(EFalse)
@@ -70,9 +74,9 @@ void CRawIPFlow::ConstructL()
  * @param aName The name of the NIF (unused)
  */
 	{
-	_LOG_L1C2(_L8("CRawIPFlow %08x:\tConstructL()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_CONSTRUCTL_1, "CRawIPFlow %08x:\tConstructL()", this);
     iBinderControl = new (ELeave) TBinderControlProxy(*this);
-	iBcaController = CBcaIoController::NewL(*this, iTheLogger);
+	iBcaController = CBcaIoController::NewL(*this);
 	}
 
 CRawIPFlow::~CRawIPFlow()
@@ -82,8 +86,6 @@ CRawIPFlow::~CRawIPFlow()
 	{
 	// Note that we don't delete iBinder because it's not owned by us.
 	delete iBcaController;
-	// This class also deletes the logging object
-	delete iTheLogger;
 
 	ASSERT(iBinder == NULL);
 	
@@ -105,7 +107,7 @@ void CRawIPFlow::StartFlowL()
 	{
 	ASSERT(iStarting==EFalse);
 	iStarting = ETrue;
-	_LOG_L1C2(_L8("CRawIPFlow %08x:\tStartFlowL()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_STARTFLOWL_1, "CRawIPFlow %08x:\tStartFlowL()", this);
 
 	// If there were any errors during earlier processing of the ProvisionConfig message
 	// then send an Error message in response to the StartFlow (because ProvisionConfig
@@ -120,7 +122,7 @@ void CRawIPFlow::StartFlowL()
 	InitialiseL(MControllerObserver::EStart, KErrNone);
 
 	//the name calculation should be done only if logging is enabled
-#ifdef __FLOG_ACTIVE
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 	const TUint KModemNameLen = KCommsDbSvrMaxColumnNameLength + 10;  // need enough for ppp-XXX.txt - e.g. ppp-comm-1.txt, ppp-btcomm-10.txt etc
 	TBuf8<KModemNameLen> modemName;
 
@@ -140,13 +142,13 @@ void CRawIPFlow::StartFlowL()
 	_LIT8(KTimeFormat, "%08X");
 	TUint32 counter = User::FastCounter();
 	logFileName.Format(KTimeFormat, counter);
-
-	TRAPD(err,__PACKETLOG_NEWL(KTcpDumpFirstTag, logFileName, CPacketLogger::ETcpDump, KTcpDumpLinkType));
-	if (err)
-		{
-		_LOG_L1C1(_L8("Trapped leave from __PACKETLOG_NEWL"));
-		}
-
+	
+    TRAPD(err,__PACKETLOG_NEWL(KTcpDumpFirstTag, logFileName, CPacketLogger::ETcpDump, KTcpDumpLinkType));
+        if (err)
+            {
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_STARTFLOWL_2, "Trapped leave from __PACKETLOG_NEWL");
+            }
+	
 	const TUint KLogTextLen = KModemNameLen+KTimeStampLen+30;
 	TBuf8<KLogTextLen> logText;
 	_LIT8(KLogTimeText, "TcpDump log file time stamp:");
@@ -155,7 +157,7 @@ void CRawIPFlow::StartFlowL()
 	logText.Append(logFileName);
 	logText.Append(KLogModemText);
 	logText.Append(modemName);
-	_LOG_L1C1(logText);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_STARTFLOWL_3, "%s", logText);
 #endif
 	}
 
@@ -167,7 +169,7 @@ void CRawIPFlow::LinkLayerUp()
  * ready to go.
  */
 	{
-	_LOG_L1C2(_L8("CRawIPFlow %08x:\tLinkLayerUp()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_LINKLAYERUP_1, "CRawIPFlow %08x:\tLinkLayerUp()", this);
 
 	iLastRequestOriginator.ReplyTo(Id(), TCFDataClient::TStarted().CRef());
 
@@ -186,9 +188,10 @@ void CRawIPFlow::LinkLayerDown(TInt aError)
  * @param aError An error code to propagate to NifMan
  */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tLinkLayerDown(aError %d)"), this, aError);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_LINKLAYERDOWN_1, "CRawIPFlow %08x:\tLinkLayerDown(aError %d)", (TUint)this, aError);
+	
 	__PACKETLOG_DELETE;
-
+	
 	if (iStopping)
 		{
 		iLastRequestOriginator.ReplyTo(Id(), TCFDataClient::TStopped(aError).CRef());
@@ -217,7 +220,7 @@ void CRawIPFlow::StopFlow(TInt aError)
  * @param aAction The action to take: disconnect or reconnect
  */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tStopFlow(aError %d)"), this, aError);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_STOPFLOW_1, "CRawIPFlow %08x:\tStopFlow(aError %d)", (TUint)this, aError);
 	__PACKETLOG_DELETE;
 	iStopping = ETrue;
 	ShutDown(MControllerObserver::EInitialised, aError);
@@ -233,9 +236,7 @@ MLowerDataSender::TSendResult CRawIPFlow::SendPacket(RMBufChain& aPdu, TAny* /*a
  * @return MLowerDataSender::TSendResult
  */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tSendPacket(): length=%d"),
-		this, aPdu.Length() - aPdu.First()->Length());
-
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_SENDPACKET_1, "CRawIPFlow %08x:\tSendPacket(): length=%d, blocked=%d", (TUint)this, aPdu.Length() - aPdu.First()->Length(),iBlocked);
     __PACKETLOG_WRITE_PACKET(aPdu, 0);
     return iBcaController->Send(aPdu);
 	}
@@ -249,13 +250,12 @@ void CRawIPFlow::Process(RMBufChain& aPdu, TUint16 aProtocolCode)
  * @param aPdu The incoming packet
  */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tProcess() [aPdu length=%d]"),
-		this, aPdu.Length() - aPdu.First()->Length());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_PROCESS_1, "CRawIPFlow %08x:\tProcess() [aPdu length=%d]",(TUint)this, aPdu.Length() - aPdu.First()->Length());
 
 	// If the packet has zero or negative length, bin it.
 	if ((aPdu.Length() - aPdu.First()->Length()) <= 0)
 		{
-		_LOG_L1C1(_L8("Dumped packet: illegal length"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_PROCESS_2, "Dumped packet: illegal length");
 		aPdu.Free();
 		return;
 		}
@@ -269,11 +269,10 @@ void CRawIPFlow::Process(RMBufChain& aPdu, TUint16 aProtocolCode)
 	else
 		{
 		// The protocol didn't want the packet, so bin it.
-		_LOG_L1C2(_L8("Packet was not processed: freeing (protocol code: %X)"),
-			aProtocolCode);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_PROCESS_3, "Packet was not processed: freeing (protocol code: %X)",aProtocolCode);
 		if (iBinder == NULL)
 			{
-			_LOG_L1C2(_L8("CRawIPFlow %08x:\tProcess(): NOTE: Binder not present"), this);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_PROCESS_4, "CRawIPFlow %08x:\tProcess(): NOTE: Binder not present", this);
 			}
 		aPdu.Free();
 		}
@@ -284,7 +283,7 @@ void CRawIPFlow::ResumeSending()
  * Notifies the protocol interface that it can resume sending packets.
  */
 	{
-	_LOG_L1C2(_L8("CRawIPFlow %08x:\tResumeSending()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_RESUMESENDING_1, "CRawIPFlow %08x:\tResumeSending()", this);
 
 	if (iBinder)
 		{
@@ -292,7 +291,7 @@ void CRawIPFlow::ResumeSending()
 		}
 	else
 		{
-		_LOG_L1C2(_L8("CRawIPFlow %08x:\tResumeSending(): NOTE: Binder not present"), this);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_RESUMESENDING_2, "CRawIPFlow %08x:\tResumeSending(): NOTE: Binder not present", this);
 		}
 	}
 
@@ -307,12 +306,11 @@ void CRawIPFlow::InitialiseL(TInitialisationState aState, TInt aError)
  * @param aError A possible error
  */
 	{
-	_LOG_L1C4(_L8("CRawIPFlow %08x:\tInitialiseL(aState %d, aError %d)"),
-		this, aState, aError);		
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_1, "CRawIPFlow %08x:\tInitialiseL(aState %d, aError %d)",(TUint)this, aState, aError);
 
 	if (aError != KErrNone)
 		{
-		_LOG_L2C2(_L8("  *** FAILED to initialise NIF *** Error =%d"),aError);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_2, "  *** FAILED to initialise NIF *** Error =%d",aError);
 
 		// Initialise shutdown sequence
 		switch (aState)
@@ -321,7 +319,7 @@ void CRawIPFlow::InitialiseL(TInitialisationState aState, TInt aError)
 			ShutDown(MControllerObserver::EInitialised, aError);
 			break;
 		default:
-			_LOG_L2C3(_L8("ERROR CRawIPFlow: Unknown state:%d in NIF: %S"), aState, &KNifName);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_3, "ERROR CRawIPFlow: Unknown state:%d in NIF: %S", aState, KNifName);
 			User::Leave(KErrUnknown);
 			break;
 			}
@@ -336,13 +334,13 @@ void CRawIPFlow::InitialiseL(TInitialisationState aState, TInt aError)
 		GetBinder()->UpdateContextConfigL(*iAgentProvision->iGprsConfig);
 		GetBinder()->UpdateConnectionSpeed(iAgentProvision->iConnectionSpeed);
 
-		_LOG_L1C2(_L8("Port details %S"), &iProvision->GetPortName());
+		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_4, "Port details %S", iProvision->GetPortName());
 		iBcaController->SetPort(iProvision->GetPortName());
 
-		_LOG_L1C3(_L8("bcaName details %S,%S"),&iProvision->GetBCAStack(), &iProvision->GetBCAName());
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_5, "bcaName details %S,%S",iProvision->GetBCAStack(), iProvision->GetBCAName());
 		iBcaController->SetBcaStackAndName(iProvision->GetBCAStack(), iProvision->GetBCAName());
 
-		_LOG_L1C2(_L8("IAP ID details %u"), iProvision->GetIAPid());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_6, "IAP ID details %u", iProvision->GetIAPid());
 		iBcaController->SetIapId(iProvision->GetIAPid());
 
 		UpdateContextState(RPacketContext::EStatusActive, KErrNone);
@@ -351,11 +349,11 @@ void CRawIPFlow::InitialiseL(TInitialisationState aState, TInt aError)
 		}
 		break;
 	case MControllerObserver::EBcaController:
-		_LOG_L1C1(_L8("  ***** NIF INITIALISED *****"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_7, "  ***** NIF INITIALISED *****");
 		LinkLayerUp();
 		break;
 	default:
-		_LOG_L2C3(_L8("ERROR CRawIPFlow: Unknown state:%d in NIF: %S"), aState, &KNifName);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_INITIALISEL_8, "ERROR CRawIPFlow: Unknown state:%d in NIF: %S", aState, KNifName);
 		User::Leave(KErrUnknown);
 		break;
 		}
@@ -371,8 +369,7 @@ void CRawIPFlow::ShutDown(TInitialisationState aState, TInt aError)
  * @param aError A possible error (only during initialisation)
  */
 	{
-	_LOG_L1C4(_L8("CRawIPFlow %08x:\tShutDown(aState %d, aError %d)"),
-		this, aState, aError);	
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_SHUTDOWN_1, "CRawIPFlow %08x:\tShutDown(aState %d, aError %d)",(TUint)this, aState, aError);
 			
 	if (aError != KErrNone)
 		{
@@ -391,8 +388,9 @@ void CRawIPFlow::ShutDown(TInitialisationState aState, TInt aError)
 		LinkLayerDown(iInitError);
 		break;
 	default:
-		_LOG_L2C1(_L8("ERROR CRawIPFlow: Unknown Shutdown step"));
-		_BTT_PANIC(KNifName,KNifUnknownShutDownState);
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_SHUTDOWN_2, "ERROR CRawIPFlow: Unknown Shutdown step");
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_SHUTDOWN_3, "PANIC: %S %d", KNifName, KNifUnknownShutDownState);
+          User::Panic(KNifName,KNifUnknownShutDownState);
 		break;
 		}
 	}
@@ -426,7 +424,7 @@ void CRawIPFlow::UpdateContextState(
  * @param aError A possible error
  */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tUpdateContextState(aState %d)"), this, aState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_UPDATECONTEXTSTATE_1, "CRawIPFlow %08x:\tUpdateContextState(aState %d)",(TUint) this, aState);
 
 	// Note that we do not need to close the Flow down if there's been an
 	// error, as the context state machine will do this for us.
@@ -451,25 +449,23 @@ MFlowBinderControl* CRawIPFlow::DoGetBinderControlL()
 
 MLowerControl* CRawIPFlow::GetControlL(const TDesC8& aProtocol)
 	{
-#ifdef __BTT_LOGGING__
-	//TBuf8<256> debugBuffer;
-	//debugBuffer.Copy(aProtocol);
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tGetControlL(aProtocol %S)"), this, &aProtocol);
-#endif
+
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_GETCONTROLL_1, "CRawIPFlow %08x:\tGetControlL(aProtocol %s)", (TUint)this, aProtocol);
+
 
 	// IPv4 and ICMP Protocols
 	if (aProtocol.CompareF(KDescIp()) == 0 || aProtocol.CompareF(KDescIcmp()) == 0)
 		{
 		if (!iBinder)
 			{
-			iBinder = new (ELeave) CIPv4Binder(*this, iTheLogger);
+			iBinder = new (ELeave) CIPv4Binder(*this);
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
  			iBcaController->SetType(KIp4FrameType);
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
 			}
 		else
 			{
-			_LOG_L1C2(_L8("CRawIPFlow %08x:\tGetControlL(): IPv4 binder already exists"), this);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_GETCONTROLL_2, "CRawIPFlow %08x:\tGetControlL(): IPv4 binder already exists", this);
 			}
 		}
 	// IPv6 Protocol
@@ -477,14 +473,14 @@ MLowerControl* CRawIPFlow::GetControlL(const TDesC8& aProtocol)
 		{
 		if (!iBinder)
 			{
-			iBinder = new (ELeave) CIPv6Binder(*this, iTheLogger);
+			iBinder = new (ELeave) CIPv6Binder(*this);
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
  			iBcaController->SetType(KIp6FrameType);
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
 			}
 		else
 			{
-			_LOG_L1C2(_L8("CRawIPFlow %08x:\tGetControlL(): IPv6 binder already exists"), this);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_GETCONTROLL_3, "CRawIPFlow %08x:\tGetControlL(): IPv6 binder already exists", this);
 			}
 		}		
 	else
@@ -517,7 +513,7 @@ MLowerDataSender* CRawIPFlow::BindL(const TDesC8& aProtocol, MUpperDataReceiver*
 
 void CRawIPFlow::Unbind(MUpperDataReceiver* aUpperReceiver, MUpperControl* aUpperControl)
     {
-    _LOG_L1C2(_L8("CRawIPFlow %08x:\tUnbind()"), this);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_UNBIND_1, "CRawIPFlow %08x:\tUnbind()", this);
 
 	if (iBinder)
 	    {
@@ -640,7 +636,6 @@ void CRawIPFlow::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipie
 			//doesn't notice anything. It does that by swapping the
 			//flows below the binders.
 			CBinderBase* localBinder = iBinder;
-			CBttLogger* logger = localBinder->iTheLogger;
 
 			TBinderControlProxy* localBinderControl = iBinderControl;
 			iBinder = otherFlow->iBinder;
@@ -652,7 +647,6 @@ void CRawIPFlow::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipie
 			otherFlow->iBinderControl->iFlow = otherFlow;
 			iBinderControl->iFlow = this;
 
-			iBinder->iTheLogger = logger;
 
 			iSubConnectionProvider.Close();
 			iSubConnectionProvider.Open(address_cast<TNodeId>(rejoinMsg.iNodeId));
@@ -726,7 +720,7 @@ Just save the pointer for now - validate it later on StartFlow.
 @param aData provisioning pointer from message
 */
 	{
-	_LOG_L1C2(_L8("CRawIPFlow %08x:\tProvisionConfig()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_PROVISIONCONFIG_1, "CRawIPFlow %08x:\tProvisionConfig()", this);
 
 	AccessPointConfig().Close();
 	AccessPointConfig().Open(aConfigData);
@@ -743,7 +737,7 @@ Retrieve provisioning information available only at StartFlow time.
 	{
     if (iProvision == NULL)
         {
-        _LOG_L1C1(_L8("CRawIPFlow:\tProvisionConfigL() - CBCAProvision config incomplete"));
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_DYNAMICPROVISIONCONFIGL_1, "CRawIPFlow:\tProvisionConfigL() - CBCAProvision config incomplete");
 		iProvisionError = KErrCorrupt;
 		return;
         }
@@ -761,7 +755,7 @@ Retrieve provisioning information available only at StartFlow time.
             STypeId::CreateSTypeId(CIPConfig::EUid, CIPConfig::ETypeId)));
     if (wcdmaIpProvision == NULL)
         {
-        _LOG_L1C2(_L8("CRawIPFlow %08x:\tDynamicProvisionConfigL() - WCDMA config incomplete"), this);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_DYNAMICPROVISIONCONFIGL_2, "CRawIPFlow %08x:\tDynamicProvisionConfigL() - WCDMA config incomplete", this);
 		iProvisionError = KErrCorrupt;
 		return;
         }
@@ -789,13 +783,13 @@ These used to be implemented as Agent <-> NIF Notifications, hence the method na
 some historical understanding.
 */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tNotification(aEvent %d)"), this, aEvent);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_NOTIFICATION_1, "CRawIPFlow %08x:\tNotification(aEvent %d)", (TUint)this, aEvent);
 
 	switch (aEvent)
 	{
-    case EAgentToNifEventTypeDisableTimers: //GPRS suspension
-        {
-        _LOG_L1C1(_L8("CRawIPFlow::Received Suspend from Agent..."));
+	case EAgentToNifEventTypeDisableTimers: //GPRS suspension
+		{
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_NOTIFICATION_2, "CRawIPFlow::Received Suspend from Agent...");
 
         // Let the BCA controller know that data can no longer be sent over
         // the PDP context.
@@ -806,7 +800,7 @@ some historical understanding.
 
     case EAgentToNifEventTypeEnableTimers: //GPRS resumption
         {
-        _LOG_L1C1(_L8("CRawIPFlow::Received Resume from Agent..."));
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_NOTIFICATION_3, "CRawIPFlow::Received Resume from Agent...");
         iBcaController->ResumeSending();
 
         break;
@@ -814,13 +808,13 @@ some historical understanding.
 	case (EAgentToNifEventTypeDisableConnection) :
 		{
 		// This is handled by NIFMAN and passed to Flow as a Stop() call
-		_LOG_L1C1(_L8("CRawIPFlow::Received Disable connection from Agent..."));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_NOTIFICATION_4, "CRawIPFlow::Received Disable connection from Agent...");
 		break;
 		}
 
 	default :
 		{
-		_LOG_L1C2(_L8("CRawIPFlow::Received Notification [%d] from Agent..."), aEvent);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_NOTIFICATION_5, "CRawIPFlow::Received Notification [%d] from Agent...", aEvent);
 		break;
 		}
 	}//endswitch

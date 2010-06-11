@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,10 +19,15 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smsubackupTraces.h"
+#endif
+
 #include <e32std.h>
 #include "SmsuBackup.h"
 #include <babackup.h>
-#include "smsstacklog.h"
 
 
 const TInt KBURPartMask = 0x000000FF;
@@ -34,7 +39,7 @@ using namespace conn;
 
 EXPORT_C CBackupAndRestore* CBackupAndRestore::NewL(MNBBackupAndRestoreObserver& aBackupAndRestoreObserver)
  	{
- 	LOGSMSU1("CBackupAndRestore::NewL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CBACKUPANDRESTORE_NEWL_1, "CBackupAndRestore::NewL()");
 
  	CBackupAndRestore* me = new(ELeave) CBackupAndRestore(aBackupAndRestoreObserver);
  	CleanupStack::PushL(me);
@@ -53,7 +58,7 @@ CBackupAndRestore::CBackupAndRestore(MNBBackupAndRestoreObserver& aBackupAndRest
 
 void CBackupAndRestore::ConstructL()
  	{
- 	LOGSMSU1("CBackupAndRestore::ConstructL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBACKUPANDRESTORE_CONSTRUCTL_1, "CBackupAndRestore::ConstructL()");
 
  	iBackupOrRestoreInProgress = EFalse;
 	User::LeaveIfError(iBackupProperty.Attach(KUidSystemCategory,KUidBackupRestoreKey));
@@ -72,7 +77,7 @@ EXPORT_C CBackupAndRestore::~CBackupAndRestore()
 
 void CBackupAndRestore::DoCancel()
  	{
- 	LOGSMSU1("CBackupAndRestore::DoCancel()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBACKUPANDRESTORE_DOCANCEL_1, "CBackupAndRestore::DoCancel()");
 
  	iBackupProperty.Cancel();
  	} // CBackupAndRestore::DoCancel
@@ -80,7 +85,7 @@ void CBackupAndRestore::DoCancel()
 
 EXPORT_C TBool CBackupAndRestore::IsBackupOrRestoreInProgress()
 	{
-	LOGSMSU1("CBackupAndRestore::IsBackupOrRestoreInProgress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CBACKUPANDRESTORE_ISBACKUPORRESTOREINPROGRESS_1, "CBackupAndRestore::IsBackupOrRestoreInProgress()");
 
 	return iBackupOrRestoreInProgress;
 	} // CBackupAndRestore::IsBackupOrRestoreInProgress
@@ -91,7 +96,7 @@ EXPORT_C TBool CBackupAndRestore::IsBackupOrRestoreInProgress()
  */
 void CBackupAndRestore::RunL()
  	{
- 	LOGSMSU1("CBackupAndRestore::RunL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBACKUPANDRESTORE_RUNL_1, "CBackupAndRestore::RunL()");
 
  	iBackupProperty.Subscribe(iStatus);
  	SetActive();

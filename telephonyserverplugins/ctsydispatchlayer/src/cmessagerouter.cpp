@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmessagerouterTraces.h"
+#endif
 
 #include <e32def.h>
 #include <satcs.h>
@@ -314,7 +320,7 @@ void CMessageRouter::StartBootSequenceL()
 
     // Kick off boot sequence
     TInt ret = ExtFuncL(EMmTsyBootNotifyModemStatusReadyIPC, NULL);
-    LOG(_L8("ExtFuncL(EMmTsyBootNotifyModemStatusReadyIPC returned %d"), ret);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_STARTBOOTSEQUENCEL_1, "ExtFuncL(EMmTsyBootNotifyModemStatusReadyIPC returned %d", ret);
     User::LeaveIfError(ret);
     } // CMessageRouter::StartBootSequenceL
 
@@ -1045,7 +1051,7 @@ TInt CMessageRouter::ExtFuncL(TInt aIpc, const CMmDataPackage* aDataPackage)
 		ret = iCtsyDispatcherSatDispatcher->DispatchGetUssdControlSupportedL();
 		break;
 	default:
-		LOG(_L8("WARNING: CMessageRouter::ExtFuncL unhandled IPC=%d"), aIpc);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_EXTFUNCL_1, "WARNING: CMessageRouter::ExtFuncL unhandled IPC=%d", aIpc);
 	 	break;
 		} // switch (aIpc)
 
@@ -1080,31 +1086,31 @@ void CMessageRouter::QuerySupporterCallbackIndicators()
 
 	TUint32 indmask;
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchCallControlFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("CallControl indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_1, "CallControl indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchPhoneFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Security indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_2, "Security indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchSecurityFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("CallControl indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_3, "CallControl indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchPhonebookEnFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Phonebook EN indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_4, "Phonebook EN indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchCellBroadcastFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Cell Broadcast indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_5, "Cell Broadcast indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchPhonebookOnFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Phonebook ON indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_6, "Phonebook ON indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchPhonebookFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Phonebook indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_7, "Phonebook indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchSimFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("SIM indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_8, "SIM indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchSmsFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Sms indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_9, "Sms indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchCallControlMultipartyFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Call Control Multiparty indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_10, "Call Control Multiparty indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchSupplementaryServicesFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Supplementary Services indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_11, "Supplementary Services indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchPacketServicesFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("Packet Services indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_12, "Packet Services indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	iLtsyFactoryV1->IsCallbackIndicatorSupported(KDispatchSatFuncUnitId, EIndIdGroup1, indmask);
-	LOG(_L8("SAT indicator support. GroupID=%d, bitmask = 0x%x"), EIndIdGroup1, indmask);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMESSAGEROUTER_QUERYSUPPORTERCALLBACKINDICATORS_13, "SAT indicator support. GroupID=%d, bitmask = 0x%x", EIndIdGroup1, (TUint)indmask);
 	}
 
 void CMessageRouter::RetrieveNetworkInfoL()

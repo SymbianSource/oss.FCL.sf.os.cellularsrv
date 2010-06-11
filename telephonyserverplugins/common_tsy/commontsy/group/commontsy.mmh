@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -181,6 +181,8 @@ USERINCLUDE     ../inc/mmutility
 
 USERINCLUDE     ../../licenseetsy_lib/inc
 
+USERINCLUDE ../traces
+
 // Default system include paths for OS extension layer modules.
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 #ifdef USING_DISPATCHER
@@ -188,7 +190,6 @@ OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 	
 LIBRARY       euser.lib    // EPOC basics
 LIBRARY	      bafl.lib	   // Arrays
-LIBRARY       flogger.lib  // Logging
 LIBRARY       hash.lib     // For sha functions
 LIBRARY       efsrv.lib    // File handling
 LIBRARY	      centralrepository.lib  //Central Repository
@@ -205,6 +206,4 @@ LIBRARY       hwrmpowerclient.lib  // Hardware resource library
 #ifdef SYMBIAN_BAFL_SYSUTIL
 LIBRARY sysutil.lib // for using sysutil API for phone identity
 #endif
-
-#include <comms-infras/commsdebugutility.mmh>
 

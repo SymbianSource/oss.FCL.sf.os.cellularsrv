@@ -31,7 +31,7 @@
 #include <comms-infras/agentscpractivities.h>
 #include <comms-infras/ss_nodemessages_factory.h>
 
-#if defined __FLOG_ACTIVE || defined SYMBIAN_TRACE_ENABLE
+#if  defined SYMBIAN_TRACE_ENABLE
 #define KPDPSCprTag KESockSubConnectionTag
 _LIT8(KPDPSCprSubTag, "pdpscpr");
 #endif

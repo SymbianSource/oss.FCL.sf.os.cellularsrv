@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmdatalinetsyTraces.h"
+#endif
+
 #include "cmmdatalinetsy.h"
 #include "cmmphonetsy.h"
 #include "cmmdatacalltsy.h"
@@ -37,7 +43,7 @@ CMmDataLineTsy::CMmDataLineTsy()
 
 void CMmDataLineTsy::ConstructL()
     {
-TFLOGSTRING("TSY: CMmDataLineTsy::ConstructL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_CONSTRUCTL_1, "TSY: CMmDataLineTsy::ConstructL");
 
     CMmLineTsy::ConstructL();
     }
@@ -48,7 +54,7 @@ CMmDataLineTsy* CMmDataLineTsy::NewL(
     const TDesC& aName,
     CMmMessageManagerBase* aMessageManager )
     {
-TFLOGSTRING2("TSY: CMmDataLineTsy::NewL - Data line %S created", &aName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_NEWL_1, "TSY: CMmDataLineTsy::NewL - Data line %S created", aName);
     CMmDataLineTsy* mmLineTsy = NULL;
 
     if ( NULL != aMmPhone && RMobilePhone::ECircuitDataService == aMode )
@@ -69,8 +75,7 @@ TFLOGSTRING2("TSY: CMmDataLineTsy::NewL - Data line %S created", &aName);
 
 CMmDataLineTsy::~CMmDataLineTsy()
     {
-TFLOGSTRING2("TSY: CMmDataLineTsy::~CMmDataLineTsy - Line name: %S",
-    &iLineName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_DTOR_1, "TSY: CMmDataLineTsy::~CMmDataLineTsy - Line name: %S",iLineName);
 
     }
 
@@ -252,8 +257,7 @@ void CMmDataLineTsy::CompleteNotifyIncomingCall(
         reinterpret_cast<CCallDataPackage*>(aDataPackage);
     callDataPackage->GetCallIdAndMode( callId, callMode ); 
 
-TFLOGSTRING3("TSY: CMmDataLineTsy::CompleteNotifyIncomingCall - \
-    Line name: %S, Call id: %d", &iLineName, callId );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYINCOMINGCALL_1, "TSY: CMmDataLineTsy::CompleteNotifyIncomingCall - \Line name: %S, Call id: %d", iLineName, callId );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -419,7 +423,7 @@ TFLOGSTRING3("TSY: CMmDataLineTsy::CompleteNotifyIncomingCall - \
 void CMmDataLineTsy::CompleteNotifyDiallingStatus(
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_1, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus");
 
     TInt callId( -1 );
     TBool ghostCall( EFalse );
@@ -436,8 +440,7 @@ TFLOGSTRING("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus");
 
     if ( NULL == mmCall )
         {
-        TFLOGSTRING("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - \
-            GhostCall");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_2, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - \GhostCall");
         ghostCall = ETrue;
         }
     else
@@ -453,8 +456,8 @@ TFLOGSTRING("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus");
         resultNoFdnCheck = mmCall->IsServiceLocallyRequested( 
             CMmCallTsy::EMultimodeCallDialNoFdnCheck );
 
-TFLOGSTRING2("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - IsDial: %d", result );  
-TFLOGSTRING2("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - IsDialNoFdnCheck: %d", resultNoFdnCheck );  
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_3, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - IsDial: %d", result );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_4, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - IsDialNoFdnCheck: %d", resultNoFdnCheck );
 
         if ( result || resultNoFdnCheck )
             {
@@ -470,7 +473,7 @@ TFLOGSTRING2("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - IsDialNoFdnChe
                         CMmCallTsy::EMultimodeCallDialNoFdnCheck ) ) )
                     {
                     mmCall->SetCallId( callId );
-TFLOGSTRING2("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - mmCall SetCallId: %d", callId);                           
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_5, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - mmCall SetCallId: %d", callId);
                     mmCall->CompleteNotifyMobileCallInfoChange( 
                                 aDataPackage );
                     break;
@@ -479,14 +482,14 @@ TFLOGSTRING2("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - mmCall SetCall
             }
         else
             {
-TFLOGSTRING("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - Dial not found");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_6, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus - Dial not found");
             ghostCall = ETrue;
             }
         }
     //Ghost call handling starts here
     if ( ghostCall )
         {
-TFLOGSTRING("TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus -> CompleteNotifyAddBypassingCall");        
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATALINETSY_COMPLETENOTIFYDIALLINGSTATUS_7, "TSY: CMmDataLineTsy::CompleteNotifyDiallingStatus -> CompleteNotifyAddBypassingCall");
         //complete call added notification directly from here
         CompleteNotifyAddBypassingCall( aDataPackage ); 
         }

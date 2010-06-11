@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,6 +13,12 @@
 // Description:
 //
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "wappstorTraces.h"
+#endif
+
 #include "wappstor.h"
 #include "ws_main.h"
 #include "smsstackutils.h"
@@ -26,7 +32,7 @@ const TUid KWapReassemblyStoreUid={KWapReassemblyStoreUidValue};  //  Used for s
 
 CWapReassemblyStore* CWapReassemblyStore::NewL(RFs& aFs)
     {
-    LOGWAPPROT1("CWapReassemblyStore::NewL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_NEWL_1, "CWapReassemblyStore::NewL()");
 
     CWapReassemblyStore* reassembly=new (ELeave)CWapReassemblyStore(aFs);
    	CleanupStack::PushL(reassembly);
@@ -44,7 +50,7 @@ CWapReassemblyStore::~CWapReassemblyStore()
 
 TBool CWapReassemblyStore::AddMessageL( TInt& aIndex, const CWapDatagram& aDatagram)                                                
     {
-    LOGWAPPROT1("CWapReassemblyStore::AddMessageL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_ADDMESSAGEL_1, "CWapReassemblyStore::AddMessageL()");
 
     CArrayPtrFlat<CWapDatagram::TSegmentData>* segmentArray = new
         (ELeave) CArrayPtrFlat<CWapDatagram::TSegmentData> (8);
@@ -198,7 +204,7 @@ TBool CWapReassemblyStore::AddMessageL( TInt& aIndex, const CWapDatagram& aDatag
 void CWapReassemblyStore::GetDatagramL( TInt            aIndex,
                                                 CWapDatagram&   aDatagram)
     {
-    LOGWAPPROT1("CWapReassemblyStore::GetDatagramL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_GETDATAGRAML_1, "CWapReassemblyStore::GetDatagramL()");
 
     CArrayPtrFlat<CWapDatagram::TSegmentData>* segmentArray = new
         (ELeave) CArrayPtrFlat<CWapDatagram::TSegmentData> (8);
@@ -231,7 +237,7 @@ void CWapReassemblyStore::GetDatagramL( TInt            aIndex,
 
 TBool CWapReassemblyStore::FindAndDeleteDatagramL( CWapDatagram& aDatagram)
 	{
-	LOGWAPPROT1("CWapReassemblyStore::FindAndDeleteDatagramL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_FINDANDDELETEDATAGRAML_1, "CWapReassemblyStore::FindAndDeleteDatagramL()");
 
 	TInt index;
 	TBool isFound = EFalse;
@@ -263,7 +269,7 @@ TBool CWapReassemblyStore::FindAndDeleteDatagramL( CWapDatagram& aDatagram)
 
 void CWapReassemblyStore::ConstructL()
     {
-    LOGWAPPROT1("CWapReassemblyStore::ConstructL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_CONSTRUCTL_1, "CWapReassemblyStore::ConstructL()");
 
     //get full path of reassembly store
     PrivatePath(iFullPathBuf);
@@ -286,7 +292,7 @@ void CWapReassemblyStore::InternalizeEntryL(
                             CWapDatagram&               aDatagram,
                             CArrayPtr<CWapDatagram::TSegmentData>&  aSegmentArray)
     {
-    LOGWAPPROT1("CWapReassemblyStore::InternalizeEntryL Start");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_INTERNALIZEENTRYL_1, "CWapReassemblyStore::InternalizeEntryL Start");
 
 	BeginTransactionLC();
     RStoreReadStream ReadStream;
@@ -318,7 +324,7 @@ void CWapReassemblyStore::InternalizeEntryL(
     // Closes the ReadStream
     CleanupStack::PopAndDestroy();
 	CommitTransactionL();
-    LOGWAPPROT1("CWapReassemblyStore::InternalizeEntryL End");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_INTERNALIZEENTRYL_2, "CWapReassemblyStore::InternalizeEntryL End");
     } // CWapReassemblyStore::InternalizeEntryL
 
 
@@ -335,7 +341,7 @@ void CWapReassemblyStore::ExternalizeEntryL(
                             const CWapDatagram& aDatagram,
                             const CArrayPtr<CWapDatagram::TSegmentData>& aSegmentArray)
     {
-    LOGWAPPROT1("CWapReassemblyStore::ExternalizeEntryL Start");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_EXTERNALIZEENTRYL_1, "CWapReassemblyStore::ExternalizeEntryL Start");
     
     TInt32 Count = aSegmentArray.Count();
     RStoreWriteStream WriteStream;
@@ -370,7 +376,7 @@ void CWapReassemblyStore::PopulateEntry(TWapReassemblyEntry& aEntry,
                                         const CWapDatagram& aDatagram,
                                         TInt                aNumDatagrams)
     {
-    LOGWAPPROT1("CWapReassemblyStore::PopulateEntry()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_POPULATEENTRY_1, "CWapReassemblyStore::PopulateEntry()");
 
     TInt ToPort = 0;
     TInt FromPort = 0;
@@ -402,7 +408,7 @@ void CWapReassemblyStore::PopulateEntry(TWapReassemblyEntry& aEntry,
 void CWapReassemblyStore::CreateEntryL(const CWapDatagram&                 aDatagram,
                                        const CArrayPtr<CWapDatagram::TSegmentData>& aSegmentArray)
 	{
-	LOGWAPPROT1("CWapReassemblyStore::CreateEntryL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_CREATEENTRYL_1, "CWapReassemblyStore::CreateEntryL");
 
     TWapReassemblyEntry Entry;
     TStreamId WriteStream = KNullStreamId;
@@ -427,7 +433,7 @@ CWapReassemblyStore::CWapReassemblyStore(RFs& aFs)
  */
 void CWapReassemblyStore::OpenStoreL()
 	{
-	LOGWAPPROT1("CWapReassemblyStore::OpenStoreL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPREASSEMBLYSTORE_OPENSTOREL_1, "CWapReassemblyStore::OpenStoreL()");
 
 	OpenL(iFullPathBuf,KWapReassemblyStoreUid);
 	} // CWapReassemblyStore::OpenStoreL

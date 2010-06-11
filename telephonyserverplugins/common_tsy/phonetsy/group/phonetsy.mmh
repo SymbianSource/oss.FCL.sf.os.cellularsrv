@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -38,6 +38,8 @@ USERINCLUDE     ../../commontsy/inc/mmutility
 USERINCLUDE     ../../commontsy/inc/mmgsmwcdma
 USERINCLUDE     ../../licenseetsy_lib/inc
 
+USERINCLUDE ../traces
+
 // Default system include paths for OS extension layer modules.
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 #ifdef	CTSY_DISPATCHER
@@ -54,11 +56,8 @@ LIBRARY         commontsy.lib   // Common TSY
 #else
 	LIBRARY         commontsyfordispatcher.lib   // Common TSY for Dispatcher
 #endif //CTSY_DISPATCHER
-LIBRARY         flogger.lib     // Logging
 LIBRARY         licenseetsy.lib // LTSY 
 LIBRARY         featmgr.lib     // for featuremanager
-
-#include <comms-infras/commsdebugutility.mmh>
 
 //  End of file
 

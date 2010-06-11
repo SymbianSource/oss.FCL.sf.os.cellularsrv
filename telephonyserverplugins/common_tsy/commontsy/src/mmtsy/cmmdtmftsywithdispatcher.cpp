@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,17 @@
  * in CTSY for use when the CTSY is used with the CTSY Dispatcher.
  */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmdtmftsywithdispatcherTraces.h"
+#endif
+
 #include "cmmdtmftsy.h"
 #include "cmmphonetsy.h"
 #include "cmmtsyreqhandlestore.h"
 #include "cmmcalllist.h"
 #include "cmmcalltsy.h"
-#include <ctsy/tflogger.h>
 
 /**
  * Starts sending a single DTMF digit.
@@ -40,7 +45,7 @@
  */
 TInt CMmDtmfTsy::StartDTMFToneL(const TTsyReqHandle aTsyReqHandle, TChar* aTone)
 	{
-	TFLOGSTRING("TSY: CMmDtmfTsy::StartDTMFToneL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_STARTDTMFTONEL_1, "TSY: CMmDtmfTsy::StartDTMFToneL");
 
     TInt ret = KErrServerBusy;
 
@@ -101,7 +106,7 @@ TInt CMmDtmfTsy::StartDTMFToneL(const TTsyReqHandle aTsyReqHandle, TChar* aTone)
  */
 TInt CMmDtmfTsy::StopDTMFToneL(const TTsyReqHandle aTsyReqHandle)
 	{
-	TFLOGSTRING("TSY: CMmDtmfTsy::StopDTMFToneL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_STOPDTMFTONEL_1, "TSY: CMmDtmfTsy::StopDTMFToneL");
 
     TInt ret = KErrServerBusy;
 
@@ -156,7 +161,7 @@ TInt CMmDtmfTsy::StopDTMFToneL(const TTsyReqHandle aTsyReqHandle)
  */
 void CMmDtmfTsy::CompleteStartDTMFTone(TInt aResult)
 	{
-	TFLOGSTRING2("TSY: CMmDtmfTsy::CompleteStartDTMFTone aResult=%d", aResult);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_COMPLETESTARTDTMFTONE_1, "TSY: CMmDtmfTsy::CompleteStartDTMFTone aResult=%d", aResult);
 
     TTsyReqHandle reqHandle
         = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -176,7 +181,7 @@ void CMmDtmfTsy::CompleteStartDTMFTone(TInt aResult)
  */
 void CMmDtmfTsy::CompleteStopDTMFTone(TInt aResult)
 	{
-	TFLOGSTRING2("TSY: CMmDtmfTsy::CompleteStopDTMFTone aResult=%d", aResult);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_COMPLETESTOPDTMFTONE_1, "TSY: CMmDtmfTsy::CompleteStopDTMFTone aResult=%d", aResult);
 
     TTsyReqHandle reqHandle
         = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -197,7 +202,7 @@ void CMmDtmfTsy::CompleteStopDTMFTone(TInt aResult)
  */
 TInt CMmDtmfTsy::SendDTMFTonesL(const TTsyReqHandle aTsyReqHandle, const TDesC* aTones)
 	{
-	TFLOGSTRING("TSY: CMmDtmfTsy::SendDTMFTonesL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_SENDDTMFTONESL_1, "TSY: CMmDtmfTsy::SendDTMFTonesL");
 
     TTsyReqHandle sendDTMFTonesHandle = iMmPhone->iTsyReqHandleStore
         ->GetTsyReqHandle(CMmPhoneTsy::EMultimodePhoneSendDTMFTones);
@@ -295,7 +300,7 @@ void CMmDtmfTsy::Complete(TInt aReqHandleType, TInt)
 //
 TInt CMmDtmfTsy::SendDTMFTonesCancelL()
     {
-TFLOGSTRING("TSY: CMmDtmfTsy::SendDTMFTonesCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_SENDDTMFTONESCANCELL1_1, "TSY: CMmDtmfTsy::SendDTMFTonesCancel");
 
     TTsyReqHandle sendDTMFTonesHandle =
         iMmPhone->iTsyReqHandleStore->GetTsyReqHandle(

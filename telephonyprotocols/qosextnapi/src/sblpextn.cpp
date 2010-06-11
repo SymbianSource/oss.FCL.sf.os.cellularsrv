@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,9 +14,14 @@
 // sblpapi.cpp - SBLP QoS API
 //
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "sblpextnTraces.h"
+#endif
+
 #include "sblpextn.h"
 #include "qosextn_constants.h"
-#include "qosextn_log.h"
 #include <networking/qosparameters.h>
 
 // Buffer size
@@ -228,7 +233,7 @@ EXPORT_C void CSblpPolicy::SetSblpParameters(const CSblpParameters& aSblp)
 	
 	*iSblp = aSblp;
 
-	LOG(
+
 	// following code is to create logs
 	TAuthorizationToken authToken;
 	iSblp->GetMAT (authToken);
@@ -237,22 +242,22 @@ EXPORT_C void CSblpPolicy::SetSblpParameters(const CSblpParameters& aSblp)
 	TBuf<KAuthorizationTokenSize> label;
 	label.Copy(authToken);
 		
-	Log::Printf(_L("<------------------------------------------------\n"));
-	Log::Printf(_L("CSblpPolicy::SetSblpParameters"));
-	Log::Printf(_L("\n"));
-	Log::Printf(_L("SBLP VALUES SUPPLIED BY CLIENT IS \n"));
-	Log::Printf(_L("\n"));
-	Log::Printf(_L("[MAT string			 :	 = %S]\n"),&label);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_1, "<------------------------------------------------\n");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_2, "CSblpPolicy::SetSblpParameters");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_3, "\n");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_4, "SBLP VALUES SUPPLIED BY CLIENT IS \n");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_5, "\n");
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_6, "[MAT string           :   = %S]\n",label);
 	
 	TInt i;
 	for(i=0; i<flowIds.Count();i++)
 		{
-		Log::Printf(_L("Media component number  :	 = %d]\n"),flowIds[i].iMediaComponentNumber);
-		Log::Printf(_L("IP flow number		  :	 = %d]\n"),flowIds[i].iIPFlowNumber);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_7, "Media component number  :   = %d]\n",flowIds[i].iMediaComponentNumber);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_8, "IP flow number       :  = %d]\n",flowIds[i].iIPFlowNumber);
 		}
-	Log::Printf(_L("------------------------------------------------>\n"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_9, "------------------------------------------------>\n");
 	flowIds.Close();
-	)
+	
 	
 	}
 

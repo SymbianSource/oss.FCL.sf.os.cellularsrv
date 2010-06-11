@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
  
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifySendDtmfTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySendDtmf.h"     // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifySendDtmf* CSatNotifySendDtmf::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::NewL");  
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_NEWL_1, "CSAT: CSatNotifySendDtmf::NewL");
    	CSatNotifySendDtmf* const satNotifySendDtmf = 
         new ( ELeave ) CSatNotifySendDtmf( aNotificationsTsy );
     CleanupStack::PushL( satNotifySendDtmf );
     satNotifySendDtmf->ConstructL();
     CleanupStack::Pop( satNotifySendDtmf );
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::NewL, end of method");  
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_NEWL_2, "CSAT: CSatNotifySendDtmf::NewL, end of method");
     return satNotifySendDtmf;
     }
 
@@ -62,7 +67,7 @@ CSatNotifySendDtmf::~CSatNotifySendDtmf
 		// None
         )
     { 
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::~CSatNotifySendDtmf");  
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_DTOR_1, "CSAT: CSatNotifySendDtmf::~CSatNotifySendDtmf");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ void CSatNotifySendDtmf::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::ConstructL, does nothing");  
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_CONSTRUCTL_1, "CSAT: CSatNotifySendDtmf::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -102,7 +107,7 @@ TInt CSatNotifySendDtmf::Notify
         const TDataPackage& aPackage   
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::Notify");  
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_NOTIFY_1, "CSAT: CSatNotifySendDtmf::Notify");
     // Save data pointer to client side for completion
     iSendDtmfV1Pckg = reinterpret_cast<RSat::TSendDtmfV1Pckg*>( 
         aPackage.Des1n() );
@@ -128,7 +133,7 @@ TInt CSatNotifySendDtmf::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::CancelNotification"); 
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_CANCELNOTIFICATION_1, "CSAT: CSatNotifySendDtmf::CancelNotification");
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
         CSatTsy::ESatNotifySendDtmfPCmdReqType );
@@ -152,7 +157,7 @@ TInt CSatNotifySendDtmf::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL"); 
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_1, "CSAT: CSatNotifySendDtmf::CompleteNotifyL");
     TInt returnValue( KErrNone );
     TInt ret( KErrNone );
     // Unpack parameters
@@ -198,8 +203,7 @@ TInt CSatNotifySendDtmf::CompleteNotifyL
     
                 if ( RSat::KAlphaIdMaxSize < alphaIdLength )
                     {
-                    TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL,\
-                        Alpha ID length exceeded"); 
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_2, "CSAT: CSatNotifySendDtmf::CompleteNotifyL, Alpha ID length exceeded");
                     // String too long
                     additionalInfo.Zero();
                     additionalInfo.Append( KNoCause );                  
@@ -220,16 +224,14 @@ TInt CSatNotifySendDtmf::CompleteNotifyL
                     }
                 else
                 	{
-                	TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL,\
-                        Alpha ID is NULL"); 
+                	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_3, "CSAT: CSatNotifySendDtmf::CompleteNotifyL, Alpha ID is NULL");
                     sendDtmfV1.iAlphaId.iStatus = RSat::EAlphaIdNull;                     
                     }
                 }
             // Alpha id not present
             else 
                 {
-                TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL,\
-                    Alpha ID not present"); 
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_4, "CSAT: CSatNotifySendDtmf::CompleteNotifyL, Alpha ID not present");
                 sendDtmfV1.iAlphaId.iStatus = RSat::EAlphaIdNotPresent;
                 }
 
@@ -250,15 +252,13 @@ TInt CSatNotifySendDtmf::CompleteNotifyL
 	            if ( ( dtmfStringLength && ( sendDtmf.Data()[2] == 0xFF ) ) ||
 	                !dtmfStringLength )
 	                {
-	                TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL,\
-                        Data not understood"); 
+	                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_5, "CSAT: CSatNotifySendDtmf::CompleteNotifyL, Data not understood");
 	                generalResult = RSat::KCmdDataNotUnderstood; 
 	                ret = KErrCorrupt;
 	                }
 	            else if( RSat::KDtmfStringMaxSize < dtmfStringLength )
 	                {
-	                TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL,\
-                        Cmd beyond ME capabilities"); 
+	                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_6, "CSAT: CSatNotifySendDtmf::CompleteNotifyL, Cmd beyond ME capabilities");
 	                generalResult = RSat::KCmdBeyondMeCapabilities;
 	                ret = KErrCorrupt;
 	                }
@@ -269,8 +269,7 @@ TInt CSatNotifySendDtmf::CompleteNotifyL
 
 	            if( KErrCorrupt == ret )
 	                {
-	                TFLOGSTRING("CSAT: CSatNotifySendDtmf::CompleteNotifyL,\
-                        DTMF length exceeded"); 
+	                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_COMPLETENOTIFYL_7, "CSAT: CSatNotifySendDtmf::CompleteNotifyL, DTMF length exceeded");
                     // String too long
                     additionalInfo.Zero();
                     additionalInfo.Append( KNoCause );
@@ -319,7 +318,7 @@ TInt CSatNotifySendDtmf::TerminalResponseL
         TDes8* aRsp 
         )
     {
-    TFLOGSTRING("CSAT:CSatNotifySendDtmf::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_TERMINALRESPONSEL_1, "CSAT:CSatNotifySendDtmf::TerminalResponseL");
     
     TInt ret( KErrNone );
     TBuf<1> additionalInfo;
@@ -343,8 +342,7 @@ TInt CSatNotifySendDtmf::TerminalResponseL
          ( RSat::KPSessionTerminatedByUser != rspV1.iGeneralResult ) && 
          ( RSat::KErrorRequiredValuesMissing != rspV1.iGeneralResult ) )
         {
-        TFLOGSTRING("CSAT:CSatNotifySendDtmf::TerminalResponseL,\
-                Invalid General result");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_TERMINALRESPONSEL_2, "CSAT:CSatNotifySendDtmf::TerminalResponseL, Invalid General result");
         ret = KErrCorrupt;
         }
         
@@ -357,8 +355,7 @@ TInt CSatNotifySendDtmf::TerminalResponseL
             }
         else
             {
-            TFLOGSTRING("CSAT:CSatNotifySendDtmf::TerminalResponseL,\
-                Invalid Info Type");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_TERMINALRESPONSEL_3, "CSAT:CSatNotifySendDtmf::TerminalResponseL, Invalid Info Type");
             ret = KErrCorrupt;
             }
         }
@@ -388,7 +385,7 @@ TInt CSatNotifySendDtmf::CreateTerminalRespL
         TDesC16& aAdditionalInfo          
 		)
     {
-    TFLOGSTRING("CSAT: CSatNotifySendDtmf::CreateTerminalRespL");   
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDTMF_CREATETERMINALRESPL_1, "CSAT: CSatNotifySendDtmf::CreateTerminalRespL");
     
     TTlv tlvSpecificData;
     // Append general result tag

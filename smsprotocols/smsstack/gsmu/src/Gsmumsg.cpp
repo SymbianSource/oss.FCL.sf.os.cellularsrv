@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "GsmumsgTraces.h"
+#endif
+
 #include <gsmumsg.h>
 #include "Gsmumain.h"
 #include <gsmubuf.h>
@@ -28,10 +34,9 @@
 #include <gsmuieoperations.h>
 #include <gsmunonieoperations.h>
 
-#include <logwrap.h> //  Used for KLogNullId only
+#include <logwraplimits.h>
 #include <e32uid.h>
 #include <etelmm.h>
-#include <logwraplimits.h>
 
 #include <emsinformationelement.h>
 #include <emsformatie.h>
@@ -58,7 +63,7 @@
  */
 EXPORT_C CSmsMessage* CSmsMessage::NewL(RFs& aFs, const TGsmSms& aGsmSms,CSmsBufferBase* aBuffer, TBool aIsRPError,TBool aIsMobileTerminated)
 	{
-	LOGGSMU1("CSmsMessage::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_NEWL_1, "CSmsMessage::NewL()");
 	
 	CleanupStack::PushL(aBuffer);
 	CSmsMessage* smsmessage=new(ELeave) CSmsMessage(aFs, aBuffer);
@@ -85,7 +90,7 @@ EXPORT_C CSmsMessage* CSmsMessage::NewL(RFs& aFs, const TGsmSms& aGsmSms,CSmsBuf
  */
 EXPORT_C CSmsMessage* CSmsMessage::NewL(RFs& aFs, CSmsPDU::TSmsPDUType aType,CSmsBufferBase* aBuffer,TBool aIsRPError)
 	{
-	LOGGSMU1("CSmsMessage::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_NEWL1_1, "CSmsMessage::NewL()");
 
 	CleanupStack::PushL(aBuffer);
 	CSmsMessage* smsmessage=new(ELeave) CSmsMessage(aFs, aBuffer);
@@ -103,7 +108,7 @@ EXPORT_C CSmsMessage* CSmsMessage::NewL(RFs& aFs, CSmsPDU::TSmsPDUType aType,CSm
  */
 EXPORT_C CSmsMessage::~CSmsMessage()
 	{
-	LOGGSMU1("CSmsMessage::~CSmsMessage()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_DTOR_1, "CSmsMessage::~CSmsMessage()");
 
 	delete iSmsPDU;
 	delete iBuffer;
@@ -129,7 +134,7 @@ EXPORT_C CSmsMessage::~CSmsMessage()
  */
 EXPORT_C void CSmsMessage::InternalizeWithoutBufferL(RReadStream& aStream)
 	{
-	LOGGSMU1("CSmsMessage::InternalizeWithoutBufferL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_INTERNALIZEWITHOUTBUFFERL_1, "CSmsMessage::InternalizeWithoutBufferL()");
 
 	InternalizeWithoutBufferAndVersionL(aStream);
 	InternalizeVersionL(aStream);
@@ -153,7 +158,7 @@ EXPORT_C void CSmsMessage::InternalizeWithoutBufferL(RReadStream& aStream)
  */
 EXPORT_C void CSmsMessage::ExternalizeWithoutBufferL(RWriteStream& aStream) const
 	{
-	LOGGSMU1("CSmsMessage::ExternalizeWithoutBufferL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_EXTERNALIZEWITHOUTBUFFERL_1, "CSmsMessage::ExternalizeWithoutBufferL()");
 
 	ExternalizeWithoutBufferAndVersionL(aStream);
 	ExternalizeVersionL(aStream);
@@ -173,7 +178,7 @@ EXPORT_C void CSmsMessage::ExternalizeWithoutBufferL(RWriteStream& aStream) cons
  */
 EXPORT_C void CSmsMessage::InternalizeL(RReadStream& aStream)
 	{
-	LOGGSMU1("CSmsMessage::InternalizeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_INTERNALIZEL_1, "CSmsMessage::InternalizeL()");
 
 	InternalizeWithoutBufferAndVersionL(aStream);
 	InternalizeBufferL(aStream);
@@ -195,7 +200,7 @@ EXPORT_C void CSmsMessage::InternalizeL(RReadStream& aStream)
  */
 EXPORT_C void CSmsMessage::ExternalizeL(RWriteStream& aStream) const
 	{
-	LOGGSMU1("CSmsMessage::ExternalizeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_EXTERNALIZEL_1, "CSmsMessage::ExternalizeL()");
 
 	ExternalizeWithoutBufferAndVersionL(aStream);
 	ExternalizeBufferL(aStream);
@@ -216,7 +221,7 @@ EXPORT_C void CSmsMessage::ExternalizeL(RWriteStream& aStream) const
  */
 EXPORT_C TBool CSmsMessage::TextPresent() const
 	{
-	LOGGSMU1("CSmsMessage::TextPresent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_TEXTPRESENT_1, "CSmsMessage::TextPresent()");
 
 	CSmsPDU::TSmsPDUType pdutype=SmsPDU().Type();
 	return (pdutype==CSmsPDU::ESmsSubmit) ||
@@ -237,7 +242,7 @@ EXPORT_C TBool CSmsMessage::TextPresent() const
  */
 EXPORT_C TInt CSmsMessage::NumMessagePDUsL()
 	{
-	LOGGSMU1("CSmsMessage::NumMessagePDUsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_NUMMESSAGEPDUSL_1, "CSmsMessage::NumMessagePDUsL()");
 
 	TInt nummessagepdus=1;
 	if (IsDecoded())
@@ -258,7 +263,7 @@ EXPORT_C TInt CSmsMessage::NumMessagePDUsL()
 		nummessagepdus=SmsPDU().NumConcatenatedMessagePDUs();
 		}
 
-	LOGGSMU2("CSmsMessage::NumMessagePDUsL() returns %d", nummessagepdus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_NUMMESSAGEPDUSL_2, "CSmsMessage::NumMessagePDUsL() returns %d", nummessagepdus);
 
 	return nummessagepdus;
 	} // CSmsMessage::NumMessagePDUsL
@@ -282,7 +287,7 @@ EXPORT_C TInt CSmsMessage::MaxMessageLength() const
 		maxmessagelength=maxmessagelength*0xFF;
 		}
 
-	LOGGSMU2("CSmsMessage::MaxMessageLength() returns %d", maxmessagelength);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_MAXMESSAGELENGTH_1, "CSmsMessage::MaxMessageLength() returns %d", maxmessagelength);
 
 	return maxmessagelength;
 	} // CSmsMessage::MaxMessageLength
@@ -298,7 +303,7 @@ TInt CSmsMessage::ConvertedBufferLengthL(const CSmsBufferBase& aBuffer)
     // Ignore in code coverage - not used in SMS stack and not exported
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsMessage::ConvertedBufferLengthL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CONVERTEDBUFFERLENGTHL_1, "CSmsMessage::ConvertedBufferLengthL()");
     
     TInt convertedBufferLength=0;
     CSmsAlphabetConverter* converter=CSmsAlphabetConverter::NewLC(*iCharacterSetConverter,iFs,SmsPDU().Alphabet(),BinaryData());
@@ -306,7 +311,7 @@ TInt CSmsMessage::ConvertedBufferLengthL(const CSmsBufferBase& aBuffer)
     convertedBufferLength=segmenter->TotalConvertedLengthL(iAdditionalInfo->Alternative7bitEncoding());
     CleanupStack::PopAndDestroy(2, converter);
     
-    LOGGSMU2("CSmsMessage::ConvertedBufferLengthL() returns %d", convertedBufferLength);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CONVERTEDBUFFERLENGTHL_2, "CSmsMessage::ConvertedBufferLengthL() returns %d", convertedBufferLength);
     
     return convertedBufferLength;
     BULLSEYE_RESTORE
@@ -326,7 +331,7 @@ TInt CSmsMessage::ConvertedBufferLengthL(const CSmsBufferBase& aBuffer)
  */
 EXPORT_C TInt CSmsMessage::MessageLengthL()
 	{
-	LOGGSMU1("CSmsMessage::MessageLengthL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_MESSAGELENGTHL_1, "CSmsMessage::MessageLengthL()");
 
 	TInt messagelength=0;
 	if (!SmsPDU().TextCompressed())
@@ -345,7 +350,7 @@ EXPORT_C TInt CSmsMessage::MessageLengthL()
 EXPORT_C void CSmsMessage::GetEncodingInfoL(TInt& aPdus, TInt& aUnconvertedChars,
 		                                    TInt& aDowngradedChars, TInt& aFreeUDUnitsInLastPDU)
 	{
-	LOGGSMU1("CSmsMessage::GetEncodingInfoL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETENCODINGINFOL_1, "CSmsMessage::GetEncodingInfoL()");
 
 	aPdus                 = 1;
 	aUnconvertedChars     = 0;
@@ -395,10 +400,10 @@ EXPORT_C void CSmsMessage::GetEncodingInfoL(TInt& aPdus, TInt& aUnconvertedChars
 			}
 		}
 
-	LOGGSMU2("CSmsMessage::GetEncodingInfoL(): aPdus=%d", aPdus);
-	LOGGSMU2("CSmsMessage::GetEncodingInfoL(): aUnconvertedChars=%d", aUnconvertedChars);
-	LOGGSMU2("CSmsMessage::GetEncodingInfoL(): aDowngradedChars=%d", aDowngradedChars);
-	LOGGSMU2("CSmsMessage::GetEncodingInfoL(): aFreeUDUnitsInLastPDU=%d", aFreeUDUnitsInLastPDU);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETENCODINGINFOL_2, "CSmsMessage::GetEncodingInfoL(): aPdus=%d", aPdus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETENCODINGINFOL_3, "CSmsMessage::GetEncodingInfoL(): aUnconvertedChars=%d", aUnconvertedChars);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETENCODINGINFOL_4, "CSmsMessage::GetEncodingInfoL(): aDowngradedChars=%d", aDowngradedChars);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETENCODINGINFOL_5, "CSmsMessage::GetEncodingInfoL(): aFreeUDUnitsInLastPDU=%d", aFreeUDUnitsInLastPDU);
 	} // CSmsMessage::GetEncodingInfoL
 
 
@@ -410,7 +415,7 @@ EXPORT_C void CSmsMessage::GetEncodingInfoL(TInt& aPdus, TInt& aUnconvertedChars
  */
 EXPORT_C void CSmsMessage::UserDataSettings(TSmsUserDataSettings& aSettings) const
 	{
-	LOGGSMU1("CSmsMessage::UserDataSettings()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_USERDATASETTINGS_1, "CSmsMessage::UserDataSettings()");
 
 	__ASSERT_DEBUG(TextPresent(),Panic(KGsmuPanicTextNotPresent));
 	aSettings.SetAlphabet(SmsPDU().Alphabet());
@@ -429,7 +434,7 @@ EXPORT_C void CSmsMessage::UserDataSettings(TSmsUserDataSettings& aSettings) con
  */
 EXPORT_C void CSmsMessage::SetUserDataSettingsL(const TSmsUserDataSettings& aSettings)
 	{
-	LOGGSMU1("CSmsMessage::SetUserDataSettingsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETUSERDATASETTINGSL_1, "CSmsMessage::SetUserDataSettingsL()");
 
 	__ASSERT_DEBUG(TextPresent(),Panic(KGsmuPanicTextNotPresent));
 	SmsPDU().SetAlphabet(aSettings.Alphabet());
@@ -465,7 +470,7 @@ EXPORT_C void CSmsMessage::SetUserDataSettingsL(const TSmsUserDataSettings& aSet
  */
 EXPORT_C void CSmsMessage::OptimizeSettingsL(TInt aOptions)
 	{
-	LOGGSMU1("CSmsMessage::OptimizeSettingsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_OPTIMIZESETTINGSL_1, "CSmsMessage::OptimizeSettingsL()");
 
 	__ASSERT_DEBUG(TextPresent(),Panic(KGsmuPanicTextNotPresent));
 	__ASSERT_DEBUG(IsDecoded(),Panic(KGsmuPanicNotDecoded));
@@ -522,7 +527,7 @@ EXPORT_C void CSmsMessage::OptimizeSettingsL(TInt aOptions)
  */
 EXPORT_C TSmsEncoding CSmsMessage::Alternative7bitEncoding() const
 	{
-	LOGGSMU1("CSmsMessage::Alternative7bitEncoding()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ALTERNATIVE7BITENCODING_1, "CSmsMessage::Alternative7bitEncoding()");
 
 	return iAdditionalInfo->Alternative7bitEncoding();
 	} // CSmsMessage::Alternative7bitEncoding
@@ -543,7 +548,7 @@ EXPORT_C TSmsEncoding CSmsMessage::Alternative7bitEncoding() const
  */
 EXPORT_C TInt CSmsMessage::SetAlternative7bitEncoding(TSmsEncoding aEncoding)
 	{
-	LOGGSMU2("CSmsMessage::SetAlternative7bitEncoding(%d)", aEncoding);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETALTERNATIVE7BITENCODING_1, "CSmsMessage::SetAlternative7bitEncoding(%d)", aEncoding);
 
 	//
 	// Get the encoders that would be used for this encoding method.
@@ -578,8 +583,7 @@ EXPORT_C TInt CSmsMessage::SetAlternative7bitEncoding(TSmsEncoding aEncoding)
  */
 void CSmsMessage::MergeAlternative7bitEncoding(TSmsEncoding aEncoding) const
 	{
-	LOGGSMU3("CSmsMessage::MergeAlternative7bitEncoding(): aEncoding=%d (currently %d)",
-			 aEncoding, iAdditionalInfo->Alternative7bitEncoding());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_MERGEALTERNATIVE7BITENCODING_1, "CSmsMessage::MergeAlternative7bitEncoding(): aEncoding=%d (currently %d)",aEncoding, iAdditionalInfo->Alternative7bitEncoding());
 
 	switch (iAdditionalInfo->Alternative7bitEncoding())
 		{
@@ -639,8 +643,7 @@ void CSmsMessage::MergeAlternative7bitEncoding(TSmsEncoding aEncoding) const
 			}
 		};
 
-	LOGGSMU2("CSmsMessage::MergeAlternative7bitEncoding(): New encoding=%d",
-			 iAdditionalInfo->Alternative7bitEncoding());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_MERGEALTERNATIVE7BITENCODING_2, "CSmsMessage::MergeAlternative7bitEncoding(): New encoding=%d",iAdditionalInfo->Alternative7bitEncoding());
 	} // CSmsMessage::MergeAlternative7bitEncoding
 
 
@@ -660,7 +663,7 @@ void CSmsMessage::MergeAlternative7bitEncoding(TSmsEncoding aEncoding) const
 EXPORT_C TBool CSmsMessage::IsSupportedL(const TDesC& aDes, TInt& aNumberOfUnconvertibleCharacters,
 		                                 TInt& aIndexOfFirstUnconvertibleCharacter)
 	{
-	LOGGSMU1("[1] CSmsMessage::IsSupportedL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ISSUPPORTEDL_1, "[1] CSmsMessage::IsSupportedL()");
 
 	__ASSERT_DEBUG(TextPresent(), Panic(KGsmuPanicTextNotPresent));
 
@@ -700,7 +703,7 @@ EXPORT_C TBool CSmsMessage::IsSupportedL(const TDesC& aDes, TInt& aNumberOfUncon
 		                                 TInt& aNumberRequiringAlternativeEncoding,
 		                                 TInt& aIndexOfFirstUnconvertibleCharacter) const
 	{
-	LOGGSMU1("[2] CSmsMessage::IsSupportedL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ISSUPPORTEDL1_1, "[2] CSmsMessage::IsSupportedL()");
 
 	__ASSERT_DEBUG(TextPresent(), Panic(KGsmuPanicTextNotPresent));
 
@@ -734,7 +737,7 @@ EXPORT_C TBool CSmsMessage::IsSupportedL(const TDesC& aDes, TInt& aNumberOfUncon
  */
 EXPORT_C void CSmsMessage::EncodeMessagePDUsL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference)
 	{
-	LOGGSMU2("CSmsMessage::EncodeMessagePDUsL(): aReference=%d", aReference);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ENCODEMESSAGEPDUSL_1, "CSmsMessage::EncodeMessagePDUsL(): aReference=%d", aReference);
 
 	__ASSERT_DEBUG((aSmsArray.Count()==0),Panic(KGsmuPanicSmsArrayNotEmpty));
 	
@@ -791,7 +794,7 @@ EXPORT_C void CSmsMessage::EncodeMessagePDUsL(CArrayFix<TGsmSms>& aSmsArray, TIn
  */
 void CSmsMessage::PrepareCommandMessageL()
     {
-    LOGGSMU1("CSmsMessage::PrepareCommandMessageL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_PREPARECOMMANDMESSAGEL_1, "CSmsMessage::PrepareCommandMessageL()");
 
     if (SmsPDU().Type()==CSmsPDU::ESmsCommand)
         {
@@ -814,7 +817,7 @@ void CSmsMessage::PrepareCommandMessageL()
                     break;
                     }
                 default:
-                LOGGSMU2("CSmsMessage::PrepareCommandMessageL,default switch category = %d, id = %d", category);
+                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_PREPARECOMMANDMESSAGEL_2, "CSmsMessage::PrepareCommandMessageL,default switch category = %d", category);
                     break;
                 }
             }
@@ -833,7 +836,7 @@ void CSmsMessage::PrepareCommandMessageL()
  */
 EXPORT_C void CSmsMessage::DecodeMessagePDUsL(const CArrayFix<TGsmSms>& aSmsArray)
 	{
-    LOGGSMU2("CSmsMessage::DecodeMessagePDUsL(): PDUs=%d", aSmsArray.Count());
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_DECODEMESSAGEPDUSL_1, "CSmsMessage::DecodeMessagePDUsL(): PDUs=%d", aSmsArray.Count());
 
 	TInt count=aSmsArray.Count();
 	SetIsComplete(ETrue);
@@ -891,7 +894,7 @@ EXPORT_C void CSmsMessage::DecodeMessagePDUsL(const CArrayFix<TGsmSms>& aSmsArra
  */
 EXPORT_C void CSmsMessage::DecodePartialCompleteMessagePDUsL(const CArrayFix<TGsmSms>& aSmsArray, TBool aLastPartialCompleteMsg)
 	{
-	LOGGSMU2("CSmsMessage::DecodePartialCompleteMessagePDUsL(): PDUs=%d", aSmsArray.Count());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_DECODEPARTIALCOMPLETEMESSAGEPDUSL_1, "CSmsMessage::DecodePartialCompleteMessagePDUsL(): PDUs=%d", aSmsArray.Count());
 
 	TInt count=aSmsArray.Count();
 	SetIsComplete(EFalse);
@@ -978,7 +981,7 @@ CSmsMessage::CSmsMessage(RFs& aFs, CSmsBufferBase* aBuffer):
 
 void CSmsMessage::ConstructL(const TGsmSms& aGsmSms, TBool aIsRPError,TBool aIsMobileTerminated)
 	{
-    LOGGSMU1("CSmsMessage::ConstructL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CONSTRUCTL_1, "CSmsMessage::ConstructL()");
 
 	iCharacterSetConverter=CCnvCharacterSetConverter::NewL();
 	iInformationElementArray = new (ELeave) RPointerArray<CEmsInformationElement>(8);
@@ -1037,8 +1040,7 @@ void CSmsMessage::ConstructL(const TGsmSms& aGsmSms, TBool aIsRPError,TBool aIsM
 
 void CSmsMessage::ConstructL(CSmsPDU::TSmsPDUType aType,TBool aIsRPError)
 	{
-    LOGGSMU3("CSmsMessage::ConstructL(): aType=%d, aIsRPError=%d", (TInt) aType,
-    		 aIsRPError);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CONSTRUCTL1_1, "CSmsMessage::ConstructL(): aType=%d, aIsRPError=%d", (TInt) aType,aIsRPError);
 
 	iCharacterSetConverter=CCnvCharacterSetConverter::NewL();
 	iInformationElementArray = new (ELeave) RPointerArray<CEmsInformationElement>(2);
@@ -1063,7 +1065,7 @@ void CSmsMessage::ConstructL(CSmsPDU::TSmsPDUType aType,TBool aIsRPError)
  */
 TInt CSmsMessage::NumMessageEmsPDUsL()
 	{
-	LOGGSMU1("CSmsMessage::NumMessageEmsPDUsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_NUMMESSAGEEMSPDUSL_1, "CSmsMessage::NumMessageEmsPDUsL()");
 
 	//
 	// Clear the concatenated flag, EncodeBufferL() will add it if needed.
@@ -1090,7 +1092,7 @@ TInt CSmsMessage::NumMessageEmsPDUsL()
 
 	CleanupStack::PopAndDestroy(tmpArray);
 	
-    LOGGSMU2("CSmsMessage::NumMessageEmsPDUsL() returns %d", numMsgs);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_NUMMESSAGEEMSPDUSL_2, "CSmsMessage::NumMessageEmsPDUsL() returns %d", numMsgs);
 
 	return numMsgs;
 	} // CSmsMessage::NumMessageEmsPDUsL
@@ -1108,7 +1110,7 @@ TInt CSmsMessage::NumMessageEmsPDUsL()
  */
 void CSmsMessage::ResetWorkingPDUL()
 	{
-	LOGGSMU1("CSmsMessage::ResetWorkingPDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_RESETWORKINGPDUL_1, "CSmsMessage::ResetWorkingPDUL()");
 	
 	CSmsUserData& uData = SmsPDU().UserData();
 	//remove non-mandatory EMS information elements
@@ -1135,8 +1137,7 @@ void CSmsMessage::CorrectFormattingL(TUint aCharsAddedToCurrentPDU,
 									 RPointerArray<CEmsInformationElement>& aCorrectedFormattingIEArray,
 									 TUint aCharsAlreadyAdded)
 	{
-	LOGGSMU3("CSmsMessage::CorrectFormattingL(): aCharsAddedToCurrentPDU=%d, aCharsAlreadyAdded=%d",
-			 aCharsAddedToCurrentPDU, aCharsAlreadyAdded);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CORRECTFORMATTINGL_1, "CSmsMessage::CorrectFormattingL(): aCharsAddedToCurrentPDU=%u, aCharsAlreadyAdded=%u",aCharsAddedToCurrentPDU, aCharsAlreadyAdded);
 
 	CSmsUserData& uData = SmsPDU().UserData();
 	for (TInt a= 0; a < uData.NumInformationElements(); a++)
@@ -1163,7 +1164,7 @@ void CSmsMessage::CorrectFormattingL(TUint aCharsAddedToCurrentPDU,
 					CleanupStack::PushL(newie);
 					newie->SetFormatLength(oldFormatLen - newFormatLen);
 					newie->SetStartPosition(aCharsAlreadyAdded+aCharsAddedToCurrentPDU);
-					LOGGSMU2("CSmsMessage::CorrectFormattingL",aCorrectedFormattingIEArray.Count());
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CORRECTFORMATTINGL_2, "CSmsMessage::CorrectFormattingL Count=%d",aCorrectedFormattingIEArray.Count());
 					aCorrectedFormattingIEArray.Append(newie);
 					CleanupStack::Pop(newie);
 					}
@@ -1175,7 +1176,7 @@ void CSmsMessage::CorrectFormattingL(TUint aCharsAddedToCurrentPDU,
 
 void CSmsMessage::CorrectFormattingInSinglePDUL()
 	{
-	LOGGSMU1("CSmsMessage::CorrectFormattingInSinglePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CORRECTFORMATTINGINSINGLEPDUL_1, "CSmsMessage::CorrectFormattingInSinglePDUL()");
 
 	CSmsUserData& uData = SmsPDU().UserData();
 	for (TInt a= 0; a < uData.NumInformationElements(); a++)
@@ -1209,8 +1210,7 @@ void CSmsMessage::CorrectFormattingInSinglePDUL()
  */
 void CSmsMessage::AddCurrentPDUToPDUArrayL(TBool aDoEncode)
 	{
-	LOGGSMU2("CSmsMessage::AddCurrentPDUToPDUArrayL(): Adding PDU number %d",
-			 iAdditionalInfo->SmsPDUArray().Count() + 1);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDCURRENTPDUTOPDUARRAYL_1, "CSmsMessage::AddCurrentPDUToPDUArrayL(): Adding PDU number %d",iAdditionalInfo->SmsPDUArray().Count() + 1);
 	
 	//
 	// Maximum number of PDU is 255, so if we have that already then we cannot
@@ -1261,7 +1261,7 @@ void CSmsMessage::AddCurrentPDUToPDUArrayL(TBool aDoEncode)
 
 TBool CSmsMessage::AddIEToUserDataL(CEmsInformationElement* aIE, TInt aCharsAlreadyAdded,TUint& aCharsAddedToCurrentPDU,CSmsEMSBufferSegmenter& aSeg)
 	{
-	LOGGSMU1("CSmsMessage::AddIEToUserDataL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDIETOUSERDATAL_1, "CSmsMessage::AddIEToUserDataL()");
 
 	TBool ieAdded=EFalse;
 	if (SmsPDU().UserData().EmsInformationElementWillFitL(aIE,aSeg,aCharsAddedToCurrentPDU))
@@ -1288,7 +1288,7 @@ TBool CSmsMessage::AddIEToUserDataL(CEmsInformationElement* aIE, TInt aCharsAlre
  */
 TInt CSmsMessage::FillPduL(CSmsEMSBufferSegmenter& aSeg, TInt aNumChars, TSmsEncoding aEncoding)
 	{
-	LOGGSMU1("CSmsMessage::FillPduL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_FILLPDUL_1, "CSmsMessage::FillPduL()");
 
 	TUint maxUDUnitsREmaining=SmsPDU().UserData().MaxPackedUDUnitsInBodyRemaining();
 
@@ -1333,7 +1333,7 @@ TInt CSmsMessage::FillPduL(CSmsEMSBufferSegmenter& aSeg, TInt aNumChars, TSmsEnc
 void CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL(TSmsInformationElementCategories::TInformationElementCategory aCategory,
 			                                                          TBool aMandatoryInPDU, TBool aDoEncode)
     {
-    LOGGSMU1("CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDCONTROLINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_1, "CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL()");
 
     TUint numberOfInformationElements = iAdditionalInfo->NumberOfControlInformationElements(aCategory);
 
@@ -1365,7 +1365,7 @@ void CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL(TSmsInform
                 TBool canFit = SmsPDU().UserData().ControlInformationElementWillFitL(cloneInformationElement);
                 if (canFit == EFalse)
                     {
-                    LOGGSMU1("CSmsMessage::AddControlInformationElementsToMultiSegmentMessage, IE too bit to fit in any PDUL");
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDCONTROLINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_2, "CSmsMessage::AddControlInformationElementsToMultiSegmentMessage, IE too bit to fit in any PDUL");
                     User::Leave(KErrArgument);
                     }
                 i--;
@@ -1389,7 +1389,7 @@ void CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL(TSmsInform
  */
 void CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL(TBool aDoEncode)
     {
-    LOGGSMU1("CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL() 1");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDCONTROLINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL1_1, "CSmsMessage::AddControlInformationElementsToMultiSegmentMessageL() 1");
 
     TBool mandatoryInEachPDU = ETrue;
     AddControlInformationElementsToMultiSegmentMessageL(TSmsInformationElementCategories::ECtrlMandatoryIn1stPDUOnly,
@@ -1425,13 +1425,13 @@ TBool CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL(CSmsEMSBuffer
 																   TUint& aCurrEMSIEno,
 																   TUint& aCharsAlreadyAdded)
 	{
-	LOGGSMU1("CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_1, "CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL()");
 
 	TUint startPosition=0;
 
 	 // number of chars added to the current PDU
 	TUint no=iInformationElementArray->Count();
-	LOGGSMU2("CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL no of IE %d",no);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_2, "CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL no of IE %d",no);
 	CEmsInformationElement* ie = NULL;
 	TUint msgLen=iBuffer->Length();
 	TUint filledChars=0;
@@ -1472,7 +1472,7 @@ TBool CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL(CSmsEMSBuffer
 				aCharsAddedToCurrentPDU+=filledChars;
 				}
 
-			LOGGSMU2("CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL: filled %d chars", filledChars);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_3, "CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL: filled %d chars", filledChars);
 
 			if (aCharsAddedToCurrentPDU==startPosition)
 				{
@@ -1492,7 +1492,7 @@ TBool CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL(CSmsEMSBuffer
 				else
 					{
 					// Information Element will not fit send PDU
-					LOGGSMU1("CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL: ie will not fit send Message");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_4, "CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL: ie will not fit send Message");
 					CorrectFormattingL(aCharsAddedToCurrentPDU,aCorrectedFormatingIEArray,aCharsAlreadyAdded);
 
 					aCharsAlreadyAdded += aCharsAddedToCurrentPDU;
@@ -1513,7 +1513,7 @@ TBool CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL(CSmsEMSBuffer
 			else
 				{
 				// native chars upto start position will not fit send PDu.
-				LOGGSMU1("CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL: PDU is filled with chars sending");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTSTOMULTISEGMENTMESSAGEL_5, "CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL: PDU is filled with chars sending");
 
 				CorrectFormattingL(aCharsAddedToCurrentPDU,aCorrectedFormatingIEArray,aCharsAlreadyAdded);
 
@@ -1551,7 +1551,7 @@ TBool CSmsMessage::AddEMSInformationElementsToMultiSegmentMessageL(CSmsEMSBuffer
 TBool CSmsMessage::AddEMSInformationElementsToSingleSegmentMessageL(CSmsEMSBufferSegmenter& aSegmenter,
 																	TSmsEncoding aEncoding)
 	{
-	LOGGSMU1("CSmsMessage::AddEMSInformationElementsToSingleSegmentMessageL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTSTOSINGLESEGMENTMESSAGEL_1, "CSmsMessage::AddEMSInformationElementsToSingleSegmentMessageL()");
 
 	TUint charsAddedToCurrentPDU=0;
 	TUint numOfEmsIE=iInformationElementArray->Count();
@@ -1608,7 +1608,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 								TInt& aUnconvertedChars, TInt& aDowngradedChars,
 						        TInt& aFreeUDUnitsInLastPDU, TBool aDoEncode)
 	{
-	LOGGSMU1("CSmsMessage::EncodeBufferL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_1, "CSmsMessage::EncodeBufferL()");
 
 	aUnconvertedChars     = 0;
 	aDowngradedChars      = 0;
@@ -1712,13 +1712,13 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 	//
 	while (segmenter->MoreL())
 			{
-			LOGGSMU1("CSmsMessage::EncodeBufferL - there is MoreL");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_2, "CSmsMessage::EncodeBufferL - there is MoreL");
 			
 			//
 			// Calculate the space left to use in this PDU...
 			//
 			TInt size = SmsPDU().UserData().MaxPackedUDUnitsInBodyRemaining();
-			LOGGSMU2("CSmsMessage::EncodeBufferL - remaining size in PDU is %d",size);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_3, "CSmsMessage::EncodeBufferL - remaining size in PDU is %d",size);
 
 			//
 			// While there is no space, correct the formatting (which may
@@ -1755,7 +1755,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 				// Add any elements that can be placed now (from previous
 				// PDUs and above)... 
 				//
-				LOGGSMU3("CSmsMessage::EncodeBufferL: IE count  %d corrected  count %d",iInformationElementArray->Count(),correctedFormatingIEArray.Count() );
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_4, "CSmsMessage::EncodeBufferL: IE count  %d corrected  count %d",iInformationElementArray->Count(),correctedFormatingIEArray.Count() );
 				if ((TUint)iInformationElementArray->Count() > currEMSIEno  ||
 					correctedFormatingIEArray.Count() > 0)
 					{
@@ -1769,7 +1769,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 				// Calculate the space left remaining in this new PDU...
 				//
 				size = SmsPDU().UserData().MaxPackedUDUnitsInBodyRemaining();
-				LOGGSMU2("CSmsMessage::EncodeBufferL - remaining size in PDU is %d",size);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_5, "CSmsMessage::EncodeBufferL - remaining size in PDU is %d",size);
 				}
 			
 			//
@@ -1780,7 +1780,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 			SmsPDU().UserData().AppendBodyL(ptr);
 
 			TUint charsInSegment= isUnicode ? ptr.Length()/2 : ptr.Length();
-			LOGGSMU2("CSmsMessage::EncodeBufferL: segmenting added %d chars", charsInSegment);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_6, "CSmsMessage::EncodeBufferL: segmenting added %d chars", charsInSegment);
 
 			//
 			// At this point the working PDU is either full (e.g. we filled the
@@ -1793,7 +1793,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 			charsAdded2CurrentPDU+=charsInSegment;
 			CorrectFormattingL(charsAdded2CurrentPDU, correctedFormatingIEArray, charsAlreadyAdded);
 			charsAlreadyAdded+=charsAdded2CurrentPDU;
-			LOGGSMU2("CSmsMessage::EncodeBufferL(): charsAlreadyAdded=%d", charsAlreadyAdded);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_7, "CSmsMessage::EncodeBufferL(): charsAlreadyAdded=%d", charsAlreadyAdded);
 			
 			//
 			// Now store this PDU and reset the working PDU...
@@ -1816,8 +1816,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 			// Add any elements that can be placed now given we have a new
 			// empty PDU... 
 			//
-			LOGGSMU3("CSmsMessage::EncodeBufferL: IE count  %d corrected  count %d",
-			         iInformationElementArray->Count(), correctedFormatingIEArray.Count() );
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_8, "CSmsMessage::EncodeBufferL: IE count  %d corrected  count %d",iInformationElementArray->Count(), correctedFormatingIEArray.Count() );
 			if ((TUint)iInformationElementArray->Count() > currEMSIEno  ||
 				correctedFormatingIEArray.Count() > 0)
 				{
@@ -1826,11 +1825,11 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 																correctedFormatingIEArray,
 																currEMSIEno, charsAlreadyAdded);
 				}
-			LOGGSMU1("CSmsMessage::EncodeBufferL end Moreloop");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_9, "CSmsMessage::EncodeBufferL end Moreloop");
 			}
 	CleanupStack::PopAndDestroy(buf);
 
-	LOGGSMU1("CSmsMessage::EncodeBufferL - last PDU");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_10, "CSmsMessage::EncodeBufferL - last PDU");
 	
 	//
 	// This is the last PDU. We need to check if there is a partial PDU left over
@@ -1865,7 +1864,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 	//
 	TInt  numPDUs = iAdditionalInfo->SmsPDUArray().Count();
 
-	LOGGSMU2("CSmsMessage::EncodeBufferL number of PDUs: %d", iAdditionalInfo->SmsPDUArray().Count());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEBUFFERL_11, "CSmsMessage::EncodeBufferL number of PDUs: %d", iAdditionalInfo->SmsPDUArray().Count());
 	
 	if (aDoEncode)
 		{
@@ -1956,7 +1955,7 @@ void CSmsMessage::EncodeBufferL(CArrayFix<TGsmSms>& aSmsArray, TInt aReference,
 TBool CSmsMessage::EncodeIntoSinglePDUL(CArrayFix<TGsmSms>& aSmsArray, TInt& aUnconvertedChars,
 		                                TInt& aDowngradedChars, TInt& aFreeUDUnitsInLastPDU)
 	{
-	LOGGSMU1("CSmsMessage::EncodeIntoSinglePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEINTOSINGLEPDUL_1, "CSmsMessage::EncodeIntoSinglePDUL()");
 
 	__ASSERT_DEBUG((aSmsArray.Count()==0),Panic(KGsmuPanicSmsArrayNotEmpty));
 
@@ -2003,7 +2002,7 @@ TBool CSmsMessage::EncodeIntoSinglePDUL(CArrayFix<TGsmSms>& aSmsArray, TInt& aUn
                 break;
             }
         }
-    LOGGSMU2("CSmsMessage::EncodeIntoSinglePDUL, ctrl elem len = %d", ieLength);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEINTOSINGLEPDUL_2, "CSmsMessage::EncodeIntoSinglePDUL, ctrl elem len = %d", ieLength);
 
 	CEmsInformationElement* emsIE =NULL;
 	for (TInt num=0; num<iInformationElementArray->Count();num++)
@@ -2018,7 +2017,7 @@ TBool CSmsMessage::EncodeIntoSinglePDUL(CArrayFix<TGsmSms>& aSmsArray, TInt& aUn
 
 	if( msgLength > remainInBody) return EFalse;
 
-    LOGGSMU4("CSmsMessage::EncodeIntoSinglePDUL, ie len = %d, remainInBody = %d, msgLength = %d", ieLength, msgLength, remainInBody);
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ENCODEINTOSINGLEPDUL_3, "CSmsMessage::EncodeIntoSinglePDUL, ie len = %d, remainInBody = %d, msgLength = %d", ieLength, msgLength, remainInBody);
     //  add all control information elements into working PDU.
     //
     for (TUint8 category = 0; category <  TSmsInformationElementCategories::ENumberOfCategories; category++)
@@ -2136,7 +2135,7 @@ TBool CSmsMessage::EncodeIntoSinglePDUL(CArrayFix<TGsmSms>& aSmsArray, TInt& aUn
  */
 EXPORT_C TBool CSmsMessage::EncodeIntoSinglePDUL(CArrayFix<TGsmSms>& aSmsArray)
 	{
-	LOGGSMU1("CSmsMessage::EncodeIntoSinglePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ENCODEINTOSINGLEPDUL1_1, "CSmsMessage::EncodeIntoSinglePDUL()");
 	
 	TInt  unconvertedChars, downgradedChars, freeUDUnitsInLastPDU;
 	
@@ -2219,7 +2218,7 @@ void CSmsMessage::EncodingTPSRRFromSchemesIntoSinglePDUL()
 void CSmsMessage::DecodeBufferL(CArrayPtr<CSmsPDU>& aSmsPDUArray,
 								CSmsBufferBase& aBuffer)
 	{
-	LOGGSMU1("CSmsMessage::DecodeBufferL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_DECODEBUFFERL_1, "CSmsMessage::DecodeBufferL()");
 
 	iInformationElementArray->ResetAndDestroy();
 
@@ -2281,7 +2280,7 @@ void CSmsMessage::DecodeBufferL(CArrayPtr<CSmsPDU>& aSmsPDUArray,
 void CSmsMessage::DecodeOnlyTextL(CArrayPtr<CSmsPDU>& aSmsPDUArray,
 								CSmsBufferBase& aBuffer)
 	{
-	LOGGSMU1("CSmsMessage::DecodeOnlyTextL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_DECODEONLYTEXTL_1, "CSmsMessage::DecodeOnlyTextL()");
 
 	for (TInt i=0; i<aSmsPDUArray.Count(); i++)
 		{
@@ -2308,7 +2307,7 @@ void CSmsMessage::DecodeOnlyTextL(CArrayPtr<CSmsPDU>& aSmsPDUArray,
  */
 void CSmsMessage::AddIncompleteMessageInfoL(TInt aStartPDU, TInt aEndPDU, TBool aLastPartialCompleteMsg)
 	{
-	LOGGSMU1("CSmsMessage::AddIncompleteMessageInfoL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDINCOMPLETEMESSAGEINFOL_1, "CSmsMessage::AddIncompleteMessageInfoL()");
 
 	CIncompleteClass0MessageInfo& incompleteClass0MsgInfo = (CIncompleteClass0MessageInfo&) iAdditionalInfo->GetNonIEOperationL(ESmsIncompleteClass0MessageParameter);
 	incompleteClass0MsgInfo.SetVersion(CIncompleteClass0MessageInfo::ESmsIncompleteClass0MessageV0);
@@ -2332,7 +2331,7 @@ void CSmsMessage::AddIncompleteMessageInfoL(TInt aStartPDU, TInt aEndPDU, TBool 
 void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TInt aSegmentSequenceNum)
     {
 	// Installs all the information elements within the subsequent PDUs.
-	LOGGSMU1("CSmsMessage::InstallControlInformationElements()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_1, "CSmsMessage::InstallControlInformationElements()");
 
     CSmsMessageAdditionalAttributes::CSmsStatusReportScheme& scheme = iAdditionalInfo->GetStatusReportScheme();
     
@@ -2347,8 +2346,7 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
             switch (category)
                 {
                 case  TSmsInformationElementCategories::ECtrlMandatoryInEveryPDUMultipleInstancesPerPDU: // e.g. Special SMS Message Indication
-                    LOGGSMU2("CSmsMessage::InstallControlInformationElements \
-                    ECtrlMandatoryInEveryPDUMultipleInstancesPerPDU id = %d", ie.Identifier());
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_2, "CSmsMessage::InstallControlInformationElements \ECtrlMandatoryInEveryPDUMultipleInstancesPerPDU id = %d", ie.Identifier());
 
                     if (ie.Identifier()== CSmsInformationElement::ESmsIEISpecialSMSMessageIndication)
                         {
@@ -2380,15 +2378,14 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
                     else
                         {
                         // Unknown category.
-                        LOGGSMU3("CSmsMessage::InstallControlInformationElementsL category = %d, id = %d", category, ie.Identifier());
+                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_3, "CSmsMessage::InstallControlInformationElementsL category = %d, id = %d", category, ie.Identifier());
                         User::Leave(KErrArgument);
                         }
                     break;
                 case  TSmsInformationElementCategories::ECtrlMandatoryIn1stPDUOnly:
                 case  TSmsInformationElementCategories::ECtrlSingleInstanceOnly:
                     {
-                    LOGGSMU2("CSmsMessage::InstallControlInformationElements ECtrlMandatoryIn1stPDUOnly "
-                                 "ECtrlSingleInstanceOnly, id = %d", ie.Identifier());
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_4, "CSmsMessage::InstallControlInformationElements ECtrlMandatoryIn1stPDUOnly ""ECtrlSingleInstanceOnly, id = %d", ie.Identifier());
 
                     TUint index = 0;
                     if (iAdditionalInfo->Find1stInstanceOfControlInformationElement(ie.Identifier(), index))
@@ -2413,8 +2410,7 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
                     }
                 case  TSmsInformationElementCategories::ECtrlMandatoryInEveryPDUAndWithIdenticalValues:
                     {
-                    LOGGSMU2("CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUAndWithIdenticalValues "
-                                 "ECtrlSingleInstanceOnly, id = %d", ie.Identifier());
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_5, "CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUAndWithIdenticalValues ""ECtrlSingleInstanceOnly, id = %d", ie.Identifier());
                     TInt index = 0;
                     if (SmsPDU().UserData().InformationElementIndex(ie.Identifier(),index))
                         {
@@ -2438,8 +2434,7 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
 
                 case  TSmsInformationElementCategories::ECtrlMultipleInstancesAllowed:
                     {
-                    LOGGSMU2("CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUAndWithIdenticalValues "
-                                 "ECtrlSingleInstanceOnly, id = %d", ie.Identifier() );
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_6, "CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUAndWithIdenticalValues ""ECtrlSingleInstanceOnly, id = %d", ie.Identifier() );
 
                     CSmsInformationElement* cloneInformationElement = CSmsInformationElement::NewL( ie.Identifier(),ie.Data() );
                     CleanupStack::PushL(cloneInformationElement);
@@ -2448,8 +2443,7 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
                     break;
                     }
                 case  TSmsInformationElementCategories::ECtrlMandatoryInEveryPDUButWithValueSpecificToPDU:
-                    LOGGSMU2("CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUButWithValueSpecificToPDU "
-                                 "ECtrlSingleInstanceOnly, id = %d", ie.Identifier() );
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_7, "CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUButWithValueSpecificToPDU ""ECtrlSingleInstanceOnly, id = %d", ie.Identifier() );
                     
                     if (ie.Identifier() == CSmsInformationElement::ESmsIEISMSCControlParameters)
                     	{
@@ -2476,12 +2470,11 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
                     // or left as is.
                     break;
                 case  TSmsInformationElementCategories::EEmsInformationElement:
-                    LOGGSMU2("CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUButWithValueSpecificToPDU "
-                                 "ECtrlSingleInstanceOnly, id = %d", ie.Identifier() );
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_8, "CSmsMessage::InstallControlInformationElements ECtrlMandatoryInEveryPDUButWithValueSpecificToPDU ""ECtrlSingleInstanceOnly, id = %d", ie.Identifier() );
                     // Will be handled in the method InstallEmsInformationElements, nothing to do here
                     break;
                 default:
-                    LOGGSMU3("CSmsMessage::InstallControlInformationElementsToMultiSegmentMessageL, default switch, category = %d, id= %d", category, ie.Identifier() );
+                    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLCONTROLINFORMATIONELEMENTSL_9, "CSmsMessage::InstallControlInformationElementsToMultiSegmentMessageL, default switch, category = %d, id= %d", category, ie.Identifier() );
                     break;
                 }
             }
@@ -2499,7 +2492,7 @@ void CSmsMessage::InstallControlInformationElementsL(CSmsUserData& aUserData, TI
 void  CSmsMessage::InstallEmsInformationElementsL(CSmsUserData& aUserData, TInt aCharsAlreadyAdded)
 	{
 	// Installs all the information elements within the subsequent PDUs.
-	LOGGSMU1("CSmsMessage::InstallEmsInformationElements()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLEMSINFORMATIONELEMENTSL_1, "CSmsMessage::InstallEmsInformationElements()");
 
 	CSmsInformationElement::TSmsInformationElementIdentifier id;
 	CEmsInformationElement* newIE =NULL;
@@ -2547,7 +2540,7 @@ void  CSmsMessage::InstallEmsInformationElementsL(CSmsCommand& aCommand, TInt aC
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
     // Installs all the information elements within the subsequent PDUs.
-    LOGGSMU1("CSmsMessage::InstallEmsInformationElements()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLEMSINFORMATIONELEMENTSL1_1, "CSmsMessage::InstallEmsInformationElements()");
     
     CSmsInformationElement::TSmsInformationElementIdentifier id;
     CEmsInformationElement* newIE=NULL;
@@ -2673,7 +2666,7 @@ void CSmsMessage::InstallTPSRRInformationL(const CArrayPtr<CSmsPDU>& aSmsPDUArra
  */
 EXPORT_C void CSmsMessage::AddEMSInformationElementL(const CEmsInformationElement& aEmsIE)
 	{
-	LOGGSMU1("CSmsMessage::AddEMSInformationElementL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ADDEMSINFORMATIONELEMENTL_1, "CSmsMessage::AddEMSInformationElementL()");
 
 	if(aEmsIE.StartPosition() > (TUint)iBuffer->Length())
 		{
@@ -2715,7 +2708,7 @@ EXPORT_C void CSmsMessage::AddEMSInformationElementL(const CEmsInformationElemen
 
 TBool CSmsMessage::CanBeRemoved(const CEmsInformationElement& aIE, const TUint aIEIndex)
 	{
-	LOGGSMU1("CSmsMessage::CanBeRemoved()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CANBEREMOVED_1, "CSmsMessage::CanBeRemoved()");
 
 	TBool ret=ETrue;
 	if(CSmsInformationElement::ESmsEnhancedODI == aIE.Identifier())
@@ -2740,7 +2733,7 @@ TBool CSmsMessage::CanBeRemoved(const CEmsInformationElement& aIE, const TUint a
 		    }
 		}
 
-	LOGGSMU2("CSmsMessage::CanBeRemoved() returns %d", ret);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CANBEREMOVED_2, "CSmsMessage::CanBeRemoved() returns %d", ret);
 
 	return ret;
 	} // CSmsMessage::CanBeRemoved
@@ -2753,7 +2746,7 @@ TBool CSmsMessage::CanBeRemoved(const CEmsInformationElement& aIE, const TUint a
  */
 void CSmsMessage::AddEmsUserPromptL(const CEmsUserPrompt& aUserPromptIE)
 	{
-	LOGGSMU1("CSmsMessage::AddEmsUserPromptL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSUSERPROMPTL_1, "CSmsMessage::AddEmsUserPromptL()");
 
 		if(aUserPromptIE.ObjectCount() == 0 )User::Leave(KErrArgument);
 
@@ -2830,7 +2823,7 @@ void CSmsMessage::AddEmsUserPromptL(const CEmsUserPrompt& aUserPromptIE)
  */
 void CSmsMessage::AddEmsObjectDistributionL(const CEmsObjectDistribution& aObjectDistributionIE)
     {
-	LOGGSMU1("CSmsMessage::AddEmsObjectDistributionL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDEMSOBJECTDISTRIBUTIONL_1, "CSmsMessage::AddEmsObjectDistributionL()");
 
     TUint count=iInformationElementArray->Count();
     TUint objectDistributionStartPosition=aObjectDistributionIE.StartPosition();
@@ -2882,7 +2875,7 @@ void CSmsMessage::AddEmsObjectDistributionL(const CEmsObjectDistribution& aObjec
  */
 EXPORT_C CEmsInformationElement* CSmsMessage::RemoveEMSInformationElementL(const TUint aStartPosition,const TSmsId aEmsId)
 	{
-	LOGGSMU1("CSmsMessage::RemoveEMSInformationElementL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_REMOVEEMSINFORMATIONELEMENTL_1, "CSmsMessage::RemoveEMSInformationElementL()");
 
 	CEmsInformationElement* emsIE=NULL;
 	CEmsInformationElement* ie=NULL;
@@ -2920,7 +2913,7 @@ EXPORT_C CEmsInformationElement* CSmsMessage::RemoveEMSInformationElementL(const
  */
 EXPORT_C RPointerArray<CEmsInformationElement>* CSmsMessage::RemoveEMSInformationElementsL(const TUint aStartPosition,const TSmsId aEmsId)
 	{
-	LOGGSMU1("CSmsMessage::RemoveEMSInformationElementsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_REMOVEEMSINFORMATIONELEMENTSL_1, "CSmsMessage::RemoveEMSInformationElementsL()");
 
 	CEmsInformationElement* ie=NULL;
 	RPointerArray<CEmsInformationElement>* selectedIEs = NULL;
@@ -2951,7 +2944,7 @@ EXPORT_C RPointerArray<CEmsInformationElement>* CSmsMessage::RemoveEMSInformatio
  */
 EXPORT_C void  CSmsMessage::ResetEMSL()
 	{
-	LOGGSMU1("CSmsMessage::ResetEMSL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_RESETEMSL_1, "CSmsMessage::ResetEMSL()");
 
 	iInformationElementArray->ResetAndDestroy();
 	} // CSmsMessage::ResetEMSL
@@ -2965,7 +2958,7 @@ EXPORT_C void  CSmsMessage::ResetEMSL()
  */
 EXPORT_C const RPointerArray<const CEmsInformationElement>& CSmsMessage::GetEMSInformationElementsL()const
 	{
-	LOGGSMU1("CSmsMessage::GetEMSInformationElementsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETEMSINFORMATIONELEMENTSL_1, "CSmsMessage::GetEMSInformationElementsL()");
 
 	 return (const RPointerArray<const CEmsInformationElement>&)(*iInformationElementArray);
 	} // CSmsMessage::GetEMSInformationElementsL
@@ -2973,7 +2966,7 @@ EXPORT_C const RPointerArray<const CEmsInformationElement>& CSmsMessage::GetEMSI
 
 void CSmsMessage::UpdateUserPromptAndODIElementsStartPosition()
 	{
-	LOGGSMU1("CSmsMessage::UpdateUserPromptAndODIElementsStartPosition()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_UPDATEUSERPROMPTANDODIELEMENTSSTARTPOSITION_1, "CSmsMessage::UpdateUserPromptAndODIElementsStartPosition()");
 
 		TUint num=iInformationElementArray->Count();
 		TInt startPosition=-1;
@@ -3001,7 +2994,7 @@ void CSmsMessage::UpdateUserPromptAndODIElementsStartPosition()
 
 TInt CSmsMessage::AddReceivedEmsInformationElement(CEmsInformationElement* aEmsIE)
 	{
-	LOGGSMU1("CSmsMessage::AddReceivedEmsInformationElement()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_ADDRECEIVEDEMSINFORMATIONELEMENT_1, "CSmsMessage::AddReceivedEmsInformationElement()");
 
 	TInt ret=KErrNone;
 	if(CSmsInformationElement::ESmsEnhancedUserPromptIndicator == aEmsIE->Identifier() || CSmsInformationElement::ESmsEnhancedODI == aEmsIE->Identifier())
@@ -3034,7 +3027,7 @@ TInt CSmsMessage::AddReceivedEmsInformationElement(CEmsInformationElement* aEmsI
  */
 EXPORT_C void CSmsMessage::UpdateSlotsL(TDesC8& aDesc)
     {
-	LOGGSMU1("CSmsMessage::UpdateSlotsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_UPDATESLOTSL_1, "CSmsMessage::UpdateSlotsL()");
 
     TGsmSmsSlotEntry newSlot;
 
@@ -3077,7 +3070,7 @@ EXPORT_C void CSmsMessage::UpdateSlotsL(TDesC8& aDesc)
  */
 EXPORT_C void CSmsMessage::CopyEmsElementsL(CSmsMessage& aToMessage) const
 	{
-	LOGGSMU1("CSmsMessage::CopyEmsElementsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_COPYEMSELEMENTSL_1, "CSmsMessage::CopyEmsElementsL()");
 
 	// CSmsMessage extended EMS API method creates array of references to EMS elements in
 	// the source message
@@ -3099,7 +3092,7 @@ EXPORT_C void CSmsMessage::CopyEmsElementsL(CSmsMessage& aToMessage) const
  */
 EXPORT_C void CSmsMessage::AddSlotL(const TGsmSmsSlotEntry& aSlot)
 	{
-	LOGGSMU1("CSmsMessage::AddSlotL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ADDSLOTL_1, "CSmsMessage::AddSlotL()");
 
 		TInt count = iSlotArray.Count();
 		TInt i(0);
@@ -3109,8 +3102,8 @@ EXPORT_C void CSmsMessage::AddSlotL(const TGsmSmsSlotEntry& aSlot)
 			if(aSlot.iIndex == iSlotArray[i].iIndex)found=ETrue;
 			else ++i;
 		}
-		LOGGSMU3("CSmsMessage::AddSlotL current no in: %d, adds index %d", count,aSlot.iIndex );
-		LOGGSMU3("found %d at position %d",found,i);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ADDSLOTL_2, "CSmsMessage::AddSlotL current no in: %d, adds index %d", count,aSlot.iIndex );
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ADDSLOTL_3, "found %d at position %d",found,i);
 		iSlotArray.AppendL(aSlot);
 	} // CSmsMessage::AddSlotL
 
@@ -3119,7 +3112,7 @@ EXPORT_C void CSmsMessage::AddSlotL(const TGsmSmsSlotEntry& aSlot)
  */
 EXPORT_C TBool CSmsMessage::MatchSlots(const CArrayFixFlat<TGsmSmsSlotEntry>& aSlotArray)
 	{
-	LOGGSMU1("CSmsMessage::MatchSlots()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_MATCHSLOTS_1, "CSmsMessage::MatchSlots()");
 
 		TBool match = EFalse;
 		TInt count = aSlotArray.Count();
@@ -3180,7 +3173,7 @@ void TGsmSmsSlotEntry::ExternalizeL(RWriteStream& aStream) const
 void  CSmsMessage::InstallEmailHeaderInformationElementL(CSmsUserData& aUserData,TInt& aHeaderLength)
  	{
  	// Installs all the information elements within the subsequent PDUs.
- 	LOGGSMU1("CSmsMessage::InstallEmailHeaderInformationElementL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLEMAILHEADERINFORMATIONELEMENTL_1, "CSmsMessage::InstallEmailHeaderInformationElementL()");
 
  	CSmsInformationElement::TSmsInformationElementIdentifier id;
 
@@ -3209,7 +3202,7 @@ void CSmsMessage::InstallEmailHeaderInformationElementL(CSmsCommand& aCommand,TI
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
     // Installs all the information elements within the subsequent PDUs.
-    LOGGSMU1("CSmsMessage::InstallEmailHeaderInformationElementL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_INSTALLEMAILHEADERINFORMATIONELEMENTL1_1, "CSmsMessage::InstallEmailHeaderInformationElementL()");
     
     CSmsInformationElement::TSmsInformationElementIdentifier id;
     
@@ -3240,7 +3233,7 @@ void CSmsMessage::InstallEmailHeaderInformationElementL(CSmsCommand& aCommand,TI
  */
 EXPORT_C void CSmsMessage::AddEmailHeaderL(const TDesC& aEmailHeader, const TDesC& aEmailBody)
  	{
- 	LOGGSMU1("CSmsMessage::AddEmailHeaderL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ADDEMAILHEADERL_1, "CSmsMessage::AddEmailHeaderL()");
 
  	if(IsEmailHeader())
  		User::Leave(KErrAlreadyExists);
@@ -3288,7 +3281,7 @@ EXPORT_C void CSmsMessage::AddEmailHeaderL(const TDesC& aEmailHeader, const TDes
   */
 EXPORT_C TBool CSmsMessage::IsEmailHeader() const
  	{
- 	LOGGSMU1("CSmsMessage::IsEmailHeader()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_ISEMAILHEADER_1, "CSmsMessage::IsEmailHeader()");
 
 	TInt emailIndex;
 	return SmsPDU().UserData().InformationElementIndex(CSmsInformationElement::ESmsIEIRFC822EmailHeader,emailIndex);
@@ -3307,7 +3300,7 @@ EXPORT_C TBool CSmsMessage::IsEmailHeader() const
   */
 EXPORT_C TBool CSmsMessage::GetEmailHeaderL(HBufC** aEmailHeader,HBufC** aEmailBody)
  	{
- 	LOGGSMU1("CSmsMessage::GetEmailHeaderL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETEMAILHEADERL_1, "CSmsMessage::GetEmailHeaderL()");
 
  	if(IsEmailHeader())
  		{
@@ -3354,7 +3347,7 @@ EXPORT_C TBool CSmsMessage::GetEmailHeaderL(HBufC** aEmailHeader,HBufC** aEmailB
   */
 EXPORT_C TTimeIntervalSeconds CSmsMessage::UTCOffset() const
     {
-    LOGGSMU1("CSmsMessage::UTCOffset()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_UTCOFFSET_1, "CSmsMessage::UTCOffset()");
 
     TUint timeZoneOffset = ((iFlags & ESmsUTCOffsetSecondGranularityMask) >> ESecondBitOffset);
 
@@ -3380,7 +3373,7 @@ EXPORT_C TTimeIntervalSeconds CSmsMessage::UTCOffset() const
   */
 EXPORT_C TBool CSmsMessage::SetUTCOffset(const TTimeIntervalSeconds& aTimeOffset)
     {
-    LOGGSMU1("CSmsMessage::SetUTCOffset()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETUTCOFFSET_1, "CSmsMessage::SetUTCOffset()");
 
     TBool rc = ETrue;
 
@@ -3403,7 +3396,7 @@ EXPORT_C TBool CSmsMessage::SetUTCOffset(const TTimeIntervalSeconds& aTimeOffset
         }
     else
         {
-        LOGGSMU2("CSmsMessage::SetUTCOffset offset [out of range] = %d",timeOffset);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETUTCOFFSET_2, "CSmsMessage::SetUTCOffset offset [out of range] = %d",timeOffset);
         rc = EFalse;
         }
 
@@ -3417,7 +3410,7 @@ EXPORT_C TBool CSmsMessage::SetUTCOffset(const TTimeIntervalSeconds& aTimeOffset
  */
 EXPORT_C TInt CSmsMessage::Version()
  	{
- 	LOGGSMU1("CSmsMessage::Version()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_VERSION_1, "CSmsMessage::Version()");
 
  	return iVersion;
  	} // CSmsMessage::Version
@@ -3433,7 +3426,7 @@ EXPORT_C TInt CSmsMessage::Version()
  */
 EXPORT_C TInt CSmsMessage::SetVersion(TInt aVersion)
 	{
- 	LOGGSMU2("CSmsMessage::SetVersion()", aVersion);
+ 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETVERSION_1, "CSmsMessage::SetVersion(), version = %d", aVersion);
 
 	if((aVersion>=ESmsMessageV0) && (aVersion<=ESmsMessageV4))
 		{
@@ -3456,7 +3449,7 @@ EXPORT_C TInt CSmsMessage::SetVersion(TInt aVersion)
  */
 EXPORT_C void CSmsMessage::InternalizeWithoutBufferAndVersionL(RReadStream& aStream)
 	{
- 	LOGGSMU1("CSmsMessage::InternalizeWithoutBufferAndVersionL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_INTERNALIZEWITHOUTBUFFERANDVERSIONL_1, "CSmsMessage::InternalizeWithoutBufferAndVersionL()");
 
 	iFlags=aStream.ReadInt32L();
 	iStatus=(NMobileSmsStore::TMobileSmsStoreStatus) aStream.ReadInt32L();
@@ -3496,7 +3489,7 @@ EXPORT_C void CSmsMessage::InternalizeWithoutBufferAndVersionL(RReadStream& aStr
  */
 EXPORT_C void CSmsMessage::ExternalizeWithoutBufferAndVersionL(RWriteStream& aStream) const
 	{
- 	LOGGSMU1("CSmsMessage::ExternalizeWithoutBufferAndVersionL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_EXTERNALIZEWITHOUTBUFFERANDVERSIONL_1, "CSmsMessage::ExternalizeWithoutBufferAndVersionL()");
 
 	aStream.WriteInt32L(iFlags);
 	aStream.WriteInt32L(iStatus);
@@ -3592,11 +3585,11 @@ EXPORT_C void CSmsMessage::ExternalizeVersionL(RWriteStream& aStream) const
  */
 EXPORT_C CSmsIEOperation& CSmsMessage::GetOperationsForIEL(CSmsInformationElement::TSmsInformationElementIdentifier aId) const
     {
-    LOGGSMU1("CSmsMessage::GetOperationsForIEL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETOPERATIONSFORIEL_1, "CSmsMessage::GetOperationsForIEL()");
 
     if (iVersion < CSmsMessage::ESmsMessageV1)
         {
-        LOGGSMU2("CSmsMessage::GetOperationsForIEL, Operation not supported, Msg Version %d", iVersion);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETOPERATIONSFORIEL_2, "CSmsMessage::GetOperationsForIEL, Operation not supported, Msg Version %d", iVersion);
         User::Leave(KErrNotSupported);
         }
 
@@ -3605,11 +3598,11 @@ EXPORT_C CSmsIEOperation& CSmsMessage::GetOperationsForIEL(CSmsInformationElemen
 
 EXPORT_C CSmsNonIEOperation& CSmsMessage::GetOperationsForNonIEL(TSmsNonIEIdentifier aId) const
 	{
-	LOGGSMU1("CSmsMessage::GetOperationsForNonIEL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETOPERATIONSFORNONIEL_1, "CSmsMessage::GetOperationsForNonIEL");
 
 	if (iVersion < CSmsMessage::ESmsMessageV2)
 		{
-		LOGGSMU2("GetOperationsForNonIEL not supported, Msg Version %d", iVersion);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_GETOPERATIONSFORNONIEL_2, "GetOperationsForNonIEL not supported, Msg Version %d", iVersion);
 		User::Leave(KErrNotSupported);
 		}
 
@@ -3619,7 +3612,7 @@ EXPORT_C CSmsNonIEOperation& CSmsMessage::GetOperationsForNonIEL(TSmsNonIEIdenti
 
 void CSmsMessage::CreateControlIEOperationsClassesL()
     {
- 	LOGGSMU1("CSmsMessage::CreateControlIEOperationsClassesL()");
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CREATECONTROLIEOPERATIONSCLASSESL_1, "CSmsMessage::CreateControlIEOperationsClassesL()");
 
     CSmsIEOperation* iEOperation = NULL;
 
@@ -3676,7 +3669,7 @@ EXPORT_C TSmsStatusReportScheme CSmsMessage::Scheme() const
  */
 EXPORT_C void  CSmsMessage::SetDecodedOnSIM(TBool aOnSim)
     {
- 	LOGGSMU2("CSmsMessage::SetDecodedOnSIM(): %d", aOnSim);
+ 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETDECODEDONSIM_1, "CSmsMessage::SetDecodedOnSIM(): %d", aOnSim);
 
     if (aOnSim)
         {
@@ -3704,7 +3697,7 @@ EXPORT_C void  CSmsMessage::SetDecodedOnSIM(TBool aOnSim)
  */
 EXPORT_C TBool CSmsMessage::DecodedOnSim()
     {
-    LOGGSMU1("CSmsMessage::DecodedOnSim()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_DECODEDONSIM_1, "CSmsMessage::DecodedOnSim()");
 
     if (iFlags & EDecodedOnSimBit)
         {
@@ -3730,7 +3723,7 @@ EXPORT_C TBool CSmsMessage::DecodedOnSim()
  */
 EXPORT_C void CSmsMessage::SetForwardToClient(TBool aForward)
     {
- 	LOGGSMU2("CSmsMessage::SetForwardToClient(): %d", aForward);
+ 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_SETFORWARDTOCLIENT_1, "CSmsMessage::SetForwardToClient(): %d", aForward);
 
     if (aForward)
         {
@@ -3757,7 +3750,7 @@ EXPORT_C void CSmsMessage::SetForwardToClient(TBool aForward)
  */
 EXPORT_C TBool CSmsMessage::ForwardToClient()
     {
-    LOGGSMU1("CSmsMessage::ForwardToClient()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSMESSAGE_FORWARDTOCLIENT_1, "CSmsMessage::ForwardToClient()");
 
     if (iFlags & EForwardToClientBit)
         {

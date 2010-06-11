@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,11 +20,17 @@
  @internalComponent
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ceteldrivernotifierTraces.h"
+#endif
+
 #include <e32def.h>
 
 #include "ceteldrivernotifier.h"
 #include "PDPFSM.h"
-#include "spudteldebuglogger.h"
 
 
 /**
@@ -52,8 +58,7 @@ void CEtelDriverNotifier::RunL()
 		{
 		if(KErrCancel != iStatus.Int())
 			{
-			SPUDTEL_ERROR_LOG(_L("CEtelDriverNotifier::RunL() reported an error: %d"), 
-							iStatus.Int());
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERNOTIFIER_RUNL_1, "CEtelDriverNotifier::RunL() reported an error: %d", iStatus.Int());
 			}
 		}
 	}

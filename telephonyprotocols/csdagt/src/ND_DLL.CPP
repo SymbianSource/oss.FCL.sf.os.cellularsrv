@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,10 +20,15 @@
  @internalComponent
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ND_DLLTraces.h"
+#endif
+
 #include <e32std.h>
 #include <cdbcols.h>
 #include "ND_STD.H"
-#include "SLOGGER.H"
 #include "ND_DIRCT.H"
 #include "ND_DLIN.H"
 #include "ND_DLUP.H"
@@ -39,8 +44,7 @@ Global functions - DLL entry point and general panic
 */
 GLDEF_C void NetDialPanic(TNetDialPanic aPanic)
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial Panic %d");)
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()),aPanic);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, NETDIALPANIC_1, _"NetDial Panic %d",aPanic);
 	_LIT(KNetDialPanic,"NetDial");
 	User::Panic(KNetDialPanic,aPanic);
 	}

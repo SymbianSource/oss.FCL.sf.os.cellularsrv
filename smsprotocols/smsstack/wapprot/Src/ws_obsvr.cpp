@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ws_obsvrTraces.h"
+#endif
 
 #include "ws_obsvr.h"
 
@@ -83,7 +89,7 @@ CWapSapMessageSender::~CWapSapMessageSender()
  */
 CWapSapMessageSender* CWapSapMessageSender::NewL(CSmsProtocol* aSmsProtocol, CWapSmsProvider* aWapSap)
 	{
-	LOGWAPPROT1("CWapSapMessageSender::NewL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_NEWL_1, "CWapSapMessageSender::NewL");
 
 	CWapSapMessageSender* msgSender = new(ELeave) CWapSapMessageSender(aSmsProtocol,aWapSap);
 	CleanupStack::PushL(msgSender);
@@ -102,7 +108,7 @@ CWapSapMessageSender* CWapSapMessageSender::NewL(CSmsProtocol* aSmsProtocol, CWa
  */
 void CWapSapMessageSender::SendDatagramL(CWapDatagram* aMsg)
 	{
-	LOGWAPPROT1("CWapSapMessageSender::SendDatagramL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_SENDDATAGRAML_1, "CWapSapMessageSender::SendDatagramL");
 
 	__ASSERT_DEBUG(iSmsMsgArray->Count()==0,Panic(EWapSmsSapMessageSenderBusy));
 
@@ -118,7 +124,7 @@ void CWapSapMessageSender::SendDatagramL(CWapDatagram* aMsg)
  */
 void CWapSapMessageSender::SendNextSms()
 	{
-	LOGWAPPROT1("CWapSapMessageSender::SendNextSms");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_SENDNEXTSMS_1, "CWapSapMessageSender::SendNextSms");
 
 	__ASSERT_DEBUG(iSmsMsgArray->Count()>0,Panic(EWapSmsSapMessageSenderNothingToSend));
 	CSmsMessage* smsMsg = iSmsMsgArray->At(0);
@@ -139,7 +145,7 @@ void CWapSapMessageSender::SendNextSms()
  */
 void CWapSapMessageSender::SetSmsMessageSettingsL(CSmsMessage* aSmsMessage)
 	{
-	LOGWAPPROT1("CWapSapMessageSender::SetSmsMessageSettingsL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_SETSMSMESSAGESETTINGSL_1, "CWapSapMessageSender::SetSmsMessageSettingsL");
 
 	TBuf<KCommsDbSvrMaxFieldLength> msgCenterNumberValue;
 	TUint32 msgValidityPeriodValue = KWapSmsMessageValidityPeriod;
@@ -277,7 +283,7 @@ void CWapSapMessageSender::SetSmsMessageSettingsL(CSmsMessage* aSmsMessage)
  */
 void CWapSapMessageSender::MessageSendCompleted(TInt aStatus)
 	{
-	LOGWAPPROT2("CWapSapMessageSender::MessageSendCompleted [aStatus=%d]", aStatus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_MESSAGESENDCOMPLETED_1, "CWapSapMessageSender::MessageSendCompleted [aStatus=%d]", aStatus);
 
 	if (aStatus!=KErrNone)
 		iSmsMsgArray->ResetAndDestroy();
@@ -296,7 +302,7 @@ void CWapSapMessageSender::MessageSendCompleted(TInt aStatus)
  */
 const TSmsAddr& CWapSapMessageSender::GetLocalAddress() const
 	{
-	LOGWAPPROT1("CWapSapMessageSender::GetLocalAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_GETLOCALADDRESS_1, "CWapSapMessageSender::GetLocalAddress()");
 
 	return iSmsAddr;
 	} // CWapSapMessageSender::GetLocalAddress
@@ -307,7 +313,7 @@ const TSmsAddr& CWapSapMessageSender::GetLocalAddress() const
  */
 void CWapSapMessageSender::SetLocalAddress(const TSmsAddr& aSmsAddr)
 	{
-	LOGWAPPROT1("CWapSapMessageSender::SetLocalAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_SETLOCALADDRESS_1, "CWapSapMessageSender::SetLocalAddress()");
 
 	iSmsAddr = aSmsAddr;
 	} // CWapSapMessageSender::SetLocalAddress
@@ -322,7 +328,7 @@ void CWapSapMessageSender::ModemNotificationCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::ModemNotificationCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_MODEMNOTIFICATIONCOMPLETED_1, "CWapSapMessageSender::ModemNotificationCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -335,7 +341,7 @@ void CWapSapMessageSender::EnumeratePhoneCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::EnumeratePhoneCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_ENUMERATEPHONECOMPLETED_1, "CWapSapMessageSender::EnumeratePhoneCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -348,7 +354,7 @@ TInt CWapSapMessageSender::MessageReceived(const CSmsMessage& /*aSmsMessage*/,TD
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::MessageReceived");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_MESSAGERECEIVED_1, "CWapSapMessageSender::MessageReceived");
     __ASSERT_DEBUG(EFalse,Panic(EWapSmsReceiveOnMessageSender));
     return KErrNone;
     BULLSEYE_RESTORE
@@ -362,7 +368,7 @@ TBool CWapSapMessageSender::ClientConfirmsMessage()const
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::ClientConfirmsMessage");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_CLIENTCONFIRMSMESSAGE_1, "CWapSapMessageSender::ClientConfirmsMessage");
     __ASSERT_DEBUG(EFalse,Panic(EWapSmsReceiveOnMessageSender));
     return ETrue;
     BULLSEYE_RESTORE
@@ -373,7 +379,7 @@ TBool CWapSapMessageSender::ClientConfirmsMessage()const
  */
 TInt CWapSapMessageSender::SmsAddrIsDuplicate(const MSmsMessageObserver* /*aObserver*/,const TSmsAddr& /*aAddr*/)const
 	{
-	LOGWAPPROT1("CWapSapMessageSender::SmsAddrIsDuplicate()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_SMSADDRISDUPLICATE_1, "CWapSapMessageSender::SmsAddrIsDuplicate()");
 
 	return EFalse;
 	} // CWapSapMessageSender::SmsAddrIsDuplicate
@@ -388,7 +394,7 @@ void CWapSapMessageSender::MessageWriteCompleted(TInt /*aStatus*/, const CSmsMes
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::MessageWriteCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_MESSAGEWRITECOMPLETED_1, "CWapSapMessageSender::MessageWriteCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -401,7 +407,7 @@ void CWapSapMessageSender::MessageDeleteCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::MessageDeleteCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_MESSAGEDELETECOMPLETED_1, "CWapSapMessageSender::MessageDeleteCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -414,7 +420,7 @@ void CWapSapMessageSender::ReadSmsParamsCompleted(TInt /*aStatus*/,CMobilePhoneS
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::ReadSmsParamsCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_READSMSPARAMSCOMPLETED_1, "CWapSapMessageSender::ReadSmsParamsCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -427,7 +433,7 @@ void CWapSapMessageSender::WriteSmsParamsCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapSapMessageSender::WriteSmsParamsCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSAPMESSAGESENDER_WRITESMSPARAMSCOMPLETED_1, "CWapSapMessageSender::WriteSmsParamsCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -444,7 +450,7 @@ void CWapSapMessageSender::WriteSmsParamsCompleted(TInt /*aStatus*/)
  */
 CWapProtocolObserver* CWapProtocolObserver::NewL(CWapSmsProtocol* aProtocol)
 	{
-	LOGWAPPROT1("CWapProtocolObserver::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_NEWL_1, "CWapProtocolObserver::NewL()");
 
 	CWapProtocolObserver* prot = new(ELeave) CWapProtocolObserver;
 	prot->iWapSmsProtocol=aProtocol;
@@ -457,7 +463,7 @@ CWapProtocolObserver* CWapProtocolObserver::NewL(CWapSmsProtocol* aProtocol)
  */
 const TSmsAddr& CWapProtocolObserver::GetLocalAddress() const
 	{
-	LOGWAPPROT1("CWapProtocolObserver::GetLocalAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_GETLOCALADDRESS_1, "CWapProtocolObserver::GetLocalAddress()");
 
 	return iSmsAddr;
 	} // CWapProtocolObserver::GetLocalAddress
@@ -468,7 +474,7 @@ const TSmsAddr& CWapProtocolObserver::GetLocalAddress() const
  */
 void CWapProtocolObserver::SetLocalAddress(const TSmsAddr& aSmsAddr)
 	{
-	LOGWAPPROT1("CWapProtocolObserver::SetLocalAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_SETLOCALADDRESS_1, "CWapProtocolObserver::SetLocalAddress()");
 
 	iSmsAddr = aSmsAddr;
 	} // CWapProtocolObserver::SetLocalAddress
@@ -480,7 +486,7 @@ void CWapProtocolObserver::SetLocalAddress(const TSmsAddr& aSmsAddr)
  */
 void CWapProtocolObserver::ModemNotificationCompleted(TInt /*aStatus*/)
 	{
-	LOGWAPPROT1("CWapProtocolObserver::ModemNotificationCompleted()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_MODEMNOTIFICATIONCOMPLETED_1, "CWapProtocolObserver::ModemNotificationCompleted()");
 
 	} // CWapProtocolObserver::ModemNotificationCompleted
 
@@ -494,7 +500,7 @@ void CWapProtocolObserver::MessageSendCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapProtocolObserver::MessageSendCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_MESSAGESENDCOMPLETED_1, "CWapProtocolObserver::MessageSendCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -503,7 +509,7 @@ void CWapProtocolObserver::MessageSendCompleted(TInt /*aStatus*/)
  */
 TBool CWapProtocolObserver::ClientConfirmsMessage()const
 	{
-	LOGWAPPROT1("CWapProtocolObserver::ClientConfirmsMessage()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_CLIENTCONFIRMSMESSAGE_1, "CWapProtocolObserver::ClientConfirmsMessage()");
 
 	return EFalse;
 	} // CWapProtocolObserver::ClientConfirmsMessage
@@ -514,7 +520,7 @@ TBool CWapProtocolObserver::ClientConfirmsMessage()const
  */
 TInt CWapProtocolObserver::SmsAddrIsDuplicate(const MSmsMessageObserver* aObserver,const TSmsAddr& aAddr)const
 	{
-	LOGWAPPROT1("CWapProtocolObserver::SmsAddrIsDuplicate()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_SMSADDRISDUPLICATE_1, "CWapProtocolObserver::SmsAddrIsDuplicate()");
 
 	if(this == aObserver)return EFalse;
 	if(aAddr.SmsAddrFamily() == ESmsAddrApplication8BitPort || ( aAddr.SmsAddrFamily() == ESmsAddrApplication16BitPort && aAddr.Port() > 255))
@@ -533,7 +539,7 @@ TInt CWapProtocolObserver::SmsAddrIsDuplicate(const MSmsMessageObserver* aObserv
  */
 TInt CWapProtocolObserver::MessageReceived(const CSmsMessage& aSmsMessage,TDes& /*aDes*/)
 	{
-	LOGWAPPROT1("CWapProtocolObserver::MessageReceived");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_MESSAGERECEIVED_1, "CWapProtocolObserver::MessageReceived");
 
 	TRAPD(ret, iWapSmsProtocol->ProcessSmsL(aSmsMessage) );
 	return ret;
@@ -549,7 +555,7 @@ void CWapProtocolObserver::EnumeratePhoneCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapProtocolObserver::EnumeratePhoneCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_ENUMERATEPHONECOMPLETED_1, "CWapProtocolObserver::EnumeratePhoneCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -562,7 +568,7 @@ void CWapProtocolObserver::MessageWriteCompleted(TInt /*aStatus*/, const CSmsMes
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapProtocolObserver::MessageWriteCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_MESSAGEWRITECOMPLETED_1, "CWapProtocolObserver::MessageWriteCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -575,7 +581,7 @@ void CWapProtocolObserver::MessageDeleteCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapProtocolObserver::MessageDeleteCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_MESSAGEDELETECOMPLETED_1, "CWapProtocolObserver::MessageDeleteCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -588,7 +594,7 @@ void CWapProtocolObserver::ReadSmsParamsCompleted(TInt /*aStatus*/,CMobilePhoneS
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapProtocolObserver::ReadSmsParamsCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_READSMSPARAMSCOMPLETED_1, "CWapProtocolObserver::ReadSmsParamsCompleted()");
     BULLSEYE_RESTORE
     }
 
@@ -601,6 +607,6 @@ void CWapProtocolObserver::WriteSmsParamsCompleted(TInt /*aStatus*/)
     // Ignore in code coverage - implementation required by base class
     // but not relavent for WAP PROT.
     BULLSEYE_OFF
-    LOGWAPPROT1("CWapProtocolObserver::WriteSmsParamsCompleted()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPPROTOCOLOBSERVER_WRITESMSPARAMSCOMPLETED_1, "CWapProtocolObserver::WriteSmsParamsCompleted()");
     BULLSEYE_RESTORE
     }

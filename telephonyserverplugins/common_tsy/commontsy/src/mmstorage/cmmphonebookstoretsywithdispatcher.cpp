@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,6 +22,11 @@
 
 // INCLUDE FILES
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmphonebookstoretsywithdispatcherTraces.h"
+#endif
+
 #include "cmmphonebookstoretsy.h"
 #include "cmmphonebookstoreextinterface.h"
 #include <ctsy/serviceapi/mmtsy_ipcdefs.h>
@@ -40,7 +45,7 @@
 
 void CMmPhoneBookStoreTsy::CacheEntriesL()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL1_1, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
     // Get Phonebook related DLL -static data
 
     // Check if phonebook has been initialized successfully. Caching of ADN
@@ -49,7 +54,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
          ( EFalse == iStoreInfoData->iIsPhonebookInitializeFailed ||
            KADNPhoneBook != iPhoneBookType ) )
         {
-        TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", &iPhoneBookName);
+        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL1_2, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", iPhoneBookName);
         TInt ret = KErrNone;
 		CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
 		
@@ -66,7 +71,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
 					iPBStoreCache->ResetAndDestroy();
 					delete iPBStoreCache;
 					iPBStoreCache = NULL;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Old cache deleted");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL1_3, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Old cache deleted");
 					}
 				
 				//Inform phonebook that the cache is not ready for refresh
@@ -78,11 +83,11 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Old cache deleted");
 			}
             else if ( iCacheReady )
                 {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S cache entries ready", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL1_4, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S cache entries ready", iPhoneBookName);
                 }
         if ( KErrNone != ret)
             {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S caching failed!", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL1_5, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S caching failed!", iPhoneBookName);
             }
         }
     // Phonebook not initialized -> let's do it before caching
@@ -90,7 +95,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S caching failed!",
         || iStoreInfoData->iIsPhonebookInitializeFailed )
         && !iMmPhoneTsy->IsPBInitActive() )
         {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Starting initialization PB: %S", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL1_6, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Starting initialization PB: %S", iPhoneBookName);
         // before phonebook requests, phonebook must be initialized
         iMmPhoneBookStoreExtInterface->InitPhonebook(
             EMmTsyPhoneBookStoreInitIPC, iPhoneBookName );
