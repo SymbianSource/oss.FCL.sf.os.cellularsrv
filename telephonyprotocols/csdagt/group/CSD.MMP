@@ -58,12 +58,12 @@ LIBRARY			etelmm.lib
 
 LIBRARY			commsdat.lib
 
-#if defined(WINS)
-deffile    /epoc32/release/wins/agent.def
-#elif defined(GCC32)
-deffile    /epoc32/release/marm/agent.def
-#else
+#if defined(EABI)
 deffile    /epoc32/include/def/eabi/agent.def
+#elif defined(WINS)
+deffile    /epoc32/release/wins/agent.def
+#else
+deffile    /epoc32/release/marm/agent.def
 #endif
 
 START WINS
