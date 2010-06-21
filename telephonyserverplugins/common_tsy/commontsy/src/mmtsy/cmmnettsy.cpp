@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -25,6 +25,7 @@
 #include "cmmcalllist.h"
 #include "cmmcalltsy.h"
 #include "CMmCommonStaticUtility.h"
+#include "mmtsy_ipcdefs.h"
 #include <ctsy/serviceapi/gsmerror.h>
 
 // ======== MEMBER FUNCTIONS ========
@@ -106,6 +107,12 @@ TFLOGSTRING("TSY: CMmNetTsy::~CMmNetTsy");
     
     // Destroy array        			
     iRegisterationStatusRequests.ResetAndDestroy();
+    
+    // delete buffers for PLMN List 
+	delete iClientIdGetPrefPLMN;
+	delete iGetPrefPLMNList;
+	delete iStorePrefPLMNList;
+	
     }
     
     
@@ -283,7 +290,23 @@ TFLOGSTRING("TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneGetNetworkName");
         case EMobilePhoneGetCurrentActiveUSimApplication:
             ret = GetCurrentActiveUSimApplicationL( aTsyReqHandle,
                 reinterpret_cast<RMobilePhone::TAID*>( dataPtr ) );
-            break;                        
+            break;
+		case EMobilePhoneGetPreferredNetworksPhase1:
+			ret = GetPreferredNetworksListPhase1L(aTsyReqHandle, 
+				                                  reinterpret_cast< RMobilePhone::TClientId*>( dataPtr ),
+                                                  reinterpret_cast< TInt* >( dataPtr2 ) );
+			break;
+        case EMobilePhoneGetPreferredNetworksPhase2:
+			ret = GetPreferredNetworksListPhase2
+				    (aTsyReqHandle, reinterpret_cast<RMobilePhone::TClientId*>(aPackage.Ptr1()),
+				     aPackage.Des2n());
+        	break;
+		case EMobilePhoneStorePreferredNetworksList:
+			ret = StorePreferredNetworksListL(aTsyReqHandle, aPackage.Des1n());
+			break;
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
+			ret = NotifyStorePreferredNetworksListChange();
+			break;
         default:
             ret = KErrNotSupported;
             break;
@@ -429,7 +452,18 @@ TInt CMmNetTsy::CancelService(
                 }
             break;
             }    
-        //Default case
+		case EMobilePhoneGetPreferredNetworksPhase1:
+			ret = GetPreferredNetworksListCancel(aTsyReqHandle);
+			break;
+		case EMobilePhoneStorePreferredNetworksList:
+			// LTSY doesn't have transcation mechanism so that storing request cannot be cancelled.
+			// So this cancellation request is ignored. 
+            ret = KErrNone; 
+			break;
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
+			ret = NotifyStorePreferredNetworksListChangeCancel(aTsyReqHandle);
+			break;
+	        //Default case
         default:
             ret = KErrNone; 
             break;
@@ -3179,7 +3213,364 @@ void CMmNetTsy::CompleteGetCurrentActiveUSimApplication(
         iMmPhoneTsy->ReqCompleted( reqHandle, aErrorValue );	        				                          
         }    	        
     }
-    
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::GetPreferredNetworksListPhase1L
+// Returns minimum size of a buffer to retreive the current Preferred Networks List from SIM
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::GetPreferredNetworksListPhase1L(const TTsyReqHandle /*aTsyReqHandle*/, 
+    											 RMobilePhone::TClientId const* aId, TInt* aBufSize)
+	{
+	TFLOGSTRING("TSY: CMmNetTsy::GetPreferredNetworksListPhase1");	
+	TTsyReqHandle getPrefPLMNHandle = iMmPhoneTsy->iTsyReqHandleStore->GetTsyReqHandle
+		                              (CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1);
+	
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != getPrefPLMNHandle)
+		{
+        // The request is already processing because of previous request
+        // Complete request with status value informing the client about 
+        // the situation.
+		TFLOGSTRING("TSY GetPreferredNetworksListPhase1: the request is already processing because previous request.");
+		return KErrServerBusy;
+        }
+	else
+		{
+		TInt ret = iMmPhoneTsy->iMessageManager->HandleRequestL(ECtsyPhoneGetPreferredNetworksReq);
+
+		if(KErrNone == ret)
+			{
+			TFLOGSTRING("TSY: Successfully send IPC EMobilePhoneGetPreferredNetworksPhase1 to LTSY");
+			
+			iMmPhoneTsy->iReqHandleType = CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1;
+			
+			// if iGetPrefPLMNList, iClientIdGetPrefPLMN, and/or iBufSizeGetPrefPLMN are not NULL, phase 1 is called twice without calling phase 2.
+			// In this case, we should ignore the previous phase 1 and delete buffers.
+			if(iGetPrefPLMNList != NULL)
+				{
+				delete iGetPrefPLMNList;
+				iGetPrefPLMNList = NULL;
+				}
+			iBufSizeGetPrefPLMN = aBufSize;
+			if(iClientIdGetPrefPLMN != NULL)
+				{
+				delete iClientIdGetPrefPLMN;
+				iClientIdGetPrefPLMN = NULL;
+				}
+			// Copy client id (session and subsession handle). it's used for
+            // matching phase 1 and 2 of a request
+			iClientIdGetPrefPLMN = new ( ELeave ) RMobilePhone::TClientId( *aId ); 
+			
+			}
+		else
+			{
+			TFLOGSTRING2("TSY: GetPreferredNetworksListPhase1L LTSY returns error=%d", ret);			
+			return ret;
+			}
+		}
+	return KErrNone;
+	
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::GetPreferredNetworksListPhase2
+// Copies the current Preferred Networks List in the given buffer
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::GetPreferredNetworksListPhase2(const TTsyReqHandle aTsyReqHandle, 
+    											 RMobilePhone::TClientId const* aId, TDes8* aBuffer)
+	{
+	TFLOGSTRING2("TSY: CMmNetTsy::GetPreferredNetworksListPhase2: aTsyReqHandle=%d", aTsyReqHandle);	
+	TInt ret = KErrNone;
+	
+	if( ( iClientIdGetPrefPLMN->iSessionHandle == aId->iSessionHandle ) &&
+        ( iClientIdGetPrefPLMN->iSubSessionHandle == aId->iSubSessionHandle ) )
+		{
+		TFLOGSTRING3("TSY GetPreferredNetworksListPhase2: Phase 1 and Phase 2 client ID matched, Copy the streamed list to client buffer. session %d, subsession %d.",
+				iClientIdGetPrefPLMN->iSessionHandle, iClientIdGetPrefPLMN->iSubSessionHandle);		
+		if(iGetPrefPLMNList != NULL)
+			{
+			aBuffer->Copy( iGetPrefPLMNList->Ptr( 0 ) );
+			// MmPhoneTsy completes the request only if return an error
+			// so the request without error code has to complete here
+			iMmPhoneTsy->ReqCompleted(aTsyReqHandle, KErrNone);
+			}
+		else
+			{
+			ret = KErrNotReady;
+			}
+		}
+	else
+		{
+		TFLOGSTRING("TSY GetPreferredNetworksListPhase2: Phase 1 and Phase 2 client ID not matched, complete request with KErrCorrupt");			
+		ret = KErrCorrupt;
+		}
+
+	delete iClientIdGetPrefPLMN;
+	iClientIdGetPrefPLMN = NULL;
+
+	delete iGetPrefPLMNList;
+	iGetPrefPLMNList = NULL;
+	
+	iBufSizeGetPrefPLMN = NULL;
+	
+	return ret;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::StorePreferredNetworksListL
+// Stores the Preferred Networks List into the SIM
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::StorePreferredNetworksListL(const TTsyReqHandle /*aTsyReqHandle*/, TDes8* aBuffer)
+	{
+	TFLOGSTRING("TSY: CMmNetTsy::StorePreferredNetworksList");	
+
+	TTsyReqHandle storePrefPLMNHandle = 
+			iMmPhoneTsy->iTsyReqHandleStore->GetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneStorePreferredNetworksList );
+
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != storePrefPLMNHandle)
+        {
+        // The request is already processing because of previous request.
+        // Complete request with status value informing the client about 
+        // the situation.
+		TFLOGSTRING("TSY StorePreferredNetworksListL: the request is already processing because previous request.");
+		return KErrServerBusy;
+        }
+    else
+        {
+    	iMmPhoneTsy->iReqHandleType = CMmPhoneTsy::EMultimodePhoneStorePreferredNetworksList;
+		delete iStorePrefPLMNList;
+		iStorePrefPLMNList = NULL;
+		iStorePrefPLMNList = CMobilePhoneStoredNetworkList::NewL();
+		iStorePrefPLMNList->RestoreL(*aBuffer);
+
+		CMmDataPackage package;
+		package.PackData(iStorePrefPLMNList);
+		TInt ret = iMmPhoneTsy->iMessageManager->HandleRequestL(ECtsyPhoneStorePreferredNetworksListReq, &package);
+		if(KErrNone == ret)
+			{
+			TFLOGSTRING("TSY StorePreferredNetworksListL: Successfully send IPC EMobilePhoneStorePreferredNetworksList to LTSY");
+
+			}
+		else
+			{
+			TFLOGSTRING2("TSY StorePreferredNetworksListL: LTSY returns error=%d", ret);		
+			delete iStorePrefPLMNList;
+			iStorePrefPLMNList = NULL;
+			return ret;
+			}
+    	}
+
+	return KErrNone;
+	}
+
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::GetPreferredNetworksListCancel
+// Cancels the request for Getting Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::GetPreferredNetworksListCancel(const TTsyReqHandle /*aTsyReqHandle*/)
+	{
+	TFLOGSTRING("TSY: CMmPhoneTsy::GetPreferredNetworksListCancel");
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1); 
+
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle)
+		{
+		iBufSizeGetPrefPLMN = NULL;
+		if(iClientIdGetPrefPLMN)
+			{
+			delete iClientIdGetPrefPLMN;
+			iClientIdGetPrefPLMN = NULL;
+			}
+		if(iGetPrefPLMNList)
+			{
+			delete iGetPrefPLMNList;
+			iGetPrefPLMNList = NULL;
+			}
+        iMmPhoneTsy->ReqCompleted( reqHandle, KErrCancel );        
+		}
+	//if reqHandle is 0, it means  phase 1 has completed and the list retrieval cannot be cancelled
+	return KErrNone;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::NotifyStorePreferredNetworksListChange
+// Subscribes the notification for storing Preferred networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::NotifyStorePreferredNetworksListChange()
+	{
+	TFLOGSTRING("TSY: CMmPhoneTsy::NotifyStorePreferredNetworksListChange");	
+	iMmPhoneTsy->iReqHandleType = CMmPhoneTsy::EMultimodePhoneNotifyStorePreferredNetworksListChange;
+
+	return KErrNone;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::NotifyStorePreferredNetworksListChangeCancel
+// Cancels the notification request for storing Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::NotifyStorePreferredNetworksListChangeCancel(const TTsyReqHandle aTsyReqHandle)
+	{
+	TFLOGSTRING2("TSY: CMmNetTsy::NotifyStorePreferredNetworksListChangeCancel: aTsyReqHandle=%d", aTsyReqHandle);
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle
+		                       (CMmPhoneTsy::EMultimodePhoneNotifyStorePreferredNetworksListChange);	
+
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle)
+		{
+		iMmPhoneTsy->ReqCompleted( aTsyReqHandle, KErrCancel );
+		}
+	return KErrNone;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::CompleteGetPreferredNetworksListPhase1
+// Completes the notification request for storing Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmNetTsy::CompleteGetPreferredNetworksListPhase1(TInt aError, CMmDataPackage* aDataPackage)
+	{
+	TFLOGSTRING2("TSY: CMmNetTsy::CompleteGetPreferredNetworksListPhase1: aError=%d", aError);
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1 );
+
+	TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: EMobilePhoneGetPreferredNetworksPhase1 reqHandle=%d", reqHandle);
+
+	TInt completeError = KErrNone;
+	
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown == reqHandle)
+		{
+		TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: reqHandle is 0, cannot complete Phase1 list retrieval request!!");
+		if(iClientIdGetPrefPLMN)
+			{
+			delete iClientIdGetPrefPLMN;
+			iClientIdGetPrefPLMN = NULL;
+			}
+		}
+	else if(KErrNone == aError)
+		{
+		if(iGetPrefPLMNList == NULL)
+			{
+			TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: LTSY successfully retrieved the preferred networks list, unpack it");		
+			CMobilePhoneStoredNetworkList* list;
+			aDataPackage->UnPackData(&list);
+	
+			TRAPD(trapError, iGetPrefPLMNList = list->StoreLC(); CleanupStack::Pop();); // pop the CBufBase * allocated by StoreLC
+			if(KErrNone == trapError)
+				{
+				*iBufSizeGetPrefPLMN = iGetPrefPLMNList->Size();
+				TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: first phase list retrieval is OK!!, client buffer = %d", *iBufSizeGetPrefPLMN);					
+				iMmPhoneTsy->ReqCompleted( reqHandle, KErrNone );
+			
+				}
+			else
+				{
+				TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: failed to stream the list into the buffer, error = %d!!", trapError);
+				completeError = trapError;
+				}
+			delete list;
+			}
+		else
+			{
+			TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: iGetPrefPLMNList is not null");
+			completeError = KErrServerBusy;
+			}
+		}
+	else
+		{
+		TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: LTSY failed to retrieve preferred network list!! error = %d", aError);
+		completeError = aError;
+		}
+	
+	if(completeError != KErrNone)
+		{
+		iMmPhoneTsy->ReqCompleted( reqHandle, aError );
+		if(iClientIdGetPrefPLMN)
+			{
+			delete iClientIdGetPrefPLMN;
+			iClientIdGetPrefPLMN = NULL;
+			}
+		}
+	
+	iBufSizeGetPrefPLMN = NULL;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::CompleteStorePreferredNetworksList
+// Completes an outstanding StorePreferredNetworksListL, which stores Preferred Networks List to LTSY layer
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmNetTsy::CompleteStorePreferredNetworksList(TInt aError)
+	{
+	TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteStorePreferredNetworksList: aError=%d", aError);	
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneStorePreferredNetworksList );
+
+	TFLOGSTRING2("TSY CompleteStorePreferredNetworksList: EMobilePhoneStorePreferredNetworksList reqHandle=%d", reqHandle);
+
+	if(iStorePrefPLMNList != NULL)
+		{
+		delete iStorePrefPLMNList;
+		iStorePrefPLMNList = NULL;
+
+		}
+
+	if(KErrNone == aError)
+		{
+		if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown == reqHandle)
+			{
+			// we cannot complete the store request but complete the notifier.
+			TFLOGSTRING("TSY CompleteStorePreferredNetworksList: reqHandle is 0, cannot complete store list request!!");
+			}
+		else
+			{
+			TFLOGSTRING("TSY CompleteStorePreferredNetworksList: LTSY successfully stored the preferred networks list");
+			iMmPhoneTsy->ReqCompleted( reqHandle, KErrNone );
+			}
+		CompleteNotifyStorePreferredNetworksListChange();
+		}
+	else
+		{
+		TFLOGSTRING("TSY CompleteStorePreferredNetworksList: LTSY failed to store the preferred networks list");
+		iMmPhoneTsy->ReqCompleted( reqHandle, aError );
+		}
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::CompleteNotifyStorePreferredNetworksListChange
+// Completes the notification request for storing Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmNetTsy::CompleteNotifyStorePreferredNetworksListChange()
+	{
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyStorePreferredNetworksListChange");	
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle
+		                      ( CMmPhoneTsy::EMultimodePhoneNotifyStorePreferredNetworksListChange );
+    if (CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle )
+        {
+    	iMmPhoneTsy->ReqCompleted( reqHandle, KErrNone);
+        }
+	else
+		{
+		TFLOGSTRING("TSY CompleteNotifyStorePreferredNetworksListChange: reqHandle is 0, cannot complete request for IPC EMobilePhoneNotifyStorePreferredNetworksListChange!!");
+
+		}
+	}
+
 //  End of File 
 
 

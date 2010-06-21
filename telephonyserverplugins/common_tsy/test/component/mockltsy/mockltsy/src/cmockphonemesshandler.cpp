@@ -363,6 +363,14 @@ TInt CMockPhoneMessHandler::ExtFuncL(TInt aIpc,const CMmDataPackage* aMmDataPack
 			TMockLtsyData1< TInt > data(callId);
 			return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc, data);
 			}
+        case ECtsyPhoneStorePreferredNetworksListReq:
+            {
+            CMobilePhoneStoredNetworkList* list = NULL;
+            aMmDataPackage->UnPackData(&list);
+            TMockLtsyData1<CMobilePhoneStoredNetworkList*> data(list);
+            return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc,data);
+            }
+        case ECtsyPhoneGetPreferredNetworksReq:
     	case ECtsyPhoneCellInfoReq:
     	case ECtsyPhoneCellInfoIndReq:			
     	case EMobilePhoneSelectNetworkCancel:
@@ -934,10 +942,18 @@ void CMockPhoneMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt aResu
 			}
 			break;
 		case ECtsyPhoneTerminateAllCallsComp:
+        case ECtsyPhoneStorePreferredNetworksListComp:
 			{
 			// no parameter is required
-			}
-			break;
+			}		
+            break;
+        case ECtsyPhoneGetPreferredNetworksComp:
+            {
+            CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+            TSerializer<CMobilePhoneStoredNetworkList>::DeserialiseL(aData, *list);
+            dataPackage.PackData(list);
+            }
+            break;
 		default:
 			{
 			// shouldnt get here. will panic MessageManager()->Complete if allowed to continue

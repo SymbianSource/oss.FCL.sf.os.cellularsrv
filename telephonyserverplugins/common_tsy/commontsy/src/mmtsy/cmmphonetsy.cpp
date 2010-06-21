@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1231,7 +1231,11 @@ TFLOGSTRING3("TSY: CMmPhoneTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHan
         case EMobilePhoneAuthorizationInfoPhase2:
         case EMobilePhoneGetCellInfo:
         case EMobilePhoneNotifyCellInfoChange:
-        case EMobilePhoneGetCurrentActiveUSimApplication:                
+        case EMobilePhoneGetCurrentActiveUSimApplication:
+        case EMobilePhoneGetPreferredNetworksPhase1:
+        case EMobilePhoneGetPreferredNetworksPhase2:
+        case EMobilePhoneStorePreferredNetworksList:
+        case EMobilePhoneNotifyStorePreferredNetworksListChange:
             //direct this request to the net specific DoExtFuncL
             ret = iMmNetTsy->DoExtFuncL ( aTsyReqHandle, aIpc, aPackage );
             break;
@@ -1632,6 +1636,9 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
         case EMobilePhoneDeleteAPNName:
         case EMobilePhoneAppendAPNName:
         case EMobilePhoneGetSecurityCodeInfo:
+		case EMobilePhoneGetPreferredNetworksPhase1:
+		case EMobilePhoneGetPreferredNetworksPhase2:		
+		case EMobilePhoneStorePreferredNetworksList:
 
         //SS related methods.
         case EMobilePhoneGetCallForwardingStatusPhase1:
@@ -1755,6 +1762,7 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
         case EMobilePhoneNotifySendNetworkServiceRequest:
         case EMobilePhoneNotifyAllSendNetworkServiceRequest: 
         case EMobilePhoneNotifyCellInfoChange:
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
             ret=KReqModeMultipleCompletionEnabled | KReqModeRePostImmediately;
             break;
         // Cancel Requests
@@ -1905,6 +1913,9 @@ TInt CMmPhoneTsy::NumberOfSlotsL(
         case EMobilePhoneNotifyCellInfoChange:
         	numberOfSlots = KMmPhoneCellInfoChangeSlots;
         	break;
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
+			numberOfSlots = KMmPhoneStorePreferredNetworksListChangeSlots;
+            break;
         default:
             // Unknown or invalid Phone IPC
             User::Leave( KErrNotSupported );
@@ -1963,6 +1974,9 @@ TFLOGSTRING3("TSY: CMmPhoneTsy::CancelService - IPC:%d, Handle:%d", aIpc, aTsyRe
         case EMobilePhoneGetCellInfo:
         case EMobilePhoneNotifyCellInfoChange:
         case EMobilePhoneGetCurrentActiveUSimApplication:        
+        case EMobilePhoneGetPreferredNetworksPhase1:
+        case EMobilePhoneStorePreferredNetworksList:
+        case EMobilePhoneNotifyStorePreferredNetworksListChange:
         	ret = iMmNetTsy->CancelService( aIpc, aTsyReqHandle );
             break;
 		// forward SS cancellations
@@ -2558,6 +2572,7 @@ TInt CMmPhoneTsy::RegisterNotification (
         case EMobilePhoneNotifySendNetworkServiceRequest:
         case EMobilePhoneNotifyAllSendNetworkServiceRequest:
         case EMobilePhoneNotifyCellInfoChange:
+        case EMobilePhoneNotifyStorePreferredNetworksListChange:
             ret = KErrNone;
             break;
         default:
@@ -2623,6 +2638,7 @@ TInt CMmPhoneTsy::DeregisterNotification(
         case EMobilePhoneNotifySendNetworkServiceRequest:
         case EMobilePhoneNotifyAllSendNetworkServiceRequest:
         case EMobilePhoneNotifyCellInfoChange:
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
             ret = KErrNone;
             break;
         default:

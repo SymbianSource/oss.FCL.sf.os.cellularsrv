@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -156,18 +156,22 @@ enum TCtsyIpc
 	ECtsyPhoneCellInfoComp,
 	ECtsyPhoneCellInfoIndReq,
 	ECtsyPhoneCellInfoIndComp,
-	ECtsyPhoneCellInfoInd,
+	ECtsyPhoneCellInfoInd,	// 5
 	ECtsyUpdateLifeTimeReq,
 	ECtsyUpdateLifeTimeComp,
 	ECtsyPacketMbmsInitialiseContextReq,
 	ECtsyPacketMbmsInitialiseContextComp,
-	ECtsyPacketMbmsContextNotifyConfigChanged,
+	ECtsyPacketMbmsContextNotifyConfigChanged, // 10
 	ECtsyPhoneTerminateAllCallsReq,
 	ECtsyPhoneTerminateAllCallsComp,
 	// RMobilePhone::NotifySendNetworkServiceRequest
 	ECtsyPhoneSendNetworkServiceRequestReq,
 	ECtsyPhoneSendNetworkServiceRequestIndReq,
-	ECtsyPhoneSendNetworkServiceRequestInd
+	ECtsyPhoneSendNetworkServiceRequestInd,	//15
+	ECtsyPhoneGetPreferredNetworksReq,
+	ECtsyPhoneGetPreferredNetworksComp,
+	ECtsyPhoneStorePreferredNetworksListReq,
+	ECtsyPhoneStorePreferredNetworksListComp
 	};
 #else
 enum TCtsyIpc
@@ -177,14 +181,18 @@ enum TCtsyIpc
 	ECtsyPhoneCellInfoIndReq,
 	ECtsyPhoneCellInfoIndComp,
 	ECtsyUpdateLifeTimeReq,
-	ECtsyUpdateLifeTimeComp,
+	ECtsyUpdateLifeTimeComp,	// 5
 	ECtsyPacketMbmsInitialiseContextReq,
 	ECtsyPacketMbmsInitialiseContextComp,
 	ECtsyPacketMbmsContextNotifyConfigChanged,
 	ECtsyPhoneTerminateAllCallsReq,
-	ECtsyPhoneTerminateAllCallsComp,
+	ECtsyPhoneTerminateAllCallsComp,	//10
 	ECtsyPhoneSendNetworkServiceRequestInd,
-	ECtsyGetPhoneIdV2Comp
+	ECtsyGetPhoneIdV2Comp,
+	ECtsyPhoneGetPreferredNetworksReq,
+	ECtsyPhoneGetPreferredNetworksComp,
+	ECtsyPhoneStorePreferredNetworksListReq,	 //15
+	ECtsyPhoneStorePreferredNetworksListComp
 	};
 #endif //USING_CTSY_DISPATCHER
 

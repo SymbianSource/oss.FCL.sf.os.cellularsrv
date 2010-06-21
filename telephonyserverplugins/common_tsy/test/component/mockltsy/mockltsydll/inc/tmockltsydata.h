@@ -3799,6 +3799,50 @@ public:
     IMPORT_C static void ConstructL(CMobilePhoneSmspList*& aData);    
 	};
 
+/**
+TConstructor specialisation for CMobilePhoneStoredNetworkList
+*/
+template <>
+class TConstructor<CMobilePhoneStoredNetworkList>
+    {
+public:
+    IMPORT_C static void ConstructL(CMobilePhoneStoredNetworkList*& aData);    
+	};
+
+/**
+TSerializer specialisation for CMobilePhoneStoredNetworkList
+*/
+template <>
+class TSerializer<CMobilePhoneStoredNetworkList>
+    {
+public:
+    IMPORT_C static void SerialiseL(const CMobilePhoneStoredNetworkList& aData, RBuf8& aBuffer);
+    IMPORT_C static void DeserialiseL(const TDesC8& aPackedData, CMobilePhoneStoredNetworkList& aData);
+    };
+
+/**
+TComparator Specialisation for CMobilePhoneStoredNetworkList
+*/
+template<>
+class TComparator<CMobilePhoneStoredNetworkList>
+    {
+public: 
+    IMPORT_C static TBool TComparator<CMobilePhoneStoredNetworkList>::
+        IsEqual(const CMobilePhoneStoredNetworkList& aData1,
+                const CMobilePhoneStoredNetworkList& aData2);
+    };
+
+/**
+TComparator Specialisation for RMobilePhone::TMobilePreferredNetworkEntryV3
+*/
+template<>
+class TComparator<RMobilePhone::TMobilePreferredNetworkEntryV3>
+    {
+public: 
+    IMPORT_C static TBool TComparator<RMobilePhone::TMobilePreferredNetworkEntryV3>::
+        IsEqual(const RMobilePhone::TMobilePreferredNetworkEntryV3& aData1,
+                const RMobilePhone::TMobilePreferredNetworkEntryV3& aData2);
+    };
 
 /**
 TComparator Specialisation for RMobilePhone::TAID

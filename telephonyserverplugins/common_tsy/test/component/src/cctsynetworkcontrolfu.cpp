@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -99,11 +99,20 @@ CTestSuite* CCTsyNetworkControlFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestSetNetworkSelectionSetting0005L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetLastUsedAccessTechnology0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0001aL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0001bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0002L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001aL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001bL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001cL);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0004L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0005L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyPreferredNetworksListChange0001L);
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyPreferredNetworksListChange0002L);           
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyNetworkSelectionSettingChange0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyNetworkSelectionSettingChange0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyNetworkSelectionSettingChange0004L);
@@ -5221,14 +5230,14 @@ void CCTsyNetworkControlFU::TestGetLastUsedAccessTechnology0001L()
 
 
 /**
-@SYMTestCaseID BA-CTSY-NTWC-MSPNL-0001
-@SYMPREQ 1551
-@SYMComponent  telephony_ctsy
-@SYMTestCaseDesc Test support in CTSY for RMobilePhone::StorePreferredNetworksListL
-@SYMTestPriority High
-@SYMTestActions Invokes RMobilePhone::StorePreferredNetworksListL
-@SYMTestExpectedResults Pass
-@SYMTestType CT
+@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0001
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL with a list of Preferred Networks.
+@SYMTestExpectedResults LTSY receives the same list of Preferred Networks. 
+@SYMTestType            CT
 */
 void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001L()
 	{
@@ -5240,21 +5249,666 @@ void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001L()
 	RBuf8 data;
 	CleanupClosePushL(data);
 
-	TRequestStatus requestStatus;
-	CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
-	CleanupStack::PushL(list);
+    TRequestStatus requestStatus;
 	
+	// --- prepare data ---
+
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+	
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetworks[3];
+    
+    prefNetworks[0].iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetworks[0].iCountryCode = _L("262");
+    prefNetworks[0].iNetworkId = _L("01");
+    
+    prefNetworks[1].iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetworks[1].iCountryCode = _L("262");
+    prefNetworks[1].iNetworkId = _L("02");
+
+    prefNetworks[2].iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetworks[2].iCountryCode = _L("262");
+    prefNetworks[2].iNetworkId = _L("03");
+        
+    for( TInt i=0; i < 3; i++ )
+        {
+        list->AddEntryL(prefNetworks[i]);
+        }
+    
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
+    listData.SerialiseL(data);
+    
+    // Invoke Store request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
+    
 	iPhone.StorePreferredNetworksListL(requestStatus, list);
 
 	User::WaitForRequest(requestStatus);
 	AssertMockLtsyStatusL();
-	ASSERT_EQUALS(KErrNotSupported, requestStatus.Int());
+	ASSERT_EQUALS(KErrNone, requestStatus.Int());
 
-	AssertMockLtsyStatusL();
-	CleanupStack::PopAndDestroy(3, this); // data, this, list
-	
+	CleanupStack::PopAndDestroy(3, this); // list, data, this
 	}
 
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0001a
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL with empty list
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL with an empty list of Preferred Networks.
+@SYMTestExpectedResults LTSY receives an empty list of Preferred Networks.
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001aL()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    TRequestStatus requestStatus;
+    
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
+    listData.SerialiseL(data);
+    
+    // Invoke Store request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
+
+    iPhone.StorePreferredNetworksListL(requestStatus, list);
+
+    User::WaitForRequest(requestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0001b
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL with error
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL.
+                        2. LTSY returns error.  
+@SYMTestExpectedResults Test code receives error. 
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001bL()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    TRequestStatus requestStatus;
+
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
+    
+    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetwork.iCountryCode = _L("262");
+    prefNetwork.iNetworkId = _L("01");
+    
+    list->AddEntryL(prefNetwork);
+    
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
+    listData.SerialiseL(data);
+    
+    // Invoke Store request - LTSY returns KErrUnknown
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrUnknown);
+    
+    iPhone.StorePreferredNetworksListL(requestStatus, list);
+
+    User::WaitForRequest(requestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrUnknown, requestStatus.Int());
+
+    // Invoke Store request - LTSY returns KErrNotSupported
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNotSupported);
+    
+    iPhone.StorePreferredNetworksListL(requestStatus, list);
+
+    User::WaitForRequest(requestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNotSupported, requestStatus.Int());
+    
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0002
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for Cancelling RMobilePhone::StorePreferredNetworksListL
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL.
+                        2. Cancel the outstanding request.
+                        3. LTSY ignores cancelling the request and stores the preferred networks list.
+@SYMTestExpectedResults Request status of the operation is KErrNone. 
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0002L()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    TRequestStatus requestStatus;
+
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
+    
+    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetwork.iCountryCode = _L("262");
+    prefNetwork.iNetworkId = _L("01");
+    
+    list->AddEntryL(prefNetwork);
+    
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
+    listData.SerialiseL(data);
+    
+    // Invoke Store request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
+        
+    iPhone.StorePreferredNetworksListL(requestStatus, list);
+
+    // Cancel outstanding request
+    iPhone.CancelAsyncRequest(EMobilePhoneStorePreferredNetworksList);    
+    
+    User::WaitForRequest(requestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+    
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0001
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for CRetrieveMobilePhonePreferredNetworks::Start
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
+                        2. Add a new entry to the list.
+                        3. Invoke RMobilePhone::StorePreferredNetworksListL. 
+@SYMTestExpectedResults LTSY receives the modified list and test code receives KErrNone. 
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001L()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+            
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
+    
+    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetwork.iCountryCode = _L("262");
+    prefNetwork.iNetworkId = _L("01");
+    
+    list->AddEntryL(prefNetwork);
+    
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData(list);    
+    completeLtsyData.SerialiseL(data);    
+    
+    CFilteringActiveScheduler scheduler;
+    CActiveScheduler::Install(&scheduler);
+
+    CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks = 
+                        CRetrieveMobilePhonePreferredNetworks::NewL(iPhone);
+    CleanupStack::PushL(retrieveMobilePhonePreferredNetworks);
+    
+    CActiveRetriever::ResetRequestsNumber();
+    CActiveRetriever* activeRetriever = 
+                        CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks);
+    CleanupStack::PushL(activeRetriever);
+    scheduler.AddRetrieverL(*activeRetriever);
+    
+    // Invoke retrieve request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+    iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNone, data);    
+    
+    retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
+    
+    activeRetriever->Activate();
+    scheduler.StartScheduler();
+
+    AssertMockLtsyStatusL();    
+    ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
+    ASSERT_EQUALS(KErrNone, activeRetriever->iStatus.Int());
+    
+    CMobilePhoneStoredNetworkList*  retrievedList = 
+            retrieveMobilePhonePreferredNetworks->RetrieveListL();
+    CleanupStack::PushL( retrievedList );
+    
+    // Check Retrieved list
+    
+    ASSERT_EQUALS(list->Enumerate(), retrievedList->Enumerate());
+    ASSERT_EQUALS(list->GetEntryL(0).iAccess, retrievedList->GetEntryL(0).iAccess);
+    ASSERT_EQUALS(list->GetEntryL(0).iCountryCode, retrievedList->GetEntryL(0).iCountryCode);
+    ASSERT_EQUALS(list->GetEntryL(0).iNetworkId, retrievedList->GetEntryL(0).iNetworkId);    
+    
+    CleanupStack::PopAndDestroy(3, 
+            retrieveMobilePhonePreferredNetworks); // retrievedList
+                                                   // activeRetriever
+                                                   // retrieveMobilePhonePreferredNetworks
+
+    CActiveScheduler::Install(NULL);
+/*    
+    // Add new entry to the list
+    
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork2;
+    prefNetwork2.iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetwork2.iCountryCode = _L("262");
+    prefNetwork2.iNetworkId = _L("02");
+      
+    list->AddEntryL(prefNetwork2);
+     
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData2(list);
+    completeLtsyData2.SerialiseL(data);
+
+    // Invoke Store request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);      
+  
+    TRequestStatus requestStatus;
+    iPhone.StorePreferredNetworksListL(requestStatus, list);
+
+    User::WaitForRequest(requestStatus);
+   
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+*/    
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0001a
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for CRetrieveMobilePhonePreferredNetworks::Start
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
+                        2. Remove an entry from the list.
+                        3. Invoke RMobilePhone::StorePreferredNetworksListL. 
+@SYMTestExpectedResults LTSY receives the modified list and test code receives KErrNone. 
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001aL()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+            
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetworks[2];
+    
+    prefNetworks[0].iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetworks[0].iCountryCode = _L("262");
+    prefNetworks[0].iNetworkId = _L("01");
+
+    prefNetworks[1].iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetworks[1].iCountryCode = _L("262");
+    prefNetworks[1].iNetworkId = _L("02");
+    
+    for (int i = 0; i < 2; ++i)
+        {
+        list->AddEntryL(prefNetworks[i]);
+        }
+    
+    CFilteringActiveScheduler scheduler;
+    CActiveScheduler::Install(&scheduler);
+
+    CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks = 
+                        CRetrieveMobilePhonePreferredNetworks::NewL(iPhone);
+    CleanupStack::PushL(retrieveMobilePhonePreferredNetworks);
+    
+    CActiveRetriever::ResetRequestsNumber();
+    CActiveRetriever* activeRetriever = 
+                        CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks);
+    CleanupStack::PushL(activeRetriever);
+    scheduler.AddRetrieverL(*activeRetriever);
+        
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData(list);    
+    completeLtsyData.SerialiseL(data);
+    
+    // Invoke Retrieve request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+    iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNone, data);    
+    
+    retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
+    activeRetriever->Activate();
+    scheduler.StartScheduler();
+
+    ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
+    ASSERT_EQUALS(KErrNone, activeRetriever->iStatus.Int());
+    AssertMockLtsyStatusL();    
+    
+    CMobilePhoneStoredNetworkList*  retrievedList = 
+            retrieveMobilePhonePreferredNetworks->RetrieveListL();
+    CleanupStack::PushL( retrievedList );
+    
+    // Check retrieved list
+    
+    ASSERT_EQUALS(list->Enumerate(), retrievedList->Enumerate());
+    ASSERT_EQUALS(list->GetEntryL(0).iAccess, retrievedList->GetEntryL(0).iAccess);
+    ASSERT_EQUALS(list->GetEntryL(0).iCountryCode, retrievedList->GetEntryL(0).iCountryCode);
+    ASSERT_EQUALS(list->GetEntryL(0).iNetworkId, retrievedList->GetEntryL(0).iNetworkId);    
+    ASSERT_EQUALS(list->GetEntryL(1).iAccess, retrievedList->GetEntryL(1).iAccess);
+    ASSERT_EQUALS(list->GetEntryL(1).iCountryCode, retrievedList->GetEntryL(1).iCountryCode);
+    ASSERT_EQUALS(list->GetEntryL(1).iNetworkId, retrievedList->GetEntryL(1).iNetworkId);    
+    
+    CleanupStack::PopAndDestroy(3, 
+            retrieveMobilePhonePreferredNetworks); // retrievedList
+                                                   // activeRetriever
+                                                   // retrieveMobilePhonePreferredNetworks
+
+    CActiveScheduler::Install(NULL);
+/*    
+    // Remove the last entry from the list
+    
+    list->DeleteEntryL(1);
+    
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData2(list);
+    completeLtsyData2.SerialiseL(data);
+
+    // Invoke Store request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);      
+  
+    TRequestStatus requestStatus;
+    iPhone.StorePreferredNetworksListL(requestStatus, list);
+
+    User::WaitForRequest(requestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestStatus.Int());
+ */   
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0001b
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for CRetrieveMobilePhonePreferredNetworks::Start with empty list
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
+                        2. LTSY returns an empty list of preferred networks.
+@SYMTestExpectedResults Test code receives an empty list of preferred networks. 
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001bL()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+                
+    CFilteringActiveScheduler scheduler;
+    CActiveScheduler::Install(&scheduler);
+
+    CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks = 
+                        CRetrieveMobilePhonePreferredNetworks::NewL(iPhone);
+    CleanupStack::PushL(retrieveMobilePhonePreferredNetworks);
+    
+    CActiveRetriever::ResetRequestsNumber();
+    CActiveRetriever* activeRetriever = 
+                        CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks);
+    CleanupStack::PushL(activeRetriever);
+    scheduler.AddRetrieverL(*activeRetriever);
+        
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData(list);    
+    completeLtsyData.SerialiseL(data);
+
+    // Invoke Retrieve request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+    iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNone, data);    
+    
+    retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
+    activeRetriever->Activate();
+    scheduler.StartScheduler();
+
+    ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
+    ASSERT_EQUALS(KErrNone, activeRetriever->iStatus.Int());
+    AssertMockLtsyStatusL();    
+    
+    CMobilePhoneStoredNetworkList*  retrievedList = 
+            retrieveMobilePhonePreferredNetworks->RetrieveListL();
+    CleanupStack::PushL( retrievedList );
+    
+    // Check retrieved list is empty
+    
+    ASSERT_EQUALS(list->Enumerate(), retrievedList->Enumerate());
+    
+    CleanupStack::PopAndDestroy(3, 
+            retrieveMobilePhonePreferredNetworks); // retrievedList
+                                                   // activeRetriever
+                                                   // retrieveMobilePhonePreferredNetworks
+
+    CActiveScheduler::Install(NULL);
+        
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0001c
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for CRetrieveMobilePhonePreferredNetworks::Start with error
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
+                        2. LTSY returns error.
+@SYMTestExpectedResults Test code receives error. 
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001cL()
+    {
+
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+
+    // --- prepare data ---
+    
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+  
+    CFilteringActiveScheduler scheduler;
+    CActiveScheduler::Install(&scheduler);
+
+    CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks = 
+                        CRetrieveMobilePhonePreferredNetworks::NewL(iPhone);
+    CleanupStack::PushL(retrieveMobilePhonePreferredNetworks);
+    
+    CActiveRetriever::ResetRequestsNumber();
+    CActiveRetriever* activeRetriever = 
+                        CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks);
+    CleanupStack::PushL(activeRetriever);
+    scheduler.AddRetrieverL(*activeRetriever);
+        
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData(list);    
+    completeLtsyData.SerialiseL(data);
+    
+    // Invoke Retrieve request - LTSY returns KErrUnknown
+    
+    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+    iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrUnknown, data);    
+    
+    retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
+    activeRetriever->Activate();
+    scheduler.StartScheduler();
+
+    ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
+    ASSERT_EQUALS(KErrUnknown, activeRetriever->iStatus.Int());
+    AssertMockLtsyStatusL();    
+
+    // Invoke Retrieve request - LTSY returns KErrNotSupported
+    
+    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+    iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNotSupported, data);    
+    
+    retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
+    activeRetriever->Activate();
+    scheduler.StartScheduler();
+
+    ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
+    ASSERT_EQUALS(KErrNotSupported, activeRetriever->iStatus.Int());
+    AssertMockLtsyStatusL();    
+    
+    CleanupStack::PopAndDestroy(2, 
+            retrieveMobilePhonePreferredNetworks); // activeRetriever
+                                                   // retrieveMobilePhonePreferredNetworks
+
+    CActiveScheduler::Install(NULL);
+        
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+
+    }
+
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0002
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for Cancelling CRetrieveMobilePhonePreferredNetworks::Start
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
+                        2. Cancel outstanding request.
+@SYMTestExpectedResults Request status of the operation is KErrCancel
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0002L()
+    {
+     OpenEtelServerL(EUseExtendedError);
+     CleanupStack::PushL(TCleanupItem(Cleanup,this));
+     OpenPhoneL();
+
+     RBuf8 data;
+     CleanupClosePushL(data);
+
+     // --- prepare data ---
+     
+     CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+     CleanupStack::PushL(list);
+        
+     CFilteringActiveScheduler scheduler;
+     CActiveScheduler::Install(&scheduler);
+
+     CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks = 
+                         CRetrieveMobilePhonePreferredNetworks::NewL(iPhone);
+     CleanupStack::PushL(retrieveMobilePhonePreferredNetworks);
+     
+     CActiveRetriever::ResetRequestsNumber();
+     CActiveRetriever* activeRetriever = 
+                         CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks);
+     CleanupStack::PushL(activeRetriever);
+     scheduler.AddRetrieverL(*activeRetriever);
+         
+     TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData(list);    
+     completeLtsyData.SerialiseL(data);
+     
+     // Invoke Retrieve request
+     
+     TRequestStatus mockLtsyStatus;
+     iMockLTSY.NotifyTerminated(mockLtsyStatus);     
+     iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+     iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNone, data);    
+     
+     retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
+     activeRetriever->Activate();
+     
+     // Cancel Retrieve request
+
+     iPhone.CancelAsyncRequest(EMobilePhoneGetPreferredNetworksPhase1);    
+     scheduler.StartScheduler();
+
+     User::WaitForRequest(mockLtsyStatus);
+     
+     ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
+     ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());     
+     ASSERT_EQUALS(KErrCancel, activeRetriever->iStatus.Int());
+     AssertMockLtsyStatusL();    
+        
+     CleanupStack::PopAndDestroy(2, 
+             retrieveMobilePhonePreferredNetworks); // activeRetriever
+                                                    // retrieveMobilePhonePreferredNetworks
+
+     CActiveScheduler::Install(NULL);
+         
+     CleanupStack::PopAndDestroy(3, this); // list, data, this
+    
+    }
 
 /**
 @SYMTestCaseID BA-CTSY-NTWC-MGNRS-0001
@@ -5573,15 +6227,17 @@ void CCTsyNetworkControlFU::TestGetNetworkRegistrationStatus0005L()
 	CleanupStack::PopAndDestroy(2, this); // data, this
 
 	}
+
 /**
-@SYMTestCaseID BA-CTSY-NTWC-MNPNLC-0001
-@SYMPREQ 1551
-@SYMComponent  telephony_ctsy
-@SYMTestCaseDesc Test support in CTSY for RMobilePhone::NotifyPreferredNetworksListChange
-@SYMTestPriority High
-@SYMTestActions Invokes RMobilePhone::NotifyPreferredNetworksListChange
-@SYMTestExpectedResults Pass
-@SYMTestType CT
+@SYMTestCaseID          BA-CTSY-NTWC-MNPNLC-0001
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::NotifyPreferredNetworksListChange
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke RMobilePhone::NotifyPreferredNetworksListChange.
+                        2. Invoke RMobilePhone::StorePreferredNetworksListL.
+@SYMTestExpectedResults Test code receives preferred network list notification
+@SYMTestType            CT
 */
 void CCTsyNetworkControlFU::TestNotifyPreferredNetworksListChange0001L()
 	{
@@ -5592,19 +6248,123 @@ void CCTsyNetworkControlFU::TestNotifyPreferredNetworksListChange0001L()
 
 	RBuf8 data;
 	CleanupClosePushL(data);
+    
+    TRequestStatus requestStatus;   
 
-	TRequestStatus requestStatus;
+    // --- prepare data ---
+
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
+    
+    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetwork.iCountryCode = _L("262");
+    prefNetwork.iNetworkId = _L("01");
+    
+    list->AddEntryL(prefNetwork);
+    
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
+    listData.SerialiseL(data);
+    
+	// Invoke Notify request
 	
 	iPhone.NotifyPreferredNetworksListChange(requestStatus);
 
-	User::WaitForRequest(requestStatus);
-	AssertMockLtsyStatusL();
-	ASSERT_EQUALS(KErrNotSupported, requestStatus.Int());
+	// Invoke Store request
+	    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
+    
+    TRequestStatus storeRequestStatus;
+    iPhone.StorePreferredNetworksListL(storeRequestStatus, list);
 
-	CleanupStack::PopAndDestroy(2, this); // data, this
+    User::WaitForRequest(storeRequestStatus);
+    ASSERT_EQUALS(KErrNone, storeRequestStatus.Int());    
+    AssertMockLtsyStatusL();
+	
+	User::WaitForRequest(requestStatus);
+	
+	ASSERT_EQUALS(KErrNone, requestStatus.Int());
+
+	CleanupStack::PopAndDestroy(3, this); // list, data, this
 	
 	}
 
+/**
+@SYMTestCaseID          BA-CTSY-NTWC-MNPNLC-0002
+@SYMPREQ                417-71654
+@SYMComponent           telephony_ctsy
+@SYMTestCaseDesc        Test support in CTSY for Cancelling RMobilePhone::NotifyPreferredNetworksListChange
+@SYMTestPriority        High
+@SYMTestActions         1. Invoke RMobilePhone::NotifyPreferredNetworksListChange.
+                        2. Cancel subscription to preferred network list change.
+                        3. Invoke RMobilePhone::StorePreferredNetworksListL.
+@SYMTestExpectedResults Test code does not receive preferred network list notification
+@SYMTestType            CT
+*/
+void CCTsyNetworkControlFU::TestNotifyPreferredNetworksListChange0002L()
+    {
+    
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 data;
+    CleanupClosePushL(data);
+    
+    TRequestStatus requestStatus;
+
+    // --- prepare data ---
+
+    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
+    CleanupStack::PushL(list);
+
+    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
+     
+    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
+    prefNetwork.iCountryCode = _L("262");
+    prefNetwork.iNetworkId = _L("01");
+     
+    list->AddEntryL(prefNetwork);
+     
+    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
+    listData.SerialiseL(data);
+    
+    // Invoke Notify request
+    
+    iPhone.NotifyPreferredNetworksListChange(requestStatus);
+
+    // Cancel Notify request
+    
+    iPhone.CancelAsyncRequest(EMobilePhoneNotifyStorePreferredNetworksListChange);
+
+    TRequestStatus mockLtsyStatus;    
+    iMockLTSY.NotifyTerminated(mockLtsyStatus);
+    
+    // Invoke Store request
+    
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);    
+    
+    TRequestStatus storeRequestStatus;
+    iPhone.StorePreferredNetworksListL(storeRequestStatus, list);
+
+    User::WaitForRequest(mockLtsyStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
+    
+    User::WaitForRequest(storeRequestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, storeRequestStatus.Int());    
+    
+    User::WaitForRequest(requestStatus);
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrCancel, requestStatus.Int());
+
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+      
+    }
 
 /**
 @SYMTestCaseID BA-CTSY-NTWC-MNNSSC-0001

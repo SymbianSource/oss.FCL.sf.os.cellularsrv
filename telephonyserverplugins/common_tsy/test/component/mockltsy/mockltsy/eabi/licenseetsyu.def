@@ -940,4 +940,8 @@ EXPORTS
 	_ZTI17TMockLtsyData1BufIN12RMmCustomAPI15TApduParametersEE @ 939 NONAME
 	_ZTV14TMockLtsyData1IN12RMmCustomAPI15TApduParametersEE @ 940 NONAME
 	_ZTV17TMockLtsyData1BufIN12RMmCustomAPI15TApduParametersEE @ 941 NONAME
+	_ZTI14TMockLtsyData1IP29CMobilePhoneStoredNetworkListE @ 942 NONAME
+	_ZTI17TMockLtsyData1BufIP29CMobilePhoneStoredNetworkListE @ 943 NONAME
+	_ZTV14TMockLtsyData1IP29CMobilePhoneStoredNetworkListE @ 944 NONAME
+	_ZTV17TMockLtsyData1BufIP29CMobilePhoneStoredNetworkListE @ 945 NONAME
 
