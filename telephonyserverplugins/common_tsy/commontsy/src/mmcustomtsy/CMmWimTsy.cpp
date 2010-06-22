@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,9 +16,14 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CMmWimTsyTraces.h"
+#endif
+
 #include "CMmWimTsy.h"
 #include <ctsy/rmmcustomapi.h>
-#include <ctsy/tflogger.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
 
 // ======== MEMBER FUNCTIONS ========
@@ -503,7 +508,7 @@ void CMmWimTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-TFLOGSTRING3( "CustomTSY: CMmWimTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETE_1,  "CustomTSY: CMmWimTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
     iMmCustomTsy->ReqCompleted( iTsyReqHandleStore->ResetTsyReqHandle( 
         aReqHandleType ), aError );
     }
@@ -519,7 +524,7 @@ TInt CMmWimTsy::GetATRL(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8 *aATR )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::GetATRL" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_GETATRL_1,  "TSY: CMmWimTsy::GetATRL" );
     
     TTsyReqHandle getAtrHandle = iTsyReqHandleStore->
         GetTsyReqHandle( EWIMRequestTypeGetATR );
@@ -529,7 +534,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::GetATRL" );
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING( "TSY: CMmWimTsy::GetATRL - KErrServerBusy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_GETATRL_2,  "TSY: CMmWimTsy::GetATRL - KErrServerBusy" );
         iMmCustomTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -572,7 +577,7 @@ void CMmWimTsy::CompleteGetATR(
     TPtrC8& aData, 
     TInt aError )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::CompleteGetATR ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETEGETATR_1,  "TSY: CMmWimTsy::CompleteGetATR ");
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle = 
         iTsyReqHandleStore->ResetTsyReqHandle( EWIMRequestTypeGetATR );
@@ -606,7 +611,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::CompleteGetATR ");
 //
 TInt CMmWimTsy::GetATRCancel()
     {
-TFLOGSTRING( "CMmWimTsy::GetATRCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_GETATRCANCEL_1,  "CMmWimTsy::GetATRCancel" );
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EWIMRequestTypeGetATR );
@@ -632,7 +637,7 @@ TFLOGSTRING( "CMmWimTsy::GetATRCancel" );
 TInt CMmWimTsy::SimWarmResetL(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING( "CMmWimTsy::SimWarmResetL"); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_SIMWARMRESETL_1,  "CMmWimTsy::SimWarmResetL");
     TTsyReqHandle simWarmResetHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EWIMRequestTypeSimWarmReset );
         
@@ -641,7 +646,7 @@ TFLOGSTRING( "CMmWimTsy::SimWarmResetL");
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING( "TSY: CMmWimTsy::SimWarmResetL - KErrServerBusy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_SIMWARMRESETL_2,  "TSY: CMmWimTsy::SimWarmResetL - KErrServerBusy" );
         iMmCustomTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -678,7 +683,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::SimWarmResetL - KErrServerBusy" );
 void CMmWimTsy::CompleteSimWarmReset(
     TInt aError )
     {
-TFLOGSTRING( "CMmWimTsy::CompleteSimWarmReset" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETESIMWARMRESET_1,  "CMmWimTsy::CompleteSimWarmReset" );
        
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle = 
@@ -699,7 +704,7 @@ TFLOGSTRING( "CMmWimTsy::CompleteSimWarmReset" );
 //
 TInt CMmWimTsy::SimWarmResetCancel()
     {
-TFLOGSTRING( "TSY: CMmWimTsy::SimWarmResetCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_SIMWARMRESETCANCEL_1,  "TSY: CMmWimTsy::SimWarmResetCancel" );
     // reset the reqhandle
     TTsyReqHandle reqHandle =
         iTsyReqHandleStore->ResetTsyReqHandle( EWIMRequestTypeSimWarmReset );
@@ -723,7 +728,7 @@ TInt CMmWimTsy::GetSimCardReaderStatusL(
     const TTsyReqHandle aTsyReqHandle, 
     RMmCustomAPI::TSimCardReaderStatus* aSimCardReaderStatus )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::GetSimCardReaderStatusL" ); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_GETSIMCARDREADERSTATUSL_1,  "TSY: CMmWimTsy::GetSimCardReaderStatusL" );
     TTsyReqHandle getSimCardReaderStatusHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( 
         EWIMRequestTypeGetSimCardReaderStatus );
@@ -733,7 +738,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::GetSimCardReaderStatusL" );
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING( "TSY: CMmWimTsy::GetSimCardReaderStatusL - KErrServerBusy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_GETSIMCARDREADERSTATUSL_2,  "TSY: CMmWimTsy::GetSimCardReaderStatusL - KErrServerBusy" );
         iMmCustomTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -776,7 +781,7 @@ void CMmWimTsy::CompleteGetSimCardReaderStatus(
     TPtrC8& aData, 
     TInt aError )
     {
-TFLOGSTRING( "CMmWimTsy::CompleteGetSimCardReaderStatus" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETEGETSIMCARDREADERSTATUS_1,  "CMmWimTsy::CompleteGetSimCardReaderStatus" );
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle = 
         iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -811,7 +816,7 @@ TFLOGSTRING( "CMmWimTsy::CompleteGetSimCardReaderStatus" );
 //
 TInt CMmWimTsy::GetSimCardReaderStatusCancel()
     {
-TFLOGSTRING( "TSY: CMmWimTsy::GetSimCardReaderStatusCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_GETSIMCARDREADERSTATUSCANCEL_1,  "TSY: CMmWimTsy::GetSimCardReaderStatusCancel" );
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EWIMRequestTypeGetSimCardReaderStatus );
@@ -838,7 +843,7 @@ TInt CMmWimTsy::NotifySimCardStatus(
     const TTsyReqHandle aTsyReqHandle, 
     RMmCustomAPI::TSIMCardStatus* aCardStatus )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::NotifySimCardStatus" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_NOTIFYSIMCARDSTATUS_1,  "TSY: CMmWimTsy::NotifySimCardStatus" );
     if ( NULL != aCardStatus )
         {
         // save pointer to client for response data
@@ -862,7 +867,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::NotifySimCardStatus" );
 void CMmWimTsy::CompleteNotifySimCardStatus(
     RMmCustomAPI::TSIMCardStatus aCardStatus )
     {
-TFLOGSTRING( "CMmWimTsy::CompleteNotifySimCardStatus" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETENOTIFYSIMCARDSTATUS_1,  "CMmWimTsy::CompleteNotifySimCardStatus" );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EWIMRequestTypeNotifySimCardStatus );
@@ -888,7 +893,7 @@ TFLOGSTRING( "CMmWimTsy::CompleteNotifySimCardStatus" );
 //
 TInt CMmWimTsy::NotifySimCardStatusCancel()
     {
-TFLOGSTRING( "TSY: CMmWimTsy::NotifySimCardStatusCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_NOTIFYSIMCARDSTATUSCANCEL_1,  "TSY: CMmWimTsy::NotifySimCardStatusCancel" );
     // reset pointer to client data
     iNotifiedSimCardStatus = NULL;
 
@@ -915,7 +920,7 @@ TInt CMmWimTsy::SendAPDUReqV2L(
     const TTsyReqHandle aTsyReqHandle, 
     RMmCustomAPI::TApduParameters* aApduParameters )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::SendAPDUReqV2L" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_SENDAPDUREQV2L_1,  "TSY: CMmWimTsy::SendAPDUReqV2L" );
     TTsyReqHandle sendApduReqV2Handle = 
         iTsyReqHandleStore->GetTsyReqHandle( EWIMRequestTypeSendAPDUReqV2 );
     TInt ret = KErrNone; 
@@ -925,7 +930,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::SendAPDUReqV2L" );
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING( "TSY: CMmWimTsy::SendAPDUReqV2L - KErrServerBusy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_SENDAPDUREQV2L_2,  "TSY: CMmWimTsy::SendAPDUReqV2L - KErrServerBusy" );
         iMmCustomTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         return ret; 
         }
@@ -963,7 +968,7 @@ void CMmWimTsy::CompleteSendAPDUReqV2(
     TPtrC8 &aData, 
     TInt aError )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::CompleteSendAPDUReqV2" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETESENDAPDUREQV2_1,  "TSY: CMmWimTsy::CompleteSendAPDUReqV2" );
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle = 
         iTsyReqHandleStore->ResetTsyReqHandle( EWIMRequestTypeSendAPDUReqV2 );
@@ -997,7 +1002,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::CompleteSendAPDUReqV2" );
 //
 TInt CMmWimTsy::SendAPDUReqV2Cancel()
     {
-TFLOGSTRING( "TSY: CMmWimTsy::SendAPDUReqV2Cancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_SENDAPDUREQV2CANCEL_1,  "TSY: CMmWimTsy::SendAPDUReqV2Cancel" );
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EWIMRequestTypeSendAPDUReqV2 );
@@ -1023,7 +1028,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::SendAPDUReqV2Cancel" );
 TInt CMmWimTsy::PowerSimOnL(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOnL" ); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_POWERSIMONL_1,  "TSY: CMmWimTsy::PowerSimOnL" );
     TTsyReqHandle powerSimOnHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EWIMRequestTypePowerSimOn );
         
@@ -1032,7 +1037,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOnL" );
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOnL - KErrServerBusy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_POWERSIMONL_2,  "TSY: CMmWimTsy::PowerSimOnL - KErrServerBusy" );
         iMmCustomTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1068,7 +1073,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOnL - KErrServerBusy" );
 void CMmWimTsy::CompletePowerSimOn(
     TInt aError )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::CompletePowerSimOn" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETEPOWERSIMON_1,  "TSY: CMmWimTsy::CompletePowerSimOn" );
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle = 
         iTsyReqHandleStore->ResetTsyReqHandle( EWIMRequestTypePowerSimOn );
@@ -1088,7 +1093,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::CompletePowerSimOn" );
 //
 TInt CMmWimTsy::PowerSimOnCancel()
     {
-TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOnCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_POWERSIMONCANCEL_1,  "TSY: CMmWimTsy::PowerSimOnCancel" );
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EWIMRequestTypePowerSimOn );
@@ -1111,7 +1116,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOnCancel" );
 TInt CMmWimTsy::PowerSimOffL(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOffL" ); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_POWERSIMOFFL_1,  "TSY: CMmWimTsy::PowerSimOffL" );
     TTsyReqHandle powerSimOffHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EWIMRequestTypePowerSimOff );
         
@@ -1120,7 +1125,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOffL" );
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOffL - KErrServerBusy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_POWERSIMOFFL_2,  "TSY: CMmWimTsy::PowerSimOffL - KErrServerBusy" );
         iMmCustomTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1156,7 +1161,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOffL - KErrServerBusy" );
 void CMmWimTsy::CompletePowerSimOff(
     TInt aError )
     {
-TFLOGSTRING( "TSY: CMmWimTsy::CompletePowerSimOff" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETEPOWERSIMOFF_1,  "TSY: CMmWimTsy::CompletePowerSimOff" );
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle = 
         iTsyReqHandleStore->ResetTsyReqHandle( EWIMRequestTypePowerSimOff );
@@ -1176,7 +1181,7 @@ TFLOGSTRING( "TSY: CMmWimTsy::CompletePowerSimOff" );
 //
 TInt CMmWimTsy::PowerSimOffCancel()
     {
-TFLOGSTRING( "TSY: CMmWimTsy::PowerSimOffCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_POWERSIMOFFCANCEL_1,  "TSY: CMmWimTsy::PowerSimOffCancel" );
     // reset the reqhandle
     TTsyReqHandle reqHandle =
         iTsyReqHandleStore->ResetTsyReqHandle( EWIMRequestTypePowerSimOff );

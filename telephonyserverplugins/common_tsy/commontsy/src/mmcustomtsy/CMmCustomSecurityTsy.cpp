@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,8 +16,13 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CMmCustomSecurityTsyTraces.h"
+#endif
+
 #include "CMmCustomSecurityTsy.h"
-#include <ctsy/tflogger.h>
 #include "cmmphonegsmwcdmaext.h"
 #include <ctsy/serviceapi/mmtsy_ipcdefs.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
@@ -32,7 +37,7 @@ void CMmCustomSecurityTsy::ConstructL(
     CMmCustomTsy* aMmCustomTsy, 
     CMmPhoneTsy* aMmPhoneTsy )
     {
-TFLOGSTRING("TSY: CMmCustomSecurityTsy::ConstructL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_CONSTRUCTL_1, "TSY: CMmCustomSecurityTsy::ConstructL");
     iMmCustomTsy = aMmCustomTsy;
     iMmPhoneTsy = aMmPhoneTsy;
 
@@ -58,7 +63,7 @@ CMmCustomSecurityTsy* CMmCustomSecurityTsy::NewL(
     CMmCustomTsy* aMmCustomTsy, 
     CMmPhoneTsy* aPhoneTsy )
     {
-TFLOGSTRING("TSY: CMmCustomSecurityTsy::NewL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_NEWL_1, "TSY: CMmCustomSecurityTsy::NewL");
     CMmCustomSecurityTsy* self = new (ELeave) CMmCustomSecurityTsy();
 
     CleanupStack::PushL( self );
@@ -332,7 +337,7 @@ void CMmCustomSecurityTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-TFLOGSTRING3( "CustomTSY: CMmCustomSecurityTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETE_1,  "CustomTSY: CMmCustomSecurityTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
     // All possible TSY req handle types are listed in the
     // switch case below.
     switch ( aReqHandleType )
@@ -370,7 +375,7 @@ TInt CMmCustomSecurityTsy::IsBlocked(
         {
         return KErrServerBusy;
         }
-TFLOGSTRING2( "TSY: CMmPhoneTsy::IsBlocked - Code to check: %d", *aCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_ISBLOCKED_1,  "TSY: CMmPhoneTsy::IsBlocked - Code to check: %d", *aCode );
 
     switch ( *aCode )
         {
@@ -496,7 +501,7 @@ TInt CMmCustomSecurityTsy::CheckSecurityCodeL(
     CMmDataPackage aPackage;
     aPackage.PackData( &iCodeID, &iSecCode );
 
-TFLOGSTRING2( "TSY: CMmCustomSecurityTsy::CheckSecurityCodeL iSecCode: %S", &iSecCode );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_CHECKSECURITYCODEL_1,  "TSY: CMmCustomSecurityTsy::CheckSecurityCodeL iSecCode: %S", iSecCode );
     TInt retValue ( iMmPhoneTsy->MessageManager()->HandleRequestL( 
         ECustomCheckSecurityCodeIPC, &aPackage ) );
 
@@ -523,7 +528,7 @@ TFLOGSTRING2( "TSY: CMmCustomSecurityTsy::CheckSecurityCodeL iSecCode: %S", &iSe
 void CMmCustomSecurityTsy::CompleteCheckSecurityCode(
     TInt aErrorCode )
     {
-TFLOGSTRING2("TSY: CMmCustomSecurityTsy::CompleteCheckSecurityCode - Error code: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETECHECKSECURITYCODE_1, "TSY: CMmCustomSecurityTsy::CompleteCheckSecurityCode - Error code: %d", aErrorCode );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         ESecurityRequestTypeCheckSecurityCode );
@@ -577,7 +582,7 @@ TInt CMmCustomSecurityTsy::CheckSecurityCodeCancelL()
 //
 void CMmCustomSecurityTsy::CompleteCheckSecurityCodeCancel()
     {
-TFLOGSTRING("TSY: CMmCustomSecurityTsy::CompleteCheckSecurityCodeCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETECHECKSECURITYCODECANCEL_1, "TSY: CMmCustomSecurityTsy::CompleteCheckSecurityCodeCancel");
     }
 
 // ---------------------------------------------------------------------------
@@ -596,7 +601,7 @@ TInt CMmCustomSecurityTsy::DeliverCodeL(
     iMmPhoneTsy->MessageManager()->HandleRequestL( 
         ECustomSecurityDeliverCodeIPC, &aPackage );
 
-TFLOGSTRING2( "TSY: CMmCustomSecurityTsy::DeliverCodeL iSecCode: %S", &iSecCode );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_DELIVERCODEL_1,  "TSY: CMmCustomSecurityTsy::DeliverCodeL iSecCode: %S", iSecCode );
 
     return KErrNone;
     }
@@ -647,7 +652,7 @@ TInt CMmCustomSecurityTsy::DisablePhoneLockL(
 void CMmCustomSecurityTsy::CompleteDisablePhoneLock(
     TInt aErrorCode )
     {
-TFLOGSTRING2("TSY: CMmCustomSecurityTsy::CompleteDisablePhoneLock - Error code: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETEDISABLEPHONELOCK_1, "TSY: CMmCustomSecurityTsy::CompleteDisablePhoneLock - Error code: %d", aErrorCode );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         ESecurityRequestTypeDisablePhoneLock );

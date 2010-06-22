@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmpacketqosgsmwcdmaextTraces.h"
+#endif
+
 #include "Cmmpacketservicetsy.h"
 #include "Cmmpacketcontexttsy.h"
 #include "cmmpacketqosgsmwcdmaext.h"
@@ -43,7 +49,7 @@ CMmPacketQoSGsmWcdmaExt* CMmPacketQoSGsmWcdmaExt::NewL(
     packetQoSGsmWcdmaExt->ConstructL();
     CleanupStack::Pop( packetQoSGsmWcdmaExt );
 
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::NewL. ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_NEWL_1, "TSY: CMmPacketQoSGsmWcdmaExt::NewL. ");
     return packetQoSGsmWcdmaExt;
     }
 
@@ -55,7 +61,7 @@ void CMmPacketQoSGsmWcdmaExt::ConstructL()
     
 CMmPacketQoSGsmWcdmaExt::~CMmPacketQoSGsmWcdmaExt()
     {
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::~CMmPacketQoSGsmWcdmaExt." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_DTOR_1, "TSY: CMmPacketQoSGsmWcdmaExt::~CMmPacketQoSGsmWcdmaExt." );
     }
 
 
@@ -68,7 +74,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::~CMmPacketQoSGsmWcdmaExt." );
 TInt CMmPacketQoSGsmWcdmaExt::GetProfileCapabilities(
         TDes8* aProfileCaps )
     {
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::GetProfileCapabilities." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_GETPROFILECAPABILITIES_1, "TSY: CMmPacketQoSGsmWcdmaExt::GetProfileCapabilities." );
 
     // Unpack the packet
     TPckg<TPacketDataConfigBase>* profileCapsPckg = 
@@ -129,7 +135,7 @@ TInt CMmPacketQoSGsmWcdmaExt::GetProfileParameters(
     TPckg<TPacketDataConfigBase>* profilePckg = 
         ( TPckg<TPacketDataConfigBase>* ) aProfile;
     TPacketDataConfigBase& profile = ( *profilePckg )();
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::GetProfileParameters.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_GETPROFILEPARAMETERS_1, "TSY: CMmPacketQoSGsmWcdmaExt::GetProfileParameters.");
 
 // If extension is KConfigGPRS
     if ( TPacketDataConfigBase::KConfigGPRS == profile.ExtensionId() )
@@ -169,7 +175,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::GetProfileParameters.");
    else if ( TPacketDataConfigBase::KConfigRel5 == profile.ExtensionId() )
         { 
         
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::GetProfileParameters. Rel 5");            
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_GETPROFILEPARAMETERS_2, "TSY: CMmPacketQoSGsmWcdmaExt::GetProfileParameters. Rel 5");
         TPckg<RPacketQoS::TQoSR5Negotiated >* gprsProfilePckg = 
                 ( TPckg<RPacketQoS::TQoSR5Negotiated >* ) aProfile;
         RPacketQoS::TQoSR5Negotiated& gprsProfile = ( *gprsProfilePckg )();
@@ -233,7 +239,7 @@ TInt CMmPacketQoSGsmWcdmaExt::NotifyProfileChanged(
 
 void CMmPacketQoSGsmWcdmaExt::NotifyProfileChangedCancel()
     {
-TFLOGSTRING( "TSY: CMmPacketQoSGsmWcdmaExt::NotifyProfileChangedCancel." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_NOTIFYPROFILECHANGEDCANCEL_1,  "TSY: CMmPacketQoSGsmWcdmaExt::NotifyProfileChangedCancel." );
 
 	iQoSGPRSNotifyPckg = NULL;
 
@@ -247,7 +253,7 @@ TFLOGSTRING( "TSY: CMmPacketQoSGsmWcdmaExt::NotifyProfileChangedCancel." );
 TInt CMmPacketQoSGsmWcdmaExt::SetProfileParametersL(
         TDes8* aProfile ) 
     {
-TFLOGSTRING2("TSY: CMmPacketQoSGsmWcdmaExt::SetProfileParametersL. \t aProfile:%d", aProfile );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_SETPROFILEPARAMETERSL_1, "TSY: CMmPacketQoSGsmWcdmaExt::SetProfileParametersL. \t aProfile:%d", aProfile );
 
 	//Datapackage
 	CMmDataPackage data;
@@ -303,7 +309,7 @@ TFLOGSTRING2("TSY: CMmPacketQoSGsmWcdmaExt::SetProfileParametersL. \t aProfile:%
         }
     else if ( TPacketDataConfigBase::KConfigRel5 == profile.ExtensionId() )
         {
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::SetProfileParameters. Rel 5");   
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_SETPROFILEPARAMETERSL_2, "TSY: CMmPacketQoSGsmWcdmaExt::SetProfileParameters. Rel 5");
         TPckg<RPacketQoS::TQoSR5Requested >* gprsProfilePckg = 
              ( TPckg<RPacketQoS::TQoSR5Requested >* ) aProfile;
         RPacketQoS::TQoSR5Requested& gprsProfile = ( *gprsProfilePckg )();
@@ -349,7 +355,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::SetProfileParameters. Rel 5");
 void CMmPacketQoSGsmWcdmaExt::CompleteSetProfileParameters(
 		const TInt aErrorValue )
     {
-TFLOGSTRING2("TSY: CMmPacketQoSGsmWcdmaExt::CompleteSetProfileParameters.  \t aErrorValue:%d", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETESETPROFILEPARAMETERS_1, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteSetProfileParameters.  \t aErrorValue:%d", aErrorValue );
 
     // Call CompleteSetProfileParameters from QoS Tsy
     iMmPacketQoSTsy->CompleteSetProfileParameters( aErrorValue );
@@ -379,7 +385,7 @@ void CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged(
 
 
    
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY new R99/R4 default values");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETENOTIFYPROFILECHANGED_1, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY new R99/R4 default values");
 		//Copy negotiated values to minimun values
 		iRequested99.iMinTrafficClass = iQoSR99_R4Negotiated.iTrafficClass;
 	    iRequested99.iMinDeliveryOrderReqd = 
@@ -430,7 +436,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY n
         iRequested99.iReqGuaranteedRate = iQoSR99_R4Negotiated.iGuaranteedRate;
 
 
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY new R97 default values");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETENOTIFYPROFILECHANGED_2, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY new R97 default values");
         iRequested.iReqPrecedence = iQoSGPRSNegotiated.iPrecedence;
         iRequested.iMinPrecedence = iQoSGPRSNegotiated.iPrecedence;
 
@@ -448,7 +454,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY n
         
 
 
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY new R5 default values");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETENOTIFYPROFILECHANGED_3, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY new R5 default values");
 
         //Copy negotiated values to minimun values
         iRequestedR5.iMinTrafficClass = iQoSR5Negotiated.iTrafficClass;
@@ -512,7 +518,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged . COPY n
             // Update the client side data through pointers
             gprsProfile = iQoSGPRSNegotiated;
 
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R97/98 QoS Parameters in use");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETENOTIFYPROFILECHANGED_4, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R97/98 QoS Parameters in use");
             }
 
         // if client uses R99 QoS parameters and aQoS99Negotiated 
@@ -529,7 +535,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R97/98
                                        
                 // Update the client side data through pointers
                 gprsProfile = iQoSR99_R4Negotiated;
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R99/R4 QoS Parameters in use");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETENOTIFYPROFILECHANGED_5, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R99/R4 QoS Parameters in use");
             
             }
 
@@ -545,7 +551,7 @@ TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R99/R4
 
             // Update the client side data through pointers
             gprsProfile = iQoSR5Negotiated;
-TFLOGSTRING("TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R5 QoS Parameters in use");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSGSMWCDMAEXT_COMPLETENOTIFYPROFILECHANGED_6, "TSY: CMmPacketQoSGsmWcdmaExt::CompleteNotifyProfileChanged.  R5 QoS Parameters in use");
             }            
 
         if ( completeToClient )

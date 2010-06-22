@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,8 +16,13 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmsupplservtsyTraces.h"
+#endif
+
 #include "cmmsupplservtsy.h"
-#include <ctsy/tflogger.h> 
 
 // include internal Tsy classes
 #include "cmmphonetsy.h"
@@ -707,7 +712,7 @@ void CMmSupplServTsy::CompleteGetCallForwardingStatusPhase1L(
                 }
             else
                 {
-TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetCallForwardingStatusPhase1L: No response received.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETCALLFORWARDINGSTATUSPHASE1L_1, "TSY: CMmSupplServTsy::CompleteGetCallForwardingStatusPhase1L: No response received.");
                 aErrorCode = KErrNotFound;
                 }
             }
@@ -887,7 +892,7 @@ TInt CMmSupplServTsy::SetCallForwardingStatusCancel(
     if ( !cancelSetCallForwardingStatus )
         {
         // Cancellation called although request is not going on
-        TFLOGSTRING("TSY: CMmSupplServTsy::SetCallForwardingStatusCancel - KErrServerBusy");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETCALLFORWARDINGSTATUSCANCEL_1, "TSY: CMmSupplServTsy::SetCallForwardingStatusCancel - KErrServerBusy");
         iMmPhone->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1122,7 +1127,7 @@ void CMmSupplServTsy::CompleteGetCallBarringStatusPhase1L(
                 }
             else
                 {
-TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetCallBarringStatusPhase1L: No response received.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETCALLBARRINGSTATUSPHASE1L_1, "TSY: CMmSupplServTsy::CompleteGetCallBarringStatusPhase1L: No response received.");
                 aErrorCode = KErrNotFound;
                 }
             }
@@ -1242,7 +1247,7 @@ TInt CMmSupplServTsy::SetCallBarringStatusCancel(
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about 
         //the situation.
-        TFLOGSTRING("TSY: CMmPhoneTsy::SetCallBarringStatusCancel - KErrServerBusy");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETCALLBARRINGSTATUSCANCEL_1, "TSY: CMmPhoneTsy::SetCallBarringStatusCancel - KErrServerBusy");
         iMmPhone->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1343,14 +1348,11 @@ TInt CMmSupplServTsy::SetSSPasswordL(
         RMobilePhone::TMobilePhonePasswordChangeV2& ssPassword = 
             ( *ssPasswordPckg )();
 
-        TFLOGSTRING2("TSY: CMmSupplServTsy::SetSSPassword - SS service: %d", 
-            *aSsService );
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETSSPASSWORDL_1, "TSY: CMmSupplServTsy::SetSSPassword - SS service: %d", *aSsService );
 
-        TFLOGSTRING2("TSY: CMmSupplServTsy::SetSSPassword - Old PW: %S", 
-            &ssPassword.iOldPassword );
+        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETSSPASSWORDL_2, "TSY: CMmSupplServTsy::SetSSPassword - Old PW: %S", ssPassword.iOldPassword );
 
-        TFLOGSTRING3("TSY: CMmSupplServTsy::SetSSPassword - New PW: %S, Verify PW: %S", 
-            &ssPassword.iNewPassword, &ssPassword.iVerifiedPassword );
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETSSPASSWORDL_3, "TSY: CMmSupplServTsy::SetSSPassword - New PW: %S, Verify PW: %S", ssPassword.iNewPassword, ssPassword.iVerifiedPassword );
 
         // Packed parameters: TMobilePhonePasswordChangeV2 and TUint16
         TUint16 ssServiceUnsigned = static_cast<TUint16>( *aSsService );
@@ -1413,7 +1415,7 @@ TInt CMmSupplServTsy::SetSSPasswordCancel(
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about 
         //the situation.
-        TFLOGSTRING("TSY: CMmSupplServTsy::SetSSPasswordCancel - KErrServerBusy");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETSSPASSWORDCANCEL_1, "TSY: CMmSupplServTsy::SetSSPasswordCancel - KErrServerBusy");
         iMmPhone->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1575,7 +1577,7 @@ void CMmSupplServTsy::CompleteGetCallWaitingStatusPhase1L(
                 }
             else
                 {
-TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetCallWaitingStatusPhase1L: No response received.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETCALLWAITINGSTATUSPHASE1L_1, "TSY: CMmSupplServTsy::CompleteGetCallWaitingStatusPhase1L: No response received.");
                 aErrorCode = KErrNotFound;
                 }
             }
@@ -1674,7 +1676,7 @@ TInt CMmSupplServTsy::SetCallWaitingStatusCancel(
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about 
         //the situation.
-        TFLOGSTRING("TSY: CMmSupplServTsy::SetCallWaitingStatusCancel - KErrServerBusy");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETCALLWAITINGSTATUSCANCEL_1, "TSY: CMmSupplServTsy::SetCallWaitingStatusCancel - KErrServerBusy");
         iMmPhone->ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1871,7 +1873,7 @@ TInt CMmSupplServTsy::SendNetworkServiceRequestL(
     const TDesC* aServiceString )
     {
     TInt ret = KErrNone;
-TFLOGSTRING2("TSY: CMmSupplServTsy::SendNetworkServiceRequestL: iSsNoFdnCheckFlag: %d", iSsNoFdnCheckFlag);       
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SENDNETWORKSERVICEREQUESTL_1, "TSY: CMmSupplServTsy::SendNetworkServiceRequestL: iSsNoFdnCheckFlag: %d", iSsNoFdnCheckFlag);
     if ( iSsTransactionOngoing )
 	    {
 	    ret = KErrServerBusy;
@@ -1955,7 +1957,7 @@ TInt CMmSupplServTsy::GetIccMessageWaitingIndicatorsL(
     const TTsyReqHandle aTsyReqHandle, 
     RMobilePhone::TMobilePhoneMessageWaitingV1* aMessageWaiting )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSL_1, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL");
     
     // check if parameter is correct type of class
     if ( KETelExtMultimodeV1 != aMessageWaiting->ExtensionId() )
@@ -1976,7 +1978,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL");
             {
             TInt ret( KErrNone );
 
-TFLOGSTRING2("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, MWIS supported:%d", iMessageWaitingSupportedByIcc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSL_2, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, MWIS supported:%d", iMessageWaitingSupportedByIcc );
 
 			if (iMmPhone->IsSIMReady())
 				{
@@ -2010,7 +2012,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, MWIS suppor
 			        ret = ReadIccMessageWaitingIndicatorsFromCentRep( 
 			            iMessageWaiting );
 			        
-			TFLOGSTRING2("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, Error during the reading from CentRep:%d", ret);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSL_3, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, Error during the reading from CentRep:%d", ret);
 				
 				   	if ( KErrNone == ret )
 				   		{
@@ -2032,7 +2034,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, MWIS suppor
 			}
 			else
 			{
-			TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL - save reqHandle to queue");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSL_4, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL - save reqHandle to queue");
 			// Save reqHandle to queue for completion
 			TMwisInfoRequest* req = new (ELeave) TMwisInfoRequest();
 			req->iReqHandle = aTsyReqHandle;
@@ -2055,7 +2057,7 @@ void CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators(
     RMobilePhone::TMobilePhoneMessageWaitingV1* aMessageWaiting, 
     TInt aErrorCode )
     {
-TFLOGSTRING3("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, bootup=%d, Error: %d", iGetIccSupportAtBoot, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_1, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, bootup=%d, Error: %d", iGetIccSupportAtBoot, aErrorCode );
              
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2083,7 +2085,7 @@ TFLOGSTRING3("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, boot
             }
         else 
             {
-TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, NOT supported by SIM" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_2, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, NOT supported by SIM" );
             SetIccSupportForMWIS( EFalse );
             
             // read the data from the Central Repository
@@ -2094,7 +2096,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, NOT s
         // Go through the request queue and complete same information to all reguests
         for ( TInt i = 0; i < iMwisInfoRequests.Count(); i++ )
         	{
-        	TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, Going throw request queue" );
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_3, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, Going throw request queue" );
         	TMwisInfoRequest* req = iMwisInfoRequests[ i ];
         	//set value in client side
         	*(req->iMwisInfo) = iMessageWaiting;
@@ -2124,7 +2126,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, NOT s
             iMessageWaiting.iDisplayStatus = aMessageWaiting->iDisplayStatus;
             aErrorCode = iMwisCentRep->Set( KCtsyMessageWaitingDisplayStatus, 
                 aMessageWaiting->iDisplayStatus );
-TFLOGSTRING3("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, CPHS bootup, status=%d, error=%d ", aMessageWaiting->iDisplayStatus, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_4, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, CPHS bootup, status=%d, error=%d ", aMessageWaiting->iDisplayStatus, aErrorCode );
             }
         else
             {
@@ -2143,12 +2145,12 @@ TFLOGSTRING3("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, CPHS
 TInt CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSCANCEL_1, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel");
     
 	//reset the req handle if only one req remains
 	if( 1 == iMwisInfoRequests.Count() )
 		{
-		TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel - one req");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSCANCEL_2, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel - one req");
 		TTsyReqHandle reqHandle = iMmPhone->
 		iTsyReqHandleStore->ResetTsyReqHandle(
 				CMmPhoneTsy::EMultimodePhoneGetIccMessageWaitingIndicators);
@@ -2156,7 +2158,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel");
 	// qo through array if several requests and find correct reqhandle to cancel
 	for ( TInt i = 0; i < iMwisInfoRequests.Count(); i++ )
 		{
-		TFLOGSTRING("TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel - queued requests");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSCANCEL_3, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsCancel - queued requests");
 		TMwisInfoRequest* req = iMwisInfoRequests[ i ];
 		if( aTsyReqHandle == req->iReqHandle  )
 			{
@@ -2180,13 +2182,13 @@ TInt CMmSupplServTsy::SetIccMessageWaitingIndicatorsL(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8* aParams )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCMESSAGEWAITINGINDICATORSL_1, "TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL");
     
     TInt ret( KErrNone ); 
 
     if ( sizeof( RMobilePhone::TMobilePhoneMessageWaitingV1 ) > aParams->MaxLength() )
 	  	{
-	  	TFLOGSTRING ("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL bad size argument");
+	  	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCMESSAGEWAITINGINDICATORSL_2, "TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL bad size argument");
 	  	// Complete the request with appropiate error        
         ret = KErrArgument;
 	  	}
@@ -2200,7 +2202,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL");
             CMmPhoneTsy::EMultimodePhoneGetIccMessageWaitingIndicators ) ) )
         {
         
-TFLOGSTRING2("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL, MWIS supported:%d",iMessageWaitingSupportedByIcc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCMESSAGEWAITINGINDICATORSL_3, "TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL, MWIS supported:%d",iMessageWaitingSupportedByIcc );
     
         RMobilePhone::TMobilePhoneMessageWaitingV1Pckg* paramsPckgV1 = 
             reinterpret_cast<RMobilePhone::TMobilePhoneMessageWaitingV1Pckg*>( aParams );
@@ -2258,7 +2260,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsL, MWIS suppor
 void CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators( 
     TInt aErrorCode )
     {
-TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, Error: %d", aErrorCode );    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESETICCMESSAGEWAITINGINDICATORS_1, "TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, Error: %d", aErrorCode );
    
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2282,7 +2284,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, Erro
             }
         else
             {
-TFLOGSTRING("TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, not supported by SIM" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESETICCMESSAGEWAITINGINDICATORS_2, "TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, not supported by SIM" );
             SetIccSupportForMWIS( EFalse );
             
             // reset error value, return possible cenrep error value
@@ -2304,7 +2306,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, not s
     // So go through the request queue and complete all the request.
     for ( TInt i = 0; i < iMwisInfoRequests.Count(); i++ )
     	{
-    	TFLOGSTRING("TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, Going throw request queue" );
+    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESETICCMESSAGEWAITINGINDICATORS_3, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, Going throw request queue" );
     	TMwisInfoRequest* req = iMwisInfoRequests[ i ];
     	//set value in client side
     	*(req->iMwisInfo) = iMessageWaiting;
@@ -2325,7 +2327,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, not s
 TInt CMmSupplServTsy::SetIccMessageWaitingIndicatorsCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCMESSAGEWAITINGINDICATORSCANCEL_1, "TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsCancel");
     
     // As cancel is called, the client memory address pointed to is no longer 
     // valid -> NULL it
@@ -2346,7 +2348,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::SetIccMessageWaitingIndicatorsCancel");
 TInt CMmSupplServTsy::NotifyIccMessageWaitingIndicatorsChange( 
     RMobilePhone::TMobilePhoneMessageWaitingV1* aMessageWaiting )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::NotifyIccMessageWaitingIndicatorsChangeL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYICCMESSAGEWAITINGINDICATORSCHANGE_1, "TSY: CMmSupplServTsy::NotifyIccMessageWaitingIndicatorsChangeL");
     
     TInt ret( KErrNone );
     
@@ -2377,7 +2379,7 @@ void CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange(
     RMobilePhone::TMobilePhoneMessageWaitingV1* aMessageWaiting,
     TInt& aErrorCode )
     {
-TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange, error:%d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYICCMESSAGEWAITINGINDICATORCHANGE_1, "TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange, error:%d", aErrorCode );
     
     if ( IsMwisInfoChanged( *aMessageWaiting ) )
         {
@@ -2399,7 +2401,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChan
             if ( aMessageWaiting->iDisplayStatus != 
                 iMessageWaiting.iDisplayStatus )
                 {
-TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange, CPHS information changed status=%d ", aMessageWaiting->iDisplayStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYICCMESSAGEWAITINGINDICATORCHANGE_2, "TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange, CPHS information changed status=%d ", aMessageWaiting->iDisplayStatus);
                 // update only CPHS supported information
                 iMessageWaiting.iDisplayStatus = 
                     aMessageWaiting->iDisplayStatus;
@@ -2438,7 +2440,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChan
 TInt CMmSupplServTsy::NotifyIccMessageWaitingIndicatorChangeCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::NotifyIccMessageWaitingIndicatorChangeCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYICCMESSAGEWAITINGINDICATORCHANGECANCEL_1, "TSY: CMmSupplServTsy::NotifyIccMessageWaitingIndicatorChangeCancel");
     
     // Null the pointer to client-side data
     iRetNotifyMessageWaiting = NULL;  
@@ -2457,7 +2459,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::NotifyIccMessageWaitingIndicatorChangeCancel"
 //
 void CMmSupplServTsy::SetIccSupportForMWIS( TBool aSupport )
     {
-TFLOGSTRING2("TSY: CMmSupplServTsy::SetIccSupportForMWIS, support%d ", aSupport );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCSUPPORTFORMWIS_1, "TSY: CMmSupplServTsy::SetIccSupportForMWIS, support%d ", aSupport );
     
     iMessageWaitingSupportedByIcc = aSupport; 
     }
@@ -2471,7 +2473,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::SetIccSupportForMWIS, support%d ", aSupport 
 TInt CMmSupplServTsy::ReadIccMessageWaitingIndicatorsFromCentRep( 
     RMobilePhone::TMobilePhoneMessageWaitingV1& aMessageWaiting )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::ReadIccMessageWaitingIndicatorsFromCentRep");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_READICCMESSAGEWAITINGINDICATORSFROMCENTREP_1, "TSY: CMmSupplServTsy::ReadIccMessageWaitingIndicatorsFromCentRep");
     
     TInt retval( KErrNone );
     TInt tempVal( 0 );
@@ -2526,32 +2528,32 @@ TFLOGSTRING("TSY: CMmSupplServTsy::ReadIccMessageWaitingIndicatorsFromCentRep");
 TInt CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep( 
     const RMobilePhone::TMobilePhoneMessageWaitingV1& aMessageWaiting )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_1, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep");
     
     TInt retval( KErrNone );
 	
 	// Write new values to the central repository       
     retval = iMwisCentRep->Set( KCtsyMessageWaitingDisplayStatus, 
         aMessageWaiting.iDisplayStatus );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iDisplayStatus:%u", aMessageWaiting.iDisplayStatus );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_2, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iDisplayStatus:%u", aMessageWaiting.iDisplayStatus );
     retval = iMwisCentRep->Set( KCtsyMessageWaitingVoiceMailCount,
         aMessageWaiting.iVoiceMsgs );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iVoiceMsgs:%u", aMessageWaiting.iVoiceMsgs );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_3, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iVoiceMsgs:%u", aMessageWaiting.iVoiceMsgs );
     retval = iMwisCentRep->Set( KCtsyMessageWaitingAuxLineCount,
         aMessageWaiting.iAuxVoiceMsgs );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iAuxVoiceMsgs:%u", aMessageWaiting.iAuxVoiceMsgs );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_4, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iAuxVoiceMsgs:%u", aMessageWaiting.iAuxVoiceMsgs );
     retval = iMwisCentRep->Set( KCtsyMessageWaitingDataCount,
         aMessageWaiting.iDataMsgs );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iDataMsgs:%u", aMessageWaiting.iDataMsgs );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_5, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iDataMsgs:%u", aMessageWaiting.iDataMsgs );
     retval = iMwisCentRep->Set( KCtsyMessageWaitingFaxCount,
         aMessageWaiting.iFaxMsgs );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iFaxMsgs:%u", aMessageWaiting.iFaxMsgs );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_6, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iFaxMsgs:%u", aMessageWaiting.iFaxMsgs );
     retval = iMwisCentRep->Set( KCtsyMessageWaitingEmailCount,
         aMessageWaiting.iEmailMsgs );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iEmailMsgs:%u", aMessageWaiting.iEmailMsgs );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_7, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iEmailMsgs:%u", aMessageWaiting.iEmailMsgs );
     retval = iMwisCentRep->Set( KCtsyMessageWaitingOtherMessageCount,
         aMessageWaiting.iOtherMsgs );
-TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iOtherMsgs:%u", aMessageWaiting.iOtherMsgs );            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_WRITEICCMESSAGEWAITINGINDICATORSTOCENTREP_8, "TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : iOtherMsgs:%u", aMessageWaiting.iOtherMsgs );
 
     return retval;
     }
@@ -2565,7 +2567,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::WriteIccMessageWaitingIndicatorsToCentRep : 
 TBool CMmSupplServTsy::IsMwisInfoChanged( 
     const RMobilePhone::TMobilePhoneMessageWaitingV1& aNewMessageWaiting )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::IsMwisInfoChanged");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_ISMWISINFOCHANGED_1, "TSY: CMmSupplServTsy::IsMwisInfoChanged");
     
     TBool retval( ETrue ); 
     
@@ -2615,11 +2617,11 @@ TInt CMmSupplServTsy::NotifySendNetworkServiceRequest(
     const RMobilePhone::TMobilePhoneNotifySendSSOperation* aOperation,
     TDes8* aSendSSRequestPckg )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::NotifySendNetworkServiceRequest" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYSENDNETWORKSERVICEREQUEST_1, "TSY: CMmSupplServTsy::NotifySendNetworkServiceRequest" );
  
 	if(sizeof(RMobilePhone::TMobilePhoneSendSSRequestV3) > aSendSSRequestPckg->MaxLength())
 		{
-	    TFLOGSTRING ("TSY: CMmNetTsy::NotifySendNetworkServiceRequest Bad size argument");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYSENDNETWORKSERVICEREQUEST_2, "TSY: CMmNetTsy::NotifySendNetworkServiceRequest Bad size argument");
 	    // Complete the request with appropiate error        
 	    return KErrArgument;
 		}
@@ -2648,7 +2650,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::NotifySendNetworkServiceRequest" );
 void CMmSupplServTsy::CompleteSendNetworkServiceRequestInd(
     TInt aErrorCode, CMmDataPackage* aDataPackage  )
     {
-TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteSendNetworkServiceRequestInd. Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESENDNETWORKSERVICEREQUESTIND_1, "TSY: CMmSupplServTsy::CompleteSendNetworkServiceRequestInd. Error: %d", aErrorCode );
   
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -2695,7 +2697,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteSendNetworkServiceRequestInd. Error:
 TInt CMmSupplServTsy::NotifySendNetworkServiceRequestCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::NotifySendNetworkServiceRequestCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYSENDNETWORKSERVICEREQUESTCANCEL_1, "TSY: CMmSupplServTsy::NotifySendNetworkServiceRequestCancel");
 
     // Clear data pointers        
 	iRetSSDataPtrIndRequest = NULL;
@@ -2720,7 +2722,7 @@ TInt CMmSupplServTsy::NotifyAllSendNetworkServiceRequest(
     RMobilePhone::TMobilePhoneNotifySendSSOperation* aOperation,
     TDes8* aRequestComplete )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::NotifyAllSendNetworkRequest" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYALLSENDNETWORKSERVICEREQUEST_1, "TSY: CMmSupplServTsy::NotifyAllSendNetworkRequest" );
  
     TPckg<RMobilePhone::TMobilePhoneSendSSRequestV3>* ssDataPckg = 
         reinterpret_cast<TPckg<RMobilePhone::TMobilePhoneSendSSRequestV3>*>
@@ -2753,7 +2755,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::NotifyAllSendNetworkRequest" );
 void CMmSupplServTsy::CompleteNotifyAllSendNetworkServiceRequest(
     TInt aErrorCode, CMmDataPackage* aDataPackage  )
     {
-TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteNotifyAllSendNetworkRequest. Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYALLSENDNETWORKSERVICEREQUEST_1, "TSY: CMmSupplServTsy::CompleteNotifyAllSendNetworkRequest. Error: %d", aErrorCode );
    
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -2787,7 +2789,7 @@ TFLOGSTRING2("TSY: CMmSupplServTsy::CompleteNotifyAllSendNetworkRequest. Error: 
 TInt CMmSupplServTsy::NotifyAllSendNetworkServiceRequestCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmSupplServTsy::NotifyAllSendNetworkServiceRequestCancel");   
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYALLSENDNETWORKSERVICEREQUESTCANCEL_1, "TSY: CMmSupplServTsy::NotifyAllSendNetworkServiceRequestCancel");
 
     // Clear data pointers        
     iRetSSOperationPtr = NULL;
@@ -2811,7 +2813,7 @@ TFLOGSTRING("TSY: CMmSupplServTsy::NotifyAllSendNetworkServiceRequestCancel");
 //
 void CMmSupplServTsy::SetIccMwisBootUpFlag( TBool aBootUp )
     {
-TFLOGSTRING2("TSY: CMmSupplServTsy::SetIccMwisBootUpFlag, aBootUp=%d", aBootUp );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCMWISBOOTUPFLAG_1, "TSY: CMmSupplServTsy::SetIccMwisBootUpFlag, aBootUp=%d", aBootUp );
 
     iGetIccSupportAtBoot = aBootUp;
     }    

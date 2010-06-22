@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,7 +16,6 @@
 
 
 //  INCLUDE FILES
-#include <ctsy/tflogger.h>
 #include "cmmtsyfax.h"
 #include "cmmfaxext.h"
 
@@ -28,12 +27,12 @@ CMmTsyFax::CMmTsyFax(
     :  iFaxExt( aFaxExt )
     
     {
-TFLOGSTRING("TSY: CMmTsyFax::CMmTsyFax" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_CTOR_1 "TSY: CMmTsyFax::CMmTsyFax" );
     }
 
 void CMmTsyFax::ConstructL()
     {
-TFLOGSTRING("TSY: CMmTsyFax::ConstructL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_CONSTRUCTL_1, "TSY: CMmTsyFax::ConstructL");
     
     iTerminate     = EFalse;
     iDataDirection = EUnknown;
@@ -58,7 +57,7 @@ TFLOGSTRING("TSY: CMmTsyFax::ConstructL");
 CMmTsyFax* CMmTsyFax::NewL(
         CMmFaxExt* aFaxExt )
     {
-TFLOGSTRING("TSY: CMmTsyFax::NewL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_NEWL_1, "TSY: CMmTsyFax::NewL");
     //  Completes successfully if fax call has already been dialled creating
     //  a CFaxSession instance, and is not called if that is not true.
     CMmTsyFax* fax = new ( ELeave ) CMmTsyFax( aFaxExt );
@@ -72,7 +71,7 @@ TFLOGSTRING("TSY: CMmTsyFax::NewL");
 
 CMmTsyFax::~CMmTsyFax()
     {
-TFLOGSTRING("TSY: CMmTsyFax::~CMmTsyFax" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_DTOR_1, "TSY: CMmTsyFax::~CMmTsyFax" );
 
 	if( iFaxExt )
 		{
@@ -90,7 +89,7 @@ TFLOGSTRING("TSY: CMmTsyFax::~CMmTsyFax" );
 void CMmTsyFax::CloseFax(
         TAny* aObj )
     {
-TFLOGSTRING("TSY: CMmTsyFax::CloseFax");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_CLOSEFAX_1, "TSY: CMmTsyFax::CloseFax");
     
     ( ( CObject* )aObj )->Close();
     }
@@ -104,7 +103,7 @@ TFLOGSTRING("TSY: CMmTsyFax::CloseFax");
 TInt CMmTsyFax:: DeregisterNotification(
         const TInt /*aIpc*/ )
     {
-TFLOGSTRING("TSY: CMmTsyFax::DeregisterNotification");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, DEREGISTERNOTIFICATION_1, "TSY: CMmTsyFax::DeregisterNotification");
     return KErrNone;
     }
 
@@ -116,7 +115,7 @@ TFLOGSTRING("TSY: CMmTsyFax::DeregisterNotification");
 //
 void CMmTsyFax::Init()
     {
-TFLOGSTRING("TSY: CMmTsyFax::Init");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_INIT_1, "TSY: CMmTsyFax::Init");
     }
 
 // ---------------------------------------------------------------------------
@@ -129,7 +128,7 @@ TInt CMmTsyFax::Read(
         const TTsyReqHandle aTsyReqHandle, 
         TDes8* aDes )                      
     {
-TFLOGSTRING2("TSY: CMmTsyFax::Read : %d" , aTsyReqHandle);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_READ_1, "TSY: CMmTsyFax::Read : %d" , aTsyReqHandle);
 
     TInt errorCode( KErrNone );
 
@@ -173,7 +172,7 @@ TInt CMmTsyFax::RegisterNotification
         const TInt /*aIpc*/ 
         )
     {
-TFLOGSTRING("TSY: CMmTsyFax::RegisterNotification");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_REGISTERNOTIFICATION_1, "TSY: CMmTsyFax::RegisterNotification");
     return KErrNone;
     }
 // ---------------------------------------------------------------------------
@@ -194,7 +193,7 @@ CTelObject::TReqMode CMmTsyFax::ReqModeL(
 //
 void CMmTsyFax::Terminate()
 	{    
-TFLOGSTRING("TSY: CMmTsyFax::Terminate");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_TERMINATE_1, "TSY: CMmTsyFax::Terminate");
 	iTerminate = ETrue;
 	}
 
@@ -207,7 +206,7 @@ TFLOGSTRING("TSY: CMmTsyFax::Terminate");
 TInt CMmTsyFax::TerminateFaxSession(
         const TTsyReqHandle aTsyReqHandle ) 
     {
-TFLOGSTRING2("TSY: CMmTsyFax::TerminateFaxSession Handle: %d", aTsyReqHandle);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_TERMINATEFAXSESSION_1, "TSY: CMmTsyFax::TerminateFaxSession Handle: %d", aTsyReqHandle);
     
     CFaxSession* session = iFaxExt->GetFaxSession();
 
@@ -236,7 +235,7 @@ TFLOGSTRING2("TSY: CMmTsyFax::TerminateFaxSession Handle: %d", aTsyReqHandle);
 TInt CMmTsyFax::WaitForEndOfPage(
         const TTsyReqHandle aTsyReqHandle ) 
     {
-TFLOGSTRING2("TSY: CMmTsyFax::WaitForEndOfPage  Handle:%d", aTsyReqHandle);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_WAITFORENDOFPAGE_1, "TSY: CMmTsyFax::WaitForEndOfPage  Handle:%d", aTsyReqHandle);
 
     if ( !iFaxExt->GetFaxSession() 
          || iFaxExt->GetCallStatus() != RCall::EStatusConnected )
@@ -274,7 +273,7 @@ TInt CMmTsyFax::Write(
         const TTsyReqHandle aTsyReqHandle, 
         TDesC8* aDes )                     
     {
-TFLOGSTRING2("TSY: CMmTsyFax::Write : %d" , aTsyReqHandle);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYFAX_WRITE_1, "TSY: CMmTsyFax::Write : %d" , aTsyReqHandle);
 
     TInt errorCode( KErrNone );
 

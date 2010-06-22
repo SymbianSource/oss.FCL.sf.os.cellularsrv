@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifySetUpMenuTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySetUpMenu.h"    // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifySetUpMenu* CSatNotifySetUpMenu::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_NEWL_1, "CSAT: CSatNotifySetUpMenu::NewL");
    	CSatNotifySetUpMenu* const satNotifySetUpMenu = 
         new ( ELeave ) CSatNotifySetUpMenu( aNotificationsTsy );
     CleanupStack::PushL( satNotifySetUpMenu );
     satNotifySetUpMenu->ConstructL();
     CleanupStack::Pop( satNotifySetUpMenu );
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_NEWL_2, "CSAT: CSatNotifySetUpMenu::NewL");
     return satNotifySetUpMenu;
     }
 
@@ -62,7 +67,7 @@ CSatNotifySetUpMenu::~CSatNotifySetUpMenu
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::~CSatNotifySetUpMenu");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_DTOR_1, "CSAT: CSatNotifySetUpMenu::~CSatNotifySetUpMenu");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ void CSatNotifySetUpMenu::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_CONSTRUCTL_1, "CSAT: CSatNotifySetUpMenu::ConstructL");
     iItemsNextIndicatorRemoved = EFalse;
     }
 
@@ -104,7 +109,7 @@ TInt CSatNotifySetUpMenu::Notify
         const TDataPackage& aPackage    
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_NOTIFY_1, "CSAT: CSatNotifySetUpMenu::Notify");
     // Save data pointer to client side for completion
     iSetUpMenuV2Pckg = reinterpret_cast<RSat::TSetUpMenuV2Pckg*>( 
         aPackage.Des1n() );
@@ -128,7 +133,7 @@ TInt CSatNotifySetUpMenu::CancelNotification
         const TTsyReqHandle aTsyReqHandle		
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CancelNotification");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_CANCELNOTIFICATION_1, "CSAT: CSatNotifySetUpMenu::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifySetUpMenuPCmdReqType );
@@ -150,7 +155,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_1, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL");
     TInt ret( KErrNone );
 	TInt returnValue( KErrNone );
 	// Unpack parameters
@@ -162,8 +167,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
         iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle(
 		CSatTsy::ESatNotifySetUpMenuPCmdReqType );
 		
-	TFLOGSTRING2("CSAT: CSatNotifySetUpMenu::CompleteNotifyL reqHandle is :%d", 
-        reqHandle );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_2, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL reqHandle is :%d", reqHandle );
 					
 	// Get ber tlv 
     CBerTlv berTlv;
@@ -221,7 +225,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
     
 				TUint16 alphaIdLength = alphaIdentifier.GetLength();
 
-				TFLOGSTRING2("CSAT: Alpha ID length:%d", alphaIdLength );
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_3, "CSAT: Alpha ID length:%d", alphaIdLength );
 
 				if ( RSat::KAlphaIdMaxSize < alphaIdLength )
 					{
@@ -239,13 +243,11 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 					// Set SAT toolikit name, send SAT SMS logging purpose
 					iToolKitName.Copy( menu.iAlphaId.iAlphaId );
 
-					TFLOGSTRING2("CSAT: CSatNotifySetUpMenu::CompleteNotifyL, \
-                        iToolKitName:%S", &iToolKitName );
+					OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_4, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, iToolKitName:%S", iToolKitName );
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL,\
-        				Wrong length of alpha id.");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_5, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Wrong length of alpha id.");
 					}
 
 				// Alpha Id status
@@ -255,8 +257,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL,\
-					    Alpha ID is NULL");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_6, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Alpha ID is NULL");
 					menu.iAlphaId.iStatus = RSat::EAlphaIdNull;
 					}
 
@@ -269,8 +270,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL,\
-					    No Help available");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_7, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, No Help available");
 					// No help
 					menu.iHelp = RSat::ENoHelpAvailable;
 					}
@@ -307,14 +307,12 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
                 }
             else if ( KErrNotFound == retValue )
                 {
-                TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL,\
-                    No Icon ID");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_8, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, No Icon ID");
                 menu.iIconListQualifier = RSat::ENoIconId;
                 }
             else
             	{
-	            TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL, \
-        			Wrong return value of icon identifier list.");	
+	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_9, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Wrong return value of icon identifier list.");
            		}	
            	
 	        //Items Data
@@ -376,8 +374,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
                     // Suffle through all the menu items
                     stringLength = 0;
 
-                    TFLOGSTRING2("CSAT: CSatNotifySetUpMenu::CompleteNotifyL, \
-                        item number:%d", i );
+                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_10, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, item number:%d", i );
                     
                     // Fill the new item
                     newItem.iItemId = itemsData.GetShortInfo( 
@@ -404,14 +401,12 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
                             newItem.iItemString );
                         }
             
-                    TFLOGSTRING2("CSAT: CSatNotifySetUpMenu::CompleteNotifyL \
-                        newItem.iItemString:%S", &newItem.iItemString );
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_11, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL newItem.iItemString:%S", newItem.iItemString );
 
 	                // Adding the new menuitem
 	                if( NULL != iconIdList.Size()  && ( i < iconIdList.Length() ) )
 	                    {
-	                    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL \
-	                            Icons on the list" );
+	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_12, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL Icons on the list" );
 	                    if( ( NULL != itemNextIndicator.Size() ) 
 	                        && ( i < itemNextIndicator.Length() ) )
 	                        {
@@ -419,8 +414,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 	                        if ( KErrNoMemory == menu.AddItem( newItem, 
 	                             itemNextIndicator[i], iconIdList[i] ) )
 	                            {
-	                            TFLOGSTRING("CSAT: CSatNotifySetUpMenu::\
-	                                CompleteNotifyL, Menu item length exceeded");
+	                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_13, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Menu item length exceeded");
 	                            // Too many or long menu items
 	                            ret = KErrCorrupt;
 	                            }
@@ -429,8 +423,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 	                    else if ( KErrNoMemory == menu.AddItemIcon( newItem, 
 	                        iconIdList[i] ) )
 	                        {
-	                        TFLOGSTRING("CSAT: CSatNotifySetUpMenu::\
-	                            CompleteNotifyL, Menu item length exceeded");
+	                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_14, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Menu item length exceeded");
 	                        // Too many or long menu items
 	                        ret = KErrCorrupt;
 	                        }
@@ -445,8 +438,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 	                        if ( KErrNoMemory == menu.AddItem( newItem, 
 	                            itemNextIndicator[i] ) )
 	                            {
-	                            TFLOGSTRING("CSAT: CSatNotifySetUpMenu::\
-	                                CompleteNotifyL, Menu item length exceeded");
+	                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_15, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Menu item length exceeded");
 	                            // Too many or long menu items
 	                            ret = KErrCorrupt;
 	                            }
@@ -457,8 +449,7 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
 	                        TInt retAdd = menu.AddItem( newItem );
 	                        if ( KErrNoMemory == retAdd )
 	                            {
-	                            TFLOGSTRING("CSAT: CSatNotifySetUpMenu::\
-	                                CompleteNotifyL, Menu item length exceeded");
+	                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_16, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Menu item length exceeded");
 	                            // Too many or long menu items
 	                            // If there is not enough space left in the buffer used 
 	                            // by the menu KErrNoMemory is returned.
@@ -487,14 +478,12 @@ TInt CSatNotifySetUpMenu::CompleteNotifyL
         	}
         
 		// Complete to the client side
-		TFLOGSTRING2("CSAT: Completing CSatNotifySetUpMenu: error %d",
-			aErrorCode );
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_17, "CSAT: Completing CSatNotifySetUpMenu: error %d",aErrorCode );
 		iNotificationsTsy->iSatTsy->ReqCompleted( reqHandle, ret );
 		} 
     else 
         {
-        TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CompleteNotifyL, \
-            Request not ongoing");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_COMPLETENOTIFYL_18, "CSAT: CSatNotifySetUpMenu::CompleteNotifyL, Request not ongoing");
 		TBuf16<1>additionalInfo;
         additionalInfo.Append ( RSat::KNoSpecificMeProblem );
 		CreateTerminalRespL( pCmdNumber,                         
@@ -513,7 +502,7 @@ TInt CSatNotifySetUpMenu::TerminalResponseL
         TDes8* aRsp
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySetUpMenu::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_TERMINALRESPONSEL_1, "CSAT: CSatNotifySetUpMenu::TerminalResponseL");
 
     TInt ret( KErrNone );
     TBuf16<1> additionalInfo;
@@ -552,8 +541,7 @@ TInt CSatNotifySetUpMenu::TerminalResponseL
         
     if( RSat::KSuccess == rspV1.iGeneralResult && iItemsNextIndicatorRemoved )
 		{
-		TFLOGSTRING("CSatNotifySetUpMenu::TerminalResponseL, \
-			iItemsNextIndicatorRemoved");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_TERMINALRESPONSEL_2, "CSatNotifySetUpMenu::TerminalResponseL, iItemsNextIndicatorRemoved");
 		rspV1.iGeneralResult = RSat::KPartialComprehension;
 		}
 		
@@ -578,7 +566,7 @@ TInt CSatNotifySetUpMenu::CreateTerminalRespL
         const TDesC16& aAdditionalInfo		
 		)
 	{
-	TFLOGSTRING("CSAT: CSatNotifySetUpMenu::CreateTerminalRespL");	
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPMENU_CREATETERMINALRESPL_1, "CSAT: CSatNotifySetUpMenu::CreateTerminalRespL");
     // Create and append response data
     TTlv tlvSpecificData;
     // Create General Result TLV here

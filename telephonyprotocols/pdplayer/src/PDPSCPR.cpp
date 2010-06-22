@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -31,7 +31,7 @@
 #include <comms-infras/agentscpractivities.h>
 #include <comms-infras/ss_nodemessages_factory.h>
 
-#if defined __FLOG_ACTIVE || defined SYMBIAN_TRACE_ENABLE
+#if  defined SYMBIAN_TRACE_ENABLE
 #define KPDPSCprTag KESockSubConnectionTag
 _LIT8(KPDPSCprSubTag, "pdpscpr");
 #endif
@@ -91,7 +91,7 @@ DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStartDataClient, pdpDataClientStar
     NODEACTIVITY_ENTRY(KNoTag, SCprStates::TStopYourFlows, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KNoDataClientsToStop>)
     THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KNoDataClientsToStop, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrProviderStopped)
     NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TDestroyPDPContext, PDPSCprStates::TAwaitingPDPContextDestroyed, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
-    THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PRStates::TDestroyOrphanedDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
+    THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TCleanupFSMAndDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, MeshMachine::TRaiseActivityError)
 NODEACTIVITY_END()
 }
@@ -106,7 +106,7 @@ DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStopDataClient, Stop, TCFDataClien
     NODEACTIVITY_ENTRY(KNoTag, SCprStates::TStopYourFlows, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
 	THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrProviderStopped)
 	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TDestroyPDPContext, PDPSCprStates::TAwaitingPDPContextDestroyed, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
-	THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PRStates::TDestroyOrphanedDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
+	THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TCleanupFSMAndDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
 	LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TSendDataClientStopped)
 NODEACTIVITY_END()
 }
@@ -549,7 +549,7 @@ void CPDPSubConnectionProvider::NewPacketFilterAddedL(CSubConIPAddressInfoParamS
 			{
 			grantedIPAddressInfo->AddParamInfo(aParamInfo);
 
-			iPacketFilterId.Append(aId);
+			User::LeaveIfError(iPacketFilterId.Append(aId));
 			iPacketFilterMaskId |= 1 << aId;
 			}
 		else

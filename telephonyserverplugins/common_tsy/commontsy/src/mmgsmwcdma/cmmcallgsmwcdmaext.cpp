@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,6 +15,12 @@
 
 
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmcallgsmwcdmaextTraces.h"
+#endif
+
 #include "cmmcallgsmwcdmaext.h"
 #include <featureuids.h>
 #include "cmmphonetsy.h"
@@ -23,7 +29,6 @@
 #include "cmmconferencecallgsmwcdmaext.h"
 #include <ctsy/pluginapi/cmmdatapackage.h>
 #include "cmmmessagemanagerbase.h"
-#include <ctsy/tflogger.h>
 
 #include "cmmvoicecalltsy.h"
 
@@ -237,7 +242,7 @@ TInt CMmCallGsmWcdmaExt::DialL(
     const TDesC* aTelNumber,
     TInt aExtensionId )
     {
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::DialL extensionid %d", aExtensionId );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_1, "TSY: CMmCallGsmWcdmaExt::DialL extensionid %d", aExtensionId );
 
     // Reset iCallParams extended members 
     iCallParams.iAlphaId.Zero();
@@ -263,12 +268,12 @@ TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::DialL extensionid %d", aExtensionId );
     RCall::TCallParams& callParams = ( *callParamsPckg )();
     
     TInt extensionId( callParams.ExtensionId() );
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::DialL callParams.extensionId %d ", extensionId);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_2, "TSY: CMmCallGsmWcdmaExt::DialL callParams.extensionId %d ", extensionId);
 
     if( ( RMobileCall::KETelMobileCallParamsV1 == extensionId ) || 
     		( RMobileCall::KETelMobileCallParamsV2 == extensionId ))
         {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams V1, V2");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_3, "TSY: CMmCallGsmWcdmaExt::DialL callparams V1, V2");
 
         iCallParams.iSpeakerControl = callParams.iSpeakerControl;
 
@@ -288,7 +293,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams V1, V2");
 
         if ( RMobileCall::KETelMobileCallParamsV2 == extensionId ) 
             {
-    TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams V2");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_4, "TSY: CMmCallGsmWcdmaExt::DialL callparams V2");
             RMobileCall::TMobileCallParamsV2Pckg* paramsPckgV2 = 
                 reinterpret_cast<RMobileCall::TMobileCallParamsV2Pckg*>( 
                 const_cast<TDesC8*>( aCallParams ) );
@@ -300,7 +305,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams V1, V2");
 
     else if( RMobileCall::KETelMobileCallParamsV7 == extensionId )
         {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams V7");        
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_5, "TSY: CMmCallGsmWcdmaExt::DialL callparams V7");
         RMobileCall::TMobileCallParamsV7Pckg* paramsPckgV7 = 
             reinterpret_cast<RMobileCall::TMobileCallParamsV7Pckg*>( 
             const_cast<TDesC8*>( aCallParams ) );
@@ -309,7 +314,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams V7");
         }
     else
         {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams version unknown");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_6, "TSY: CMmCallGsmWcdmaExt::DialL callparams version unknown");
         iCallParams.iSpeakerControl = callParams.iSpeakerControl;
         iCallParams.iSpeakerVolume = callParams.iSpeakerVolume;
         iCallParams.iInterval = callParams.iInterval;
@@ -348,7 +353,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL callparams version unknown");
         //Pack call parameters and mobile call info
         // Use argument parameters since TMobileCallParamsV7 does not inherit from 3rd party params.
         package.PackData(const_cast<TDesC8*>(aCallParams), &iMobileCallInfo);
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL: KETelExt3rdPartyV1");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_7, "TSY: CMmCallGsmWcdmaExt::DialL: KETelExt3rdPartyV1");
     	//if it is a 3rd party client
     	return iMessageManager->HandleRequestL( EMobileCallDialISV, 
             &package );
@@ -360,7 +365,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL: KETelExt3rdPartyV1");
         //Pack call parameters and mobile call info
         TPckg<RMobileCall::TMobileCallParamsV7> pckgToSend(iCallParams); 
         package.PackData(  &pckgToSend , &iMobileCallInfo );
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL: KMultimodeCallTypeIDNoFdnCheck");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_8, "TSY: CMmCallGsmWcdmaExt::DialL: KMultimodeCallTypeIDNoFdnCheck");
         return iMessageManager->HandleRequestL( 
             EMobileCallDialNoFdnCheck, &package );
         }    
@@ -369,7 +374,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL: KMultimodeCallTypeIDNoFdnCheck");
         //Pack call parameters and mobile call info
         TPckg<RMobileCall::TMobileCallParamsV7> pckgToSend(iCallParams); 
         package.PackData(  &pckgToSend , &iMobileCallInfo );
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialL: EEtelCallDial");    	    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALL_9, "TSY: CMmCallGsmWcdmaExt::DialL: EEtelCallDial");
     	return iMessageManager->HandleRequestL( EEtelCallDial, &package );
     	}
 
@@ -1155,7 +1160,7 @@ void CMmCallGsmWcdmaExt::GetCallParams(
             }
         else
         	{
-        	TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCallParams callparams version unknown");
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_GETCALLPARAMS_1, "TSY: CMmCallGsmWcdmaExt::GetCallParams callparams version unknown");
         	}
 
         }
@@ -1306,7 +1311,7 @@ void CMmCallGsmWcdmaExt::GetCallParams(
 	        hscsdParams8.iBCRepeatIndicator = hscsdCallParamsV8->iBCRepeatIndicator;
 	          
 	        }
-	    TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCallParams callparams version unknown");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_GETCALLPARAMS_2, "TSY: CMmCallGsmWcdmaExt::GetCallParams callparams version unknown");
 	    
     	}
        
@@ -1550,8 +1555,7 @@ TInt CMmCallGsmWcdmaExt::TransferL()
     if ( mmCall )
         {
         // Held call Id
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::Transfer, CallId: %d", \
-            mmCall->CallId() );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_TRANSFERL_1, "TSY: CMmCallGsmWcdmaExt::Transfer, CallId: %d", mmCall->CallId() );
 
         //Create package
         CCallDataPackage package;
@@ -1600,7 +1604,7 @@ TInt CMmCallGsmWcdmaExt::FillMobileCallInfo(
 TInt CMmCallGsmWcdmaExt::FillMobileCallInfoV3(
     RMobileCall::TMobileCallInfoV3* aInfoV3 )
     {
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV3 - extensionid=%d", aInfoV3->ExtensionId() );    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_FILLMOBILECALLINFOV3_1, "TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV3 - extensionid=%d", aInfoV3->ExtensionId() );
     
     // V3 info parameters
     aInfoV3->iSecurity = iMobileCallInfo.iSecurity;
@@ -1617,7 +1621,7 @@ TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV3 - extensionid=%d", a
 TInt CMmCallGsmWcdmaExt::FillMobileCallInfoV7(
     RMobileCall::TMobileCallInfoV7* aInfoV7 )
     {
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV7 - extensionid=%d", aInfoV7->ExtensionId() );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_FILLMOBILECALLINFOV7_1, "TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV7 - extensionid=%d", aInfoV7->ExtensionId() );
         
     // V7 info parameters
     // TCallParamOrigin iCallParamOrigin;    
@@ -1643,7 +1647,7 @@ TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV7 - extensionid=%d", a
 TInt CMmCallGsmWcdmaExt::FillMobileCallInfoV8(
     RMobileCall::TMobileCallInfoV8* aInfoV8 )
     {
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV8 - extensionid=%d", aInfoV8->ExtensionId() );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_FILLMOBILECALLINFOV8_1, "TSY: CMmCallGsmWcdmaExt::FillMobileCallInfoV8 - extensionid=%d", aInfoV8->ExtensionId() );
    
     // V8 info parameters
     aInfoV8->iSubAddress = iMobileCallInfo.iSubAddress;
@@ -1685,7 +1689,7 @@ void CMmCallGsmWcdmaExt::SetRfState(
     MCtsySsmPluginCallback* aSsmPluginCallback,
     TCtsySsmCallbackData& aCallbackData  )
     {
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::SetRfState - state=%d", aMtcState );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SETRFSTATE_1, "TSY: CMmCallGsmWcdmaExt::SetRfState - state=%d", aMtcState );
 
     TInt err ( KErrNotSupported );  
     if ( (iUsingFeatureManager) && (iFeatureControl.FeatureSupported(NFeature::KEmergencyCallsEnabledInOfflineMode ) == KFeatureSupported) )
@@ -1711,7 +1715,7 @@ TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::SetRfState - state=%d", aMtcState );
        		}
        	else
        		{
-       		TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::SetRfState - bad state");
+       		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SETRFSTATE_2, "TSY: CMmCallGsmWcdmaExt::SetRfState - bad state");
        		// pass this error to callback
        		SsmPluginCallback (KErrArgument, aCallbackData);
        		}        		
@@ -1822,7 +1826,7 @@ void CMmCallGsmWcdmaExt::SetMobileCallData(
         	{
         	// V3 parameters
 	        iMobileCallInfo.iSecurity = mobileCallInfoV3->iSecurity;
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::SetMobileCallData V3 params copied");         
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SETMOBILECALLDATA_1, "TSY: CMmCallGsmWcdmaExt::SetMobileCallData V3 params copied");
         	}
         }
         
@@ -1861,7 +1865,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::SetMobileCallData V3 params copied");
         	}
        
         
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::SetMobileCallData V7 params copied"); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SETMOBILECALLDATA_2, "TSY: CMmCallGsmWcdmaExt::SetMobileCallData V7 params copied");
         }
         
     // TMobileCallInfoV8
@@ -1892,7 +1896,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::SetMobileCallData V7 params copied");
         	iMobileCallInfo.iBCRepeatIndicator = mobileCallInfoV8->iBCRepeatIndicator;
         	}	 
 	    
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::SetMobileCallData V8 params copied"); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SETMOBILECALLDATA_3, "TSY: CMmCallGsmWcdmaExt::SetMobileCallData V8 params copied");
 	       }
 	
 	//update validity flags
@@ -2023,7 +2027,7 @@ TInt CMmCallGsmWcdmaExt::GetCurrentHscsdInfo(
 
                if (KETelExtMultimodeV1 == extensionId )
                    {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCallParamsV1");                   
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_GETCURRENTHSCSDINFO_1, "TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCallParamsV1");
                    RMobileCall::TMobileCallHscsdInfoV1Pckg* hscsdInfoPckg =
                        REINTERPRET_CAST( RMobileCall::TMobileCallHscsdInfoV1Pckg*,
                        aHSCSDInfo );
@@ -2039,7 +2043,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCall
             
                else if (KEtelExtMultimodeV7 == extensionId )
                    {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCallParamsV7");                  
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_GETCURRENTHSCSDINFO_2, "TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCallParamsV7");
                    RMobileCall::TMobileCallHscsdInfoV7Pckg* hscsdInfoPckg7 =
                        ( RMobileCall::TMobileCallHscsdInfoV7Pckg* )aHSCSDInfo;
                    RMobileCall::TMobileCallHscsdInfoV7& hscsdInfoV7 =
@@ -2064,7 +2068,7 @@ TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCall
             
                else if (KEtelExtMultimodeV8 == extensionId )
                    {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCallParamsV8");                  
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_GETCURRENTHSCSDINFO_3, "TSY: CMmCallGsmWcdmaExt::GetCurrentHscsdInfo - KETelMobileHscsdCallParamsV8");
                    RMobileCall::TMobileCallHscsdInfoV8Pckg* hscsdInfoPckg8 =
                        ( RMobileCall::TMobileCallHscsdInfoV8Pckg* )aHSCSDInfo;
                    RMobileCall::TMobileCallHscsdInfoV8& hscsdInfoV8 =
@@ -2128,8 +2132,8 @@ TInt CMmCallGsmWcdmaExt::DialDataCallL(
     const TDesC8* aCallParams,
     const TDesC* aTelNumber )
     {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialDataCallL");
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::DialDataCallL aCallMode: %d", aCallMode);
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALDATACALLL_1, "TSY: CMmCallGsmWcdmaExt::DialDataCallL");
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALDATACALLL_2, "TSY: CMmCallGsmWcdmaExt::DialDataCallL aCallMode: %d", aCallMode);
 
 	iMobileCallInfo.iDialledParty.iTelNumber.Copy( *aTelNumber );
 	iMobileCallInfo.iDialledParty.iNumberPlan =
@@ -2369,13 +2373,13 @@ TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::DialDataCallL aCallMode: %d", aCallMode);
     
     if( KMultimodeCallTypeIDNoFdnCheck == iMmCallTsy->GetDialTypeId() )
         {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialDataCallL: EMobileCallDialNoFdnCheck");                      
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALDATACALLL_3, "TSY: CMmCallGsmWcdmaExt::DialDataCallL: EMobileCallDialNoFdnCheck");
         //Send request to the Domestic OS layer.
         return iMessageManager->HandleRequestL( EMobileCallDialNoFdnCheck, &package );
         }
     else
         {
-TFLOGSTRING("TSY: CMmCallGsmWcdmaExt::DialDataCallL: EEtelCallDial");          
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_DIALDATACALLL_4, "TSY: CMmCallGsmWcdmaExt::DialDataCallL: EEtelCallDial");
         //Send request to the Domestic OS layer.
         return iMessageManager->HandleRequestL( EEtelCallDial, &package );
         }        
@@ -2982,7 +2986,7 @@ void CMmCallGsmWcdmaExt::SsmPluginCallback(TInt aResult, TCtsySsmCallbackData& a
 	
 	if ( KErrNone == aResult )
     	{
-		TFLOGSTRING ("TSY:CMmCallGsmWcdmaExt::SsmPluginCallback: Dialing...");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SSMPLUGINCALLBACK_1, "TSY:CMmCallGsmWcdmaExt::SsmPluginCallback: Dialing...");
 		
 		//at this point the RF should be enabled in all cases
 		TRAPD(err, result = iMessageManager->HandleRequestL(

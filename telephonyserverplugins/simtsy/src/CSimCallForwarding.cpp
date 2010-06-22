@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,10 +20,16 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimCallForwardingTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 #include "CSimCallForwarding.h"
 #include "CSimPhone.h"
-#include "Simlog.h"
 
 const TInt KSettingListGranularity=5;	// < The granularity used for parameter list arrays.
 const TInt KInvalidTimeout = -1;        // Value used when timeout period does not matter
@@ -59,7 +65,7 @@ void CSimCallForwarding::ConstructL()
  	Retrieves all the Call forwarding and Identity services tags from the config file
 	*/
 	{
-	LOGCALL1("Starting to parse Call Forwarding config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_CONSTRUCTL_1, "Starting to parse Call Forwarding config parameters...");
 
 	iIdentityServiceStatus=new(ELeave) CArrayFixFlat<TIdentityServiceStatus>(KSettingListGranularity);
 	
@@ -80,13 +86,13 @@ void CSimCallForwarding::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,service);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("service",ret,0,&KIdentityServiceStatus);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SERVICE returned %d (element no. %d) from tag %s.",ret,0,KIdentityServiceStatus);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,status);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("status",ret,1,&KIdentityServiceStatus);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element STATUS returned %d (element no. %d) from tag %s.",ret,1,KIdentityServiceStatus);
 			continue;
 			}
 			
@@ -96,7 +102,7 @@ void CSimCallForwarding::ConstructL()
 		iIdentityServiceStatus->AppendL(identityServiceStatus);
 		}
 		
-	LOGCALL1("...Finished parsing Call Forwarding config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_CONSTRUCTL_4, "...Finished parsing Call Forwarding config parameters...");
 	}
 
 CSimCallForwarding::~CSimCallForwarding()
@@ -179,7 +185,7 @@ void CSimCallForwarding::FindAndCreateCFListL()
 	/**
 	Creates the Call forwarding list from the config file
 	*/
-	LOGCALL1("CSimPhone::FindAndCreateCFListL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_1, "CSimPhone::FindAndCreateCFListL");
 	RMobilePhone::TMobilePhoneCFInfoEntryV1 entry;
 
 	if(iCFList)
@@ -191,7 +197,7 @@ void CSimCallForwarding::FindAndCreateCFListL()
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
 
-	LOGCALL1("Starting to Load and Parse CFList Config parameters");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_2, "Starting to Load and Parse CFList Config parameters");
 	
 	TInt i;
 	for(i=0;i<count;i++)
@@ -205,34 +211,34 @@ void CSimCallForwarding::FindAndCreateCFListL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,condition);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("condition",ret,0,&KCFList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CONDITION returned %d (element no. %d) from tag %s.",ret,0,KCFList);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,serviceGroup);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("serviceGroup",ret,1,&KCFList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SERVICEGROUP returned %d (element no. %d) from tag %s.",ret,1,KCFList);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,status);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("status",ret,2,&KCFList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element STATUS returned %d (element no. %d) from tag %s.",ret,2,KCFList);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,timeout);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("timeout",ret,3,&KCFList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element TIMEOUT returned %d (element no. %d) from tag %s.",ret,3,KCFList);
 			continue;
 			}
 		
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,number);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("number",ret,4,&KCFList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_FINDANDCREATECFLISTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element NUMBER returned %d (element no. %d) from tag %s.",ret,4,KCFList);
 			continue;
 			}
 		
@@ -354,7 +360,7 @@ TInt CSimCallForwarding::NotifyCallForwardingStatusChange(const TTsyReqHandle aR
 	iCFNotification.iCFChangeInfoNotificationPending=ETrue;
 	iCFNotification.iCFChangeInfoReqHandle=aReqHandle;
 	iCFNotification.iCurrentCFCondition=aCF;
-	LOGCALL1("Finished CSimCallForwarding::NotifyCallForwardingStatusChange");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_NOTIFYCALLFORWARDINGSTATUSCHANGE_1, "Finished CSimCallForwarding::NotifyCallForwardingStatusChange");
 	return KErrNone;
 	}
 	
@@ -395,7 +401,7 @@ TInt CSimCallForwarding::SetCallForwardingStatus(const TTsyReqHandle aReqHandle,
 		}
 	
 	iPhone->ReqCompleted(aReqHandle,err);
-	LOGCALL1("Finished CSimCallForwarding::SetCallForwardingStatus");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_SETCALLFORWARDINGSTATUS_1, "Finished CSimCallForwarding::SetCallForwardingStatus");
 	return KErrNone;
 	}
 	
@@ -420,7 +426,7 @@ TInt CSimCallForwarding::GetCallForwardingStatusPhase1(const TTsyReqHandle aTsyR
 	@param aReqData contains details of the request
 	@param aBufSize size of the buffer the client needs to allocate for phase 2
 	*/
-	LOGCALL1("CSimPhone::GetCallForwardingStatusPhase1");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_GETCALLFORWARDINGSTATUSPHASE1_1, "CSimPhone::GetCallForwardingStatusPhase1");
 	TInt ret=KErrNone;
 
     // for forwarding we cannot querry for all conditions;
@@ -439,7 +445,7 @@ TInt CSimCallForwarding::GetCallForwardingStatusPhase1(const TTsyReqHandle aTsyR
 		if (leaveCode != KErrNone)
 			iPhone->ReqCompleted(aTsyReqHandle,leaveCode);
 		}
-	LOGCALL1("CSimPhone::GetCallForwardingStatusPhase1");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_GETCALLFORWARDINGSTATUSPHASE1_2, "CSimPhone::GetCallForwardingStatusPhase1");
 	return ret;
 	}
 	
@@ -455,7 +461,7 @@ TInt CSimCallForwarding::ProcessGetCallForwardingStatusPhase1L(const TTsyReqHand
 	@param aBufSize Size of the buffer the client has to allocate for the 2nd pahase
 	*/
 
-	LOGCALL1("CSimPhone::ProcessGetCallForwardingStatusPhase1L");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_PROCESSGETCALLFORWARDINGSTATUSPHASE1L_1, "CSimPhone::ProcessGetCallForwardingStatusPhase1L");
 
 	CMobilePhoneCFList* list=CMobilePhoneCFList::NewL();
 	CleanupStack::PushL(list);
@@ -503,7 +509,7 @@ TInt CSimCallForwarding::ProcessGetCallForwardingStatusPhase1L(const TTsyReqHand
 	
 	// Complete first phase of list retrieval
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
-	LOGCALL1("CSimPhone::ProcessGetCallForwardingStatusPhase1L");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_PROCESSGETCALLFORWARDINGSTATUSPHASE1L_2, "CSimPhone::ProcessGetCallForwardingStatusPhase1L");
 	return KErrNone;	
 	}
 
@@ -516,7 +522,7 @@ TInt CSimCallForwarding::GetCallForwardingStatusPhase2(const TTsyReqHandle aTsyR
 	@param aBuf buffer that contains the call forwarding list
 	*/
 	{
-	LOGCALL1("CSimPhone::GetCallForwardingStatusPhase2");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_GETCALLFORWARDINGSTATUSPHASE2_1, "CSimPhone::GetCallForwardingStatusPhase2");
 	CListReadAllAttempt* read=NULL;
 	// Find the get detected network attempt from this client
 	for (TInt i=0; i<iGetCFStatus->Count(); ++i)
@@ -535,7 +541,7 @@ TInt CSimCallForwarding::GetCallForwardingStatusPhase2(const TTsyReqHandle aTsyR
 			}
 		}
 	// Should handle error case of not finding the matching client from read all phase 1
-	LOGCALL1("CSimPhone::GetCallForwardingStatusPhase2");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_GETCALLFORWARDINGSTATUSPHASE2_2, "CSimPhone::GetCallForwardingStatusPhase2");
 	return KErrNotFound;
 	}
 
@@ -546,7 +552,7 @@ TInt CSimCallForwarding::GetCallForwardingStatusCancel(const TTsyReqHandle aTsyR
 	Cancel the request to retrieve the status of call forwarding
 	@param aTsyReqHandle handle to the request
 	*/
-	LOGCALL1("CSimPhone::GetCallForwardingStatusCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_GETCALLFORWARDINGSTATUSCANCEL_1, "CSimPhone::GetCallForwardingStatusCancel");
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	// Remove the read all attempt from iGetCFStatus
 	CListReadAllAttempt* read=NULL;
@@ -561,7 +567,7 @@ TInt CSimCallForwarding::GetCallForwardingStatusCancel(const TTsyReqHandle aTsyR
 			}
 		}
 	iPhone->ReqCompleted(aTsyReqHandle,KErrCancel);
-	LOGCALL1("CSimPhone::GetCallForwardingStatusCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLFORWARDING_GETCALLFORWARDINGSTATUSCANCEL_2, "CSimPhone::GetCallForwardingStatusCancel");
 	return KErrNone;
 	}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -196,7 +196,7 @@ private:
 	TInt GetMbmsSessionsPhase2(const TTsyReqHandle aTsyReqHandle, TClientId* aClient, TDes8* aBufSize);
 	TInt GetMbmsSessionsCancel(const TTsyReqHandle aTsyReqHandle);
 
-	TInt UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHandle,TMbmsAction* aAction, TUint* aSessionId);
+	TInt UpdateMbmsSessionList(const TTsyReqHandle aTsyReqHandle,TMbmsAction* aAction, TUint* aSessionId);
 	TInt UpdateMbmsSessionListCancel(const TTsyReqHandle aTsyReqHandle);
 	
 	TInt InitialiseContext(const TTsyReqHandle aTsyReqHandle, TDes8* aDataChannelV2Pckg); // This method supersedes the LoanCommPort() and RecoverCommPort() methods.

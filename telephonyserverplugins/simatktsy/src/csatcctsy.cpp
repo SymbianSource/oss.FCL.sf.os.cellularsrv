@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,13 +21,18 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "csatcctsyTraces.h"
+#endif
+
 #include "etelsat.h"                // SAT specific Etel definitions
 #include "CSatDataPackage.h"        // Parameter packing 
 #include "CSatCCTsy.h"              // Class header
 #include "CSatTsy.h"                // SAT TSY general class
 #include "CSatNotificationsTsy.h"   // SAT TSY Notifications class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "msattsy_ipcdefs.h"		// Sat Tsy specific request types
 #include "TSatUtility.h"			// Utility class
 #include "TTlv.h"					// TTlv class
@@ -44,13 +49,13 @@ CSatCCTsy* CSatCCTsy::NewL
         CSatNotificationsTsy* aNotificationsTsy   
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_NEWL_1, "CSAT: CSatCCTsy::NewL");
     CSatCCTsy* const satCcTsy = new ( ELeave ) CSatCCTsy( aNotificationsTsy );
     CleanupStack::PushL( satCcTsy );
     satCcTsy->iSatTsy = aSatTsy;
     satCcTsy->ConstructL();
     CleanupStack::Pop( satCcTsy );
-    TFLOGSTRING("CSAT: CSatCCTsy::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_NEWL_2, "CSAT: CSatCCTsy::NewL, end of method");
     return satCcTsy;
     }
 
@@ -64,7 +69,7 @@ CSatCCTsy::~CSatCCTsy
         //None   
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::~CSatCCTsy");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_DTOR_1, "CSAT: CSatCCTsy::~CSatCCTsy");
     // Unregister.
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatCCTsyObjType, NULL );
@@ -80,7 +85,7 @@ void CSatCCTsy::ConstructL
         //None
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::ConstructL\n" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CONSTRUCTL_1, "CSAT: CSatCCTsy::ConstructL\n" );
     // Register.
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatCCTsyObjType, this );
@@ -117,7 +122,7 @@ void CSatCCTsy::CompleteBearerCapability
 		 TInt /*aResult*/
 		 )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::CompleteBearerCapability");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_COMPLETEBEARERCAPABILITY_1, "CSAT: CSatCCTsy::CompleteBearerCapability");
     TPtrC8* bearerData = NULL;
 
     // Unpack parameters 
@@ -134,7 +139,7 @@ void CSatCCTsy::CreateEnvelopeL
         CSatDataPackage* aDataPackage
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::CreateEnvelope");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CREATEENVELOPEL_1, "CSAT: CSatCCTsy::CreateEnvelope");
     TCCInfo* ccInfo;
     
     // Unpack parameters
@@ -159,8 +164,7 @@ void CSatCCTsy::CreateEnvelopeL
             }
         default:
             {
-            TFLOGSTRING2("CSAT: CSatCCTsy::CreateEnvelope,\
-                Unidentified tag: %d", ccInfo->iTag );
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CREATEENVELOPEL_2, "CSAT: CSatCCTsy::CreateEnvelope, Unidentified tag: %d", ccInfo->iTag );
             }
         }
     }
@@ -175,7 +179,7 @@ void CSatCCTsy::CheckIfAlphaIdPresent
         CSatDataPackage* aDataPackage
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::CheckIfAlphaIdPresent"); 
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CHECKIFALPHAIDPRESENT_1, "CSAT: CSatCCTsy::CheckIfAlphaIdPresent");
     TDesC8* atkData;            
     RSat::TControlResult* result;
     
@@ -267,8 +271,7 @@ void CSatCCTsy::CheckIfAlphaIdPresent
                         // can be made.
                         if ( 0 != alphaIdLength )
                             {
-                            TFLOGSTRING("CSAT: CSatCCTsy::CheckIfAlphaIdPresent.\
-                                inform user.");
+                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CHECKIFALPHAIDPRESENT_2, "CSAT: CSatCCTsy::CheckIfAlphaIdPresent. inform user.");
 
                             TPtrC8 sourceString;
                             sourceString.Set( ( *atkData ).Mid( index + 
@@ -283,8 +286,7 @@ void CSatCCTsy::CheckIfAlphaIdPresent
                             }
                         else
                             {
-                            TFLOGSTRING("CSAT: CSatCCTsy::CheckIfAlphaIdPresent.\
-                                AlphaID length: 0.");
+                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CHECKIFALPHAIDPRESENT_3, "CSAT: CSatCCTsy::CheckIfAlphaIdPresent. AlphaID length: 0.");
                             }
 
                         // Update index
@@ -293,8 +295,7 @@ void CSatCCTsy::CheckIfAlphaIdPresent
                         }
                     default:
                         {
-                        TFLOGSTRING("CSAT: CSatCCTsy::CheckIfAlphaIdPresent\
-                            Unknown tag.");
+                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CHECKIFALPHAIDPRESENT_4, "CSAT: CSatCCTsy::CheckIfAlphaIdPresent Unknown tag.");
                         index = envLength;
                         break;
                         }
@@ -304,8 +305,7 @@ void CSatCCTsy::CheckIfAlphaIdPresent
         }
     else
         {
-        TFLOGSTRING("CSAT: CSatCCTsy::CheckIfAlphaIdPresent. \
-            Input data missing!");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CHECKIFALPHAIDPRESENT_5, "CSAT: CSatCCTsy::CheckIfAlphaIdPresent. Input data missing!");
         }
     }
     
@@ -320,7 +320,7 @@ void CSatCCTsy::CompleteCCEventL
         CSatDataPackage* aDataPackage 
         )
     {
-    TFLOGSTRING2("CSAT: CSatCCTsy::CompleteCCEventL, aIpc: %d", aIpc);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_COMPLETECCEVENTL_1, "CSAT: CSatCCTsy::CompleteCCEventL, aIpc: %d", aIpc);
     TCCInfo* ccInfo;
     
     // Unpack parameters
@@ -387,7 +387,7 @@ void CSatCCTsy::CompleteCCEventL
             }
         default:
             {
-            TFLOGSTRING("CSAT: CSatCCTsy::CompleteCCEventL, Unknown event!");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_COMPLETECCEVENTL_2, "CSAT: CSatCCTsy::CompleteCCEventL, Unknown event!");
             }
         }
     }   
@@ -404,7 +404,7 @@ void CSatCCTsy::SetTonNpiForSS
         const TUint8 aTonNpi 
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::SetTonNpiForSS");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_SETTONNPIFORSS_1, "CSAT: CSatCCTsy::SetTonNpiForSS");
     iTonNpiForSS = aTonNpi;
     iTonNpiPresent = ETrue;
     }
@@ -419,7 +419,7 @@ void CSatCCTsy::SetUssdStatus
     	CSatDataPackage* aDataPackage
     	)
     { 
-    TFLOGSTRING("CSAT: CSatCCTsy::SetUssdStatus." );    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_SETUSSDSTATUS_1, "CSAT: CSatCCTsy::SetUssdStatus." );
     // Unpack parameters 
     aDataPackage->UnPackData( iUssdTlvSupported ); 
     }  
@@ -436,12 +436,12 @@ void CSatCCTsy::StoreAddressForCC
         const TDesC8& aAddress 
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::StoreAddressForCC");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_STOREADDRESSFORCC_1, "CSAT: CSatCCTsy::StoreAddressForCC");
     
     if ( NULL == &aAddress )
         {
         iProactiveCommandAddress.Zero();
-        TFLOGSTRING("CSAT: CSatCCTsy::StoreAddressForCC, address cleared");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_STOREADDRESSFORCC_2, "CSAT: CSatCCTsy::StoreAddressForCC, address cleared");
         }
     else
         {
@@ -456,7 +456,7 @@ void CSatCCTsy::StoreAddressForCC
                 iProactiveCommandAddress.Delete( 0, 1 );
                 }
             }
-        TFLOGSTRING("CSAT: CSatCCTsy::StoreAddressForCC, Address stored");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_STOREADDRESSFORCC_3, "CSAT: CSatCCTsy::StoreAddressForCC, Address stored");
         }
     }     
        
@@ -470,7 +470,7 @@ void CSatCCTsy::CreateCallEnvelopeL
 		const TCCInfo* aCCInfo
 		)
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::CreateCallEnvelopeL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CREATECALLENVELOPEL_1, "CSAT: CSatCCTsy::CreateCallEnvelopeL" );
     // Create envelope
     TTlv envelope;
     envelope.Begin( KBerTlvCallControlTag );
@@ -527,8 +527,7 @@ void CSatCCTsy::CreateCallEnvelopeL
             }
         else
         	{
-        	TFLOGSTRING("CSAT: CSatCCTsy::CreateCallEnvelopeL,\
-        	    Bearer data length exceeded, data not added" );
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CREATECALLENVELOPEL_2, "CSAT: CSatCCTsy::CreateCallEnvelopeL, Bearer data length exceeded, data not added" );
         	}
         }
 
@@ -562,7 +561,7 @@ void CSatCCTsy::CreateSSEnvelopeL
 		const TCCInfo* aCCInfo
 		)
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::CreateSSEnvelopeL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CREATESSENVELOPEL_1, "CSAT: CSatCCTsy::CreateSSEnvelopeL" );
     // There is no TON and NPI in SS cc request. Information is part of the 
     // number string: Spec ETSI TS 122 030 v5.0.0 says that if number starts
     // with +, TON is international and if it starts without it, it's unknown.
@@ -694,7 +693,7 @@ void CSatCCTsy::CreateUSSDEnvelopeL
 		const TCCInfo* aCCInfo
 		)
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::CreateUSSDEnvelopeL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_CREATEUSSDENVELOPEL_1, "CSAT: CSatCCTsy::CreateUSSDEnvelopeL" );
     // Create USSD envelope
     TTlv envelope;
         
@@ -773,7 +772,7 @@ TBool CSatCCTsy::IsOnlyDigitsInUssd
         const TDesC8& aUSSDString
         )
     {    
-    TFLOGSTRING("CSAT: CSatCCTsy::IsOnlyDigitsInUssd." );        
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_ISONLYDIGITSINUSSD_1, "CSAT: CSatCCTsy::IsOnlyDigitsInUssd." );
     // Unpack it
     TBuf8<KMaxUssdStringLengthInBytes> ussdString;
     TSatUtility::Packed7to8Unpacked( aUSSDString, ussdString );    
@@ -804,7 +803,7 @@ TBool CSatCCTsy::HasProactiveOrigin
         const TDesC8& aAddress 
         )
     {
-    TFLOGSTRING("CSAT: CSatCCTsy::HasProactiveOrigin");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_HASPROACTIVEORIGIN_1, "CSAT: CSatCCTsy::HasProactiveOrigin");
     TBool match( EFalse );
     
     if ( aAddress.Length() )
@@ -815,21 +814,20 @@ TBool CSatCCTsy::HasProactiveOrigin
             // It means we need to drop the first character out from comparison
             if ( iProactiveCommandAddress == aAddress.Mid( 1 ) )
                 {
-                TFLOGSTRING("CSAT: CSatCCTsy::HasProactiveOrigin, Match!");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_HASPROACTIVEORIGIN_2, "CSAT: CSatCCTsy::HasProactiveOrigin, Match!");
                 match = ETrue;
                 }
             }
         // Otherwise we can use the whole string for checking
         else if ( iProactiveCommandAddress == aAddress )
             {
-            TFLOGSTRING("CSAT: CSatCCTsy::HasProactiveOrigin, Match!");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_HASPROACTIVEORIGIN_3, "CSAT: CSatCCTsy::HasProactiveOrigin, Match!");
             match = ETrue;
             }
         }
     else
         {
-        TFLOGSTRING("CSAT: CSatCCTsy::HasProactiveOrigin, \
-            Invalid input address");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATCCTSY_HASPROACTIVEORIGIN_4, "CSAT: CSatCCTsy::HasProactiveOrigin, Invalid input address");
         }
         
     return match;

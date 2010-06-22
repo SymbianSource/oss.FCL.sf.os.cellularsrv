@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,11 +16,16 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmphonebookstoretsyTraces.h"
+#endif
+
 #include "cmmphonebookstoretsy.h"
 #include "cmmpblist.h"
 #include "cmmphonebookstoregsmext.h"
 #include "CMmCustomTsy.h"
-#include <ctsy/tflogger.h>
 #include <ctsy/rmmcustomapi.h>
 #include "cmmmessagemanagerbase.h"
 #include "cmmtsyreqhandlestore.h"
@@ -39,7 +44,7 @@ CMmPhoneBookStoreTsy::CMmPhoneBookStoreTsy():
 
 void CMmPhoneBookStoreTsy::ConstructL( const TDesC& aName )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - entered");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CONSTRUCTL_1, "TSY: CMmPhoneBookStoreTsy::ConstructL - entered");
 #ifdef REQHANDLE_TIMER
     // Create req handle store
     iTsyReqHandleStore = CMmTsyReqHandleStore::NewL( this,
@@ -74,7 +79,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - entered");
     // Set phonebookrelated name and number max values
     SetMaxNameAndNumLenght();
 
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - PB %S", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CONSTRUCTL_2, "TSY: CMmPhoneBookStoreTsy::ConstructL - PB %S", iPhoneBookName);
 
     // Used entries is zero in the start
     iUsedEntries = 0;
@@ -90,9 +95,9 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - PB %S", &iPhoneBookName);
     iRequestedOnPBRead = EFalse;
     iIsPBInitCompleted = EFalse;
 
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - iIsPhonebookInitialized: %i", iStoreInfoData->iIsPhonebookInitialized);
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ConstructL - iSIMReady: %i", bootState->iSIMReady);
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ConstructL - before initialization");
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CONSTRUCTL_3, "TSY: CMmPhoneBookStoreTsy::ConstructL - iIsPhonebookInitialized: %u", (TUint)iStoreInfoData->iIsPhonebookInitialized);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CONSTRUCTL_4, "TSY: CMmPhoneBookStoreTsy::ConstructL - iSIMReady: %u", (TUint)bootState->iSIMReady);
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CONSTRUCTL_5, "TSY: CMmPhoneBookStoreTsy::ConstructL - before initialization");
     if(bootState->iSIMReady)
         {
         SimIsReady();
@@ -107,7 +112,7 @@ CMmPhoneBookStoreTsy* CMmPhoneBookStoreTsy::NewL(
     CMmPhoneTsy* aMmPhone,
     const TDesC& aName )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::NewL - entered");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_NEWL_1, "TSY: CMmPhoneBookStoreTsy::NewL - entered");
     
     CMmPhoneBookStoreTsy* mmPhoneBookStoreTsy =
         new ( ELeave ) CMmPhoneBookStoreTsy();
@@ -126,7 +131,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::NewL - entered");
 
 CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy()
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - PB %S", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DTOR_1, "TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - PB %S", iPhoneBookName);
 
     if ( iMmPhoneTsy )
         {
@@ -136,11 +141,11 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - PB %S", &iPhone
             {
             RMmCustomAPI::TPndCacheStatus fdnCacheStatus = 
             iMmPhoneTsy->GetCustomTsy()->GetPhonebookCacheStatus( KFDNPhoneBook );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - FDN cachestatus %d", fdnCacheStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DTOR_2, "TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - FDN cachestatus %d", fdnCacheStatus);
 
             RMmCustomAPI::TPndCacheStatus adnCacheStatus =
             iMmPhoneTsy->GetCustomTsy()->GetPhonebookCacheStatus( KADNPhoneBook );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - ADN cachestatus %d", adnCacheStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DTOR_3, "TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - ADN cachestatus %d", adnCacheStatus);
 
             // Check if the caching is active
             if ( bootState->iCachingActive )
@@ -161,8 +166,8 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - ADN cachestatus
                         package.SetPhoneBookName( iPhoneBookName );
                         TRAP_IGNORE( iMmPhoneTsy->MessageManager()->HandleRequestL( 
                                 EMmTsyPhoneBookStoreCacheCancelIPC, &package ); );
-                        TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - CacheCancel for %d", iPhoneBookType);
-                        TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - CachingActive = EFalse");
+                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DTOR_4, "TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - CacheCancel for %d", iPhoneBookType);
+                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DTOR_5, "TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - CachingActive = EFalse");
 
                         bootState->iCachingActive = EFalse;
                         }
@@ -174,7 +179,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - ADN cachestatus
                                 || RMmCustomAPI::ECacheFailed == adnCacheStatus )) && (KFDNPhoneBook == iPhoneBookType) )  
 
                     {
-                    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - CachingActive = ETrue");
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DTOR_6, "TSY: CMmPhoneBookStoreTsy::~CMmPhoneBookStoreTsy - CachingActive = ETrue");
                     // Set the caching back to active
                     bootState->iCachingActive = ETrue;                 
                     }
@@ -299,7 +304,7 @@ CTelObject* CMmPhoneBookStoreTsy::OpenNewObjectL( TDes& )
 CTelObject::TReqMode CMmPhoneBookStoreTsy::ReqModeL(
     const TInt aIpc )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReqModeL IPC:%d", aIpc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQMODEL_1, "TSY: CMmPhoneBookStoreTsy::ReqModeL IPC:%d", aIpc);
 
     CTelObject::TReqMode ret = 0;
     switch ( aIpc )
@@ -438,7 +443,7 @@ TInt CMmPhoneBookStoreTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::CancelService IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CANCELSERVICE_1, "TSY: CMmPhoneBookStoreTsy::CancelService IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -464,7 +469,7 @@ TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::CancelService IPC:%d Handle:%d", aIpc, 
         default:
             break;
         }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CancelService return: %d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CANCELSERVICE_2, "TSY: CMmPhoneBookStoreTsy::CancelService return: %d", ret);
 
     return ret;
     }
@@ -483,7 +488,7 @@ TInt CMmPhoneBookStoreTsy::ExtFunc(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_EXTFUNC_1, "TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
@@ -537,7 +542,7 @@ TInt CMmPhoneBookStoreTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::DoExtFuncL IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DOEXTFUNCL_1, "TSY: CMmPhoneBookStoreTsy::DoExtFuncL IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TAny* dataPtr=aPackage.Ptr1();
     TAny* dataPtr2=aPackage.Ptr2();
@@ -630,7 +635,7 @@ void CMmPhoneBookStoreTsy::SetPhoneBookType(
         {
         iPhoneBookType = KMBDNPhoneBook; //MBDN
         }
-TFLOGSTRING2( "TSY: CMmPhoneBookStoreTsy::SetPhoneBookType - Type: %d", iPhoneBookType);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SETPHONEBOOKTYPE_1,  "TSY: CMmPhoneBookStoreTsy::SetPhoneBookType - Type: %d", iPhoneBookType);
     }
 
 // ---------------------------------------------------------------------------
@@ -643,8 +648,8 @@ void CMmPhoneBookStoreTsy::CompletePBStoreInitializationL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - Result: %i",aResult );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneBookType: %u",iPhoneBookType );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEPBSTOREINITIALIZATIONL_1, "TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEPBSTOREINITIALIZATIONL_2, "TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneBookType: %u",iPhoneBookType );
 
     // If initialization made successfully
     // fill phonebook related static data
@@ -671,7 +676,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneB
     //Initialisation has failed
         {
         CMmCustomTsy* mmCustom = iMmPhoneTsy->GetCustomTsy();
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has failed" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEPBSTOREINITIALIZATIONL_3, "TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has failed" );
 
         if ( NULL != mmCustom )
             {
@@ -732,7 +737,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL has faile
 //
 void CMmPhoneBookStoreTsy::SetMaxNameAndNumLenght()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SetMaxNameAndNumLenght");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SETMAXNAMEANDNUMLENGHT_1, "TSY: CMmPhoneBookStoreTsy::SetMaxNameAndNumLenght");
     switch ( iPhoneBookType )
         {
         case KADNPhoneBook:
@@ -781,7 +786,7 @@ TInt CMmPhoneBookStoreTsy::ReadL(
     RMobilePhoneBookStore::TPBIndexAndNumEntries* aIndexAndEntries,
     TDes8* aPBData, TBool aContinuedRead )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_1, "TSY: CMmPhoneBookStoreTsy::ReadL");
 
     // Initialise ret to KErrServerBusy
     TInt ret = KErrServerBusy;
@@ -799,7 +804,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL");
     if ( !aContinuedRead && EMultimodePhoneBookStoreReqHandleUnknown != phoneBookStoreReadHandle )
         {
         // If request handle already exists return KErrServerBusy
-        TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Handle already exists");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_2, "TSY: CMmPhoneBookStoreTsy::ReadL - Handle already exists");
         ReqCompleted( aTsyReqHandle, ret );
         }
     // check the buffer size
@@ -812,7 +817,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL");
         !( iReadReqStore->iCaching ) &&
         (KADNPhoneBook == iPhoneBookType || KFDNPhoneBook == iPhoneBookType))
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - SIM refresh registration failed Cache info can be corrupted - ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_3, "TSY: CMmPhoneBookStoreTsy::ReadL - SIM refresh registration failed Cache info can be corrupted - ");
 
         //Store Read req params for new request
         iReadReqStore->iReqHandle = aTsyReqHandle;
@@ -834,7 +839,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - SIM refresh registration failed 
                 KFDNPhoneBook == iPhoneBookType ) &&
              ( !iStoreInfoData->iIsPhonebookInitialized || !iCacheReady ) )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Initiliszation ongoing -> Read not possible");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_4, "TSY: CMmPhoneBookStoreTsy::ReadL - Initiliszation ongoing -> Read not possible");
             // If phonebook initialisation is not ready for AND and FDN phonebooks,
             // complete with KErrInUse. This is done becauce TSY can not handle
             // multible simultaneously request to certain phonebook.
@@ -857,8 +862,8 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Initiliszation ongoing -> Read n
         // number of records.
         if ( ( 1 > iIndexToRead ) || ( 1 > aIndexAndEntries->iNumSlots ) )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Index is less than 1 or aIndexAndEntries->iNumSlots is less then 1" );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadL - Index %i ", iIndexToRead);
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_5, "TSY: CMmPhoneBookStoreTsy::ReadL - Index is less than 1 or aIndexAndEntries->iNumSlots is less then 1" );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_6, "TSY: CMmPhoneBookStoreTsy::ReadL - Index %d ", iIndexToRead);
             iIndexAndEntries = NULL;
             iIndexToRead = 0;
             ReqCompleted( aTsyReqHandle, KErrArgument );
@@ -866,8 +871,8 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadL - Index %i ", iIndexToRead);
         else if ( KBDNPhoneBook != iPhoneBookType && 
                   aIndexAndEntries->iNumSlots > iMultipleReadPosTo  )
             {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadL - iPhoneBookType %i: ", iPhoneBookType);
-TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ReadL - iNumSlots: %i > iMultipleReadPosTo: %i", aIndexAndEntries->iNumSlots, iMultipleReadPosTo );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_7, "TSY: CMmPhoneBookStoreTsy::ReadL - iPhoneBookType %u: ", iPhoneBookType);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_8, "TSY: CMmPhoneBookStoreTsy::ReadL - iNumSlots: %d > iMultipleReadPosTo: %d", aIndexAndEntries->iNumSlots, iMultipleReadPosTo );
             iIndexAndEntries = NULL;
             iIndexToRead = 0;
             ReqCompleted( aTsyReqHandle, KErrNotFound );
@@ -896,7 +901,7 @@ TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ReadL - iNumSlots: %i > iMultipleReadPo
             // If cache request, but cache is not yet ready
             else if ( ( NULL == iPBStoreCache ) || !iCacheReady )
                 {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Cache is not yet ready" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_9, "TSY: CMmPhoneBookStoreTsy::ReadL - Cache is not yet ready" );
                 ret = KErrNotReady;
                 }
             // Set cache request for completion handling
@@ -907,7 +912,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Cache is not yet ready" );
                 if ( ( iNumEntriesToRead ) > iMultipleReadPosTo )
                     {
                     ret = KErrArgument;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - KErrArgument" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_10, "TSY: CMmPhoneBookStoreTsy::ReadL - KErrArgument" );
                     }
                 }
 
@@ -932,20 +937,20 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - KErrArgument" );
             // Handle cached request
             else
                 {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadL - iIndexToRead %i ", iIndexToRead);
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadL - iNumSlots %i ", iNumEntriesToRead);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_11, "TSY: CMmPhoneBookStoreTsy::ReadL - iIndexToRead %d ", iIndexToRead);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_12, "TSY: CMmPhoneBookStoreTsy::ReadL - iNumSlots %d ", iNumEntriesToRead);
                 ReadEntriesFromArrayL( EPBStoreCacheArray );
                 aIndexAndEntries->iNumSlots = iNumEntriesFilled;
                 //This condition will arise when client has sent a buffer insufficient to
                 //hold even one entry. KErrArgument has to be returned in this case.
                 if ( ( iRetFillBufferedDes == KErrOverflow ) && ( iNumEntriesFilled == 0 ) )
                     {
-                    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Insufficient buffer to hold even 1 entry." );
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_13, "TSY: CMmPhoneBookStoreTsy::ReadL - Insufficient buffer to hold even 1 entry." );
                     ret = KErrArgument;
                     }
                 else if ( 0 == iNumEntriesFilled )
                     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - iNumEntriesFilled is 0 " );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READL_14, "TSY: CMmPhoneBookStoreTsy::ReadL - iNumEntriesFilled is 0 " );
                     ret = KErrNotFound;
                     }
                 ReqCompleted( aTsyReqHandle, ret );
@@ -979,7 +984,7 @@ void CMmPhoneBookStoreTsy::CompleteReadL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteReadL - aResult: %i",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEREADL_1, "TSY: CMmPhoneBookStoreTsy::CompleteReadL - aResult: %d",aResult );
 
     TInt errCode = aResult;
     // Reset req handle. Returns the deleted req handle
@@ -997,7 +1002,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteReadL - aResult: %i",aResult );
             //hold even one entry. KErrArgument has to be returned in this case.
             if ( ( iRetFillBufferedDes == KErrOverflow ) && ( iNumEntriesFilled == 0 ) )
                 {
-                TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteReadL - Insufficient buffer to hold even 1 entry." );
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEREADL_2, "TSY: CMmPhoneBookStoreTsy::CompleteReadL - Insufficient buffer to hold even 1 entry." );
                 errCode = KErrArgument;
                 }
             }
@@ -1027,7 +1032,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteReadL - aResult: %i",aResult );
 //
 TInt CMmPhoneBookStoreTsy::CountEntriesL()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CountEntriesL called");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COUNTENTRIESL_1, "TSY: CMmPhoneBookStoreTsy::CountEntriesL called");
 
     // before phonebook requests, phonebook must be initialized
     TInt returnValue( KErrNone );
@@ -1049,7 +1054,7 @@ void CMmPhoneBookStoreTsy::CompleteCountEntries(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCountEntries - Result: %i", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECOUNTENTRIES_1, "TSY: CMmPhoneBookStoreTsy::CompleteCountEntries - Result: %d", aResult );
     TInt numOfEntries( 0 );
 
     //reset request handle. Returns the deleted req handle.
@@ -1086,7 +1091,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCountEntries - Result: %i", aRe
 
 void CMmPhoneBookStoreTsy::CacheEntriesL()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL_1, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
     // Get Phonebook related DLL -static data
 
     // Check if phonebook has been initialized successfully. Caching of ADN
@@ -1095,7 +1100,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - entered");
          ( EFalse == iStoreInfoData->iIsPhonebookInitializeFailed ||
            KADNPhoneBook != iPhoneBookType ) )
         {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL_2, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", iPhoneBookName);
 
 		TInt ret = KErrNone;
 		CMmPhoneTsy::TNosBootState* bootState = iMmPhoneTsy->NosBootState();
@@ -1113,7 +1118,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Cache PB %S ", &iPhoneB
                         iPBStoreCache->ResetAndDestroy();
                         delete iPBStoreCache;
                         iPBStoreCache = NULL;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Old cache deleted");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL_3, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Old cache deleted");
                         }
                     
                     //Inform phonebook that the cache is not ready for refresh
@@ -1125,11 +1130,11 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Old cache deleted");
                 }
             else if ( iCacheReady )
                 {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S cache entries ready", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL_4, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S cache entries ready", iPhoneBookName);
                 }
         if ( KErrNone != ret)
             {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S caching failed!", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL_5, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S caching failed!", iPhoneBookName);
             }
         }
     // Phonebook not initialized -> let's do it before caching
@@ -1137,7 +1142,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - PB %S caching failed!",
         || iStoreInfoData->iIsPhonebookInitializeFailed )
         && !iMmPhoneTsy->IsPBInitActive() )
         {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Starting initialization PB: %S", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CACHEENTRIESL_6, "TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Starting initialization PB: %S", iPhoneBookName);
         // before phonebook requests, phonebook must be initialized
         iMmPhoneBookStoreExtInterface->InitPhonebook(
             EMmTsyPhoneBookStoreInitIPC, iPhoneBookName );
@@ -1159,8 +1164,8 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CacheEntriesL - Starting initialization
 void CMmPhoneBookStoreTsy::CompleteCachingL(
     TInt aResult, CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - PB %S Caching completed", &iPhoneBookName);
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %i",aResult );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_1, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - PB %S Caching completed", iPhoneBookName);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_2, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %d",aResult );
 	
 #ifdef USING_CTSY_DISPATCHER 		
 	aDataPackage->UnPackData(iPBStoreCache);
@@ -1176,7 +1181,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %i",aResult 
     // the number of used entries
     if ( KErrNone == aResult )
         {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - iPBStoreCache->Count: %i",iPBStoreCache->Count() );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_3, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - iPBStoreCache->Count: %d",iPBStoreCache->Count() );
         iUsedEntries = iPBStoreCache->Count();
         //Set the caching ready only if request is successfull.
         //when FDN is on, the ADN caching is not successful. Meanwhile the FDN
@@ -1187,7 +1192,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - iPBStoreCache->Count
         iCacheReady = ETrue;
         }
 
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - iUsedEntries: %i",iUsedEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_4, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - iUsedEntries: %d",iUsedEntries );
 
     bootState->iCachingActive = EFalse;
 
@@ -1196,7 +1201,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - iUsedEntries: %i",iU
     // Check if client has requested caching before completing
     if ( NULL != mmCustom && !iMmPhoneTsy->IsRefreshOngoing() )
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Client refresh req complete" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_5, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Client refresh req complete" );
         if ( KErrNone == aResult )
             {
             mmCustom->UpdateCacheStatus( RMmCustomAPI::ECacheReady,
@@ -1224,7 +1229,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Client refresh req co
     // through refresh
     else
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - SIM refresh req complete" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_6, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - SIM refresh req complete" );
 
         // Check for which phonebook the caching must be completed
         if ( !iPhoneBookName.CompareF( KETelIccAdnPhoneBook ) )
@@ -1238,7 +1243,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - SIM refresh req compl
         //NOTIFY THE PHONEBOOK that the cache is ready
         if ( NULL != mmCustom )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteCachingL, mmCustom->UpdateCacheStatus" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_7, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL, mmCustom->UpdateCacheStatus" );
             if ( KErrNone == aResult )
                 {
                 mmCustom->UpdateCacheStatus(
@@ -1260,8 +1265,8 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteCachingL, mmCustom->UpdateCacheS
             mmCustom->GetPhonebookCacheStatus( KFDNPhoneBook );
         RMmCustomAPI::TPndCacheStatus adnCacheStatus =
             mmCustom->GetPhonebookCacheStatus( KADNPhoneBook );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - FDN cachestatus %d", fdnCacheStatus);
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - ADN cachestatus %d", adnCacheStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_8, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - FDN cachestatus %d", fdnCacheStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_9, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - ADN cachestatus %d", adnCacheStatus);
 
 	    // Set caching back to active if either FDN or ADN is caching
         if ( RMmCustomAPI::ECacheNotReady == fdnCacheStatus 
@@ -1285,17 +1290,17 @@ void CMmPhoneBookStoreTsy::ReadEntriesFromArrayL(
 
     if ( EPBStoreCacheArray == aArrayType )
         {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadEntriesFromCache %S, iPBStoreCache", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READENTRIESFROMARRAYL_1, "TSY: CMmPhoneBookStoreTsy::ReadEntriesFromCache %S, iPBStoreCache", iPhoneBookName);
         ptrToArray = iPBStoreCache;
         }
     else if ( EPBStoreReadEntriesArray == aArrayType )
         {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadEntriesFromEntryArray %S, iPBStoreReadEntries", &iPhoneBookName);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READENTRIESFROMARRAYL_2, "TSY: CMmPhoneBookStoreTsy::ReadEntriesFromEntryArray %S, iPBStoreReadEntries", iPhoneBookName);
         ptrToArray = iPBStoreReadEntries;
         }
     else
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadEntriesFromEntryArray invalid aArrayType");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READENTRIESFROMARRAYL_3, "TSY: CMmPhoneBookStoreTsy::ReadEntriesFromEntryArray invalid aArrayType");
         User::Leave(KErrNotSupported);
         }
 
@@ -1332,7 +1337,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadEntriesFromEntryArray invalid aArray
 //
 void CMmPhoneBookStoreTsy::ReadToCacheL()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadToCacheL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READTOCACHEL_1, "TSY: CMmPhoneBookStoreTsy::ReadToCacheL");
 
     // Call ReadL from GSM extension
     iMmPhoneBookStoreExtInterface->ReadToCacheL(
@@ -1351,8 +1356,8 @@ void CMmPhoneBookStoreTsy::UpdateCacheL(
     CPhoneBookStoreEntry* aEntry,
     TBool aDeleteEntry )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL");
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iPBStoreCache->Count(): %i ", iPBStoreCache->Count() );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_1, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL");
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_2, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iPBStoreCache->Count(): %d ", iPBStoreCache->Count() );
 
     if(aEntry == NULL)
         {
@@ -1365,7 +1370,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iPBStoreCache->Count(): 
 		User::Leave(KErrArgument);
         }
     
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - aEntry->Location(): %i ", aEntry->iLocation );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_3, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - aEntry->Location(): %u ", aEntry->iLocation );
 
     TInt result( KErrNotFound );
     TInt updateIndex( 0 );
@@ -1375,7 +1380,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - aEntry->Location(): %i "
         {
         if ( ( iPBStoreCache->At( index ) )->iLocation == aEntry->iLocation )
             {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iPBStoreCache->iLocation:  %i ", aEntry->iLocation);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_4, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iPBStoreCache->iLocation:  %u ", aEntry->iLocation);
             updateIndex =  index;
             result = KErrNone;
             }
@@ -1402,7 +1407,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iPBStoreCache->iLocation
             }     
         else
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL, Deleted entry is not in cache! ");                
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_5, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL, Deleted entry is not in cache! ");
             }          
         }
     // Entry found
@@ -1414,7 +1419,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL, Deleted entry is not in ca
             ( aEntry->iEmail && aEntry->iEmail->MdcaCount() > 0 ) ||
             ( aEntry->iSne && aEntry->iSne->MdcaCount() > 0 ) )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - Change existing entry");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_6, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - Change existing entry");
             // Every update/deletion of an existing phonebook entry or the
             // addition of a new phone book entry, incremements the
             // iChangeCounter.
@@ -1426,13 +1431,13 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - Change existing entry");
                 iPBStoreCache->At( updateIndex );
             if ( entryToDelete == iDeleteEntry )
                 {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iDeleteEntry");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_7, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iDeleteEntry");
                 // reset iDeleteEntry member
                 iDeleteEntry = NULL;
                 }
             if ( entryToDelete == iWriteEntry )
                 {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iWriteEntry");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_8, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iWriteEntry");
                 // reset iWriteEntry member
                 iWriteEntry = NULL;
                 }
@@ -1440,10 +1445,10 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iWriteEn
             entryToDelete = NULL;
             iPBStoreCache->Delete( updateIndex );
             iPBStoreCache->InsertL( updateIndex, aEntry );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - updateIndex: %i", updateIndex);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_9, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - updateIndex: %d", updateIndex);
             if ( aEntry == iWriteEntry )
                 {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - aEntry == iWriteEntry");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_10, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - aEntry == iWriteEntry");
                 // reset iWriteEntry member
                 iWriteEntry = NULL;
                 }
@@ -1456,7 +1461,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - aEntry == iWriteEntry");
         // Case: <Delete entry from cache>
         else
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - Delete entry");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_11, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - Delete entry");
             // decrease iUsedEntries
             iUsedEntries--;
 
@@ -1468,13 +1473,13 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - Delete entry");
                 iPBStoreCache->At( updateIndex );
             if ( entryToDelete == iDeleteEntry )
                 {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iDeleteEntry");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_12, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - entryToDelete == iDeleteEntry");
                 // reset iDeleteEntry member
                 iDeleteEntry = NULL;
                 }
             else
                 {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iWriteEntry = NULL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_UPDATECACHEL_13, "TSY: CMmPhoneBookStoreTsy::UpdateCacheL - iWriteEntry = NULL");
                 // reset iWriteEntry member
                 iWriteEntry = NULL;
                 }
@@ -1531,7 +1536,7 @@ TInt CMmPhoneBookStoreTsy::FillBufferedDesL(
         if ( 0 == marked )
             {
             ret = pbBuffer->AddNewEntryTag();
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 0, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_1, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 0, ret: %d ", ret);
             }
         // Append Index
         else if ( 1 == marked )
@@ -1539,7 +1544,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 0, ret: %i ", ret);
             ret = pbBuffer->PutTagAndValue(
                 RMobilePhoneBookStore::ETagPBAdnIndex, (TUint16)(
                 aPhoneBookStoreResp->iLocation ) );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 1, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_2, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 1, ret: %d ", ret);
             }
         // Append Name
         else if ( 2 == marked )
@@ -1551,7 +1556,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 1, ret: %i ", ret);
                     RMobilePhoneBookStore::ETagPBText,
                     aPhoneBookStoreResp->iText->Des() );
                 }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 2, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_3, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 2, ret: %d ", ret);
             }
         // Append Number
         else if ( 3 == marked )
@@ -1563,7 +1568,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 2, ret: %i ", ret);
                     RMobilePhoneBookStore::ETagPBNumber,
                     aPhoneBookStoreResp->iNumber->Des() );
                 }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 3, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_4, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 3, ret: %d ", ret);
             }
         // Append Email
         else if ( 4 == marked )
@@ -1576,7 +1581,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 3, ret: %i ", ret);
                     RMobilePhoneBookStore::ETagPBEmailAddress,
                     aPhoneBookStoreResp->iEmail->MdcaPoint( numEmails ) );
                 }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 4, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_5, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 4, ret: %d ", ret);
             }
         // Append Sne
         else if ( 5 == marked )
@@ -1589,7 +1594,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 4, ret: %i ", ret);
                     RMobilePhoneBookStore::ETagPBSecondName,
                     aPhoneBookStoreResp->iSne->MdcaPoint( numSnes ) );
                 }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 5, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_6, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 5, ret: %d ", ret);
             }
         // Append Anr
         else if ( 6 == marked )
@@ -1603,7 +1608,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 5, ret: %i ", ret);
                     RMobilePhoneBookStore::ETagPBNumber,
                     aPhoneBookStoreResp->iAnr->MdcaPoint( numAnrs ) );
                 }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 6, ret: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_7, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 6, ret: %d ", ret);
             }
 
         marked++;
@@ -1627,12 +1632,12 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 6, ret: %i ", ret);
     
     CleanupStack::PopAndDestroy(pbBuffer);
 
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - returnvalue: %i ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_8, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - returnvalue: %d ", ret);
 
     //If simrefresh registration is failed prevent new cache
     if( KErrOverflow == ret && !( iMmPhoneTsy->GetSimRefreshRegister() ) )
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Prevent new cache" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_9, "TSY: CMmPhoneBookStoreTsy::ReadL - Prevent new cache" );
         iReadReqStore->iCaching = ETrue;
         }
 
@@ -1651,7 +1656,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ReadL - Prevent new cache" );
 TInt CMmPhoneBookStoreTsy::ReadCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::ReadCancel - Handle:%d", aTsyReqHandle );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_READCANCEL_1, "TSY: CMmPhoneBookStoreTsy::ReadCancel - Handle:%d", aTsyReqHandle );
 
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1687,12 +1692,12 @@ TInt CMmPhoneBookStoreTsy::WriteL(
     TDesC8* aPBData,
     TInt* aIndex )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::WriteL - EtelIndex: %i",*aIndex );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_WRITEL_1, "TSY: CMmPhoneBookStoreTsy::WriteL - EtelIndex: %d",*aIndex );
 
     //SDN phonebook can't be updated by user.
     if (iPhoneBookType == KSDNPhoneBook)
         {
-        TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::WriteL - SDN phonebook entry can't be updated");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_WRITEL_2, "TSY: CMmPhoneBookStoreTsy::WriteL - SDN phonebook entry can't be updated");
         ReqCompleted( aTsyReqHandle, KErrAccessDenied );
         }
     else
@@ -1729,7 +1734,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::WriteL - EtelIndex: %i",*aIndex );
                 // Straight write-forwarding to SIM server,
                 TInt index = *aIndex;
     
-    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::WriteL - Straight write-forwarding to SIM");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_WRITEL_3, "TSY: CMmPhoneBookStoreTsy::WriteL - Straight write-forwarding to SIM");
                 ret = WriteByIndexL( index );
                 }
     
@@ -1813,7 +1818,7 @@ void CMmPhoneBookStoreTsy::CompleteWriteL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL - Result: %i",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_1, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL - Result: %d",aResult );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneBookStoreWrite );
@@ -1862,14 +1867,14 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL - Result: %i",aResult );
                 //Update Adn Max Num Length
                 iStoreInfoData->iADNNumberLengthMax =
                     pbEntryInfo.iMaxNumLength;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL: pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_2, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL: pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KFDNPhoneBook == iPhoneBookType )
                 {
                 //Update Fdn Max Num Length
                 iStoreInfoData->iFDNNumberLengthMax =
                     pbEntryInfo.iMaxNumLength;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL:FDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_3, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL:FDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KVMBXPhoneBook == iPhoneBookType )
                 {
@@ -1879,7 +1884,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL:FDN pbEntryInfo.iMaxNumL
                     iStoreInfoData->iVMBXNumberLengthMax =
                         pbEntryInfo.iMaxNumLength;
                     }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL:VMBX pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_4, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL:VMBX pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KMBDNPhoneBook == iPhoneBookType )
                 {
@@ -1889,7 +1894,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL:VMBX pbEntryInfo.iMaxNum
                     iStoreInfoData->iMBDNNumberLengthMax =
                         pbEntryInfo.iMaxNumLength;
                     }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteWriteL:MBDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_5, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL:MBDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             CompleteNotifyStoreEvent( pbEntryInfo.iLocation );
             }
@@ -1978,7 +1983,7 @@ TInt CMmPhoneBookStoreTsy::SeparatePBDataL(
                     ret = pbBuffer->GetValue( textPtr );
                     if ( iMaxTextLen < textPtr.Length() )
                         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Text length is more than KPBStoreTextSize " );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_1, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Text length is more than KPBStoreTextSize " );
                         ret = CMmCommonStaticUtility::EpocErrorCode(
                             KErrTooBig, KErrGsm0707TextStringTooLong );
                         }
@@ -2054,13 +2059,13 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Text length is more th
                             }
                         break;
                     case RMobilePhoneBookStore::ETagPBText:
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::ETagPBAnrStart ETagPBText" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_2, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::ETagPBAnrStart ETagPBText" );
                         break;
                     case RMobilePhoneBookStore::ETagPBTonNpi:
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::ETagPBAnrStart ETagPBTonNpi" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_3, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::ETagPBAnrStart ETagPBTonNpi" );
                         break;
                     default:
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::ETagPBAnrStart KErrArgument" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_4, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::ETagPBAnrStart KErrArgument" );
                         ret = KErrArgument;
                         break;
                     }
@@ -2068,7 +2073,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore:
                 break;
                 // Unknown Tag, complete with KErrArgument
                 default:
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Unknown Tag " );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_5, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Unknown Tag " );
                     ret = KErrArgument;
                     break;
                 }
@@ -2077,7 +2082,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Unknown Tag " );
             if ( KErrNone == ret )
                 {
                 ret = pbBuffer->GetTagAndType( tagValue, tagType );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::GetNewField tagValue: %d ", tagValue);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_6, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore::GetNewField tagValue: %d ", tagValue);
                 }         
             }
         if ( KErrNotFound != ret )
@@ -2088,7 +2093,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - RMobilePhoneBookStore
     // Bad descriptor, no new entry found
     else
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Bad descriptor " );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SEPARATEPBDATAL_7, "TSY: CMmPhoneBookStoreTsy::SeparatePBDataL - Bad descriptor " );
         returnValue = KErrArgument;
         }
 
@@ -2108,12 +2113,12 @@ TInt CMmPhoneBookStoreTsy::DeleteL(
     const TTsyReqHandle aTsyReqHandle,
     TInt* aIndex )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::DeleteL - aIndex: %i",*aIndex );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DELETEL_1, "TSY: CMmPhoneBookStoreTsy::DeleteL - aIndex: %d",*aIndex );
 
     //SDN phonebook can't be updated by user.
     if (iPhoneBookType == KSDNPhoneBook)
         {
-        TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::DeleteL - SDN phonebook entry can't be updated");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DELETEL_2, "TSY: CMmPhoneBookStoreTsy::DeleteL - SDN phonebook entry can't be updated");
         ReqCompleted( aTsyReqHandle, KErrAccessDenied );
         }
     else
@@ -2177,7 +2182,7 @@ void CMmPhoneBookStoreTsy::CompleteDeleteL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL - Result: %i",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEL_1, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteL - Result: %d",aResult );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneStoreDelete );
@@ -2220,14 +2225,14 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL - Result: %i",aResult )
                 //Update Adn Max Num Length
                 iStoreInfoData->iADNNumberLengthMax =
                     pbEntryInfo.iMaxNumLength;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL: pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEL_2, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteL: pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KFDNPhoneBook == iPhoneBookType )
                 {
                 //Update Fdn Max Num Length
                 iStoreInfoData->iFDNNumberLengthMax =
                     pbEntryInfo.iMaxNumLength;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL:FDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEL_3, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteL:FDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KVMBXPhoneBook == iPhoneBookType )
                 {
@@ -2237,7 +2242,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL:FDN pbEntryInfo.iMaxNum
                     iStoreInfoData->iVMBXNumberLengthMax =
                         pbEntryInfo.iMaxNumLength;
                     }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL:VMBX pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEL_4, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteL:VMBX pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             }
         
@@ -2285,12 +2290,12 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteL:VMBX pbEntryInfo.iMaxNu
 TInt CMmPhoneBookStoreTsy::DeleteAllL(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::DeleteAllL - Handle:%d", aTsyReqHandle );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DELETEALLL_1, "TSY: CMmPhoneBookStoreTsy::DeleteAllL - Handle:%d", aTsyReqHandle );
 
     //SDN phonebook can't be updated by user.
     if (iPhoneBookType == KSDNPhoneBook)
         {
-        TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::DeleteAllL - SDN phonebook entry can't be updated");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DELETEALLL_2, "TSY: CMmPhoneBookStoreTsy::DeleteAllL - SDN phonebook entry can't be updated");
         ReqCompleted( aTsyReqHandle, KErrAccessDenied );
         }
     else
@@ -2326,7 +2331,7 @@ void CMmPhoneBookStoreTsy::CompleteDeleteAll(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll - Result: %i",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEALL_1, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll - Result: %d",aResult );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneStoreDeleteAll );
@@ -2358,14 +2363,14 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll - Result: %i",aResult
                 //Update Adn Max Num Length
                 iStoreInfoData->iADNNumberLengthMax =
                     pbEntryInfo.iMaxNumLength;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll: pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEALL_2, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll: pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KFDNPhoneBook == iPhoneBookType )
                 {
                 //Update Fdn Max Num Length
                 iStoreInfoData->iFDNNumberLengthMax =
                     pbEntryInfo.iMaxNumLength;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll:FDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEALL_3, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll:FDN pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
             else if ( KVMBXPhoneBook == iPhoneBookType )
                 {
@@ -2375,7 +2380,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll:FDN pbEntryInfo.iMaxN
                     iStoreInfoData->iVMBXNumberLengthMax =
                         pbEntryInfo.iMaxNumLength;
                     }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll:VMBX pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEALL_4, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll:VMBX pbEntryInfo.iMaxNumLength:%d", pbEntryInfo.iMaxNumLength);
                 }
 
             // Complete notify store event
@@ -2402,7 +2407,7 @@ TInt CMmPhoneBookStoreTsy::GetInfoL(
     TDes8* aInfo )
     {
 
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL Handle:%d", aTsyReqHandle);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_1, "TSY: CMmPhoneBookStoreTsy::GetInfoL Handle:%d", aTsyReqHandle);
 
     TInt ret( KErrNone );
     TTsyReqHandle getInfoHandle =
@@ -2453,12 +2458,12 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL Handle:%d", aTsyReqHandle);
         // will be delivered to the client.
         if ( KBDNPhoneBook == iPhoneBookType )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - BDN" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_2, "TSY: CMmPhoneBookStoreTsy::GetInfoL - BDN" );
             }
         // If PB type is ADN, total entries and used entries already read
         else if ( KADNPhoneBook == iPhoneBookType )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - ADN" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_3, "TSY: CMmPhoneBookStoreTsy::GetInfoL - ADN" );
             ret = KErrNotReady;
 
             //if cache is ready, set information and get name length
@@ -2477,7 +2482,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - ADN" );
                 // The total number of entries
                 iPhoneBookInfoChanged->iTotalEntries =
                     iStoreInfoData->iADNNumOfEntries;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInfoData->iADNNumOfEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_4, "TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %d",iStoreInfoData->iADNNumOfEntries );
 
                 // Check if Email, SNE & ANR Caps are supported + GRP
 
@@ -2486,28 +2491,28 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInf
                     iPhoneBookInfoChanged->iCaps =
                         iPhoneBookInfoChanged->iCaps |
                         RMobilePhoneBookStore::KCapsEmailAddressUsed;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL ADN -> Email supported" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_5, "TSY: CMmPhoneBookStoreTsy::GetInfoL ADN -> Email supported" );
                     }
                 if ( iStoreInfoData->iSNENumOfEntriesPerEntry > 0 )
                     {
                     iPhoneBookInfoChanged->iCaps =
                         iPhoneBookInfoChanged->iCaps |
                         RMobilePhoneBookStore::KCapsSecondNameUsed;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL ADN -> SNE supported" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_6, "TSY: CMmPhoneBookStoreTsy::GetInfoL ADN -> SNE supported" );
                     }
                 if ( iStoreInfoData->iANRNumOfEntriesPerEntry > 0 )
                     {
                     iPhoneBookInfoChanged->iCaps =
                         iPhoneBookInfoChanged->iCaps |
                         RMobilePhoneBookStore::KCapsAdditionalNumUsed;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL ADN -> ANR supported" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_7, "TSY: CMmPhoneBookStoreTsy::GetInfoL ADN -> ANR supported" );
                     }
                 }
             }
         // If PB type is FDN, total entries and used entries already read
         else if ( KFDNPhoneBook == iPhoneBookType )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - FDN" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_8, "TSY: CMmPhoneBookStoreTsy::GetInfoL - FDN" );
             ret = KErrNotReady;
 
             //if cache is ready, set information and get name length
@@ -2526,19 +2531,19 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - FDN" );
                 // The total number of entries
                 iPhoneBookInfoChanged->iTotalEntries =
                     iStoreInfoData->iFDNNumOfEntries;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInfoData->iFDNNumOfEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_9, "TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %d",iStoreInfoData->iFDNNumOfEntries );
 
                 // Set caps by phonebook name
                 iPhoneBookInfoChanged->iCaps = KPBTypeFDNCaps;
                 }
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxNumLength: %i",iPhoneBookInfoChanged->iMaxNumLength );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxTextLength: %i",iPhoneBookInfoChanged->iMaxTextLength );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iTotalEntries: %i",iPhoneBookInfoChanged->iTotalEntries );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iUsedEntries: %i",iPhoneBookInfoChanged->iUsedEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_10, "TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxNumLength: %d",iPhoneBookInfoChanged->iMaxNumLength );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_11, "TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxTextLength: %d",iPhoneBookInfoChanged->iMaxTextLength );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_12, "TSY: CMmPhoneBookStoreTsy::GetInfoL - iTotalEntries: %d",iPhoneBookInfoChanged->iTotalEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_13, "TSY: CMmPhoneBookStoreTsy::GetInfoL - iUsedEntries: %d",iPhoneBookInfoChanged->iUsedEntries );
             }
         else if ( KSDNPhoneBook == iPhoneBookType )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - SDN" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_14, "TSY: CMmPhoneBookStoreTsy::GetInfoL - SDN" );
             ret = KErrNone;
 
             // The maximum length for the number in a phonebook entry
@@ -2552,7 +2557,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - SDN" );
             // The total number of entries
             iPhoneBookInfoChanged->iTotalEntries =
                 iStoreInfoData->iSDNNumOfEntries;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInfoData->iSDNNumOfEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_15, "TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %d",iStoreInfoData->iSDNNumOfEntries );
 
             if ( !iIsUsedEntriesCounted )
                 {
@@ -2569,7 +2574,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInf
                 else
                     {
                     iPhoneBookInfoChanged = NULL;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL, not ready to perform CountEntriesL()");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_16, "TSY: CMmPhoneBookStoreTsy::GetInfoL, not ready to perform CountEntriesL()");
                     ret = KErrNotReady;
                     }
                 }
@@ -2577,7 +2582,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL, not ready to perform CountEntr
         //VMBX need to read total and used entries
         else if ( KVMBXPhoneBook == iPhoneBookType )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - VMBX" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_17, "TSY: CMmPhoneBookStoreTsy::GetInfoL - VMBX" );
             ret = KErrNone;
 
             // The maximum length for the number in a phonebook entry
@@ -2591,7 +2596,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - VMBX" );
             // The total number of entries
             iPhoneBookInfoChanged->iTotalEntries =
                 iStoreInfoData->iVMBXNumOfEntries;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInfoData->iVMBXNumOfEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_18, "TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %d",iStoreInfoData->iVMBXNumOfEntries );
 
             // Set caps by the store info data 
             //iPhoneBookInfoChanged->iCaps = iStoreInfoData->iVMBXCaps;
@@ -2611,7 +2616,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iStoreInf
                 else
                     {
                     iPhoneBookInfoChanged = NULL;
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL, not ready to perform CountEntriesL()");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_19, "TSY: CMmPhoneBookStoreTsy::GetInfoL, not ready to perform CountEntriesL()");
                     ret = KErrNotReady;
                     }
                 }
@@ -2619,7 +2624,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL, not ready to perform CountEntr
          //MBDN
         else if ( KMBDNPhoneBook == iPhoneBookType )
             {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - MBDN" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_20, "TSY: CMmPhoneBookStoreTsy::GetInfoL - MBDN" );
             ret = KErrNone;
 
             // The maximum length for the number in a phonebook entry
@@ -2633,9 +2638,9 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::GetInfoL - MBDN" );
             // The total number of entries
             iPhoneBookInfoChanged->iTotalEntries =
                 iStoreInfoData->iMBDNNumOfEntries;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %i",iPhoneBookInfoChanged->iTotalEntries );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxNumLength: %i",iPhoneBookInfoChanged->iMaxNumLength );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxTextLength: %i",iPhoneBookInfoChanged->iMaxTextLength );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_21, "TSY: CMmPhoneBookStoreTsy::GetInfoL - total entries: %d",iPhoneBookInfoChanged->iTotalEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_22, "TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxNumLength: %d",iPhoneBookInfoChanged->iMaxNumLength );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOL_23, "TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxTextLength: %d",iPhoneBookInfoChanged->iMaxTextLength );
 
             // Set caps by the store info data 
             iPhoneBookInfoChanged->iCaps = KPBTypeMBDNCaps;
@@ -2670,7 +2675,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoL - iMaxTextLength: %i",iPhoneBo
 void CMmPhoneBookStoreTsy::CompleteGetInfo(
     TInt aError )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteGetInfo - Result: %i", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEGETINFO_1, "TSY: CMmPhoneBookStoreTsy::CompleteGetInfo - Result: %d", aError );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneStoreGetInfo );
@@ -2751,7 +2756,7 @@ void CMmPhoneBookStoreTsy::SetInfo()
 
     // Indicates the current number of entries that may be held in this store
     iPhoneBookInfoChanged->iUsedEntries = iUsedEntries;
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::SetInfo - used entries: %i",iUsedEntries );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SETINFO_1, "TSY: CMmPhoneBookStoreTsy::SetInfo - used entries: %d",iUsedEntries );
 
     // Indicates the total number of entries
     iPhoneBookInfoChanged->iTotalEntries = KNoInfoAvail;
@@ -2767,7 +2772,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::SetInfo - used entries: %i",iUsedEntrie
 TInt CMmPhoneBookStoreTsy::GetInfoCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::GetInfoCancel - Handle:%d", aTsyReqHandle );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETINFOCANCEL_1, "TSY: CMmPhoneBookStoreTsy::GetInfoCancel - Handle:%d", aTsyReqHandle );
 
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2800,7 +2805,7 @@ TInt CMmPhoneBookStoreTsy::NotifyStoreEvent(
     RMobilePhoneStore::TMobileStoreEvent *aEvent,
     TInt* aIndex )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::NotifyStoreEvent - called" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_NOTIFYSTOREEVENT_1, "TSY: CMmPhoneBookStoreTsy::NotifyStoreEvent - called" );
 
     TTsyReqHandle requestHandle = iTsyReqHandleStore->GetTsyReqHandle(
         EMultimodePhoneStoreNotifyStoreEvent );
@@ -2828,7 +2833,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::NotifyStoreEvent - called" );
 TInt CMmPhoneBookStoreTsy::NotifyStoreEventCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::NotifyStoreEventCancel - called" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_NOTIFYSTOREEVENTCANCEL_1, "TSY: CMmPhoneBookStoreTsy::NotifyStoreEventCancel - called" );
 
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2854,7 +2859,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::NotifyStoreEventCancel - called" );
 void CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent(
     TInt aLocation )
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - Called" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETENOTIFYSTOREEVENT_1, "TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - Called" );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2866,8 +2871,8 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - Called" );
             REINTERPRET_CAST( RMobilePhoneStore::TMobileStoreEvent*,
             iNotifyPhoneBookStoreEventPtr );
 
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - StoreEvent %i ", iMobilePhoneBookStoreEvent );
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - location %i ", aLocation );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETENOTIFYSTOREEVENT_2, "TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - StoreEvent %8X ", (TUint)iMobilePhoneBookStoreEvent );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETENOTIFYSTOREEVENT_3, "TSY: CMmPhoneBookStoreTsy::CompleteNotifyStoreEvent - location %d ", aLocation );
         // Fill notify information
         *phoneBookStoreEvent = iMobilePhoneBookStoreEvent;
         *iNotifyPhoneBookStoreEventIndexPtr = aLocation;
@@ -2915,7 +2920,7 @@ CMmPhoneBookStoreExtInterface* CMmPhoneBookStoreTsy::ActivePBExtension()
 //
 void CMmPhoneBookStoreTsy::ResetVariables()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetVariables" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_RESETVARIABLES_1, "TSY: CMmPhoneBookStoreTsy::ResetVariables" );
 
     // Reset phonebooktype
     iPhoneBookType = 0;
@@ -2960,7 +2965,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetVariables" );
 //
 void CMmPhoneBookStoreTsy::ResetCache()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetCache" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_RESETCACHE_1, "TSY: CMmPhoneBookStoreTsy::ResetCache" );
 
     // SDN and VMBX do not have cache. Skip reset if the cache pointer is null.
     if ( NULL != iPBStoreCache )
@@ -2980,7 +2985,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetCache" );
 //
 void CMmPhoneBookStoreTsy::ResetCacheReady()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetCacheReady" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_RESETCACHEREADY_1, "TSY: CMmPhoneBookStoreTsy::ResetCacheReady" );
     iCacheReady = EFalse;
     CMmCustomTsy* mmCustom = NULL;
 
@@ -2991,7 +2996,7 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetCacheReady" );
 
     if ( NULL != mmCustom )
         {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ResetCacheReady, mmCustom->UpdateCacheStatus - not ready" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_RESETCACHEREADY_2, "TSY: CMmPhoneBookStoreTsy::ResetCacheReady, mmCustom->UpdateCacheStatus - not ready" );
         mmCustom->UpdateCacheStatus( RMmCustomAPI::ECacheNotReady,
             iPhoneBookName );
         }
@@ -3023,7 +3028,7 @@ void CMmPhoneBookStoreTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::ReqCompleted - Handle:%d Error:%d", aTsyReqHandle, aError);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQCOMPLETED_1, "TSY: CMmPhoneBookStoreTsy::ReqCompleted - Handle:%d Error:%d", aTsyReqHandle, aError);
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
     }
 
@@ -3044,7 +3049,7 @@ void CMmPhoneBookStoreTsy::SetTypeOfResponse(
     const TInt aReqHandleType,
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING3("TSY: CMmPhoneBookStoreTsy::SetTypeOfResponse - Handle:%d Type:%d", aTsyReqHandle, aReqHandleType );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SETTYPEOFRESPONSE_1, "TSY: CMmPhoneBookStoreTsy::SetTypeOfResponse - Handle:%d Type:%d", aTsyReqHandle, aReqHandleType );
 
     TInt timeOut( 0 );
 
@@ -3143,7 +3148,7 @@ void CMmPhoneBookStoreTsy::Complete(
 //
 void CMmPhoneBookStoreTsy::ContinueReadL()
     {
-TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ContinueReadL ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CONTINUEREADL_1, "TSY: CMmPhoneBookStoreTsy::ContinueReadL ");
 
     iRequestedOnPBRead = EFalse;
     //Reguest Read with stored parameters
@@ -3162,8 +3167,8 @@ TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::ContinueReadL ");
 //    
 TBool CMmPhoneBookStoreTsy::IsPBInitDone()
     {
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::IsPBInitDone: - PB %S", &iPhoneBookName);
-TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::IsPBInitDone: - PB iIsPBInitCompleted = %d ", iIsPBInitCompleted );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_ISPBINITDONE_1, "TSY: CMmPhoneBookStoreTsy::IsPBInitDone: - PB %S", iPhoneBookName);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_ISPBINITDONE_2, "TSY: CMmPhoneBookStoreTsy::IsPBInitDone: - PB iIsPBInitCompleted = %d ", iIsPBInitCompleted );
     
     return iIsPBInitCompleted;
     }
@@ -3176,7 +3181,7 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::IsPBInitDone: - PB iIsPBInitCompleted =
 // 
 TUint8 CMmPhoneBookStoreTsy::GetPhonebookType()
  	{
-TFLOGSTRING2( "TSY: CMmPhoneBookStoreTsy::GetPhonebookType - iPhoneBookType: %d", iPhoneBookType);	            
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GETPHONEBOOKTYPE_1,  "TSY: CMmPhoneBookStoreTsy::GetPhonebookType - iPhoneBookType: %d", iPhoneBookType);
  	return iPhoneBookType;
  	}
 
@@ -3268,14 +3273,14 @@ void CMmPhoneBookStoreTsy::CopyLtsyCacheToCtsyCacheL( CArrayPtrSeg<CPhoneBookSto
 void CMmPhoneBookStoreTsy::SimIsReady()
     {
     
-    TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::SimIsReady - iIsPhonebookInitialized: %i", iStoreInfoData->iIsPhonebookInitialized);
-    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - before initialization");
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SIMISREADY_1, "TSY: CMmPhoneBookStoreTsy::SimIsReady - iIsPhonebookInitialized: %u", (TUint)iStoreInfoData->iIsPhonebookInitialized);
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SIMISREADY_2, "TSY: CMmPhoneBookStoreTsy::SimIsReady - before initialization");
         // Check if phonebook has been initialized
         if ( !iMmPhoneTsy->IsPBInitActive()
             && ( !iStoreInfoData->iIsPhonebookInitialized )
             )
             {
-    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - starting initialization");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SIMISREADY_3, "TSY: CMmPhoneBookStoreTsy::SimIsReady - starting initialization");
 
             // before phonebook requests, phonebook must be initialized
             iMmPhoneBookStoreExtInterface->InitPhonebook(
@@ -3285,12 +3290,12 @@ void CMmPhoneBookStoreTsy::SimIsReady()
             }
         else if (iMmPhoneTsy->IsPBInitActive())
             {
-    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - initialization active via other store, waiting for completion");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SIMISREADY_4, "TSY: CMmPhoneBookStoreTsy::SimIsReady - initialization active via other store, waiting for completion");
             iIsPBInitCompleted = EFalse;
             }
         else
             {
-    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - Initialization was done via other store");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SIMISREADY_5, "TSY: CMmPhoneBookStoreTsy::SimIsReady - Initialization was done via other store");
             // Set initialization flag 
             iIsPBInitCompleted = ETrue;
             }
@@ -3299,7 +3304,7 @@ void CMmPhoneBookStoreTsy::SimIsReady()
             && ( iPhoneBookType == KADNPhoneBook
             || iPhoneBookType == KFDNPhoneBook ) )
             {
-    TFLOGSTRING("TSY: CMmPhoneBookStoreTsy::SimIsReady - starting caching");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SIMISREADY_6, "TSY: CMmPhoneBookStoreTsy::SimIsReady - starting caching");
             // Call CacheEntries method to read entries from SIM.
             CacheEntriesL();
             }

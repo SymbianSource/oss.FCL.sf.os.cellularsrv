@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmconferencecalltsyTraces.h"
+#endif
+
 #include "cmmconferencecalltsy.h"
 #include "cmmphonetsy.h"
 #include "cmmtsyreqhandlestore.h"
@@ -89,7 +95,7 @@ void CMmConferenceCallTsy::ConstructL()
 CMmConferenceCallTsy::~CMmConferenceCallTsy()
     {
 
-    TFLOGSTRING("TSY: CMmConferenceCallTsy::~CMmConferenceCallTsy");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_DTOR_1, "TSY: CMmConferenceCallTsy::~CMmConferenceCallTsy");
 
     if ( iMmPhone )
         {
@@ -230,8 +236,7 @@ TInt CMmConferenceCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-	TFLOGSTRING3("TSY: CMmConferenceCallTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d",
-        aIpc, aTsyReqHandle);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_DOEXTFUNCL_1, "TSY: CMmConferenceCallTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d",aIpc, aTsyReqHandle);
 
     TInt ret( KErrNotSupported );
 
@@ -687,7 +692,7 @@ void CMmConferenceCallTsy::CompleteNotifyCapsChange(
 TInt CMmConferenceCallTsy::CreateConferenceL(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmConferenceCallTsy::CreateConferenceL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_CREATECONFERENCEL_1, "TSY: CMmConferenceCallTsy::CreateConferenceL");
     //Store call object with status connected
 	iConnectedCall = 
 		iMmPhone->CallList()->GetMmCallByStatus( RMobileCall::EStatusConnected );
@@ -723,7 +728,7 @@ TFLOGSTRING("TSY: CMmConferenceCallTsy::CreateConferenceL");
 void CMmConferenceCallTsy::CompleteCreateConference(
     TInt aResult )
     {
-TFLOGSTRING("TSY: CMmConferenceCallTsy::CompleteCreateConference");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETECREATECONFERENCE_1, "TSY: CMmConferenceCallTsy::CompleteCreateConference");
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeConferenceCallCreateConference );
@@ -780,7 +785,7 @@ TInt CMmConferenceCallTsy::AddCallL(
     const TTsyReqHandle aTsyReqHandle,
     const TName* aCallName )
     {
-TFLOGSTRING("TSY: CMmConferenceCallTsy::AddCallL");    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_ADDCALLL_1, "TSY: CMmConferenceCallTsy::AddCallL");
     //set return value to KErrNotFound
     TInt ret( KErrNotFound );
     
@@ -816,7 +821,7 @@ TFLOGSTRING("TSY: CMmConferenceCallTsy::AddCallL");
 void CMmConferenceCallTsy::CompleteAddCall(
     TInt aResult )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallTsy::CompleteAddCall, Result: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_1, "TSY: CMmConferenceCallTsy::CompleteAddCall, Result: %d", aResult );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -827,7 +832,7 @@ TFLOGSTRING2("TSY: CMmConferenceCallTsy::CompleteAddCall, Result: %d", aResult )
         {
         if ( (KErrNone == aResult) && (iAddCallName.Length() > 0) )
             {
-TFLOGSTRING("TSY: AddCall succeeded. AddCall request completed");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_2, "TSY: AddCall succeeded. AddCall request completed");
             //notify call added using the call name received with AddCall
             //request
             CompleteNotifyConferenceEvent( iAddCallName,
@@ -842,11 +847,11 @@ TFLOGSTRING("TSY: AddCall succeeded. AddCall request completed");
 			{
 			//something special is needed here to handle a case where 
 			//CompleteAddCall fails
-			TFLOGSTRING("TSY: AddCall failed");
-			TFLOGSTRING2("TSY: # of CC participants: %d", iNumOfCallsInConferenceCall );
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_3, "TSY: AddCall failed");
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_4, "TSY: # of CC participants: %d", iNumOfCallsInConferenceCall );
 			if ( 2 == iNumOfCallsInConferenceCall )
 				{
-				TFLOGSTRING("TSY: FIX FOR A ADDCALL & MT RELEASE CASE");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_5, "TSY: FIX FOR A ADDCALL & MT RELEASE CASE");
 				CMmCallTsy* mmCall = NULL;
 				CMmCallList* callList = iMmPhone->CallList();
 				CMmCallGsmWcdmaExt* mmCallGsmWcdmaExt = NULL;
@@ -858,12 +863,12 @@ TFLOGSTRING("TSY: AddCall succeeded. AddCall request completed");
 					mmCall = callList->GetMmCallByIndex(i);
 					status = mmCall->MobileCallStatus();
 
-					TFLOGSTRING2("TSY: Handling call, Call ID: %d", mmCall->CallId() );
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_6, "TSY: Handling call, Call ID: %d", mmCall->CallId() );
 
 					if ( status == RMobileCall::EStatusHold ||
 						status == RMobileCall::EStatusConnected )
 						{
-						TFLOGSTRING("TSY: Status was Held or Connected, reconstructing capabilities");
+						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_7, "TSY: Status was Held or Connected, reconstructing capabilities");
 
 						// Fetch the active call extension
 						mmCallGsmWcdmaExt = static_cast<CMmCallGsmWcdmaExt*>(
@@ -887,7 +892,7 @@ TFLOGSTRING("TSY: AddCall succeeded. AddCall request completed");
 				}
 			else
 				{
-				TFLOGSTRING("TSY: normal AddCall failure");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_8, "TSY: normal AddCall failure");
 				}
 			}
         ReqCompleted( reqHandle, aResult );
@@ -905,7 +910,7 @@ TFLOGSTRING("TSY: AddCall succeeded. AddCall request completed");
 void CMmConferenceCallTsy::RemoveNonParticipatingCall()
 	{
 
-	TFLOGSTRING("TSY: CMmConferenceCallTsy::RemoveNonParticipatingCall");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REMOVENONPARTICIPATINGCALL_1, "TSY: CMmConferenceCallTsy::RemoveNonParticipatingCall");
 
 	RMobileCall::TMobileCallStatus statusOfCallsInConference(
 		RMobileCall::EStatusConnected);
@@ -915,7 +920,7 @@ void CMmConferenceCallTsy::RemoveNonParticipatingCall()
 	TInt numberOfCallInConference(0);
 	TBool callReleased = EFalse;
 
-	TFLOGSTRING2("TSY: Conference status: %d", iStatus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REMOVENONPARTICIPATINGCALL_2, "TSY: Conference status: %d", iStatus);
 
 	if ( iStatus == RMobileConferenceCall::EConferenceHold )
 		{
@@ -935,7 +940,7 @@ void CMmConferenceCallTsy::RemoveNonParticipatingCall()
 			CompleteNotifyConferenceEvent( 
 				mmCall->CallName(), 
 				RMobileConferenceCall::EConferenceCallRemoved );
-TFLOGSTRING("TSY: Call removed from conference." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REMOVENONPARTICIPATINGCALL_3, "TSY: Call removed from conference." );
 			}
 		else if ( status == statusOfCallsInConference )
 			{
@@ -944,7 +949,7 @@ TFLOGSTRING("TSY: Call removed from conference." );
 			}
 		if ( mmCall->IsRemoteReleasedCall() )
 			{
-TFLOGSTRING("TSY: One call is remote released");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REMOVENONPARTICIPATINGCALL_4, "TSY: One call is remote released");
 			callReleased = ETrue;
 			}
 		}
@@ -952,7 +957,7 @@ TFLOGSTRING("TSY: One call is remote released");
 			iNumOfCallsInConferenceCall == 3 && callReleased )
 			{
 			iNumOfCallsInConferenceCall--;
-			TFLOGSTRING("TSY: number of calls in conference decremented");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REMOVENONPARTICIPATINGCALL_5, "TSY: number of calls in conference decremented");
 		}
 
 	}
@@ -968,7 +973,7 @@ TFLOGSTRING("TSY: One call is remote released");
 TInt CMmConferenceCallTsy::SwapL(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmConferenceCallTsy::SwapL");      
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_SWAPL_1, "TSY: CMmConferenceCallTsy::SwapL");
     //direct request to extension
     TInt ret = iMmConferenceCallExtInterface->SwapL(
         iStatus, iMmPhone->CallList() );
@@ -997,7 +1002,7 @@ TFLOGSTRING("TSY: CMmConferenceCallTsy::SwapL");
 void CMmConferenceCallTsy::CompleteSwap(
     TInt aResult )
     {
-TFLOGSTRING("TSY: CMmConferenceCallTsy::CompleteSwap");      
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETESWAP_1, "TSY: CMmConferenceCallTsy::CompleteSwap");
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeConferenceCallSwap );
@@ -1151,7 +1156,7 @@ TInt CMmConferenceCallTsy::GetConferenceStatus(
     const TTsyReqHandle aTsyReqHandle,
     RMobileConferenceCall::TMobileConferenceStatus* aStatus )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallTsy::GetConferenceStatus. iStatus:%d", iStatus );     
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_GETCONFERENCESTATUS_1, "TSY: CMmConferenceCallTsy::GetConferenceStatus. iStatus:%d", iStatus );
     *aStatus = iStatus;
 
     ReqCompleted( aTsyReqHandle, KErrNone );
@@ -1223,7 +1228,7 @@ void CMmConferenceCallTsy::CompleteNotifyConferenceStatusChange()
     TBool conferenceStatusChanged( EFalse );
 
     RMobileConferenceCall::TMobileConferenceStatus oldStatus = iStatus;
-TFLOGSTRING2("TSY: CMmConferenceCallTsy::CompleteNotifyConferenceStatusChange. oldStatus:%d", oldStatus );    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETENOTIFYCONFERENCESTATUSCHANGE_1, "TSY: CMmConferenceCallTsy::CompleteNotifyConferenceStatusChange. oldStatus:%d", oldStatus );
     iMmConferenceCallExtInterface->GetNewStatus( &iStatus );
 
     switch( iStatus )
@@ -1294,7 +1299,7 @@ TFLOGSTRING2("TSY: CMmConferenceCallTsy::CompleteNotifyConferenceStatusChange. o
     if ( ( EMultimodeConferenceCallReqHandleUnknown != reqHandle ) &&
         conferenceStatusChanged )
         {
-TFLOGSTRING2("TSY: CMmConferenceCallTsy::CompleteNotifyConferenceStatusChange. Cur. iStatus:%d", iStatus );         
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETENOTIFYCONFERENCESTATUSCHANGE_2, "TSY: CMmConferenceCallTsy::CompleteNotifyConferenceStatusChange. Cur. iStatus:%d", iStatus );
         //reset req handle.
         iTsyReqHandleStore->ResetTsyReqHandle(
             EMultimodeConferenceCallStatusChangeNotification );
@@ -1377,7 +1382,7 @@ void CMmConferenceCallTsy::CompleteNotifyConferenceEvent(
     const TName& aName,
     RMobileConferenceCall::TMobileConferenceEvent aEvent )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallTsy::CompleteNotifyConferenceEvent.aEvent:%d", aEvent );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETENOTIFYCONFERENCEEVENT_1, "TSY: CMmConferenceCallTsy::CompleteNotifyConferenceEvent.aEvent:%d", aEvent );
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeConferenceCallConferenceEventNotification );
@@ -1598,7 +1603,7 @@ CMmPhoneTsy* CMmConferenceCallTsy::Phone()
 //
 void CMmConferenceCallTsy::ResetAttributes()
     {
-TFLOGSTRING("TSY: CMmConferenceCallTsy::ResetAttributes." );    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_RESETATTRIBUTES_1, "TSY: CMmConferenceCallTsy::ResetAttributes." );
     //Name of the call to be added to Conference call
     iAddCallName.Zero();
     //Conference call capabilities
@@ -1756,8 +1761,7 @@ void CMmConferenceCallTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-	TFLOGSTRING3("TSY: CMmConferenceCallTsy::Request Completed. \n\t\t\tHandle:%d\n\t\t\t Error:%d",
-        aTsyReqHandle, aError);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REQCOMPLETED_1, "TSY: CMmConferenceCallTsy::Request Completed. \n\t\t\tHandle:%d\n\t\t\t Error:%d",aTsyReqHandle, aError);
 
     //call original ReqCompleted from CTelObject
     CTelObject::ReqCompleted( aTsyReqHandle, aError );

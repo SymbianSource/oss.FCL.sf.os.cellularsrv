@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,18 @@
  @internalComponent
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ceteldriverfactoryTraces.h"
+#endif
+
 #include <e32base.h>
 #include <etelmm.h>
 
 #include "cspudcontextelem.h"
 #include "ceteldriverfactory.h"
-#include "spudteldebuglogger.h"
 #include "PDPFSM.h"
 using namespace EtelDriver;
 
@@ -36,7 +42,7 @@ CEtelDriverFactory::CEtelDriverFactory (CPdpFsmInterface& aPdpFsmInterface)
 : iPdpFsmInterface(aPdpFsmInterface),
   iServiceChangeNotifier(iPacketService, iPdpFsmInterface)
 	{
-	SPUDTELVERBOSE_INFO_LOG(_L("CEtelDriverFactory::CEtelDriverFactory()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG,TRACE_INTERNALS, CETELDRIVERFACTORY_CTOR_1, "CEtelDriverFactory::CEtelDriverFactory()");
 	}
 
 /**
@@ -44,15 +50,15 @@ CEtelDriverFactory::CEtelDriverFactory (CPdpFsmInterface& aPdpFsmInterface)
 */
 CEtelDriverFactory* CEtelDriverFactory::NewL (CPdpFsmInterface& aPdpFsmInterface)
 	{
-	SPUDTEL_INFO_LOG(_L("CEtelDriverFactory::NewL()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_NEWL_1, "CEtelDriverFactory::NewL()");
 	
 	return new (ELeave) CEtelDriverFactory (aPdpFsmInterface);
 	}
 
 CEtelDriverFactory::~CEtelDriverFactory()
 	{
-	SPUDTEL_FNLOG("CEtelDriverFactory::~CEtelDriverFactory()");
-	SPUDTEL_INFO_LOG(_L("CEtelDriverFactory::~CEtelDriverFactory()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_DTOR_1, "CEtelDriverFactory::~CEtelDriverFactory()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_DTOR_2, "CEtelDriverFactory::~CEtelDriverFactory()");
 
 	// cancel all notificators
 	iServiceChangeNotifier.Cancel();
@@ -91,7 +97,7 @@ static void GetPhoneInfoL(RTelServer& aTelServer, const TDesC& aLoadedTsyName, R
 	{
 	// dev. note: leavescan reports an error in this method.
 	// But there is no visible ground for it.
-	SPUDTEL_FNLOG("GetPhoneInfoL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, GETPHONEINFOL_1, "GetPhoneInfoL()");
 	TInt count;
 	User::LeaveIfError(aTelServer.EnumeratePhones(count));
 	if (count<=0)
@@ -128,8 +134,8 @@ static void GetPhoneInfoL(RTelServer& aTelServer, const TDesC& aLoadedTsyName, R
 /** initializes factory objects */
 void CEtelDriverFactory::InitL()
 	{
-	SPUDTEL_FNLOG("CEtelDriverFactory::InitL()");
-	SPUDTEL_INFO_LOG(_L("Initializing Etel driver"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_INITL_1, "CEtelDriverFactory::InitL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_INITL_2, "Initializing Etel driver");
 	
 	iStrategies[EOpenPhoneStrategy] 			= &iOpenStrategy;
 	iStrategies[ESetQoSStrategy] 				= &iSetQoSStrategy;
@@ -182,8 +188,8 @@ void CEtelDriverFactory::InitL()
 */
 void CEtelDriverFactory::CreatePdpL (TContextId aPdpId,SpudMan::TPdpContextType aContextType)
 	{
-	SPUDTEL_FNLOG("CEtelDriverFactory::CreatePdpL()");
-	SPUDTELVERBOSE_INFO_LOG1(_L("pdp id : %d"), aPdpId);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_CREATEPDPL_1, "CEtelDriverFactory::CreatePdpL()");
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_CREATEPDPL_2, "pdp id : %d", aPdpId);
 	__ASSERT_ALWAYS((NULL == iContexts[aPdpId]), User::Panic(KTxtSpudTel, KErrArgument));
 
 	if (aContextType == SpudMan::EMbms)
@@ -204,7 +210,7 @@ void CEtelDriverFactory::CreatePdpL (TContextId aPdpId,SpudMan::TPdpContextType 
 void CEtelDriverFactory::FreePdp(TContextId aPdpId)
 	{
 
-	SPUDTELVERBOSE_INFO_LOG1(_L("Free pdp id : %d"), aPdpId);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_FREEPDP_1, "Free pdp id : %d", aPdpId);
     // In an OOM situation, this object may be cleaned up prior to establishment. 
     if (iContexts[aPdpId] != NULL) 
         { 
@@ -222,7 +228,7 @@ void CEtelDriverFactory::FreePdp(TContextId aPdpId)
 */
 void CEtelDriverFactory::StartPdpNotifications (TContextId aPdpId)
 	{
-	SPUDTELVERBOSE_INFO_LOG1(_L("StartPdpNotifications for pdp id : %d"), aPdpId);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_STARTPDPNOTIFICATIONS_1, "StartPdpNotifications for pdp id : %d", aPdpId);
 	// sanity check
 	ASSERT(iContexts[aPdpId]);
 	
@@ -235,7 +241,7 @@ void CEtelDriverFactory::StartPdpNotifications (TContextId aPdpId)
 */
 void CEtelDriverFactory::CancelPdpNotifications (TContextId aPdpId)
 	{
-	SPUDTELVERBOSE_INFO_LOG1(_L("CancelPdpNotifications for pdp id : %d"), aPdpId);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_CANCELPDPNOTIFICATIONS_1, "CancelPdpNotifications for pdp id : %d", aPdpId);
 	// sanity check
 	ASSERT(iContexts[aPdpId]);
 	
@@ -245,7 +251,7 @@ void CEtelDriverFactory::CancelPdpNotifications (TContextId aPdpId)
 /** cancels notifications for all pdp contexts */
 void CEtelDriverFactory::CancelAllPdpNotifications()
 	{
-	SPUDTEL_INFO_LOG(_L("CancelAllPdpNotifications"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CETELDRIVERFACTORY_CANCELALLPDPNOTIFICATIONS_1, "CancelAllPdpNotifications");
 	for(TContextId i = 0; i < static_cast<TContextId>(ContextCount()); i++)
 		{ 
 		CancelPdpNotifications (i); 

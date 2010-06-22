@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,14 +24,9 @@ TARGETTYPE      dll
 UID             0x1000008D 0x102078E0
 
 #define USING_CTSY_DISPATCHER
-MACRO TF_SAT_LOGGING
 USERINCLUDE     ../inc
 USERINCLUDE		../exportinc/utility
-
-#ifdef USING_CTSY_DISPATCHER
-//needed for tflogger.h (ideally change all "" to <> and remove
-USERINCLUDE	../../common_tsy/commontsy/inc
-#endif //USING_CTSY_DISPATCHER
+USERINCLUDE		../traces
 
 SOURCEPATH      ../utility/src
 
@@ -50,8 +45,6 @@ OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 // Symbian
 LIBRARY         euser.lib	// E32 user library
-
-#include <comms-infras/commsdebugutility.mmh>
 
 UNPAGED
 

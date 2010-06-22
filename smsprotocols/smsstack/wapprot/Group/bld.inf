@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -44,58 +44,4 @@ PRJ_MMPFILES
 
 ../Group/wapprot.mmp
 
-PRJ_TESTEXPORTS
-
-//
-// Test files used by all WAP tests...
-//
-../test/configfiles/tone1.rtp                           z:/testdata/configs/tone1.rtp
-../test/configfiles/tone2.rtp                           z:/testdata/configs/tone2.rtp
-../test/configfiles/tone3.rtp                           z:/testdata/configs/tone3.rtp
-../test/configfiles/vcard1.vcf                          z:/testdata/configs/vcard1.vcf
-../test/configfiles/vcard2.vcf                          z:/testdata/configs/vcard2.vcf
-../test/configfiles/vcard3.vcf                          z:/testdata/configs/vcard3.vcf
-
-//
-// TE_WAPDGRM test files...
-//
-../test/TE_WAPDGRM/TE_wapdgrm.script                    z:/testdata/scripts/te_wapdgrm.script
-
-//
-// TE_WAPHDR test files...
-//
-../test/configfiles/te_waphdr.txt                       z:/testdata/configs/te_waphdr.txt
-../test/TE_WAPTHDR/TE_wapthdr.script                    z:/testdata/scripts/te_wapthdr.script
-../test/TE_WAPTHDR/TE_wapthdr_setup.script              z:/testdata/scripts/te_wapthdr_setup.script
-
-//
-// TE_WAPSMS test files...
-//
-../test/TE_WAPSMS/TE_wapsms.script                      z:/testdata/scripts/te_wapsms.script
-../test/TE_WAPSMS/TE_wapsms_setup.script                z:/testdata/scripts/te_wapsms_setup.script
-../test/TE_WAPSMS/TE_wapsms.txt                         z:/testdata/configs/te_wapsms.txt
-../test/TE_WAPSMS/te_setupgsmsms.txt                    z:/testdata/configs/te_setupgsmsms.txt
-../test/TE_WAPSMS/te_wapsms_commdb.cfg                  z:/testdata/configs/te_wapsms_commdb.cfg
-
-//
-// TE_WAPPROT test files...
-//
-../test/Te_wapprot/Te_WapProt.script                    z:/testdata/scripts/te_wapprot.script
-../test/Te_wapprot/Config.txt                           z:/testdata/configs/wapprotsuite/config.txt
-../test/Te_wapprot/WapProtSuite.cfg                     z:/testdata/configs/wapprotsuite/wapprotsuite.cfg
-../test/Te_wapprot/WapProtSuiteMM.cfg                   z:/testdata/configs/wapprotsuite/wapprotsuitemm.cfg
-../test/Te_wapprot/StatusReportsRequested.cfg           z:/testdata/configs/wapprotsuite/statusreportsrequested.cfg
-../test/Te_wapprot/WapProtSuite.ini                     z:/testdata/configs/wapprotsuite/wapprotsuite.ini
-../test/Te_wapprot/WapStatusReports.ini                 z:/testdata/configs/wapprotsuite/wapstatusreports.ini
-../test/Te_wapprot/WAPStackOutOfDiskSpace.ini           z:/testdata/configs/wapprotsuite/wapstackoutofdiskspace.ini
-../test/Te_wapprot/Te_WapStackOutOfDiskSpace.script     z:/testdata/scripts/te_wapstackoutofdiskspace.script
-../test/Te_wapprot/Te_WapStackOutOfDiskSpace_ARM_UREL.script     z:/testdata/scripts/te_wapstackoutofdiskspace_arm_urel.script
-
-
-
-PRJ_TESTMMPFILES
-
-../test/TE_WAPDGRM/TE_wapdgrm.mmp
-../test/TE_WAPTHDR/TE_wapthdr.mmp
-../test/TE_WAPSMS/TE_wapsms.mmp
-../test/Te_wapprot/TE_WapProt.mmp
+#include "../test/group/bld.inf"

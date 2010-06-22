@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,13 +20,18 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyLocalInfoTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyLocalInfo.h"    // Class header
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifyLocalInfo* CSatNotifyLocalInfo::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_NEWL_1, "CSAT: CSatNotifyLocalInfo::NewL");
    	CSatNotifyLocalInfo* const satNotifyLocalInfo = 
         new ( ELeave ) CSatNotifyLocalInfo( aNotificationsTsy );
     CleanupStack::PushL( satNotifyLocalInfo );
     satNotifyLocalInfo->ConstructL();
     CleanupStack::Pop( satNotifyLocalInfo );
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_NEWL_2, "CSAT: CSatNotifyLocalInfo::NewL, end of method");
     return satNotifyLocalInfo;
     }
 
@@ -62,7 +67,7 @@ CSatNotifyLocalInfo::~CSatNotifyLocalInfo
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::~CSatNotifyLocalInfo");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_DTOR_1, "CSAT: CSatNotifyLocalInfo::~CSatNotifyLocalInfo");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +98,7 @@ void CSatNotifyLocalInfo::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_CONSTRUCTL_1, "CSAT: CSatNotifyLocalInfo::ConstructL");
     // IMEI of the ME
     iIMEI.Zero();
     // Clear NMR (Network Measurement result)
@@ -118,7 +123,7 @@ TInt CSatNotifyLocalInfo::Notify
         const TDataPackage& aPackage    
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_NOTIFY_1, "CSAT: CSatNotifyLocalInfo::Notify");
     // Save data pointer to client side for completion
     iLocalInfoV3Pckg = reinterpret_cast<RSat::TLocalInfoV3Pckg*>( 
         aPackage.Des1n() );
@@ -141,7 +146,7 @@ TInt CSatNotifyLocalInfo::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CancelNotification"); 
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_CANCELNOTIFICATION_1, "CSAT: CSatNotifyLocalInfo::CancelNotification");
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
         CSatTsy::ESatNotifyLocalInfoPCmdReqType );
@@ -163,7 +168,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
         TInt aErrorCode                 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_1, "CSAT: CSatNotifyLocalInfo::CompleteNotifyL");
 
     TInt ret( KErrNone );
     TPtrC8* data;
@@ -192,8 +197,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
         {
         case RSat::KProvideLocalInfo:
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteNotifyL\
-            	request: LOCAL INFO");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_2, "CSAT: CSatNotifyLocalInfo::CompleteNotifyL request: LOCAL INFO");
             iLocalInfoIsOngoing = ETrue;
             // Get Local Info
             dataPackage.PackData( &iLocalInfoIsOngoing );
@@ -203,8 +207,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
             }
         case RSat::KProvideLocalInfoImei:
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo:: CompleteNotifyL, \
-            	request: IMEI");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_3, "CSAT: CSatNotifyLocalInfo:: CompleteNotifyL, request: IMEI");
             // Check if IMEI is received
             if ( iIMEI.Length() )
                 {
@@ -221,7 +224,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
             }
         case RSat::KProvideLocalInformationNmr:
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo:: request: NMR");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_4, "CSAT: CSatNotifyLocalInfo:: request: NMR");
             iLocalInfoIsOngoing = ETrue;
             // Request Network Measurement Results
             dataPackage.PackData( &iLocalInfoIsOngoing );
@@ -231,15 +234,13 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
             }
         case RSat::KProvideLocalInfoDateTimeTimeZone:
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo:: request: \
-            	DATE/TIME/TIMEZONE");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_5, "CSAT: CSatNotifyLocalInfo:: request: DATE/TIME/TIMEZONE");
             SetDateTimeTimeZone();	
             break;
             }
         case RSat::KProvideLocalInfoLanguage:
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteNotifyL request, \
-                Language");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_6, "CSAT: CSatNotifyLocalInfo::CompleteNotifyL request, Language");
 		    // Reset req handle. Returns the deleted req handle
 		    TTsyReqHandle reqHandle = 
 		        iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
@@ -273,8 +274,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
                 }
             else
                 {
-                TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteNotifyL\
-                	 No reqHandle");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_7, "CSAT: CSatNotifyLocalInfo::CompleteNotifyL No reqHandle");
                 iLocalInfoRspV3.iGeneralResult = 
                     RSat::KMeUnableToProcessCmd;
                 iLocalInfoRspV3.iAdditionalInfo.Append( 
@@ -285,8 +285,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
             }
         case RSat::KProvideLocalInfoTimingAdv:
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteNotifyL\
-            	 request: TimingAdvance");       
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_8, "CSAT: CSatNotifyLocalInfo::CompleteNotifyL request: TimingAdvance");
             iLocalInfoIsOngoing = ETrue;
             dataPackage.PackData( &iLocalInfoIsOngoing );
             // Request service
@@ -296,8 +295,7 @@ TInt CSatNotifyLocalInfo::CompleteNotifyL
             }
         case RSat::KProvideLocalInfoAccTech:
         	{
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteNotifyL\
-            	request: Access Technology");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETENOTIFYL_9, "CSAT: CSatNotifyLocalInfo::CompleteNotifyL request: Access Technology");
             iLocalInfoIsOngoing = ETrue;
 			dataPackage.PackData( &iLocalInfoIsOngoing );
             // Request Access technology
@@ -345,7 +343,7 @@ TInt CSatNotifyLocalInfo::TerminalResponseL
         TDes8* aRsp
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_TERMINALRESPONSEL_1, "CSAT: CSatNotifyLocalInfo::TerminalResponseL");
 
     TInt ret( KErrNone );
     TBuf<RSat::KAdditionalInfoMaxSize> additionalInfo;    
@@ -362,8 +360,7 @@ TInt CSatNotifyLocalInfo::TerminalResponseL
             && ( RSat::KMeUnableToProcessCmd != rspV1.iGeneralResult )
             && ( RSat::KCmdBeyondMeCapabilities != rspV1.iGeneralResult ) )
             {
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo::TerminalResponseL,\
-                Invalid General Result");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_TERMINALRESPONSEL_2, "CSAT: CSatNotifyLocalInfo::TerminalResponseL, Invalid General Result");
             // Invalid general result
             ret = KErrCorrupt;
             }
@@ -377,8 +374,7 @@ TInt CSatNotifyLocalInfo::TerminalResponseL
         if ( ( RSat::KMeProblem == rspV1.iInfoType ) &&
              ( NULL == rspV1.iAdditionalInfo.Length() ) )
             {   
-            TFLOGSTRING("CSAT: CSatNotifyLocalInfo::TerminalResponseL,\
-                Invalid Additional Info");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_TERMINALRESPONSEL_3, "CSAT: CSatNotifyLocalInfo::TerminalResponseL, Invalid Additional Info");
             // Invalid additional info field
             ret = KErrCorrupt;
             }
@@ -415,7 +411,7 @@ TInt CSatNotifyLocalInfo::CreateTerminalRespL
         TDesC16& aAdditionalInfo		
 		)
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CreateTerminalRespL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_CREATETERMINALRESPL_1, "CSAT: CSatNotifyLocalInfo::CreateTerminalRespL");
     // Create and append response data
     TTlv tlvSpecificData;
     // Create General Result TLV 
@@ -506,8 +502,7 @@ TInt CSatNotifyLocalInfo::CreateTerminalRespL
                 }
             case RSat::KProvideLocalInfoTimingAdv:
                 {
-                TFLOGSTRING("CSAT: CSatNotifyLocalInfo::\
-                 	CreateTerminalRespL, TimingAdvance");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_CREATETERMINALRESPL_2, "CSAT: CSatNotifyLocalInfo::CreateTerminalRespL, TimingAdvance");
                 // Timing advance result
                 tlvSpecificData.AddTag( KTlvTimingAdvanceTag );
                 tlvSpecificData.AddByte( iMEStatus );
@@ -516,8 +511,7 @@ TInt CSatNotifyLocalInfo::CreateTerminalRespL
                 }
             case RSat::KProvideLocalInfoLanguage:
                 {
-                TFLOGSTRING("CSAT: CSatNotifyLocalInfo::\
-                	CreateTerminalRespL, LocalInfoLanguage");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_CREATETERMINALRESPL_3, "CSAT: CSatNotifyLocalInfo::CreateTerminalRespL, LocalInfoLanguage");
                 
                 if ( aAdditionalInfo.Length() )
                     {
@@ -535,8 +529,7 @@ TInt CSatNotifyLocalInfo::CreateTerminalRespL
                 }
             case RSat::KProvideLocalInfoAccTech:
             	{
-            	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::\
-            		CreateTerminalRespL, Access Technology");	
+            	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_CREATETERMINALRESPL_4, "CSAT: CSatNotifyLocalInfo::CreateTerminalRespL, Access Technology");
             	// Access technology result
                 tlvSpecificData.AddTag( KTlvAccessTechnologyTag );
                 tlvSpecificData.AddByte( iCurrentAccTech );
@@ -573,7 +566,7 @@ TInt CSatNotifyLocalInfo::CompleteTerminalRespDataL
         TInt /*aErrorCode*/
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteTerminalRespDataL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETETERMINALRESPDATAL_1, "CSAT: CSatNotifyLocalInfo::CompleteTerminalRespDataL");
     TInt ret( KErrNone );
     // Unpack parameters
     CSatNotificationsTsy::TTerminalRespData* terminalRespData;
@@ -595,7 +588,7 @@ void CSatNotifyLocalInfo::CompleteUpdateLocalInfo
 		TInt /*aErrorCode*/ 
 		)
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteUpdateLocalInfo");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETEUPDATELOCALINFO_1, "CSAT: CSatNotifyLocalInfo::CompleteUpdateLocalInfo");
 	aDataPackage->UnPackData( iLocalInformation );	
 	}
 	
@@ -610,7 +603,7 @@ void CSatNotifyLocalInfo::CompleteUpdateNetInfo
         TInt /*aErrorCode*/ 
         )
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteUpdateNetInfo");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETEUPDATENETINFO_1, "CSAT: CSatNotifyLocalInfo::CompleteUpdateNetInfo");
 	aDataPackage->UnPackData( iNMR, iBCCHChannelList );	
 	}
 	
@@ -625,7 +618,7 @@ void CSatNotifyLocalInfo::CompleteUpdateTimingAdvAndMEStatus
         TInt /*aErrorCode*/ 
         )
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteUpdateTimingAdvAndMEStatus");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETEUPDATETIMINGADVANDMESTATUS_1, "CSAT: CSatNotifyLocalInfo::CompleteUpdateTimingAdvAndMEStatus");
 	aDataPackage->UnPackData( iTimingAdvance, iMEStatus );		
 	}
 	
@@ -640,7 +633,7 @@ void CSatNotifyLocalInfo::CompleteUpdateAccTech
 		TInt /*aErrorCode*/ 
 		)      
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteUpdateAccTech");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETEUPDATEACCTECH_1, "CSAT: CSatNotifyLocalInfo::CompleteUpdateAccTech");
 	aDataPackage->UnPackData( iCurrentAccTech );	
 	}
 // -----------------------------------------------------------------------------
@@ -654,7 +647,7 @@ void CSatNotifyLocalInfo::CompleteUpdateIMEI
 		TInt /*aErrorCode*/ 
 		)      
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteUpdateIMEI");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETEUPDATEIMEI_1, "CSAT: CSatNotifyLocalInfo::CompleteUpdateIMEI");
 	aDataPackage->UnPackData( iIMEI );	
 	}
 
@@ -669,7 +662,7 @@ void CSatNotifyLocalInfo::CompleteUpdateTimeZone
 		TInt /*aErrorCode*/ 
 		)      
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::CompleteUpdateTimeZone");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_COMPLETEUPDATETIMEZONE_1, "CSAT: CSatNotifyLocalInfo::CompleteUpdateTimeZone");
 	aDataPackage->UnPackData( iTimeZone );	
 	}
 	
@@ -684,7 +677,7 @@ const CSatNotificationsTsy::TLocalInformation&
 		// None
 		)
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::LocalInformation");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_TLOCALINFORMATION_1, "CSAT: CSatNotifyLocalInfo::LocalInformation");
 	return iLocalInformation;
 	}
 	
@@ -698,7 +691,7 @@ void CSatNotifyLocalInfo::SetDateTimeTimeZone
 		// None
 		)
 	{
-    TFLOGSTRING("CSAT: CSatNotifyLocalInfo::SetDateTimeTimeZone");        
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_SETDATETIMETIMEZONE_1, "CSAT: CSatNotifyLocalInfo::SetDateTimeTimeZone");
     TTime time;
     TLocale locale;
     TDateTime dateTime;
@@ -762,7 +755,7 @@ void CSatNotifyLocalInfo::SetInformationNmr
 		TTlv* aTlvSpecificData
 		)
 	{
-	TFLOGSTRING("CSAT: CSatNotifyLocalInfo::SetInformationNmr");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLOCALINFO_SETINFORMATIONNMR_1, "CSAT: CSatNotifyLocalInfo::SetInformationNmr");
     if ( iNMR.Length() )
         {
         // Network measurement result

@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,10 +20,16 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimBatteryChargerTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 #include "CSimBatteryCharger.h"
 #include "CSimPhone.h"
-#include "Simlog.h"
 
 const TInt KChargerGranularity=5;		// < Granularity for Battery Charger list array
 
@@ -68,7 +74,7 @@ void CSimBatteryCharger::ConstructL()
 	iTimer=CSimTimer::NewL(iPhone);
 	iBatteryChargerInfo=new(ELeave) CArrayFixFlat<TBatteryChargerInfo>(KChargerGranularity);
 
-	LOGMISC1("Starting to parse Battery Charger config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_CONSTRUCTL_1, "Starting to parse Battery Charger config parameters...");
 	TInt count=CfgFile()->ItemCount(KBatteryCharger);
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
@@ -85,20 +91,20 @@ void CSimBatteryCharger::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("duration",ret,0,&KBatteryCharger);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KBatteryCharger);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,status);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("status",ret,1,&KBatteryCharger);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element STATUS returned %d (element no. %d) from tag %s.",ret,1,KBatteryCharger);
 			continue;
 			}
 		
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,level);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("level",ret,2,&KBatteryCharger);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element LEVEL returned %d (element no. %d) from tag %s.",ret,2,KBatteryCharger);
 			continue;
 			}
 
@@ -114,7 +120,7 @@ void CSimBatteryCharger::ConstructL()
 		iBatteryChargerInfo->AppendL(chargerInfo);
 		}
 	
-	LOGMISC2("Finished parsing Battery Charger config parameters...%d items found",count);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_CONSTRUCTL_5, "Finished parsing Battery Charger config parameters...%d items found",count);
 
 	if(iBatteryChargerInfo->Count()!=0)
 		{
@@ -188,7 +194,7 @@ TInt CSimBatteryCharger::GetBatteryInfo(TTsyReqHandle aReqHandle, TDes8* aInfo)
  * @return TInt			Standard error value.
  */
 	{
-	LOGMISC1(">>CSimBatteryCharger::GetBatteryInfo");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_GETBATTERYINFO_1, ">>CSimBatteryCharger::GetBatteryInfo");
 	TPckg<RMobilePhone::TMobilePhoneBatteryInfoV1>* batteryInfoPckg = (TPckg<RMobilePhone::TMobilePhoneBatteryInfoV1>*)aInfo;
 	RMobilePhone::TMobilePhoneBatteryInfoV1& batteryInfo = (*batteryInfoPckg)();
 
@@ -208,7 +214,7 @@ TInt CSimBatteryCharger::GetBatteryInfo(TTsyReqHandle aReqHandle, TDes8* aInfo)
 
 	batteryInfo.iChargeLevel=iCurrentBatteryCharger;
 	batteryInfo.iStatus = iCurrentStatus;
-	LOGMISC3("<<CSimBatteryCharger::GetBatteryInfo with level=%d and status=%d",iCurrentBatteryCharger,iCurrentStatus);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_GETBATTERYINFO_2, "<<CSimBatteryCharger::GetBatteryInfo with level=%d and status=%d",iCurrentBatteryCharger,iCurrentStatus);
 	iPhone->ReqCompleted(aReqHandle,iCurrentErr);
 	return KErrNone;
 	}
@@ -223,7 +229,7 @@ TInt CSimBatteryCharger::NotifyBatteryInfoChange(TTsyReqHandle aReqHandle, TDes8
  * @return TInt			Standard error value.
  */
 	{
-	LOGMISC1(">>CSimBatteryCharger::NotifyBatteryInfoChange");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_NOTIFYBATTERYINFOCHANGE_1, ">>CSimBatteryCharger::NotifyBatteryInfoChange");
 	TPckg<RMobilePhone::TMobilePhoneBatteryInfoV1>* batteryInfoPckg=(TPckg<RMobilePhone::TMobilePhoneBatteryInfoV1>*)aInfo;
 	RMobilePhone::TMobilePhoneBatteryInfoV1& batteryInfo=(*batteryInfoPckg)();
 
@@ -255,12 +261,12 @@ void CSimBatteryCharger::NotifyBatteryInfoCancel()
 	{
 	if(iBatteryChargerNotificationPending)
 		{
-		LOGMISC1("CSimBatteryCharger::NotifyBatteryInfoChange has been cancelled");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_NOTIFYBATTERYINFOCANCEL_1, "CSimBatteryCharger::NotifyBatteryInfoChange has been cancelled");
 		iBatteryChargerNotificationPending=EFalse;
 		iPhone->ReqCompleted(iBatteryChargerNotificationReqHandle,KErrCancel);
 		}
 	else
-		LOGMISC1("CSimBatteryCharger::NotifyBatteryInfoChange was not outstanding and hasn't been cancelled");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_NOTIFYBATTERYINFOCANCEL_2, "CSimBatteryCharger::NotifyBatteryInfoChange was not outstanding and hasn't been cancelled");
 	}
 
 
@@ -294,7 +300,7 @@ void CSimBatteryCharger::TimerCallBack(TInt /*aId*/)
 		iBatteryChargerNotificationPending=EFalse;
 		(*iBatteryChargerNofificationValue).iChargeLevel=iCurrentBatteryCharger;
 		(*iBatteryChargerNofificationValue).iStatus=iCurrentStatus;
-		LOGMISC3("<<CSimBatteryCharger::NotifyBatteryInfoChange with level=%d and status=%d",iCurrentBatteryCharger,iCurrentStatus);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMBATTERYCHARGER_TIMERCALLBACK_1, "<<CSimBatteryCharger::NotifyBatteryInfoChange with level=%d and status=%d",iCurrentBatteryCharger,iCurrentStatus);
 		iPhone->ReqCompleted(iBatteryChargerNotificationReqHandle,iCurrentErr);
 		}
 	iTimer->Start(iBatteryChargerInfo->At(iBatteryChargerIndex).iDuration,this);

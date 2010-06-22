@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,10 +20,16 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimCallBarringTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 #include "CSimCallBarring.h"
 #include "CSimPhone.h"
-#include "Simlog.h"
 
 // The Mobile Basic Service Groups used - originally were magic numbers from 1 to 6 incl;
 const TInt KMobServiceIndxStart = 1;
@@ -59,13 +65,13 @@ void CSimCallBarring::ConstructL()
   	Retrieves all the Call Barring related tags from the config file
 */
 	{
-	LOGCALL1("Starting to parse Call Barring config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_CONSTRUCTL_1, "Starting to parse Call Barring config parameters...");
 
 	iPassword.Copy(CfgFile()->ItemValue(KCBPassword,KCBDefaultPassword));
 
 	iGetCBStatus = new(ELeave) CArrayPtrFlat<CListReadAllAttempt>(1);
 	FindAndCreateCBListL();
-	LOGCALL1("...Finished parsing Call Barring config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_CONSTRUCTL_2, "...Finished parsing Call Barring config parameters...");
 	}
 	
 void CSimCallBarring::FindAndCreateCBListL()
@@ -74,7 +80,7 @@ void CSimCallBarring::FindAndCreateCBListL()
   	Retrieves all the Call barring tags that define the 
   	original status of Call barring from the config file
 */
-	LOGCALL1("CSimPhone::FindAndCreateCBListL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_FINDANDCREATECBLISTL_1, "CSimPhone::FindAndCreateCBListL");
 	RMobilePhone::TMobilePhoneCBInfoEntryV1 entry;
 
 	iCBList = CMobilePhoneCBList::NewL();
@@ -82,7 +88,7 @@ void CSimCallBarring::FindAndCreateCBListL()
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
 
-	LOGCALL1("Starting to Load and Parse CBList Config parameters");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_FINDANDCREATECBLISTL_2, "Starting to Load and Parse CBList Config parameters");
 	TInt i;
 	for(i=0;i<count;i++)
 		{
@@ -94,20 +100,20 @@ void CSimCallBarring::FindAndCreateCBListL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,condition);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("condition",ret,0,&KCBList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_FINDANDCREATECBLISTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CONDITION returned %d (element no. %d) from tag %s.",ret,0,KCBList);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,serviceGroup);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("serviceGroup",ret,1,&KCBList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_FINDANDCREATECBLISTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SERVICEGROUP returned %d (element no. %d) from tag %s.",ret,1,KCBList);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,status);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("status",ret,2,&KCBList);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_FINDANDCREATECBLISTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element STATUS returned %d (element no. %d) from tag %s.",ret,2,KCBList);
 			continue;
 			}
 		
@@ -194,7 +200,7 @@ TInt CSimCallBarring::NotifyCallBarringStatusChange(const TTsyReqHandle aReqHand
 	iCBNotification.iCBChangeInfoNotificationPending=ETrue;
 	iCBNotification.iCBChangeInfoReqHandle=aReqHandle;
 	iCBNotification.iCurrentCBCondition=aCB;
-	LOGCALL1("Finished CSimCallBarring::NotifyCallBarringStatusChange");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_NOTIFYCALLBARRINGSTATUSCHANGE_1, "Finished CSimCallBarring::NotifyCallBarringStatusChange");
 	return KErrNone;
 	}
 
@@ -310,7 +316,7 @@ TInt CSimCallBarring::GetCallBarringStatusPhase1(const TTsyReqHandle aTsyReqHand
 	@param aReqData information about the request
 	@param aBufSize Size of the buffer the client has to allocate for the 2nd pahase
   	*/
-	LOGCALL1("CSimPhone::GetCallBarringStatusPhase1");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_GETCALLBARRINGSTATUSPHASE1_1, "CSimPhone::GetCallBarringStatusPhase1");
 	
 	TInt ret=KErrNone;
 	TInt leaveCode=KErrNone;
@@ -318,7 +324,7 @@ TInt CSimCallBarring::GetCallBarringStatusPhase1(const TTsyReqHandle aTsyReqHand
 	if (leaveCode != KErrNone)
 			iPhone->ReqCompleted(aTsyReqHandle,leaveCode);
 
-	LOGCALL1("CSimPhone::GetCallBarringStatusPhase1");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_GETCALLBARRINGSTATUSPHASE1_2, "CSimPhone::GetCallBarringStatusPhase1");
 	return ret;
 	}
 	
@@ -333,7 +339,7 @@ TInt CSimCallBarring::ProcessGetCallBarringStatusPhase1L(const TTsyReqHandle aTs
 	@param aReqData information about the request
 	@param aBufSize Size of the buffer the client has to allocate for the 2nd pahase
 	*/
-	LOGCALL1("CSimCallBarring::ProcessGetCallBarringStatusPhase1L");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_PROCESSGETCALLBARRINGSTATUSPHASE1L_1, "CSimCallBarring::ProcessGetCallBarringStatusPhase1L");
 
 	CMobilePhoneCBList* list=CMobilePhoneCBList::NewL();
 	CleanupStack::PushL(list);
@@ -395,7 +401,7 @@ TInt CSimCallBarring::ProcessGetCallBarringStatusPhase1L(const TTsyReqHandle aTs
 	// Complete first phase of list retrieval
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	
-	LOGCALL1("CSimCallBarring::ProcessGetCallBarringStatusPhase1L");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_PROCESSGETCALLBARRINGSTATUSPHASE1L_2, "CSimCallBarring::ProcessGetCallBarringStatusPhase1L");
 	return KErrNone;
 	}
 
@@ -408,7 +414,7 @@ TInt CSimCallBarring::GetCallBarringStatusPhase2(const TTsyReqHandle aTsyReqHand
 	@param aClient Ponter to the client
 	@param aBuf Buffer containiong the call barring status list
 	*/
-	LOGCALL1("CSimCallBarring::GetCallBarringStatusPhase2");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_GETCALLBARRINGSTATUSPHASE2_1, "CSimCallBarring::GetCallBarringStatusPhase2");
 	CListReadAllAttempt* read=NULL;
 	// Find the get detected network attempt from this client
 	for (TInt i=0; i<iGetCBStatus->Count(); ++i)
@@ -427,7 +433,7 @@ TInt CSimCallBarring::GetCallBarringStatusPhase2(const TTsyReqHandle aTsyReqHand
 			}
 		}
 	// Should handle error case of not finding the matching client from read all phase 1
-	LOGCALL1("CSimCallBarring::GetCallBarringStatusPhase2");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_GETCALLBARRINGSTATUSPHASE2_2, "CSimCallBarring::GetCallBarringStatusPhase2");
 	return KErrNotFound;
 	}
 
@@ -437,7 +443,7 @@ TInt CSimCallBarring::GetCallBarringStatusCancel(const TTsyReqHandle aTsyReqHand
 	Cancels a Request to retrieve the call barring status list
 	@param aReqHandle Handle to the request
 	*/
-	LOGCALL1("CSimCallBarring::GetCallBarringStatusCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_GETCALLBARRINGSTATUSCANCEL_1, "CSimCallBarring::GetCallBarringStatusCancel");
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	// Remove the read all attempt from iGetCBStatus
 	CListReadAllAttempt* read=NULL;
@@ -452,7 +458,7 @@ TInt CSimCallBarring::GetCallBarringStatusCancel(const TTsyReqHandle aTsyReqHand
 			}
 		}
 	iPhone->ReqCompleted(aTsyReqHandle,KErrCancel);
-	LOGCALL1("CSimCallBarring::GetCallBarringStatusCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLBARRING_GETCALLBARRINGSTATUSCANCEL_2, "CSimCallBarring::GetCallBarringStatusCancel");
 	return KErrNone;
 	}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,14 @@
  @file Sio.cpp 
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "SIOTraces.h"
+#endif
+
 #include "SSCREXEC.H"
 #include "SIO.H"
-#include "SLOGGER.H"
 #include <networking/bca.h>
 
 const TInt KChatterPriority=0;
@@ -80,13 +85,13 @@ Instantiates member variables.
 void CScriptIO::CreateChannel(TRequestStatus& aStatus)
 	{
 	ASSERT(iCreateAndShutdownStatus == NULL);
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),_L("Script:\tOpening Comm Port '%S'"), &iCommsChannel);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CREATECHANNEL_1,"Script:\tOpening Comm Port '%S'", iCommsChannel);
 
 	iCommClosed = EFalse;
 	TInt err = CommOpen(iCommsChannel);
 	if (err != KErrNone)
 		{
-		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),_L("Script: Error %d opening Comm Port"), err);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CREATECHANNEL_2, "Script: Error %d opening Comm Port", err);
 		TRequestStatus* stat = &aStatus;
 		User::RequestComplete(stat, err);	
 		}
@@ -95,15 +100,13 @@ void CScriptIO::CreateChannel(TRequestStatus& aStatus)
 
 void CScriptIO::CancelCreateChannel()
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tCancelCreateChannel()");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CANCELCREATECHANNEL_1, "Script:\tCancelCreateChannel()");
 	CommCancel();
 	}
 
 void CScriptIO::InitializeComplete()
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tInitializeComplete()");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_INITIALIZECOMPLETE_1,"Script:\tInitializeComplete()");
 	ASSERT(iCreateAndShutdownStatus);
 	User::RequestComplete(iCreateAndShutdownStatus, KErrNone);
 	iCreateAndShutdownStatus = NULL;
@@ -111,8 +114,7 @@ void CScriptIO::InitializeComplete()
 
 void CScriptIO::ShutdownComplete(TInt aError)
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tShutdownComplete(aError %d)");)
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),logString(), aError);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_SHUTDOWNCOMPLETE_1, _"Script:\tShutdownComplete(aError %d)", aError);
 
 	ASSERT(iCreateAndShutdownStatus);
 	if (iCreateError != KErrNone) //The creation error is probably more interesting than a bad shutdown error
@@ -159,8 +161,7 @@ Upcall from CScriptBcaControl class indicating an error was encountered.  Clean 
 @param aError System wide error code. 
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tStop(aError %d)");)
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),logString(), aError);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_STOP_1,"Script:\tStop(aError %d)", aError);
 
 	iCreateError = aError;
 	delete iChat;
@@ -200,19 +201,16 @@ void CScriptIO::CommReadComplete(TInt aStatus)
 Reads completely - stops timer and if no error checks string against the desired string
 */
 	{
-	__FLOG_STMT(_LIT8(logString1,"Script:\tRead Complete");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_1,"Script:\tRead Complete");
 	if(aStatus==KErrCommsLineFail)
 		{
-		__FLOG_STMT(_LIT8(logString2,"Script:\tComms Error %d");)
-		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString2()),aStatus);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_2,"Script:\tComms Error %d",aStatus);
 		iChat->StopTimer();
 		iReadPending=EFalse;
 		TRAPD(ret,iScriptExecutor->CompletedReadL(KErrCommsLineFail));
 		if (KErrNone != ret)
 			{
-			__FLOG_STMT(_LIT8(logString6,"Script:\tCompleteReadL Failure");)
-			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString6());
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_3,"Script:\tCompleteReadL Failure");
 			}
 		return;
 		}
@@ -223,8 +221,7 @@ Reads completely - stops timer and if no error checks string against the desired
 	
 	if (aStatus==KErrCommsFrame)
 		{
-		__FLOG_STMT(_LIT(logString3,"Script:\tComms Error %d");)
-		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString3()),aStatus);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_4, "Script:\tComms Error %d",aStatus);
 		User::After(KClockTick);		// wait for a clock tick and continue
 		aStatus=KErrNone;
 		}
@@ -234,18 +231,13 @@ Reads completely - stops timer and if no error checks string against the desired
 		TRAPD(ret,iScriptExecutor->CompletedReadL(aStatus));
 		if (KErrNone != ret)
 			{
-			__FLOG_STMT(_LIT8(logString7,"Script:\tCompleteReadL Failure");)
-			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString7());
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_5,"Script:\tCompleteReadL Failure");
 			}
 		return;
 		}
 
-#ifdef __FLOG_ACTIVE
-	_LIT(logString4,"Rx:\t%S");
-	TBuf16<KLogBufferSize> temp;
-	temp.Copy(iRxBuffer.Left(Min(iRxBuffer.Length(),KLogBufferSize)));
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString4()),&temp);
-#endif
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_7, "Rx:\t%s",iRxBuffer);
+
 
 	if (iScriptExecutor->RequestUsePct())
 		{
@@ -255,8 +247,7 @@ Reads completely - stops timer and if no error checks string against the desired
 			TRAPD(ret,iScriptExecutor->CompletedReadL(err));
 			if (KErrNone != ret)
 				{
-				__FLOG_STMT(_LIT8(logString8,"Script:\tCompleteReadL Failure");)
-				__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString8());
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_8,"Script:\tCompleteReadL Failure");
 				}
 			return;
 			}
@@ -270,12 +261,7 @@ Reads completely - stops timer and if no error checks string against the desired
 			if(iStringFound!=-1)
 				{
 				iExcessData.Set(iRxBuffer.Right(iRxBuffer.Length()-iRxBufOffset-1));
-#ifdef __FLOG_ACTIVE
-				_LIT(logString5,"Script:\tExcess data buffer set to: %S");
-				TBuf16<KLogBufferSize> temp;
-				temp.Copy(iExcessData.Left(Min(iExcessData.Length(),KLogBufferSize)));
-				__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString5()),&temp);
-#endif
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_9, "Script:\tExcess data buffer set to: %s",iExcessData);
 				break;
 				}
 			}
@@ -289,8 +275,7 @@ Reads completely - stops timer and if no error checks string against the desired
 		TRAPD(ret,iScriptExecutor->CompletedReadL(aStatus,iStringFound));
 		if (KErrNone != ret)
 			{
-			__FLOG_STMT(_LIT8(logString9,"Script:\tCompleteReadL Failure");)
-			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString9());
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMREADCOMPLETE_10, "Script:\tCompleteReadL Failure");
 			}
 		}
 	else
@@ -305,13 +290,11 @@ void CScriptIO::CommWriteComplete(TInt aStatus)
 Writes completely - stops timer
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tWrite Complete");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMWRITECOMPLETE_1,"Script:\tWrite Complete");
 	iChat->StopTimer();
 	if(aStatus==KErrCommsLineFail)
  		{
- 		__FLOG_STMT(_LIT8(logString2,"Script:\tComms Error %d");)
- 		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),logString2(),aStatus);
+ 		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_COMMWRITECOMPLETE_2, "Script:\tComms Error %d",aStatus);
  		iWritePending=EFalse;
  		iScriptExecutor->CompletedWrite(KErrCommsLineFail);
  		return;
@@ -328,8 +311,7 @@ void CScriptIO::ChatStringMatch(TInt aIndex)
 Logs matching string found and sets iStringFound to aIndex.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tMatching String Found %d");)
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()),aIndex);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CHATSTRINGMATCH_1, "Script:\tMatching String Found %d",aIndex);
 	iStringFound=aIndex;
 	}
 
@@ -341,21 +323,18 @@ Timeout has occurred without while read/write pending.  Calls executor with erro
 	CommCancel();
 	if(iWritePending)
 		{
-		__FLOG_STMT(_LIT8(logString1,"Script:\tWrite Chat Time Out");)
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CHATTIMEOUT_1, "Script:\tWrite Chat Time Out");
 		iWritePending=EFalse;
 		iScriptExecutor->CompletedWrite(KErrTimedOut);
 		}
 	else if(iReadPending)
 		{
-		__FLOG_STMT(_LIT8(logString2,"Script:\tRead Chat Time Out");)
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CHATTIMEOUT_2,"Script:\tRead Chat Time Out");
 		iReadPending=EFalse;
 		TRAPD(ret,iScriptExecutor->CompletedReadL(KErrTimedOut));
 		if (KErrNone != ret)
 			{
-			__FLOG_STMT(_LIT8(logString3,"Script:\tCompleteReadL Failure");)
-			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString3());
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_CHATTIMEOUT_3,"Script:\tCompleteReadL Failure");
 			}
 		}
 	else
@@ -382,8 +361,8 @@ Read from port.
 	TInt timeInterval=TInt(realTimeInterval);
 	if (realTimeInterval>TReal(timeInterval))
 		timeInterval++;
-	__FLOG_STMT(_LIT8(logString,"Script:\tRead Pending In %d Microseconds");)
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),logString(),timeInterval);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_READ_1,"Script:\tRead Pending In %d Microseconds",timeInterval);
+	
 //
 	iChat->StartTimer(timeInterval);
 	CommReadOneOrMore(iRxBuffer);
@@ -395,8 +374,7 @@ void CScriptIO::ReadEcho()
 Reads echo.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"Script:\tRead Echo");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_READECHO_1,"Script:\tRead Echo");
 	iExcessData.Set(NULL,0);	// clear excess data buffer
 
 	iReadPending=ETrue;
@@ -424,12 +402,7 @@ void CScriptIO::PreSendPauseCompleted()
 PreSend pause is finished, can now do write.
 */
 	{
-#ifdef __FLOG_ACTIVE
-	_LIT(logString,"Tx:\t%S");
-	TBuf16<KLogBufferSize> temp;
-	temp.Copy(iTxBuffer.Left(Min(iTxBuffer.Length(),KLogBufferSize)));
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString()),&temp);
-#endif
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTIO_PRESENDPAUSECOMPLETED_1, "Tx:\t%s",iTxBuffer);
 	CommWrite(iTxBuffer);
 	iChat->StartTimer(KWriteTimeOutSec*KOneSecInMicroSecs);
 	}

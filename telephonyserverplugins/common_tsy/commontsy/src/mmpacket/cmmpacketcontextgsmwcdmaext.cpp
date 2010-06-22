@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmpacketcontextgsmwcdmaextTraces.h"
+#endif
+
 #include <in_sock.h>
 #include "cmmpacketcontextgsmwcdmaext.h"
 #include "Cmmpacketcontexttsy.h"
@@ -32,7 +38,7 @@ CMmPacketContextGsmWcdmaExt* CMmPacketContextGsmWcdmaExt::NewL(
         CMmPacketContextTsy* const aMmPacketContextTsy, 
         CMmPacketServiceTsy* const aMmPacketServiceTsy  ) 
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::NewL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_NEWL_1,  "TSY: CMmPacketContextGsmWcdmaExt::NewL." );
 
     CMmPacketContextGsmWcdmaExt* packetContextGsmWcdmaExt = 
         new ( ELeave ) CMmPacketContextGsmWcdmaExt();
@@ -59,7 +65,7 @@ void CMmPacketContextGsmWcdmaExt::ConstructL()
  
 CMmPacketContextGsmWcdmaExt::~CMmPacketContextGsmWcdmaExt()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::~CMmPacketContextGsmWcdmaExt." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_DTOR_1,  "TSY: CMmPacketContextGsmWcdmaExt::~CMmPacketContextGsmWcdmaExt." );
 
     TInfoName contextName;
     if( iMmPacketContextTsy )
@@ -157,7 +163,7 @@ void CMmPacketContextGsmWcdmaExt::InitInternalAttributesL()
 //
 TInt CMmPacketContextGsmWcdmaExt::InitialiseContextL(RPacketContext::TDataChannelV2* aDataChannel)
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::InitialiseContextL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_INITIALISECONTEXTL_1,  "TSY: CMmPacketContextGsmWcdmaExt::InitialiseContextL." );
 
     TInt ret( KErrArgument );
 
@@ -191,7 +197,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::InitialiseContextL." );
 //
 void CMmPacketContextGsmWcdmaExt::CompleteInitialiseContext(const TInt aResult) // Result
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteInitialiseContext." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteInitialiseContext." );
 
     if ( KErrNone == aResult )
         {
@@ -226,7 +232,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteInitialiseContext." );
 //
 TInt CMmPacketContextGsmWcdmaExt::ActivateL()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::ActivateL " );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_ACTIVATEL_1,  "TSY: CMmPacketContextGsmWcdmaExt::ActivateL " );
 
     TInt ret( KErrArgument );
 
@@ -285,8 +291,7 @@ void CMmPacketContextGsmWcdmaExt::CompleteActivate(
         CMmDataPackage* aDataPackage,
         TInt aResult ) 
     {
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. Status: %d",
-             aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATE_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. Status: %d",aResult );
 
     if ( KErrNone == aResult )
         {
@@ -332,8 +337,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. Status: %d",
         }
     else
         {
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. ErrorCause: %d",
-             aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATE_2,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. ErrorCause: %d",aResult );
         // Re-activation is allowed because activation has not succeeded
         iIsActivateAllowed = ETrue;
         }
@@ -357,7 +361,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. ErrorCause: %
 void CMmPacketContextGsmWcdmaExt::CompleteActivatePhase2(  
         CMmDataPackage* aDataPackage, const TInt aResult )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivatePhase2. Status: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATEPHASE2_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivatePhase2. Status: %d", aResult );
 
     if ( KErrNone == aResult )
         {
@@ -429,7 +433,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivatePhase2. Status:
 //
 TInt CMmPacketContextGsmWcdmaExt::DeactivateL()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::DeactivateL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_DEACTIVATEL_1,  "TSY: CMmPacketContextGsmWcdmaExt::DeactivateL." );
 
     TInt ret( KErrArgument );
     //zero length
@@ -459,7 +463,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::DeactivateL." );
 void CMmPacketContextGsmWcdmaExt::CompleteDeactivate( 
         const TInt aResult )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteDeactivate." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEDEACTIVATE_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteDeactivate." );
 
     if ( KErrNone == aResult )
         {
@@ -487,7 +491,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteDeactivate." );
 //
 TInt CMmPacketContextGsmWcdmaExt::DeleteL()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::DeleteL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_DELETEL_1,  "TSY: CMmPacketContextGsmWcdmaExt::DeleteL." );
 
     TInt ret( KErrNotReady );
 
@@ -516,7 +520,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::DeleteL." );
 void CMmPacketContextGsmWcdmaExt::CompleteDelete( 
 		TInt const aResult )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteDelete." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEDELETE_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteDelete." );
 
     if( KErrNone == aResult )
         {
@@ -548,7 +552,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteDelete." );
 TInt CMmPacketContextGsmWcdmaExt::GetConfig( 
 		TPacketDataConfigBase* const aConfig )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::GetConfig." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_GETCONFIG_1,  "TSY: CMmPacketContextGsmWcdmaExt::GetConfig." );
 
     TInt ret( KErrNone );
 
@@ -602,7 +606,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::GetConfig." );
 //
 TInt CMmPacketContextGsmWcdmaExt::GetDataVolumeTransferredL()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::GetDataVolumeTransferredL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_GETDATAVOLUMETRANSFERREDL_1,  "TSY: CMmPacketContextGsmWcdmaExt::GetDataVolumeTransferredL." );
 
     TInt ret( KErrNone );
     TInfoName contextName = iMmPacketContextTsy->ContextName();
@@ -645,8 +649,7 @@ void CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferred(
         {
         errorValue = KErrGeneral;
         }
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferred. Error Value:%d",
-                errorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEGETDATAVOLUMETRANSFERRED_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferred. Error Value:%d",errorValue );
 
     iMmPacketContextTsy->CompleteGetDataVolumeTransferred( errorValue );
 
@@ -662,7 +665,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferre
 TInt CMmPacketContextGsmWcdmaExt::NotifyConfigChanged(
         TPacketDataConfigBase& aConfig )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::NotifyConfigChanged." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_NOTIFYCONFIGCHANGED_1,  "TSY: CMmPacketContextGsmWcdmaExt::NotifyConfigChanged." );
 
     TInt ret( KErrNone );
 
@@ -684,7 +687,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::NotifyConfigChanged." );
 //
 void CMmPacketContextGsmWcdmaExt::CompleteNotifyConfigChanged()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteNotifyConfigChanged." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETENOTIFYCONFIGCHANGED_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteNotifyConfigChanged." );
 
     if ( NULL != iConfig )
         {
@@ -717,7 +720,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::CompleteNotifyConfigChanged." );
 TInt CMmPacketContextGsmWcdmaExt::SetConfigL( 
 		TPacketDataConfigBase* const aConfig )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::SetConfigL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_SETCONFIGL_1,  "TSY: CMmPacketContextGsmWcdmaExt::SetConfigL." );
 
     TInt ret( KErrNotSupported );
 
@@ -744,7 +747,7 @@ TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::SetConfigL." );
                  // Temporary store the configGPRS
                 *iTempConfig = configGPRS;
 
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::SetConfigL. NWIContext: %d", configGPRS.iNWIContext );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_SETCONFIGL_2,  "TSY: CMmPacketContextGsmWcdmaExt::SetConfigL. NWIContext: %d", configGPRS.iNWIContext );
 
                 TInfoName contextName = iMmPacketContextTsy->ContextName();
                 CMmDataPackage data;
@@ -827,8 +830,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::SetConfigL. NWIContext: %d", co
 void CMmPacketContextGsmWcdmaExt::CompleteSetConfig( 
 		const TInt aResult )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::CompleteSetConfig. aStatus:%d",
-                aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETESETCONFIG_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteSetConfig. aStatus:%d",aResult );
 
 
     if ( NULL != iTempConfig )
@@ -885,7 +887,7 @@ TInt CMmPacketContextGsmWcdmaExt::GetConfigurationData(
         TBool& aContextType,                       
         TInfoName& aPrimaryContextName )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::GetConfigurationData." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_GETCONFIGURATIONDATA_1,  "TSY: CMmPacketContextGsmWcdmaExt::GetConfigurationData." );
 
     TInt ret( KErrNotReady );
 
@@ -920,7 +922,7 @@ TInt CMmPacketContextGsmWcdmaExt::AddPacketFilterL(
     RPacketContext::TPacketFilterV2& contextFilter =
         ( *contextFilterPckg )();
 
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::AddPacketFilterL contextFilterId: %d", contextFilter.iId );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_ADDPACKETFILTERL_1,  "TSY: CMmPacketContextGsmWcdmaExt::AddPacketFilterL contextFilterId: %d", contextFilter.iId );
 
     // Check out Tft operation
     iFilterStatus = EAddPacketFilterStatusAdd;
@@ -1142,7 +1144,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::AddPacketFilterL contextFilterI
 TInt CMmPacketContextGsmWcdmaExt::RemovePacketFilter( 
 			const TInt aID )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::RemovePacketFilter. FilterId:%d", aID );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_REMOVEPACKETFILTER_1,  "TSY: CMmPacketContextGsmWcdmaExt::RemovePacketFilter. FilterId:%d", aID );
 
     TInt ret( KErrArgument );
 
@@ -1217,7 +1219,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextGsmWcdmaExt::RemovePacketFilter. FilterId:%d
 //
 TInt CMmPacketContextGsmWcdmaExt::ModifyActiveContextL()
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::ModifyActiveContextL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_MODIFYACTIVECONTEXTL_1,  "TSY: CMmPacketContextGsmWcdmaExt::ModifyActiveContextL." );
 
     TInt ret( KErrArgument );
     
@@ -1610,7 +1612,7 @@ RPacketContext::TContextConfigGPRS* CMmPacketContextGsmWcdmaExt::ContextConfig
 TInt CMmPacketContextGsmWcdmaExt::GetDnsInfoEtel(
             TDes8* const aDnsInfo )
     {
-TFLOGSTRING( "TSY: CMmPacketContextGsmWcdmaExt::GetDnsInfoEtel." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_GETDNSINFOETEL_1,  "TSY: CMmPacketContextGsmWcdmaExt::GetDnsInfoEtel." );
 
     // Unpack the aDnsInfo
     RPacketContext::TTDnsInfoV2Pckg* dnsInfoPckg =

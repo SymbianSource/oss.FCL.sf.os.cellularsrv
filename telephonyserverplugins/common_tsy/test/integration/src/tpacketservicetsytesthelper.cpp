@@ -82,7 +82,19 @@ void TPacketServiceTsyTestHelper::WaitForPacketContextNotifyStatusChange(
 		{
 		// Request has completed with incorrect result. Consume any outstanding
 		// Repost notification until timeout or we get the right result.
-		
+		DEBUG_PRINTF3(_L("State %d Expected %d waiting for correct state"), aContextStatus, aExpectedContextStatus);
+
+		if (RPacketContext::EStatusActive == aContextStatus)
+			{
+			// === NTN Failure ===
+			ERR_PRINTF1(_L("<font color=Orange>$NTNKnownFailure: Context Activation success (EStatusActive = 3)</font>"));
+			// Nothing else to wait for now!
+			// Deactivate the context with RPacketContext::Deactivate
+			TExtEtelRequestStatus contextDeactivateStatus(aPacketContext, EPacketContextDeactivate);
+			aPacketContext.Deactivate(contextDeactivateStatus);
+			User::Leave(iTestStep.WaitForRequestWithTimeOut(contextDeactivateStatus, ETimeLong));
+			}
+
 		aPacketContext.NotifyStatusChange(aRequestStatus, aContextStatus);
 		err = iTestStep.WaitForRequestWithTimeOut(aRequestStatus, ETimeVeryLong);
 		}
@@ -777,8 +789,13 @@ void TPacketServiceTsyTestHelper::GetGprsSettings(RMobilePhone::TMobilePhoneNetw
         }
 	else if(ptrNetworkName.Find(_L("NTN")) != KErrNotFound)   // NTN
         {
-        section.Copy(KIniSectionVodafoneGprs);
-        DEBUG_PRINTF1(_L("Retrieving NTN GPRS settings"));
+		section.Copy(KIniSectionNTNGprs);
+		DEBUG_PRINTF1(_L("Retrieving NTN GPRS settings"));
+        }
+	else if(ptrNetworkName.Find(_L("NOKIA")) != KErrNotFound)   // NTN
+        {
+		section.Copy(KIniSectionNTNGprs);
+		DEBUG_PRINTF1(_L("Retrieving NTN GPRS settings"));
         }
 	else if( (ptrNetworkName.Find(_L("01")) >=0) || 
 			(ptrNetworkName.Find(_L("ANITE")) >=0) ) // Anite

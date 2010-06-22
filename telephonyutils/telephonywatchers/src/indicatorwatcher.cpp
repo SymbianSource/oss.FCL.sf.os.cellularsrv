@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,7 +14,13 @@
 //
 
 // User includes
-#include "watcherlog.h"
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "indicatorwatcherTraces.h"
+#endif
+
 #include "indicatorwatcher.h"
 
 // System includes
@@ -75,7 +81,7 @@ void CIndicatorWatcher::HandlePhoneStateEventL(TInt aCompletionCode)
 		{
 	case EIndicatorNotYetInitialised:
 	case EIndicatorRequestInitialIndicator:
-		LOGINDICATOR1("IndicatorWatcher : Requesting initial indicator values");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINDICATORWATCHER_HANDLEPHONESTATEEVENTL_1, "IndicatorWatcher : Requesting initial indicator values");
 		Phone().GetIndicator(iStatus, iIndicatorInfo);
 		IndicatorState() = EIndicatorWaitingForInitialIndicator;
 		SetActive();
@@ -130,8 +136,8 @@ void CIndicatorWatcher::ReleasePhoneResources()
 
 void CIndicatorWatcher::HandleIndicatorUpdateL(TInt aCompletionCode)
 	{
-#ifdef _DEBUG
-	LOGINDICATOR2("IndicatorWatcher : Handling phone state change with request result (%d)", aCompletionCode);
+#ifdef OST_TRACE_COMPILER_IN_USE
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINDICATORWATCHER_HANDLEINDICATORUPDATEL_1, "IndicatorWatcher : Handling phone state change with request result (%d)", aCompletionCode);
 #else
 	(void) aCompletionCode;
 #endif
@@ -210,7 +216,7 @@ void CIndicatorWatcher::HandleIndicatorUpdateL(TInt aCompletionCode)
 		}
 	else
 		{
-		LOGINDICATOR1("IndicatorWatcher : Processing successful indicator event");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINDICATORWATCHER_HANDLEINDICATORUPDATEL_2, "IndicatorWatcher : Processing successful indicator event");
 	
 		// Update charger status if there has been a change
 		{
@@ -226,7 +232,7 @@ void CIndicatorWatcher::HandleIndicatorUpdateL(TInt aCompletionCode)
 	
 		if (newChargerState!=chargerState)
 			{
-			LOGINDICATOR2("IndicatorWatcher : New Charger State %d", newChargerState);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINDICATORWATCHER_HANDLEINDICATORUPDATEL_3, "IndicatorWatcher : New Charger State %d", newChargerState);
 			User::LeaveIfError(iChargerStatusProperty.Set(newChargerState));
 			}
 		}
@@ -244,7 +250,7 @@ void CIndicatorWatcher::HandleIndicatorUpdateL(TInt aCompletionCode)
 	
 		if (newNetworkState!=networkState)
 			{
-			LOGINDICATOR2("IndicatorWatcher : New Network State %d", newNetworkState);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINDICATORWATCHER_HANDLEINDICATORUPDATEL_4, "IndicatorWatcher : New Network State %d", newNetworkState);
 			User::LeaveIfError(iNetworkStatusProperty.Set(newNetworkState));		
 			}
 		}
@@ -268,7 +274,7 @@ void CIndicatorWatcher::HandleIndicatorUpdateL(TInt aCompletionCode)
 	
 		if (newCallState!=callState)
 			{
-			LOGINDICATOR2("IndicatorWatcher : New Call State %d", newCallState);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINDICATORWATCHER_HANDLEINDICATORUPDATEL_5, "IndicatorWatcher : New Call State %d", newCallState);
 			User::LeaveIfError(iCurrentCallProperty.Set(newCallState));
 			}
 		}

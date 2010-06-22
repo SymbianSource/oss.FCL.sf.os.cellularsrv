@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,6 +14,11 @@
 //
 
 #ifdef USING_CTSY_DISPATCHER
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmphonetsywithdispatcherTraces.h"
+#endif
 
 /**
  * This file contains additional function definitions for the CMmPhoneTsy class
@@ -52,11 +57,11 @@ void CMmPhoneTsy::CompleteGetPhoneId(
 			iPhoneIdentity.iSerialNumber.Copy(aPhoneId.iSerialNumber);
 			}
 
-TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetPhoneId :");
-TFLOGSTRING2("				Manufacturer: %S,", &iPhoneIdentity.iManufacturer);
-TFLOGSTRING2("				Model: %S,", &iPhoneIdentity.iModel);
-TFLOGSTRING2("				Revision: %S,", &iPhoneIdentity.iRevision);
-TFLOGSTRING2("				SerialNumber: %S", &iPhoneIdentity.iSerialNumber);
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETPHONEID1_1, "TSY: CMmPhoneTsy::CompleteGetPhoneId :");
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETPHONEID1_2, "Manufacturer: %S,", iPhoneIdentity.iManufacturer);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETPHONEID1_3, "Model: %S,", iPhoneIdentity.iModel);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETPHONEID1_4, "Revision: %S,", iPhoneIdentity.iRevision);
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETPHONEID1_5, "SerialNumber: %S", iPhoneIdentity.iSerialNumber);
         }
 
     //reset req handle. Returns the deleted req handle

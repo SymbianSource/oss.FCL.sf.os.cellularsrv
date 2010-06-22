@@ -25,6 +25,9 @@ TARGETTYPE     PLUGIN
 UID            0x10009D8D 0x102822EF
 VENDORID       0x70000001
 
+//PDP logging in commsdbg.ini is enabled with  'LOG SPUD *'
+MACRO 	_INFO_LOG
+MACRO 	_ERROR_LOG
 
 SOURCEPATH     	../src
 SOURCE		PDPSCPRStates.cpp 
@@ -43,9 +46,9 @@ SOURCE		pdptiermanager.cpp
 SOURCE		pdpservices.cpp
 SOURCE		mbmsengine.cpp
 SOURCE		pdptiermanagerselector.cpp
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 SOURCE		PDPCPR.cpp
 SOURCE		PDPCPRFactory.cpp
+#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 SOURCE		PDPCPRAvailabilityListener.cpp
 #endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 SOURCE		AuthenticationDialog.cpp
@@ -98,6 +101,7 @@ END
 USERINCLUDE    	../inc
 USERINCLUDE		../umts/spudtel/inc
 USERINCLUDE		../umts/spudfsm/inc
+USERINCLUDE    	../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 

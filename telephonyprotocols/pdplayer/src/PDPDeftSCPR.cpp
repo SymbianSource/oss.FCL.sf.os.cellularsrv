@@ -20,6 +20,11 @@
  @internalComponent
 */
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "PDPDeftSCPRTraces.h"
+#endif
+
 #include <comms-infras/corescpractivities.h>
 #include "PDPDeftSCPR.h"
 #include "PDPSCPRStates.h"
@@ -28,7 +33,7 @@
 #include <comms-infras/commsdebugutility.h>
 #include <elements/nm_signatures.h>
 
-#if defined(__CFLOG_ACTIVE) || defined(SYMBIAN_TRACE_ENABLE)
+#if defined(SYMBIAN_TRACE_ENABLE)
 #define KPDPSCprTag KESockSubConnectionTag
 _LIT8(KPDPSCprSubTag, "pdpscpr");
 #endif
@@ -65,7 +70,7 @@ DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStartDataClient, PDPDeftDataClient
     NODEACTIVITY_ENTRY(KNoTag, SCprStates::TStopYourFlows, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KNoDataClientsToStop>)
     THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KNoDataClientsToStop, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrProviderStopped)
     NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TDestroyPDPContext, PDPSCprStates::TAwaitingPDPContextDestroyed, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
-    THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PRStates::TDestroyOrphanedDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
+    THROUGH_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TCleanupFSMAndDataClients, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, MeshMachine::TRaiseActivityError)
 NODEACTIVITY_END()
 }
@@ -103,21 +108,21 @@ typedef MeshMachine::TAcceptErrorState<CoreNetStates::TAwaitingApplyResponse> TA
 //           to TRejoin, whereas TRejoin doesn't mean swap - suggesting to
 //           introduce PDP level msg: TRejoinAndSwap.
 DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityGoneDown, PDPDeftSCprGoneDown, TPDPMessages::TPDPFSMMessage, PDPSCprStates::CPrimaryPDPGoneDownActivity::NewL)
-	FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
-	THROUGH_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TDoNothing, PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
+    FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
+    THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCleanupFSM, PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStoreOriginalDataClient, MeshMachine::TNoTag)
-	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TRejoinDataClient, CoreNetStates::TAwaitingRejoinDataClientComplete, MeshMachine::TNoTag)
-	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TApplyNewDefault, TAwaitingApplyResponseOrError, MeshMachine::TNoTag)
-	THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TSwitchToNewDefault, MeshMachine::TNoTag)
-	NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStopOriginalDataClient, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TNoTag)
-
-	LAST_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TClearError)
-	THROUGH_NODEACTIVITY_ENTRY(KActiveTag, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrContentionTag)
-	//Awaiting for contention result, do not stop the start activity.
-	LAST_NODEACTIVITY_ENTRY(PDPSCprStates::KContentionTag, MeshMachine::TDoNothing)
-
-	LAST_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCancelDataClientStartInPDP)
-
+    NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TRejoinDataClient, CoreNetStates::TAwaitingRejoinDataClientComplete, MeshMachine::TNoTag)
+    NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TApplyNewDefault, TAwaitingApplyResponseOrError, MeshMachine::TNoTag)
+    THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TSwitchToNewDefault, MeshMachine::TNoTag)
+    NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStopOriginalDataClient, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TNoTag)
+    
+    LAST_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TClearError)
+    THROUGH_NODEACTIVITY_ENTRY(KActiveTag, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrContentionTag)
+    //Awaiting for contention result, do not stop the start activity.
+    LAST_NODEACTIVITY_ENTRY(PDPSCprStates::KContentionTag, MeshMachine::TDoNothing)
+    
+    LAST_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCancelDataClientStartInPDP)
+    
     NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, CoreNetStates::TStopSelf, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TSendGoneDown)
 NODEACTIVITY_END()
@@ -277,8 +282,8 @@ void CPDPDefaultSubConnectionProvider::AuthenticateL()
     iUsername.Copy(configOption->iAuthInfo.iUsername);
     iPassword.Copy(configOption->iAuthInfo.iPassword);
 
-    __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &iUsername));
-    __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &iPassword));
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATE_1, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] ", (TUint)this, iUsername);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATE_2, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] ", (TUint)this, iPassword);
     
     iAuthDialog = CAuthenticationDialog::NewL();
     iAuthDialog->Authenticate(*this, iUsername, iPassword);
@@ -293,9 +298,9 @@ void CPDPDefaultSubConnectionProvider::AuthenticationCompleteL(TInt aError)
 
         configOption->iAuthInfo.iUsername.Copy(iUsername);
         configOption->iAuthInfo.iPassword.Copy(iPassword);
-
-        __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &configOption->iAuthInfo.iUsername));
-        __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &configOption->iAuthInfo.iPassword));
+       
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATIONCOMPLETE_1, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%s] ", (TUint)this, configOption->iAuthInfo.iUsername);
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATIONCOMPLETE_2, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%s] ", (TUint)this, configOption->iAuthInfo.iPassword);
         }
 
     //Send AuthenticateComplete message

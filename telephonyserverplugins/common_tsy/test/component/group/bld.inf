@@ -1,4 +1,5 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+//
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -11,6 +12,7 @@
 // Contributors:
 //
 // Description:
+//
 //
 
 
@@ -53,6 +55,10 @@ te_ctsy_component.iby          /epoc32/rom/include/te_ctsy_component.iby
 ../scripts/te_ctsycomponent.script					z:/testdata/scripts/te_ctsycomponent.script
 ../scripts/te_ctsycomponent_timeout_all.script  	z:/testdata/scripts/te_ctsycomponent_timeout_all.script
 ../scripts/te_ctsycomponent_fullrun.script			z:/testdata/scripts/te_ctsycomponent_fullrun.script
+
+// Scripts which can be used to copy/remove MockLtsy ini file to/from C: drive
+../scripts/mockltsy_copy_ini_file.script			z:/testdata/scripts/mockltsy_copy_ini_file.script
+../scripts/mockltsy_remove_ini_file.script			z:/testdata/scripts/mockltsy_remove_ini_file.script
 
 ../scripts/te_ctsycomponent_lbs_individual.script	z:/testdata/scripts/te_ctsycomponent_lbs_individual.script
 ../scripts/te_ctsycomponent_smsstore_individual.script	z:/testdata/scripts/te_ctsycomponent_smsstore_individual.script

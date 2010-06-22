@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,8 +14,13 @@
 //
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CmmcustommesshandlergsmextTraces.h"
+#endif
+
 #include "CMmCustomMessHandlerGsmExt.h"
-#include <ctsy/tflogger.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
 #include <ctsy/serviceapi/mmtsy_ipcdefs.h>
 #include <ctsy/pluginapi/mmmessagemanagercallback.h>
@@ -35,7 +40,7 @@ void CMmCustomMessHandlerGsmExt::ConstructL()
 CMmCustomMessHandlerGsmExt* CMmCustomMessHandlerGsmExt::NewL( 
     CMmMessageRouter* aMessageRouter ) 
     {
-TFLOGSTRING("TSY: CMmCustomMessHandlerGsmExt::NewL.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMMESSHANDLERGSMEXT_NEWL_1, "TSY: CMmCustomMessHandlerGsmExt::NewL.\n" );
     
     CMmCustomMessHandlerGsmExt* self = new( ELeave ) 
         CMmCustomMessHandlerGsmExt();
@@ -50,7 +55,7 @@ TFLOGSTRING("TSY: CMmCustomMessHandlerGsmExt::NewL.\n" );
 
 CMmCustomMessHandlerGsmExt::~CMmCustomMessHandlerGsmExt()
     {
-TFLOGSTRING("TSY: CMmCustomMessHandlerGsmExt::~CMmCustomMessHandlerGsmExt.\n");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMMESSHANDLERGSMEXT_DTOR_1, "TSY: CMmCustomMessHandlerGsmExt::~CMmCustomMessHandlerGsmExt.\n");
     }
 
 // ---------------------------------------------------------------------------

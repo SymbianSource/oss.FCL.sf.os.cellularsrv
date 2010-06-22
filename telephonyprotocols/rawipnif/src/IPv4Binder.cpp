@@ -20,6 +20,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "IPv4BinderTraces.h"
+#endif
+
 #include <etelpckt.h>
 #include <in_iface.h>
 #include "RawIPFlow.h"
@@ -32,8 +38,6 @@ using namespace ESock;
 #include <networking/umtsnifcontrolif.h>
 #endif
 
-#define LOG_IP_ADDRESS(desc,addr) _LOG_L1C5(_L8("    " desc " = %d.%d.%d.%d"), \
-			addr >> 24, (addr >> 16) & 0xFF, (addr >> 8) & 0xFF, addr & 0xFF);
 
 #ifdef __EABI__
 // Patch data is used and KMtuIPv4 and KRMtuIPv4 can be modified to a different value in RawIpNif.iby file
@@ -41,11 +45,11 @@ extern const TInt KMtuIPv4 = KDefaultMtu;
 extern const TInt KRMtuIPv4 = KDefaultMtu;
 #endif
 
-CIPv4Binder::CIPv4Binder(CRawIPFlow& aFlow, CBttLogger* aTheLogger)
+CIPv4Binder::CIPv4Binder(CRawIPFlow& aFlow)
 /**
  * Constructor
  */ 
-	: CBinderBase(aFlow,aTheLogger),
+	: CBinderBase(aFlow),
 	  iSpeedMetric(KDefaultSpeedMetric)
 	{
 	}
@@ -81,8 +85,7 @@ TInt CIPv4Binder::Control(TUint aLevel, TUint aName, TDes8& aOption)
  * @return Standard error codes
  */
 	{
-	_LOG_L1C3(_L8("CIPv4Binder::Control [aLevel=%d, aName=%d]"),
-		aLevel, aName);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_CONTROL_1, "CIPv4Binder::Control [aLevel=%d, aName=%d]",aLevel, aName);
 
 	if (aLevel == KSOLInterface)
 		{
@@ -159,7 +162,7 @@ TInt CIPv4Binder::Control(TUint aLevel, TUint aName, TDes8& aOption)
 
 TInt CIPv4Binder::GetConfig(TBinderConfig& aConfig)
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::GetConfig"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_GETCONFIG_1, "CIPv4Binder::GetConfig");
 	
     TBinderConfig4* config = TBinderConfig::Cast<TBinderConfig4>(aConfig);
     
@@ -189,8 +192,8 @@ TInt CIPv4Binder::GetConfig(TBinderConfig& aConfig)
 	
 	config->iInfo.iSpeedMetric = iSpeedMetric;		/* approximation of the interface speed in Kbps. */
 
-    LOG_IP_ADDRESS("Local IP address from TBinderConfig", iSettings.iLocalAddr);
-	
+	OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_GETCONFIG_2, "Local IP address from TBinderConfig = %u.%u.%u.%u",iSettings.iLocalAddr >> 24, (iSettings.iLocalAddr >> 16) & 0xFF, (iSettings.iLocalAddr >> 8) & 0xFF, iSettings.iLocalAddr & 0xFF);   
+    
 	config->iAddress.SetAddress(iSettings.iLocalAddr);		/* Interface IP address. */
 	config->iNetMask.SetAddress(iSettings.iNetMask);			/* IP netmask. */
 	config->iBrdAddr.SetAddress(iSettings.iBroadcastAddr);	/* IP broadcast address. */
@@ -211,7 +214,7 @@ TInt CIPv4Binder::DeleteContext(TDes8& aContextParameters)
  * @return KErrArgument if an incorrect structure is passed, otherwise KErrNone
  */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::DeleteContext"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_DELETECONTEXT_1, "CIPv4Binder::DeleteContext");
 
 	if (aContextParameters.Length() != sizeof(TContextParameters))
 		{
@@ -244,7 +247,7 @@ TInt CIPv4Binder::DeleteContext(TDes8& aContextParameters)
  */
 void CIPv4Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::UpdateContextConfig"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_1, "CIPv4Binder::UpdateContextConfig");
 
 	// Get our IP address from the GPRS context config.
 	TInetAddr address;
@@ -270,14 +273,13 @@ void CIPv4Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 	if (ret == KErrNone)
 		{
 		iSettings.iLocalAddr = address.Address();
-		LOG_IP_ADDRESS("Got local IP address from context", iSettings.iLocalAddr);
+		OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_2, "Got local IP address from context = %u.%u.%u.%u",iSettings.iLocalAddr >> 24, (iSettings.iLocalAddr >> 16) & 0xFF, (iSettings.iLocalAddr >> 8) & 0xFF, iSettings.iLocalAddr & 0xFF);
 		iSettings.iDefGateway = address.Address();
-		_LOG_L1C1(_L8("Set Default Gateway to local IP address"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_3, "Set Default Gateway to local IP address");
 		}
 	else
 		{
-		_LOG_L2C2(_L8("Couldn't get IP address from GPRS config (err: %d)"),
-			ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_4, "Couldn't get IP address from GPRS config (err: %d)",ret);
 
 		// Don't leave on this error: we may still be OK if we read some
 		// settings from CommDB.
@@ -299,12 +301,11 @@ void CIPv4Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 		if (ret == KErrNone)
 			{
 			iSettings.iPrimaryDns = address.Address();
-			LOG_IP_ADDRESS("Got primary DNS from context PCO", iSettings.iPrimaryDns);
+			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_5, "Got primary DNS from context PCO = %u.%u.%u.%u",iSettings.iPrimaryDns >> 24, (iSettings.iPrimaryDns >> 16) & 0xFF, (iSettings.iPrimaryDns >> 8) & 0xFF, iSettings.iPrimaryDns & 0xFF);
 			}
 		else
 			{
-			_LOG_L2C2(_L8("Couldn't get primary DNS address from GPRS config (err: %d)"),
-				ret);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_6, "Couldn't get primary DNS address from GPRS config (err: %d)",ret);
 
 			// Don't leave on this error: we may still be OK if we read some
 			// settings from CommDB.
@@ -316,12 +317,11 @@ void CIPv4Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 		if (ret == KErrNone)
 			{
 			iSettings.iSecondaryDns = address.Address();
-			LOG_IP_ADDRESS("Got secondary DNS from context PCO", iSettings.iPrimaryDns);
+	        OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_7, "Got secondary DNS from context PCO = %u.%u.%u.%u",iSettings.iSecondaryDns >> 24, (iSettings.iSecondaryDns >> 16) & 0xFF, (iSettings.iSecondaryDns >> 8) & 0xFF, iSettings.iSecondaryDns);
 			}
 		else
 			{
-			_LOG_L2C2(_L8("Couldn't get secondary DNS address from GPRS config (err: %d)"),
-				ret);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_8, "Couldn't get secondary DNS address from GPRS config (err: %d)",ret);
 
 			// Don't leave on this error: we may still be OK if we read some
 			// settings from CommDB.
@@ -329,8 +329,8 @@ void CIPv4Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 		}
 	else
 		{
-		LOG_IP_ADDRESS("Using CommDB DNS address - Primary ", iSettings.iPrimaryDns);
-		LOG_IP_ADDRESS("                         - Secondary ", iSettings.iSecondaryDns);
+        OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_9, "Using CommDB DNS address - Primary = %u.%u.%u.%u",iSettings.iPrimaryDns >> 24, (iSettings.iPrimaryDns >> 16) & 0xFF, (iSettings.iPrimaryDns >> 8) & 0xFF, iSettings.iPrimaryDns & 0xFF);
+		OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_10, "                         - Secondary = %u.%u.%u.%u",iSettings.iSecondaryDns >> 24, (iSettings.iSecondaryDns >> 16) & 0xFF, (iSettings.iSecondaryDns >> 8) & 0xFF, iSettings.iSecondaryDns);
 		}
 
 
@@ -352,8 +352,7 @@ void CIPv4Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 			}
 		else
 			{
-			_LOG_L2C2(_L8("Couldn't get default gateway from GPRS config (err: %d)"),
-				ret);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONTEXTCONFIGL_4, "Couldn't get default gateway from GPRS config (err: %d)",ret);
 			}
 		}*/
 	}
@@ -365,7 +364,7 @@ void CIPv4Binder::UpdateConnectionSpeed(TUint aConnectionSpeed)
  * @param aConnectionSpeed Our connection speed
  */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::UpdateConnectionSpeed"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONNECTIONSPEED_1, "CIPv4Binder::UpdateConnectionSpeed");
 
 	iSpeedMetric = aConnectionSpeed;
 	}
@@ -379,7 +378,7 @@ MLowerDataSender::TSendResult CIPv4Binder::Send(RMBufChain& aPdu)
  * @return MLowerDataSender::ESendBlocked or ESendAccepted based on state of flow.
  */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::Send"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_SEND_1, "CIPv4Binder::Send");
 
 #ifdef __BTT_LOGGING__
 	LogPacket(aPdu);
@@ -400,7 +399,7 @@ TInt CIPv4Binder::Notification(TAgentToNifEventType /*aEvent*/,
  * @param aInfo Not used 
  */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::Notification"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_NOTIFICATION_1, "CIPv4Binder::Notification");
 
 	return KErrNone;
 	}
@@ -412,7 +411,7 @@ void CIPv4Binder::StartSending()
  * @param aProtocol A pointer to a protocol
  */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::StartSending()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_STARTSENDING_1, "CIPv4Binder::StartSending()");
 
 	CBinderBase::StartSending();
 	}
@@ -424,8 +423,7 @@ TBool CIPv4Binder::WantsProtocol(TUint16 aProtocolCode)
  * @param aProtocolCode The protocol type
  */
 	{
-	_LOG_L1C2(_L8("CIPv4Binder::WantsProtocol [aProtocolCode=%X]"),
-		aProtocolCode);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_WANTSPROTOCOL_1, "CIPv4Binder::WantsProtocol [aProtocolCode=%X]",aProtocolCode);
 
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
 	return ((aProtocolCode & 0x00FF) == KIp4FrameType);
@@ -443,7 +441,7 @@ void CIPv4Binder::Process(RMBufChain& aPdu)
  * @param aPdu The incoming packet
  */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::Process"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_PROCESS_1, "CIPv4Binder::Process");
 
 #ifdef __BTT_LOGGING__
 	LogPacket(aPdu);
@@ -453,12 +451,12 @@ void CIPv4Binder::Process(RMBufChain& aPdu)
 	// been bound yet.
 	if (iUpperReceiver)						// ASSERT(iUpperReceiver) ?
 		{
-		_LOG_L1C1(_L8("CIPv4Binder: Packet Sent to TCP/IP Protocol!!!"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_PROCESS_2, "CIPv4Binder: Packet Sent to TCP/IP Protocol!!!");
 		iUpperReceiver->Process(aPdu);
 		}
 	else 
 		{
-		_LOG_L2C1(_L8("WARNING: dumping incoming packet, no protocol bound"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_PROCESS_3, "WARNING: dumping incoming packet, no protocol bound");
 		aPdu.Free();
 		}
 	}
@@ -488,7 +486,7 @@ Called from RawIP Flow.
 @param aProvision Provisioning structure from Control side.
 */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::SetProvision"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_SETPROVISION_1, "CIPv4Binder::SetProvision");
 
 	iSettings.iLocalAddr	 = aProvision.GetIpAddress();
 	iSettings.iNetMask		 = aProvision.GetIpNetMask();
@@ -499,7 +497,7 @@ Called from RawIP Flow.
 	iSettings.iGetGatewayFromServer = aProvision.GetIpAddrFromServer();
 	iSettings.iGetDnsFromServer		= aProvision.GetIp4DNSAddrFromServer();
 	
-    LOG_IP_ADDRESS("Local IP address from Provisioning", iSettings.iLocalAddr);	
+    OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_SETPROVISION_2, "Local IP address from Provisioning = %u.%u.%u.%u",iSettings.iLocalAddr >> 24, (iSettings.iLocalAddr >> 16) & 0xFF, (iSettings.iLocalAddr >> 8) & 0xFF, iSettings.iLocalAddr & 0xFF);
 	}
 
 #ifdef __BTT_LOGGING__
@@ -510,19 +508,18 @@ void CIPv4Binder::LogPacket(const RMBufChain& aPacket)
 * @param aPacket The packet 
 */
 	{
-	_LOG_L1C1(_L8("CIPv4Binder::LogPacket"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_1, "CIPv4Binder::LogPacket");
 
 	TInt mBufLength = aPacket.Length() - aPacket.First()->Length();
 
-	_LOG_L3C2(_L8("Analysis of %d byte packet:"), mBufLength);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_2, "Analysis of %d byte packet:", mBufLength);
 
 	//Note: All the constants used on this method are a pragmatic guess of the
 	//IP header fields. The only porpose of this method is logging.
 
 	if (mBufLength < 20)
 		{
-		_LOG_L3C2(_L8(" -doesn't appear to be a valid IPv4 packet (length=%d)")
-			, mBufLength);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_3, " -doesn't appear to be a valid IPv4 packet (length=%d)", mBufLength);
 		return;
 		}
 
@@ -531,39 +528,34 @@ void CIPv4Binder::LogPacket(const RMBufChain& aPacket)
 
 	if ((payloadPtr[0] & 0xF0) != 0x40)
 		{
-		_LOG_L3C2(_L8(" - doesn't appear to be an IPv4 packet (version=0x%X)"),
-			(payloadPtr[0] & 0xF0) >> 4);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_4, " - doesn't appear to be an IPv4 packet (version=0x%X)",(payloadPtr[0] & 0xF0) >> 4);
 		return;
 		}
 
 	if ((payloadPtr[0] & 0xF) != 0x5)
 		{
-		_LOG_L3C2(_L8(" - doesn't have a standard IP header (length=0x%X)"),
-			payloadPtr[0] & 0xF);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_5, " - doesn't have a standard IP header (length=0x%X)",payloadPtr[0] & 0xF);
 		return;
 		}
 
-	_LOG_L3C5(_L8(" - src addr: %d.%d.%d.%d"), payloadPtr[12], payloadPtr[13],
-		payloadPtr[14], payloadPtr[15]);
-	_LOG_L3C5(_L8(" - dst addr: %d.%d.%d.%d"), payloadPtr[16], payloadPtr[17],
-		payloadPtr[18], payloadPtr[19]);
+	OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_6, " - src addr: %d.%d.%d.%d", payloadPtr[12], payloadPtr[13],payloadPtr[14], payloadPtr[15]);
+	OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_7, " - dst addr: %d.%d.%d.%d", payloadPtr[16], payloadPtr[17],payloadPtr[18], payloadPtr[19]);
 
 	if (payloadPtr[9] == 0x06)
 		{
-		_LOG_L3C1(_L8(" - appears to be a TCP packet"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_8, " - appears to be a TCP packet");
 		if (mBufLength < 40)
 			{
-			_LOG_L3C2(_L8(" - but is too short (length=0x%X)"), mBufLength);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_9, " - but is too short (length=0x%X)", mBufLength);
 			return;
 			}
-		_LOG_L3C3(_L8(" - src port: %d, dst port: %d"),
-			(payloadPtr[20] << 8) + payloadPtr[21],
-			(payloadPtr[22] << 8) + payloadPtr[23]);
-		_LOG_L3C3(_L8(" - seq #: 0x%08X, ack #: 0x%08X"),
-			(payloadPtr[24] << 24) + (payloadPtr[25] << 16) +
-			(payloadPtr[26] << 8) + payloadPtr[27],
-			(payloadPtr[28] << 24) + (payloadPtr[29] << 16) +
-			(payloadPtr[30] << 8) + payloadPtr[31]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_10, " - src port: %d, dst port: %d",(payloadPtr[20] << 8) + payloadPtr[21],(payloadPtr[22] << 8) + payloadPtr[23]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_11, " - seq #: 0x%08X, ack #: 0x%08X",           
+		        (payloadPtr[24] << 24) + (payloadPtr[25] << 16) +
+	            (payloadPtr[26] << 8) + payloadPtr[27],
+	            (payloadPtr[28] << 24) + (payloadPtr[29] << 16) +
+	            (payloadPtr[30] << 8) + payloadPtr[31]);
+
 
 		TBuf8<100> flagsSet;
 		flagsSet.Copy(_L8(" - flags set: "));
@@ -593,7 +585,7 @@ void CIPv4Binder::LogPacket(const RMBufChain& aPacket)
 			{
 			flagsSet.Append(_L8("URG "));
 			}
-		_LOG_L3C1(flagsSet);
+		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_12, "%s", flagsSet);
 
 		TInt dataOffset = payloadPtr[32] >> 2; // in bytes
 		if ((dataOffset > 0) && (mBufLength > dataOffset + 30))
@@ -616,55 +608,50 @@ void CIPv4Binder::LogPacket(const RMBufChain& aPacket)
 					data.Append(TChar('?'));
 					}
 				}
-			_LOG_L3C1(data);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_13, "%s", data);
 			}
 		}
 	else if (payloadPtr[9] == 0x01)
 		{
-		_LOG_L3C1(_L8(" - appears to be an ICMP packet"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_14, " - appears to be an ICMP packet");
 		if (mBufLength < 24)
 			{
-			_LOG_L3C2(_L8(" - but is too short (length=0x%X)"), mBufLength);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_15, " - but is too short (length=0x%X)", mBufLength);
 			return;
 			}
 
 		if (payloadPtr[20] == 0x8)
 			{
-			_LOG_L3C1(_L8(" - is an echo request"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_16, " - is an echo request");
 			}
 		else if (payloadPtr[20] == 0x0)
 			{
-			_LOG_L3C1(_L8(" - is an echo reply"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_17, " - is an echo reply");
 			}
 		else
 			{
-			_LOG_L3C2(_L8(" - unknown type (0x%02X)"), payloadPtr[20]);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_18, " - unknown type (0x%02X)", payloadPtr[20]);
 			return;
 			}
 
 		if (mBufLength >= 28)
 			{
-			_LOG_L3C3(_L8(" - ID: 0x%04X, seq #: 0x%04X"),
-				(payloadPtr[24] << 8) + payloadPtr[25],
-				(payloadPtr[26] << 8) + payloadPtr[27]);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_19, " - ID: 0x%04X, seq #: 0x%04X",(payloadPtr[24] << 8) + payloadPtr[25],(payloadPtr[26] << 8) + payloadPtr[27]);
 			}
 		}
 	else if (payloadPtr[9] == 0x11)
 		{
-		_LOG_L3C1(_L8(" - appears to be a UDP packet"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_20, " - appears to be a UDP packet");
 		if (mBufLength < 28)
 			{
-			_LOG_L3C2(_L8(" - but is too short (length=0x%X)"), mBufLength);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_21, " - but is too short (length=0x%X)", mBufLength);
 			return;
 			}
-		_LOG_L3C3(_L8(" - src port: %d, dst port: %d"),
-			(payloadPtr[20] << 8) + payloadPtr[21],
-			(payloadPtr[22] << 8) + payloadPtr[23]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_22, " - src port: %d, dst port: %d",(payloadPtr[20] << 8) + payloadPtr[21],(payloadPtr[22] << 8) + payloadPtr[23]);
 		}
 	else
 		{
-		_LOG_L3C2(_L8(" - appears to be for an unknown protocol (0x%X)"),
-			payloadPtr[9]);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_LOGPACKET_23, " - appears to be for an unknown protocol (0x%X)",payloadPtr[9]);
 		}
 	}
 #endif // __BTT_LOGGING__

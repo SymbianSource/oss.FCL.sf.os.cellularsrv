@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,14 +21,19 @@
 
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "IPTagHeaderTraces.h"
+#endif
+
 #include "IPTagHeader.h"
 #include "Constants.h"
 
 /**
 Default constructor. 
 */
-CIPTagHeader::CIPTagHeader(CBttLogger* aTheLogger)
-	: iTheLogger(aTheLogger)
+CIPTagHeader::CIPTagHeader()
 	{
 	iHeaderByte.SetMax();
 	iHeaderByte.FillZ();
@@ -48,7 +53,7 @@ This method will set the type of the IP header.
 */
 void CIPTagHeader::SetType(TUint16 aType)
  	{
- 	_LOG_L1C1(_L8("CIPTagHeader::SetType"));
+ 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPTAGHEADER_SETTYPE_1, "CIPTagHeader::SetType");
  	
  	iHeaderByte[0] = (TUint8)(aType>>8); 
  	iHeaderByte[1] = (TUint8)(aType&0xff);	
@@ -63,7 +68,7 @@ header tag is appended.
 */
 void CIPTagHeader::AddHeader(RCommsBufChain& aPdu)
 	{
-	_LOG_L1C1(_L8("CIPTagHeader::AddHeader"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPTAGHEADER_ADDHEADER_1, "CIPTagHeader::AddHeader");
 
 	// Add the protocol code as a header to the buffer
 	aPdu.Write(iHeaderByte,0);	
@@ -79,7 +84,7 @@ will be stored in protocolCode and returned to the caller.
 */
 TUint16 CIPTagHeader::RemoveHeader(RCommsBufChain& aPdu)
 	{
-	_LOG_L1C1(_L8("CIPTagHeader::RemoveHeader"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPTAGHEADER_REMOVEHEADER_1, "CIPTagHeader::RemoveHeader");
 
 	if (aPdu.Length() > KIPTagHeaderLength)
 		{

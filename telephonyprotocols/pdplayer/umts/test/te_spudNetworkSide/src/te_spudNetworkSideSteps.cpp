@@ -20,7 +20,7 @@
  @internalComponent
 */
 
-
+#include <e32math.h>
 #include "te_spudNetworkSideSteps.h"
 #include <c32comm.h> // uniquely for the call to StartC32WithCMISuppressions
 #include "spudNetSideQos.h"
@@ -80,7 +80,7 @@ TVerdict CSpudNetSideTestBase::doTestStepPreambleL()
 
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 TVerdict CSpudNetSideTestBase::doTestStepPostambleL()
-	{	
+	{
 	ClearPolicySelector2QosParametersTableL();
 	return TestStepResult();
 	}
@@ -97,7 +97,18 @@ void CSpudNetSideTestBase::FailNextPktLoopbackCsyWriteL(TInt aPortNum, TInt aErr
 	TestL(RProperty::Set(KUidPSCsyWriteResultCategory, aPortNum, aErrorCode), _L("Set PSCsy write result"));
   	INFO_PRINTF3(_L("Next write on [PKTLOOPBACK::%d] is going to fail with [%d]"), aPortNum, aErrorCode);
   	}
-	
+
+void CSpudNetSideTestBase::ClearNextPktLoopbackCsyWriteL(TInt aPortNum)
+    {
+    TInt dummy(0);
+    TInt ret = RProperty::Get(KUidPSCsyWriteResultCategory, aPortNum, dummy);
+    if(ret != KErrNotFound)
+        {
+        RProperty::Set(KUidPSCsyWriteResultCategory, aPortNum, KErrNone);
+        }
+    INFO_PRINTF2(_L("Reset to KErrNone for the next write on [PKTLOOPBACK::%d] port"), aPortNum);
+    }
+
 /**
 Blocks until Nifman progress notification is received.
 
@@ -757,7 +768,7 @@ void CSpudNetSideTestBase::StartSecondaryL()
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"),_L("SecondaryActivationEvent2Reason"));
 #else
-	User::After(KTimeToStartSecondary);
+	User::After(KTimeToStartSecondary*4);
 	VerifySubconnectionCountL(_L("SubConnectionCount2"), iap);
 #endif
 	}
@@ -1145,7 +1156,7 @@ enum TVerdict CSpudPrimaryEvent::RunTestStepL()
 		}
 	
 	StartPrimaryOnlyL();	
-	
+	User::After(KTimeToStartSecondary);
 
 	TRequestStatus progressReqSt;	
 	iInterface.ProgressNotification(iProgressBuf, progressReqSt, static_cast<TUint>(expProgress));
@@ -1636,6 +1647,7 @@ enum TVerdict CSpudSecondaryLowerNifDownStop::RunTestStepL()
 	
 	StopSecondaryL();
 	
+	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;
 	}
 
@@ -1719,6 +1731,7 @@ enum TVerdict CSpudPrimaryDeletionInterfaceStop::RunTestStepL()
 	// In the meanwhile, we sneak in and stop the interface.
 	
 	StopInterfaceL();
+	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;	
 	};
 
@@ -1961,9 +1974,18 @@ TBool CSpudNetSideTestBase::SpudDeletePrimaryPdpL()
 	// start a secondary context with QoS parameters connected to the same address as above
 	// it will use the iSocket member variable to connect to the address
 	
+
+	TInt defaultIapID = 2;
+	//the default IapID is usually defined in commsdb with value of 2.
+	//this allows us to change the default IapID, as in R4_and_R5 test the default ID is 11.
+	if(!GetIntFromConfig(ConfigSection(), _L("DefaultIapId"), defaultIapID))
+        	{
+	        defaultIapID = PDPIAP;
+        	}
+
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	User::After(10*KTimeToStartSecondary);
-	VerifySubconnectionCountL(_L("SubConnectionCount1"), PDPIAP);
+	VerifySubconnectionCountL(_L("SubConnectionCount1"), defaultIapID);
 #endif
 	InitiateSecondaryStartL();
 	
@@ -1972,11 +1994,17 @@ TBool CSpudNetSideTestBase::SpudDeletePrimaryPdpL()
 
 	// start rawipnif instance opposite the SPUD's secondary context, and open a socket on it
 	CConnectionStart *secondaryIfStart = CConnectionStart::NewLC(iEsock, *this, oppositeSecondaryIapId);
+
+    TRequestStatus progressReqSt;   
+    
+	secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, 7000);
+	WaitForProgressNotificationL(progressReqSt, 7000, 0); // We can wait here forever. Set timeout on test step.
+
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));
 #else
 	User::After(KTimeToStartSecondary);
-	VerifySubconnectionCountL(_L("SubConnectionCount2"), PDPIAP);
+	VerifySubconnectionCountL(_L("SubConnectionCount2"), defaultIapID);
 #endif
 	
 	RSocket oppositeSecondarySocket;
@@ -2112,8 +2140,9 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	VerifySubconnectionCountL(_L("SubConnectionCount1"), PDPIAP);
 #endif
-	// start a secondary context
-	InitiateSecondaryStartL();
+
+   // start a secondary context
+    InitiateSecondaryStartL();
 
 	TInt primaryIapId, secondaryIapId;
 	TestBooleanTrueL(GetIntFromConfig(ConfigSection(), _L("PppIapId1"), primaryIapId), _L("Get Iap ID for first Ppp instance"));
@@ -2123,10 +2152,18 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 	CConnectionStart *primaryIfStart = CConnectionStart::NewLC(iEsock, *this, primaryIapId);
 	CConnectionStart *secondaryIfStart = CConnectionStart::NewLC(iEsock, *this, secondaryIapId);
 
+	TRequestStatus progressReqSt;   
+	primaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp );
+
+	WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0);
+
+	secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
+	WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0);
+
+
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));
 #else
-	User::After(2*KTimeToStartSecondary);
 	VerifySubconnectionCountL(_L("SubConnectionCount2"), PDPIAP);
 #endif
 
@@ -2229,6 +2266,20 @@ enum TVerdict CSpudMultiPrimary::RunTestStepL()
     	TestL(p->Start(iap1prefs),primaryCreationErr, _L("RConnection::Start the interface"));
 	    }
 
+	//check if all contexts are still there
+	for (TInt i = 0; i < maximumConnections; i++)
+	    {
+        TBuf<32> primaryIap;
+        primaryIap.Format(KPrimaryIapFormatLit, i + 1);
+    	if (!GetIntFromConfig(ConfigSection(), primaryIap, primaryIapId))
+    		{
+    		User::Leave(KErrNotFound);
+    		}
+		INFO_PRINTF2(_L("Verify context #%d is still there"), i);
+		VerifySubconnectionCountL(2, primaryIapId);
+		INFO_PRINTF2(_L("Context #%d is still there"), i);
+	    }
+
 	
 	for (TInt i = (interfaces.Count() - 1); i >= 0; i--)
 	    {
@@ -2315,6 +2366,129 @@ enum TVerdict CIoctlAddressRetrieve::RunTestStepL()
     
     iInterface.Stop();
     iInterface.Close(); 
+
+    return EPass;
+    }
+
+enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
+    {
+    //Start 1st context
+    RConnection* conn1 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn1);
+
+    TInt primaryIapId;
+    if (!GetIntFromConfig(ConfigSection(), _L("PrimaryIapId1"), primaryIapId))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    TCommDbConnPref conn1Pref;
+    conn1Pref.SetIapId(primaryIapId);
+    
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId); 
+    TestL(conn1->Open(iEsock), _L("RConnection::Open the interface"));
+    TestL(conn1->Start(conn1Pref), _L("RConnection::Start the interface"));
+
+    //Start 2nd context
+    RConnection* conn2 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn2);
+
+    if (!GetIntFromConfig(ConfigSection(), _L("PrimaryIapId2"), primaryIapId))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    TCommDbConnPref conn2Pref;
+    conn2Pref.SetIapId(primaryIapId);
+    
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId);     
+    TestL(conn2->Open(iEsock), _L("RConnection::Open the interface"));
+    TestL(conn2->Start(conn2Pref), _L("RConnection::Start the interface"));
+
+    //Open & Connect 1st Socket
+    RSocket sock1;
+    TestL(sock1.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn1), _L("RSocket::Open"));
+    CleanupClosePushL<RSocket>(sock1);
+    TInetAddr localAddr;
+    localAddr.SetPort(KConfiguredTftFilter1DestPort);
+    TestL(sock1.Bind(localAddr), _L("Binding the local Socket"));
+    
+    TInetAddr dstAddr;
+    dstAddr.SetPort(KConfiguredTftFilter1SrcPort);
+    dstAddr.Input(KConfiguredTftFilter1SrcAddr);
+
+    TRequestStatus status;
+    sock1.Connect(dstAddr, status);
+    User::WaitForRequest(status);
+    TestL(status.Int(), _L("RSocket::Connect status opening 1st socket"));
+
+    //Open & Bind 2nd Socket
+    RSocket sock2;
+    TestL(sock2.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn2), _L("RSocket::Open"));
+    CleanupClosePushL<RSocket>(sock2);
+    localAddr.SetPort(KConfiguredTftFilter1SrcPort);
+    TestL(sock2.Bind(localAddr), _L("Binding the local Socket"));
+
+    //then send & receive data.
+    const TInt KMaxMMU = 4000;
+    TBuf8<KMaxMMU> *sendBuf = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(sendBuf);
+    
+    TBuf8<KMaxMMU> *recvBuf = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(recvBuf);
+
+    TBuf8<KMaxMMU> *recvBuf2 = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(recvBuf2);
+
+    TInt end;
+    if (!GetIntFromConfig(ConfigSection(), _L("TestMaxMMU"), end))
+        {
+        User::Leave(KErrNotFound);
+        }
+    
+    TInt begin;
+    if (!GetIntFromConfig(ConfigSection(), _L("TestMinMMU"), begin))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    if (begin > end)
+        {
+        User::Leave(KErrArgument);
+        }
+
+    INFO_PRINTF3(_L("Sending data frame size from (%d) to (%d)"), begin, end); 
+    TRequestStatus readStatus;
+
+    for(TInt j=begin;j<=end;j++)
+        {
+        sendBuf->Zero();
+        for (TInt i=0;i<j;i++)
+            {
+            sendBuf->Append(Math::Random() & 0x7f);
+            }
+
+        recvBuf->Zero();
+        sock2.Read(*recvBuf, readStatus);
+        sock1.Write(*sendBuf, status);
+        
+        User::WaitForRequest(status);
+        TESTL(status.Int() == 0);
+        User::WaitForRequest(readStatus);
+        TESTL(readStatus.Int() == 0);
+        if (sendBuf->Length() > recvBuf->Length())
+            {
+            recvBuf2->Zero();
+            sock2.Read(*recvBuf2, readStatus);
+            User::WaitForRequest(readStatus);
+            TESTL(readStatus.Int() == 0);
+            recvBuf->Append(*recvBuf2);
+            TESTL(sendBuf->Length() == recvBuf->Length());
+            }
+        TESTL(recvBuf->Compare(*sendBuf) == 0);
+        }
+
+    CleanupStack::PopAndDestroy(7); //conn1, conn2, sock1, sock2, sendBuf, recvBuf, recvBuf2
 
     return EPass;
     }

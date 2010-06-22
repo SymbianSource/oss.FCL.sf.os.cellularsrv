@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,9 +16,14 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CTsyDelegatesTraces.h"
+#endif
+
 #include "ctsydelegates.h"
 #include "cmmmessagemanagerbase.h"
-#include "tflogger.h" 
 
 // ======== MEMBER FUNCTIONS ========
 
@@ -44,7 +49,7 @@ CTsyDelegates::CTsyDelegates()
 CBase* CTsyDelegates::GetTsyObject( 
     CMmMessageManagerBase::TTsyObjects aObject )
 	{
-TFLOGSTRING2("TSY: CTsyDelegates::GetTsyObject object=%d", aObject );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTSYDELEGATES_GETTSYOBJECT_1, "TSY: CTsyDelegates::GetTsyObject object=%d", aObject );
 	
 	CBase* object = NULL;	
  	object = iTsyObjectArray.At( aObject );	
@@ -61,7 +66,7 @@ void CTsyDelegates::RegisterTsyObject(
     CMmMessageManagerBase::TTsyObjects aTsyObjectType,
     CBase* aTsyObject )
     {
-TFLOGSTRING3("TSY: CTsyDelegates::RegisterTsyObject type=%d address=0x%x", TInt( aTsyObjectType ), aTsyObject );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTSYDELEGATES_REGISTERTSYOBJECT_1, "TSY: CTsyDelegates::RegisterTsyObject type=%d address=0x%x", TInt( aTsyObjectType ), aTsyObject );
 
     iTsyObjectArray[ aTsyObjectType ] = aTsyObject;
     }
@@ -74,7 +79,7 @@ TFLOGSTRING3("TSY: CTsyDelegates::RegisterTsyObject type=%d address=0x%x", TInt(
 //
 void CTsyDelegates::DeregisterTsyObject( CBase* aTsyObject )
     {
-TFLOGSTRING2("TSY: CTsyDelegates::DeregisterTsyObject address=0x%x", aTsyObject );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTSYDELEGATES_DEREGISTERTSYOBJECT_1, "TSY: CTsyDelegates::DeregisterTsyObject address=0x%x", aTsyObject );
 
     for( TInt i = 0; i < TInt( 
         CMmMessageManagerBase::EMaxNumOfTsyObjects ); i++ )

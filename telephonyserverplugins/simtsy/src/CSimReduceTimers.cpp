@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,7 +21,13 @@
 */
 
 
-#include "Simlog.h"
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimReduceTimersTraces.h"
+#endif
+
 #include "CSimReduceTimers.h"
 
 
@@ -84,26 +90,26 @@ void CSimReduceTimers::SimPSEvent(const CSimPubSub::TPubSubProperty aProperty, T
 	if (aProperty == iPSProperty && // Condition for correct property
 		(aStatus == ETimerIdAllTimers)) // and correct value for signal
 		{
-		LOGMISC1(">>CSimReduceTimers.cpp: Reduce Timer event fired for all timers");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_SIMPSEVENT_1, ">>CSimReduceTimers.cpp: Reduce Timer event fired for all timers");
 		Notify();
 		}
 	else if(aProperty == iPSProperty && aStatus > 0)
 		{
-		LOGMISC2(">>CSimReduceTimers.cpp: Reduce Timer event fired for event ID %d", aStatus);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_SIMPSEVENT_2, ">>CSimReduceTimers.cpp: Reduce Timer event fired for event ID %d", aStatus);
 		Notify(aStatus);
 		}
 	}
 
 void CSimReduceTimers::AttachL(MSimTimerUpdateObserver* aObserver)
 	{
-	LOGMISC1("CSimReduceTimers::AttachL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_ATTACHL_1, "CSimReduceTimers::AttachL");
 	User::LeaveIfError(iObservers.Append(aObserver));
 	}
 
 void CSimReduceTimers::DetachL(MSimTimerUpdateObserver* aObserver)
 	{
 	TInt pos = iObservers.Find(aObserver);
-	LOGMISC2("CSimReduceTimers::DetachL, from position %d", pos);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_DETACHL_1, "CSimReduceTimers::DetachL, from position %d", pos);
 	User::LeaveIfError(pos);
 	iObservers.Remove(pos);
 	}
@@ -111,10 +117,10 @@ void CSimReduceTimers::DetachL(MSimTimerUpdateObserver* aObserver)
 void CSimReduceTimers::Notify()
 	{
 	TInt totalItems = iObservers.Count();
-	LOGMISC2("CSimReduceTimers::Notify, %d observers registered", totalItems);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY_1, "CSimReduceTimers::Notify, %d observers registered", totalItems);
 	if (totalItems <= 0)
 		{
-		LOGMISC1("CSimReduceTimers::Notify, No timers to reduce.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY_2, "CSimReduceTimers::Notify, No timers to reduce.");
 		return;
 		}
 
@@ -123,7 +129,7 @@ void CSimReduceTimers::Notify()
 	for (num = 0; num < totalItems; num++)
 		{
 		TInt temp = iObservers[num]->GetRemainingSeconds();
-		LOGMISC3("CSimReduceTimers::Notify, iObservers[%d] remaining time = %d", num, temp);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY_3, "CSimReduceTimers::Notify, iObservers[%d] remaining time = %d", num, temp);
 
 		// Ensure no error is returned and check if the current itteration gives a lower time remaining.
 		if (temp > 0 && temp < minTimeReduce)
@@ -134,16 +140,16 @@ void CSimReduceTimers::Notify()
 
 	if (minTimeReduce == KMaxTInt)
 		{
-		LOGMISC1("CSimReduceTimers::Notify, No running timers.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY_4, "CSimReduceTimers::Notify, No running timers.");
 		return;
 		}
 
-	LOGMISC2("CSimReduceTimers::Notify, Min time to reduce all timers: %d", minTimeReduce);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY_5, "CSimReduceTimers::Notify, Min time to reduce all timers: %d", minTimeReduce);
 	// Ensure that reducing timers by minTimeReduce does not reduce any timer to less than KTimerDelayOnReduceTimeSignal.
 	minTimeReduce -= KTimerDelayOnReduceTimeSignal;
 	if (minTimeReduce <= 0)
 		{
-		LOGMISC1("CSimReduceTimers::Notify, Min time to reduce <= KTimerDelayOnReduceTimeSignal, no change to timers.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY_6, "CSimReduceTimers::Notify, Min time to reduce <= KTimerDelayOnReduceTimeSignal, no change to timers.");
 		return;
 		}
 
@@ -156,10 +162,10 @@ void CSimReduceTimers::Notify()
 void CSimReduceTimers::Notify(TInt aTimerEventId)
 	{
 	TInt totalItems = iObservers.Count();
-	LOGMISC2("CSimReduceTimers::Notify, %d observers registered", totalItems);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY1_1, "CSimReduceTimers::Notify, %d observers registered", totalItems);
 	if (totalItems <= 0)
 		{
-		LOGMISC1("CSimReduceTimers::Notify, No timers to reduce.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY1_2, "CSimReduceTimers::Notify, No timers to reduce.");
 		return;
 		}
 	
@@ -182,8 +188,7 @@ void CSimReduceTimers::Notify(TInt aTimerEventId)
 		
 	if(indexOfLowest == KErrNotFound)
 		{
-		LOGMISC2(">>CSimReduceTimers::Notify, No observers with event ID %d found", 
-					aTimerEventId);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY1_3, ">>CSimReduceTimers::Notify, No observers with event ID %d found", aTimerEventId);
 		return;
 		}
 
@@ -191,13 +196,11 @@ void CSimReduceTimers::Notify(TInt aTimerEventId)
 	TInt reduceBy = lowestTime - KTimerDelayOnReduceTimeSignal;
 	if(reduceBy >= lowestTime)
 		{
-		LOGMISC3("CSimReduceTimers::Notify, Lowest timer for event ID %d already less than %d sec. No timer reduced.",
-				KTimerDelayOnReduceTimeSignal, aTimerEventId);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY1_4, "CSimReduceTimers::Notify, Lowest timer for event ID %d already less than %d sec. No timer reduced.",KTimerDelayOnReduceTimeSignal, aTimerEventId);
 		}
 	else
 		{
-		LOGMISC3(">>CSimReduceTimers::Notify, Timer for observer with event ID %d, reduced by %d sec", 
-					aTimerEventId, reduceBy);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMREDUCETIMERS_NOTIFY1_5, ">>CSimReduceTimers::Notify, Timer for observer with event ID %d, reduced by %d sec", aTimerEventId, reduceBy);
 		iObservers[indexOfLowest]->Update(reduceBy);
 		}
 	}

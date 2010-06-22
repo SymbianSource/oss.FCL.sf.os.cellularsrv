@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "gsmupduTraces.h"
+#endif
 
 #include <etelmm.h>
 #include "gsmuNmspaceMobMsg.h"
@@ -43,7 +49,7 @@
  */
 EXPORT_C CSmsPDU* CSmsPDU::NewL(RReadStream& aStream,CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsPDU::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NEWL_1, "CSmsPDU::NewL()");
 
 	TInt type=aStream.ReadUint8L();
 	CSmsPDU* smspdu=NULL;
@@ -111,8 +117,7 @@ EXPORT_C CSmsPDU* CSmsPDU::NewL(RReadStream& aStream,CCnvCharacterSetConverter& 
  */
 EXPORT_C CSmsPDU* CSmsPDU::NewL(const TGsmSms& aGsmSms,CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs, TBool aIsRPError,TBool aIsMobileTerminated)
 	{
-	LOGGSMU3("CSmsPDU::NewL(): aIsRPError=%d, aIsMobileTerminated=%d",
-			 aIsRPError, aIsMobileTerminated);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NEWL1_1, "CSmsPDU::NewL(): aIsRPError=%d, aIsMobileTerminated=%d",aIsRPError, aIsMobileTerminated);
 
     const TUint8* ptr1=aGsmSms.Pdu().Ptr();
 
@@ -176,7 +181,7 @@ EXPORT_C CSmsPDU* CSmsPDU::NewL(const TGsmSms& aGsmSms,CCnvCharacterSetConverter
  */
 EXPORT_C CSmsPDU* CSmsPDU::NewL(TSmsPDUType aType,CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs,TBool aIsRPError)
 	{
-	LOGGSMU2("CSmsPDU::NewL(): aIsRPError=%d", aIsRPError);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NEWL2_1, "CSmsPDU::NewL(): aIsRPError=%d", aIsRPError);
 
 	CSmsPDU* smspdu=NULL;
 	switch (aType)
@@ -229,7 +234,7 @@ EXPORT_C CSmsPDU* CSmsPDU::NewL(TSmsPDUType aType,CCnvCharacterSetConverter& aCh
  */
 EXPORT_C CSmsPDU* CSmsPDU::DuplicateL() const
 	{
-	LOGGSMU1("CSmsPDU::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_DUPLICATEL_1, "CSmsPDU::DuplicateL()");
 
 	CSmsPDU*  smsPDU = NULL;
 
@@ -303,7 +308,7 @@ EXPORT_C void CSmsPDU::ExternalizeL(RWriteStream& aStream) const
  */
 EXPORT_C void CSmsPDU::EncodeMessagePDUL(TGsmSms& aGsmSms) const
 	{
-	LOGGSMU1("CSmsPDU::EncodeMessagePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_ENCODEMESSAGEPDUL_1, "CSmsPDU::EncodeMessagePDUL()");
 
 	NMobileSmsMessaging::TMobileSmsGsmTpdu pdu;
 	pdu.SetLength(NMobileSmsMessaging::KGsmTpduSize);
@@ -321,7 +326,7 @@ EXPORT_C void CSmsPDU::EncodeMessagePDUL(TGsmSms& aGsmSms) const
 
 void CSmsPDU::EncodeMessagePDUL(TGsmSms& aGsmSms, const TEncodeParams* aEncodeParams) const
 	{
-	LOGGSMU1("CSmsPDU::EncodeMessagePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_ENCODEMESSAGEPDUL1_1, "CSmsPDU::EncodeMessagePDUL()");
 
 	NMobileSmsMessaging::TMobileSmsGsmTpdu pdu;
 	pdu.SetLength(NMobileSmsMessaging::KGsmTpduSize);
@@ -348,7 +353,7 @@ void CSmsPDU::EncodeMessagePDUL(TGsmSms& aGsmSms, const TEncodeParams* aEncodePa
  */
 EXPORT_C TPtrC CSmsPDU::ServiceCenterAddress() const
 	{
-	LOGGSMU1("CSmsPDU::ServiceCenterAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SERVICECENTERADDRESS_1, "CSmsPDU::ServiceCenterAddress()");
 
 	return iServiceCenterAddress->Address();
 	} // CSmsPDU::ServiceCenterAddress
@@ -364,7 +369,7 @@ EXPORT_C TPtrC CSmsPDU::ServiceCenterAddress() const
  */
 EXPORT_C void CSmsPDU::SetServiceCenterAddressL(const TDesC& aAddress)
 	{
-	LOGGSMU1("CSmsPDU::SetServiceCenterAddressL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETSERVICECENTERADDRESSL_1, "CSmsPDU::SetServiceCenterAddressL()");
 
 	iServiceCenterAddress->SetAddressL(aAddress);
 	} // CSmsPDU::SetServiceCenterAddressL
@@ -380,7 +385,7 @@ EXPORT_C void CSmsPDU::SetServiceCenterAddressL(const TDesC& aAddress)
  */
 EXPORT_C void CSmsPDU::ParsedServiceCenterAddress(TGsmSmsTelNumber& aParsedAddress) const
 	{
-	LOGGSMU1("CSmsPDU::ParsedServiceCenterAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_PARSEDSERVICECENTERADDRESS_1, "CSmsPDU::ParsedServiceCenterAddress()");
 
 	iServiceCenterAddress->ParsedAddress(aParsedAddress);
 	} // CSmsPDU::ParsedServiceCenterAddress
@@ -396,7 +401,7 @@ EXPORT_C void CSmsPDU::ParsedServiceCenterAddress(TGsmSmsTelNumber& aParsedAddre
  */
 EXPORT_C void CSmsPDU::SetParsedServiceCenterAddressL(const TGsmSmsTelNumber& aParsedAddress)
 	{
-	LOGGSMU1("CSmsPDU::SetParsedServiceCenterAddressL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETPARSEDSERVICECENTERADDRESSL_1, "CSmsPDU::SetParsedServiceCenterAddressL()");
 
 	iServiceCenterAddress->SetParsedAddressL(aParsedAddress);
 	} // CSmsPDU::SetParsedServiceCenterAddressL
@@ -421,7 +426,7 @@ EXPORT_C void CSmsPDU::SetParsedServiceCenterAddressL(const TGsmSmsTelNumber& aP
  */
 EXPORT_C TPtrC CSmsPDU::ToFromAddress() const
 	{
-	LOGGSMU1("CSmsPDU::SetParsedServiceCenterAddressL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_TOFROMADDRESS_1, "CSmsPDU::SetParsedServiceCenterAddressL()");
 
 	if (ToFromAddressPtr() == NULL)
 		{
@@ -445,7 +450,7 @@ EXPORT_C TPtrC CSmsPDU::ToFromAddress() const
  */
 EXPORT_C void CSmsPDU::SetToFromAddressL(const TDesC& aAddress)
 	{
-	LOGGSMU1("CSmsPDU::SetToFromAddressL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETTOFROMADDRESSL_1, "CSmsPDU::SetToFromAddressL()");
 
 	__ASSERT_DEBUG(ToFromAddressPtr()!=NULL,Panic(KGsmuPanicToFromAddressNotPresent));
 	CSmsAddress* tofromaddress=(CSmsAddress*) ToFromAddressPtr();
@@ -463,7 +468,7 @@ EXPORT_C void CSmsPDU::SetToFromAddressL(const TDesC& aAddress)
  */
 EXPORT_C void CSmsPDU::ParsedToFromAddress(TGsmSmsTelNumber& aParsedAddress) const
 	{
-	LOGGSMU1("CSmsPDU::ParsedToFromAddress()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_PARSEDTOFROMADDRESS_1, "CSmsPDU::ParsedToFromAddress()");
 
 	__ASSERT_DEBUG(ToFromAddressPtr()!=NULL,Panic(KGsmuPanicToFromAddressNotPresent));
 	ToFromAddressPtr()->ParsedAddress(aParsedAddress);
@@ -478,7 +483,7 @@ EXPORT_C void CSmsPDU::ParsedToFromAddress(TGsmSmsTelNumber& aParsedAddress) con
  */
 EXPORT_C void CSmsPDU::SetParsedToFromAddressL(const TGsmSmsTelNumber& aParsedAddress)
 	{
-	LOGGSMU1("CSmsPDU::SetParsedToFromAddressL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETPARSEDTOFROMADDRESSL_1, "CSmsPDU::SetParsedToFromAddressL()");
 
 	__ASSERT_DEBUG(ToFromAddressPtr()!=NULL,Panic(KGsmuPanicToFromAddressNotPresent));
 	CSmsAddress* tofromaddress=(CSmsAddress*) ToFromAddressPtr();
@@ -497,7 +502,7 @@ EXPORT_C void CSmsPDU::SetParsedToFromAddressL(const TGsmSmsTelNumber& aParsedAd
  */
 void CSmsPDU::UpdateConcatenationDataL(TInt aRef, TInt aPduIndex, TInt aMaxPdu)
 	{
-	LOGGSMU1("CSmsPDU::UpdateConcatenationDataL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_UPDATECONCATENATIONDATAL_1, "CSmsPDU::UpdateConcatenationDataL()");
 
 	SetConcatenatedMessageReference(aRef);
 	SetConcatenatedMessagePDUIndex(aPduIndex);
@@ -512,7 +517,7 @@ void CSmsPDU::UpdateConcatenationDataL(TInt aRef, TInt aPduIndex, TInt aMaxPdu)
  */
 void CSmsPDU::UpdateEmailHeaderDataL(TInt& aEmailOverallHeaderLength)
 	{
-	LOGGSMU1("CSmsPDU::UpdateEmailHeaderDataL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_UPDATEEMAILHEADERDATAL_1, "CSmsPDU::UpdateEmailHeaderDataL()");
 
 	TInt emailIndex(0);
 	TInt udLength=0;
@@ -610,7 +615,7 @@ TBool CSmsPDU::UpdateTPSRRL(TSmsFirstOctet aSmsReportRequest)
 
 EXPORT_C TSmsEncoding CSmsPDU::NationalLanguageEncoding() const
 	{
-	LOGGSMU1("CSmsPDU::NationalLanguageEncoding()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NATIONALLANGUAGEENCODING_1, "CSmsPDU::NationalLanguageEncoding()");
 	
 	TSmsEncoding  encodingUsed = ESmsEncodingNone;
 	
@@ -720,9 +725,9 @@ EXPORT_C TSmsEncoding CSmsPDU::NationalLanguageEncoding() const
 			};
 		}
 	
-	LOGGSMU2("CSmsPDU::NationalLanguageEncoding(): lockingShift=%d", lockingShiftValue);
-	LOGGSMU2("CSmsPDU::NationalLanguageEncoding(): singleShift=%d", singleShiftValue);
-	LOGGSMU2("CSmsPDU::NationalLanguageEncoding(): encodingUsed=%d", encodingUsed);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NATIONALLANGUAGEENCODING_2, "CSmsPDU::NationalLanguageEncoding(): lockingShift=%d", lockingShiftValue);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NATIONALLANGUAGEENCODING_3, "CSmsPDU::NationalLanguageEncoding(): singleShift=%d", singleShiftValue);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NATIONALLANGUAGEENCODING_4, "CSmsPDU::NationalLanguageEncoding(): encodingUsed=%d", encodingUsed);
 	
 	return encodingUsed;
 	} // CSmsPDU::NationalLanguageEncoding
@@ -730,7 +735,7 @@ EXPORT_C TSmsEncoding CSmsPDU::NationalLanguageEncoding() const
 
 EXPORT_C void CSmsPDU::SetNationalLanguageEncodingL(TSmsEncoding aEncoding)
 	{
-	LOGGSMU2("CSmsPDU::SetNationalLanguageEncodingL(): aEncoding=%d", aEncoding);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETNATIONALLANGUAGEENCODINGL_1, "CSmsPDU::SetNationalLanguageEncodingL(): aEncoding=%d", aEncoding);
 	
 	//
 	// Convert the encoding enum into two parts: Single Shift and Locking Shift
@@ -810,8 +815,8 @@ EXPORT_C void CSmsPDU::SetNationalLanguageEncodingL(TSmsEncoding aEncoding)
 			}
 		};
 	
-	LOGGSMU2("CSmsPDU::SetNationalLanguageEncodingL(): lockingShift=%d", lockingShiftValue);
-	LOGGSMU2("CSmsPDU::SetNationalLanguageEncodingL(): singleShift=%d", singleShiftValue);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETNATIONALLANGUAGEENCODINGL_2, "CSmsPDU::SetNationalLanguageEncodingL(): lockingShift=%d", lockingShiftValue);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETNATIONALLANGUAGEENCODINGL_3, "CSmsPDU::SetNationalLanguageEncodingL(): singleShift=%d", singleShiftValue);
 	
 	//
 	// Update the locking shift setting...
@@ -899,7 +904,7 @@ EXPORT_C void CSmsPDU::SetNationalLanguageEncodingL(TSmsEncoding aEncoding)
  */
 EXPORT_C TSmsDataCodingScheme::TSmsDCSBits7To4 CSmsPDU::Bits7To4() const
 	{
-	LOGGSMU1("CSmsPDU::Bits7To4()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_BITS7TO4_1, "CSmsPDU::Bits7To4()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 
@@ -921,7 +926,7 @@ EXPORT_C TSmsDataCodingScheme::TSmsDCSBits7To4 CSmsPDU::Bits7To4() const
  */
 EXPORT_C void CSmsPDU::SetBits7To4(TSmsDataCodingScheme::TSmsDCSBits7To4 aBits7To4)
 	{
-	LOGGSMU1("CSmsPDU::SetBits7To4()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETBITS7TO4_1, "CSmsPDU::SetBits7To4()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	TSmsDataCodingScheme* datacodingscheme=(TSmsDataCodingScheme*) DataCodingScheme();
@@ -939,7 +944,7 @@ EXPORT_C void CSmsPDU::SetBits7To4(TSmsDataCodingScheme::TSmsDCSBits7To4 aBits7T
  */
 EXPORT_C TSmsDataCodingScheme::TSmsAlphabet CSmsPDU::Alphabet() const
 	{
-	LOGGSMU1("CSmsPDU::Alphabet()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_ALPHABET_1, "CSmsPDU::Alphabet()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return DataCodingScheme()->Alphabet();
@@ -956,7 +961,7 @@ EXPORT_C TSmsDataCodingScheme::TSmsAlphabet CSmsPDU::Alphabet() const
  */
 EXPORT_C void CSmsPDU::SetAlphabet(TSmsDataCodingScheme::TSmsAlphabet aAlphabet)
 	{
-	LOGGSMU1("CSmsPDU::SetAlphabet()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETALPHABET_1, "CSmsPDU::SetAlphabet()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	TSmsDataCodingScheme* datacodingscheme=(TSmsDataCodingScheme*) DataCodingScheme();
@@ -975,7 +980,7 @@ EXPORT_C void CSmsPDU::SetAlphabet(TSmsDataCodingScheme::TSmsAlphabet aAlphabet)
  */
 EXPORT_C TBool CSmsPDU::Class(TSmsDataCodingScheme::TSmsClass& aClass) const
 	{
-	LOGGSMU1("CSmsPDU::Class()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_CLASS_1, "CSmsPDU::Class()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return DataCodingScheme()->Class(aClass);
@@ -993,7 +998,7 @@ EXPORT_C TBool CSmsPDU::Class(TSmsDataCodingScheme::TSmsClass& aClass) const
  */
 EXPORT_C void CSmsPDU::SetClass(TBool aClassDefined,TSmsDataCodingScheme::TSmsClass aClass)
 	{
-	LOGGSMU1("CSmsPDU::SetClass()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETCLASS_1, "CSmsPDU::SetClass()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	TSmsDataCodingScheme* datacodingscheme=(TSmsDataCodingScheme*) DataCodingScheme();
@@ -1011,7 +1016,7 @@ EXPORT_C void CSmsPDU::SetClass(TBool aClassDefined,TSmsDataCodingScheme::TSmsCl
  */
 EXPORT_C TBool CSmsPDU::TextCompressed() const
 	{
-	LOGGSMU1("CSmsPDU::TextCompressed()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_TEXTCOMPRESSED_1, "CSmsPDU::TextCompressed()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return DataCodingScheme()->TextCompressed();
@@ -1028,7 +1033,7 @@ EXPORT_C TBool CSmsPDU::TextCompressed() const
  */
 EXPORT_C void CSmsPDU::SetTextCompressed(TBool aCompressed)
 	{
-	LOGGSMU1("CSmsPDU::SetTextCompressed()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETTEXTCOMPRESSED_1, "CSmsPDU::SetTextCompressed()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	TSmsDataCodingScheme* datacodingscheme=(TSmsDataCodingScheme*) DataCodingScheme();
@@ -1046,7 +1051,7 @@ EXPORT_C void CSmsPDU::SetTextCompressed(TBool aCompressed)
  */
 EXPORT_C TSmsDataCodingScheme::TSmsIndicationState CSmsPDU::IndicationState() const
 	{
-	LOGGSMU1("CSmsPDU::IndicationState()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_INDICATIONSTATE_1, "CSmsPDU::IndicationState()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return DataCodingScheme()->IndicationState();
@@ -1063,7 +1068,7 @@ EXPORT_C TSmsDataCodingScheme::TSmsIndicationState CSmsPDU::IndicationState() co
  */
 EXPORT_C void CSmsPDU::SetIndicationState(TSmsDataCodingScheme::TSmsIndicationState aState)
 	{
-	LOGGSMU1("CSmsPDU::SetIndicationState()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETINDICATIONSTATE_1, "CSmsPDU::SetIndicationState()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	TSmsDataCodingScheme* datacodingscheme=(TSmsDataCodingScheme*) DataCodingScheme();
@@ -1081,7 +1086,7 @@ EXPORT_C void CSmsPDU::SetIndicationState(TSmsDataCodingScheme::TSmsIndicationSt
  */
 EXPORT_C TSmsDataCodingScheme::TSmsIndicationType CSmsPDU::IndicationType() const
 	{
-	LOGGSMU1("CSmsPDU::IndicationType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_INDICATIONTYPE_1, "CSmsPDU::IndicationType()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return DataCodingScheme()->IndicationType();
@@ -1098,7 +1103,7 @@ EXPORT_C TSmsDataCodingScheme::TSmsIndicationType CSmsPDU::IndicationType() cons
  */
 EXPORT_C void CSmsPDU::SetIndicationType(TSmsDataCodingScheme::TSmsIndicationType aType)
 	{
-	LOGGSMU1("CSmsPDU::SetIndicationType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETINDICATIONTYPE_1, "CSmsPDU::SetIndicationType()");
 
 	__ASSERT_DEBUG(DataCodingScheme()!=NULL,Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	TSmsDataCodingScheme* datacodingscheme=(TSmsDataCodingScheme*) DataCodingScheme();
@@ -1116,7 +1121,7 @@ EXPORT_C void CSmsPDU::SetIndicationType(TSmsDataCodingScheme::TSmsIndicationTyp
  */
 EXPORT_C TBool CSmsPDU::TextConcatenated(TBool* aIs16Bit) const
 	{
-	LOGGSMU1("CSmsPDU::TextConcatenated()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_TEXTCONCATENATED_1, "CSmsPDU::TextConcatenated()");
 
 	TInt index;
 	return DoTextConcatenated(index,aIs16Bit);
@@ -1135,7 +1140,7 @@ EXPORT_C TBool CSmsPDU::TextConcatenated(TBool* aIs16Bit) const
  */
 EXPORT_C void CSmsPDU::SetTextConcatenatedL(TBool aConcatenated,TBool aIs16Bit)
 	{
-	LOGGSMU1("CSmsPDU::SetTextConcatenatedL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETTEXTCONCATENATEDL_1, "CSmsPDU::SetTextConcatenatedL()");
 
 	TInt index=0;
 	TInt is16bit;
@@ -1173,7 +1178,7 @@ EXPORT_C void CSmsPDU::SetTextConcatenatedL(TBool aConcatenated,TBool aIs16Bit)
  */
 EXPORT_C TInt CSmsPDU::ConcatenatedMessageReference() const
 	{
-	LOGGSMU1("CSmsPDU::ConcatenatedMessageReference()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_CONCATENATEDMESSAGEREFERENCE_1, "CSmsPDU::ConcatenatedMessageReference()");
 
 	TInt index=0;
 	TBool is16bit;
@@ -1201,7 +1206,7 @@ EXPORT_C TInt CSmsPDU::ConcatenatedMessageReference() const
  */
 EXPORT_C void CSmsPDU::SetConcatenatedMessageReference(TInt aReference)
 	{
-	LOGGSMU1("CSmsPDU::SetConcatenatedMessageReference()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETCONCATENATEDMESSAGEREFERENCE_1, "CSmsPDU::SetConcatenatedMessageReference()");
 
 	TInt index=0;
 	TBool is16bit;
@@ -1231,7 +1236,7 @@ EXPORT_C void CSmsPDU::SetConcatenatedMessageReference(TInt aReference)
  */
 EXPORT_C TInt CSmsPDU::NumConcatenatedMessagePDUs() const
 	{
-	LOGGSMU1("CSmsPDU::NumConcatenatedMessagePDUs()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_NUMCONCATENATEDMESSAGEPDUS_1, "CSmsPDU::NumConcatenatedMessagePDUs()");
 
 	TInt index=0;
 	TBool is16bit;
@@ -1252,7 +1257,7 @@ EXPORT_C TInt CSmsPDU::NumConcatenatedMessagePDUs() const
  */
 EXPORT_C void CSmsPDU::SetNumConcatenatedMessagePDUs(TInt aNum)
 	{
-	LOGGSMU1("CSmsPDU::SetNumConcatenatedMessagePDUs()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETNUMCONCATENATEDMESSAGEPDUS_1, "CSmsPDU::SetNumConcatenatedMessagePDUs()");
 
 	TInt index=0;
 	TBool is16bit;
@@ -1274,7 +1279,7 @@ EXPORT_C void CSmsPDU::SetNumConcatenatedMessagePDUs(TInt aNum)
  */
 EXPORT_C TInt CSmsPDU::ConcatenatedMessagePDUIndex() const
 	{
-	LOGGSMU1("CSmsPDU::ConcatenatedMessagePDUIndex()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_CONCATENATEDMESSAGEPDUINDEX_1, "CSmsPDU::ConcatenatedMessagePDUIndex()");
 
 	TInt index=0;
 	TBool is16bit;
@@ -1295,7 +1300,7 @@ EXPORT_C TInt CSmsPDU::ConcatenatedMessagePDUIndex() const
  */
 EXPORT_C void CSmsPDU::SetConcatenatedMessagePDUIndex(TInt aIndex)
 	{
-	LOGGSMU1("CSmsPDU::SetConcatenatedMessagePDUIndex()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETCONCATENATEDMESSAGEPDUINDEX_1, "CSmsPDU::SetConcatenatedMessagePDUIndex()");
 
 	TInt index=0;
 	TBool is16bit;
@@ -1319,7 +1324,7 @@ EXPORT_C void CSmsPDU::SetConcatenatedMessagePDUIndex(TInt aIndex)
  */
 EXPORT_C TBool CSmsPDU::ApplicationPortAddressing(TInt& aDestination,TInt& aOriginator,TBool* aIs16Bit) const
 	{
-	LOGGSMU1("CSmsPDU::ApplicationPortAddressing()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_APPLICATIONPORTADDRESSING_1, "CSmsPDU::ApplicationPortAddressing()");
 
 	TInt index;
 	return DoApplicationPortAddressing(index,aDestination,aOriginator,aIs16Bit);
@@ -1338,7 +1343,7 @@ EXPORT_C TBool CSmsPDU::ApplicationPortAddressing(TInt& aDestination,TInt& aOrig
  */
 EXPORT_C void CSmsPDU::SetApplicationPortAddressingL(TBool aAddressing,TInt aDestination,TInt aOriginator,TBool aIs16Bit)
 	{
-	LOGGSMU1("CSmsPDU::SetApplicationPortAddressingL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETAPPLICATIONPORTADDRESSINGL_1, "CSmsPDU::SetApplicationPortAddressingL()");
 
 	TInt index=0;
 	TInt is16bit;
@@ -1376,7 +1381,7 @@ EXPORT_C void CSmsPDU::SetApplicationPortAddressingL(TBool aAddressing,TInt aDes
  */
 EXPORT_C TSmsProtocolIdentifier::TSmsPIDType CSmsPDU::PIDType() const
 	{
-	LOGGSMU1("CSmsPDU::PIDType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_PIDTYPE_1, "CSmsPDU::PIDType()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return ProtocolIdentifier()->PIDType();
@@ -1391,7 +1396,7 @@ EXPORT_C TSmsProtocolIdentifier::TSmsPIDType CSmsPDU::PIDType() const
  */
 EXPORT_C void CSmsPDU::SetPIDType(TSmsProtocolIdentifier::TSmsPIDType aSmsPIDType)
 	{
-	LOGGSMU1("CSmsPDU::SetPIDType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETPIDTYPE_1, "CSmsPDU::SetPIDType()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	TSmsProtocolIdentifier* protocolidentifier=(TSmsProtocolIdentifier*) ProtocolIdentifier();
@@ -1407,7 +1412,7 @@ EXPORT_C void CSmsPDU::SetPIDType(TSmsProtocolIdentifier::TSmsPIDType aSmsPIDTyp
  */
 EXPORT_C TSmsProtocolIdentifier::TSmsTelematicDeviceIndicator CSmsPDU::TelematicDeviceIndicator() const
 	{
-	LOGGSMU1("CSmsPDU::TelematicDeviceIndicator()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_TELEMATICDEVICEINDICATOR_1, "CSmsPDU::TelematicDeviceIndicator()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return ProtocolIdentifier()->TelematicDeviceIndicator();
@@ -1422,7 +1427,7 @@ EXPORT_C TSmsProtocolIdentifier::TSmsTelematicDeviceIndicator CSmsPDU::Telematic
  */
 EXPORT_C void CSmsPDU::SetTelematicDeviceIndicator(TSmsProtocolIdentifier::TSmsTelematicDeviceIndicator aIndicator)
 	{
-	LOGGSMU1("CSmsPDU::SetTelematicDeviceIndicator()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETTELEMATICDEVICEINDICATOR_1, "CSmsPDU::SetTelematicDeviceIndicator()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	TSmsProtocolIdentifier* protocolidentifier=(TSmsProtocolIdentifier*) ProtocolIdentifier();
@@ -1438,7 +1443,7 @@ EXPORT_C void CSmsPDU::SetTelematicDeviceIndicator(TSmsProtocolIdentifier::TSmsT
  */
 EXPORT_C TSmsProtocolIdentifier::TSmsShortMessageType CSmsPDU::ShortMessageType() const
 	{
-	LOGGSMU1("CSmsPDU::ShortMessageType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SHORTMESSAGETYPE_1, "CSmsPDU::ShortMessageType()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return (TSmsProtocolIdentifier::TSmsShortMessageType) ProtocolIdentifier()->ShortMessageType();
@@ -1453,7 +1458,7 @@ EXPORT_C TSmsProtocolIdentifier::TSmsShortMessageType CSmsPDU::ShortMessageType(
  */
 EXPORT_C void CSmsPDU::SetShortMessageType(TSmsProtocolIdentifier::TSmsShortMessageType aShortMessageType)
 	{
-	LOGGSMU1("CSmsPDU::SetShortMessageType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETSHORTMESSAGETYPE_1, "CSmsPDU::SetShortMessageType()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	TSmsProtocolIdentifier* protocolidentifier=(TSmsProtocolIdentifier*) ProtocolIdentifier();
@@ -1469,7 +1474,7 @@ EXPORT_C void CSmsPDU::SetShortMessageType(TSmsProtocolIdentifier::TSmsShortMess
  */
 EXPORT_C TSmsProtocolIdentifier::TSmsTelematicDeviceType CSmsPDU::TelematicDeviceType() const
 	{
-	LOGGSMU1("CSmsPDU::TelematicDeviceType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_TELEMATICDEVICETYPE_1, "CSmsPDU::TelematicDeviceType()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return ProtocolIdentifier()->TelematicDeviceType();
@@ -1484,7 +1489,7 @@ EXPORT_C TSmsProtocolIdentifier::TSmsTelematicDeviceType CSmsPDU::TelematicDevic
  */
 EXPORT_C void CSmsPDU::SetTelematicDeviceType(TSmsProtocolIdentifier::TSmsTelematicDeviceType aDeviceType)
 	{
-	LOGGSMU1("CSmsPDU::SetTelematicDeviceType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETTELEMATICDEVICETYPE_1, "CSmsPDU::SetTelematicDeviceType()");
 
 	__ASSERT_DEBUG(ProtocolIdentifier()!=NULL,Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	TSmsProtocolIdentifier* protocolidentifier=(TSmsProtocolIdentifier*) ProtocolIdentifier();
@@ -1502,7 +1507,7 @@ EXPORT_C void CSmsPDU::SetTelematicDeviceType(TSmsProtocolIdentifier::TSmsTelema
  */
 EXPORT_C TBool CSmsPDU::UserDataPresent() const
 	{
-	LOGGSMU1("CSmsPDU::UserDataPresent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_USERDATAPRESENT_1, "CSmsPDU::UserDataPresent()");
 
 	TBool udPresent=ETrue;
 	switch (iSmsPDUType)
@@ -1535,7 +1540,7 @@ EXPORT_C TBool CSmsPDU::UserDataPresent() const
  */
 EXPORT_C void CSmsPDU::SetUserDataPresent(TBool aPresent)
 	{
-	LOGGSMU2("CSmsPDU::SetUserDataPresent(): aPresent=%d", aPresent);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETUSERDATAPRESENT_1, "CSmsPDU::SetUserDataPresent(): aPresent=%d", aPresent);
 
 	__ASSERT_DEBUG(ParameterIndicator()!=NULL,Panic(KGsmuPanicParameterIndicatorNotPresent));
 	TSmsParameterIndicator* parameterindicator=(TSmsParameterIndicator*) ParameterIndicator();
@@ -1553,7 +1558,7 @@ EXPORT_C void CSmsPDU::SetUserDataPresent(TBool aPresent)
  */
 EXPORT_C TBool CSmsPDU::DataCodingSchemePresent() const
 	{
-	LOGGSMU1("CSmsPDU::DataCodingSchemePresent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_DATACODINGSCHEMEPRESENT_1, "CSmsPDU::DataCodingSchemePresent()");
 
 	TBool dcsPresent=ETrue;
 	switch (iSmsPDUType)
@@ -1587,7 +1592,7 @@ EXPORT_C TBool CSmsPDU::DataCodingSchemePresent() const
  */
 EXPORT_C void CSmsPDU::SetDataCodingSchemePresent(TBool aPresent)
 	{
-	LOGGSMU2("CSmsPDU::SetDataCodingSchemePresent(): aPresent=%d", aPresent);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETDATACODINGSCHEMEPRESENT_1, "CSmsPDU::SetDataCodingSchemePresent(): aPresent=%d", aPresent);
 
 	__ASSERT_DEBUG(ParameterIndicator()!=NULL,Panic(KGsmuPanicParameterIndicatorNotPresent));
 	TSmsParameterIndicator* parameterindicator=(TSmsParameterIndicator*) ParameterIndicator();
@@ -1605,7 +1610,7 @@ EXPORT_C void CSmsPDU::SetDataCodingSchemePresent(TBool aPresent)
  */
 EXPORT_C TBool CSmsPDU::ProtocolIdentifierPresent() const
 	{
-	LOGGSMU1("CSmsPDU::ProtocolIdentifierPresent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_PROTOCOLIDENTIFIERPRESENT_1, "CSmsPDU::ProtocolIdentifierPresent()");
 
 	TBool pidPresent=ETrue;
 	switch (iSmsPDUType)
@@ -1639,7 +1644,7 @@ EXPORT_C TBool CSmsPDU::ProtocolIdentifierPresent() const
  */
 EXPORT_C void CSmsPDU::SetProtocolIdentifierPresent(TBool aPresent)
 	{
-	LOGGSMU2("CSmsPDU::SetProtocolIdentifierPresent(): aPresent=%d", aPresent);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_SETPROTOCOLIDENTIFIERPRESENT_1, "CSmsPDU::SetProtocolIdentifierPresent(): aPresent=%d", aPresent);
 
 	__ASSERT_DEBUG(ParameterIndicator()!=NULL,Panic(KGsmuPanicParameterIndicatorNotPresent));
 	TSmsParameterIndicator* parameterindicator=(TSmsParameterIndicator*) ParameterIndicator();
@@ -1656,7 +1661,7 @@ EXPORT_C void CSmsPDU::SetProtocolIdentifierPresent(TBool aPresent)
  */
 EXPORT_C CSmsUserData& CSmsPDU::UserData()
 	{
-	LOGGSMU1("CSmsPDU::UserData()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_USERDATA_1, "CSmsPDU::UserData()");
 
 	__ASSERT_DEBUG(UserDataPtr()!=NULL,Panic(KGsmuPanicUserDataNotPresent));
 	CSmsUserData* userdata=(CSmsUserData*) UserDataPtr();
@@ -1672,7 +1677,7 @@ EXPORT_C CSmsUserData& CSmsPDU::UserData()
  */
 EXPORT_C const CSmsUserData& CSmsPDU::UserData() const
 	{
-	LOGGSMU1("CSmsPDU::UserData()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSPDU_USERDATA1_1, "CSmsPDU::UserData()");
 
 	__ASSERT_DEBUG(UserDataPtr()!=NULL,Panic(KGsmuPanicUserDataNotPresent));
 	return *UserDataPtr();
@@ -1733,7 +1738,7 @@ const CSmsAddress* CSmsPDU::ToFromAddressPtr() const
 
 TBool CSmsPDU::DoTextConcatenated(TInt& aIndex,TBool* aIs16Bit) const
 	{
-	LOGGSMU1("CSmsPDU::DoTextConcatenated()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_DOTEXTCONCATENATED_1, "CSmsPDU::DoTextConcatenated()");
 
 	TBool is8bit=UserData().InformationElementIndex(CSmsInformationElement::ESmsIEIConcatenatedShortMessages8BitReference,aIndex);
 	TBool is16bit=EFalse;
@@ -1747,7 +1752,7 @@ TBool CSmsPDU::DoTextConcatenated(TInt& aIndex,TBool* aIs16Bit) const
 
 void CSmsPDU::DoSetTextConcatenatedL(TBool aIs16Bit)
 	{
-	LOGGSMU2("CSmsPDU::DoSetTextConcatenatedL(): aIs16Bit=%d", aIs16Bit);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_DOSETTEXTCONCATENATEDL_1, "CSmsPDU::DoSetTextConcatenatedL(): aIs16Bit=%d", aIs16Bit);
 
 	if (!aIs16Bit)
 		{
@@ -1773,7 +1778,7 @@ void CSmsPDU::DoSetTextConcatenatedL(TBool aIs16Bit)
 
 TBool CSmsPDU::DoApplicationPortAddressing(TInt& aIndex,TInt& aDestination,TInt& aOriginator,TBool* aIs16Bit) const
 	{
-	LOGGSMU1("CSmsPDU::DoApplicationPortAddressing()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_DOAPPLICATIONPORTADDRESSING_1, "CSmsPDU::DoApplicationPortAddressing()");
 
 	TBool is8bit=UserData().InformationElementIndex(CSmsInformationElement::ESmsIEIApplicationPortAddressing8Bit,aIndex);
 	TBool is16bit=EFalse;
@@ -1803,8 +1808,7 @@ TBool CSmsPDU::DoApplicationPortAddressing(TInt& aIndex,TInt& aDestination,TInt&
 
 void CSmsPDU::DoSetApplicationPortAddressingL(TInt aDestination,TInt aOriginator,TBool aIs16Bit)
 	{
-	LOGGSMU4("CSmsPDU::DoSetApplicationPortAddressingL(): aDestination=%d, aOriginator=%d, aIs16Bit=%d",
-			 aDestination, aOriginator, aIs16Bit);
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDU_DOSETAPPLICATIONPORTADDRESSINGL_1, "CSmsPDU::DoSetApplicationPortAddressingL(): aDestination=%d, aOriginator=%d, aIs16Bit=%d",aDestination, aOriginator, aIs16Bit);
 
 	if (!aIs16Bit)
 		{
@@ -1845,7 +1849,7 @@ CSmsDeliver::CSmsDeliver():
  */
 EXPORT_C TBool CSmsDeliver::MoreMessagesToSend() const
 	{
-	LOGGSMU1("CSmsDeliver::MoreMessagesToSend");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_MOREMESSAGESTOSEND_1, "CSmsDeliver::MoreMessagesToSend");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsMoreMessagesToSendMask)==TSmsFirstOctet::ESmsMoreMessagesToSend;
 	} // CSmsDeliver::MoreMessagesToSend
@@ -1859,7 +1863,7 @@ EXPORT_C TBool CSmsDeliver::MoreMessagesToSend() const
  */
 EXPORT_C void CSmsDeliver::SetMoreMessagesToSend(TBool aMore)
 	{
-	LOGGSMU2("CSmsDeliver::SetMoreMessagesToSend(): aMore=%d", aMore);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_SETMOREMESSAGESTOSEND_1, "CSmsDeliver::SetMoreMessagesToSend(): aMore=%d", aMore);
 
 	iFirstOctet=aMore? (iFirstOctet&(~TSmsFirstOctet::ESmsMoreMessagesToSendMask)|TSmsFirstOctet::ESmsMoreMessagesToSend):
 	                   (iFirstOctet&(~TSmsFirstOctet::ESmsMoreMessagesToSendMask)|TSmsFirstOctet::ESmsNoMoreMessagesToSend);
@@ -1877,7 +1881,7 @@ EXPORT_C void CSmsDeliver::SetMoreMessagesToSend(TBool aMore)
  */
 EXPORT_C TBool CSmsDeliver::ReplyPath() const
 	{
-	LOGGSMU1("CSmsDeliver::ReplyPath");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_REPLYPATH_1, "CSmsDeliver::ReplyPath");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsReplyPathMask)==TSmsFirstOctet::ESmsReplyPathExists;
 	} // CSmsDeliver::ReplyPath
@@ -1891,7 +1895,7 @@ EXPORT_C TBool CSmsDeliver::ReplyPath() const
  */
 EXPORT_C void CSmsDeliver::SetReplyPath(TBool aReplyPath)
 	{
-	LOGGSMU2("CSmsDeliver::SetReplyPath(): aReplyPath=%d", aReplyPath);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_SETREPLYPATH_1, "CSmsDeliver::SetReplyPath(): aReplyPath=%d", aReplyPath);
 
 	iFirstOctet=aReplyPath? (iFirstOctet&(~TSmsFirstOctet::ESmsReplyPathMask)|TSmsFirstOctet::ESmsReplyPathExists):
 	                        (iFirstOctet&(~TSmsFirstOctet::ESmsReplyPathMask)|TSmsFirstOctet::ESmsReplyPathNone);
@@ -1906,7 +1910,7 @@ EXPORT_C void CSmsDeliver::SetReplyPath(TBool aReplyPath)
  */
 EXPORT_C TBool CSmsDeliver::StatusReportIndication() const
 	{
-	LOGGSMU1("CSmsDeliver::StatusReportIndication");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_STATUSREPORTINDICATION_1, "CSmsDeliver::StatusReportIndication");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsStatusReportIndicatorMask)==TSmsFirstOctet::ESmsStatusReportReturned;
 	} // CSmsDeliver::StatusReportIndication
@@ -1920,7 +1924,7 @@ EXPORT_C TBool CSmsDeliver::StatusReportIndication() const
  */
 EXPORT_C void CSmsDeliver::SetStatusReportIndication(TBool aIndication)
 	{
-	LOGGSMU2("CSmsDeliver::SetStatusReportIndication(): aIndication=%d", aIndication);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_SETSTATUSREPORTINDICATION_1, "CSmsDeliver::SetStatusReportIndication(): aIndication=%d", aIndication);
 
 	iFirstOctet=aIndication? (iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportIndicatorMask)|TSmsFirstOctet::ESmsStatusReportReturned):
 	                         (iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportIndicatorMask)|TSmsFirstOctet::ESmsStatusReportNotReturned);
@@ -1947,7 +1951,7 @@ CSmsDeliver::~CSmsDeliver()
  */
 EXPORT_C void CSmsDeliver::ServiceCenterTimeStamp(TTime& aTime,TInt& aNumQuarterHours)
 	{
-	LOGGSMU1("CSmsDeliver::ServiceCenterTimeStamp()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_SERVICECENTERTIMESTAMP_1, "CSmsDeliver::ServiceCenterTimeStamp()");
 
 	aTime=iServiceCenterTimeStamp.Time();
 	aNumQuarterHours=iServiceCenterTimeStamp.TimeOffset();
@@ -1963,7 +1967,7 @@ EXPORT_C void CSmsDeliver::ServiceCenterTimeStamp(TTime& aTime,TInt& aNumQuarter
  */
 EXPORT_C void CSmsDeliver::SetServiceCenterTimeStamp(const TTime& aTime,TInt aNumQuarterHours)
 	{
-	LOGGSMU2("CSmsDeliver::ServiceCenterTimeStamp(): aNumQuarterHours=%d", aNumQuarterHours);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_SETSERVICECENTERTIMESTAMP_1, "CSmsDeliver::ServiceCenterTimeStamp(): aNumQuarterHours=%d", aNumQuarterHours);
 
 	iServiceCenterTimeStamp.SetTime(aTime);
 	iServiceCenterTimeStamp.SetTimeOffset(aNumQuarterHours);
@@ -1972,7 +1976,7 @@ EXPORT_C void CSmsDeliver::SetServiceCenterTimeStamp(const TTime& aTime,TInt aNu
 
 void CSmsDeliver::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsDeliver::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_CONSTRUCTL_1, "CSmsDeliver::ConstructL()");
 
 	iServiceCenterAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
 	iOriginalAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
@@ -1987,7 +1991,7 @@ void CSmsDeliver::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,R
  */
 EXPORT_C CSmsDeliver* CSmsDeliver::DuplicateL() const
 	{
-	LOGGSMU1("CSmsDeliver::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_DUPLICATEL_1, "CSmsDeliver::DuplicateL()");
 
 	CSmsDeliver*  smsDeliver = new (ELeave) CSmsDeliver();
 	CleanupStack::PushL(smsDeliver);
@@ -2009,7 +2013,7 @@ EXPORT_C CSmsDeliver* CSmsDeliver::DuplicateL() const
 
 TUint8* CSmsDeliver::EncodeL(TUint8* aPtr) const
 	{
-	LOGGSMU1("CSmsDeliver::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_ENCODEL_1, "CSmsDeliver::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	aPtr=iOriginalAddress->EncodeL(aPtr);
@@ -2026,7 +2030,7 @@ TUint8* CSmsDeliver::EncodeL(TUint8* aPtr, const TEncodeParams* ) const
 
 void CSmsDeliver::DecodeL(TGsmuLex8& aPdu)
 	{
-	LOGGSMU1("CSmsDeliver::DecodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_DECODEL_1, "CSmsDeliver::DecodeL()");
 
 	iFirstOctet.DecodeL(aPdu);
 	iOriginalAddress->DecodeL(aPdu);
@@ -2055,7 +2059,7 @@ void CSmsDeliver::DecodeL(TGsmuLex8& aPdu)
 
 void CSmsDeliver::InternalizeMessagePDUL(RReadStream& aStream)
 	{
-	LOGGSMU1("CSmsDeliver::InternalizeMessagePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_INTERNALIZEMESSAGEPDUL_1, "CSmsDeliver::InternalizeMessagePDUL()");
 
 	iServiceCenterAddress->InternalizeL(aStream);
 
@@ -2074,7 +2078,7 @@ void CSmsDeliver::InternalizeMessagePDUL(RReadStream& aStream)
 
 void CSmsDeliver::ExternalizeMessagePDUL(RWriteStream& aStream) const
 	{
-	LOGGSMU1("CSmsDeliver::ExternalizeMessagePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_EXTERNALIZEMESSAGEPDUL_1, "CSmsDeliver::ExternalizeMessagePDUL()");
 
 	iServiceCenterAddress->ExternalizeL(aStream);
 
@@ -2093,7 +2097,7 @@ void CSmsDeliver::ExternalizeMessagePDUL(RWriteStream& aStream) const
 
 const TSmsDataCodingScheme* CSmsDeliver::DataCodingScheme() const
 	{
-	LOGGSMU1("CSmsDeliver::DataCodingScheme()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_DATACODINGSCHEME_1, "CSmsDeliver::DataCodingScheme()");
 
 	return &iDataCodingScheme;
 	} // CSmsDeliver::DataCodingScheme
@@ -2107,7 +2111,7 @@ const TSmsDataCodingScheme* CSmsDeliver::DataCodingScheme() const
  */
 EXPORT_C const TSmsProtocolIdentifier* CSmsDeliver::ProtocolIdentifier() const
 	{
-	LOGGSMU1("CSmsDeliver::ProtocolIdentifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVER_PROTOCOLIDENTIFIER_1, "CSmsDeliver::ProtocolIdentifier()");
 
 	return &iProtocolIdentifier;
 	} // CSmsDeliver::ProtocolIdentifier
@@ -2115,7 +2119,7 @@ EXPORT_C const TSmsProtocolIdentifier* CSmsDeliver::ProtocolIdentifier() const
 
 const CSmsUserData* CSmsDeliver::UserDataPtr() const
 	{
-	LOGGSMU1("CSmsDeliver::UserDataPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_USERDATAPTR_1, "CSmsDeliver::UserDataPtr()");
 
 	return iUserData;
 	} // CSmsDeliver::UserDataPtr
@@ -2123,7 +2127,7 @@ const CSmsUserData* CSmsDeliver::UserDataPtr() const
 
 const CSmsAddress* CSmsDeliver::ToFromAddressPtr() const
 	{
-	LOGGSMU1("CSmsDeliver::ToFromAddressPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVER_TOFROMADDRESSPTR_1, "CSmsDeliver::ToFromAddressPtr()");
 
 	return iOriginalAddress;
 	} // CSmsDeliver::ToFromAddressPtr
@@ -2159,7 +2163,7 @@ CSmsSubmit::~CSmsSubmit()
  */
 EXPORT_C TBool CSmsSubmit::RejectDuplicates() const
 	{
-	LOGGSMU1("CSmsSubmit::RejectDuplicates()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_REJECTDUPLICATES_1, "CSmsSubmit::RejectDuplicates()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsRejectDuplicatesMask)==TSmsFirstOctet::ESmsRejectDuplicates;
 	} // CSmsSubmit::RejectDuplicates
@@ -2173,7 +2177,7 @@ EXPORT_C TBool CSmsSubmit::RejectDuplicates() const
  */
 EXPORT_C void CSmsSubmit::SetRejectDuplicates(TBool aRejectDuplicates)
 	{
-	LOGGSMU2("CSmsSubmit::SetRejectDuplicates(): aRejectDuplicates=%d", aRejectDuplicates);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_SETREJECTDUPLICATES_1, "CSmsSubmit::SetRejectDuplicates(): aRejectDuplicates=%d", aRejectDuplicates);
 
 	iFirstOctet=aRejectDuplicates? (iFirstOctet&(~TSmsFirstOctet::ESmsRejectDuplicatesMask)|TSmsFirstOctet::ESmsRejectDuplicates):
 	                        (iFirstOctet&(~TSmsFirstOctet::ESmsRejectDuplicatesMask)|TSmsFirstOctet::ESmsAcceptDuplicates);
@@ -2188,7 +2192,7 @@ EXPORT_C void CSmsSubmit::SetRejectDuplicates(TBool aRejectDuplicates)
  */
 EXPORT_C TSmsFirstOctet::TSmsValidityPeriodFormat CSmsSubmit::ValidityPeriodFormat() const
 	{
-	LOGGSMU1("CSmsSubmit::ValidityPeriodFormat()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_VALIDITYPERIODFORMAT_1, "CSmsSubmit::ValidityPeriodFormat()");
 
 	return iValidityPeriod.ValidityPeriodFormat();
 	} // TSmsFirstOctet::TSmsValidityPeriodFormat
@@ -2202,7 +2206,7 @@ EXPORT_C TSmsFirstOctet::TSmsValidityPeriodFormat CSmsSubmit::ValidityPeriodForm
  */
 EXPORT_C void CSmsSubmit::SetValidityPeriodFormat(TSmsFirstOctet::TSmsValidityPeriodFormat aValidityPeriodFormat)
 	{
-	LOGGSMU1("CSmsSubmit::SetValidityPeriodFormat()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_SETVALIDITYPERIODFORMAT_1, "CSmsSubmit::SetValidityPeriodFormat()");
 
 	iValidityPeriod.SetValidityPeriodFormat(aValidityPeriodFormat);
 	} // CSmsSubmit::SetValidityPeriodFormat
@@ -2219,7 +2223,7 @@ EXPORT_C void CSmsSubmit::SetValidityPeriodFormat(TSmsFirstOctet::TSmsValidityPe
  */
 EXPORT_C TBool CSmsSubmit::ReplyPath() const
 	{
-	LOGGSMU1("CSmsSubmit::ReplyPath()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_REPLYPATH_1, "CSmsSubmit::ReplyPath()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsReplyPathMask)==TSmsFirstOctet::ESmsReplyPathExists;
 	} // CSmsSubmit::ReplyPath
@@ -2233,7 +2237,7 @@ EXPORT_C TBool CSmsSubmit::ReplyPath() const
  */
 EXPORT_C void CSmsSubmit::SetReplyPath(TBool aReplyPath)
 	{
-	LOGGSMU2("CSmsSubmit::SetReplyPath(): aReplyPath=%d", aReplyPath);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_SETREPLYPATH_1, "CSmsSubmit::SetReplyPath(): aReplyPath=%d", aReplyPath);
 
 	iFirstOctet=aReplyPath? (iFirstOctet&(~TSmsFirstOctet::ESmsReplyPathMask)|TSmsFirstOctet::ESmsReplyPathExists):
 	                        (iFirstOctet&(~TSmsFirstOctet::ESmsReplyPathMask)|TSmsFirstOctet::ESmsReplyPathNone);
@@ -2250,7 +2254,7 @@ EXPORT_C void CSmsSubmit::SetReplyPath(TBool aReplyPath)
  */
 EXPORT_C TBool CSmsSubmit::StatusReportRequest() const
 	{
-	LOGGSMU1("CSmsSubmit::StatusReportRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_STATUSREPORTREQUEST_1, "CSmsSubmit::StatusReportRequest()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsStatusReportRequestMask)==TSmsFirstOctet::ESmsStatusReportRequested;
 	} // CSmsSubmit::StatusReportRequest
@@ -2264,7 +2268,7 @@ EXPORT_C TBool CSmsSubmit::StatusReportRequest() const
  */
 EXPORT_C void CSmsSubmit::SetStatusReportRequest(TBool aRequest)
 	{
-	LOGGSMU2("CSmsSubmit::SetStatusReportRequest(): aRequest=%d", aRequest);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_SETSTATUSREPORTREQUEST_1, "CSmsSubmit::SetStatusReportRequest(): aRequest=%d", aRequest);
 
 	iFirstOctet=aRequest? (iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportRequestMask)|TSmsFirstOctet::ESmsStatusReportRequested):
 	                      (iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportRequestMask)|TSmsFirstOctet::ESmsStatusReportNotRequested);
@@ -2279,7 +2283,7 @@ EXPORT_C void CSmsSubmit::SetStatusReportRequest(TBool aRequest)
  */
 EXPORT_C TInt CSmsSubmit::MessageReference() const
 	{
-	LOGGSMU1("CSmsSubmit::MessageReference()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_MESSAGEREFERENCE_1, "CSmsSubmit::MessageReference()");
 
 	return iMessageReference;
 	} // CSmsSubmit::MessageReference
@@ -2293,8 +2297,7 @@ EXPORT_C TInt CSmsSubmit::MessageReference() const
  */
 EXPORT_C void CSmsSubmit::SetMessageReference(TInt aMessageReference)
 	{
-	LOGGSMU2("CSmsSubmit::SetMessageReference(): aMessageReference=%d",
-			 aMessageReference);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_SETMESSAGEREFERENCE_1, "CSmsSubmit::SetMessageReference(): aMessageReference=%d",aMessageReference);
 	iMessageReference=aMessageReference;
 	} // CSmsSubmit::SetMessageReference
 
@@ -2307,7 +2310,7 @@ EXPORT_C void CSmsSubmit::SetMessageReference(TInt aMessageReference)
  */
 EXPORT_C const TTimeIntervalMinutes&  CSmsSubmit::ValidityPeriod() const
 	{
-	LOGGSMU1("CSmsSubmit::ValidityPeriod()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_VALIDITYPERIOD_1, "CSmsSubmit::ValidityPeriod()");
 
 	return iValidityPeriod.TimeIntervalMinutes();
 	} // CSmsSubmit::ValidityPeriod
@@ -2321,8 +2324,7 @@ EXPORT_C const TTimeIntervalMinutes&  CSmsSubmit::ValidityPeriod() const
  */
 EXPORT_C void CSmsSubmit::SetValidityPeriod(const TTimeIntervalMinutes& aTimeIntervalMinutes)
 	{
-	LOGGSMU2("CSmsSubmit::SetValidityPeriod(): aTimeIntervalMinutes",
-			 aTimeIntervalMinutes.Int());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_SETVALIDITYPERIOD_1, "CSmsSubmit::SetValidityPeriod(): %d",aTimeIntervalMinutes.Int());
 
 	iValidityPeriod.SetTimeIntervalMinutes(aTimeIntervalMinutes);
 	} // CSmsSubmit::SetValidityPeriod
@@ -2330,7 +2332,7 @@ EXPORT_C void CSmsSubmit::SetValidityPeriod(const TTimeIntervalMinutes& aTimeInt
 
 const TSmsDataCodingScheme* CSmsSubmit::DataCodingScheme() const
 	{
-	LOGGSMU1("CSmsSubmit::DataCodingScheme()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_DATACODINGSCHEME_1, "CSmsSubmit::DataCodingScheme()");
 
 	return &iDataCodingScheme;
 	} // CSmsSubmit::DataCodingScheme
@@ -2338,7 +2340,7 @@ const TSmsDataCodingScheme* CSmsSubmit::DataCodingScheme() const
 
 const TSmsProtocolIdentifier* CSmsSubmit::ProtocolIdentifier() const
 	{
-	LOGGSMU1("CSmsSubmit::ProtocolIdentifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_PROTOCOLIDENTIFIER_1, "CSmsSubmit::ProtocolIdentifier()");
 
 	return &iProtocolIdentifier;
 	} // CSmsSubmit::ProtocolIdentifier
@@ -2346,7 +2348,7 @@ const TSmsProtocolIdentifier* CSmsSubmit::ProtocolIdentifier() const
 
 const CSmsUserData* CSmsSubmit::UserDataPtr() const
 	{
-	LOGGSMU1("CSmsSubmit::UserDataPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_USERDATAPTR_1, "CSmsSubmit::UserDataPtr()");
 
 	return iUserData;
 	} // CSmsSubmit::UserDataPtr
@@ -2354,7 +2356,7 @@ const CSmsUserData* CSmsSubmit::UserDataPtr() const
 
 const CSmsAddress* CSmsSubmit::ToFromAddressPtr() const
 	{
-	LOGGSMU1("CSmsSubmit::ToFromAddressPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_TOFROMADDRESSPTR_1, "CSmsSubmit::ToFromAddressPtr()");
 
 	return iDestinationAddress;
 	} // CSmsSubmit::ToFromAddressPtr
@@ -2362,7 +2364,7 @@ const CSmsAddress* CSmsSubmit::ToFromAddressPtr() const
 
 void CSmsSubmit::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsSubmit::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_CONSTRUCTL_1, "CSmsSubmit::ConstructL()");
 
 	iServiceCenterAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
 	iDestinationAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
@@ -2377,7 +2379,7 @@ void CSmsSubmit::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RF
  */
 EXPORT_C CSmsSubmit* CSmsSubmit::DuplicateL() const
 	{
-	LOGGSMU1("CSmsSubmit::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMIT_DUPLICATEL_1, "CSmsSubmit::DuplicateL()");
 
 	CSmsSubmit*  smsSubmit = new (ELeave) CSmsSubmit();
 	CleanupStack::PushL(smsSubmit);
@@ -2401,7 +2403,7 @@ EXPORT_C CSmsSubmit* CSmsSubmit::DuplicateL() const
 
 TUint8* CSmsSubmit::EncodeL(TUint8* aPtr) const
 	{
-	LOGGSMU1("CSmsSubmit::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_ENCODEL_1, "CSmsSubmit::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	aPtr=iMessageReference.EncodeL(aPtr);
@@ -2414,7 +2416,7 @@ TUint8* CSmsSubmit::EncodeL(TUint8* aPtr) const
 
 TUint8* CSmsSubmit::EncodeL(TUint8* aPtr, const TEncodeParams* aEncodeParams) const		
 	{
-	LOGGSMU1("CSmsSubmit::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_ENCODEL1_1, "CSmsSubmit::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	aPtr=iMessageReference.EncodeL(aPtr);
@@ -2427,7 +2429,7 @@ TUint8* CSmsSubmit::EncodeL(TUint8* aPtr, const TEncodeParams* aEncodeParams) co
 
 void CSmsSubmit::DecodeL(TGsmuLex8& aPdu)
 	{
-	LOGGSMU1("CSmsSubmit::DecodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_DECODEL_1, "CSmsSubmit::DecodeL()");
 
 	iFirstOctet.DecodeL(aPdu);
 	iMessageReference.DecodeL(aPdu);
@@ -2447,7 +2449,7 @@ void CSmsSubmit::DecodeL(TGsmuLex8& aPdu)
 
 void CSmsSubmit::InternalizeMessagePDUL(RReadStream& aStream)
 	{
-	LOGGSMU1("CSmsSubmit::InternalizeMessagePDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMIT_INTERNALIZEMESSAGEPDUL_1, "CSmsSubmit::InternalizeMessagePDUL()");
 
 	iServiceCenterAddress->InternalizeL(aStream);
 
@@ -2503,7 +2505,7 @@ CSmsDeliverReport::~CSmsDeliverReport()
  */
 EXPORT_C TInt CSmsDeliverReport::FailureCause() const
 	{
-	LOGGSMU1("CSmsDeliverReport::FailureCause()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVERREPORT_FAILURECAUSE_1, "CSmsDeliverReport::FailureCause()");
 
 	__ASSERT_DEBUG(iIsRPError,Panic(KGsmuPanicNotRPError));
 	return iFailureCause.Error();
@@ -2518,7 +2520,7 @@ EXPORT_C TInt CSmsDeliverReport::FailureCause() const
  */
 EXPORT_C void CSmsDeliverReport::SetFailureCause(TSmsFailureCause::TSmsFailureCauseError aFailureCause)
 	{
-	LOGGSMU1("CSmsDeliverReport::SetFailureCause()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVERREPORT_SETFAILURECAUSE_1, "CSmsDeliverReport::SetFailureCause()");
 
 	__ASSERT_DEBUG(iIsRPError,Panic(KGsmuPanicNotRPError));
 	iFailureCause.SetError(aFailureCause);
@@ -2527,7 +2529,7 @@ EXPORT_C void CSmsDeliverReport::SetFailureCause(TSmsFailureCause::TSmsFailureCa
 
 const TSmsDataCodingScheme* CSmsDeliverReport::DataCodingScheme() const
 	{
-	LOGGSMU1("CSmsDeliverReport::DataCodingScheme()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_DATACODINGSCHEME_1, "CSmsDeliverReport::DataCodingScheme()");
 
 	__ASSERT_DEBUG(DataCodingSchemePresent(),Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return &iDataCodingScheme;
@@ -2536,7 +2538,7 @@ const TSmsDataCodingScheme* CSmsDeliverReport::DataCodingScheme() const
 
 const TSmsProtocolIdentifier* CSmsDeliverReport::ProtocolIdentifier() const
 	{
-	LOGGSMU1("CSmsDeliverReport::ProtocolIdentifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_PROTOCOLIDENTIFIER_1, "CSmsDeliverReport::ProtocolIdentifier()");
 
 	__ASSERT_DEBUG(ProtocolIdentifierPresent(),Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return &iProtocolIdentifier;
@@ -2545,7 +2547,7 @@ const TSmsProtocolIdentifier* CSmsDeliverReport::ProtocolIdentifier() const
 
 const TSmsParameterIndicator* CSmsDeliverReport::ParameterIndicator() const
 	{
-	LOGGSMU1("CSmsDeliverReport::ParameterIndicator()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_PARAMETERINDICATOR_1, "CSmsDeliverReport::ParameterIndicator()");
 
 	return &iParameterIndicator;
 	} // CSmsDeliverReport::ParameterIndicator
@@ -2553,7 +2555,7 @@ const TSmsParameterIndicator* CSmsDeliverReport::ParameterIndicator() const
 
 const CSmsUserData* CSmsDeliverReport::UserDataPtr() const
 	{
-	LOGGSMU1("CSmsDeliverReport::UserDataPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_USERDATAPTR_1, "CSmsDeliverReport::UserDataPtr()");
 
 	__ASSERT_DEBUG(UserDataPresent(),Panic(KGsmuPanicUserDataNotPresent));
 	return iUserData;
@@ -2562,7 +2564,7 @@ const CSmsUserData* CSmsDeliverReport::UserDataPtr() const
 
 void CSmsDeliverReport::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsDeliverReport::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_CONSTRUCTL_1, "CSmsDeliverReport::ConstructL()");
 
 	iServiceCenterAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
 	iUserData=CSmsUserData::NewL(aCharacterSetConverter,aFs,iFirstOctet,iDataCodingScheme);
@@ -2576,7 +2578,7 @@ void CSmsDeliverReport::ConstructL(CCnvCharacterSetConverter& aCharacterSetConve
  */
 EXPORT_C CSmsDeliverReport* CSmsDeliverReport::DuplicateL() const
 	{
-	LOGGSMU1("CSmsDeliverReport::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSDELIVERREPORT_DUPLICATEL_1, "CSmsDeliverReport::DuplicateL()");
 
 	CSmsDeliverReport*  smsDeliverReport = new (ELeave) CSmsDeliverReport(iIsRPError);
 	CleanupStack::PushL(smsDeliverReport);
@@ -2598,7 +2600,7 @@ EXPORT_C CSmsDeliverReport* CSmsDeliverReport::DuplicateL() const
 
 TUint8* CSmsDeliverReport::EncodeL(TUint8* aPtr) const
 	{
-	LOGGSMU1("CSmsDeliverReport::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_ENCODEL_1, "CSmsDeliverReport::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	if (iIsRPError)
@@ -2620,7 +2622,7 @@ TUint8* CSmsDeliverReport::EncodeL(TUint8* aPtr, const TEncodeParams* ) const
 
 void CSmsDeliverReport::DecodeL(TGsmuLex8& aPdu)
 	{
-	LOGGSMU1("CSmsDeliverReport::DecodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSDELIVERREPORT_DECODEL_1, "CSmsDeliverReport::DecodeL()");
 
 	iFirstOctet.DecodeL(aPdu);
 	if (iIsRPError)
@@ -2717,7 +2719,7 @@ CSmsSubmitReport::~CSmsSubmitReport()
  */
 EXPORT_C TInt CSmsSubmitReport::FailureCause() const
 	{
-	LOGGSMU1("CSmsSubmitReport::FailureCause()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMITREPORT_FAILURECAUSE_1, "CSmsSubmitReport::FailureCause()");
 
 	__ASSERT_DEBUG(iIsRPError,Panic(KGsmuPanicNotRPError));
 	return iFailureCause.Error();
@@ -2732,7 +2734,7 @@ EXPORT_C TInt CSmsSubmitReport::FailureCause() const
  */
 EXPORT_C void CSmsSubmitReport::SetFailureCause(TSmsFailureCause::TSmsFailureCauseError aFailureCause)
 	{
-	LOGGSMU1("CSmsSubmitReport::SetFailureCause()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMITREPORT_SETFAILURECAUSE_1, "CSmsSubmitReport::SetFailureCause()");
 
 	__ASSERT_DEBUG(iIsRPError,Panic(KGsmuPanicNotRPError));
 	iFailureCause.SetError(aFailureCause);
@@ -2741,7 +2743,7 @@ EXPORT_C void CSmsSubmitReport::SetFailureCause(TSmsFailureCause::TSmsFailureCau
 
 const TSmsDataCodingScheme* CSmsSubmitReport::DataCodingScheme() const
 	{
-	LOGGSMU1("CSmsSubmitReport::DataCodingScheme()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_DATACODINGSCHEME_1, "CSmsSubmitReport::DataCodingScheme()");
 
 	__ASSERT_DEBUG(DataCodingSchemePresent(),Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return &iDataCodingScheme;
@@ -2750,7 +2752,7 @@ const TSmsDataCodingScheme* CSmsSubmitReport::DataCodingScheme() const
 
 const TSmsProtocolIdentifier* CSmsSubmitReport::ProtocolIdentifier() const
 	{
-	LOGGSMU1("CSmsSubmitReport::ProtocolIdentifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_PROTOCOLIDENTIFIER_1, "CSmsSubmitReport::ProtocolIdentifier()");
 
 	__ASSERT_DEBUG(ProtocolIdentifierPresent(),Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return &iProtocolIdentifier;
@@ -2759,7 +2761,7 @@ const TSmsProtocolIdentifier* CSmsSubmitReport::ProtocolIdentifier() const
 
 const TSmsParameterIndicator* CSmsSubmitReport::ParameterIndicator() const
 	{
-	LOGGSMU1("CSmsSubmitReport::ParameterIndicator()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_PARAMETERINDICATOR_1, "CSmsSubmitReport::ParameterIndicator()");
 
 	return &iParameterIndicator;
 	} // CSmsSubmitReport::ParameterIndicator
@@ -2767,7 +2769,7 @@ const TSmsParameterIndicator* CSmsSubmitReport::ParameterIndicator() const
 
 const CSmsUserData* CSmsSubmitReport::UserDataPtr() const
 	{
-	LOGGSMU1("CSmsSubmitReport::UserDataPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_USERDATAPTR_1, "CSmsSubmitReport::UserDataPtr()");
 
 	__ASSERT_DEBUG(UserDataPresent(),Panic(KGsmuPanicUserDataNotPresent));
 	return iUserData;
@@ -2776,7 +2778,7 @@ const CSmsUserData* CSmsSubmitReport::UserDataPtr() const
 
 void CSmsSubmitReport::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsSubmitReport::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_CONSTRUCTL_1, "CSmsSubmitReport::ConstructL()");
 
 	iServiceCenterAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
 	iUserData=CSmsUserData::NewL(aCharacterSetConverter,aFs,iFirstOctet,iDataCodingScheme);
@@ -2790,7 +2792,7 @@ void CSmsSubmitReport::ConstructL(CCnvCharacterSetConverter& aCharacterSetConver
  */
 EXPORT_C CSmsSubmitReport* CSmsSubmitReport::DuplicateL() const
 	{
-	LOGGSMU1("CSmsSubmitReport::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSUBMITREPORT_DUPLICATEL_1, "CSmsSubmitReport::DuplicateL()");
 
 	CSmsSubmitReport*  smsSubmitReport = new (ELeave) CSmsSubmitReport(iIsRPError);
 	CleanupStack::PushL(smsSubmitReport);
@@ -2813,7 +2815,7 @@ EXPORT_C CSmsSubmitReport* CSmsSubmitReport::DuplicateL() const
 
 TUint8* CSmsSubmitReport::EncodeL(TUint8* aPtr) const
 	{
-	LOGGSMU1("CSmsSubmitReport::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_ENCODEL_1, "CSmsSubmitReport::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	if (iIsRPError)
@@ -2836,7 +2838,7 @@ TUint8* CSmsSubmitReport::EncodeL(TUint8* aPtr, const TEncodeParams* ) const
 
 void CSmsSubmitReport::DecodeL(TGsmuLex8& aPdu)
 	{
-	LOGGSMU1("CSmsSubmitReport::DecodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSUBMITREPORT_DECODEL_1, "CSmsSubmitReport::DecodeL()");
 
 	iFirstOctet.DecodeL(aPdu);
 	if (iIsRPError)
@@ -2931,7 +2933,7 @@ void CSmsSubmitReport::ExternalizeMessagePDUL(RWriteStream& aStream) const
  */
 EXPORT_C TBool CSmsStatusReport::MoreMessagesToSend() const
 	{
-	LOGGSMU1("CSmsStatusReport::MoreMessagesToSend()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_MOREMESSAGESTOSEND_1, "CSmsStatusReport::MoreMessagesToSend()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsMoreMessagesToSendMask)==TSmsFirstOctet::ESmsMoreMessagesToSend;
 	} // CSmsStatusReport::MoreMessagesToSend
@@ -2945,7 +2947,7 @@ EXPORT_C TBool CSmsStatusReport::MoreMessagesToSend() const
  */
 EXPORT_C void CSmsStatusReport::SetMoreMessagesToSend(TBool aMore)
 	{
-	LOGGSMU1("CSmsStatusReport::SetMoreMessagesToSend()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SETMOREMESSAGESTOSEND_1, "CSmsStatusReport::SetMoreMessagesToSend()");
 
 	iFirstOctet=aMore? (iFirstOctet&(~TSmsFirstOctet::ESmsMoreMessagesToSendMask)|TSmsFirstOctet::ESmsMoreMessagesToSend):
 	                   (iFirstOctet&(~TSmsFirstOctet::ESmsMoreMessagesToSendMask)|TSmsFirstOctet::ESmsNoMoreMessagesToSend);
@@ -2961,7 +2963,7 @@ EXPORT_C void CSmsStatusReport::SetMoreMessagesToSend(TBool aMore)
  */
 EXPORT_C TSmsFirstOctet::TSmsStatusReportQualifier CSmsStatusReport::StatusReportQualifier() const
 	{
-	LOGGSMU1("TSmsFirstOctet::TSmsStatusReportQualifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_STATUSREPORTQUALIFIER_1, "CSmsStatusReport::StatusReportQualifier()");
 
 	return (TSmsFirstOctet::TSmsStatusReportQualifier) (iFirstOctet&TSmsFirstOctet::ESmsStatusReportQualifierMask);
 	} // TSmsFirstOctet::TSmsStatusReportQualifier
@@ -2975,7 +2977,7 @@ EXPORT_C TSmsFirstOctet::TSmsStatusReportQualifier CSmsStatusReport::StatusRepor
  */
 EXPORT_C void CSmsStatusReport::SetStatusReportQualifier(TSmsFirstOctet::TSmsStatusReportQualifier aQualifier)
 	{
-	LOGGSMU1("CSmsStatusReport::SetStatusReportQualifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SETSTATUSREPORTQUALIFIER_1, "CSmsStatusReport::SetStatusReportQualifier()");
 
 	iFirstOctet=iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportQualifierMask)|aQualifier;
 	} // CSmsStatusReport::SetStatusReportQualifier
@@ -3007,7 +3009,7 @@ CSmsStatusReport::~CSmsStatusReport()
  */
 EXPORT_C TInt CSmsStatusReport::MessageReference() const
 	{
-	LOGGSMU2("CSmsStatusReport::MessageReference %d", (TInt)iMessageReference );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_MESSAGEREFERENCE_1, "CSmsStatusReport::MessageReference %d", (TInt)iMessageReference );
 	return iMessageReference;
 	} // CSmsStatusReport::MessageReference
 
@@ -3021,7 +3023,7 @@ EXPORT_C TInt CSmsStatusReport::MessageReference() const
 EXPORT_C void CSmsStatusReport::SetMessageReference(TInt aMessageReference)
 	{
 	iMessageReference=aMessageReference;
-	LOGGSMU2("CSmsStatusReport::SetMessageReference %d", (TInt)iMessageReference );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SETMESSAGEREFERENCE_1, "CSmsStatusReport::SetMessageReference %d", (TInt)iMessageReference );
 	} // CSmsStatusReport::SetMessageReference
 
 
@@ -3034,7 +3036,7 @@ EXPORT_C void CSmsStatusReport::SetMessageReference(TInt aMessageReference)
  */
 EXPORT_C void CSmsStatusReport::ServiceCenterTimeStamp(TTime& aTime,TInt& aNumQuarterHours)
 	{
-	LOGGSMU1("CSmsStatusReport::ServiceCenterTimeStamp()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SERVICECENTERTIMESTAMP_1, "CSmsStatusReport::ServiceCenterTimeStamp()");
 
 	aTime=iServiceCenterTimeStamp.Time();
 	aNumQuarterHours=iServiceCenterTimeStamp.TimeOffset();
@@ -3050,7 +3052,7 @@ EXPORT_C void CSmsStatusReport::ServiceCenterTimeStamp(TTime& aTime,TInt& aNumQu
  */
 EXPORT_C void CSmsStatusReport::SetServiceCenterTimeStamp(const TTime& aTime,TInt& aNumQuarterHours)
 	{
-	LOGGSMU1("CSmsStatusReport::SetServiceCenterTimeStamp()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SETSERVICECENTERTIMESTAMP_1, "CSmsStatusReport::SetServiceCenterTimeStamp()");
 
 	iServiceCenterTimeStamp.SetTime(aTime);
 	iServiceCenterTimeStamp.SetTimeOffset(aNumQuarterHours);
@@ -3066,7 +3068,7 @@ EXPORT_C void CSmsStatusReport::SetServiceCenterTimeStamp(const TTime& aTime,TIn
  */
 EXPORT_C void CSmsStatusReport::DischargeTime(TTime& aTime,TInt& aNumQuarterHours)
 	{
-	LOGGSMU1("CSmsStatusReport::DischargeTime()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_DISCHARGETIME_1, "CSmsStatusReport::DischargeTime()");
 
 	aTime=iDischargeTime.Time();
 	aNumQuarterHours=iDischargeTime.TimeOffset();
@@ -3082,7 +3084,7 @@ EXPORT_C void CSmsStatusReport::DischargeTime(TTime& aTime,TInt& aNumQuarterHour
  */
 EXPORT_C void CSmsStatusReport::SetDischargeTime(const TTime& aTime,TInt& aNumQuarterHours)
 	{
-	LOGGSMU1("CSmsStatusReport::SetDischargeTime()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SETDISCHARGETIME_1, "CSmsStatusReport::SetDischargeTime()");
 
 	iDischargeTime.SetTime(aTime);
 	iDischargeTime.SetTimeOffset(aNumQuarterHours);
@@ -3097,7 +3099,7 @@ EXPORT_C void CSmsStatusReport::SetDischargeTime(const TTime& aTime,TInt& aNumQu
  */
 EXPORT_C TSmsStatus::TSmsStatusValue CSmsStatusReport::Status() const
 	{
-	LOGGSMU2("CSmsStatusReport::Status %d", iStatus.Status());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_STATUS_1, "CSmsStatusReport::Status %d", iStatus.Status());
 	return iStatus.Status();
 	} // TSmsStatus::TSmsStatusValue
 
@@ -3110,7 +3112,7 @@ EXPORT_C TSmsStatus::TSmsStatusValue CSmsStatusReport::Status() const
  */
 EXPORT_C void CSmsStatusReport::SetStatus(TSmsStatus::TSmsStatusValue aValue)
 	{
-	LOGGSMU1("CSmsStatusReport::SetStatus()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_SETSTATUS_1, "CSmsStatusReport::SetStatus()");
 
 	iStatus.SetStatus(aValue);
 	} // CSmsStatusReport::SetStatus
@@ -3118,7 +3120,7 @@ EXPORT_C void CSmsStatusReport::SetStatus(TSmsStatus::TSmsStatusValue aValue)
 
 const TSmsDataCodingScheme* CSmsStatusReport::DataCodingScheme() const
 	{
-	LOGGSMU1("CSmsStatusReport::DataCodingScheme()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_DATACODINGSCHEME_1, "CSmsStatusReport::DataCodingScheme()");
 
 	__ASSERT_DEBUG(DataCodingSchemePresent(),Panic(KGsmuPanicDataCodingSchemeNotPresent));
 	return &iDataCodingScheme;
@@ -3127,7 +3129,7 @@ const TSmsDataCodingScheme* CSmsStatusReport::DataCodingScheme() const
 
 const TSmsProtocolIdentifier* CSmsStatusReport::ProtocolIdentifier() const
 	{
-	LOGGSMU1("CSmsStatusReport::ProtocolIdentifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_PROTOCOLIDENTIFIER_1, "CSmsStatusReport::ProtocolIdentifier()");
 
 	__ASSERT_DEBUG(ProtocolIdentifierPresent(),Panic(KGsmuPanicProtocolIdentifierNotPresent));
 	return &iProtocolIdentifier;
@@ -3136,7 +3138,7 @@ const TSmsProtocolIdentifier* CSmsStatusReport::ProtocolIdentifier() const
 
 const TSmsParameterIndicator* CSmsStatusReport::ParameterIndicator() const
 	{
-	LOGGSMU1("CSmsStatusReport::ParameterIndicator()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_PARAMETERINDICATOR_1, "CSmsStatusReport::ParameterIndicator()");
 
 	__ASSERT_DEBUG(iParameterIndicatorPresent,Panic(KGsmuPanicParameterIndicatorNotPresent));
 	return &iParameterIndicator;
@@ -3145,7 +3147,7 @@ const TSmsParameterIndicator* CSmsStatusReport::ParameterIndicator() const
 
 const CSmsUserData* CSmsStatusReport::UserDataPtr() const
 	{
-	LOGGSMU1("CSmsStatusReport::UserDataPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_USERDATAPTR_1, "CSmsStatusReport::UserDataPtr()");
 
 	__ASSERT_DEBUG(UserDataPresent(),Panic(KGsmuPanicUserDataNotPresent));
 	return iUserData;
@@ -3154,7 +3156,7 @@ const CSmsUserData* CSmsStatusReport::UserDataPtr() const
 
 const CSmsAddress* CSmsStatusReport::ToFromAddressPtr() const
 	{
-	LOGGSMU1("CSmsStatusReport::ToFromAddressPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_TOFROMADDRESSPTR_1, "CSmsStatusReport::ToFromAddressPtr()");
 
 	return iRecipientAddress;
 	} // CSmsStatusReport::ToFromAddressPtr
@@ -3162,7 +3164,7 @@ const CSmsAddress* CSmsStatusReport::ToFromAddressPtr() const
 
 void CSmsStatusReport::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsStatusReport::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_CONSTRUCTL_1, "CSmsStatusReport::ConstructL()");
 
 	iServiceCenterAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
 	iRecipientAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
@@ -3177,7 +3179,7 @@ void CSmsStatusReport::ConstructL(CCnvCharacterSetConverter& aCharacterSetConver
  */
 EXPORT_C CSmsStatusReport* CSmsStatusReport::DuplicateL() const
 	{
-	LOGGSMU1("CSmsStatusReport::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSSTATUSREPORT_DUPLICATEL_1, "CSmsStatusReport::DuplicateL()");
 
 	CSmsStatusReport*  smsStatusReport = new (ELeave) CSmsStatusReport();
 	CleanupStack::PushL(smsStatusReport);
@@ -3204,7 +3206,7 @@ EXPORT_C CSmsStatusReport* CSmsStatusReport::DuplicateL() const
 
 TUint8* CSmsStatusReport::EncodeL(TUint8* aPtr) const
 	{
-	LOGGSMU1("CSmsStatusReport::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_ENCODEL_1, "CSmsStatusReport::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	aPtr=iMessageReference.EncodeL(aPtr);
@@ -3232,7 +3234,7 @@ TUint8* CSmsStatusReport::EncodeL(TUint8* aPtr, const TEncodeParams* ) const
 
 void CSmsStatusReport::DecodeL(TGsmuLex8& aPdu)
 	{
-	LOGGSMU1("CSmsStatusReport::DecodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTATUSREPORT_DECODEL_1, "CSmsStatusReport::DecodeL()");
 
 	iFirstOctet.DecodeL(aPdu);
 	iMessageReference.DecodeL(aPdu);
@@ -3379,7 +3381,7 @@ CSmsCommand::~CSmsCommand()
  */
 EXPORT_C TBool CSmsCommand::StatusReportRequest() const
 	{
-	LOGGSMU1("CSmsCommand::StatusReportRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_STATUSREPORTREQUEST_1, "CSmsCommand::StatusReportRequest()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsStatusReportRequestMask)==TSmsFirstOctet::ESmsStatusReportRequested;
 	} // CSmsCommand::StatusReportRequest
@@ -3393,7 +3395,7 @@ EXPORT_C TBool CSmsCommand::StatusReportRequest() const
  */
 EXPORT_C void CSmsCommand::SetStatusReportRequest(TBool aRequest)
 	{
-	LOGGSMU1("CSmsCommand::SetStatusReportRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_SETSTATUSREPORTREQUEST_1, "CSmsCommand::SetStatusReportRequest()");
 
 	__ASSERT_DEBUG(CommandType()==TSmsCommandType::ESmsCommandTypeEnableStatusReportRequest,Panic(KGsmuPanicSetStatusReportRequestNotSupportedForCommandType));
 	DoSetStatusReportRequest(aRequest);
@@ -3408,7 +3410,7 @@ EXPORT_C void CSmsCommand::SetStatusReportRequest(TBool aRequest)
  */
 EXPORT_C TInt CSmsCommand::MessageReference() const
 	{
-	LOGGSMU1("CSmsCommand::MessageReference()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_MESSAGEREFERENCE_1, "CSmsCommand::MessageReference()");
 
 	return iMessageReference;
 	} // CSmsCommand::MessageReference
@@ -3422,7 +3424,7 @@ EXPORT_C TInt CSmsCommand::MessageReference() const
  */
 EXPORT_C void CSmsCommand::SetMessageReference(TInt aMessageReference)
 	{
-	LOGGSMU1("CSmsCommand::SetMessageReference()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_SETMESSAGEREFERENCE_1, "CSmsCommand::SetMessageReference()");
 
 	iMessageReference=aMessageReference;
 	} // CSmsCommand::SetMessageReference
@@ -3436,7 +3438,7 @@ EXPORT_C void CSmsCommand::SetMessageReference(TInt aMessageReference)
  */
 EXPORT_C TInt CSmsCommand::CommandType() const
 	{
-	LOGGSMU1("CSmsCommand::CommandType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_COMMANDTYPE_1, "CSmsCommand::CommandType()");
 
 	return iCommandType.CommandType();
 	} // CSmsCommand::CommandType
@@ -3450,7 +3452,7 @@ EXPORT_C TInt CSmsCommand::CommandType() const
  */
 EXPORT_C void CSmsCommand::SetCommandType(TSmsCommandType::TSmsCommandTypeValue aCommandType)
 	{
-	LOGGSMU1("CSmsCommand::SetCommandType()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_SETCOMMANDTYPE_1, "CSmsCommand::SetCommandType()");
 
 	//  Some command types have default status report request
 	switch (aCommandType)
@@ -3483,7 +3485,7 @@ EXPORT_C void CSmsCommand::SetCommandType(TSmsCommandType::TSmsCommandTypeValue 
  */
 EXPORT_C TInt CSmsCommand::MessageNumber() const
 	{
-	LOGGSMU1("CSmsCommand::MessageNumber()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_MESSAGENUMBER_1, "CSmsCommand::MessageNumber()");
 
 	return iMessageNumber;
 	} // CSmsCommand::MessageNumber
@@ -3497,7 +3499,7 @@ EXPORT_C TInt CSmsCommand::MessageNumber() const
  */
 EXPORT_C void CSmsCommand::SetMessageNumber(TInt aMessageNumber)
 	{
-	LOGGSMU1("CSmsCommand::SetMessageNumber()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_SETMESSAGENUMBER_1, "CSmsCommand::SetMessageNumber()");
 
 	iMessageNumber=aMessageNumber;
 	} // CSmsCommand::SetMessageNumber
@@ -3511,7 +3513,7 @@ EXPORT_C void CSmsCommand::SetMessageNumber(TInt aMessageNumber)
  */
 EXPORT_C TInt CSmsCommand::NumInformationElements() const
 	{
-	LOGGSMU1("CSmsCommand::NumInformationElements()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_NUMINFORMATIONELEMENTS_1, "CSmsCommand::NumInformationElements()");
 
 	return iCommandData->NumInformationElements();
 	} // CSmsCommand::NumInformationElements
@@ -3526,7 +3528,7 @@ EXPORT_C TInt CSmsCommand::NumInformationElements() const
  */
 EXPORT_C CSmsInformationElement& CSmsCommand::InformationElement(TInt aIndex) const
 	{
-	LOGGSMU1("CSmsCommand::InformationElement()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_INFORMATIONELEMENT_1, "CSmsCommand::InformationElement()");
 
 	return iCommandData->InformationElement(aIndex);
 	} // CSmsCommand::InformationElement
@@ -3544,7 +3546,7 @@ CSmsInformationElement*& CSmsCommand::InformationElementPtr(TInt aIndex) const
     // Ignore in code coverage - not used in SMS stack and not exported
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsCommand::InformationElementPtr()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_INFORMATIONELEMENTPTR_1, "CSmsCommand::InformationElementPtr()");
     return iCommandData->InformationElementPtr(aIndex);
     BULLSEYE_RESTORE
     }
@@ -3560,7 +3562,7 @@ CSmsInformationElement*& CSmsCommand::InformationElementPtr(TInt aIndex) const
 EXPORT_C TBool CSmsCommand::InformationElementIndex(CSmsInformationElement::TSmsInformationElementIdentifier aIdentifier,
 		TInt& aIndex) const
 	{
-	LOGGSMU1("CSmsCommand::InformationElementIndex()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_INFORMATIONELEMENTINDEX_1, "CSmsCommand::InformationElementIndex()");
 
 	return iCommandData->InformationElementIndex(aIdentifier,aIndex);
 	} // CSmsCommand::InformationElementIndex
@@ -3575,7 +3577,7 @@ EXPORT_C TBool CSmsCommand::InformationElementIndex(CSmsInformationElement::TSms
  */
 EXPORT_C void CSmsCommand::AddInformationElementL(CSmsInformationElement::TSmsInformationElementIdentifier aIdentifier, TDesC8& aData)
 	{
-	LOGGSMU1("CSmsCommand::AddInformationElementL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_ADDINFORMATIONELEMENTL_1, "CSmsCommand::AddInformationElementL()");
 
 	iCommandData->AddInformationElementL(aIdentifier,aData);
 	} // CSmsCommand::AddInformationElementL
@@ -3589,7 +3591,7 @@ EXPORT_C void CSmsCommand::AddInformationElementL(CSmsInformationElement::TSmsIn
  */
 EXPORT_C void CSmsCommand::RemoveInformationElement(TInt aIndex)
 	{
-	LOGGSMU1("CSmsCommand::RemoveInformationElement()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_REMOVEINFORMATIONELEMENT_1, "CSmsCommand::RemoveInformationElement()");
 
 	iCommandData->RemoveInformationElement(aIndex);
 	} // CSmsCommand::RemoveInformationElement
@@ -3603,7 +3605,7 @@ EXPORT_C void CSmsCommand::RemoveInformationElement(TInt aIndex)
  */
 EXPORT_C TInt CSmsCommand::MaxCommandDataLength() const
 	{
-	LOGGSMU1("CSmsCommand::MaxCommandDataLength()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_MAXCOMMANDDATALENGTH_1, "CSmsCommand::MaxCommandDataLength()");
 
 	return iCommandData->MaxDataLength();
 	} // CSmsCommand::MaxCommandDataLength
@@ -3617,7 +3619,7 @@ EXPORT_C TInt CSmsCommand::MaxCommandDataLength() const
  */
 EXPORT_C TPtrC8 CSmsCommand::CommandData() const
 	{
-	LOGGSMU1("CSmsCommand::CommandData()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_COMMANDDATA_1, "CSmsCommand::CommandData()");
 
 	return iCommandData->Data();
 	} // CSmsCommand::CommandData
@@ -3631,7 +3633,7 @@ EXPORT_C TPtrC8 CSmsCommand::CommandData() const
  */
 EXPORT_C void CSmsCommand::SetCommandDataL(const TDesC8& aData)
 	{
-	LOGGSMU1("CSmsCommand::SetCommandDataL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_SETCOMMANDDATAL_1, "CSmsCommand::SetCommandDataL()");
 
 	iCommandData->SetDataL(aData);
 	} // CSmsCommand::SetCommandDataL
@@ -3639,7 +3641,7 @@ EXPORT_C void CSmsCommand::SetCommandDataL(const TDesC8& aData)
 
 const TSmsProtocolIdentifier* CSmsCommand::ProtocolIdentifier() const
 	{
-	LOGGSMU1("CSmsCommand::ProtocolIdentifier()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_PROTOCOLIDENTIFIER_1, "CSmsCommand::ProtocolIdentifier()");
 
 	return &iProtocolIdentifier;
 	} // CSmsCommand::ProtocolIdentifier
@@ -3647,7 +3649,7 @@ const TSmsProtocolIdentifier* CSmsCommand::ProtocolIdentifier() const
 
 const CSmsAddress* CSmsCommand::ToFromAddressPtr() const
 	{
-	LOGGSMU1("CSmsCommand::ToFromAddressPtr()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_TOFROMADDRESSPTR_1, "CSmsCommand::ToFromAddressPtr()");
 
 	return iDestinationAddress;
 	} // CSmsCommand::ToFromAddressPtr
@@ -3655,7 +3657,7 @@ const CSmsAddress* CSmsCommand::ToFromAddressPtr() const
 
 void CSmsCommand::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	LOGGSMU1("CSmsCommand::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_CONSTRUCTL_1, "CSmsCommand::ConstructL()");
 
 	iServiceCenterAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
 	iDestinationAddress=CSmsAddress::NewL(aCharacterSetConverter,aFs);
@@ -3670,7 +3672,7 @@ void CSmsCommand::ConstructL(CCnvCharacterSetConverter& aCharacterSetConverter,R
  */
 EXPORT_C CSmsCommand* CSmsCommand::DuplicateL() const
 	{
-	LOGGSMU1("CSmsCommand::DuplicateL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSCOMMAND_DUPLICATEL_1, "CSmsCommand::DuplicateL()");
 
 	CSmsCommand*  smsCommand = new (ELeave) CSmsCommand();
 	CleanupStack::PushL(smsCommand);
@@ -3692,7 +3694,7 @@ EXPORT_C CSmsCommand* CSmsCommand::DuplicateL() const
 
 TUint8* CSmsCommand::EncodeL(TUint8* aPtr) const
 	{
-	LOGGSMU1("CSmsCommand::EncodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_ENCODEL_1, "CSmsCommand::EncodeL()");
 
 	aPtr=iFirstOctet.EncodeL(aPtr);
 	aPtr=iMessageReference.EncodeL(aPtr);
@@ -3714,7 +3716,7 @@ TUint8* CSmsCommand::EncodeL(TUint8* aPtr, const TEncodeParams* ) const
 
 void CSmsCommand::DecodeL(TGsmuLex8& aPdu)
 	{
-	LOGGSMU1("CSmsCommand::DecodeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_DECODEL_1, "CSmsCommand::DecodeL()");
 
 	iFirstOctet.DecodeL(aPdu);
 	iMessageReference.DecodeL(aPdu);
@@ -3756,7 +3758,7 @@ void CSmsCommand::ExternalizeMessagePDUL(RWriteStream& aStream) const
 
 void CSmsCommand::DoSetStatusReportRequest(TBool aRequest)
 	{
-	LOGGSMU1("CSmsCommand::DoSetStatusReportRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMAND_DOSETSTATUSREPORTREQUEST_1, "CSmsCommand::DoSetStatusReportRequest()");
 
 	iFirstOctet=aRequest? (iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportRequestMask)|TSmsFirstOctet::ESmsStatusReportRequested):
 	                      (iFirstOctet&(~TSmsFirstOctet::ESmsStatusReportRequestMask)|TSmsFirstOctet::ESmsAcceptDuplicates);

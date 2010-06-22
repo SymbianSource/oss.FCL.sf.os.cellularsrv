@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,11 +16,16 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CResponseTimerStoreTraces.h"
+#endif
+
 #include "CResponseTimerStore.h"
 #include "cmmphonetsy.h"
 #include "CResponseTimer.h"
 #include "MmTsy_timeoutdefs.h"
-#include <ctsy/tflogger.h>
 
 #ifdef REQHANDLE_TIMER
 
@@ -216,7 +221,7 @@ void CResponseTimerStore::AddTimeEntry(
     if ( KErrNone != ret )
         {
         //log problem
-TFLOGSTRING("Error inserting entry in the Timer table.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRESPONSETIMERSTORE_ADDTIMEENTRY_1, "Error inserting entry in the Timer table.");
         }
     }
 

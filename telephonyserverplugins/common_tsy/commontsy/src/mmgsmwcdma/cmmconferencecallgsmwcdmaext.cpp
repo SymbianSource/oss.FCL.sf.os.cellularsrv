@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmconferencecallgsmwcdmaextTraces.h"
+#endif
+
 #include "cmmconferencecallgsmwcdmaext.h"
 #include "cmmphonetsy.h"
 #include "cmmconferencecalltsy.h"
@@ -180,7 +186,7 @@ TInt CMmConferenceCallGsmWcdmaExt::SwapL(
 	RMobileConferenceCall::TMobileConferenceStatus aStatus,
     CMmCallList* aCallList )
     {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::SwapL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_SWAPL_1, "TSY: CMmConferenceCallGsmWcdmaExt::SwapL");
 	TInt ret = KErrArgument;
 
 	// conference must be active or held
@@ -208,7 +214,7 @@ TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::SwapL");
                 iNumberOfCallsToBeSwapped++;
                 }
             }
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::SwapL - Number of calls in conference: %d", iNumberOfCallsToBeSwapped);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_SWAPL_2, "TSY: CMmConferenceCallGsmWcdmaExt::SwapL - Number of calls in conference: %d", iNumberOfCallsToBeSwapped);
 
         // Find active and held call objects:
         CMmCallTsy* mmActiveCall = 
@@ -332,7 +338,7 @@ TBool CMmConferenceCallGsmWcdmaExt::CallStatusChanged(
     RMobileCall::TMobileCallStatus aNewStatus,
     TInt aCallId )
     {
-TFLOGSTRING3("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, aNewStatus:%d, aCallId:%d", aNewStatus, aCallId );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_CALLSTATUSCHANGED_1, "TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, aNewStatus:%d, aCallId:%d", aNewStatus, aCallId );
 
     TBool statusChanged( EFalse );
 
@@ -340,8 +346,8 @@ TFLOGSTRING3("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, aNewStatus:%
     RMobileConferenceCall::TMobileConferenceStatus status 
             = iMmConferenceCallTsy->Status();
 
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, Current conf call iMmConferenceCallTsy->Status:%d ", status);
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, Current conference extension iNewStatus:%d ", iNewStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_CALLSTATUSCHANGED_2, "TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, Current conf call iMmConferenceCallTsy->Status:%d ", status);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_CALLSTATUSCHANGED_3, "TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, Current conference extension iNewStatus:%d ", iNewStatus);
     //get call list
     CMmCallList* callList = iMmConferenceCallTsy->Phone()->CallList();
 
@@ -466,9 +472,9 @@ TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, Current conf
         {
         // -1 indicates that there is no unhandled ghost operation anymore
         iCurrentGhostOperation = -1;
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, statusChanged!! ");   
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_CALLSTATUSCHANGED_4, "TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged, statusChanged!! ");
         }
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged END, current conference extension iNewStatus:%d ", iNewStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_CALLSTATUSCHANGED_5, "TSY: CMmConferenceCallGsmWcdmaExt::CallStatusChanged END, current conference extension iNewStatus:%d ", iNewStatus);
 
     return statusChanged;
     }
@@ -498,7 +504,7 @@ void CMmConferenceCallGsmWcdmaExt::CheckConferenceCapability(
     RMobileConferenceCall::TMobileConferenceStatus aStatus,
     CMmCallList* aCallList )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CheckConferenceCapability. aStatus:%d ", aStatus);     
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_CHECKCONFERENCECAPABILITY_1, "TSY: CMmConferenceCallGsmWcdmaExt::CheckConferenceCapability. aStatus:%d ", aStatus);
     //Check if conference creation is possible. CC has to be in Idle state
     if ( RMobileConferenceCall::EConferenceIdle == aStatus  )
         {
@@ -702,7 +708,7 @@ TBool CMmConferenceCallGsmWcdmaExt::HandleSwap(
     RMobileConferenceCall::TMobileConferenceStatus aStatus,
     CMmCallList& aCallList )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::HandleSwap. aStatus:%d ", aStatus);     
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLESWAP_1, "TSY: CMmConferenceCallGsmWcdmaExt::HandleSwap. aStatus:%d ", aStatus);
     TBool statusChanged( EFalse );
 
     //increment counter telling how many calls will still change state
@@ -744,8 +750,8 @@ TBool CMmConferenceCallGsmWcdmaExt::HandleAddCall(
     CMmCallList& aCallList,
     RMobileCall::TMobileCallStatus aNewStatus )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. aStatus:%d ", aStatus); 
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. aNewStatus:%d ", aNewStatus); 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLEADDCALL_1, "TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. aStatus:%d ", aStatus);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLEADDCALL_2, "TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. aNewStatus:%d ", aNewStatus);
     TBool statusChanged( EFalse );
 
     //Handle adding a call to conference call
@@ -810,7 +816,7 @@ TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. aNewStatus:%d ",
             UpdateCapsAfterJoin( aCallList );
             } 
         }
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. statusChanged:%d ", statusChanged); 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLEADDCALL_3, "TSY: CMmConferenceCallGsmWcdmaExt::HandleAddCall. statusChanged:%d ", statusChanged);
     
     return statusChanged;
     }
@@ -880,8 +886,8 @@ TBool CMmConferenceCallGsmWcdmaExt::HandleCallRelease(
 	TBool callFound( EFalse );
 	CMmCallTsy* mmCall = NULL;
 
-	TFLOGSTRING3("TSY: CMmConferenceCallGsmWcdmaExt::HandleCallRelease aNewStatus %d, aCallId %d",aNewStatus , aCallId );
-	TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::HandleCallRelease Calls in CC %d",iMmConferenceCallTsy->NumberOfCallsInConference());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLECALLRELEASE_1, "TSY: CMmConferenceCallGsmWcdmaExt::HandleCallRelease aNewStatus %d, aCallId %d",aNewStatus , aCallId );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLECALLRELEASE_2, "TSY: CMmConferenceCallGsmWcdmaExt::HandleCallRelease Calls in CC %d",iMmConferenceCallTsy->NumberOfCallsInConference());
 
 	//first find the call object which has gone to idle state
 	for ( TInt i = 0; i < aCallList.GetNumberOfObjects(); i++ )
@@ -890,14 +896,14 @@ TBool CMmConferenceCallGsmWcdmaExt::HandleCallRelease(
 
 		if(mmCall)
 			{
-			TFLOGSTRING2("TSY: Previous Call ID: %d", mmCall->PreviousCallId() );
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLECALLRELEASE_3, "TSY: Previous Call ID: %d", mmCall->PreviousCallId() );
 			if ( mmCall->PreviousCallId() == aCallId )
 				{
 				if ( 2 == iMmConferenceCallTsy->NumberOfCallsInConference() && mmCall->IsPartOfConference() &&
 						iMmConferenceCallTsy->ServiceRequested( 
 								CMmConferenceCallTsy::EMultimodeConferenceCallAddCall ) )
 					{
-					TFLOGSTRING("TSY: STOP handling this case");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLECALLRELEASE_4, "TSY: STOP handling this case");
 					return EFalse;
 					}
 				mmCall->ResetPreviousCallId();
@@ -982,7 +988,7 @@ TBool CMmConferenceCallGsmWcdmaExt::HandleCallRelease(
 					if( remainingCall->MobileCallStatus() == RMobileCall::EStatusHold )
 						{
 						callStatus = RMobileCall::EStatusHold;
-						TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::HandleCallRelease Call with Hold status found" );
+						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_HANDLECALLRELEASE_5, "TSY: CMmConferenceCallGsmWcdmaExt::HandleCallRelease Call with Hold status found" );
 						break;
 						}	
 					}
@@ -1268,7 +1274,7 @@ TBool CMmConferenceCallGsmWcdmaExt::HandleGoOneToOne(
 TInt CMmConferenceCallGsmWcdmaExt::GetNewStatus(
     RMobileConferenceCall::TMobileConferenceStatus* aNewStatus )
     {
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::GetNewStatus. iNewStatus:%d ", iNewStatus );     
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_GETNEWSTATUS_1, "TSY: CMmConferenceCallGsmWcdmaExt::GetNewStatus. iNewStatus:%d ", iNewStatus );
     //copy new status
     *aNewStatus = iNewStatus;
     //delete new status from GSM extension
@@ -1284,7 +1290,7 @@ TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::GetNewStatus. iNewStatus:%d ", 
 //
 void CMmConferenceCallGsmWcdmaExt::ResetAttributes()
     {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::ResetAttributes. " );     
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_RESETATTRIBUTES_1, "TSY: CMmConferenceCallGsmWcdmaExt::ResetAttributes. " );
     //Flag telling if this is not the first hold/active status indication
     //caused by client asking hold/resume for a single call.
     iCallControlStarted = EFalse;
@@ -1541,7 +1547,7 @@ void CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent(
     //get current conference call status
     RMobileConferenceCall::TMobileConferenceStatus status 
             = iMmConferenceCallTsy->Status();
-TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent. iMmConferenceCallTsy->Status():%d ", status );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_1, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent. iMmConferenceCallTsy->Status():%d ", status );
 
     switch( confEvent )
         {
@@ -1552,7 +1558,7 @@ TFLOGSTRING2("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent. 
                 !iMmConferenceCallTsy->ServiceRequested( CMmConferenceCallTsy::
                     EMultimodeConferenceCallCreateConference ) )
                 {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Build");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_2, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Build");
                 //We have to get 2 active status indications before the 
                 //conference has really gone to active state.
                 iCreateConferenceCounter = 2;
@@ -1564,7 +1570,7 @@ TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - 
                 !iMmConferenceCallTsy->ServiceRequested( CMmConferenceCallTsy::
                     EMultimodeConferenceCallAddCall ) )
                 {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Build/Add");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_3, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Build/Add");
                 iCurrentGhostOperation = confEvent;
                 }
             break;
@@ -1575,7 +1581,7 @@ TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - 
                 !iMmConferenceCallTsy->ServiceRequested( CMmConferenceCallTsy::
                     EMultimodeConferenceCallAddCall ) )
                 {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Add");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_4, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Add");
                 iCurrentGhostOperation = confEvent;
                 }
             break;
@@ -1585,7 +1591,7 @@ TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - 
                 !iMmConferenceCallTsy->ServiceRequested( 
                 CMmConferenceCallTsy::EMultimodeConferenceCallSwap ) )
                 {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Swap");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_5, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Swap");
                 iNumberOfCallsToBeSwapped 
                     = iMmConferenceCallTsy->NumberOfCallsInConference();
 
@@ -1596,14 +1602,14 @@ TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - 
         case RMobileConferenceCall::EConferenceSplit:
             if ( !iGoOneToOneHandlingStarted )
                 {
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Split");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_6, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - Split");
                 iGoOneToOneHandlingStarted = ETrue;
                 iCurrentGhostOperation = confEvent;
                 iGoOneToOneCallId = callId;
                 }
             break;
         default:
-TFLOGSTRING("TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - No Actions");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLGSMWCDMAEXT_COMPLETENOTIFYCONFERENCEEVENT_7, "TSY: CMmConferenceCallGsmWcdmaExt::CompleteNotifyConferenceEvent - No Actions");
             break;
         }
     }

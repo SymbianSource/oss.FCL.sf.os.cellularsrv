@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,30 +23,29 @@
 #define RECEIVER_H
 
 #include "BcaIoController.h"
-#include "bttlog.h"
 #include "Constants.h"
 #include <nifmbuf.h>
 
-class CBttLogger;
 
 class CReceiver : public CActive
 	{
 public:	
-	static CReceiver* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize);
+	static CReceiver* NewL(CBcaIoController& aObserver, TUint aMaxPacketSize);
 	~CReceiver();
 
 	// Inherited from CActive.
 	virtual void RunL();
+	virtual TInt RunError(TInt aError);
 	virtual void DoCancel();
+	
 	void StartListening();
 	
 private:
-	CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize);
+	CReceiver(CBcaIoController& aObserver, TUint aMaxPacketSize);
 	void ConstructL();
 
 private: // Unowned data.
 	CBcaIoController& iObserver;
-	CBttLogger* iTheLogger;
 	TUint iMaxPacketSize;
 	RBuf8 iData;
 	RMBufPacket iRMBufPacket;

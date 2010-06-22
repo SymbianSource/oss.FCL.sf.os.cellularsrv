@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,12 +19,18 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimUsimR6Traces.h"
+#endif
+
 #include <e32property.h>
 #include <testconfigfileparser.h>
 #include <sacls.h>
 #include <e32math.h>
 #include "CSimPhone.h"
-#include "Simlog.h"
 #include "CSimPubSubChange.h"
 #include "CSimTsyMode.h"
 #include <etelmmerr.h>
@@ -77,7 +83,7 @@ void CSimUsimR6::ConstructL()
  * 
  */
 	{
-	LOGMISC1("CSimUsimR6: Entered ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_1, "CSimUsimR6: Entered ConstructL()");
 	iVoiceMailIds=new(ELeave) CArrayFixFlat<RMobilePhone::TMobilePhoneVoicemailIdsV8>(KUsimGranularity);
 	iMessageWaiting=new(ELeave) CArrayFixFlat<RMobilePhone::TMobilePhoneMessageWaitingV8>(KUsimGranularity);
 	
@@ -127,31 +133,31 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,voice);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("voice",ret,0,&KUsimMailBoxIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element VOICE returned %d (element no. %d) from tag %s.",ret,0,KUsimMailBoxIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,data);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("data",ret,1,&KUsimMailBoxIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element DATA returned %d (element no. %d) from tag %s.",ret,1,KUsimMailBoxIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,fax);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("fax",ret,2,&KUsimMailBoxIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element FAX returned %d (element no. %d) from tag %s.",ret,2,KUsimMailBoxIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,other);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("other",ret,3,&KUsimMailBoxIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element OTHER returned %d (element no. %d) from tag %s.",ret,3,KUsimMailBoxIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,video);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("video",ret,4,&KUsimMailBoxIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element VIDEO returned %d (element no. %d) from tag %s.",ret,4,KUsimMailBoxIdInfo);
 			continue;
 			}
 		RMobilePhone::TMobilePhoneVoicemailIdsV8 mailboxIdInfo;
@@ -175,49 +181,49 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,displayStatus);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("displayStatus",ret,0,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element DISPLAYSTATUS returned %d (element no. %d) from tag %s.",ret,0,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,voiceMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("voiceMsgs",ret,1,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element VOICEMSGS returned %d (element no. %d) from tag %s.",ret,1,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,auxVoiceMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("auxVoiceMsgs",ret,2,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element AUXVOICEMSGS returned %d (element no. %d) from tag %s.",ret,2,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,dataMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("dataMsgs",ret,3,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element DATAMSGS returned %d (element no. %d) from tag %s.",ret,3,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,faxMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("faxMsgs",ret,4,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element FAXMSGS returned %d (element no. %d) from tag %s.",ret,4,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,emailMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("emailMsgs",ret,5,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element EMAILMSGS returned %d (element no. %d) from tag %s.",ret,5,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,otherMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("otherMsgs",ret,6,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element OTHERMSGS returned %d (element no. %d) from tag %s.",ret,6,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,videoMsgs);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("longName",ret,7,&KUsimMessageWaitingIdInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element LONGNAME returned %d (element no. %d) from tag %s.",ret,7,KUsimMessageWaitingIdInfo);
 			continue;
 			}
 		RMobilePhone::TMobilePhoneMessageWaitingV8 messageWaiting;
@@ -246,7 +252,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,FieldsUsed);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Fields Used",ret,0,&KUsimWlanDataInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element FIELDS USED returned %d (element no. %d) from tag %s.",ret,0,KUsimWlanDataInfo);
 			continue;
 			}
 		else 
@@ -259,7 +265,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,Pseudonym);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Pseudonym",ret,1,&KUsimWlanDataInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element PSEUDONYM returned %d (element no. %d) from tag %s.",ret,1,KUsimWlanDataInfo);
 			continue;
 			}
 		else
@@ -269,7 +275,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,ReauthenticationId);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ReauthenticationId",ret,2,&KUsimWlanDataInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element REAUTHENTICATIONID returned %d (element no. %d) from tag %s.",ret,2,KUsimWlanDataInfo);
 			continue;
 			}
 		else
@@ -279,7 +285,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,MasterKey);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("MasterKey",ret,3,&KUsimWlanDataInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element MASTERKEY returned %d (element no. %d) from tag %s.",ret,3,KUsimWlanDataInfo);
 			continue;
 			}
 		else
@@ -289,7 +295,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,Counter);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Counter",ret,4,&KUsimWlanDataInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element COUNTER returned %d (element no. %d) from tag %s.",ret,4,KUsimWlanDataInfo);
 			continue;
 			}
 		else
@@ -313,7 +319,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,wlanSidBuf);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Wlan Sid Buffer",ret,0,&KUsimWlanSidInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element WLAN SID BUFFER returned %d (element no. %d) from tag %s.",ret,0,KUsimWlanSidInfo);
 			continue;
 			}
 		else 
@@ -323,7 +329,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,userDef);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("User Defined",ret,1,&KUsimWlanSidInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element USER DEFINED returned %d (element no. %d) from tag %s.",ret,1,KUsimWlanSidInfo);
 			continue;
 			}
 		else
@@ -347,7 +353,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,accessId);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Access Id",ret,0,&KUsimPreferredNetworksInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element ACCESS ID returned %d (element no. %d) from tag %s.",ret,0,KUsimPreferredNetworksInfo);
 			continue;
 			}
 		else 
@@ -360,7 +366,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,userDef);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("User Defined",ret,1,&KUsimPreferredNetworksInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element USER DEFINED returned %d (element no. %d) from tag %s.",ret,1,KUsimPreferredNetworksInfo);
 			continue;
 			}
 		else
@@ -370,7 +376,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,countryCode);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Country Code",ret,1,&KUsimPreferredNetworksInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element COUNTRY CODE returned %d (element no. %d) from tag %s.",ret,1,KUsimPreferredNetworksInfo);
 			continue;
 			}
 		else
@@ -380,7 +386,7 @@ void CSimUsimR6::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,networkId);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("Network Id",ret,1,&KUsimPreferredNetworksInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element NETWORK ID returned %d (element no. %d) from tag %s.",ret,1,KUsimPreferredNetworksInfo);
 			continue;
 			}
 		else
@@ -390,7 +396,7 @@ void CSimUsimR6::ConstructL()
 		
 		iPreferredNetworks->AppendL(networkEntry);
 		}	
-	LOGPHONE1("Starting to Parse GBA Authentication Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_26, "Starting to Parse GBA Authentication Info");
 	count = CfgFile()->ItemCount(KGBAAuthInfo);
 	TGBAAuthInfo authInfo;
 
@@ -411,7 +417,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, AUTN);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("AUTN",ret,0,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_27, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTN returned %d (element no. %d) from tag %s.",ret,0,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -422,7 +428,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, RAND);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("RAND",ret,1,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_28, "WARNING - CONFIGURATION FILE PARSING - Reading element RAND returned %d (element no. %d) from tag %s.",ret,1,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -433,7 +439,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, appId);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("APPID",ret,2,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_29, "WARNING - CONFIGURATION FILE PARSING - Reading element APPID returned %d (element no. %d) from tag %s.",ret,2,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -444,7 +450,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 3, RES);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("RES",ret,3,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_30, "WARNING - CONFIGURATION FILE PARSING - Reading element RES returned %d (element no. %d) from tag %s.",ret,3,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -455,7 +461,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 4, AUTS);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("AUTS",ret,4,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_31, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTS returned %d (element no. %d) from tag %s.",ret,4,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -466,7 +472,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 5, NAFID);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("NAFID",ret,5,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_32, "WARNING - CONFIGURATION FILE PARSING - Reading element NAFID returned %d (element no. %d) from tag %s.",ret,5,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -477,7 +483,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 6, IMPI);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("IMPI",ret,6,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_33, "WARNING - CONFIGURATION FILE PARSING - Reading element IMPI returned %d (element no. %d) from tag %s.",ret,6,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -488,7 +494,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 7, KSExtNaf);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("KSExtNaf",ret,7,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_34, "WARNING - CONFIGURATION FILE PARSING - Reading element KSEXTNAF returned %d (element no. %d) from tag %s.",ret,7,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -499,7 +505,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 8, BtID);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("BtID",ret,8,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_35, "WARNING - CONFIGURATION FILE PARSING - Reading element BTID returned %d (element no. %d) from tag %s.",ret,8,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -510,7 +516,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 9, KeyLifeTime);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("KeyLifeTime",ret,9,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_36, "WARNING - CONFIGURATION FILE PARSING - Reading element KEYLIFETIME returned %d (element no. %d) from tag %s.",ret,9,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -521,7 +527,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 10, OtherApplnBusy);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("OtherApplnBusy",ret,10,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_37, "WARNING - CONFIGURATION FILE PARSING - Reading element OTHERAPPLNBUSY returned %d (element no. %d) from tag %s.",ret,10,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -532,7 +538,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 11, applnActive);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("applnActive",ret,11,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_38, "WARNING - CONFIGURATION FILE PARSING - Reading element APPLNACTIVE returned %d (element no. %d) from tag %s.",ret,11,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -543,7 +549,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 12, authErr);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("authErr",ret,12,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_39, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTHERR returned %d (element no. %d) from tag %s.",ret,12,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -553,7 +559,7 @@ void CSimUsimR6::ConstructL()
 		iGBAAuthInfoList->AppendL(authInfo);
 		CleanupStack::Pop(item);
 		} // end FOR Loop
-	LOGPHONE1("Starting to Parse GBA 2 Phase Retrieval list information");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_40, "Starting to Parse GBA 2 Phase Retrieval list information");
 	count = CfgFile()->ItemCount(KGBAListInfo);
 	RMobilePhone::TGbaNafEntryV8 entry;
 	for(index = 0; index < count; index++)
@@ -571,7 +577,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, NafId);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("NafID",ret,0,&KGBAListInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_41, "WARNING - CONFIGURATION FILE PARSING - Reading element NAFID returned %d (element no. %d) from tag %s.",ret,0,KGBAListInfo);
 			continue;
 			}
 		else
@@ -583,7 +589,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, Btid);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("BTID",ret,1,&KGBAListInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_42, "WARNING - CONFIGURATION FILE PARSING - Reading element BTID returned %d (element no. %d) from tag %s.",ret,1,KGBAListInfo);
 			continue;
 			}
 		else
@@ -594,7 +600,7 @@ void CSimUsimR6::ConstructL()
 		iGbaNafList->AddEntryL(entry);
 		CleanupStack::Pop(item);
 		}	
-	LOGPHONE1("Starting to Parse MBMS related config information");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_43, "Starting to Parse MBMS related config information");
 	count = CfgFile()->ItemCount(KMBMSInfo);
 	TMBMSInfo tMbmsInfo;
 	for(index = 0; index < count; index++)
@@ -616,7 +622,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, iMikey);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("iMikey",ret,0,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_44, "WARNING - CONFIGURATION FILE PARSING - Reading element IMIKEY returned %d (element no. %d) from tag %s.",ret,0,KMBMSInfo);
 			continue;
 			}
 		else
@@ -628,7 +634,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, oMikey);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("oMikey",ret,1,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_45, "WARNING - CONFIGURATION FILE PARSING - Reading element OMIKEY returned %d (element no. %d) from tag %s.",ret,1,KMBMSInfo);
 			continue;
 			}
 		else
@@ -640,7 +646,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, mtk);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("MTK",ret,2,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_46, "WARNING - CONFIGURATION FILE PARSING - Reading element MTK returned %d (element no. %d) from tag %s.",ret,2,KMBMSInfo);
 			continue;
 			}
 		else
@@ -652,7 +658,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 3, saltKey);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("saltKey",ret,3,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_47, "WARNING - CONFIGURATION FILE PARSING - Reading element SALTKEY returned %d (element no. %d) from tag %s.",ret,3,KMBMSInfo);
 			continue;
 			}
 		else
@@ -664,7 +670,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 4, keyDmn );
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("keyDmn ",ret,4,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_48, "WARNING - CONFIGURATION FILE PARSING - Reading element KEYDMN  returned %d (element no. %d) from tag %s.",ret,4,KMBMSInfo);
 			continue;
 			}
 		else
@@ -676,7 +682,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 5, MskIdgrp);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("MskIdgrp",ret,5,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_49, "WARNING - CONFIGURATION FILE PARSING - Reading element MSKIDGRP returned %d (element no. %d) from tag %s.",ret,5,KMBMSInfo);
 			continue;
 			}
 		else
@@ -688,7 +694,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 6, MukId );
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("iMukIdTlv ",ret,6,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_50, "WARNING - CONFIGURATION FILE PARSING - Reading element IMUKIDTLV  returned %d (element no. %d) from tag %s.",ret,6,KMBMSInfo);
 			continue;
 			}
 		else
@@ -700,7 +706,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 7, MukIdi);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("MukIdi",ret,7,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_51, "WARNING - CONFIGURATION FILE PARSING - Reading element MUKIDI returned %d (element no. %d) from tag %s.",ret,7,KMBMSInfo);
 			continue;
 			}
 		else
@@ -712,7 +718,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 8, MukIdr );
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("MukIdr ",ret,8,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_52, "WARNING - CONFIGURATION FILE PARSING - Reading element MUKIDR  returned %d (element no. %d) from tag %s.",ret,8,KMBMSInfo);
 			continue;
 			}
 		else
@@ -724,7 +730,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 9, MukTimeStamp );
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("iMikey",ret,9,&KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_53, "WARNING - CONFIGURATION FILE PARSING - Reading element IMIKEY returned %d (element no. %d) from tag %s.",ret,9,KMBMSInfo);
 			continue;
 			}
 		else
@@ -736,7 +742,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 10, appId);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("APPID", ret, 10, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_54, "WARNING - CONFIGURATION FILE PARSING - Reading element APPID returned %d (element no. %d) from tag %s.", ret, 10, KMBMSInfo);
 			continue;
 			}
 		else
@@ -748,7 +754,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 11,KSIntNaf);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("KSIntNaf", ret, 11, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_55, "WARNING - CONFIGURATION FILE PARSING - Reading element KSINTNAF returned %d (element no. %d) from tag %s.", ret, 11, KMBMSInfo);
 			continue;
 			}
 		else
@@ -760,7 +766,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 12,applnActive);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("applnActive", ret, 12, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_56, "WARNING - CONFIGURATION FILE PARSING - Reading element APPLNACTIVE returned %d (element no. %d) from tag %s.", ret, 12, KMBMSInfo);
 			continue;
 			}
 		else
@@ -772,7 +778,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 13,authErr);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("authErr", ret, 13, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_57, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTHERR returned %d (element no. %d) from tag %s.", ret, 13, KMBMSInfo);
 			continue;
 			}
 		else
@@ -784,7 +790,7 @@ void CSimUsimR6::ConstructL()
 		CleanupStack::Pop(item);
 		}
 	
-	LOGPHONE1("Starting to Parse MBMS 2 Phase Retrieval list information");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_58, "Starting to Parse MBMS 2 Phase Retrieval list information");
 	count = CfgFile()->ItemCount(KMBMSListInfo);
 	RMobilePhone::TMskEntryV8 mskEntry;
 	for(index = 0; index < count; index++)
@@ -802,7 +808,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, MskId);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("MskId",ret,0,&KMBMSListInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_59, "WARNING - CONFIGURATION FILE PARSING - Reading element MSKID returned %d (element no. %d) from tag %s.",ret,0,KMBMSListInfo);
 			continue;
 			}
 		else
@@ -814,7 +820,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, KeyDomain);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("KeyDomain",ret,1,&KMBMSListInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_60, "WARNING - CONFIGURATION FILE PARSING - Reading element KEYDOMAIN returned %d (element no. %d) from tag %s.",ret,1,KMBMSListInfo);
 			continue;
 			}
 		else
@@ -827,7 +833,7 @@ void CSimUsimR6::ConstructL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, TimeStamp);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("TimeStampCounter",ret,2,&KMBMSListInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_CONSTRUCTL_61, "WARNING - CONFIGURATION FILE PARSING - Reading element TIMESTAMPCOUNTER returned %d (element no. %d) from tag %s.",ret,2,KMBMSListInfo);
 			continue;
 			}
 		else
@@ -854,7 +860,7 @@ CSimUsimR6::~CSimUsimR6()
 *
 */
 	{
-	LOGMISC1("CSimUsimR6: Entered destructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_DTOR_1, "CSimUsimR6: Entered destructor");
 	if(iTimer)
 		{
 		delete iTimer;
@@ -925,7 +931,7 @@ CSimUsimR6::~CSimUsimR6()
 		{
 		delete iMbmsMskList;
 		}
-	LOGMISC1("CSimUsimR6: Leaving destructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_DTOR_2, "CSimUsimR6: Leaving destructor");
 	}
 
 const CTestConfigSection* CSimUsimR6::CfgFile()
@@ -1157,7 +1163,7 @@ void CSimUsimR6::TimerCallBack(TInt /**aId*/)
 			iGetAuthParams.iNotifyPending = EFalse;
 			}
 		iTimer->Start (RandTime (), this);
-		LOGMISC1("<<CSimUsimR6::TimerCallBack - Exited ");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_TIMERCALLBACK_1, "<<CSimUsimR6::TimerCallBack - Exited ");
 		}
 	}
 			
@@ -1818,7 +1824,7 @@ TInt CSimUsimR6::GetPreferredWlanSIDsCancel(const TTsyReqHandle aTsyReqHandle)
 * @param aTsyReqHandle handle to the request
 */
 	{
-	LOGCALL1("CSimPhone::GetPreferredNetworksCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_GETPREFERREDWLANSIDSCANCEL_1, "CSimPhone::GetPreferredNetworksCancel");
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	// Remove the read all attempt from iGetWlanSIDsData
 	CListReadAllAttempt* read=NULL;
@@ -1833,7 +1839,7 @@ TInt CSimUsimR6::GetPreferredWlanSIDsCancel(const TTsyReqHandle aTsyReqHandle)
 			}
 		}
 	iPhone->ReqCompleted(aTsyReqHandle,KErrCancel);
-	LOGCALL1("CSimPhone::GetPreferredWlanSIDsCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_GETPREFERREDWLANSIDSCANCEL_2, "CSimPhone::GetPreferredWlanSIDsCancel");
 	return KErrNone;
 	}
 	
@@ -1958,7 +1964,7 @@ TInt CSimUsimR6::GetPreferredNetworksCancel(const TTsyReqHandle aTsyReqHandle)
 * @param aTsyReqHandle handle to the request
 */
 	{
-	LOGCALL1("CSimPhone::GetPreferredNetworksCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_GETPREFERREDNETWORKSCANCEL_1, "CSimPhone::GetPreferredNetworksCancel");
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	CListReadAllAttempt* read=NULL;
 	for (TInt i=0; i<iGetPreferredNetworks->Count(); ++i)
@@ -1972,7 +1978,7 @@ TInt CSimUsimR6::GetPreferredNetworksCancel(const TTsyReqHandle aTsyReqHandle)
 			}
 		}
 	iPhone->ReqCompleted(aTsyReqHandle,KErrCancel);
-	LOGCALL1("CSimPhone::GetPreferredNetworksCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMUSIMR6_GETPREFERREDNETWORKSCANCEL_2, "CSimPhone::GetPreferredNetworksCancel");
 	return KErrNone;
 	}
 		

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyGetInputTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyGetInput.h"     // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifyGetInput* CSatNotifyGetInput::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyGetInput::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_NEWL_1, "CSAT: CSatNotifyGetInput::NewL");
    	CSatNotifyGetInput* const satNotifyGetInput = 
         new ( ELeave ) CSatNotifyGetInput( aNotificationsTsy );
     CleanupStack::PushL( satNotifyGetInput );
     satNotifyGetInput->ConstructL();
     CleanupStack::Pop( satNotifyGetInput );
-    TFLOGSTRING("CSAT: CSatNotifyGetInput::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_NEWL_2, "CSAT: CSatNotifyGetInput::NewL, end of method");
     return satNotifyGetInput;
     }
 
@@ -62,7 +67,7 @@ CSatNotifyGetInput::~CSatNotifyGetInput
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyGetInput::~CSatNotifyGetInput");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_DTOR_1, "CSAT: CSatNotifyGetInput::~CSatNotifyGetInput");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ void CSatNotifyGetInput::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyGetInput::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CONSTRUCTL_1, "CSAT: CSatNotifyGetInput::ConstructL");
     }
     
 // -----------------------------------------------------------------------------
@@ -102,7 +107,7 @@ TInt CSatNotifyGetInput::Notify
         const TDataPackage& aPackage
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyGetInput::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_NOTIFY_1, "CSAT: CSatNotifyGetInput::Notify");
     // Save data pointer to client side for completion
     iGetInputV1Pckg = reinterpret_cast<RSat::TGetInputV1Pckg*>( 
         aPackage.Des1n() );
@@ -125,7 +130,7 @@ TInt CSatNotifyGetInput::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {   
-	TFLOGSTRING("CSAT: CSatNotifyGetInput::CancelNotification");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CANCELNOTIFICATION_1, "CSAT: CSatNotifyGetInput::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
 		ResetTsyReqHandle( 
@@ -148,7 +153,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {   
-	TFLOGSTRING("CSAT: CSatNotifyGetInput::CompleteNotifyL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_1, "CSAT: CSatNotifyGetInput::CompleteNotifyL");
     TInt returnValue( KErrNone );
     TInt ret( KErrNone );
     // Unpack parameters
@@ -239,8 +244,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
                 }
             else
                 {
-                TFLOGSTRING("CSAT: CSatNotifyGetInput::CompleteNotifyL,\
-                    No Help available");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_2, "CSAT: CSatNotifyGetInput::CompleteNotifyL, No Help available");
                 // No help
                 getInputV1.iHelp = RSat::ENoHelpAvailable;
                 }
@@ -258,8 +262,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
                 }
             else
                 {
-                TFLOGSTRING("CSAT: CSatNotifyGetInput::CompleteNotifyL,\
-                    Input text missing");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_3, "CSAT: CSatNotifyGetInput::CompleteNotifyL, Input text missing");
                 additionalInfo.Zero();
                 additionalInfo.Append( KNoCause );
                 CreateTerminalRespL( pCmdNumber, 
@@ -268,7 +271,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
                 ret = KErrCorrupt;
                 }
 
-            TFLOGSTRING2("CSAT: GetInput, text: %S", &getInputV1.iText );
+            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_4, "CSAT: GetInput, text: %S", getInputV1.iText );
 
 			// Response length expected                                     
 			CTlv responseLength;
@@ -284,8 +287,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
 				if ( RSat::KGetInputTextMaxSize < 
 				    getInputV1.iRspLength.iMinRspLength )
 					{	
-					TFLOGSTRING("CSAT: CSatNotifyGetInput::CompleteNotifyL,\
-					    Input text length exceeded");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_5, "CSAT: CSatNotifyGetInput::CompleteNotifyL, Input text length exceeded");
 					additionalInfo.Zero();
                     additionalInfo.Append( KNoCause );
 					CreateTerminalRespL( pCmdNumber, 
@@ -300,8 +302,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
 				}				
 			else
 				{
-				TFLOGSTRING("CSAT: CSatNotifyGetInput::CompleteNotifyL,\
-				    Response length TLV missing");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_6, "CSAT: CSatNotifyGetInput::CompleteNotifyL, Response length TLV missing");
 				// Mandatory reponse length tlv is missing
 				additionalInfo.Zero();
                 additionalInfo.Append( KNoCause );
@@ -334,8 +335,7 @@ TInt CSatNotifyGetInput::CompleteNotifyL
 	
 	else 
 		{
-		TFLOGSTRING("CSAT: CSatNotifyGetInput::CompleteNotifyL,\
-		    Request not ongoing");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_COMPLETENOTIFYL_7, "CSAT: CSatNotifyGetInput::CompleteNotifyL, Request not ongoing");
 		// Request not on, returning response immediately
 		additionalInfo.Zero();
         additionalInfo.Append( KNoCause );		
@@ -358,7 +358,7 @@ TInt CSatNotifyGetInput::TerminalResponseL
         TDes8* aRsp 
         )
     {    	
-	TFLOGSTRING("CSAT: CSatNotifyGetInput::TerminalResponseL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_TERMINALRESPONSEL_1, "CSAT: CSatNotifyGetInput::TerminalResponseL");
     
 	TInt returnValue( KErrNone );
 	TBuf<1>additionalInfo;
@@ -367,11 +367,8 @@ TInt CSatNotifyGetInput::TerminalResponseL
             reinterpret_cast<RSat::TGetInputRspV1Pckg*>( aRsp );
     RSat::TGetInputRspV1& rspV1 = ( *aRspPckg ) ();
 
-    TFLOGSTRING3("CSAT: CSatNotifyGetInput::TerminalResponseL, \
-        iAdditionalInfo: %S, iInfoType: %d", 
-        &rspV1.iAdditionalInfo, rspV1.iInfoType);
-    TFLOGSTRING2("CSAT:CSatNotifyGetInput::TerminalResponseL, \
-        iGeneralResult: %d", rspV1.iGeneralResult);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_TERMINALRESPONSEL_2, "CSAT: CSatNotifyGetInput::TerminalResponseL, iAdditionalInfo: %S, iInfoType: %u", rspV1.iAdditionalInfo, rspV1.iInfoType);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_TERMINALRESPONSEL_3, "CSAT:CSatNotifyGetInput::TerminalResponseL, iGeneralResult: 0x%02x", (TUint)rspV1.iGeneralResult);
 	
 	// Get Proactive command number
     TUint8 pCmdNumber( rspV1.PCmdNumber() );
@@ -391,8 +388,7 @@ TInt CSatNotifyGetInput::TerminalResponseL
         && ( RSat::KMeUnableToProcessCmd != rspV1.iGeneralResult )
         && ( RSat::KCmdBeyondMeCapabilities != rspV1.iGeneralResult ))
 		{
-		TFLOGSTRING("CSAT: CSatNotifyGetInput::TerminalResponseL,\
-		    Invalid General Result");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_TERMINALRESPONSEL_4, "CSAT: CSatNotifyGetInput::TerminalResponseL, Invalid General Result");
         // Invalid general result
         returnValue = KErrCorrupt;
         }
@@ -408,8 +404,7 @@ TInt CSatNotifyGetInput::TerminalResponseL
             }
         else
             {
-            TFLOGSTRING("CSAT: CSatNotifyGetInput::TerminalResponseL,\
-		        Invalid Additional Info");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_TERMINALRESPONSEL_5, "CSAT: CSatNotifyGetInput::TerminalResponseL, Invalid Additional Info");
             // Invalid additional info field
             returnValue = KErrCorrupt;
             }
@@ -437,7 +432,7 @@ TInt CSatNotifyGetInput::CreateTerminalRespL
 	    TUint8   aDcs              
 	    )
 	{	
-	TFLOGSTRING("CSAT: CSatNotifyGetInput::CreateTerminalRespL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CREATETERMINALRESPL_1, "CSAT: CSatNotifyGetInput::CreateTerminalRespL");
     TTlv tlvSpecificData;
 	TBuf8<KGetInputStringMaxSize> string;
 
@@ -461,14 +456,12 @@ TInt CSatNotifyGetInput::CreateTerminalRespL
 
         if ( aTextString.Length() )
     		{
-            TFLOGSTRING2("CSAT: CSatNotifyGetInput::CreateTerminalRespL \
-                aTextString: %S", &aTextString);
+            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CREATETERMINALRESPL_2, "CSAT: CSatNotifyGetInput::CreateTerminalRespL aTextString: %S", aTextString);
             switch ( aDcs )
                 {
                 case RSat::EUcs2Alphabet:
                     {
-                    TFLOGSTRING("CSAT: CSatNotifyGetInput::CreateTerminalRespL \
-                        EUcs2Alphabet");
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CREATETERMINALRESPL_3, "CSAT: CSatNotifyGetInput::CreateTerminalRespL EUcs2Alphabet");
                      // Data coding scheme UCS2 (16-bit)
                     tlvSpecificData.AddByte( KUCS2DCS );   
                     
@@ -483,8 +476,7 @@ TInt CSatNotifyGetInput::CreateTerminalRespL
                 case RSat::EDigitOnlyPacked:
                 case RSat::ESmsDefaultAlphabetPacked:
                     {
-                    TFLOGSTRING("CSAT: CSatNotifyGetInput::CreateTerminalRespL \
-                        EDigitOnlyPacked/ESmsDefaultAlphabetPacked");
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CREATETERMINALRESPL_4, "CSAT: CSatNotifyGetInput::CreateTerminalRespL EDigitOnlyPacked/ESmsDefaultAlphabetPacked");
                     // Data coding scheme 7-bit default sms
                     tlvSpecificData.AddByte( K7BitDefaultSmsDCS );  
                     TSatUtility::UCSToPacked7( aTextString, string );
@@ -495,8 +487,7 @@ TInt CSatNotifyGetInput::CreateTerminalRespL
                 case RSat::EDigitOnlyUnpacked:
                 case RSat::ESmsDefaultAlphabetUnpacked:
                     {
-                    TFLOGSTRING("CSAT: CSatNotifyGetInput::CreateTerminalRespL \
-                        EDigitOnlyUnpacked/ESmsDefaultAlphabetUnpacked");
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CREATETERMINALRESPL_5, "CSAT: CSatNotifyGetInput::CreateTerminalRespL EDigitOnlyUnpacked/ESmsDefaultAlphabetUnpacked");
                     // Data coding scheme 8-bit
                     tlvSpecificData.AddByte( K8BitDCS );
                     TSatUtility::ConvertUnicode16To7Bit( aTextString, string );
@@ -508,8 +499,7 @@ TInt CSatNotifyGetInput::CreateTerminalRespL
                     break;
                 }
 
-            TFLOGSTRING2("CSAT: CSatNotifyGetInput::CreateTerminalRespL \
-                string: %S", &string);
+            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINPUT_CREATETERMINALRESPL_6, "CSAT: CSatNotifyGetInput::CreateTerminalRespL string: %s", string);
             }
         }
     // Prepare data

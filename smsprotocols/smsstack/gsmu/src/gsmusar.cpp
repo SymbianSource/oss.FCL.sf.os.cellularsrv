@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "gsmusarTraces.h"
+#endif
+
 #include "gsmusar.h"
 #include "Gsmumain.h"
 
@@ -38,7 +44,7 @@
  */
 EXPORT_C CSmsBufferSegmenter* CSmsBufferSegmenter::NewLC(CSmsAlphabetConverter& aAlphabetConverter,const CSmsBufferBase& aBuffer,TInt aSegmentSize)
 	{
-	LOGGSMU1("CSmsBufferSegmenter::NewLC()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSBUFFERSEGMENTER_NEWLC_1, "CSmsBufferSegmenter::NewLC()");
 	
 	CSmsBufferSegmenter* segmenter=new(ELeave) CSmsBufferSegmenter(aAlphabetConverter,aBuffer,aSegmentSize);
 	CleanupStack::PushL(segmenter);
@@ -59,7 +65,7 @@ CSmsBufferSegmenter::CSmsBufferSegmenter(CSmsAlphabetConverter& aAlphabetConvert
  */
 void CSmsBufferSegmenter::ConstructL()
 	{
-	LOGGSMU1("CSmsBufferSegmenter::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_CONSTRUCTL_1, "CSmsBufferSegmenter::ConstructL()");
 
 	iConvertedBuffer=HBufC8::NewMaxL(iSegmentSize);
 	iConvertedBufferPtr.Set((TUint8*)iConvertedBuffer->Des().Ptr(),0,iConvertedBuffer->Length());
@@ -82,7 +88,7 @@ EXPORT_C CSmsBufferSegmenter::~CSmsBufferSegmenter()
  */
 void CSmsBufferSegmenter::Reset()
 	{
-	LOGGSMU1("CSmsBufferSegmenter::Reset()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_RESET_1, "CSmsBufferSegmenter::Reset()");
 
 	iConvertedBufferPtr.Zero();
 	iElementsExtracted=0;
@@ -104,12 +110,12 @@ EXPORT_C TBool CSmsBufferSegmenter::SegmentNextL(TDes8& aSegmentBuffer,
 		                                         TInt& aUnconvertedChars, TInt& aDowngradedChars,
 		                                         TSmsEncoding aEncoding)
 	{
-	LOGGSMU2("CSmsBufferSegmenter::SegmentNextL(): iSegmentSize=%d", iSegmentSize);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSBUFFERSEGMENTER_SEGMENTNEXTL_1, "CSmsBufferSegmenter::SegmentNextL(): iSegmentSize=%d", iSegmentSize);
 
 	TBool  ret = DoSegmentNextL(aSegmentBuffer, iSegmentSize,
 			                    aUnconvertedChars, aDowngradedChars,
 			                    aEncoding);
-	LOGGSMU2("CSmsBufferSegmenter::SegmentNextL() returns %d ", ret);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSBUFFERSEGMENTER_SEGMENTNEXTL_2, "CSmsBufferSegmenter::SegmentNextL() returns %d ", ret);
 
 	return ret;
 	} // CSmsBufferSegmenter::SegmentNextL
@@ -124,7 +130,7 @@ TBool CSmsBufferSegmenter::DoSegmentNextL(TDes8& aSegmentBuffer,TInt aSegmentSiz
 // Returns true if this was the last segment
 //
 	{
-	LOGGSMU2("CSmsBufferSegmenter::DoSegmentNextL(): aSegmentSize=%d", aSegmentSize);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_DOSEGMENTNEXTL_1, "CSmsBufferSegmenter::DoSegmentNextL(): aSegmentSize=%d", aSegmentSize);
 
 	__ASSERT_ALWAYS(aSegmentSize>0,Panic(KGsmuPanicIllegalSegmentSize));
 	__ASSERT_ALWAYS(aSegmentBuffer.MaxLength()>=aSegmentSize,Panic(KGsmuPanicSegmentBufferTooSmall));
@@ -163,7 +169,7 @@ TBool CSmsBufferSegmenter::DoSegmentNextL(TDes8& aSegmentBuffer,TInt aSegmentSiz
 
 TBool CSmsBufferSegmenter::MoreL()
 	{
-	LOGGSMU1("CSmsBufferSegmenter::MoreL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_MOREL_1, "CSmsBufferSegmenter::MoreL()");
 
 	if ((iElementsExtracted>=iSmsBuffer.Length())&&(iConvertedBufferPtr.Length()==0))
 		{
@@ -190,7 +196,7 @@ TBool CSmsBufferSegmenter::MoreL()
  */
 EXPORT_C TInt CSmsBufferSegmenter::TotalConvertedLengthL(TSmsEncoding aEncoding)
 	{
-	LOGGSMU2("CSmsBufferSegmenter::TotalConvertedLengthL(): aEncoding=%d", aEncoding);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSBUFFERSEGMENTER_TOTALCONVERTEDLENGTHL_1, "CSmsBufferSegmenter::TotalConvertedLengthL(): aEncoding=%d", aEncoding);
 	
 	// Check for shortcut
 	CSmsAlphabetConverter::TSmsAlphabetConversionProperties conversionProperties;
@@ -229,8 +235,7 @@ EXPORT_C TInt CSmsBufferSegmenter::TotalConvertedLengthL(TSmsEncoding aEncoding)
 TSmsEncoding CSmsBufferSegmenter::FindBestAlternativeEncodingL(TSmsEncoding aSuggestedEncoding,
 									  			       		   TInt aMaxBodyLength) const
 	{
-	LOGGSMU3("CSmsBufferSegmenter::FindBestAlternativeEncodingL(): aSuggestedEncoding=%d, aMaxBodyLength=%d",
-			 aSuggestedEncoding, aMaxBodyLength);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_FINDBESTALTERNATIVEENCODINGL_1, "CSmsBufferSegmenter::FindBestAlternativeEncodingL(): aSuggestedEncoding=%d, aMaxBodyLength=%d",aSuggestedEncoding, aMaxBodyLength);
 
 	TSmsEncoding  encodingToUse = ESmsEncodingNone;
 	
@@ -266,8 +271,7 @@ TSmsEncoding CSmsBufferSegmenter::FindBestAlternativeEncodingL(TSmsEncoding aSug
  */
 void CSmsBufferSegmenter::CheckConvertedBufferAllocL(TInt aMaxLength)
 	{
-	LOGGSMU2("CSmsBufferSegmenter::CheckConvertedBufferAllocL(): aMaxLength=%d",
-			 aMaxLength);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_CHECKCONVERTEDBUFFERALLOCL_1, "CSmsBufferSegmenter::CheckConvertedBufferAllocL(): aMaxLength=%d",aMaxLength);
 
 	if (iConvertedBuffer->Length()<aMaxLength)
 		{
@@ -284,8 +288,7 @@ void CSmsBufferSegmenter::CheckConvertedBufferAllocL(TInt aMaxLength)
  */
 TInt CSmsBufferSegmenter::ElementsToReturnFromConvertedBufferL(TInt aSegmentSize)
 	{
-	LOGGSMU2("CSmsBufferSegmenter::CheckConvertedBufferAllocL(): aSegmentSize=%d",
-			 aSegmentSize);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSBUFFERSEGMENTER_ELEMENTSTORETURNFROMCONVERTEDBUFFERL_1, "CSmsBufferSegmenter::CheckConvertedBufferAllocL(): aSegmentSize=%d",aSegmentSize);
 
 	TInt elementCount=Min(aSegmentSize,iConvertedBufferPtr.Length());
 	if (iAlphabetConverter.Alphabet()==TSmsDataCodingScheme::ESmsAlphabet7Bit)
@@ -308,7 +311,7 @@ TInt CSmsBufferSegmenter::ElementsToReturnFromConvertedBufferL(TInt aSegmentSize
  */
 EXPORT_C CSmsEMSBufferSegmenter* CSmsEMSBufferSegmenter::NewLC(CSmsAlphabetConverter& aAlphabetConverter,const CSmsBufferBase& aBuffer, TInt aSegmentSize)
 	{
-	LOGGSMU2("CSmsBufferSegmenter::NewLC(): aSegmentSize=%d", aSegmentSize);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEMSBUFFERSEGMENTER_NEWLC_1, "CSmsBufferSegmenter::NewLC(): aSegmentSize=%d", aSegmentSize);
 
 	CSmsEMSBufferSegmenter* self = new (ELeave) CSmsEMSBufferSegmenter(aAlphabetConverter, aBuffer,  aSegmentSize);
 	CleanupStack::PushL(self);
@@ -337,12 +340,12 @@ EXPORT_C TBool CSmsEMSBufferSegmenter::SegmentNextL(TDes8& aSegmentBuffer, TInt 
 		                                            TInt& aUnconvertedChars, TInt& aDowngradedChars,
 		                                            TSmsEncoding aEncoding)
 	{
-	LOGGSMU2("CSmsEMSBufferSegmenter::SegmentNext(): aSegmentSize=%d", aSegmentSize);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEMSBUFFERSEGMENTER_SEGMENTNEXTL_1, "CSmsEMSBufferSegmenter::SegmentNext(): aSegmentSize=%d", aSegmentSize);
 
 	TBool ret=DoSegmentNextL(aSegmentBuffer, aSegmentSize, aUnconvertedChars, aDowngradedChars,
 							 aEncoding);
 
-	LOGGSMU2("CSmsEMSBufferSegmenter::SegmentNext() returns %d ", ret);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEMSBUFFERSEGMENTER_SEGMENTNEXTL_2, "CSmsEMSBufferSegmenter::SegmentNext() returns %d ", ret);
 
 	return ret;
 	} // CSmsEMSBufferSegmenter::SegmentNextL
@@ -361,8 +364,7 @@ TInt CSmsEMSBufferSegmenter::SegmentL(TDes8& aSegmentBuffer, TInt aNativeChars, 
 		                              TInt& aUnconvertedChars, TInt& aDowngradedChars,
 		                              TSmsEncoding aEncoding)
 	{
-	LOGGSMU3("CSmsEMSBufferSegmenter::SegmentL(): aNativeChars=%d, aSegmentMax=%d",
-			 aNativeChars, aSegmentMax);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEMSBUFFERSEGMENTER_SEGMENTL_1, "CSmsEMSBufferSegmenter::SegmentL(): aNativeChars=%d, aSegmentMax=%d",aNativeChars, aSegmentMax);
 
 	__ASSERT_ALWAYS(iConvertedBufferPtr.Length()==0, User::Leave(KGsmuPanicBufferNotReset));
 	__ASSERT_ALWAYS(aNativeChars>0,User::Leave(KGsmuPanicIllegalSegmentSize));
@@ -430,8 +432,7 @@ EXPORT_C TSmsBufferReassembler::TSmsBufferReassembler(CSmsAlphabetConverter& aAl
 EXPORT_C void TSmsBufferReassembler::ReassembleNextL(const TDesC8& aSegmentBuffer,
 													 TSmsEncoding aEncoding,TBool aIsLast)
 	{
-	LOGGSMU3("TSmsBufferReassembler::ReassembleNextL(): aEncoding=%d aIsLast=%d",
-			 aEncoding, aIsLast);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSBUFFERREASSEMBLER_REASSEMBLENEXTL_1, "TSmsBufferReassembler::ReassembleNextL(): aEncoding=%d aIsLast=%d",aEncoding, aIsLast);
 
 	TPtrC nativeChars=iAlphabetConverter.ConvertToNativeL(aSegmentBuffer, aEncoding);
 	iSmsBuffer.InsertL(iSmsBuffer.Length(),nativeChars);

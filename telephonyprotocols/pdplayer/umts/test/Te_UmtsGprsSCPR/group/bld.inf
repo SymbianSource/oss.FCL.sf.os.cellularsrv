@@ -17,16 +17,11 @@ prj_exports
 
 prj_testexports
 
-../configs/te_UmtsGprsScpr_CapTest.xml			z:/testdata/configs/te_umtsgprsscpr_captest.xml
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
-../configs/te_umtsgprsscpr_captest_pdpcpr.cfg		z:/testdata/configs/te_umtsgprsscpr_captest.cfg
-../configs/te_umtsgprsscpr_captest2_pdpcpr.cfg		z:/testdata/configs/te_umtsgprsscpr_captest2.cfg
-#else
-../configs/te_umtsgprsscpr_captest.cfg			z:/testdata/configs/te_umtsgprsscpr_captest.cfg
-../configs/te_umtsgprsscpr_captest2.cfg			z:/testdata/configs/te_umtsgprsscpr_captest2.cfg
-#endif
-../configs/te_UmtsGprsScpr_NoDefaults.xml		z:/testdata/configs/te_umtsgprsscpr_nodefaults.xml
-../configs/TE_UmtsGprsScprLoopbackCSY.ini		z:/testdata/configs/te_umtsgprsscprloopbackcsy.ini
+../configs/te_UmtsGprsScpr_CapTest.xml          z:/testdata/configs/te_umtsgprsscpr_captest.xml
+../configs/te_umtsgprsscpr_captest_pdpcpr.cfg   z:/testdata/configs/te_umtsgprsscpr_captest.cfg
+../configs/te_umtsgprsscpr_captest2_pdpcpr.cfg  z:/testdata/configs/te_umtsgprsscpr_captest2.cfg
+../configs/te_UmtsGprsScpr_NoDefaults.xml       z:/testdata/configs/te_umtsgprsscpr_nodefaults.xml
+../configs/TE_UmtsGprsScprLoopbackCSY.ini       z:/testdata/configs/te_umtsgprsscprloopbackcsy.ini
 
 
 // configuration 1 commdb settings //

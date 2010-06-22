@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,10 +14,16 @@
 //
 
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimContextHelperTraces.h"
+#endif
+
 #include "CSimContextHelper.h"
 
 #include "CSimPacketContext.h"
-#include "Simlog.h"
 
                                                                                                                    //const RPacketContext::TContextConfigGPRS&  aContextConfigV1        
 void CSimContextHelper::SetTContextConfigParamFromTContextConfigGPRS( TContextConfigParam& aContextConfigToSet, const RPacketContext::TContextConfigGPRS&  aContextConfigV1 )
@@ -218,7 +224,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,protocolType);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigParams::protocolType",ret,0,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::PROTOCOLTYPE returned %d (element no. %d) from tag %s.",ret,0,aTag);
 			continue;
 			}
 		else
@@ -231,7 +237,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,gsnAddress);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigParams::gsnAddress",ret,1,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::GSNADDRESS returned %d (element no. %d) from tag %s.",ret,1,aTag);
 			continue;
 			}
 		else
@@ -244,7 +250,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,protocolAddress);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigParams::protocolAddress",ret,2,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::PROTOCOLADDRESS returned %d (element no. %d) from tag %s.",ret,2,aTag);
 			continue;
 			}
 		else
@@ -260,7 +266,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,pdpCompression);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("ContextConfigParams::pdpCompression",ret,3,&aTag);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::PDPCOMPRESSION returned %d (element no. %d) from tag %s.",ret,3,aTag);
 				continue;
 				}
 			else
@@ -295,7 +301,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,12,pdpHeaderCompression);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("ContextConfigParams::pdpHeaderCompression",ret,12,&aTag);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::PDPHEADERCOMPRESSION returned %d (element no. %d) from tag %s.",ret,12,aTag);
 				continue;
 				}
 			else
@@ -307,7 +313,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,pdpDataCompression);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("ContextConfigParams::pdpDataCompression",ret,13,&aTag);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::PDPDATACOMPRESSION returned %d (element no. %d) from tag %s.",ret,13,aTag);
 				continue;
 				}
 			else
@@ -328,7 +334,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,anonymousAccess);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("ContextConfigParams::anonymousAccess",ret,4,&aTag);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::ANONYMOUSACCESS returned %d (element no. %d) from tag %s.",ret,4,aTag);
 				continue;
 				}
 			else
@@ -355,7 +361,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,useEdge);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ContextConfigParams::useEdge",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTEXTCONFIGPARAMS::USEEDGE returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			continue;
 			}
 		else
@@ -377,7 +383,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,protocol);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::protocol",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::PROTOCOL returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -398,7 +404,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,username);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::username",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::USERNAME returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -419,7 +425,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,password);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::password",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::PASSWORD returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -440,7 +446,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,challenge);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::challenge",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::CHALLENGE returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -461,7 +467,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,response);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::response",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::RESPONSE returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -482,7 +488,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,primaryDNS);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::primaryDNS",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::PRIMARYDNS returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -503,7 +509,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,secondaryDNS);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::secondaryDNS",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::SECONDARYDNS returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -524,7 +530,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterField,id);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::id",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::ID returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -553,7 +559,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 	
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("ProtocolConfigOption::numAdditionalParams",ret,delimiterField,&aTag);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::NUMADDITIONALPARAMS returned %d (element no. %d) from tag %s.",ret,delimiterField,aTag);
 			}
 		else
 			{
@@ -598,7 +604,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 				ret=CTestConfig::GetElement(item2->Value(),KStdDelimiter,0,additionalParamId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("AdditionalParamItem::additionalParamId",ret,0,&aTag);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMID returned %d (element no. %d) from tag %s.",ret,0,aTag);
 					continue;
 					}
 				else
@@ -609,7 +615,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 						}
 					else
 						{
-						LOGPARSERR("AdditionalParamItem::additionalParamId",KErrArgument,0,&aTag);
+						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMID returned %d (element no. %d) from tag %s.",KErrArgument,0,aTag);
 						continue;
 						}
 					}
@@ -621,14 +627,14 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 					{
 					// AdditionalParamDataFormat not been specified,
 					// default to plain ASCII
-					LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",ret,2,&aTag);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",ret,2,aTag);
 					format = EConfigDataFormatAscii;
 					}
 				else
 					{
 					if (AsciiToNum(additionalParamDataFormat, format) != KErrNone)
 						{
-						LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&aTag);
+						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,aTag);
 						format = EConfigDataFormatAscii;
 						}
 						
@@ -637,7 +643,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 					// default to ASCII if not.
 					if (format >= EMaxConfigDataFormat)
 						{
-						LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&aTag);
+						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,aTag);
 						format = EConfigDataFormatAscii;
 						}
 					}
@@ -646,7 +652,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 				ret=CTestConfig::GetElement(item2->Value(),KStdDelimiter,1,additionalParamData);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("AdditionalParamItem::additionalParamContent",ret,1,&aTag);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMCONTENT returned %d (element no. %d) from tag %s.",ret,1,aTag);
 					continue;
 					}
 				else
@@ -663,7 +669,7 @@ void CSimContextHelper::GetContextConfigParamSettingsL( const CTestConfigSection
 
 						if (ParseMixedBinaryAsciiDataL(additionalParamDataBuffer) != KErrNone)
 							{
-							LOGPARSERR("AdditionalParamItem::additionalParamContent",KErrArgument,1,&aTag);
+							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCONTEXTHELPER_GETCONTEXTCONFIGPARAMSETTINGSL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMCONTENT returned %d (element no. %d) from tag %s.",KErrArgument,1,aTag);
 							SimPanic(EInvalidParameterFormatInConfigFile);							
 							}
 						TPtr8 additionalParamDataPtr(const_cast<TUint8*>(additionalParamDataBuffer.Ptr()),

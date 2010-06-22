@@ -323,7 +323,7 @@ START_TESTCASE SMS-SMSStack-NA-3023
 //!@SYMTestActions  Test send sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMSendSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber21
+RUN_TEST_STEP 1000 TE_smsprt TestOOMSendSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber21
 END_TESTCASE SMS-SMSStack-NA-3023
 
 
@@ -335,7 +335,7 @@ START_TESTCASE SMS-SMSStack-NA-3024
 //!@SYMTestActions  Test write sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMWriteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber22
+RUN_TEST_STEP 1000 TE_smsprt TestOOMWriteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber22
 END_TESTCASE SMS-SMSStack-NA-3024
 
 
@@ -347,7 +347,7 @@ START_TESTCASE SMS-SMSStack-NA-3025
 //!@SYMTestActions  Test Read Sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMReadSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber23
+RUN_TEST_STEP 1000 TE_smsprt TestOOMReadSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber23
 END_TESTCASE SMS-SMSStack-NA-3025
 
 
@@ -371,7 +371,7 @@ START_TESTCASE SMS-SMSStack-NA-3027
 //!@SYMTestActions  Test delete sms with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMDeleteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber25
+RUN_TEST_STEP 1000 TE_smsprt TestOOMDeleteSms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber25
 END_TESTCASE SMS-SMSStack-NA-3027
 
 
@@ -383,7 +383,7 @@ START_TESTCASE SMS-SMSStack-NA-3028
 //!@SYMTestActions  Test sms params with out of memory conditions
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 500 TE_smsprt TestOOMSmsParams z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber26
+RUN_TEST_STEP 1000 TE_smsprt TestOOMSmsParams z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber26
 END_TESTCASE SMS-SMSStack-NA-3028
 
 
@@ -1213,7 +1213,7 @@ START_TESTCASE SMS-SMSS-SMSPROT-I-3093
 //!@SYMTestExpectedResults Assume that sending a R6 SMS requires 'M' heap allocations. The stack should return an Out of Memory error when heap allocation request fails because 'n' has a value in the range 1..m. When 'n' has value m+1, the message should be sent successfully and the test should exit.
 //!@SYMTestType CIT
 //!@SYMTestCaseDependencies SIM.TSY
-RUN_TEST_STEP 120 TE_smsprt TestOOMSendR6Sms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber82
+RUN_TEST_STEP 500 TE_smsprt TestOOMSendR6Sms z:\testdata\configs\smsstacksimtsytestnumbers.ini TestNumber82
 END_TESTCASE SMS-SMSS-SMSPROT-I-3093
 
 START_TESTCASE SMS-SMSS-SMSPROT-I-3094
