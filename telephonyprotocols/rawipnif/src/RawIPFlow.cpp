@@ -46,7 +46,7 @@ using namespace Messages;
 using namespace MeshMachine;
 using namespace ESock;
 
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+#ifdef __FLOG_ACTIVE
 //These variables are used only if flog is active.
 _LIT8(KTcpDumpFirstTag,"TcpDump");
 static const TUint16 KTcpDumpLinkType = 12;
@@ -122,7 +122,7 @@ void CRawIPFlow::StartFlowL()
 	InitialiseL(MControllerObserver::EStart, KErrNone);
 
 	//the name calculation should be done only if logging is enabled
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+#ifdef __FLOG_ACTIVE
 	const TUint KModemNameLen = KCommsDbSvrMaxColumnNameLength + 10;  // need enough for ppp-XXX.txt - e.g. ppp-comm-1.txt, ppp-btcomm-10.txt etc
 	TBuf8<KModemNameLen> modemName;
 

@@ -20,7 +20,7 @@
  @internalComponent
 */
 
-
+#include <e32math.h>
 #include "te_spudNetworkSideSteps.h"
 #include <c32comm.h> // uniquely for the call to StartC32WithCMISuppressions
 #include "spudNetSideQos.h"
@@ -2121,8 +2121,9 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	VerifySubconnectionCountL(_L("SubConnectionCount1"), PDPIAP);
 #endif
-	// start a secondary context
-	InitiateSecondaryStartL();
+
+   // start a secondary context
+    InitiateSecondaryStartL();
 
 	TInt primaryIapId, secondaryIapId;
 	TestBooleanTrueL(GetIntFromConfig(ConfigSection(), _L("PppIapId1"), primaryIapId), _L("Get Iap ID for first Ppp instance"));
@@ -2132,10 +2133,18 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 	CConnectionStart *primaryIfStart = CConnectionStart::NewLC(iEsock, *this, primaryIapId);
 	CConnectionStart *secondaryIfStart = CConnectionStart::NewLC(iEsock, *this, secondaryIapId);
 
+	TRequestStatus progressReqSt;   
+	primaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp );
+
+	WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0);
+
+	secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
+	WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0);
+
+
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));
 #else
-	User::After(2*KTimeToStartSecondary);
 	VerifySubconnectionCountL(_L("SubConnectionCount2"), PDPIAP);
 #endif
 
@@ -2324,6 +2333,129 @@ enum TVerdict CIoctlAddressRetrieve::RunTestStepL()
     
     iInterface.Stop();
     iInterface.Close(); 
+
+    return EPass;
+    }
+
+enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
+    {
+    //Start 1st context
+    RConnection* conn1 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn1);
+
+    TInt primaryIapId;
+    if (!GetIntFromConfig(ConfigSection(), _L("PrimaryIapId1"), primaryIapId))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    TCommDbConnPref conn1Pref;
+    conn1Pref.SetIapId(primaryIapId);
+    
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId); 
+    TestL(conn1->Open(iEsock), _L("RConnection::Open the interface"));
+    TestL(conn1->Start(conn1Pref), _L("RConnection::Start the interface"));
+
+    //Start 2nd context
+    RConnection* conn2 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn2);
+
+    if (!GetIntFromConfig(ConfigSection(), _L("PrimaryIapId2"), primaryIapId))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    TCommDbConnPref conn2Pref;
+    conn2Pref.SetIapId(primaryIapId);
+    
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId);     
+    TestL(conn2->Open(iEsock), _L("RConnection::Open the interface"));
+    TestL(conn2->Start(conn2Pref), _L("RConnection::Start the interface"));
+
+    //Open & Connect 1st Socket
+    RSocket sock1;
+    TestL(sock1.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn1), _L("RSocket::Open"));
+    CleanupClosePushL<RSocket>(sock1);
+    TInetAddr localAddr;
+    localAddr.SetPort(KConfiguredTftFilter1DestPort);
+    TestL(sock1.Bind(localAddr), _L("Binding the local Socket"));
+    
+    TInetAddr dstAddr;
+    dstAddr.SetPort(KConfiguredTftFilter1SrcPort);
+    dstAddr.Input(KConfiguredTftFilter1SrcAddr);
+
+    TRequestStatus status;
+    sock1.Connect(dstAddr, status);
+    User::WaitForRequest(status);
+    TestL(status.Int(), _L("RSocket::Connect status opening 1st socket"));
+
+    //Open & Bind 2nd Socket
+    RSocket sock2;
+    TestL(sock2.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn2), _L("RSocket::Open"));
+    CleanupClosePushL<RSocket>(sock2);
+    localAddr.SetPort(KConfiguredTftFilter1SrcPort);
+    TestL(sock2.Bind(localAddr), _L("Binding the local Socket"));
+
+    //then send & receive data.
+    const TInt KMaxMMU = 4000;
+    TBuf8<KMaxMMU> *sendBuf = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(sendBuf);
+    
+    TBuf8<KMaxMMU> *recvBuf = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(recvBuf);
+
+    TBuf8<KMaxMMU> *recvBuf2 = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(recvBuf2);
+
+    TInt end;
+    if (!GetIntFromConfig(ConfigSection(), _L("TestMaxMMU"), end))
+        {
+        User::Leave(KErrNotFound);
+        }
+    
+    TInt begin;
+    if (!GetIntFromConfig(ConfigSection(), _L("TestMinMMU"), begin))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    if (begin > end)
+        {
+        User::Leave(KErrArgument);
+        }
+
+    INFO_PRINTF3(_L("Sending data frame size from (%d) to (%d)"), begin, end); 
+    TRequestStatus readStatus;
+
+    for(TInt j=begin;j<=end;j++)
+        {
+        sendBuf->Zero();
+        for (TInt i=0;i<j;i++)
+            {
+            sendBuf->Append(Math::Random() & 0x7f);
+            }
+
+        recvBuf->Zero();
+        sock2.Read(*recvBuf, readStatus);
+        sock1.Write(*sendBuf, status);
+        
+        User::WaitForRequest(status);
+        TESTL(status.Int() == 0);
+        User::WaitForRequest(readStatus);
+        TESTL(readStatus.Int() == 0);
+        if (sendBuf->Length() > recvBuf->Length())
+            {
+            recvBuf2->Zero();
+            sock2.Read(*recvBuf2, readStatus);
+            User::WaitForRequest(readStatus);
+            TESTL(readStatus.Int() == 0);
+            recvBuf->Append(*recvBuf2);
+            TESTL(sendBuf->Length() == recvBuf->Length());
+            }
+        TESTL(recvBuf->Compare(*sendBuf) == 0);
+        }
+
+    CleanupStack::PopAndDestroy(7); //conn1, conn2, sock1, sock2, sendBuf, recvBuf, recvBuf2
 
     return EPass;
     }

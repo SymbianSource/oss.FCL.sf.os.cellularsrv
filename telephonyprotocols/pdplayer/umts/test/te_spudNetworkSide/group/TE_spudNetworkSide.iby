@@ -69,4 +69,10 @@ data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_sipaddress_conf
 data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_sipaddress.ini					testdata\configs\te_spudnetworkside_sipaddress.ini
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_sipaddress.script 		testdata\scripts\te_spudnetworkside_sipaddress.script
 
+//Min Max MMU tests
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_RawIpSize.ini			testdata\configs\te_rawipsize.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_RawIpSize_config.txt					testdata\configs\te_rawipsize_config.txt
+data=EPOCROOT##epoc32\data\z\TestData\Configs\TE_RawIpSize.cfg					testdata\configs\te_rawipsize.cfg
+data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_RawIpSize.script 		testdata\scripts\te_rawipsize.script
+
 #endif // TE_SPUD_NETWORK_SIDE_IBY

@@ -27,7 +27,7 @@
 
 class CPdpFsm;
 
-#if _DEBUG 
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 #define DEFINE_TPDPSTATE_CLASS(state) _LIT(KName##state, #state); \
 NONSHARABLE_CLASS(TPdpState##state) : public TPdpState \
 { \

@@ -242,6 +242,7 @@ namespace te_spudNetworkSide
 	
 	//SIP server address retrieve
 	SYMBIAN_SPUD_TEST_CLASS(CIoctlAddressRetrieve)
+	SYMBIAN_SPUD_TEST_CLASS(CRawIpMinMaxMMU)
 	} 
 	
 #endif 
