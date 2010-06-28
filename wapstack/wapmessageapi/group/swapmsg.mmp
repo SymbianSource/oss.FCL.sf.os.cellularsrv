@@ -26,12 +26,11 @@ targettype plugin
 
 UID	0x10009D8D 	0x101fbb36
 VENDORID 0x70000001
-	
-#include <comms-infras/commsdebugutility.mmh>
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 USERINCLUDE		 ../. ../inc
+USERINCLUDE 	 ../traces
 
 SOURCEPATH ../sws
 

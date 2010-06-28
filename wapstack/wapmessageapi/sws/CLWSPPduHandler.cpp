@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,9 +13,13 @@
 // Description:
 //
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CLWSPPduHandlerTraces.h"
+#endif
+
 #include "CLWSPPduHandler.h"
 #include "wapmsgerr.h"
-#include "WapSwsLog.h"
 
 void CCLWSPPduHandler::UnpackWSPPduL(HBufC8* aWSPPdu, TWSPPduType& aType, HBufC8*& aWSPHeader, HBufC8*& aBody, TUint8& aId, TWSPStatus& aStatus)
 /** 
@@ -35,8 +39,8 @@ Unpack the received WSP PDU from remote peer to several data structure expected 
 	TPtr8 des=aWSPPdu->Des();
 	if(des.Length() < KPDUTransactionIDAndPDUTypeLength)
 	{
-		LOG(SwsLog::Printf(_L("CCLWSPPduHandler::UnpackWSPPduL() Corrupted InComing Wsp PDU"));)
-		User::Leave(KErrCorrupt);
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLWSPPDUHANDLER_UNPACKWSPPDUL_1, "CCLWSPPduHandler::UnpackWSPPduL() Corrupted InComing Wsp PDU");
+        User::Leave(KErrCorrupt);
 	}
 	aId=des[KPDUHeaderTransactionIDOffSet];
 	aType=TWSPPduType(des[KPDUHeaderWSPPDUTypeOffSet]);
@@ -49,7 +53,7 @@ Unpack the received WSP PDU from remote peer to several data structure expected 
 		UnpackPushPduL(aWSPPdu, aWSPHeader, aBody);
 		break;
 	default:
-		LOG(SwsLog::Printf(_L("CCLWSPPduHandler::UnpackWSPPduL() Unknown InComing Wsp PDU Type"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLWSPPDUHANDLER_UNPACKWSPPDUL_2, "CCLWSPPduHandler::UnpackWSPPduL() Unknown InComing Wsp PDU Type");
 		User::Leave(KErrCorrupt);
 		}
 	}
@@ -85,8 +89,8 @@ Pack the information to be sent into WSP PDU.
 		break;
 
 	default:
-		LOG(SwsLog::Printf(_L("CCLWSPPduHandler::PackWSPPduL() Unknown Method Invoke Wsp PDU Type"));)
-		User::Leave(Wap::EWspClParameterError);
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLWSPPDUHANDLER_PACKWSPPDUL_1, "CCLWSPPduHandler::PackWSPPduL() Unknown Method Invoke Wsp PDU Type");
+	    User::Leave(Wap::EWspClParameterError);
 		}
 	}
 

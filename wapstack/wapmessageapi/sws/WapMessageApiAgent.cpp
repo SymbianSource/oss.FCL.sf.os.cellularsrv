@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,13 +12,16 @@
 //
 // Description:
 //
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "WapMessageApiAgentTraces.h"
+#endif
 
 #include "WapMessageApiAgent.h"
 #include "WapMsgUtils.h"
 #include "CLWSPPduHandler.h"
 #include <es_wsms.h>
 #include <wapmsgerr.h>
-#include "WapSwsLog.h"
 
 CWapAsyncCallBack::CWapAsyncCallBack( const TCallBack& aCallBack, TInt aPriority )
 :   CActive( aPriority ), iCallBack( aCallBack )
@@ -191,14 +194,14 @@ To Get local port of the last received packet
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetLocalPort: Trying to GetLocalPort on unconnected API."));)
-		return KErrNotReady;
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETLOCALPORT_1, "CWapMessageApiAgent::GetLocalPort: Trying to GetLocalPort on unconnected API.");
+        return KErrNotReady;
 		}
 	CActiveSocket* sock=GetActiveSocketByBearer(iLastPduBearer);
 	if (!sock)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetLocalPort: Can not find Last Bearer."));)
-		return Wap::EBearerError;
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETLOCALPORT_2, "CWapMessageApiAgent::GetLocalPort: Can not find Last Bearer.");
+        return Wap::EBearerError;
 		}
 	sock->GetLocalPort(aLocalPort);
 	return KErrNone;
@@ -215,13 +218,13 @@ To Get local Address of the last received Packet
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetLocalAddress: Trying to GetLocalAddress on unconnected API."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETLOCALADDRESS_1, "CWapMessageApiAgent::GetLocalAddress: Trying to GetLocalAddress on unconnected API.");
 		return KErrNotReady;
 		}
 	CActiveSocket* sock=GetActiveSocketByBearer(iLastPduBearer);
 	if (!sock)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetLocalAddress: Can not find Last Bearer"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETLOCALADDRESS_2, "CWapMessageApiAgent::GetLocalAddress: Can not find Last Bearer");
 		return Wap::EBearerError;
 		}
 	TSockAddr& localHost=sock->GetLocalAddress();
@@ -229,7 +232,7 @@ To Get local Address of the last received Packet
 	TRAP(err, aLocalHost=localHost.AllocL())
 	if (err)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetLocalAddress: Alloc Memory Err=%d"), err);)
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETLOCALADDRESS_3, "CWapMessageApiAgent::GetLocalAddress: Alloc Memory Err=%d", err);
 		}
 	return err;
 	}
@@ -245,7 +248,7 @@ To Get Bearer of the last received packet
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetBearer: Trying to GetBearer on unconnected API."));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETBEARER_1, "CWapMessageApiAgent::GetBearer: Trying to GetBearer on unconnected API.");
 		return KErrNotReady;
 		}
 	aBearer=iLastPduBearer;
@@ -263,13 +266,13 @@ To Get Server Host of the last received packet
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetServerAddress: Trying to GetServerAddress on unconnected API."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETSERVERADDRESS_1, "CWapMessageApiAgent::GetServerAddress: Trying to GetServerAddress on unconnected API.");
 		return KErrNotReady;
 		}
 	CActiveSocket* sock=GetActiveSocketByBearer(iLastPduBearer);
 	if (!sock)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::GetServerAddress: Can not find last error."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_GETSERVERADDRESS_2, "CWapMessageApiAgent::GetServerAddress: Can not find last error.");
 		return Wap::EBearerError;
 		}
 	return sock->GetRemoteAddress(aServerHost);
@@ -333,14 +336,14 @@ Opening an endpoint that can be used to listen for subsequent incoming datagrams
 		TRAP(ret, CActiveSocket::NewL(iSocketServ, iBearers, aBearer, iMessageType, this, aPort))
 		if (ret!=KErrNone)
 			{
-			LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d."),ret);)
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_1, "CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d.",ret);
 			return ret;
 			}
 		iIsOpen=ETrue;
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect:Trying Connect twice to the API."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_2, "CWapMessageApiAgent::Connect:Trying Connect twice to the API.");
 		ret=KErrInUse;
 		}
 	return ret;
@@ -361,7 +364,7 @@ Opening an endpoint that can be used to listen for subsequent incoming datagrams
 	{
 	if (aSocketServHandle==0 || !aConnection)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect:Parameter Error"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_1_1, "CWapMessageApiAgent::Connect:Parameter Error");
 		return KErrArgument;
 		}
 	TInt ret=KErrNone;
@@ -371,14 +374,14 @@ Opening an endpoint that can be used to listen for subsequent incoming datagrams
 		TRAP(ret, CActiveSocket::NewL(iSocketServ, iBearers, aBearer, iMessageType, this, aPort, aConnection))
 		if (ret!=KErrNone)
 			{
-			LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d."), ret);)
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_1_2, "CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d.", ret);
 			return ret;
 			}
 		iIsOpen=ETrue;
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect:Trying to Connect twice to the API."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_1_3, "CWapMessageApiAgent::Connect:Trying to Connect twice to the API.");
 		ret=KErrInUse;
 		}
 	return ret;
@@ -399,7 +402,7 @@ Opens a socket which is to be used only with a single, named remote host.
 	{
 	if (aBearer==Wap::EAll)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Connect to EAll Error"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_2_1, "CWapMessageApiAgent::SendWspMessage:Connect to EAll Error");
 		return Wap::EBearerError;
 		}
 	TInt ret=KErrNone;
@@ -409,20 +412,20 @@ Opens a socket which is to be used only with a single, named remote host.
 		TRAP(ret, CSWSWapMsgUtils::BuildAddrL(remoteAddr, aBearer, aRemoteHost, aRemotePort))
 		if (ret!=KErrNone)
 			{
-			LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect: BuildAddress err=%d."), ret);)
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_2_2, "CWapMessageApiAgent::Connect: BuildAddress err=%d.", ret);
 			return ret;
 			}
 		TRAP(ret, CActiveSocket::NewL(iSocketServ, iBearers, aBearer, iMessageType, this, remoteAddr))
 		if (ret!=KErrNone)
 			{
-			LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d."), ret);)
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_2_3, "CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d.", ret);
 			return ret;
 			}
 		iIsOpen=ETrue;
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect:Trying to Connect twice to the API."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_2_4, "CWapMessageApiAgent::Connect:Trying to Connect twice to the API.");
 		ret=KErrInUse;
 		}
 	return ret;
@@ -460,12 +463,12 @@ Opens a socket which is to be used only with a single, named remote host.
 	{
 	if (aBearer==Wap::EAll)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Connect to EAll Error"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_3_1, "CWapMessageApiAgent::SendWspMessage:Connect to EAll Error");
 		return Wap::EBearerError;
 		}
 	if (aSocketServHandle==0 || !aConnection)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect:Parameter Error"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_3_2, "CWapMessageApiAgent::Connect:Parameter Error");		
 		return KErrArgument;
 		}
 	TInt ret=KErrNone;
@@ -476,20 +479,20 @@ Opens a socket which is to be used only with a single, named remote host.
 		TRAP(ret, CSWSWapMsgUtils::BuildAddrL(remoteAddr, aBearer, aRemoteHost, aRemotePort))
 		if (ret!=KErrNone)
 			{
-			LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect: BuildAddress err=%d."),ret);)
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_3_3, "CWapMessageApiAgent::Connect: BuildAddress err=%d.",ret);
 			return ret;
 			}
 		TRAP(ret, CActiveSocket::NewL(iSocketServ, iBearers, aBearer, iMessageType, this, remoteAddr, aConnection))
 		if (ret!=KErrNone)
 			{
-			LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d."),ret);)
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_3_4, "CWapMessageApiAgent::Connect: CActiveSocket Instantiate err=%d.",ret);
 			return ret;
 			}
 		iIsOpen=ETrue;
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::Connect:Connect to a connected API."));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPMESSAGEAPIAGENT_CONNECT_3_5, "CWapMessageApiAgent::Connect:Connect to a connected API.");
 		ret=KErrInUse;
 		}
 	return ret;
@@ -558,12 +561,12 @@ Send Wsp Message to a remote host
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Tryig to send to unconnected API"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_1, "CWapMessageApiAgent::SendWspMessage:Tryig to send to unconnected API");
 		return KErrNotReady;
 		}
 	if (aBearer==Wap::EAll)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Send to EAll Error"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_2, "CWapMessageApiAgent::SendWspMessage:Send to EAll Error");
 		return Wap::EBearerError;
 		}
 	HBufC8* sendBuf=NULL;
@@ -572,13 +575,13 @@ Send Wsp Message to a remote host
 	TRAP(err, CSWSWapMsgUtils::BuildAddrL(remoteAddr, aBearer, aRemoteHost, aRemotePort))
 	if (err!=KErrNone)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage: BuildAddress err=%d."),err);)
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_3, "CWapMessageApiAgent::SendWspMessage: BuildAddress err=%d.", err);
 		return err;
 		}
 	TRAP(err, CCLWSPPduHandler::PackWSPPduL(sendBuf, TWSPPduType(aMethod), aURI, aReqHeaders, aReqBody, aTransactionId))
 	if (err!=KErrNone)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Pack Wsp Packet Error=%d"),err);)
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_4, "CWapMessageApiAgent::SendWspMessage:Pack Wsp Packet Error=%d", err);
 		return err;
 		}
 	CActiveSocket* sendSock=GetActiveSocketByBearer(aBearer);
@@ -596,7 +599,7 @@ Send Wsp Message to a remote host
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage: Can not find Bearer"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_5, "CWapMessageApiAgent::SendWspMessage: Can not find Bearer");
 		err=Wap::EBearerError;
 		}
 	delete sendBuf;
@@ -618,12 +621,12 @@ Send Wsp Message to a remote host for fulluSpecified Interface
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Trying to send to unconnected API"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_1_1, "CWapMessageApiAgent::SendWspMessage:Tryig to send to unconnected API");
 		return KErrNotReady;
 		}
 	if (!iBearers[0])
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:No Bearer"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_1_2, "CWapMessageApiAgent::SendWspMessage:No Bearer");
 		return Wap::EBearerError;
 		}
 	HBufC8* sendBuf=NULL;
@@ -631,7 +634,7 @@ Send Wsp Message to a remote host for fulluSpecified Interface
 	TRAP(err, CCLWSPPduHandler::PackWSPPduL(sendBuf, TWSPPduType(aMethod), aURI, aReqHeaders, aReqBody, aTransactionId))
 	if (err!=KErrNone)
 		{
-		LOG(SwsLog::Printf(_L("CWapMessageApiAgent::SendWspMessage:Pack Wsp Packet Error=%d"),err);)
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_SENDWSPMESSAGE_1_3, "CWapMessageApiAgent::SendWspMessage:Pack Wsp Packet Error=%d",err);
 		return err;
 		}
 	Wap::TBearer bearer=iBearers[0]->GetBearerType();
@@ -667,14 +670,14 @@ Receive the Wsp Message to a remote host for fulluSpecified Interface
 		{
 		reqStatus=&aReqStatus;
 		User::RequestComplete(reqStatus, KErrNotReady);
-		LOG(SwsLog::Printf(_L("CWspMessageApiAgent::ReceiveWspMessage: Trying to recvive from unconnected API"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_RECEIVEWSPMESSAGE_1, "CWspMessageApiAgent::ReceiveWspMessage: Trying to recevive from unconnected API");
 		return KErrNotReady;
 		}
 	if (iRequestActive)
 		{
 		reqStatus=&aReqStatus;
 		User::RequestComplete(reqStatus, KErrInUse);
-		LOG(SwsLog::Printf(_L("CWspMessageApiAgent::ReceiveWspMessage:Outstanding Receive exist"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_RECEIVEWSPMESSAGE_2, "CWspMessageApiAgent::ReceiveWspMessage:Outstanding Receive exist");
 		return KErrInUse;
 		}
 	//Record the client buffer
@@ -744,7 +747,7 @@ Notification of PDU size or PDU data
 @returns KErrNone on successful completion, or one of the system error codes on failure.
 */
 	{
-	LOG(SwsLog::Printf(_L("CWspMessageApiAgent::Notification is called"));)
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_NOTIFICATION_1, "CWspMessageApiAgent::Notification is called");
 	TWapNotificationInfo& info=*(reinterpret_cast<TWapNotificationInfo*>(const_cast<TUint8*>(aData.Ptr())));
 	Wap::TBearer bearer=info.iBearer;
 	CActiveSocket* currentSocket=GetActiveSocketByBearer(bearer);
@@ -760,7 +763,7 @@ Notification of PDU size or PDU data
 			{
 			if (err!=KErrNone)
 				{
-				LOG(SwsLog::Printf(_L("CWspMessageApiAgent::Notification PDU length err status:%d"), err);)
+                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_NOTIFICATION_2, "CWspMessageApiAgent::Notification PDU length err status:%d", err);
 				currentSocket->CleanUpData();
 				if (iRequestActive)
 					{
@@ -771,7 +774,7 @@ Notification of PDU size or PDU data
 				}
 			else
 				{
-				LOG(SwsLog::Printf(_L("CWspMessageApiAgent::Notification PDU length is received"));)
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_NOTIFICATION_3, "CWspMessageApiAgent::Notification PDU length is received");
 				if ((err=currentSocket->Receive())!=KErrNone)
 					{
 					currentSocket->CleanUpData();
@@ -790,7 +793,7 @@ Notification of PDU size or PDU data
 			CActiveSocket* sock=GetActiveSocketByStatus(EReading);
 			if (err!=KErrNone)
 				{
-				LOG(SwsLog::Printf(_L("CWspMessageApiAgent::Notification PDU data is received with Err status:%d"), err);)
+                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_NOTIFICATION_4, "CWspMessageApiAgent::Notification PDU data is received with Err status:%d", err);
 				currentSocket->CleanUpData();
 				if (iRequestActive && !sock)
 					{
@@ -801,7 +804,7 @@ Notification of PDU size or PDU data
 				}
 			else
 				{
-				LOG(SwsLog::Printf(_L("CWspMessageApiAgent::Notification PDU data is received"));)
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_NOTIFICATION_5, "CWspMessageApiAgent::Notification PDU data is received");
 				if (!sock && iRequestActive)
 					{
 					iTimeoutTimer->Cancel();
@@ -822,7 +825,7 @@ Notification of PDU size or PDU data
 			break;
 			}
 	default:
-		LOG(SwsLog::Printf(_L("CWspMessageApiAgent::Notification() Unknown Event From Bearer"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGEAPIAGENT_NOTIFICATION_6, "CWspMessageApiAgent::Notification() Unknown Event From Bearer");
 		;	
 		}
 	}
@@ -893,7 +896,7 @@ Receive WDP message from a remote host
 		{
 		reqStatus=&aReqStatus;
 		User::RequestComplete(reqStatus, KErrNotReady);
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::ReceiveWdpMessage:Recv From unconnected API"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_RECEIVEWDPMESSAGE_1, "CWdpMessageApiAgent::ReceiveWdpMessage: Recv From unconnected API");
 		return KErrNotReady;
 		}
 	//if the length has been read
@@ -903,7 +906,7 @@ Receive WDP message from a remote host
 		{
 		reqStatus=&aReqStatus;
 		User::RequestComplete(reqStatus, KErrInUse);
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::ReceiveWdpMessage:in wrong state"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_RECEIVEWDPMESSAGE_2, "CWdpMessageApiAgent::ReceiveWdpMessage:in wrong state");
 		return KErrInUse;
 		}
 	if (sock1)
@@ -948,7 +951,7 @@ Receive WDP message from a remote host
 			{
 			reqStatus=&aReqStatus;
 			User::RequestComplete(reqStatus, err);
-			LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::ReceiveWdpMessage:err=%d"), err);)
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_RECEIVEWDPMESSAGE_3, "CWdpMessageApiAgent::ReceiveWdpMessage:err=%d",err);
 			return err;
 			}
 		}
@@ -970,7 +973,7 @@ Receive WDP message PDU length from a remote host
 		{
 		reqStatus=&aReqStatus;
 		User::RequestComplete(reqStatus, KErrNotReady);
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::AwaitRecvDataSize:Wait For Data length From unconnected API"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_AWAITRECVDATASIZE_1, "CWdpMessageApiAgent::AwaitRecvDataSize:Wait For Data length From unconnected API");
 		return KErrNotReady;
 		}
 	//if the length has been read or there is some data pending, then error completion
@@ -981,7 +984,7 @@ Receive WDP message PDU length from a remote host
 		{
 		reqStatus=&aReqStatus;
 		User::RequestComplete(reqStatus, KErrInUse);
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::AwaitRecvDataSize:in wrong state"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_AWAITRECVDATASIZE_2, "CWdpMessageApiAgent::AwaitRecvDataSize:in wrong state");
 		return KErrInUse;
 		}
 	//if there is a pending length, then get it
@@ -1033,12 +1036,12 @@ Send WDP message to a remote host
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::SendWdpMessage:Send WDP to unconnected API"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_SENDWDPMESSAGE_1, "CWdpMessageApiAgent::SendWdpMessage:Send WDP to unconnected API");
 		return KErrNotReady;
 		}
 	if (aBearer==Wap::EAll)
 		{
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::SendWdpMessage:Wrong Bearer"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_SENDWDPMESSAGE_2, "CWdpMessageApiAgent::SendWdpMessage:Wrong Bearer");
 		return Wap::EBearerError;
 		}
 	TSockAddr remoteAddr;
@@ -1046,7 +1049,7 @@ Send WDP message to a remote host
 	TRAP(err, CSWSWapMsgUtils::BuildAddrL(remoteAddr, aBearer, aRemoteHost, aRemotePort))
 	if (err)
 		{
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::SendWdpMessage:BuildAddrL Err=%d"), err);)
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_SENDWDPMESSAGE_3, "CWdpMessageApiAgent::SendWdpMessage:BuildAddrL Err=%d", err);
 		return err;
 		}
 	CActiveSocket* sendSock=GetActiveSocketByBearer(aBearer);
@@ -1064,7 +1067,7 @@ Send WDP message to a remote host
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::SendWdpMessage:No Bearer"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_SENDWDPMESSAGE_4, "CWdpMessageApiAgent::SendWdpMessage:No Bearer");
 		err=Wap::EBearerError;
 		}
 	return err;
@@ -1081,12 +1084,12 @@ Send WDP message to a remote host
 	{
 	if (!iIsOpen)
 		{
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::SendWdpMessage:Send WDP to unconnected API"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_SENDWDPMESSAGE_1_1, "CWdpMessageApiAgent::SendWdpMessage:Send WDP to unconnected API");
 		return KErrNotReady;
 		}
 	if (!iBearers[0])
 		{
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::SendWdpMessage:No Bearer"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_SENDWDPMESSAGE_1_2, "CWdpMessageApiAgent::SendWdpMessage:No Bearer");
 		return Wap::EBearerError;
 		}
 	Wap::TBearer bearer=iBearers[0]->GetBearerType();
@@ -1178,7 +1181,7 @@ Notification from the ActiveSocket
 			}
 		break;
 	default:
-		LOG(SwsLog::Printf(_L("CWdpMessageApiAgent::Notification() Unknown Event From Bearer"));)
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGEAPIAGENT_NOTIFICATION_1, "CWdpMessageApiAgent::Notification() Unknown Event From Bearer");
 		;
 		}
 	}

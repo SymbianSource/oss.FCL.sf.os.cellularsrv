@@ -12,6 +12,10 @@
 //
 // Description:
 //
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ActiveSocketTraces.h"
+#endif
 
 #include "ActiveSocket.h"
 #include <es_wsms.h>
@@ -19,7 +23,6 @@
 #include "wapmsgerr.h"
 #include <wap_sock.h>
 #include "WapMessageApiAgent.h"
-#include "WapSwsLog.h"
 #include "WapMsgUtils.h"
 
 using namespace Wap;
@@ -81,7 +84,7 @@ This function is used by Bound Wap APIs which listen the incoming packet to a sp
 			}
 		default:
 		    {
-			LOG(SwsLog::Printf(_L("CActiveSocket::NewL Unknown Bearer Type"));)
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKET_NEWL_1, "CActiveSocket::NewL Unknown Bearer Type");
 			User::Leave(Wap::EBearerError);
 		    }
 		}
@@ -144,7 +147,7 @@ This function is used by Fully specified Wap APIs which will open a socket with 
 			}
 		default:
 		    {
-			LOG(SwsLog::Printf(_L("CActiveSocket::NewL Unknown Bearer Type"));)
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKET_NEWL_1_1, "CActiveSocket::NewL Unknown Bearer Type");
 			User::Leave(Wap::EBearerError);
 		    }
 		}
@@ -270,7 +273,7 @@ To get the remote address of the last received packet
 		}
 	else
 		{
-		LOG(SwsLog::Printf(_L("CActiveSocketUDP::GetServerAddress: Alloc Memory Err=%d"), err);)
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKET_GETREMOTEADDRESS_1, "CActiveSocket::GetRemoteAddress: Alloc Memory Err=%d", err);
 		}
 	return err;
 	}
@@ -482,7 +485,7 @@ Overload the CActive virtual methods
 		{
 	case ESocketWaitingForLength:
 			{
-			LOG(SwsLog::Printf(_L("CActiveSocketSMS::RunL() ESocketWaitingForLength"));)
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETSMS_RUNL_1, "CActiveSocketSMS::RunL() ESocketWaitingForLength");
 			iMessageRecord->SetDataState(EPendingLength);
 			iSocketState=ESocketIdle;
 			TWapNotificationInfo info(iBearerType, iStatus.Int());
@@ -492,7 +495,7 @@ Overload the CActive virtual methods
 			}
 	case ESocketWaitingForData:
 			{
-			LOG(SwsLog::Printf(_L("CActiveSocketSMS::RunL() ESocketWaitingForData"));)
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETSMS_RUNL_2, "CActiveSocketSMS::RunL() ESocketWaitingForData");
 			iMessageRecord->SetDataState(EPendingData);
 			iSocketState=ESocketIdle;
 			TWapNotificationInfo info(iBearerType, iStatus.Int());
@@ -502,7 +505,7 @@ Overload the CActive virtual methods
 			break;
 			}
 	default:
-		LOG(SwsLog::Printf(_L("CActiveSocketSMS::RunL() Unknown State")););
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETSMS_RUNL_3, "CActiveSocketSMS::RunL() Unknown State");
 		}
 	}
 void CActiveSocketSMS::DoCancel() 
@@ -526,7 +529,7 @@ Overload the CActive virtual methods
 			break;
 			}
 	default:
-		LOG(SwsLog::Printf(_L("CActiveSocketSMS::DoCancel() Unknown State")););	
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETSMS_DOCANCEL_1, "CActiveSocketSMS::DoCancel() Unknown State");	
 		}
 	}
 
@@ -662,7 +665,7 @@ RunL()
 		{
 	case ESocketWaitingForLength:
 			{
-			LOG(SwsLog::Printf(_L("CActiveSocketUDP::RunL() ESocketWaitingForLength"));)
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETUDP_RUNL_1, "CActiveSocketUDP::RunL() ESocketWaitingForLength");        
 			iMessageRecord->SetPduSize(iBuf.Length()+ iRxlength());
 			if(iRxlength() > 0)
 				{
@@ -680,7 +683,7 @@ RunL()
 			}
 	case ESocketWaitingForData:
 			{
-			LOG(SwsLog::Printf(_L("CActiveSocketUDP::RunL() ESocketWaitingForData"));)
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETUDP_RUNL_2, "CActiveSocketUDP::RunL() ESocketWaitingForData");
 			iMessageRecord->SetDataState(EPendingData);
 			iSocketState=ESocketIdle;
 			TWapNotificationInfo info(iBearerType, iStatus.Int());
@@ -689,7 +692,7 @@ RunL()
 			break;
 			}
 	default:
-		LOG(SwsLog::Printf(_L("CActiveSocketUDP::RunL() Unknown State"));)
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETUDP_RUNL_3, "CActiveSocketUDP::RunL() Unknown State");
 		break;
 		}
 	}
@@ -714,7 +717,7 @@ Cancel the outstanding request on UDP bearer
 			break;
 			}
 	default:
-		LOG(SwsLog::Printf(_L("CActiveSocketUDP::DoCancel() Unknown State")););	
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CACTIVESOCKETUDP_DOCANCEL_1, "CActiveSocketUDP::DoCancel() Unknown State");	
 		}
 	}
 
@@ -931,7 +934,7 @@ To read the wsp message from the buffer
 	if (!iWspHeader && !iWspBody)
 		{
 		// if no data, should not be here at all
-		LOG(SwsLog::Printf(_L("CWspMessageRecord::GetWspData() No Data Available"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWSPMESSAGERECORD_GETWSPDATA_1, "CWspMessageRecord::GetWspData() No Data Available");
 		CleanUpData();
 		return KErrBadDescriptor;
 		}
@@ -1065,7 +1068,7 @@ To read the received Wdp pdu
 	if (!iPdu)
 		{
 		//Should not be here at all
-		LOG(SwsLog::Printf(_L("CWdpMessageRecord::GetPduData No Data Available"));)
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWDPMESSAGERECORD_GETPDUDATA_1, "CWdpMessageRecord::GetPduData No Data Available");
 		CleanUpData();
 		return KErrBadDescriptor;
 		}
