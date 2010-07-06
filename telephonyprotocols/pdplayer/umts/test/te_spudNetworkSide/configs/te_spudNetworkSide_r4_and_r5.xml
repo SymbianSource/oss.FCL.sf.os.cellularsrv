@@ -271,7 +271,7 @@
         <MessageValidityPeriod>0</MessageValidityPeriod>
         <MessageDeliveryReport>FALSE</MessageDeliveryReport>
         <LastSessionClosedTimeout>4</LastSessionClosedTimeout>
-        <LastSocketClosedTimeout>6</LastSocketClosedTimeout>
+        <LastSocketClosedTimeout>30</LastSocketClosedTimeout>
         <LastSocketActivityTimeout>180</LastSocketActivityTimeout>
         <CommRole>0</CommRole>
     </ModemBearer>

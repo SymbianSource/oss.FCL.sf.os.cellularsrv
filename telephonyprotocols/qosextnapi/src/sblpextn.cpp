@@ -69,27 +69,39 @@ EXPORT_C void CSblpParameters::SetMAT(const TAuthorizationToken &aAuthToken )
 
 EXPORT_C CSblpParameters::TFlowIdentifier& CSblpParameters::GetFlowId(TInt aIndex)
 	{
-	__ASSERT_DEBUG(aIndex<iFlowIds.Count(),User::Panic(_L("Sblp"),KErrArgument));
+	__ASSERT_DEBUG(aIndex<iFlowIds.Count(),User::Panic(_L("CSblpParameters::GetFlowId"),KErrArgument));
 	return iFlowIds[aIndex];
 	}
 
 EXPORT_C void CSblpParameters::SetFlowIds(const RArray<TFlowIdentifier> &aFlowIds)
 	{
+    //in case of low memory the function might not set all the ids
 	iFlowIds.Reset();
 	TInt i;
 	for(i=0; i<aFlowIds.Count();i++)
 		{
-		this->iFlowIds.Append(aFlowIds[i]);
+		TInt errorCode = this->iFlowIds.Append(aFlowIds[i]);
+		if (errorCode != KErrNone) 
+		    {
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPARAMETERS_SETFLOWID, "Not Enough Memory");
+		    }
 		}
 	}
 
 EXPORT_C TInt CSblpParameters::GetFlowIds(RArray<TFlowIdentifier>& aFlowIds)
 	{
+    //in case of low memory the function might not get all the ids and returns an error code
 	aFlowIds.Reset();
 	TInt i;
+	TInt errorCode = KErrNone;
 	for(i=0; i<iFlowIds.Count();i++)
 		{
-		aFlowIds.Append(this->iFlowIds[i]);
+        errorCode = aFlowIds.Append(this->iFlowIds[i]);
+        if (errorCode != KErrNone) 
+            {
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPARAMETERS_GETFLOWID, "Not Enough Memory");
+            return errorCode;
+            }
 		}
 	return KErrNone;
 	}
@@ -168,7 +180,7 @@ EXPORT_C TDesC8& CSblpPolicy::Data()
 	header.reserved = 0;
 	header.protocol_id = 0;
 	bufPtr.Append((TUint8*)&header, sizeof(pfqos_configure));
-
+	
 	pfqos_extension extensionType;
 	extensionType.pfqos_ext_len = 0;
 	extensionType.pfqos_ext_type = EPfqosExtExtension;
@@ -187,10 +199,10 @@ EXPORT_C TDesC8& CSblpPolicy::Data()
 	iSblp->GetMAT(authToken);
 	SetStringBlockHeader(stringBlock,authToken,KDescSblpMediaAuthorizationToken);
 	bufPtr.Append((TUint8*)&stringBlock, sizeof(pfqos_configblock));
+
 	// put the string now
 	authToken.ZeroTerminate();
 	bufPtr.Append((TUint8*)authToken.Ptr(),KAuthorizationTokenAdjustedStringLength);
-
 
 	// Flowids
 	pfqos_configblock_int ext;
@@ -200,11 +212,13 @@ EXPORT_C TDesC8& CSblpPolicy::Data()
 		CSblpParameters::TFlowIdentifier& flowId = iSblp->GetFlowId(i);
 		SetIntValue(ext,flowId.iMediaComponentNumber,KDescSblpMediaComponentNumber);
 		bufPtr.Append((TUint8*)&ext, sizeof(pfqos_configblock_int));
+
 		SetIntValue(ext,flowId.iIPFlowNumber,KDescSblpIPFlowNumber);
 		bufPtr.Append((TUint8*)&ext, sizeof(pfqos_configblock_int));
 		}
 
 	bufPtr.AppendFill(0, header.pfqos_configure_len * 8 - byte_len);
+
 	return *iData;
 	}
 
@@ -237,8 +251,9 @@ EXPORT_C void CSblpPolicy::SetSblpParameters(const CSblpParameters& aSblp)
 	// following code is to create logs
 	TAuthorizationToken authToken;
 	iSblp->GetMAT (authToken);
-	RArray<CSblpParameters::TFlowIdentifier> flowIds;
+    RArray<CSblpParameters::TFlowIdentifier> flowIds;
 	iSblp->GetFlowIds(flowIds);
+	// in case of low memory GetFlowIds might return an error and flowIds might not have all the ids, but we still try to log as much as we can
 	TBuf<KAuthorizationTokenSize> label;
 	label.Copy(authToken);
 		

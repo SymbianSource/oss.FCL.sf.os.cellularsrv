@@ -549,7 +549,7 @@ void CPDPSubConnectionProvider::NewPacketFilterAddedL(CSubConIPAddressInfoParamS
 			{
 			grantedIPAddressInfo->AddParamInfo(aParamInfo);
 
-			iPacketFilterId.Append(aId);
+			User::LeaveIfError(iPacketFilterId.Append(aId));
 			iPacketFilterMaskId |= 1 << aId;
 			}
 		else

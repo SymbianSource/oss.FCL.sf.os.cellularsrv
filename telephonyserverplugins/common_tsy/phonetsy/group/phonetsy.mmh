@@ -58,6 +58,7 @@ LIBRARY         commontsy.lib   // Common TSY
 #endif //CTSY_DISPATCHER
 LIBRARY         licenseetsy.lib // LTSY 
 LIBRARY         featmgr.lib     // for featuremanager
+LIBRARY         efsrv.lib		// config file reading
 
 //  End of file
 

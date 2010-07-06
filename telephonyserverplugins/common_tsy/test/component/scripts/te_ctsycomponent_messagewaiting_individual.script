@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,12 +13,12 @@
 //
 // Description:
 //
-//! @file                   te_ctsycomponent_messagewaiting_individual.script
-//! @SYMScriptAuthor        
-//! @SYMTestSuiteName       te_ctsy_component
-//! @SYMScriptCreationDate  
+//
 
 PRINT Run Message Waiting test cases for suite te_ctsy_component
+
+RUN_SCRIPT z:\TestData\Scripts\mockltsy_copy_ini_file.script
+
 
 LOAD_SUITE te_ctsy_component
 
@@ -178,3 +178,4 @@ START_TESTCASE BA-CTSY-MSGW-MNIMWC-0004
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyMessageWaitingFU.TestNotifyIccMessageWaitingIndicatorsChange0004L
 END_TESTCASE BA-CTSY-MSGW-MNIMWC-0004
 
+RUN_SCRIPT z:\TestData\Scripts\mockltsy_remove_ini_file.script

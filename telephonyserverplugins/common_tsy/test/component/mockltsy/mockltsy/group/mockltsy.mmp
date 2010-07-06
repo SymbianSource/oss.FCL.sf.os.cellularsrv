@@ -14,10 +14,10 @@
 * Description:
 *
 */
-TARGET          licenseetsy.dll
+TARGET          mocklicenseetsy.dll
 
 TARGETTYPE      DLL
-UID             0x1000008D 0x2000BEE4
+UID             0x1000008D 0x2002EA67
 
 CAPABILITY CommDD PowerMgmt ReadDeviceData WriteDeviceData TrustedUI ProtServ NetworkControl NetworkServices LocalServices ReadUserData WriteUserData
 

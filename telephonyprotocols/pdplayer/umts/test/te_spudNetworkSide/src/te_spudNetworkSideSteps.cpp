@@ -80,7 +80,7 @@ TVerdict CSpudNetSideTestBase::doTestStepPreambleL()
 
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 TVerdict CSpudNetSideTestBase::doTestStepPostambleL()
-	{	
+	{
 	ClearPolicySelector2QosParametersTableL();
 	return TestStepResult();
 	}
@@ -97,7 +97,18 @@ void CSpudNetSideTestBase::FailNextPktLoopbackCsyWriteL(TInt aPortNum, TInt aErr
 	TestL(RProperty::Set(KUidPSCsyWriteResultCategory, aPortNum, aErrorCode), _L("Set PSCsy write result"));
   	INFO_PRINTF3(_L("Next write on [PKTLOOPBACK::%d] is going to fail with [%d]"), aPortNum, aErrorCode);
   	}
-	
+
+void CSpudNetSideTestBase::ClearNextPktLoopbackCsyWriteL(TInt aPortNum)
+    {
+    TInt dummy(0);
+    TInt ret = RProperty::Get(KUidPSCsyWriteResultCategory, aPortNum, dummy);
+    if(ret != KErrNotFound)
+        {
+        RProperty::Set(KUidPSCsyWriteResultCategory, aPortNum, KErrNone);
+        }
+    INFO_PRINTF2(_L("Reset to KErrNone for the next write on [PKTLOOPBACK::%d] port"), aPortNum);
+    }
+
 /**
 Blocks until Nifman progress notification is received.
 
@@ -1636,6 +1647,7 @@ enum TVerdict CSpudSecondaryLowerNifDownStop::RunTestStepL()
 	
 	StopSecondaryL();
 	
+	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;
 	}
 
@@ -1719,6 +1731,7 @@ enum TVerdict CSpudPrimaryDeletionInterfaceStop::RunTestStepL()
 	// In the meanwhile, we sneak in and stop the interface.
 	
 	StopInterfaceL();
+	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;	
 	};
 
@@ -1981,6 +1994,12 @@ TBool CSpudNetSideTestBase::SpudDeletePrimaryPdpL()
 
 	// start rawipnif instance opposite the SPUD's secondary context, and open a socket on it
 	CConnectionStart *secondaryIfStart = CConnectionStart::NewLC(iEsock, *this, oppositeSecondaryIapId);
+
+    TRequestStatus progressReqSt;   
+    
+	secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, 7000);
+	WaitForProgressNotificationL(progressReqSt, 7000, 0); // We can wait here forever. Set timeout on test step.
+
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));
 #else
@@ -2245,6 +2264,20 @@ enum TVerdict CSpudMultiPrimary::RunTestStepL()
     	
     	TestL(p->Open(iEsock), _L("RConnection::Open the interface"));
     	TestL(p->Start(iap1prefs),primaryCreationErr, _L("RConnection::Start the interface"));
+	    }
+
+	//check if all contexts are still there
+	for (TInt i = 0; i < maximumConnections; i++)
+	    {
+        TBuf<32> primaryIap;
+        primaryIap.Format(KPrimaryIapFormatLit, i + 1);
+    	if (!GetIntFromConfig(ConfigSection(), primaryIap, primaryIapId))
+    		{
+    		User::Leave(KErrNotFound);
+    		}
+		INFO_PRINTF2(_L("Verify context #%d is still there"), i);
+		VerifySubconnectionCountL(2, primaryIapId);
+		INFO_PRINTF2(_L("Context #%d is still there"), i);
 	    }
 
 	

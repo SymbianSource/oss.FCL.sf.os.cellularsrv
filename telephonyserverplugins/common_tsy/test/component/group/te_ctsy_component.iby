@@ -1,4 +1,5 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+//
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -11,6 +12,7 @@
 // Contributors:
 //
 // Description:
+//
 //
 
 #ifndef __TE_CTSY_COMPONENT_IBY__
@@ -33,7 +35,7 @@ patchdata etel.dll@KSatEngineSid 0x101F777C
 file=ABI_DIR\DEBUG_DIR\te_ctsy_component.exe		SYSTEM_BINDIR\te_ctsy_component.exe
 
 // executables needed by te_ctsy_component.exe
-file=ABI_DIR\DEBUG_DIR\licenseetsy.dll     	SYSTEM_BINDIR\licenseetsy.dll
+file=ABI_DIR\DEBUG_DIR\mocklicenseetsy.dll     	SYSTEM_BINDIR\mocklicenseetsy.dll
 file=ABI_DIR\DEBUG_DIR\mockltsydll.dll     	SYSTEM_BINDIR\mockltsydll.dll
 
 // MockHWRM
@@ -52,6 +54,12 @@ data=ZPRIVATE/10202be9/10200C8D.txt 	private\10202be9\10200C8D.txt
 // This is required because the cenrep files are now being included only via techview_base.iby
 data=ZPRIVATE/10202be9/10205043.txt 	private\10202be9\10205043.txt
 #endif //HWRM_IS_SUPPORTED
+
+// MockLTSY
+data=EPOCROOT##epoc32\data\z\testdata\configs\ltsydata_mock.ini 		     	testdata\configs\ltsydata_mock.ini
+// MockLTSY scripts that allow dynamic loading of mocklicenseetsy.dll
+data=EPOCROOT##epoc32\data\z\testdata\scripts\mockltsy_copy_ini_file.script		testdata\scripts\mockltsy_copy_ini_file.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\mockltsy_remove_ini_file.script		testdata\scripts\mockltsy_remove_ini_file.script
 
 // Runnable Scripts
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_ctsycomponent.script			testdata\scripts\te_ctsycomponent.script

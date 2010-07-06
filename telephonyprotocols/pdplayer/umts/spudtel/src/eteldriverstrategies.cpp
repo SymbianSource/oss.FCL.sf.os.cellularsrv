@@ -460,8 +460,8 @@ void TCreate1ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aConte
 			}
 			
 		case EInitialiseContextStep:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_4, "Cancel PacketContext::EPacketContextActivate");
-		    aContext.PacketContext().CancelAsyncRequest(EPacketContextActivateCancel);
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_4, "Cancel PacketContext::EPacketContextInitialiseContext");
+		    aContext.PacketContext().CancelAsyncRequest(EPacketContextInitialiseContext);
 		    break;
 			
 		default:
@@ -1101,13 +1101,17 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 		{
 		case EStartStep:
 			{
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_3, "RPacketContext::Activate()");
 			aContext.PacketContext().Activate(*aStatus);
 			aContext.SetStrategyStep (EActivateStep);
 			break;
 			}
 		
 		case EActivateStep:
+		case ENotifyStatusChange:
 			{
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_4, "RPacketContext::GetStatus()");
+
             if (aContext.PacketContext().GetStatus(aContext.ContextStatus()) != KErrNone)
                 {
                 aContext.ContextStatus() = RPacketContext::EStatusInactive;
@@ -1118,6 +1122,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	case RPacketContext::EStatusActive:
                 	// Context is now active
     	            aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextPacketDataConfigBase());
+    	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_5, "RPacketContext::GetConfig()");
     				aContext.PacketContext().GetConfig (*aStatus, aContext.ContextConfig());
     				aContext.SetStrategyStep (EGetConfigStep);
     				break;
@@ -1158,8 +1163,9 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	
             	default:
             		// Not active, not inactive. Re-request the status and try again
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_6, "RPacketContext::NotifyStatusChange()");
                     aContext.PacketContext().NotifyStatusChange(*aStatus, aContext.ContextStatus());
-                    aContext.SetStrategyStep (EActivateStep);
+                    aContext.SetStrategyStep (ENotifyStatusChange);
                     break;
                 }
 			break;
@@ -1259,22 +1265,22 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case EActivateStep:
 			{
-			aContext.PacketContext().CancelAsyncRequest(EPacketContextActivate);
 			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketContext::EPacketContextActivate");
+			aContext.PacketContext().CancelAsyncRequest(EPacketContextActivate);
 			break;
 			}
 			
 		case EGetConfigStep:
 			{
-			aContext.PacketContext().CancelAsyncRequest(EGetConfigStep);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EGetConfigStep");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EPacketContextGetConfig");
+			aContext.PacketContext().CancelAsyncRequest(EPacketContextGetConfig);
 			break;
 			}
 		
-		case EInitialiseContextStep:
-			{
-			aContext.PacketContext().CancelAsyncRequest(EPacketContextInitialiseContext);	
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_3, "Cancel PacketContext::EPacketContextInitialiseContext");
+		case ENotifyStatusChange:
+		    {
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_3, "Cancel PacketContext::EPacketContextNotifyStatusChange");
+			aContext.PacketContext().CancelAsyncRequest(EPacketContextNotifyStatusChange);	
 			break;
 			}
 			
@@ -1282,8 +1288,8 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 			{
 			if(KPrimaryContextId == aContext.Id())
 				{
-				aContext.PacketContext().CancelAsyncRequest(EPacketQoSGetProfileParams);	
 				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_4, "Cancel PacketContext::EPacketQoSGetProfileParams");
+				aContext.PacketContext().CancelAsyncRequest(EPacketQoSGetProfileParams);	
 				break;
 				}
 			}
@@ -1751,7 +1757,7 @@ void TActivateMbmsPdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		
 		case EGetConfigStep:
 			{
-			aContext.MbmsPacketContext().CancelAsyncRequest(EGetConfigStep);
+			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextGetConfig);
 			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_CANCELASYNCREQUEST_2, "Cancel MbmsPacketContext::EGetConfigStep");
 			break;
 			}

@@ -147,6 +147,7 @@ namespace te_spudNetworkSide
 #endif
 		
 		void FailNextPktLoopbackCsyWriteL(TInt aPortNum, TInt aErrorCode);
+		void ClearNextPktLoopbackCsyWriteL(TInt aPortNum);
 		TEtelRequestType RetrieveNetSideEventRequestFromConfigL(const TDesC& aEventName);
 		void EtelRequestL(TEtelRequestType aEtelCommand, TInt aNewValue);
 		TInt RetrieveNetSideEventValFromConfigL(const TDesC& aEventValName);

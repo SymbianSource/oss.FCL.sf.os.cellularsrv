@@ -1165,7 +1165,7 @@ void CSmsMessage::CorrectFormattingL(TUint aCharsAddedToCurrentPDU,
 					newie->SetFormatLength(oldFormatLen - newFormatLen);
 					newie->SetStartPosition(aCharsAlreadyAdded+aCharsAddedToCurrentPDU);
 					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGE_CORRECTFORMATTINGL_2, "CSmsMessage::CorrectFormattingL Count=%d",aCorrectedFormattingIEArray.Count());
-					aCorrectedFormattingIEArray.Append(newie);
+					User::LeaveIfError(aCorrectedFormattingIEArray.Append(newie));
 					CleanupStack::Pop(newie);
 					}
 				}
