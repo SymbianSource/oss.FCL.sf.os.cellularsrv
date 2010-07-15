@@ -70,21 +70,33 @@ EXPORT_C CSblpParameters::TFlowIdentifier& CSblpParameters::GetFlowId(TInt aInde
 
 EXPORT_C void CSblpParameters::SetFlowIds(const RArray<TFlowIdentifier> &aFlowIds)
 	{
+    //in case of low memory the function might not set all the ids
 	iFlowIds.Reset();
 	TInt i;
 	for(i=0; i<aFlowIds.Count();i++)
 		{
-		this->iFlowIds.Append(aFlowIds[i]);
+		TInt errorCode = this->iFlowIds.Append(aFlowIds[i]);
+		if (errorCode != KErrNone) 
+		    {
+            LOG(Log::Printf(_L("CSblpParameters::SetFlowIds - Not Enough Memory!!!\n"));)
+		    }
 		}
 	}
 
 EXPORT_C TInt CSblpParameters::GetFlowIds(RArray<TFlowIdentifier>& aFlowIds)
 	{
+    //in case of low memory the function might not get all the ids and returns an error code
 	aFlowIds.Reset();
 	TInt i;
+	TInt errorCode = KErrNone;
 	for(i=0; i<iFlowIds.Count();i++)
 		{
-		aFlowIds.Append(this->iFlowIds[i]);
+        errorCode = aFlowIds.Append(this->iFlowIds[i]);
+        if (errorCode != KErrNone) 
+            {
+            LOG(Log::Printf(_L("CSblpParameters::GetFlowIds - Not Enough Memory!!!\n"));)
+            return errorCode;
+            }
 		}
 	return KErrNone;
 	}
@@ -234,6 +246,7 @@ EXPORT_C void CSblpPolicy::SetSblpParameters(const CSblpParameters& aSblp)
 	iSblp->GetMAT (authToken);
 	RArray<CSblpParameters::TFlowIdentifier> flowIds;
 	iSblp->GetFlowIds(flowIds);
+	// in case of low memory GetFlowIds might return an error and flowIds might not have all the ids, but we still try to log as much as we can
 	TBuf<KAuthorizationTokenSize> label;
 	label.Copy(authToken);
 		

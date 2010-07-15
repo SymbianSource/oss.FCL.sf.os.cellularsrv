@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -31,7 +31,7 @@
 #include <etelmm.h>
 #include <etelpckt.h>
 #include <comms-infras/ss_metaconnprov.h>
-#include "pdpprovision.h"
+#include "PDPProvision.h"
 #include <etel.h>
 #include <networking/cfbearers.h>
 #include "pdpcpravailabilitylistener.h"
@@ -44,18 +44,11 @@
 
 using namespace ESock;
 
-
 //-=========================================================
 //
 // CPDPConnectionProvider methods
 //
 //-=========================================================	
-
-//We reserve space for two preallocated activities that may start concurrently on the CPR
-//node: destroy and data client stop.
-static const TUint KDefaultMaxPreallocatedActivityCount = 2;
-static const TUint KMaxPreallocatedActivitySize = sizeof(MeshMachine::CNodeRetryParallelActivity) + sizeof(MeshMachine::APreallocatedOriginators<4>);
-static const TUint KPDPCPRPreallocatedActivityBufferSize = KDefaultMaxPreallocatedActivityCount * KMaxPreallocatedActivitySize;
 
 namespace PDPCprLinkCharacteristicActivity
 {
@@ -112,7 +105,7 @@ void CPDPConnectionProvider::ConstructL()
  * @return void
  */
 	{
-	CCoreConnectionProvider::ConstructL(KPDPCPRPreallocatedActivityBufferSize);
+	CCoreConnectionProvider::ConstructL();
 	}
 
 void CPDPConnectionProvider::StopListener()

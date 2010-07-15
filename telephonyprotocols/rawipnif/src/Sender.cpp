@@ -72,10 +72,13 @@ CSender::~CSender()
 /**
  * Destructor.
  */
-	{
-	iSendBuffer.Close();
-	Cancel();
-	}
+    {
+    Cancel();
+    // iSendBuffer is a shared bit of memory between raw ip and bca
+    // you cannot delete it while bca might be using it otherwise
+    // bad things may happen.
+    iSendBuffer.Close();
+    }
 
 void CSender::RunL()
 /**

@@ -71,10 +71,13 @@ CReceiver::~CReceiver()
 /**
  * Destructor.
  */
-	{
-	iData.Close();
-	Cancel();
-	}
+    {
+    Cancel();
+    // iData is a shared bit of memory between raw ip and bca
+    // you cannot delete it while bca might be using it otherwise
+    // bad things may happen.
+    iData.Close();
+    }
 
 void CReceiver::RunL()
 /**
