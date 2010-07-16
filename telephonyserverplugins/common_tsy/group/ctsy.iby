@@ -42,7 +42,7 @@ file=ABI_DIR\DEBUG_DIR\CUSTOMAPI.DLL        Sys\Bin\CUSTOMAPI.DLL
 
 //*** phonetsy ***
 #ifdef SYMBIAN_USING_CTSY_DISPATCHER  
-file=ABI_DIR\DEBUG_DIR\phonetsywithdispatcher.tsy	Sys\Bin\phonetsywithdispatcher.tsy
+file=ABI_DIR\DEBUG_DIR\phonetsywithdispatcher.tsy	Sys\Bin\phonetsy.tsy
 #else
 file=ABI_DIR\DEBUG_DIR\PHONETSY.TSY        Sys\Bin\PHONETSY.TSY
 #endif

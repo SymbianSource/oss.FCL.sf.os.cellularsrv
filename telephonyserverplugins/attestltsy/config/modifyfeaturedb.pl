@@ -19,6 +19,7 @@
 
 use strict;
 use FMCreate;
+use File::Copy;
 
 #
 # Hardwire the datafile - this is only an example.
@@ -26,6 +27,7 @@ use FMCreate;
 my $datfile = "/epoc32/release/winscw/udeb/z/private/10205054/features.dat";
 my $datfile2 = "/epoc32/release/winscw/udeb/z/private/10205054/features2.dat";
 my $datfileback = "/epoc32/release/winscw/udeb/z/private/10205054/features.bak";
+my $datfilerom = "/epoc32/data/z/private/10205054/features.dat";
 
 #
 # Create an object that represents a feature data file.
@@ -48,10 +50,10 @@ my @tomtab;
 
 $tomtab[0] = 81; 	# KFeatureIdProtocolGsm
 $tomtab[1] = 82; 	# KFeatureIdProtocolWcdma
-$tomtab[1] = 1696;	# KFeatureIdOnScreenDialer
+$tomtab[2] = 1696;	# KFeatureIdOnScreenDialer
+$tomtab[3] = 1715;	# KFeatureIdTouchCallHandling
 
 foreach $ffuid (@tomtab)
-#for ($ffuid = 1696; $ffuid <= 1696; $ffuid++)
 {
 	$ff = $fmc->GetFeatureFlagByUID($ffuid);
 	if(ref($ff) ne "FeatureFlag")
@@ -84,6 +86,7 @@ foreach $ffuid (@tomtab)
 #
 $fmc->WriteToFile($datfile2) or die "Couldn't write feature data file '$datfile2'\n";
 
+copy($datfile2, $datfilerom) or die "Couldn't copy the data file for ROM usage: '$datfilerom'\n";
 rename($datfile, $datfileback) or die "Couldn't backup feature data file '$datfile'\n";
 rename($datfile2, $datfile) or die "Couldn't copy feature data file '$datfile2'\n";
 

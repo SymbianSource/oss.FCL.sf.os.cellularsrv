@@ -17,11 +17,14 @@
 #
 
 use strict;
+use File::Copy;
 
 # Open the cenrep files
 my $cenrep = "/epoc32/release/winscw/UDEB/z/private/10202be9/10282E7F.txt";
 my $newcenrep = "/epoc32/release/winscw/UDEB/z/private/10202be9/10282E7F.tmp";
 my $cenrepbak = "/epoc32/release/winscw/UDEB/z/private/10202be9/10282E7F.bak";
+my $cenreprom = "/epoc32/data/z/private/10202be9/10282E7F.txt";
+my $cenreprombak = "/epoc32/data/z/private/10202be9/10282E7F.bak";
 my $file2string;
 
 # Open the file in UNICODE-16 and read the whole contents into a string
@@ -42,7 +45,9 @@ close($CENREPOUT);
 
 
 # Now backup the old and copy the new files
-rename($cenrep, $cenrepbak) or die "Couldn't backup feature data file '$cenrep'\n" unless (-e $cenrepbak); # OK for this to fail as it probably just means there's already a backup
-rename($newcenrep, $cenrep) or die "Couldn't copy feature data file '$newcenrep'\n";
+rename($cenreprom, $cenreprombak) or die "Couldn't backup ROM cenrep file '$cenrep'\n" unless (-e $cenrepbak); # OK for this to fail as it probably just means there's already a backup
+copy($newcenrep, $cenreprom) or die "Couldn't copy the cenrep file for ROM usage '$cenreprom'\n";
+rename($cenrep, $cenrepbak) or die "Couldn't backup cenrep file '$cenrep'\n" unless (-e $cenrepbak); # OK for this to fail as it probably just means there's already a backup
+rename($newcenrep, $cenrep) or die "Couldn't copy cenrep file '$newcenrep'\n";
 
 print "\tCCE CenRep Setup\n";

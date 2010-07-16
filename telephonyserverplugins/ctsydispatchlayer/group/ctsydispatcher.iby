@@ -20,8 +20,8 @@ file=ABI_DIR\DEBUG_DIR\licenseeskeletontsy.dll		SYSTEM_BINDIR\licenseeskeletonts
 file=ABI_DIR\DEBUG_DIR\ctsydispatcher.dll			SYSTEM_BINDIR\ctsydispatcher.dll
 
 // dispatcher tests
-#include <cstktsyutility.iby>
-#include <commonsimatktsy.iby>
-#include <te_ctsydispatcher_component.iby>
+//#include <cstktsyutility.iby>
+//#include <commonsimatktsy.iby>
+//#include <te_ctsydispatcher_component.iby>
 
 #endif // __CTSYDISPATCHER__

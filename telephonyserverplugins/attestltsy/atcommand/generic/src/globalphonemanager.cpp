@@ -29,7 +29,7 @@
 _LIT(KPDDName,"ECDRV");
 _LIT(KLDDName,"ECOMM");
 #else
-_LIT(KPDDName,"EUART1");
+_LIT(KPDDName,"EUART");
 #if defined (PDD2_NAME)
 _LIT(KPDD2Name,"EUART2");
 #endif
@@ -125,25 +125,37 @@ void CGlobalPhonemanager::InitL()
 	iPhoneStatus.iGprsMaxNumContexts = 1;
 	iPhoneStatus.iMode=RPhone::EModeOnlineCommand;
 	
+	LOGTEXT(_L8("[LTSY] Creating CLTsyCallInformationManager"));
+	
 	//Create the call information manager
 	iCallInfoManager = CLtsyCallInformationManager::NewL();
+	
+	LOGTEXT(_L8("[LTSY] Loading PDD"));
 	
 	// load physical device driver
 	TInt r = User::LoadPhysicalDevice(KPDDName);
 	if (r != KErrNone && r != KErrAlreadyExists)
 		{
+		LOGTEXT(_L8("[LTSY] Loading PDD Failed"));
 		User::Leave(r);
 		}
+	
+	LOGTEXT(_L8("[LTSY] Loading LDD"));
 	
 	// load logical device driver
 	r = User::LoadLogicalDevice(KLDDName);
 	if (r != KErrNone && r != KErrAlreadyExists)
 		{
+		LOGTEXT(_L8("[LTSY] Loading LDD Failed"));
 		User::Leave(r);
 		}
-		
+	
+	LOGTEXT(_L8("[LTSY] Creating CAtManager"));
+	
 	// create the AT Manager
 	iAtManager = CAtManager::NewL();
+	
+	LOGTEXT(_L8("[LTSY] Creating CCommEngine"));
 	
 	// create the Comm Engine which handle 
 	iCommEngine = CCommEngine::NewL(KLtsyChatBufferSize,KLtsyCommReadPriority,KLtsyCommWritePriority,iPhoneStatus.iPortAccess);
@@ -152,6 +164,7 @@ void CGlobalPhonemanager::InitL()
 	iCommEngine->SetCommEngineObserver(iAtManager);
 	iCommEngine->SetCommReadLineNotify(iAtManager);
 	
+	LOGTEXT(_L8("[LTSY] Creating CTsyConfig"));
 	// create a CommDB configration helper class
 	iConfiguration = CTsyConfig::NewL();
 	
