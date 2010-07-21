@@ -1399,33 +1399,6 @@ EXPORT_C TPtrC CSmsAlphabetConverter::ConvertToNativeL(const TDesC8& aUDElements
 
 
 /**
- *  Tests if the character is supported by the current character set.
- *  This function can be used with 7bit and 8bit alphabets.
- * 
- *  @param aChar  Character to investigate.
- * 
- *  @return  ETrue if the character is supported.
- * 
- *  @note Since the function is based on the old behaviour (pre-PREQ2090)
- *        it does not accept a downgraded character or alternative encoding
- *        as being supported.
- */
-TBool CSmsAlphabetConverter::IsSupportedL(TChar aChar)
-	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_1, "[1] CSmsAlphabetConverter::IsSupportedL(aChar=0x%04x)", (TUint) aChar);
-
-	TBool isDowngrade, isRequiresAlternativeEncoding;
-
-    TBool  supported = IsSupportedL(aChar, ESmsEncodingNone,
-            isDowngrade, isRequiresAlternativeEncoding);
-	
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_2, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
-
-	return supported;
-	} // CSmsAlphabetConverter::IsSupportedL
-
-
-/**
  *  Tests if the descriptor text is supported by the current character set.
  *  This function can be used with 7bit and 8bit alphabets.
  * 
@@ -1440,133 +1413,32 @@ TBool CSmsAlphabetConverter::IsSupportedL(TChar aChar)
 TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TInt& aNumberOfUnconvertibleCharacters,
                                           TInt& aIndexOfFirstUnconvertibleCharacter)
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_1, "[2] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", aDes);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_1, "[1] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", aDes);
 
 	TInt desLength = aDes.Length();
-	//
-	// Initialise the exit params...
-	//
-	aNumberOfUnconvertibleCharacters    = 0;
-	aIndexOfFirstUnconvertibleCharacter = desLength;
 
     //
-    // Create buffers for the input converted to 7Bit and a buffer for it once
-    // converted back again...
+    // Create buffer for restored text string...
     //
-    HBufC8* encodedBuf       = HBufC8::NewLC(desLength*2); // worse case
     HBufC*  backToUnicodeAfterStdBuf = HBufC::NewLC(desLength);
-    TPtr8  encoded(encodedBuf->Des());
     TPtr  backToUnicodeAfterStd(backToUnicodeAfterStdBuf->Des());
-
-    //
-    // Convert the input string to standard 7bit (with downgrades if needed)...
-    // 
-    PrepareForConversionFromNativeL(ESmsEncodingNone);
-
-    TInt  notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
-
-    if (notConverted > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notConverted;
-        }
-    else if (notConverted < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
     
     //
-    // Convert it back again to the native format...
-    //
-    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
-    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicodeAfterStd, encoded, state);
-
-    if (notRestored > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notRestored;
-        }
-    else if (notRestored < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
-
-    //
-    // Work out if the string is acceptable as it is (e.g. no unconvertible
-    // and no downgrades). We only need do this if the previous conversions were
-    // complete with no issues.
-    //
-    for (TInt pos = desLength-1;  pos >= 0;  --pos)
-        {
-        if (backToUnicodeAfterStd[pos] != aDes[pos])
-            {
-            aNumberOfUnconvertibleCharacters++;
-            aIndexOfFirstUnconvertibleCharacter = pos;
-            }
-        }
-    
-    CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
-    CleanupStack::PopAndDestroy(encodedBuf);
+    // Convert the string...
+    //   
+	TInt numberOfDowngradedCharacters;
+	TBool isCountDowngrade = EFalse; // Don't count downgrades
+	ConvertWith7BitEncodingL(aDes, backToUnicodeAfterStd, 
+            aNumberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
+            aIndexOfFirstUnconvertibleCharacter, isCountDowngrade);
 	
-	//
-	// Useful logging...
-	//
+    CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
+	
 	TBool  supported = (aNumberOfUnconvertibleCharacters == 0);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_2, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_3, "CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_4, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
-
-	return supported;
-	} // CSmsAlphabetConverter::IsSupportedL
-
-
-/**
- *  Tests if the character is supported by the current character set.
- *  This function can be used with 7bit and 8bit alphabets.
- * 
- *  @param aChar                         Character to investigate.
- *  @param aEncoding                     Alternative 7bit encoding (if used).
- *  @param aIsDowngrade                  Exit param set to ETrue if the
- *                                       character has to be downgraded.
- *  @param aRequiresAlternativeEncoding  Exit param set to ETrue if the
- *                                       alternative encoding has to be
- *                                       used to encode it.
- * 
- *  @return  ETrue if the character is supported.
- */
-TBool CSmsAlphabetConverter::IsSupportedL(TChar aChar, TSmsEncoding aEncoding,
-		                                  TBool& aIsDowngrade,
-                                          TBool& aRequiresAlternativeEncoding)
-	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL2_1, "[3] CSmsAlphabetConverter::IsSupportedL(aChar=0x%04x)", (TUint) aChar);
-
-	//
-	// Convert the character...
-	//
-	TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
-            numberRequiringAlternativeEncoding, indexOfFirstUnconvertibleCharacter;
-	TBuf<4>   toEncode;
-
-	toEncode.SetLength(1);
-	toEncode[0]=(TText)aChar;
-
-	TBool supported = IsSupportedL(toEncode, aEncoding, 
-	        numberOfUnconvertibleCharacters,
-	        numberOfDowngradedCharacters,
-	        numberRequiringAlternativeEncoding,
-	        indexOfFirstUnconvertibleCharacter);
-
-	//
-	// Calculate the exit params...
-	//
-	aIsDowngrade                 = (numberOfDowngradedCharacters > 0);
-	aRequiresAlternativeEncoding = (numberRequiringAlternativeEncoding > 0);
-	    
-	//
-	// Useful logging...
-	//
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL2_2, "CSmsAlphabetConverter::IsSupportedL(): aIsDowngrade=%d.", aIsDowngrade);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL2_3, "CSmsAlphabetConverter::IsSupportedL(): aRequiresAlternativeEncoding=%d.", aRequiresAlternativeEncoding);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL2_4, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_2, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_3, "CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_4, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
 
 	return supported;
 	} // CSmsAlphabetConverter::IsSupportedL
@@ -1596,77 +1468,28 @@ TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
                                           TInt& aNumberRequiringAlternativeEncoding,
                                           TInt& aIndexOfFirstUnconvertibleCharacter)
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL3_1, "[4] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", aDes);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_1, "[2] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", aDes);
 
 	TInt desLength = aDes.Length();
 	//
-	// Initialise the exit params...
+	// Initialise the exit param...
 	//
-	aNumberOfUnconvertibleCharacters    = 0;
-	aNumberOfDowngradedCharacters       = 0;
 	aNumberRequiringAlternativeEncoding = 0;
-	aIndexOfFirstUnconvertibleCharacter = desLength;
 	
 	//
-	// Create buffers for the input converted to 7Bit and a buffer for it once
-	// converted back again...
+	// Create buffer for restored text string...
 	//
-    HBufC8* encodedBuf       = HBufC8::NewLC(desLength*2); // worse case
     HBufC*  backToUnicodeAfterStdBuf = HBufC::NewLC(desLength);
-    TPtr8  encoded(encodedBuf->Des());
     TPtr  backToUnicodeAfterStd(backToUnicodeAfterStdBuf->Des());
-
-    //
-    // Convert the input string to standard 7bit (with downgrades if needed)...
-    // 
-    PrepareForConversionFromNativeL(ESmsEncodingNone);
-
-    TInt  notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
-
-    if (notConverted > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notConverted;
-        }
-    else if (notConverted < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
+    TBool  isCountDowngrade = ETrue; // Count downgraded chars
     
     //
-    // Convert it back again to the native format...
-    //
-    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
-    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicodeAfterStd, encoded, state);
-
-    if (notRestored > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notRestored;
-        }
-    else if (notRestored < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
-
-    //
-    // Work out if the string is acceptable as it is (e.g. no unconvertible
-    // and no downgrades).
-    //
-    for (TInt pos = desLength-1;  pos >= 0;  --pos)
-        {
-        if (backToUnicodeAfterStd[pos] != aDes[pos])
-            {
-            if (backToUnicodeAfterStd[pos] != KReplacementCharacter)
-                {
-                aNumberOfDowngradedCharacters++;
-                }
-            else
-                {
-                aNumberOfUnconvertibleCharacters++;
-                aIndexOfFirstUnconvertibleCharacter = pos;
-                }
-            }
-        }
-
+    // Convert the character...
+    //   
+    ConvertWith7BitEncodingL(aDes, backToUnicodeAfterStd, 
+            aNumberOfUnconvertibleCharacters, aNumberOfDowngradedCharacters, 
+            aIndexOfFirstUnconvertibleCharacter, isCountDowngrade);
+    
     TInt  totalCharFaultsSoFar = aNumberOfUnconvertibleCharacters + 
                                     aNumberOfDowngradedCharacters;
     
@@ -1700,73 +1523,12 @@ TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
         TInt  tmpDowngradedCharacters        = 0;
         TInt  tmpUnconvertibleCharacters     = 0;
         TInt  tmpIndexOfFirstUnconvertibleCharacter = desLength;
-		
-        //
-        // Convert the input string to the alternative encoding...
-        //
-        PrepareForConversionFromNativeL(aEncoding);
-
-        notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
-        if (notConverted > 0)
-            {
-            tmpUnconvertibleCharacters = notConverted;
-            }
-        else if (notConverted < 0)
-            {
-            tmpUnconvertibleCharacters = desLength;
-            }
-
-        //
-        // Convert it back again to the native format...
-        //
-        HBufC*  backToUnicodeAfterAltBuf = HBufC::NewLC(desLength);
-        TPtr  backToUnicodeAfterAlt(backToUnicodeAfterAltBuf->Des());
-        TInt  state       = CCnvCharacterSetConverter::KStateDefault;
-        TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicodeAfterAlt, encoded, state);
-
-        if (notRestored > 0)
-            {
-            tmpUnconvertibleCharacters += notRestored;
-            }
-        else if (notRestored < 0)
-            {
-            tmpUnconvertibleCharacters = desLength;
-            }
-
-        //
-        // Now work out which characters are downgrades, require alternative encoding
-        // or are unsupported.
-        //
-        for (TInt pos = desLength-1;  pos >= 0;  --pos)
-            {
-            if (backToUnicodeAfterStd[pos] != aDes[pos])
-                {
-                // Not supported by standard encoder...
-                if (backToUnicodeAfterAlt[pos] == aDes[pos])
-                    {
-                    // Supported by alternative encoder...
-                    aNumberRequiringAlternativeEncoding++;
-                    }
-                else if (backToUnicodeAfterStd[pos] != KReplacementCharacter)
-                    {
-                    // Downgraded by standard encoder...
-                    tmpDowngradedCharacters++;
-                    }
-                else if (backToUnicodeAfterAlt[pos] != KReplacementCharacter)
-                    {
-                    // Downgraded by alternative encoder...
-                    tmpDowngradedCharacters++;
-                    aNumberRequiringAlternativeEncoding++;
-                    }
-                else
-                    {
-                    // Unconvertible...
-                    tmpUnconvertibleCharacters++;
-                    tmpIndexOfFirstUnconvertibleCharacter = pos;
-                    }
-                }
-            }
-
+        
+        ConvertWithAlternativeEncodingL(aDes, backToUnicodeAfterStd, aEncoding,
+                tmpUnconvertibleCharacters, tmpDowngradedCharacters,
+                aNumberRequiringAlternativeEncoding,
+                tmpIndexOfFirstUnconvertibleCharacter);       
+        
         // Is this better?  
         if ( totalCharFaultsSoFar >= (tmpUnconvertibleCharacters + tmpDowngradedCharacters) )
             {
@@ -1780,27 +1542,236 @@ TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
             // Best conversion is the standard conversion
             aNumberRequiringAlternativeEncoding = 0;
             }
-        
-        CleanupStack::PopAndDestroy(backToUnicodeAfterAltBuf);
         }
     
-    CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
-    CleanupStack::PopAndDestroy(encodedBuf);
-
+    CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);   
+ 
 	//
 	// Useful logging...
 	//
 	TBool  supported = (aNumberOfUnconvertibleCharacters == 0);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL3_2, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL3_3, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL3_4, "CSmsAlphabetConverter::IsSupportedL(): aNumberRequiringAlternativeEncoding=%d.", aNumberRequiringAlternativeEncoding);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL3_5, "CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL3_6, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_2, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_3, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_4, "CSmsAlphabetConverter::IsSupportedL(): aNumberRequiringAlternativeEncoding=%d.", aNumberRequiringAlternativeEncoding);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_5, "CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_6, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
 
 	return supported;
 	} // CSmsAlphabetConverter::IsSupportedL
 
+
+/**
+ *  Tests if the descriptor text is supported by the current character set.
+ * 
+ *  @param aDes                                 Text string to check.
+ *  @param aRestoredDes                         Exit restored text string after conversion.
+ *  @param aNumberOfUnconvertibleCharacters     Exit param for the number of
+ *                                              characters unconvertible.
+ *  @param aNumberOfDowngradedCharacters        Exit param for the number of
+ *                                              downgraded characters.
+ *  @param aIndexOfFirstUnconvertibleCharacter  Exit param for the first
+ *                                              unconverted character.
+ *  @param aIsCountDowngrade                    Flag for counting downgrades.
+ */
+void CSmsAlphabetConverter::ConvertWith7BitEncodingL(const TDesC& aDes, TDes& aRestoredDes,
+                                          TInt& aNumberOfUnconvertibleCharacters,
+                                          TInt& aNumberOfDowngradedCharacters,
+                                          TInt& aIndexOfFirstUnconvertibleCharacter,
+                                          TBool aIsCountDowngrade)
+    {
+ 	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_1, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(aDes=\"%S\")", aDes);
+
+    TInt desLength = aDes.Length();
+    //
+    // Initialise the exit params...
+    //
+    aNumberOfUnconvertibleCharacters    = 0;
+    aNumberOfDowngradedCharacters       = 0;
+    aIndexOfFirstUnconvertibleCharacter = desLength;
+    
+    //
+    // Create buffer for the input converted to 7Bit.
+    //
+    HBufC8* encodedBuf       = HBufC8::NewLC(desLength*2); // worse case
+    TPtr8  encoded(encodedBuf->Des());
+
+    //
+    // Convert the input string to standard 7bit (with downgrades if needed)...
+    // 
+    PrepareForConversionFromNativeL(ESmsEncodingNone);
+
+    TInt  notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
+
+    if (notConverted > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notConverted;
+        }
+    else if (notConverted < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
+    
+    //
+    // Convert it back again to the native format...
+    //
+    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
+    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(aRestoredDes, encoded, state);
+
+    if (notRestored > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notRestored;
+        }
+    else if (notRestored < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
+
+    //
+    // Work out if the string is acceptable as it is (e.g. no unconvertible
+    // and no downgrades).
+    //
+    for (TInt pos = desLength-1;  pos >= 0;  --pos)
+        {
+        if (aRestoredDes[pos] != aDes[pos])
+            {
+            if (aRestoredDes[pos] != KReplacementCharacter
+                    && aIsCountDowngrade)
+                {
+                ++aNumberOfDowngradedCharacters;
+                }
+            else
+                {
+                ++aNumberOfUnconvertibleCharacters;
+                aIndexOfFirstUnconvertibleCharacter = pos;
+                }
+            }
+        }
+    
+    CleanupStack::PopAndDestroy(encodedBuf);
+    
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_2, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_3, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_4, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
+    } // CSmsAlphabetConverter::ConvertWith7BitEncodingL    
+
+/**
+ *  Tests if the descriptor text is supported by given encoding.
+ *  This function can be used with 7bit and 8bit alphabets.
+ * 
+ *  @param aDes                                 Text string to check.
+ *  @param aRestoredStdDes                      Text string restored from 7bit encoding.
+ *  @param aEncoding                            Alternative 7bit encoding.
+ *  @param aNumberOfUnconvertibleCharacters     Exit param for the number of
+ *                                              characters unconvertible.
+ *  @param aNumberOfDowngradedCharacters        Exit param for the number of
+ *                                              downgraded characters.
+ *  @param aNumberRequiringAlternativeEncoding  Exit param for the number of
+ *                                              characters requiring use of
+ *                                              the alternative encoder.
+ *  @param aIndexOfFirstUnconvertibleCharacter  Exit param for the first
+ */
+void CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(const TDesC& aDes, const TDesC& aRestoredStdDes, 
+                                          TSmsEncoding aEncoding,
+                                          TInt& aNumberOfUnconvertibleCharacters,
+                                          TInt& aNumberOfDowngradedCharacters,
+                                          TInt& aNumberRequiringAlternativeEncoding,
+                                          TInt& aIndexOfFirstUnconvertibleCharacter)
+    {
+  	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_1, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(aDes=\"%S\")", aDes);
+  
+    TInt desLength = aDes.Length();
+    //
+    // Initialise the exit params...
+    //
+    aNumberOfUnconvertibleCharacters    = 0;
+    aNumberOfDowngradedCharacters       = 0;
+    aNumberRequiringAlternativeEncoding = 0;
+    aIndexOfFirstUnconvertibleCharacter = desLength;
+        
+    //
+    // Create buffer for the input converted to 7Bit.
+    //
+    HBufC8* encodedBuf = HBufC8::NewLC(desLength*2); // worse case
+    TPtr8  encoded(encodedBuf->Des());
+ 
+    //
+    // Convert the input string to the alternative encoding...
+    //
+    PrepareForConversionFromNativeL(aEncoding);
+
+    TInt notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
+    if (notConverted > 0)
+        {
+        aNumberOfUnconvertibleCharacters = notConverted;
+        }
+    else if (notConverted < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
+
+    //
+    // Create buffer for restored text...
+    //
+    HBufC*  backToUnicodeBuf = HBufC::NewLC(desLength);
+    TPtr  backToUnicode(backToUnicodeBuf->Des());
+
+    //
+    // Convert it back again to the native format...
+    //
+    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
+    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicode, encoded, state);
+
+    if (notRestored > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notRestored;
+        }
+    else if (notRestored < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
+
+    //
+    // Now work out which characters are downgrades, require alternative encoding
+    // or are unsupported.
+    //
+    for (TInt pos = desLength-1;  pos >= 0;  --pos)
+        {
+        if (aRestoredStdDes[pos] != aDes[pos])
+            {
+            // Not supported by standard encoder...
+            if (backToUnicode[pos] == aDes[pos])
+                {
+                // Supported by alternative encoder...
+                ++aNumberRequiringAlternativeEncoding;
+                }
+            else if (aRestoredStdDes[pos] != KReplacementCharacter)
+                {
+                // Downgraded by standard encoder...
+                ++aNumberOfDowngradedCharacters;
+                }
+            else if (backToUnicode[pos] != KReplacementCharacter)
+                {
+                // Downgraded by alternative encoder...
+                ++aNumberOfDowngradedCharacters;
+                ++aNumberRequiringAlternativeEncoding;
+                }
+            else
+                {
+                // Unconvertible...
+                ++aNumberOfUnconvertibleCharacters;
+                aIndexOfFirstUnconvertibleCharacter = pos;
+                }
+            }
+        }
+
+    CleanupStack::PopAndDestroy(2, encodedBuf); // backToUnicode, encodedBuf
+    
+ 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_2, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_3, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_4, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aNumberRequiringAlternativeEncoding=%d.", aNumberRequiringAlternativeEncoding);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_5, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
+    } // CSmsAlphabetConverter::ConvertWithAlternativeEncodingL    
 
 /**
  *  Given a piece of text and an alternative encoding, this function works out
@@ -1825,6 +1796,7 @@ TSmsEncoding CSmsAlphabetConverter::FindBestAlternativeEncodingL(const TDesC& aN
 	if (aSuggestedEncoding != ESmsEncodingNone  &&
 		iSmsAlphabet == TSmsDataCodingScheme::ESmsAlphabet7Bit)
 		{
+        TInt desLength = aNativeCharacters.Length();
 		TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters;
 		TInt  numberRequiringAlternativeEncoding, indexOfFirstUnconvertibleCharacter;
 		
@@ -1832,50 +1804,59 @@ TSmsEncoding CSmsAlphabetConverter::FindBestAlternativeEncodingL(const TDesC& aN
 		// First try the default encoding (but in this case treat downgrades
 		// as unconverted, since later encoders might do better)...
 		//
-		IsSupportedL(aNativeCharacters, ESmsEncodingNone,
-					 numberOfUnconvertibleCharacters,
-                     numberOfDowngradedCharacters,
-                     numberRequiringAlternativeEncoding,
-                     indexOfFirstUnconvertibleCharacter);
+		HBufC*  backToUnicodeAfterStdBuf = HBufC::NewLC(desLength);
+	    TPtr  backToUnicodeAfterStd(backToUnicodeAfterStdBuf->Des());
+	    TBool  isCountDowngrade = ETrue; // Count downgraded chars
+		
+	    ConvertWith7BitEncodingL(aNativeCharacters, backToUnicodeAfterStd, 
+	            numberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
+	            indexOfFirstUnconvertibleCharacter, isCountDowngrade);
+		
 
 		TInt leastUnconvertibleCharacters = numberOfUnconvertibleCharacters + numberOfDowngradedCharacters;
 
-		//
-		// Create a list of alternative encodings to try...
-		//
-		TSmsEncoding  encodingList[8];
-		TInt          encodingCount = 0;
+		if (leastUnconvertibleCharacters > 0)
+		    {
+            //
+            // Create a list of alternative encodings to try...
+            //
+            TSmsEncoding  encodingList[8];
+            TInt          encodingCount = 0;
+            
+            if (aSuggestedEncoding == ESmsEncodingTurkishLockingAndSingleShift)
+                {
+                encodingList[encodingCount++] = ESmsEncodingTurkishSingleShift;
+                encodingList[encodingCount++] = ESmsEncodingTurkishLockingShift;
+                }
+            else if (aSuggestedEncoding == ESmsEncodingPortugueseLockingAndSingleShift)
+                {
+                encodingList[encodingCount++] = ESmsEncodingPortugueseSingleShift;
+                encodingList[encodingCount++] = ESmsEncodingPortugueseLockingShift;
+                }
+            
+            encodingList[encodingCount++] = aSuggestedEncoding;
+
+            //
+            // Now try the all the alternatives...
+            //
+            for (TInt  encoder = 0;  encoder < encodingCount && leastUnconvertibleCharacters > 0;  ++encoder)
+                {
+                ConvertWithAlternativeEncodingL(aNativeCharacters, backToUnicodeAfterStd, 
+                        encodingList[encoder], 
+                        numberOfUnconvertibleCharacters, 
+                        numberOfDowngradedCharacters,
+                        numberRequiringAlternativeEncoding,
+                        indexOfFirstUnconvertibleCharacter);       
+
+                if (numberOfUnconvertibleCharacters + numberOfDowngradedCharacters < leastUnconvertibleCharacters)
+                    {
+                    encodingToUse = encodingList[encoder];
+                    leastUnconvertibleCharacters = numberOfUnconvertibleCharacters + numberOfDowngradedCharacters;
+                    }
+                }
+		    }
 		
-		if (aSuggestedEncoding == ESmsEncodingTurkishLockingAndSingleShift)
-			{
-			encodingList[encodingCount++] = ESmsEncodingTurkishSingleShift;
-			encodingList[encodingCount++] = ESmsEncodingTurkishLockingShift;
-			}
-		else if (aSuggestedEncoding == ESmsEncodingPortugueseLockingAndSingleShift)
-			{
-			encodingList[encodingCount++] = ESmsEncodingPortugueseSingleShift;
-			encodingList[encodingCount++] = ESmsEncodingPortugueseLockingShift;
-			}
-
-		encodingList[encodingCount++] = aSuggestedEncoding;
-		encodingList[encodingCount++] = ESmsEncodingNone;
-
-		//
-		// Now try the all the alternatives...
-		//
-		for (TInt  encoder = 0;  encoder < encodingCount;  encoder++)
-			{
-			IsSupportedL(aNativeCharacters, encodingList[encoder],
-						 numberOfUnconvertibleCharacters,
-	                     numberOfDowngradedCharacters,
-	                     numberRequiringAlternativeEncoding,
-	                     indexOfFirstUnconvertibleCharacter);
-			if (numberOfUnconvertibleCharacters + numberOfDowngradedCharacters < leastUnconvertibleCharacters)
-				{
-				encodingToUse = encodingList[encoder];
-				leastUnconvertibleCharacters = numberOfUnconvertibleCharacters + numberOfDowngradedCharacters;
-				}
-			}
+            CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
 		}
 
 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_FINDBESTALTERNATIVEENCODINGL_2, "CSmsAlphabetConverter::FindBestAlternativeEncodingL(): encodingToUse=%d", encodingToUse);
@@ -3967,9 +3948,19 @@ EXPORT_C TBool CSmsUserData::IsSupportedL(TChar aChar)
 	{
 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_ISSUPPORTEDL_1, "CSmsUserData::IsSupportedL()");
 
+	TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
+	           numberRequiringAlternativeEncoding, indexOfFirstUnconvertibleCharacter;	
+	TBuf<4>   toEncode;
+    toEncode.SetLength(1);
+    toEncode[0]=(TText)aChar;
+
 	CSmsAlphabetConverter* converter=CSmsAlphabetConverter::NewLC(iCharacterSetConverter,iFs,iDataCodingScheme.Alphabet(),IsBinaryData());
-	TBool result=converter->IsSupportedL(aChar);
-	CleanupStack::PopAndDestroy();
+	TBool result=converter->IsSupportedL(toEncode, ESmsEncodingNone, 
+                                         numberOfUnconvertibleCharacters,
+                                         numberOfDowngradedCharacters,
+                                         numberRequiringAlternativeEncoding,
+                                         indexOfFirstUnconvertibleCharacter);	
+	CleanupStack::PopAndDestroy(converter);
 
 	return result;
 	} // CSmsUserData::IsSupportedL

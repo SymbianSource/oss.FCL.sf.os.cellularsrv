@@ -37,4 +37,4 @@ PRJ_MMPFILES
 
 ../Group/SMSPROT.mmp
 
-#include "../test/group/bld.inf"
+#include "../Test/group/bld.inf"

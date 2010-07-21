@@ -111,7 +111,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DOEXTF
                 REINTERPRET_CAST( TUint32*, dataPtr ) );
             break;
                 case EMobilePhoneGetLockInfo:
-            ret = GetLockInfoL( aPackage );
+            ret = GetLockInfoL( aTsyReqHandle, aPackage );
             break;
         // Notify Change of Lock Information
         case EMobilePhoneNotifyLockInfoChange:
@@ -294,7 +294,7 @@ TInt CMmSecurityTsy::CompleteNotifySecurityCapsChange(
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-TInt CMmSecurityTsy::GetLockInfoL( const TDataPackage& aPackage ) 
+TInt CMmSecurityTsy::GetLockInfoL( const TTsyReqHandle aTsyReqHandle, const TDataPackage& aPackage )
     {
 OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_GETLOCKINFOL_1, "LTSY: CMmSecurityTsy::GetLockInfoL - Client call");
     
@@ -308,13 +308,18 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_GETLOCKIN
         //save pointer to client side for completion
         iRetGetLockInfo = data;
 
+#ifdef REQHANDLE_TIMER
+        iMmPhoneTsy->SetTypeOfResponse( CMmPhoneTsy::EMultimodePhoneGetLockInfo, aTsyReqHandle );
+#else
+        iMmPhoneTsy->iTsyReqHandleStore->SetTsyReqHandle( 
+                    CMmPhoneTsy::EMultimodePhoneGetLockInfo, aTsyReqHandle );
+#endif //REQHANDLE_TIMER
+
         ret = iMmPhoneTsy->iMmPhoneExtInterface->GetLockInfoL( aPackage );
          
-        if ( KErrNone == ret )
+        if ( KErrNone != ret )
             {
-            //save req handle type
-            iMmPhoneTsy->iReqHandleType = 
-                CMmPhoneTsy::EMultimodePhoneGetLockInfo;
+            iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetLockInfo );
             }
         }
 

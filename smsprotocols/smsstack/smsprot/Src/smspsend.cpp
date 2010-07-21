@@ -678,7 +678,7 @@ void CSmsMessageSend::SendNextPDU()
 		// Debug logging of the PDU we are sending...
 		//
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
-        LogSmsIfPDU(_L8("ETEL TX PDU: "), iSmsArray[iSmsPDUData.iSent].Pdu(), ETrue);
+        LogSmsIfPDUL(_L8("ETEL TX PDU: "), iSmsArray[iSmsPDUData.iSent].Pdu(), ETrue);
         LogSmsIfSendAttributes(_L8("SENDATTRIBS: "), iMobileSmsSendAttributesV1);
         TBuf<40> timestamp;
         SmsTimeStampL(timestamp);

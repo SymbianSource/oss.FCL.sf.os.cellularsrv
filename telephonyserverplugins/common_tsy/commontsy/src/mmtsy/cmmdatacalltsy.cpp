@@ -1923,7 +1923,7 @@ TInt CMmDataCallTsy::AcquireOwnership(
         {
         CAcquireEntry* entry = NULL;
         // Call is owned, add this req handle to acquire list
-// coverity [resource_leak]
+
 // TRAP macro releases memory while exception caught and trapError != KErrNone
         TRAP( trapError, ( entry = CAcquireEntry::NewL( aTsyReqHandle ) ) );
         if ( trapError != KErrNone )
@@ -1935,6 +1935,7 @@ TInt CMmDataCallTsy::AcquireOwnership(
             {
             iList->iAcquireList.AddLast( *entry );
             }
+        // coverity[leaked_storage]
         }
 
     return KErrNone;

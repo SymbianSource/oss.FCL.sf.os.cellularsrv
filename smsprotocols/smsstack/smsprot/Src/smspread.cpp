@@ -238,7 +238,7 @@ void CSmsPDURead::DoRunL()
 			if (iStatus.Int() == KErrNone)
 				{
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
-                LogSmsIfPDU(_L8("ETEL RX PDU: "), iMsgData, EFalse); 
+                LogSmsIfPDUL(_L8("ETEL RX PDU: "), iMsgData, EFalse); 
                 TBuf<40> timestamp;
                 SmsTimeStampL(timestamp);
                 OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSPDUREAD_DORUNL_2, "%S",timestamp);

@@ -34,7 +34,7 @@ USERINCLUDE     ../inc
 USERINCLUDE     ../../licensee_tsy_stub/inc
 
 
-LIBRARY         ETel.lib             // Etel server and core API
+LIBRARY         etel.lib             // Etel server and core API
 LIBRARY         euser.lib            // E32 user library
 
 LINKAS          SIMATKTSY.dll

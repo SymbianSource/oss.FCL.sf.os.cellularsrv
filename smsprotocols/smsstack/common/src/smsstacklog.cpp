@@ -28,7 +28,7 @@
 
 #include "gsmupdu.h"
 #include "smsstacklog.h"
-#include <S32MEM.H>
+#include <s32mem.h>
 
 //
 // All functions in this file are available only if logging is enabled.
@@ -48,7 +48,7 @@ const TInt  KHexDumpCharsPerLine = 32;
  *  @param aPDU         PDU to log.
  *  @param aCommandPdu  Flag to say if this is a command PDU.
  */
-void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
+void LogSmsIfPDUL(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	{
 	TBuf8<128>  tmpBuf;
 
@@ -203,8 +203,8 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 		tmpBuf.Append(_L8("    -      -"));
 		}
 
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_1, "%s      HEX   MTI        RP UDHI  SRX  MMS   RD     VP", aText);
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_2, "%sFO:   0x%02X  %s", aText, (TUint)firstOctet, tmpBuf);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_1, "%s      HEX   MTI        RP UDHI  SRX  MMS   RD     VP", aText);
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_2, "%sFO:   0x%02X  %s", aText, (TUint)firstOctet, tmpBuf);
 
 	if (pduType == -1)
 		{
@@ -220,7 +220,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	    pduType == CSmsPDU::ESmsStatusReport  ||
 	    pduType == CSmsPDU::ESmsCommand)
 		{
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_3, "%sMR:   0x%02X", aText, aPDU[octetOffset]);
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_3, "%sMR:   0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 		}
 
@@ -229,13 +229,13 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	//
 	if (pduType == CSmsPDU::ESmsCommand)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_4, "%sPID:  0x%02X", aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_4, "%sPID:  0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_5, "%sCT:   0x%02X", aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_5, "%sCT:   0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_6, "%sMN:   0x%02X", aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_6, "%sMN:   0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 		}
 
@@ -261,11 +261,11 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 		
 		tmpBuf.SetLength(telLength);
 
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_7, "%sTEL:  0x%02X  %s", aText, (TUint)typeOfNumber, tmpBuf);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_7, "%sTEL:  0x%02X  %s", aText, (TUint)typeOfNumber, tmpBuf);
 		}
 	else
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_8, "%sTEL:  Illegal length value (%d)!", aText, telLength);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_8, "%sTEL:  Illegal length value (%d)!", aText, telLength);
 		return;
 		}
 
@@ -274,7 +274,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	//
 	if (pduType == CSmsPDU::ESmsSubmit  ||  pduType == CSmsPDU::ESmsDeliver)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_9, "%sPID:  0x%02X", aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_9, "%sPID:  0x%02X", aText, aPDU[octetOffset]);
 		octetOffset++;
 
 		tmpBuf.Zero();
@@ -409,8 +409,8 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 			tmpBuf.Append(_L8("-"));
 			}
 
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_10, "%sDCS:  HEX   CLASS      DCS     INDICATION TYPE", aText);
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_11, "%s      0x%02X  %s", aText, (TUint) dcs, tmpBuf);
+		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_10, "%sDCS:  HEX   CLASS      DCS     INDICATION TYPE", aText);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_11, "%s      0x%02X  %s", aText, (TUint) dcs, tmpBuf);
 		}
 
 	//
@@ -420,7 +420,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 		{
 		if (vpf == EVpRel)
 			{
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_12, "%sVP:   %d (Relative)", aText, aPDU[octetOffset++]);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_12, "%sVP:   %d (Relative)", aText, aPDU[octetOffset++]);
 			}
 		else if (vpf == EVpAbs)
 			{
@@ -432,7 +432,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 				tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 				}
 			
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_13, "%sVP:   %s (Absolute)", aText, tmpBuf);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_13, "%sVP:   %s (Absolute)", aText, tmpBuf);
 			octetOffset += 7;
 			}
 		else if (vpf == EVpEnh)
@@ -445,7 +445,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 				tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 				}
 			
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_14, "%sVP:   %s (Enhanced)", aText, tmpBuf);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_14, "%sVP:   %s (Enhanced)", aText, tmpBuf);
 			octetOffset += 7;
 			}
 		}
@@ -462,7 +462,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 			tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 			}
 			
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_15, "%sSCTS: %s", aText, tmpBuf);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_15, "%sSCTS: %s", aText, tmpBuf);
 		octetOffset += 7;
 		}
 	
@@ -480,10 +480,10 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 			tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 			}
 			
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_16, "%sDT:   %s", aText, tmpBuf);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_16, "%sDT:   %s", aText, tmpBuf);
 		octetOffset += 7;
 
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_17, "%sST:   %02X", aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_17, "%sST:   %02X", aText, aPDU[octetOffset]);
 		octetOffset++;
 		}
 
@@ -527,15 +527,15 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 					}
 				else
 					{
-					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_18, "%sUDL:  Problems with the ieidl_a %d being less that UDHL",aText, ieidl_a);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_18, "%sUDL:  Problems with the ieidl_a %d being less that UDHL",aText, ieidl_a);
 					}
 	
 				if ((ieidl_a + 1) > udhl)
 					{
-					OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_19, "%sUDL:  Corrupted or implement decoding for second iei_b, iei_n!",aText);
+					OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_19, "%sUDL:  Corrupted or implement decoding for second iei_b, iei_n!",aText);
 					}
 	
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_20, "%sUDL:  HEX    UDHL   IEI_A  IEIDL_A   ", aText);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_20, "%sUDL:  HEX    UDHL   IEI_A  IEIDL_A   ", aText);
 
 				TBuf8<200> data;
 				RDesWriteStream dataStream(data);
@@ -552,24 +552,24 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 				dataStream.WriteL(tmpBuf);
 
 				dataStream.Close();
-                OstTraceDefData( OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_21, "%s      0x%02X   0x%02X   0x%02X   0x%02X  %s", data.Ptr(), data.Size() );
+                OstTraceDefData( OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_21, "%s      0x%02X   0x%02X   0x%02X   0x%02X  %s", data.Ptr(), data.Size() );
 				}
 			else
 				{
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_22, "%sUDL:  Corrupted because TP-UDHP is TRUE and TP-UDHL is less than 1!", aText);
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_23, "%sUDL:  HEX   UDHL   IEI_A", aText);
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_24, "%s      0x%02X    0x%02X", aText, udl, udhl);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_22, "%sUDL:  Corrupted because TP-UDHP is TRUE and TP-UDHL is less than 1!", aText);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_23, "%sUDL:  HEX   UDHL   IEI_A", aText);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_24, "%s      0x%02X    0x%02X", aText, udl, udhl);
 				}
 			}
 		else
 			{
 			TInt  udl  = aPDU[octetOffset++];
 			
-			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_25, "%sUDL:  HEX    UDHL", aText);
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_26, "%s      0x%02X   -", aText, udl);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_25, "%sUDL:  HEX    UDHL", aText);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDUL_26, "%s      0x%02X   -", aText, udl);
 			}
 		}
-	} // LogSmsIfPDU
+	} // LogSmsIfPDUL
 
 
 #ifdef OST_TRACE_COMPILER_IN_USE
@@ -841,7 +841,7 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 	tmpBuf.Copy(aText);
 	tmpBuf.Append(_L8("  PDU: "));
 
-	LogSmsIfPDU(tmpBuf, aSmsGsmEntryV1.iMsgData, EFalse);
+	LogSmsIfPDUL(tmpBuf, aSmsGsmEntryV1.iMsgData, EFalse);
 	} // LogSmsIfSmsEntry
 
 
@@ -956,7 +956,7 @@ void LogSmsIfSendAttributes(const TDesC8& aText,
 		tmpBuf.Copy(aText);
 		tmpBuf.Append(_L8("  iSubmitReport PDU: "));
 
-		LogSmsIfPDU(tmpBuf, aAttrib.iSubmitReport, EFalse);
+		LogSmsIfPDUL(tmpBuf, aAttrib.iSubmitReport, EFalse);
 		}
 	} // LogSmsIfSendAttributes
 

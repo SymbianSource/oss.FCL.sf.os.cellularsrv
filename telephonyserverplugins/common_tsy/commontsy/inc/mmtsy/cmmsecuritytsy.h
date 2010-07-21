@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -241,10 +241,12 @@ NONSHARABLE_CLASS( CMmSecurityTsy ) : public CBase
          * Delivers current lock information
          *          
          *
+         * @param aTsyReqHandle
          * @param aPackage Parameters where lock information is stored
          * @return KErrNone or KErrArgument
          */
-        virtual TInt GetLockInfoL( const TDataPackage& aPackage );
+        virtual TInt GetLockInfoL( const TTsyReqHandle aTsyReqHandle,
+                const TDataPackage& aPackage );
 
         /**
          * Sets TSY notify if lock information changes

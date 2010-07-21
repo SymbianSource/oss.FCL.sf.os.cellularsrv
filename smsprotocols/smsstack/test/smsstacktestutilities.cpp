@@ -1504,7 +1504,7 @@ EXPORT_C void CSmsStackTestUtils::PrintAndTestDecodeL(const TGsmSms& aPdu, TSmsD
  */
 	{
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) 
-    LogSmsIfPDU(_L8("TestPduDbToolsL PDU: "), aPdu.Pdu(), EFalse);
+    LogSmsIfPDUL(_L8("TestPduDbToolsL PDU: "), aPdu.Pdu(), EFalse);
     TBuf<40> timestamp;
     SmsTimeStampL(timestamp);
     OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSSTACKTESTUTILS_PRINTANDTESTDECODEL_1, "%S",timestamp);

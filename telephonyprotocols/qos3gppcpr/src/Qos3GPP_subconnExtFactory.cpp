@@ -22,7 +22,7 @@
 
 #include <networking/qos3gpp_subconparams.h>
 #include <ecom/implementationproxy.h>
-#include <networking/qos3GPP_subconparams_factory.h>
+#include <networking/qos3gpp_subconparams_factory.h>
 
 /**
 Data required for instantiating ECOM Plugin

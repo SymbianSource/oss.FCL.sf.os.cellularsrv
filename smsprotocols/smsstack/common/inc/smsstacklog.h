@@ -23,7 +23,7 @@
 // Functions to perform specific logging where necessary.
 //
 
-    void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu);
+    void LogSmsIfPDUL(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu);
     void LogSmsIfHexBuf(const TDesC8& aText, const TDesC8& aHexBuf);
     void LogSmsIfTypeOfNumber(const TDesC8& aText, RMobilePhone::TMobileTON aTON);
     void LogSmsIfNumberingPlan(const TDesC8& aText, RMobilePhone::TMobileNPI aNPI);
