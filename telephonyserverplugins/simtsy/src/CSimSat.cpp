@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,8 +20,14 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimSatTraces.h"
+#endif
+
 #include "CSimSat.h" 
-#include "Simlog.h"
 #include "CSimPhone.h"
 #include "utils.h"
 #include <satcs.h>
@@ -70,13 +76,13 @@ void CSimSat::ConstructL()
 */
 	{
 	
-	LOGMISC1("CSimSat: Entered ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONSTRUCTL_1, "CSimSat: Entered ConstructL()");
 	
 	iSatInfo	=new(ELeave) CArrayFixFlat<TSatInfo>(KSatGranularity);
 
 	iTimer = CSimTimer::NewL(iPhone);
 
-	LOGMISC1("Starting to parse Sat config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONSTRUCTL_2, "Starting to parse Sat config parameters...");
 	
 	TInt count		=CfgFile()->ItemCount(KSatRefresh);
 	const CTestConfigItem* item=NULL;
@@ -95,19 +101,19 @@ void CSimSat::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("duration",ret,0,&KSatRefresh);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KSatRefresh);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,type);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("type",ret,1,&KSatRefresh);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element TYPE returned %d (element no. %d) from tag %s.",ret,1,KSatRefresh);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,fileList);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("fileList",ret,2,&KSatRefresh);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element FILELIST returned %d (element no. %d) from tag %s.",ret,2,KSatRefresh);
 			continue;
 			}
 
@@ -122,7 +128,7 @@ void CSimSat::ConstructL()
 		iSatInfo->AppendL(satInfo);
 		}
 	
-	LOGMISC1("...Finished parsing Sat config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONSTRUCTL_6, "...Finished parsing Sat config parameters...");
 	
 	if(iSatInfo->Count()!=0)
 		{
@@ -138,7 +144,7 @@ CSimSat::~CSimSat()
 *
 */
 	{
-	LOGMISC1("CSimSat: Entered destructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_DTOR_1, "CSimSat: Entered destructor");
 	delete iTimer;
 	if(iSatInfo)
 		{
@@ -330,7 +336,7 @@ CTelObject::TReqMode CSimSat::ReqModeL(const TInt aIpc)
 		case ESatNotifyGetInkeyPCmd:
 		case ESatNotifySendSsPCmd:
 		case ESatNotifyLaunchBrowserPCmd:
-			LOGMISC1("CSimSat: ReqModeL");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_REQMODEL_1, "CSimSat: ReqModeL");
 			ret=KReqModeMultipleCompletionEnabled | KReqModeRePostImmediately;
 			break;
 		case ESatRefreshAllowed:
@@ -382,11 +388,11 @@ TInt CSimSat::RegisterNotification(const TInt aIpc)
 		case ESatNotifyGetInkeyPCmd:
 		case ESatNotifySendSsPCmd:
 		case ESatNotifyLaunchBrowserPCmd:
-			LOGMISC1("CSimSat: RegisterNotification");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_REGISTERNOTIFICATION_1, "CSimSat: RegisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGMISC1("CSimSat: Register error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_REGISTERNOTIFICATION_2, "CSimSat: Register error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -425,11 +431,11 @@ TInt CSimSat::DeregisterNotification(const TInt aIpc)
 		case ESatNotifyGetInkeyPCmd:
 		case ESatNotifySendSsPCmd:
 		case ESatNotifyLaunchBrowserPCmd:
-			LOGMISC1("CSimSat: DeregisterNotification");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_DEREGISTERNOTIFICATION_1, "CSimSat: DeregisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGMISC1("CSimSat: Deregister error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_DEREGISTERNOTIFICATION_2, "CSimSat: Deregister error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -464,12 +470,12 @@ TInt CSimSat::NumberOfSlotsL(const TInt aIpc)
 		case ESatNotifyGetInkeyPCmd:
 		case ESatNotifySendSsPCmd:
 		case ESatNotifyLaunchBrowserPCmd:
-			LOGMISC1("CSimSat: Registered with 2 slot");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_NUMBEROFSLOTSL_1, "CSimSat: Registered with 2 slot");
 			numberOfSlots=2;
 			break;
 		default:
 			// Unknown or invalid IPC
-			LOGMISC1("CSimSat: Number of Slots error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_NUMBEROFSLOTSL_2, "CSimSat: Number of Slots error, unknown IPC");
 			User::Leave(KErrNotSupported);
 			break;
 		}  
@@ -562,7 +568,7 @@ TInt CSimSat::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHandle)
 * @return err KErrNone if request completes ok
 */
 	{
-	LOGMISC1("CSimSat: - CancelService called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CANCELSERVICE_1, "CSimSat: - CancelService called");
 	switch (aIpc)
 		{
 		case ESatNotifyRefreshPCmd:
@@ -732,7 +738,7 @@ TInt CSimSat::RefreshAllowed(const TTsyReqHandle aTsyReqHandle, TDes8* aRefreshA
 	RSat::TRefreshRspV1Pckg* aRspPckg = (RSat::TRefreshRspV1Pckg*)aRefreshAllowedRsp;
 	RSat::TRefreshRspV1& rspV1 = (*aRspPckg)();
 
-	LOGMISC2("RefreshAllowed: - aRefreshAllowedResult %d",rspV1.iGeneralResult);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_REFRESHALLOWED_1, "RefreshAllowed: - aRefreshAllowedResult %d",rspV1.iGeneralResult);
 
 	/* Set simtsy status to reflect clients status */
 	RSat::TPCmdResult refreshAllowedResult = rspV1.iGeneralResult;
@@ -1665,7 +1671,7 @@ TInt CSimSat::NotifySendUssdPCmdCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 	
 TInt CSimSat::TerminalRsp(const TTsyReqHandle aTsyReqHandle, RSat::TPCmd* aPCmd, TDes8* aRsp)
 {
-	LOGMISC1(">>CSimSat::TerminalRsp");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_TERMINALRSP_1, ">>CSimSat::TerminalRsp");
 	iPendingTerRsp = ETrue;
 	
 	switch (*aPCmd)
@@ -1726,7 +1732,7 @@ void CSimSat::TimerCallBack(TInt /*aId*/)
 * @param aId an id identifying which timer callback is being called
 */
 	{
-	LOGMISC1(">>CSimSat::TimerCallBack");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_TIMERCALLBACK_1, ">>CSimSat::TimerCallBack");
 		
 	//
 	// Convert the SIM TSY text version into the RSat binary version...
@@ -2077,7 +2083,7 @@ void CSimSat::TimerCallBack(TInt /*aId*/)
 		iTimer->Start(randTime(),this);
 		}
 	
-	LOGMISC1("<<CSimSat::TimerCallBack");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_TIMERCALLBACK_2, "<<CSimSat::TimerCallBack");
 	}
 
 
@@ -3375,7 +3381,7 @@ TInt CSimSat::EventDownloadCancel(const TTsyReqHandle aTsyReqHandle)
 
 TInt CSimSat::ConfigL(unsigned int aCmd)
 	{
-	LOGMISC1("CSimSat: Entered ConfigL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_1, "CSimSat: Entered ConfigL()");
 
 	TInt dcs,terRsp,src,UICCRsp,lastEnv,duration,type,frameId,frmLayout,defFrmLayout,frameSeparator;
 	TInt immRsp,dispPrio,clrScr,utranQlfr,infoType,brType,location,destn,alphaIDSts;
@@ -3438,7 +3444,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("destination",ret,0,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KMMRetrieve);
 					continue;
 					}
 				tMMRetrieve.iDestn = destn;
@@ -3446,7 +3452,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,alphaIDSts);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("alphaIDStatus",ret,1,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHAIDSTATUS returned %d (element no. %d) from tag %s.",ret,1,KMMRetrieve);
 					continue;
 					}
 				tMMRetrieve.iAlphaStatus=alphaIDSts;
@@ -3454,7 +3460,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,alphaIDBuf);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("alphaIDBuf",ret,2,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHAIDBUF returned %d (element no. %d) from tag %s.",ret,2,KMMRetrieve);
 					continue;
 					}
 				location = alphaIDBuf.Locate('\n');
@@ -3470,7 +3476,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,iconid);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("IconID Identifier",ret,3,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element ICONID IDENTIFIER returned %d (element no. %d) from tag %s.",ret,3,KMMRetrieve);
 					continue;
 					}
 				tMMRetrieve.iIconID = iconid;
@@ -3478,7 +3484,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,iconidqlfr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("IconID qualifier",ret,4,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element ICONID QUALIFIER returned %d (element no. %d) from tag %s.",ret,4,KMMRetrieve);
 					continue;
 					}
 				tMMRetrieve.iIconIDBuf = iconidqlfr;
@@ -3486,7 +3492,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,msgRef);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Message Reference",ret,5,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element MESSAGE REFERENCE returned %d (element no. %d) from tag %s.",ret,5,KMMRetrieve);
 					continue;
 					}
 				location = msgRef.Locate('\n');
@@ -3502,7 +3508,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,rcpFile);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Reception File",ret,6,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element RECEPTION FILE returned %d (element no. %d) from tag %s.",ret,6,KMMRetrieve);
 					continue;
 					}
 				location = rcpFile.Locate('\n');
@@ -3518,7 +3524,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,conId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Content Identifier",ret,7,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element CONTENT IDENTIFIER returned %d (element no. %d) from tag %s.",ret,7,KMMRetrieve);
 					continue;
 					}
 				location = conId.Locate('\n');
@@ -3534,7 +3540,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,msgId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Message Identifier",ret,8,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element MESSAGE IDENTIFIER returned %d (element no. %d) from tag %s.",ret,8,KMMRetrieve);
 					continue;
 					}
 				location = msgId.Locate('\n');
@@ -3550,7 +3556,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,textStatus);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute Status",ret,9,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE STATUS returned %d (element no. %d) from tag %s.",ret,9,KMMRetrieve);
 					continue;
 					}
 				tMMRetrieve.iTextAttStatus = textStatus;
@@ -3558,7 +3564,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,txtAttr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute",ret,10,&KMMRetrieve);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE returned %d (element no. %d) from tag %s.",ret,10,KMMRetrieve);
 					continue;
 					}
 				location = txtAttr.Locate('\n');
@@ -3590,7 +3596,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("destination",ret,0,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KMMSubmit);
 					continue;
 					}
 				tMMSubmit.iDestn = destn;
@@ -3598,7 +3604,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,alphaIDSts);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("alphaIDStatus",ret,1,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHAIDSTATUS returned %d (element no. %d) from tag %s.",ret,1,KMMSubmit);
 					continue;
 					}
 				tMMSubmit.iAlphaStatus=alphaIDSts;
@@ -3606,7 +3612,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,alphaIDBuf);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("alphaIDBuf",ret,2,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHAIDBUF returned %d (element no. %d) from tag %s.",ret,2,KMMSubmit);
 					continue;
 					}
 				location = alphaIDBuf.Locate('\n');
@@ -3618,7 +3624,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,iconid);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("IconID Identifier",ret,3,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element ICONID IDENTIFIER returned %d (element no. %d) from tag %s.",ret,3,KMMSubmit);
 					continue;
 					}
 				tMMSubmit.iIconID = iconid;
@@ -3626,7 +3632,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,iconidqlfr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("IconID qualifier",ret,4,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element ICONID QUALIFIER returned %d (element no. %d) from tag %s.",ret,4,KMMSubmit);
 					continue;
 					}
 				tMMSubmit.iIconIDBuf = iconidqlfr;
@@ -3635,7 +3641,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,subFile);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Submission File",ret,5,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element SUBMISSION FILE returned %d (element no. %d) from tag %s.",ret,5,KMMSubmit);
 					continue;
 					}
 				location = subFile.Locate('\n');
@@ -3647,7 +3653,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,msgId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Message Identifier",ret,6,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element MESSAGE IDENTIFIER returned %d (element no. %d) from tag %s.",ret,6,KMMSubmit);
 					continue;
 					}
 				location = msgId.Locate('\n');
@@ -3659,7 +3665,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,textStatus);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute Status",ret,7,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE STATUS returned %d (element no. %d) from tag %s.",ret,7,KMMSubmit);
 					continue;
 					}
 				tMMSubmit.iTextAttStatus = textStatus;
@@ -3667,7 +3673,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,txtAttr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute",ret,8,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE returned %d (element no. %d) from tag %s.",ret,8,KMMSubmit);
 					continue;
 					}
 				location = txtAttr.Locate('\n');
@@ -3696,7 +3702,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("destination",ret,0,&KMMDisplay);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KMMDisplay);
 					continue;
 					}
 				tMMDisplay.iDestn = destn;
@@ -3704,7 +3710,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,dispPrio);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Display Priority",ret,1,&KMMDisplay);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element DISPLAY PRIORITY returned %d (element no. %d) from tag %s.",ret,1,KMMDisplay);
 					continue;
 					}
 				tMMDisplay.iDispPri = dispPrio;
@@ -3712,7 +3718,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,clrScr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("ClearScreen",ret,2,&KMMDisplay);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element CLEARSCREEN returned %d (element no. %d) from tag %s.",ret,2,KMMDisplay);
 					continue;
 					}
 				tMMDisplay.iClrScr = clrScr;
@@ -3720,7 +3726,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,dispFile);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Submission File",ret,3,&KMMDisplay);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element SUBMISSION FILE returned %d (element no. %d) from tag %s.",ret,3,KMMDisplay);
 					continue;
 					}
 				location = dispFile.Locate('\n');
@@ -3732,7 +3738,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,msgId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Message Identifier",ret,4,&KMMSubmit);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_26, "WARNING - CONFIGURATION FILE PARSING - Reading element MESSAGE IDENTIFIER returned %d (element no. %d) from tag %s.",ret,4,KMMSubmit);
 					continue;
 					}
 				location = msgId.Locate('\n');
@@ -3744,7 +3750,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,immRsp);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Immediate Response",ret,5,&KMMDisplay);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_27, "WARNING - CONFIGURATION FILE PARSING - Reading element IMMEDIATE RESPONSE returned %d (element no. %d) from tag %s.",ret,5,KMMDisplay);
 					continue;
 					}
 				tMMDisplay.iImmRsp = immRsp;
@@ -3769,7 +3775,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("destination",ret,0,&KSetFrames);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_28, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KSetFrames);
 					continue;
 					}
 				tSetFrms.iDestn = destn;
@@ -3777,21 +3783,21 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,frameId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Frame Identifier",ret,1,&KSetFrames);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_29, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAME IDENTIFIER returned %d (element no. %d) from tag %s.",ret,1,KSetFrames);
 					}
 				tSetFrms.iFrmId = frameId;
 				
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,frmLayout);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Frame Layout",ret,2,&KSetFrames);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_30, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAME LAYOUT returned %d (element no. %d) from tag %s.",ret,2,KSetFrames);
 					}
 				tSetFrms.iFrmLayout = frmLayout;
 				
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,frmLayoutBuf);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Frame Layout buffer",ret,3,&KSetFrames);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_31, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAME LAYOUT BUFFER returned %d (element no. %d) from tag %s.",ret,3,KSetFrames);
 					}
 				location = frmLayoutBuf.Locate('\n');
 				if(location > 0)
@@ -3802,14 +3808,14 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,defFrmLayout);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Default Frame Layout",ret,4,&KSetFrames);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_32, "WARNING - CONFIGURATION FILE PARSING - Reading element DEFAULT FRAME LAYOUT returned %d (element no. %d) from tag %s.",ret,4,KSetFrames);
 					}
 				tSetFrms.iDefFrmId = defFrmLayout;
 						
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,frameSeparator);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Frame Separator",ret,5,&KSetFrames);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_33, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAME SEPARATOR returned %d (element no. %d) from tag %s.",ret,5,KSetFrames);
 					}
 				tSetFrms.iFrmSeparator = frameSeparator;
 				
@@ -3832,7 +3838,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("destination",ret,0,&KGetFramesStatus);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_34, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KGetFramesStatus);
 					continue;
 					}
 				tGetFrmsSts.iDestn = destn;
@@ -3840,7 +3846,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,frameId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Frame Id",ret,1,&KGetFramesStatus);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_35, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAME ID returned %d (element no. %d) from tag %s.",ret,1,KGetFramesStatus);
 					continue;
 					}
 				tGetFrmsSts.iFrmId = frameId;
@@ -3848,7 +3854,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,frmLayoutBuf);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("FrameLayout Buffer",ret,1,&KGetFramesStatus);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_36, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAMELAYOUT BUFFER returned %d (element no. %d) from tag %s.",ret,1,KGetFramesStatus);
 					continue;
 					}
 				location = frmLayoutBuf.Locate('\n');
@@ -3876,7 +3882,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Destination",ret,0,&KLocalInfo);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_37, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KLocalInfo);
 					continue;
 					}
 				tLocalInfo.iDeviceId = destn;
@@ -3884,7 +3890,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,infoType);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Information Type",ret,1,&KLocalInfo);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_38, "WARNING - CONFIGURATION FILE PARSING - Reading element INFORMATION TYPE returned %d (element no. %d) from tag %s.",ret,1,KLocalInfo);
 					continue;
 					}
 				tLocalInfo.iLocalInfoType = infoType;
@@ -3892,7 +3898,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,utranQlfr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("UTRAN Qlfr",ret,2,&KLocalInfo);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_39, "WARNING - CONFIGURATION FILE PARSING - Reading element UTRAN QLFR returned %d (element no. %d) from tag %s.",ret,2,KLocalInfo);
 					continue;
 					}
 				tLocalInfo.iUTRANQlfr = utranQlfr;
@@ -3916,7 +3922,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,brType);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Destination",ret,0,&KOpenChnl);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_40, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,0,KOpenChnl);
 					continue;
 					}
 				tOpenChn.iBearerType = brType;
@@ -3924,7 +3930,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,frameId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Information Type",ret,1,&KOpenChnl);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_41, "WARNING - CONFIGURATION FILE PARSING - Reading element INFORMATION TYPE returned %d (element no. %d) from tag %s.",ret,1,KOpenChnl);
 					continue;
 					}
 				tOpenChn.iFrameId = frameId;
@@ -3950,7 +3956,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,frameId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("FrameId",ret,0,&KMiscCmd);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_42, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAMEID returned %d (element no. %d) from tag %s.",ret,0,KMiscCmd);
 					continue;
 					}
 				tMiscCmd.iFrameId = frameId;
@@ -3977,19 +3983,19 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("duration",ret,0,&KRefresh2);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_43, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KRefresh2);
 					continue;
 					}
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,type);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Refresh Type",ret,1,&KRefresh2);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_44, "WARNING - CONFIGURATION FILE PARSING - Reading element REFRESH TYPE returned %d (element no. %d) from tag %s.",ret,1,KRefresh2);
 					continue;
 					}
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,applId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Application Id",ret,2,&KRefresh2);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_45, "WARNING - CONFIGURATION FILE PARSING - Reading element APPLICATION ID returned %d (element no. %d) from tag %s.",ret,2,KRefresh2);
 					continue;
 					}
 
@@ -4022,7 +4028,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret= CTestConfig::GetElement(item->Value(),KStdDelimiter,0,textStatus);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute Status",ret,0,&KSendUssd);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_46, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE STATUS returned %d (element no. %d) from tag %s.",ret,0,KSendUssd);
 					continue;
 					}
 				tSendUssd.iTextAttStatus = textStatus;
@@ -4030,7 +4036,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,txtAttr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute Buffer",ret,1,&KSendUssd);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_47, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE BUFFER returned %d (element no. %d) from tag %s.",ret,1,KSendUssd);
 					continue;
 					}
 				TInt location = txtAttr.Locate('\n');
@@ -4058,7 +4064,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,frameId);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("FrameId",ret,0,&KLaunchBrowser);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_48, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAMEID returned %d (element no. %d) from tag %s.",ret,0,KLaunchBrowser);
 					continue;
 					}
 				tLnchBrwsr.iFrameId = frameId;
@@ -4066,7 +4072,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,terRsp);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Terminal Response",ret,1,&KLaunchBrowser);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_49, "WARNING - CONFIGURATION FILE PARSING - Reading element TERMINAL RESPONSE returned %d (element no. %d) from tag %s.",ret,1,KLaunchBrowser);
 					continue;
 					}
 				tLnchBrwsr.iTerRsp = terRsp;
@@ -4091,7 +4097,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,src);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Source",ret,0,&KUssdDataDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_50, "WARNING - CONFIGURATION FILE PARSING - Reading element SOURCE returned %d (element no. %d) from tag %s.",ret,0,KUssdDataDownload);
 					continue;
 					}
 				tUssdData.iSrc = src;
@@ -4099,7 +4105,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Destination",ret,1,&KUssdDataDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_51, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,1,KUssdDataDownload);
 					continue;
 					}
 				tUssdData.iDestn = destn;
@@ -4107,7 +4113,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,dcs);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Data Coding Scheme",ret,2,&KUssdDataDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_52, "WARNING - CONFIGURATION FILE PARSING - Reading element DATA CODING SCHEME returned %d (element no. %d) from tag %s.",ret,2,KUssdDataDownload);
 					continue;
 					}
 					tUssdData.iDcs = dcs;
@@ -4115,7 +4121,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,ussdStr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("USSD String",ret,3,&KUssdDataDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_53, "WARNING - CONFIGURATION FILE PARSING - Reading element USSD STRING returned %d (element no. %d) from tag %s.",ret,3,KUssdDataDownload);
 					continue;
 					}
 				else
@@ -4129,7 +4135,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 						}
 					else
 						{
-						LOGPARSERR("UssdDataDownload::USSD String",KErrArgument,0,&KUssdDataDownload);
+						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_54, "WARNING - CONFIGURATION FILE PARSING - Reading element USSDDATADOWNLOAD::USSD STRING returned %d (element no. %d) from tag %s.",KErrArgument,0,KUssdDataDownload);
 						continue;
 						}
 					}
@@ -4137,7 +4143,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,UICCRsp);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("UICC Response",ret,4,&KUssdDataDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_55, "WARNING - CONFIGURATION FILE PARSING - Reading element UICC RESPONSE returned %d (element no. %d) from tag %s.",ret,4,KUssdDataDownload);
 					continue;
 					}
 					tUssdData.iUICCRsp = UICCRsp;
@@ -4162,7 +4168,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret= CTestConfig::GetElement(item->Value(),KStdDelimiter,0,infoType);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Information Type",ret,0,&KEventDnld);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_56, "WARNING - CONFIGURATION FILE PARSING - Reading element INFORMATION TYPE returned %d (element no. %d) from tag %s.",ret,0,KEventDnld);
 					continue;
 					}
 				tEventDnld.iVar = infoType;
@@ -4170,7 +4176,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,framesList);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Frames List",ret,1,&KEventDnld);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_57, "WARNING - CONFIGURATION FILE PARSING - Reading element FRAMES LIST returned %d (element no. %d) from tag %s.",ret,1,KEventDnld);
 					continue;
 					}
 				TInt location = framesList.Locate('\n');
@@ -4199,7 +4205,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,textStatus);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attr Status",ret,0,&KSendSs);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_58, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTR STATUS returned %d (element no. %d) from tag %s.",ret,0,KSendSs);
 					continue;
 					}
 					
@@ -4208,7 +4214,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,txtAttr);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Text Attribute",ret,1,&KSendSs);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_59, "WARNING - CONFIGURATION FILE PARSING - Reading element TEXT ATTRIBUTE returned %d (element no. %d) from tag %s.",ret,1,KSendSs);
 					continue;
 					}
 				
@@ -4239,19 +4245,19 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("duration",ret,0,&KElemFiles);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_60, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KElemFiles);
 					continue;
 					}
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,type);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Refresh Type",ret,1,&KElemFiles);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_61, "WARNING - CONFIGURATION FILE PARSING - Reading element REFRESH TYPE returned %d (element no. %d) from tag %s.",ret,1,KElemFiles);
 					continue;
 					}
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,FileList);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Application Id",ret,2,&KElemFiles);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_62, "WARNING - CONFIGURATION FILE PARSING - Reading element APPLICATION ID returned %d (element no. %d) from tag %s.",ret,2,KElemFiles);
 					continue;
 					}
 
@@ -4284,7 +4290,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,src);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Source",ret,0,&KMmsNotificationDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_63, "WARNING - CONFIGURATION FILE PARSING - Reading element SOURCE returned %d (element no. %d) from tag %s.",ret,0,KMmsNotificationDownload);
 					continue;
 					}
 				tMmsNotificationDownload.iSrc = src;
@@ -4292,7 +4298,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,destn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Destination",ret,1,&KMmsNotificationDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_64, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTINATION returned %d (element no. %d) from tag %s.",ret,1,KMmsNotificationDownload);
 					continue;
 					}
 				tMmsNotificationDownload.iDestn = destn;
@@ -4300,7 +4306,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,mmsNotfn);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("MMS notification",ret,2,&KMmsNotificationDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_65, "WARNING - CONFIGURATION FILE PARSING - Reading element MMS NOTIFICATION returned %d (element no. %d) from tag %s.",ret,2,KMmsNotificationDownload);
 					continue;
 					}
 				location = mmsNotfn.Locate('\n');
@@ -4313,7 +4319,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,lastEnv);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("Last envelope",ret,3,&KMmsNotificationDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_66, "WARNING - CONFIGURATION FILE PARSING - Reading element LAST ENVELOPE returned %d (element no. %d) from tag %s.",ret,3,KMmsNotificationDownload);
 					continue;
 					}
 				tMmsNotificationDownload.iLastEnv = lastEnv;
@@ -4321,7 +4327,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,UICCRsp);
 				if(ret!=KErrNone)
 					{
-					LOGPARSERR("UICC Response",ret,4,&KMmsNotificationDownload);
+					OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_67, "WARNING - CONFIGURATION FILE PARSING - Reading element UICC RESPONSE returned %d (element no. %d) from tag %s.",ret,4,KMmsNotificationDownload);
 					continue;
 					}
 				tMmsNotificationDownload.iUICCRsp = UICCRsp;
@@ -4330,7 +4336,7 @@ TInt CSimSat::ConfigL(unsigned int aCmd)
 				}
 			break;
 		default:
-			LOGMISC1("Unknown command to process");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSAT_CONFIGL_68, "Unknown command to process");
 			return KErrNotSupported;
 
 		}

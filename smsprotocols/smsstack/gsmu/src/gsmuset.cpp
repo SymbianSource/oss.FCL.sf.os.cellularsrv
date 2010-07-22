@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "gsmusetTraces.h"
+#endif
 
 #include "gsmuset.h"
 #include "smsstacklog.h"
@@ -39,7 +45,7 @@ EXPORT_C TSmsUserDataSettings::TSmsUserDataSettings():
  */
 EXPORT_C TBool TSmsUserDataSettings::TextConcatenated(TBool* aIs16Bit) const
 	{
-	LOGGSMU1("TSmsUserDataSettings::TextConcatenated()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSUSERDATASETTINGS_TEXTCONCATENATED_1, "TSmsUserDataSettings::TextConcatenated()");
 
 	if (aIs16Bit!=NULL)
 		*aIs16Bit=iFlags&ESmsFlagConcatenatedUsing16BitReference;
@@ -57,7 +63,7 @@ EXPORT_C TBool TSmsUserDataSettings::TextConcatenated(TBool* aIs16Bit) const
  */
 EXPORT_C void TSmsUserDataSettings::SetTextConcatenated(TBool aConcatenated,TBool aIs16Bit)
 	{
-	LOGGSMU1("TSmsUserDataSettings::SetTextConcatenated()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSMSUSERDATASETTINGS_SETTEXTCONCATENATED_1, "TSmsUserDataSettings::SetTextConcatenated()");
 
 	iFlags=aIs16Bit? iFlags|ESmsFlagConcatenatedUsing16BitReference: iFlags&(~ESmsFlagConcatenatedUsing16BitReference);
 	iFlags=aConcatenated? iFlags|ESmsFlagConcatenated: iFlags&(~ESmsFlagConcatenated);

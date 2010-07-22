@@ -13,8 +13,21 @@
 // Description:
 //
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "watcherbaseTraces.h"
+#endif
+
+#undef TCOM_ARG
+#ifdef OST_TRACE_COMPILER_IN_USE
+#define TCOM_ARG(x) x
+#else
+#define TCOM_ARG(x)
+#endif
+
 #include "watcherbase.h"
-#include "watcherlog.h"
 
 // System includes
  #include <commsdattypesv1_1.h>
@@ -53,7 +66,7 @@ EXPORT_C CWatcherBase::CWatcherBase(TInt aPriority)
 	TheSeed = now.Int64();
 
     //-- define properties for test purposes
-    LOGCOMMON1("CTelWatcherBase : defining properties for testing");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_CTOR_1, "CTelWatcherBase : defining properties for testing");
    
     //-- For debugging purposes only, used by TE_TelWatchers(Unit).
 
@@ -83,7 +96,7 @@ EXPORT_C CWatcherBase::~CWatcherBase()
 
 EXPORT_C void CWatcherBase::ConstructL()
 	{
-	LOGCOMMON1("WatcherBase : Creating timer");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_CONSTRUCTL_1, "WatcherBase : Creating timer");
 	User::LeaveIfError(iTimer.CreateLocal());
 
 	User::LeaveIfError(iPhonePowerProperty.Attach(KUidSystemCategory, KUidPhonePwr.iUid));    
@@ -98,30 +111,23 @@ EXPORT_C void CWatcherBase::ConstructL()
 
 EXPORT_C void CWatcherBase::SuspendFor(TInt aTimeInSeconds)
 	{
-	LOGCOMMON1("WatcherBase : Pausing after error");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_SUSPENDFOR_1, "WatcherBase : Pausing after error");
 	TTimeIntervalMicroSeconds32 timeToSuspendFor = aTimeInSeconds * KOneSecond;
 	iTimer.After(iStatus, timeToSuspendFor);
 	State() = EBaseStateSuspending;
 	SetActive();
 	}
 
-EXPORT_C void CWatcherBase::SetDisabled(const TDesC& aLogEntry, TInt aError)
+EXPORT_C void CWatcherBase::SetDisabled(const TDesC& TCOM_ARG(aLogEntry), TInt TCOM_ARG(aError))
 	{
-#ifdef _WATCHER_LOGGING_ENABLED
-	TBuf8<256>  tmpBuf;
-	tmpBuf.Copy(aLogEntry);
-	LOGCOMMON3("Log Entry \"%S\" error %d", &tmpBuf, aError);
-#else
-	(void) aLogEntry;
-	(void) aError;
-#endif
-	LOGCOMMON1("WatcherBase : Watcher is now disabled");
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_SETDISABLED_1, "Log Entry \"%S\" error %d", aLogEntry, aError);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_SETDISABLED_2, "WatcherBase : Watcher is now disabled");
 	State() = EBaseStateDisabled;
 	}
 
 EXPORT_C void CWatcherBase::RequestNextState()
 	{
-	LOGCOMMON1("WatcherBase : Requesting State Change");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_REQUESTNEXTSTATE_1, "WatcherBase : Requesting State Change");
 
 	if	(State() != EBaseStateDisabled)
 		{
@@ -139,7 +145,7 @@ EXPORT_C void CWatcherBase::WaitForPhoneToPowerUpL()
 	{
 	TInt val;	
 	
-	LOGCOMMON1("WatcherBase : Waiting for phone to be turned on");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_WAITFORPHONETOPOWERUPL_1, "WatcherBase : Waiting for phone to be turned on");
 	__ASSERT_DEBUG(!IsActive(), WatcherBasePanic(EUnexpectedActiveState));
 	Cancel();
 
@@ -157,7 +163,7 @@ EXPORT_C void CWatcherBase::WaitForPhoneToPowerUpL()
 	if (val != ESAPhoneOff)
 		{//-- phone is already ON, complete request so that we go to RunL without waiting
 		iPhonePowerProperty.Cancel();        
-		LOGCOMMON1("CTelWatcherBase::WaitForPhoneToPowerUpL ??? phone is already turned ON");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_WAITFORPHONETOPOWERUPL_2, "CTelWatcherBase::WaitForPhoneToPowerUpL ??? phone is already turned ON");
 		}
 	}
 
@@ -167,12 +173,12 @@ EXPORT_C void CWatcherBase::WaitForPhoneToPowerUpL()
 
 EXPORT_C void CWatcherBase::RunL()
 	{
-	LOGCOMMON2("WatcherBase : RunL(%d)", iStatus.Int());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_1, "WatcherBase : RunL(%d)", iStatus.Int());
 
 	switch(State())
 		{
 	case EBaseStateConnectingToPropertyNotifier:		
-		LOGCOMMON1("WatcherBase : Attaching to Property");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_2, "WatcherBase : Attaching to Property");
 
 		// Virtual function call back, for any subclasses that need to implement
 		// any special stuff.
@@ -186,7 +192,7 @@ EXPORT_C void CWatcherBase::RunL()
 	case EBaseStateWaitingForPhoneToPowerUp:
 		// We were waiting for the phone to become available again. We now must restart
 		// this watcher from scratch.
-		LOGCOMMON1("WatcherBase : Phone available again. Restarting watcher framework");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_3, "WatcherBase : Phone available again. Restarting watcher framework");
 		
         //--  phone power state has changed (it must be turned ON)
         //--  retrieve its state and check.
@@ -196,19 +202,19 @@ EXPORT_C void CWatcherBase::RunL()
 
         if (val == ESAPhoneOn)
         {   //-- everything OK, the phone has been turned ON, restart this watcher from scratch.
-		    LOGCOMMON1("CTelWatcherBase : Phone has been turned ON. Restarting watcher framework");
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_4, "CTelWatcherBase : Phone has been turned ON. Restarting watcher framework");
             State() = EBaseStateConnectingToPropertyNotifier;
             RequestNextState();
         }
         else
         {   //-- strange situation, we were waiting for phone On and it now Off, try to wait again
-            LOGCOMMON1("CTelWatcherBase : ??? Phone has been turned OFF. Continue waiting...");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_5, "CTelWatcherBase : ??? Phone has been turned OFF. Continue waiting...");
             WaitForPhoneToPowerUpL();
         } 		
 		break;
 
 	case EBaseStateSuspending:
-		LOGCOMMON1("WatcherBase : Completed suspension. Resuming passive state");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_6, "WatcherBase : Completed suspension. Resuming passive state");
 		
 		State() = EBaseStatePassive; // Fall through
 
@@ -218,7 +224,7 @@ EXPORT_C void CWatcherBase::RunL()
 	
 	default:
 	case EBaseStateDisabled:
-		LOGCOMMON1("WatcherBase : RunL called in Disabled state. Ooops");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNL_7, "WatcherBase : RunL called in Disabled state. Ooops");
 		__ASSERT_DEBUG(0, WatcherBasePanic(EUnexpectedState));
 		}
 	}
@@ -247,17 +253,13 @@ EXPORT_C void CWatcherBase::DoCancel()
 	// Let other sub classes cancel their requests
 	HandleCancel();
 	}
-
-EXPORT_C TInt CWatcherBase::RunError(TInt aError)
+ 
+EXPORT_C TInt CWatcherBase::RunError(TInt TCOM_ARG(aError))
 //
 //	Called when RunL (or a sub-function there-of) leaves.
 //
 	{
-#ifdef _WATCHER_LOGGING_ENABLED
-	LOGCOMMON2("WatcherBase : RunError called with error of %d", aError);
-#else
-	(void) aError;
-#endif
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNERROR_1, "WatcherBase : RunError called with error of %d", aError);
 
 	// Should never be called from outside the framework
 	__ASSERT_DEBUG(!IsActive(), WatcherBasePanic(EUnexpectedActiveState));
@@ -284,7 +286,7 @@ EXPORT_C TInt CWatcherBase::RunError(TInt aError)
 	else
 		{
 		// Put us in the start up state again
-		LOGCOMMON1("WatcherBase : Phone available again. Restarting watcher framework");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CWATCHERBASE_RUNERROR_2, "WatcherBase : Phone available again. Restarting watcher framework");
 		State() = EBaseStateConnectingToPropertyNotifier;
 		RequestNextState();
 		}
@@ -407,32 +409,28 @@ EXPORT_C void CPhoneWatcher::Reset()
 
 TInt CPhoneWatcher::RetrieveTSYName()
 	{
-	LOGCOMMON1("PhoneWatcher : RetrieveTSYName()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_RETRIEVETSYNAME_1, "PhoneWatcher : RetrieveTSYName()");
 	TRAPD(error, DoRetrieveTSYNameL());
 	return error;
 	}
 
 TInt CPhoneWatcher::ConnectToETelServer()
 	{
-	LOGCOMMON1("PhoneWatcher : ConnectToETelServer()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOETELSERVER_1, "PhoneWatcher : ConnectToETelServer()");
 	return ETel().Connect();
 	}
 
 TInt CPhoneWatcher::LoadPhoneModule()
 	{
-#ifdef _WATCHER_LOGGING_ENABLED
-	TBuf8<256>  tmpBuf;
-	tmpBuf.Copy(iTSYName);
-	LOGCOMMON1("PhoneWatcher : LoadPhoneModule()");
-	LOGCOMMON2("TSY Name to load is %S",&tmpBuf);
-#endif
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_LOADPHONEMODULE_1, "PhoneWatcher : LoadPhoneModule()");
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_LOADPHONEMODULE_2, "TSY Name to load is %S",iTSYName);
 
 	return ETel().LoadPhoneModule(iTSYName);
 	}
 
 TInt CPhoneWatcher::ConnectToPhone()
 	{
-	LOGCOMMON1("PhoneWatcher : ConnectToPhone()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_1, "PhoneWatcher : ConnectToPhone()");
 	TInt error;
 
 	RTelServer::TPhoneInfo phoneInfo;
@@ -442,11 +440,11 @@ TInt CPhoneWatcher::ConnectToPhone()
 	error = ETel().EnumeratePhones(phoneCount);
 	if	(error < KErrNone)
 		{
-		LOGCOMMON2("PhoneWatcher : Failed to enumerate phones (%d)", error);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_2, "PhoneWatcher : Failed to enumerate phones (%d)", error);
 		return error;
 		}
 
-	LOGCOMMON2("PhoneWatcher : Counted %d 'phones'", phoneCount);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_3, "PhoneWatcher : Counted %d 'phones'", phoneCount);
 
 	// Iterate through all the phones
 	for(TInt i=0; i<phoneCount; i++)
@@ -457,29 +455,22 @@ TInt CPhoneWatcher::ConnectToPhone()
 		error = ETel().GetTsyName(i, matchTsyName);
 		if	(error < KErrNone)
 			{
-			LOGCOMMON2("PhoneWatcher : Getting TSY name failed (%d)", error);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_4, "PhoneWatcher : Getting TSY name failed (%d)", error);
 			return error;
 			}
 
-#ifdef _WATCHER_LOGGING_ENABLED
-		TBuf8<256>  tmpMatchTsyName;
-		tmpMatchTsyName.Copy(matchTsyName);
-		LOGCOMMON3("PhoneWatcher : TSY for phone %d is '%S'", i, &tmpMatchTsyName);
-#endif
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_5, "PhoneWatcher : TSY for phone %d is '%S'", i, matchTsyName);
+
 
 		// See if the phone belongs to the TSY
 		if	(matchTsyName.CompareF(iTSYName) == 0)
 			{
-#ifdef _WATCHER_LOGGING_ENABLED
-			TBuf8<256>  tsyNameBuf;
-			tsyNameBuf.Copy(iTSYName);
-			LOGCOMMON3("PhoneWatcher : %S is a match for CommDb TSY: %S", &tmpMatchTsyName, &tsyNameBuf);
-#endif
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_6, "PhoneWatcher : %S is a match for CommDb TSY: %S", matchTsyName, iTSYName);
 
 			error = ETel().GetPhoneInfo(i, phoneInfo);
 			if	(error < KErrNone)
 				{
-				LOGCOMMON2("PhoneWatcher : Getting phone info failed (%d)", error);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_7, "PhoneWatcher : Getting phone info failed (%d)", error);
 				return error;
 				}
 			break;
@@ -490,19 +481,11 @@ TInt CPhoneWatcher::ConnectToPhone()
 	error = Phone().Open(ETel(), phoneInfo.iName);
 	if	(error < KErrNone)
 		{
-#ifdef _WATCHER_LOGGING_ENABLED
-		TBuf8<256>  tmpBuf;
-		tmpBuf.Copy(phoneInfo.iName);
-		LOGCOMMON3("PhoneWatcher : Open phone %S failed (%d)", &tmpBuf, error);
-#endif
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_8, "PhoneWatcher : Open phone %S failed (%d)", phoneInfo.iName, error);
 		return error;
 		}
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEWATCHER_CONNECTTOPHONE_9, "PhoneWatcher : Opened 'phone' %S", phoneInfo.iName);
 
-#ifdef _WATCHER_LOGGING_ENABLED
-	TBuf8<256>  tmpBuf;
-	tmpBuf.Copy(phoneInfo.iName);
-	LOGCOMMON2("PhoneWatcher : Opened 'phone' %S", &tmpBuf);
-#endif
 
 	// Indicate we're connected and to move to next state.
 	return error;

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,8 +16,13 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CMmSimLockTsyTraces.h"
+#endif
+
 #include "CMmSimLockTsy.h"
-#include <ctsy/tflogger.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
 
 // ======== MEMBER FUNCTIONS ========
@@ -448,7 +453,7 @@ void CMmSimLockTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-TFLOGSTRING3( "CMmCustomTsy: CMmSimLockTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMLOCKTSY_COMPLETE_1,  "CMmCustomTsy: CMmSimLockTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
 
     // All possible TSY req handle types are listed in the
     // switch case below.

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspdelTraces.h"
+#endif
 
 #include "smspdel.h"
 #include "smspmain.h"
@@ -34,7 +40,7 @@ CSmsPDUDelete* CSmsPDUDelete::NewL(const TSmsSettings& aSmsSettings,
 								   RMobileSmsMessaging& aSmsMessaging
 								   )
 	{
-	LOGSMSPROT1("CSmsPDUDelete::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_NEWL_1, "CSmsPDUDelete::NewL()");
 
 	CSmsPDUDelete* smsPduDelete =
 		new(ELeave) CSmsPDUDelete(aSmsSettings,aSmsMessaging);
@@ -68,7 +74,7 @@ CSmsPDUDelete::CSmsPDUDelete(const TSmsSettings& aSmsSettings,
  */
 void CSmsPDUDelete::ConstructL()
 	{
-	LOGSMSPROT1("CSmsPDUDelete::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_CONSTRUCTL_1, "CSmsPDUDelete::ConstructL()");
 
 	ConstructTimeoutL();
 	} // CSmsPDUDelete::ConstructL
@@ -83,7 +89,7 @@ void CSmsPDUDelete::ConstructL()
  */
 void CSmsPDUDelete::Start(CArrayFix<TGsmSmsSlotEntry>& aLocationArray, TRequestStatus& aStatus)
 	{
-	LOGSMSPROT1("CSmsPDUDelete::Start()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_START_1, "CSmsPDUDelete::Start()");
 
 	__ASSERT_DEBUG(iState==ESmsPDUDeleteIdle,SmspPanic(KSmspPanicUnexpectedState));
 
@@ -102,7 +108,7 @@ void CSmsPDUDelete::Start(CArrayFix<TGsmSmsSlotEntry>& aLocationArray, TRequestS
  */
 void CSmsPDUDelete::DoRunL()
 	{
-    LOGSMSPROT2("CSmsPDUDelete::RunL [iStatus=%d]", iStatus.Int());
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_DORUNL_1, "CSmsPDUDelete::RunL [iStatus=%d]", iStatus.Int());
 
 	switch (iState)
 		{
@@ -173,7 +179,7 @@ void CSmsPDUDelete::DoRunL()
  */
 void CSmsPDUDelete::OpenStore()
 	{
-	LOGSMSPROT1("CSmsPDUDelete::OpenStore()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_OPENSTORE_1, "CSmsPDUDelete::OpenStore()");
 
 	//
 	// Open the SMS Store for the first PDU...
@@ -212,7 +218,7 @@ void CSmsPDUDelete::OpenStore()
  */
 void CSmsPDUDelete::DeletePDU()
 	{
-	LOGSMSPROT1("CSmsPDUDelete::DeletePDU()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_DELETEPDU_1, "CSmsPDUDelete::DeletePDU()");
 
 	//
 	// Delete the first entry in the list...
@@ -233,7 +239,7 @@ void CSmsPDUDelete::DeletePDU()
  */
 void CSmsPDUDelete::DoCancel()
 	{
-	LOGSMSPROT1("CSmsPDUDelete::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_DOCANCEL_1, "CSmsPDUDelete::DoCancel()");
 
 	TimedSetActiveCancel();
 
@@ -279,7 +285,7 @@ void CSmsPDUDelete::DoCancel()
  */
 void CSmsPDUDelete::Complete(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmsPDUDelete::Complete()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUDELETE_COMPLETE_1, "CSmsPDUDelete::Complete()");
 
 	//
 	// Only close the SMS Storage if the object is not active (and it may be

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -32,14 +32,13 @@
 #include <networking/bca2.h>
 
 class CRawIP2Flow;
-class CBttLogger;
 
 class CBinderBase : public CBase, public ESock::MLowerDataSender, public ESock::MLowerControl,
 						BasebandChannelAdaptation2::MUpperControl, BasebandChannelAdaptation2::MUpperDataReceiver
 	{
 public:
 	friend class CRawIP2Flow;
-	CBinderBase(CRawIP2Flow& aFlow, CBttLogger* aTheLogger);
+	CBinderBase(CRawIP2Flow& aFlow);
 	virtual ~CBinderBase();
 
 public:
@@ -85,7 +84,6 @@ protected:
 	ESock::MUpperControl* iUpperControl;  // not owned
 	ESock::MUpperDataReceiver* iUpperReceiver;  // not owned
 	BasebandChannelAdaptation2::MLowerDataSender* iLowerDataSender; // not owned
-	CBttLogger* iTheLogger;
 	
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
 	CIPTagHeader* iIPTagHeader; // owned

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmsmsstoragetsyTraces.h"
+#endif
+
 #include <etelmm.h>
 #include "cmmsmsstoragetsy.h"
 #include "cmmphonetsy.h"
@@ -23,7 +29,6 @@
 #include "cmmsmsextinterface.h"
 #include "MmTsy_numberOfSlots.h"
 #include <ctsy/pluginapi/cmmdatapackage.h>
-#include <ctsy/tflogger.h>
 
 // ======== MEMBER FUNCTIONS ========
 
@@ -34,7 +39,7 @@ CMmSmsStorageTsy::CMmSmsStorageTsy():
 
 void CMmSmsStorageTsy::ConstructL()
     {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::ConstructL\n");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_CONSTRUCTL_1, "TSY: CMmSmsStorageTsy::ConstructL\n");
     ResetVariables();
 
     iSmsListArray = new ( ELeave ) CArrayPtrFlat<TSmsMsg>( 1 );
@@ -65,7 +70,7 @@ CMmSmsStorageTsy* CMmSmsStorageTsy::NewL(
 
 CMmSmsStorageTsy::~CMmSmsStorageTsy()
     {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::~CMmSmsStorageTsy");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_DTOR_1, "TSY: CMmSmsStorageTsy::~CMmSmsStorageTsy");
     if ( iMmPhone )
         {
         // deregister tsy object from message manager
@@ -110,7 +115,7 @@ TFLOGSTRING("TSY: CMmSmsStorageTsy::~CMmSmsStorageTsy");
 //
 void CMmSmsStorageTsy::Init()
     {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::Init.");	
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_INIT_1, "TSY: CMmSmsStorageTsy::Init.");
     // Send request to the Domestic OS layer.
     TRAP_IGNORE( iMmPhone->MessageManager()->HandleRequestL( 
         EMobilePhoneStoreGetInfo ); );
@@ -644,7 +649,7 @@ void CMmSmsStorageTsy::CompleteReadSms(
     TInt aResult, 
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmSmsStorageTsy::CompleteReadSms. Error: %d",aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADSMS_1, "TSY: CMmSmsStorageTsy::CompleteReadSms. Error: %d",aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsReadSms );
 
@@ -676,7 +681,7 @@ TInt CMmSmsStorageTsy::WriteSmsL(
 
     if ( sizeof( RMobilePhoneStore::TMobilePhoneStoreEntryV1 ) > aSmsPckg->Length() )
         {
-        TFLOGSTRING ("TSY: CMmSmsStorageTsy::WriteSms bad size argument");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_WRITESMSL_1, "TSY: CMmSmsStorageTsy::WriteSms bad size argument");
         // Complete the request with appropiate error        
         return KErrArgument;
         }
@@ -731,7 +736,7 @@ void CMmSmsStorageTsy::CompleteWriteSms(
     TInt aResult, 
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmSmsStorageTsy::CompleteWriteSms. Error: %d",aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEWRITESMS_1, "TSY: CMmSmsStorageTsy::CompleteWriteSms. Error: %d",aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsWriteSms );
 
@@ -827,7 +832,7 @@ TInt CMmSmsStorageTsy::DeleteSmsL(
 void CMmSmsStorageTsy::CompleteDeleteSms( 
     TInt aResult )
     {
-TFLOGSTRING2("TSY: CMmSmsStorageTsy::CompleteDeleteSms. Error: %d", aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEDELETESMS_1, "TSY: CMmSmsStorageTsy::CompleteDeleteSms. Error: %d", aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsEraseSms );
 
@@ -894,7 +899,7 @@ TInt CMmSmsStorageTsy::DeleteAllSmsL(
 void CMmSmsStorageTsy::CompleteDeleteAllSms( 
     TInt aResult )
     {
-TFLOGSTRING2( "TSY: CMmSmsStorageTsy::CompleteDeleteAllSms. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEDELETEALLSMS_1,  "TSY: CMmSmsStorageTsy::CompleteDeleteAllSms. Error: %d", aResult );
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsEraseAllSms );
 
@@ -960,12 +965,12 @@ void CMmSmsStorageTsy::CompleteNotifyStoreEvent(
         {
 		// if store has space, get "StoreAdded" notifications
 		iUsedEntries++;
-TFLOGSTRING("TSY: CMmSmsStorageTsy::StoreEntryAdded notifications");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETENOTIFYSTOREEVENT_1, "TSY: CMmSmsStorageTsy::StoreEntryAdded notifications");
 		if ( iUsedEntries == iTotalEntries )
 			{ 
 		// if store gets full after class2 message, get "StoreAdded and 
 		// StoreFull" notifications
-TFLOGSTRING("TSY: CMmSmsStorageTsy::StoreEntryAdded and StoreFull notifications");	
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETENOTIFYSTOREEVENT_2, "TSY: CMmSmsStorageTsy::StoreEntryAdded and StoreFull notifications");
 			aEvent = ( RMobilePhoneStore::KStoreFull | 
 			    RMobilePhoneStore::KStoreEntryAdded );
 			}
@@ -977,12 +982,12 @@ TFLOGSTRING("TSY: CMmSmsStorageTsy::StoreEntryAdded and StoreFull notifications"
 		// if entry has been deleted from store, get "EntryDeleted" 
         // notification
 		iUsedEntries--;
-TFLOGSTRING("TSY: CMmSmsStorageTsy::StoreEntryDeleted notifications");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETENOTIFYSTOREEVENT_3, "TSY: CMmSmsStorageTsy::StoreEntryDeleted notifications");
 		if ( (iUsedEntries+1) == iTotalEntries )
 			{
 		    // if store has been full, after deleting get notifications 
 		    // "EntryDeleted" and "StoreHasSpace"
-TFLOGSTRING("TSY: CMmSmsStorageTsy::StoreEntryDeleted and StoreHasSpace notifications");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETENOTIFYSTOREEVENT_4, "TSY: CMmSmsStorageTsy::StoreEntryDeleted and StoreHasSpace notifications");
 			aEvent = ( RMobilePhoneStore::KStoreHasSpace | 
 			    RMobilePhoneStore::KStoreEntryDeleted );
 			}
@@ -1004,7 +1009,7 @@ TFLOGSTRING("TSY: CMmSmsStorageTsy::StoreEntryDeleted and StoreHasSpace notifica
         *smsStoreEvent = aEvent;
         *iNotifySmsStoreEventIndexPtr = aLocation;
 
-TFLOGSTRING3("TSY: CMmSmsStorageTsy::CompleteNotifyStoreEvent:notified client about event=0x%x, location=%d", aEvent, aLocation );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETENOTIFYSTOREEVENT_5, "TSY: CMmSmsStorageTsy::CompleteNotifyStoreEvent:notified client about event=0x%08x, location=%d", (TUint)aEvent, aLocation );
         ReqCompleted( reqHandle, KErrNone );
         }
     }
@@ -1023,7 +1028,7 @@ TInt CMmSmsStorageTsy::ReadAllSmsPhase1L(
     CRetrieveMobilePhoneSmsList::TBatchRequestData const* aRequest, 
     TInt* aBufSize )
     {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_1, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L");
     TInt ret( KErrNone );
 
     TTsyReqHandle readAllSmsHandle = iMmTsyReqHandleStore->GetTsyReqHandle( 
@@ -1045,7 +1050,7 @@ TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L");
         }
     else   
         {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1. SMS reading starts.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_2, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1. SMS reading starts.");
         // Client is asking for all SMS store entries
         iReadAllBufSizePtr = aBufSize;
         iReadAllId = aRequest->iClient;
@@ -1072,7 +1077,7 @@ TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1. SMS reading starts.");
             
             if ( KErrNone != ret )
             	{
-TFLOGSTRING2("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L - and the returned value for EMobilePhoneStoreReadAllPhase1:%d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_3, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L - and the returned value for EMobilePhoneStoreReadAllPhase1:%d", ret);
 				(void)iMmTsyReqHandleStore->ResetTsyReqHandle( CMmSmsTsy::EMultimodeSimStSmsReadAllSms );
 				// the returned value from ResetTsyReqHandle is not needed. 
             	}
@@ -1086,7 +1091,7 @@ TFLOGSTRING2("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L - and the returned value 
 		// DOS layer returned with error
 	    if ( ret != KErrNone )
 	        {
-TFLOGSTRING3("TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L aTsyReqHandle: %d and ret:%d", aTsyReqHandle, ret);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_4, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L aTsyReqHandle: %u and ret:%d", (TUint)aTsyReqHandle, ret);
 	        ReqCompleted( aTsyReqHandle, ret );
 	        }
 			
@@ -1106,7 +1111,7 @@ TInt CMmSmsStorageTsy::ReadAllSmsPhase2(
     RMobilePhone::TClientId const* aId, 
     TDes8* aBuffer )
     {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsPhase2");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE2_1, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase2");
     CListReadAllAttempt* read = NULL;
 
     // Find the read attempt from this client
@@ -1143,7 +1148,7 @@ TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsPhase2");
 TInt CMmSmsStorageTsy::ReadAllSmsCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmSmsStorageTsy::ReadAllSmsCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSCANCEL_1, "TSY: CMmSmsStorageTsy::ReadAllSmsCancel");
     iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsReadAllSms );
 
@@ -1165,7 +1170,7 @@ void CMmSmsStorageTsy::RetrieveSmsListReadSmsL(
 	TInt aResult,
     CMmDataPackage* aDataPackage )
 	{
-TFLOGSTRING("TSY: CMmSmsStorageTsy::RetrieveSmsListReadSmsL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_RETRIEVESMSLISTREADSMSL_1, "TSY: CMmSmsStorageTsy::RetrieveSmsListReadSmsL");
 
 	TTsyReqHandle reqHandle = iMmTsyReqHandleStore->GetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsReadAllSms );
@@ -1226,7 +1231,7 @@ void CMmSmsStorageTsy::CompleteReadAllSmsPhase1(
     TInt aResult, 
 	TBool aReceivedClass2ToBeReSent )
     {
-TFLOGSTRING2("TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1. Complete read first phase error: %d", aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADALLSMSPHASE1_1, "TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1. Complete read first phase error: %d", aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsReadAllSms );
     if ( reqHandle )
@@ -1235,7 +1240,7 @@ TFLOGSTRING2("TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1. Complete read fir
         ReqCompleted( reqHandle, aResult );
         iSmsListArray->Reset();
 
-TFLOGSTRING2("TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1 aReceivedClass2ToBeReSent: %d",aReceivedClass2ToBeReSent);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADALLSMSPHASE1_2, "TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1 aReceivedClass2ToBeReSent: %d",aReceivedClass2ToBeReSent);
         if ( aReceivedClass2ToBeReSent )
             {
             // silently IGNORE if call to DOS fails

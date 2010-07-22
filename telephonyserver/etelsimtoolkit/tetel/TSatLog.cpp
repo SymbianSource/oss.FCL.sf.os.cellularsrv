@@ -44,7 +44,7 @@ CTestLogger::CTestLogger() : iValid(EFalse)
 
 void CTestLogger::ConstructL()
 	{
-	iFs.Connect();
+	User::LeaveIfError(iFs.Connect());
 	TInt ret=iFile.Open(iFs,KLogFileName,EFileShareAny|EFileWrite);
 	if(ret!=KErrNone)
 		ret=iFile.Create(iFs,KLogFileName,EFileShareAny|EFileWrite);

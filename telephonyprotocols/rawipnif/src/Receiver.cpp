@@ -19,6 +19,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ReceiverTraces.h"
+#endif
+
 #include "Receiver.h"
 #include "Constants.h"
 #include <es_ini.h>
@@ -26,32 +32,29 @@
 const TUint KBufferIncreaseStep=500;
 const TUint K64k=65535;
 
-CReceiver::CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize)
+CReceiver::CReceiver(CBcaIoController& aObserver, TUint aMaxPacketSize)
 /**
  * Constructor. Performs standard active object initialisation.
  *
  * @param aObserver Reference to the observer of this state machine
- * @param aTheLogger The logging object
  */
 	: CActive(EPriorityHigh), 
 	  iObserver(aObserver), 
-	  iTheLogger(aTheLogger),
 	  iMaxPacketSize(aMaxPacketSize)
 	{	
 	CActiveScheduler::Add(this);
 	}
 
-CReceiver* CReceiver::NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize)
+CReceiver* CReceiver::NewL(CBcaIoController& aObserver, TUint aMaxPacketSize)
 /**
  * Two-phase constructor. Creates a new CBcaIoController object, performs 
  * second-phase construction, then returns it.
  *
  * @param aObserver The observer, to which events will be reported
- * @param aTheLogger The logging object
  * @return A newly constructed CBcaIoController object
  */
 	{
-	CReceiver* self = new (ELeave) CReceiver(aObserver, aTheLogger, aMaxPacketSize);
+	CReceiver* self = new (ELeave) CReceiver(aObserver, aMaxPacketSize);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -63,7 +66,7 @@ void CReceiver::ConstructL()
  * Second-phase constructor. Creates all the state objects it owns.
  */
 	{
-	_LOG_L1C1(_L8("CReceiver::ConstructL"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_CONSTRUCTL_1, "CReceiver::ConstructL");
 	iData.CreateL(iMaxPacketSize);
 	}
 
@@ -71,10 +74,13 @@ CReceiver::~CReceiver()
 /**
  * Destructor.
  */
-	{
-	iData.Close();
-	Cancel();
-	}
+    {
+    Cancel();
+    // iData is a shared bit of memory between raw ip and bca
+    // you cannot delete it while bca might be using it otherwise
+    // bad things may happen.
+    iData.Close();
+    }
 
 void CReceiver::RunL()
 /**
@@ -82,15 +88,14 @@ void CReceiver::RunL()
  *  packet in its buffer.
  */
 	{
-	_LOG_L1C2(_L8("CReceiver::RunL [iStatus=%d]"), iStatus.Int());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_1, "CReceiver::RunL [iStatus=%d]", iStatus.Int());
 
 	if (iStatus != KErrNone)
 		{
 		if (iStatus == KErrNoMemory)
 			{
-			_LOG_L2C1(
-				_L8("WARNING! CReceiver: Read failed with KErrNoMemory. Increase buffer."));
-			// Read operation failed!! Nif will re-issue the read request. Increase buffer.			
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_2, "WARNING! CReceiver: Read failed with KErrNoMemory. Increase buffer.");
+				// Read operation failed!! Nif will re-issue the read request. Increase buffer.			
 			if ((iMaxPacketSize + KBufferIncreaseStep) > K64k)
 			    {
 			    // In theory IP packet can't be bigger than 64k, so if we come here something is wrong so stop observer. 
@@ -113,14 +118,14 @@ void CReceiver::RunL()
 			}
 		else 
 			{
-			_LOG_L2C1(_L8("WARNING! CReceiver: Read failed"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_3, "WARNING! CReceiver: Read failed");
 			iObserver.Stop(iStatus.Int());
 			}
 		return;
 		}
 	else
 	    {
-        _LOG_L1C1(_L8("CReceiver: Data Packet Received"));
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_4, "CReceiver: Data Packet Received");
     
         iRMBufPacket.CreateL(iData);
         
@@ -130,7 +135,7 @@ void CReceiver::RunL()
         SetActive();
         
         iRMBufPacket.Pack();
-    
+        
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
         TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
 #else
@@ -143,12 +148,19 @@ void CReceiver::RunL()
 	    }
 	}
 
+TInt CReceiver::RunError(TInt aError)
+    {
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNERROR_1, "WARNING! CReceiver::RunError Read failed");
+    iObserver.Stop(aError); 
+    return KErrNone;  
+    }
+
 void CReceiver::DoCancel()
 /**
  *	Cancel active request
  */
 	{
-	_LOG_L1C1(_L8("CReceiver::DoCancel"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_DOCANCEL_1, "CReceiver::DoCancel");
 
 	(iObserver.Bca())->CancelRead(); 
 	}
@@ -159,7 +171,7 @@ void CReceiver::StartListening()
  *  packets from BCA.  
  */
 	{
-	_LOG_L1C1(_L8("CReceiver::StartListening"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_STARTLISTENING_1, "CReceiver::StartListening");
 
 	// The BCA will complete this read once it has a full IP packet in its buffer.
 	(iObserver.Bca())->Read(iStatus, iData);

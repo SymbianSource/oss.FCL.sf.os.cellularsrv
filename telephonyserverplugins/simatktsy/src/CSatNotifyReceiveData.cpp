@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 // INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyReceiveDataTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyReceiveData.h" 	// Class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifyReceiveData* CSatNotifyReceiveData::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyMoreTime::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_NEWL_1, "CSAT: CSatNotifyMoreTime::NewL");
    	CSatNotifyReceiveData* const satNotifyReceiveData = 
         new ( ELeave ) CSatNotifyReceiveData( aNotificationsTsy );
     CleanupStack::PushL( satNotifyReceiveData );
     satNotifyReceiveData->ConstructL();
     CleanupStack::Pop( satNotifyReceiveData );
-    TFLOGSTRING("CSAT: CSatNotifyMoreTime::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_NEWL_2, "CSAT: CSatNotifyMoreTime::NewL, end of method");
     return satNotifyReceiveData;
     }
 
@@ -62,7 +67,7 @@ CSatNotifyReceiveData::~CSatNotifyReceiveData
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyMoreTime::~CSatNotifyReceiveData");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_DTOR_1, "CSAT: CSatNotifyMoreTime::~CSatNotifyReceiveData");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ void CSatNotifyReceiveData::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyMoreTime::ConstructL, does nothing");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_CONSTRUCTL_1, "CSAT: CSatNotifyMoreTime::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -103,7 +108,7 @@ TInt CSatNotifyReceiveData::Notify
         const TDataPackage& aPackage    
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyReceiveData::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_NOTIFY_1, "CSAT: CSatNotifyReceiveData::Notify");
     // Save data pointer to client side for completion
     iReceiveDataRspV2Pckg = reinterpret_cast<RSat::TReceiveDataV2Pckg*>( 
         aPackage.Des1n() );     
@@ -126,7 +131,7 @@ TInt CSatNotifyReceiveData::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyReceiveData::CancelNotification");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_CANCELNOTIFICATION_1, "CSAT: CSatNotifyReceiveData::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyReceiveDataPCmdReqType );
@@ -149,7 +154,7 @@ TInt CSatNotifyReceiveData::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyReceiveData::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_COMPLETENOTIFYL_1, "CSAT: CSatNotifyReceiveData::CompleteNotifyL");
     TInt ret( KErrNone );
 	TBuf<1> noAdditionalInfo( 0 );
     // Unpack parameters
@@ -224,8 +229,7 @@ TInt CSatNotifyReceiveData::CompleteNotifyL
 	                    }
 	                else
 	                    {
-	                    TFLOGSTRING("CSAT: CSatNotifyReceiveData::\
-	                    	CompleteNotifyL, Alpha ID is NULL");
+	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_COMPLETENOTIFYL_2, "CSAT: CSatNotifyReceiveData::CompleteNotifyL, Alpha ID is NULL");
 	                    receiveDataV2.iAlphaId.iStatus = RSat::EAlphaIdNull;
 	                    }
 	                }
@@ -237,8 +241,7 @@ TInt CSatNotifyReceiveData::CompleteNotifyL
 	            }
 	        else
 	            {
-	            TFLOGSTRING("CSAT: CSatNotifyReceiveData::CompleteNotifyL, \
-	            	Required values missing");
+	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_COMPLETENOTIFYL_3, "CSAT: CSatNotifyReceiveData::CompleteNotifyL, Required values missing");
 	            // Required values missing
 	            TUint8 channelDataLength( 0 );
 	            CreateTerminalRespL( 
@@ -257,8 +260,7 @@ TInt CSatNotifyReceiveData::CompleteNotifyL
         }
 	else
 		{
-		TFLOGSTRING("CSAT: CSatNotifyReceiveData::CompleteNotifyL, \
-			Request not ongoing");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_COMPLETENOTIFYL_4, "CSAT: CSatNotifyReceiveData::CompleteNotifyL, Request not ongoing");
 		// Request not on, returning response immediately
     	TUint8 channelDataLength( 0 );
 		TBuf16<1> additionalInfo;
@@ -282,7 +284,7 @@ TInt CSatNotifyReceiveData::TerminalResponseL
         TDes8* aRsp
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyReceiveData::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_TERMINALRESPONSEL_1, "CSAT: CSatNotifyReceiveData::TerminalResponseL");
 
     TInt ret( KErrNone );
     
@@ -309,8 +311,7 @@ TInt CSatNotifyReceiveData::TerminalResponseL
         && ( RSat::KErrorRequiredValuesMissing != rspV2.iGeneralResult )
         && ( RSat::KBearerIndepProtocolError != rspV2.iGeneralResult ) )
         {
-        TFLOGSTRING("CSAT: CSatNotifyReceiveData::TerminalResponseL, \
-			Invalid general result");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_TERMINALRESPONSEL_2, "CSAT: CSatNotifyReceiveData::TerminalResponseL, Invalid general result");
         ret = KErrCorrupt;
         }
 
@@ -325,8 +326,7 @@ TInt CSatNotifyReceiveData::TerminalResponseL
         	}
     	else
         	{
-        	TFLOGSTRING("CSAT: CSatNotifyReceiveData::TerminalResponseL, \
-			Additional Info is Corrupted");
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_TERMINALRESPONSEL_3, "CSAT: CSatNotifyReceiveData::TerminalResponseL, Additional Info is Corrupted");
         	ret = KErrCorrupt;
         	}
         }
@@ -351,7 +351,7 @@ TInt CSatNotifyReceiveData::CreateTerminalRespL
         TUint8 aChannelDataLength
 		)
 	{   	
-    TFLOGSTRING("CSAT: CSatNotifyReceiveData::CreateTerminalRespL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYRECEIVEDATA_CREATETERMINALRESPL_1, "CSAT: CSatNotifyReceiveData::CreateTerminalRespL");
     TTlv tlvSpecificData;
     // Append general result tag
     tlvSpecificData.AddTag( KTlvResultTag );

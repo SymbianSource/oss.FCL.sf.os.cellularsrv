@@ -25,9 +25,7 @@
 #include <ecom/ecom.h>
 
 #include "pdpmcprfactory.h"
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 #include "PDPCPRFactory.h"
-#endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 #include "PDPSCPRFactory.h"
 #include "pdptiermanagerfactory.h"
 
@@ -38,9 +36,7 @@
 const TImplementationProxy ImplementationTable[] =
 	{   
 	IMPLEMENTATION_PROXY_ENTRY(CPdpMetaConnectionProviderFactory::iUid, CPdpMetaConnectionProviderFactory::NewL),
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 	IMPLEMENTATION_PROXY_ENTRY(CPDPConnectionProviderFactory::iUid, CPDPConnectionProviderFactory::NewL),
-#endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 	IMPLEMENTATION_PROXY_ENTRY(CPDPSubConnectionProviderFactory::iUid, CPDPSubConnectionProviderFactory::NewL),
 	IMPLEMENTATION_PROXY_ENTRY(CPDPTierManagerFactory::EUid, CPDPTierManagerFactory::NewL)
    	};

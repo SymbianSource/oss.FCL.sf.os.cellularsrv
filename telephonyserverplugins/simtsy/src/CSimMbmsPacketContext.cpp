@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,7 +19,13 @@
  @file
 */
 
-#include "Simlog.h"
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimMbmsPacketContextTraces.h"
+#endif
+
 #include "CSimPhone.h"
 #include "CSimMbmsPacketContext.h"
 #include "CSimPacketQoS.h"
@@ -55,7 +61,7 @@ CSimMbmsPacketContext::CSimMbmsPacketContext(CSimPhone* aPhone, CSimPacketServic
 * @param aContextName name  for this packet context
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: Entered constructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CTOR_1, "CSimMbmsPacketContext: Entered constructor");
 	iNotifyConfigMBMS.iNotifyPending = EFalse;
 	iNotifyStatusChange.iNotifyPending = EFalse;
 	}
@@ -68,7 +74,7 @@ void CSimMbmsPacketContext::ConstructL()
 * @leave Leaves no memory or any data member does not construct for any reason.
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: Entered constructL function");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CONSTRUCTL_1, "CSimMbmsPacketContext: Entered constructL function");
 	CSimPacketContext::ConstructL();
 	
 	iMbmsSetConfigTimer = CSimTimer::NewL(iPhone);
@@ -199,7 +205,7 @@ CSimMbmsPacketContext::~CSimMbmsPacketContext()
 *
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: Entered destructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DTOR_1, "CSimMbmsPacketContext: Entered destructor");
 
 	if (iMbmsSetConfigTimer != NULL)
 		{
@@ -257,7 +263,7 @@ CTelObject* CSimMbmsPacketContext::OpenNewObjectByNameL(const TDesC& /*aName*/)
  * @ return NULL.
  */
 	{	
-	LOGPACKET1("Unexpected call to CSimMbmsPacketContext: OpenNewObjectByName");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_OPENNEWOBJECTBYNAMEL_1, "Unexpected call to CSimMbmsPacketContext: OpenNewObjectByName");
 	User::Leave(KErrNotSupported);
 	return NULL;
 	}
@@ -272,7 +278,7 @@ CTelObject* CSimMbmsPacketContext::OpenNewObjectL(TDes& /*aNewName*/)
  * @leave Leaves if out of memory.
  */
 	{
-	LOGPACKET1("Unexpected call to CSimMbmsPacketContext: OpenNewObjectL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_OPENNEWOBJECTL_1, "Unexpected call to CSimMbmsPacketContext: OpenNewObjectL");
 	User::Leave(KErrNotSupported);
 	return NULL;
 	}
@@ -287,7 +293,7 @@ CTelObject::TReqMode CSimMbmsPacketContext::ReqModeL(const TInt aIpc)
 * @leave Leaves if not supported by this tsy 
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: ReqModeL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REQMODEL_1, "CSimMbmsPacketContext: ReqModeL");
 	CTelObject::TReqMode ret=0;
 	switch (aIpc)
 		{
@@ -310,8 +316,8 @@ CTelObject::TReqMode CSimMbmsPacketContext::ReqModeL(const TInt aIpc)
 			ret=KReqModeMultipleCompletionEnabled | KReqModeRePostImmediately;
 			break;
 		default:
-			LOGPACKET1("CSimMbmsPacketContext: ReqModeL error, unknown IPC");
-			LOGPACKET1("CSimMbmsPacketContext: ReqModeL sending the request to CSimPacketContext");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REQMODEL_2, "CSimMbmsPacketContext: ReqModeL error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REQMODEL_3, "CSimMbmsPacketContext: ReqModeL sending the request to CSimPacketContext");
 			ret = CSimPacketContext::ReqModeL(aIpc);
 			break;
 		}
@@ -330,18 +336,18 @@ TInt CSimMbmsPacketContext::RegisterNotification(const TInt aIpc)
 * @return err KErrNone if fine
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: RegisterNotification called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REGISTERNOTIFICATION_1, "CSimMbmsPacketContext: RegisterNotification called");
 	switch (aIpc)
 		{
 		case EPacketContextNotifyConfigChanged:
 		case EPacketContextNotifyStatusChange:
 		case EPacketContextNotifyDataTransferred:
-			LOGPACKET1("CSimMbmsPacketContext: RegisterNotification");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REGISTERNOTIFICATION_2, "CSimMbmsPacketContext: RegisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimMbmsPacketContext: Register error, unknown IPC");
-			LOGPACKET1("CSimMbmsPacketContext: Register sending the request to CSimPacketContext");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REGISTERNOTIFICATION_3, "CSimMbmsPacketContext: Register error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_REGISTERNOTIFICATION_4, "CSimMbmsPacketContext: Register sending the request to CSimPacketContext");
 			return CSimPacketContext::RegisterNotification(aIpc);
 		}
 	}
@@ -359,18 +365,18 @@ TInt CSimMbmsPacketContext::DeregisterNotification(const TInt aIpc)
 * @return err KErrNone if fine
 */
 	{	
-	LOGPACKET1("CSimMbmsPacketContext: DeregisterNotification called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DEREGISTERNOTIFICATION_1, "CSimMbmsPacketContext: DeregisterNotification called");
 	switch (aIpc)
 		{
 		case EPacketContextNotifyConfigChanged:
 		case EPacketContextNotifyStatusChange:
 		case EPacketContextNotifyDataTransferred:
-			LOGPACKET1("CSimMbmsPacketContext: DeregisterNotification");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DEREGISTERNOTIFICATION_2, "CSimMbmsPacketContext: DeregisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimMbmsPacketContext: Deregister error, unknown IPC");
-			LOGPACKET1("CSimMbmsPacketContext: Deregister sending the request to CSimPacketContext");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DEREGISTERNOTIFICATION_3, "CSimMbmsPacketContext: Deregister error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DEREGISTERNOTIFICATION_4, "CSimMbmsPacketContext: Deregister sending the request to CSimPacketContext");
 			return CSimPacketContext::DeregisterNotification(aIpc);
 		}
 	}
@@ -385,20 +391,20 @@ TInt CSimMbmsPacketContext::NumberOfSlotsL(const TInt aIpc)
 * @return err KErrNone if fine
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: NumberOfSlotsL called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NUMBEROFSLOTSL_1, "CSimMbmsPacketContext: NumberOfSlotsL called");
 	TInt numberOfSlots=1;
 	switch (aIpc)
 		{
 		case EPacketContextNotifyConfigChanged:
 		case EPacketContextNotifyStatusChange:
 		case EPacketContextNotifyDataTransferred:
-			LOGPACKET1("CSimMbmsPacketContext: Registered with 5 slots");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NUMBEROFSLOTSL_2, "CSimMbmsPacketContext: Registered with 5 slots");
 			numberOfSlots=5;
 			break;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimMbmsPacketContext: Number of Slots error, unknown IPC");
-			LOGPACKET1("CSimMbmsPacketContext: Number of Slots: sending the request to CSimPacketContext");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NUMBEROFSLOTSL_3, "CSimMbmsPacketContext: Number of Slots error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NUMBEROFSLOTSL_4, "CSimMbmsPacketContext: Number of Slots: sending the request to CSimPacketContext");
 			return CSimPacketContext::NumberOfSlotsL(aIpc);
 		}  
 	return numberOfSlots;
@@ -425,7 +431,7 @@ TInt CSimMbmsPacketContext::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt
 		ReqCompleted(aTsyReqHandle,KErrNotReady);
 		return KErrNone;
 		}
-	LOGPACKET1("CSimMbmsPacketContext: ExtFunc Called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_EXTFUNC_1, "CSimMbmsPacketContext: ExtFunc Called");
 	TAny* dataPtr=aPackage.Ptr1();
 	TAny* dataPtr2=aPackage.Ptr2();
 
@@ -444,7 +450,7 @@ TInt CSimMbmsPacketContext::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt
 			//<permitted at any one time
 			if(iIsActive)
 				{
-				LOGPACKET1("Trying to activate an already activated context");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_EXTFUNC_2, "Trying to activate an already activated context");
 				ReqCompleted(aTsyReqHandle,KErrEtelCallAlreadyActive);
 				return KErrNone;
 				}
@@ -477,7 +483,7 @@ TInt CSimMbmsPacketContext::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt
 			return GetStatus(aTsyReqHandle,
 					REINTERPRET_CAST(RPacketContext::TContextStatus*, dataPtr));
 		case EPacketContextUpdateMbmsSessionList:
-			return UpdateMbmsSessionListL(aTsyReqHandle,
+			return UpdateMbmsSessionList(aTsyReqHandle,
 					REINTERPRET_CAST(TMbmsAction*, dataPtr),
 					REINTERPRET_CAST(TUint*, dataPtr2));	
 		case EPacketContextInitialiseContext:
@@ -492,8 +498,8 @@ TInt CSimMbmsPacketContext::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt
 			return GetMbmsSessionsPhase2(aTsyReqHandle, 
 			REINTERPRET_CAST(TClientId*, dataPtr), aPackage.Des2n());		
 		default:
-			LOGPACKET1("CSimMbmsPacketContext: ExtFunc Unknown IPC");
-			LOGPACKET1("CSimMbmsPacketContext: sending the request to CSimPacketContext::ExtFunc Unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_EXTFUNC_3, "CSimMbmsPacketContext: ExtFunc Unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_EXTFUNC_4, "CSimMbmsPacketContext: sending the request to CSimPacketContext::ExtFunc Unknown IPC");
 			return CSimPacketContext::ExtFunc(aTsyReqHandle,aIpc,aPackage);
 		}
 	}
@@ -509,7 +515,7 @@ TInt CSimMbmsPacketContext::CancelService(const TInt aIpc,const TTsyReqHandle aT
 * @return err KErrNone if request completes ok
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: - CancelService called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CANCELSERVICE_1, "CSimMbmsPacketContext: - CancelService called");
 
 	switch (aIpc)
 		{
@@ -533,8 +539,8 @@ TInt CSimMbmsPacketContext::CancelService(const TInt aIpc,const TTsyReqHandle aT
 		case EPacketGetMbmsSessionListPhase2:
 			return GetMbmsSessionsCancel(aTsyReqHandle);
 		default:
-			LOGPACKET1("CSimMbmsPacketContext: - CancelService unknown IPC called");
-			LOGPACKET1("CSimMbmsPacketContext: sending the request to CSimPacketContext::ExtFunc Unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CANCELSERVICE_2, "CSimMbmsPacketContext: - CancelService unknown IPC called");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CANCELSERVICE_3, "CSimMbmsPacketContext: sending the request to CSimPacketContext::ExtFunc Unknown IPC");
 			return CSimPacketContext::CancelService(aIpc,aTsyReqHandle);
 		}
 	}
@@ -546,11 +552,11 @@ void CSimMbmsPacketContext::TimerCallBack(TInt aId)
 * param - aId indicates which Timer Event has occured.
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext: - TimerCallBack(TInt aId) called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_1, "CSimMbmsPacketContext: - TimerCallBack(TInt aId) called");
 	switch(aId)
 		{
 		case ETimerIdMbmsPcktContextSetConfig:
-			LOGPACKET1("CSimMbmsPacketContext: - TimerCallBack SetConfig called");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_2, "CSimMbmsPacketContext: - TimerCallBack SetConfig called");
 			if(iSetConfigValues.iErrorValue == KErrNone)
 				{
 				iMbmsContextConfigParamsIndex = iSetConfigValues.iIndex ;
@@ -558,7 +564,7 @@ void CSimMbmsPacketContext::TimerCallBack(TInt aId)
 			ReqCompleted(iSetConfigRequestHandle,iSetConfigValues.iErrorValue);
 			break;
 		case ETimerIdMbmsUpdateSessionId:
-			LOGPACKET1("CSimMbmsPacketContext: - TimerCallBack UpdateSessionID called");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_3, "CSimMbmsPacketContext: - TimerCallBack UpdateSessionID called");
 			if(iUpdateSessionHandle != NULL)
 				{
 				ReqCompleted(iUpdateSessionHandle,KErrNone);
@@ -572,14 +578,14 @@ void CSimMbmsPacketContext::TimerCallBack(TInt aId)
 			break;
 		default:
 			{
-			LOGPACKET1(">>CSimMbmsPacketContext::TimerCallBack Default Case for Context Events");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_4, ">>CSimMbmsPacketContext::TimerCallBack Default Case for Context Events");
 			switch(iCurrentEvent)
 				{
 				case EMbmsContextEventNone:
-					LOGPACKET1("TimerCallBack - iCurrentEvent = [EMbmsContextEventNone]");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_5, "TimerCallBack - iCurrentEvent = [EMbmsContextEventNone]");
 					break;
 				case EMbmsContextEventActivate:
-					LOGPACKET1("TimerCallBack - iCurrentEvent = [EMbmsContextEventActivate]");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_6, "TimerCallBack - iCurrentEvent = [EMbmsContextEventActivate]");
 					if(iState==RPacketContext::EStatusActivating)
 						{
 						TInt activateValue = iMbmsContextConfigParams->At(iMbmsContextConfigParamsIndex).iActivateCode;
@@ -615,11 +621,11 @@ void CSimMbmsPacketContext::TimerCallBack(TInt aId)
 						}
 					else
 						{
-						LOGPACKET1("Unexpected iState for iCurrentEvent[EMbmsContextEventActivate]");
+						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_7, "Unexpected iState for iCurrentEvent[EMbmsContextEventActivate]");
 						}
 					break;
 				case EMbmsContextEventDeactivate:
-					LOGPACKET1("TimerCallBack - iCurrentEvent = [EMbmsContextEventDeactivate]");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_8, "TimerCallBack - iCurrentEvent = [EMbmsContextEventDeactivate]");
 					if(((iState == RPacketContext::EStatusInactive) || (iState == RPacketContext::EStatusDeactivating)) && 
 									(iCurrentEvent==EMbmsContextEventDeactivate))
 						{
@@ -630,11 +636,11 @@ void CSimMbmsPacketContext::TimerCallBack(TInt aId)
 						}
 					else
 						{
-						LOGPACKET1("Unexpected iState for iCurrentEvent[EMbmsContextEventActivate]");
+						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_9, "Unexpected iState for iCurrentEvent[EMbmsContextEventActivate]");
 						}
 					break;
 				case EMbmsContextEventDelete:
-					LOGPACKET1("TimerCallBack - iCurrentEvent = [EMbmsContextEventDelete]");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_10, "TimerCallBack - iCurrentEvent = [EMbmsContextEventDelete]");
 					if(iState == RPacketContext::EStatusInactive && !iIsActive )
 						{
 						TInt ret = ChangeState(RPacketContext::EStatusDeleted);
@@ -649,8 +655,8 @@ void CSimMbmsPacketContext::TimerCallBack(TInt aId)
 					break;
 				default:
 					{
-					LOGPACKET1("CSimMbmsPacketContext::TimerCallBack");
-					LOGPACKET1("<<Unexpected iCurrentEvent @ TimerCallBack");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_11, "CSimMbmsPacketContext::TimerCallBack");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_TIMERCALLBACK_12, "<<Unexpected iCurrentEvent @ TimerCallBack");
 					break;
 					}
 				}
@@ -665,7 +671,7 @@ TName CSimMbmsPacketContext::ContextName() const
 * @return TName	Name of the MBMS context
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::ContextName called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CONTEXTNAME_1, "CSimMbmsPacketContext::ContextName called");
 	return iContextName; 
 	}
 
@@ -676,7 +682,7 @@ const CTestConfigSection* CSimMbmsPacketContext::CfgFile()
 * @return CTestConfigSection	pointer to the configuration file section
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::CfgFile called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CFGFILE_1, "CSimMbmsPacketContext::CfgFile called");
 	return iPacketService->CfgFile();
 	}
 
@@ -690,7 +696,7 @@ TInt CSimMbmsPacketContext::SetConfig(const TTsyReqHandle aTsyReqHandle,const TD
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::SetConfig called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_SETCONFIG_1, "CSimMbmsPacketContext::SetConfig called");
 
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
@@ -780,7 +786,7 @@ TInt CSimMbmsPacketContext::GetConfig(const TTsyReqHandle aTsyReqHandle,TDes8* a
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetConfig called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETCONFIG_1, "CSimMbmsPacketContext::GetConfig called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 	
@@ -816,7 +822,7 @@ TInt CSimMbmsPacketContext::GetConfigCancel(const TTsyReqHandle /*aTsyReqHandle*
 * @return err KErrNone 
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetConfigCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETCONFIGCANCEL_1, "CSimMbmsPacketContext::GetConfigCancel called");
 	return KErrNone;
 	}
 
@@ -829,7 +835,7 @@ TInt CSimMbmsPacketContext::GetStatus(const TTsyReqHandle aTsyReqHandle,RPacketC
 * @return KerrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetStatus called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETSTATUS_1, "CSimMbmsPacketContext::GetStatus called");
 	*aContextStatus = iState;
 	ReqCompleted(aTsyReqHandle,KErrNone);
 	return KErrNone;
@@ -863,7 +869,7 @@ TInt CSimMbmsPacketContext::ActivateCancel(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::ActivateCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_ACTIVATECANCEL_1, "CSimMbmsPacketContext::ActivateCancel called");
 	iMbmsContextTimer->Cancel();
 	if(((iState == RPacketContext::EStatusInactive) || (iState == RPacketContext::EStatusActivating)) && 
 					(iCurrentEvent==EMbmsContextEventActivate))
@@ -902,7 +908,7 @@ TInt CSimMbmsPacketContext::Deactivate(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::Deactivate called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DEACTIVATE_1, "CSimMbmsPacketContext::Deactivate called");
 	iDeactivateRequestHandle = aTsyReqHandle;
 	TInt ret = ActionEvent(EMbmsContextEventDeactivate);
 	return ret;
@@ -919,7 +925,7 @@ TInt CSimMbmsPacketContext::DeactivateCancel(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::DeactivateCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DEACTIVATECANCEL_1, "CSimMbmsPacketContext::DeactivateCancel called");
 	iMbmsContextTimer->Cancel();
 	if(((iState == RPacketContext::EStatusInactive) || (iState == RPacketContext::EStatusDeactivating)) && 
 					(iCurrentEvent==EMbmsContextEventDeactivate))
@@ -993,7 +999,7 @@ TInt CSimMbmsPacketContext::Delete(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::Delete called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DELETE_1, "CSimMbmsPacketContext::Delete called");
 	iDeleteRequestHandle = aTsyReqHandle;
 	TInt ret = ActionEvent(EMbmsContextEventDelete);
 	return ret;
@@ -1009,7 +1015,7 @@ TInt CSimMbmsPacketContext::DeleteCancel(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::DeleteCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_DELETECANCEL_1, "CSimMbmsPacketContext::DeleteCancel called");
 	iMbmsContextTimer->Cancel();
 	if((iState == RPacketContext::EStatusInactive) && (iCurrentEvent==EMbmsContextEventDelete))
 		{
@@ -1028,7 +1034,7 @@ TInt CSimMbmsPacketContext::GetLastErrorCause(const TTsyReqHandle aTsyReqHandle,
 * @return KerrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetLastErrorCause called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETLASTERRORCAUSE_1, "CSimMbmsPacketContext::GetLastErrorCause called");
 	
 	ReqCompleted(aTsyReqHandle,iLastError);
 	return KErrNone;
@@ -1044,7 +1050,7 @@ TInt CSimMbmsPacketContext::NotifyConfigChanged(const TTsyReqHandle aTsyReqHandl
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::NotifyConfigChanged called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NOTIFYCONFIGCHANGED_1, "CSimMbmsPacketContext::NotifyConfigChanged called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 	
@@ -1058,7 +1064,7 @@ TInt CSimMbmsPacketContext::NotifyConfigChanged(const TTsyReqHandle aTsyReqHandl
 		}
 	else
 		{
-		LOGPACKET1("CSimMbmsPacketContext::NotifyConfigChanged Unexpected config for MBMS context");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NOTIFYCONFIGCHANGED_2, "CSimMbmsPacketContext::NotifyConfigChanged Unexpected config for MBMS context");
 		}
 
 	return KErrNone;
@@ -1073,7 +1079,7 @@ TInt CSimMbmsPacketContext::NotifyConfigChangedCancel(const TTsyReqHandle aTsyRe
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::NotifyConfigChangedCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NOTIFYCONFIGCHANGEDCANCEL_1, "CSimMbmsPacketContext::NotifyConfigChangedCancel called");
 	if(iNotifyConfigMBMS.iNotifyPending &&
 		iNotifyConfigMBMS.iNotifyHandle == aTsyReqHandle)
 		{
@@ -1100,7 +1106,7 @@ TInt CSimMbmsPacketContext::NotifyStatusChange(const TTsyReqHandle aTsyReqHandle
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::NotifyStatusChange called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NOTIFYSTATUSCHANGE_1, "CSimMbmsPacketContext::NotifyStatusChange called");
 	__ASSERT_ALWAYS(!iNotifyStatusChange.iNotifyPending,SimPanic(ENotificationAlreadyPending));
 	iNotifyStatusChange.iNotifyPending = ETrue;
 	iNotifyStatusChange.iNotifyHandle = aTsyReqHandle;
@@ -1117,7 +1123,7 @@ TInt CSimMbmsPacketContext::NotifyStatusChangeCancel(const TTsyReqHandle aTsyReq
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::NotifyStatusChangeCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_NOTIFYSTATUSCHANGECANCEL_1, "CSimMbmsPacketContext::NotifyStatusChangeCancel called");
 	if(iNotifyStatusChange.iNotifyPending)
 		{
 		iNotifyStatusChange.iNotifyPending=EFalse;
@@ -1130,7 +1136,7 @@ TInt CSimMbmsPacketContext::NotifyStatusChangeCancel(const TTsyReqHandle aTsyReq
 	return KErrNone;
 	}
 
-TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHandle,TMbmsAction* aAction, TUint* aSessionId)
+TInt CSimMbmsPacketContext::UpdateMbmsSessionList(const TTsyReqHandle aTsyReqHandle,TMbmsAction* aAction, TUint* aSessionId)
 /**
 * client's interest in updating the MBMS session's list.
 * This is achieved  by updating the list maintained internally by the context
@@ -1141,7 +1147,7 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHa
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_UPDATEMBMSSESSIONLIST_1, "CSimMbmsPacketContext::UpdateMbmsSessionList called");
 
 	TInt error=KErrNone;
 	iUpdateSessionHandle = aTsyReqHandle;
@@ -1151,29 +1157,34 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHa
 	switch(*aAction)
 		{
 		case SIMTSY_PACKET_MBMS_ADD_ENTRIES:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: ADD ");
-			TRAP(error,iSessionIdList->AppendL(*aSessionId));
-			if(error == KErrNone)
-				{
-				//iSessionIdList->At(0) = ++iNumOfSessionId;
-				iSessionIdList->Delete(0);
-				iSessionIdList->InsertL(0,++iNumOfSessionId);
-				iMbmsUpdateSessionTimer->Start(RandTime(),this,ETimerIdMbmsUpdateSessionId);
-				}
-			else
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_UPDATEMBMSSESSIONLIST_2, "CSimMbmsPacketContext::UpdateMbmsSessionList Action: ADD ");
+			
+			// TRAP can contain multiple statments
+			TRAP(error,iSessionIdList->AppendL(*aSessionId);
+                    //iSessionIdList->At(0) = ++iNumOfSessionId;
+                    iSessionIdList->Delete(0);
+                    iSessionIdList->InsertL(0,++iNumOfSessionId));
+			
+            iMbmsUpdateSessionTimer->Start(RandTime(),this,ETimerIdMbmsUpdateSessionId);
+
+			if(error != KErrNone)
 				{
 				ReqCompleted(iUpdateSessionHandle,error);
 				}
 			break;
 
 		case SIMTSY_PACKET_MBMS_REM_ENTRIES:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: REMOVE ");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_UPDATEMBMSSESSIONLIST_3, "CSimMbmsPacketContext::UpdateMbmsSessionList Action: REMOVE ");
 			iSessionIdList->Find(*aSessionId,key,position);
 			if(position != -1)
 				{
 				iSessionIdList->Delete(position);
 				//iSessionIdList->At(0) = --iNumOfSessionId;
-				iSessionIdList->InsertL(0,--iNumOfSessionId);
+				TRAP(error, iSessionIdList->InsertL(0,--iNumOfSessionId));
+	            if(error != KErrNone)
+	                {
+	                ReqCompleted(iUpdateSessionHandle,error);
+	                }
 				iMbmsUpdateSessionTimer->Start(RandTime(),this,ETimerIdMbmsUpdateSessionId);
 				}
 			else
@@ -1184,16 +1195,20 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListL(const TTsyReqHandle aTsyReqHa
 			break;
 
 		case SIMTSY_PACKET_MBMS_REM_ALL_ENTRIES:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: REMOVE_ALL ");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_UPDATEMBMSSESSIONLIST_4, "CSimMbmsPacketContext::UpdateMbmsSessionList Action: REMOVE_ALL ");
 			iNumOfSessionId=0;
 			//iSessionIdList->At(0) = iNumOfSessionId;
-			iSessionIdList->InsertL(0,iNumOfSessionId);
+			TRAP(error, iSessionIdList->InsertL(0,iNumOfSessionId));
+            if(error != KErrNone)
+                {
+                ReqCompleted(iUpdateSessionHandle,error);
+                }
 			iSessionIdList->Delete(1,iSessionIdList->Count()); // removing all session ids from the list
 			ReqCompleted(aTsyReqHandle, KErrNone);
 			break;
 
 		default:
-			LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListL Action: Default ");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_UPDATEMBMSSESSIONLIST_5, "CSimMbmsPacketContext::UpdateMbmsSessionList Action: Default ");
 			ReqCompleted(aTsyReqHandle,KErrNotFound);
 			break;
 		}
@@ -1208,7 +1223,7 @@ TInt CSimMbmsPacketContext::UpdateMbmsSessionListCancel(const TTsyReqHandle aTsy
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::UpdateMbmsSessionListCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_UPDATEMBMSSESSIONLISTCANCEL_1, "CSimMbmsPacketContext::UpdateMbmsSessionListCancel called");
 	iMbmsUpdateSessionTimer->Cancel();
 	if( iUpdateSessionHandle == aTsyReqHandle )
 		{
@@ -1291,7 +1306,7 @@ TInt CSimMbmsPacketContext::GetMbmsSessionsPhase1(const TTsyReqHandle aTsyReqHan
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetMbmsSessionsPhase1 called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETMBMSSESSIONSPHASE1_1, "CSimMbmsPacketContext::GetMbmsSessionsPhase1 called");
 	iGetMbmsSessionHandle = aTsyReqHandle;
 	TInt ret=KErrNone;
 	TInt leaveCode=KErrNone;
@@ -1317,7 +1332,7 @@ TInt CSimMbmsPacketContext::ProcessGetMbmsSessionsPhase1L(const TTsyReqHandle aT
 	{
 	// Retrieve MBMS session list,
 	// Store the sessions and then return the size of the buffer to the client
-	LOGPACKET1("CSimMbmsPacketContext::ProcessGetMbmsSessionsPhase1L called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_PROCESSGETMBMSSESSIONSPHASE1L_1, "CSimMbmsPacketContext::ProcessGetMbmsSessionsPhase1L called");
 	RPacketMbmsContext::CMbmsSession* mbmsSession=RPacketMbmsContext::CMbmsSession::NewL();
 	CleanupStack::PushL(mbmsSession);
 
@@ -1366,7 +1381,7 @@ TInt CSimMbmsPacketContext::GetMbmsSessionsPhase2(const TTsyReqHandle aTsyReqHan
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetMbmsSessionsPhase2 called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETMBMSSESSIONSPHASE2_1, "CSimMbmsPacketContext::GetMbmsSessionsPhase2 called");
 	CPcktListReadAllAttempt* read=NULL;
 	// Find the get Mbms monitored services from this client
 	for (TInt i=0; i<iMbmsSessionList->Count(); ++i)
@@ -1397,7 +1412,7 @@ TInt CSimMbmsPacketContext::GetMbmsSessionsCancel(const TTsyReqHandle aTsyReqHan
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::GetMbmsSessionsCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_GETMBMSSESSIONSCANCEL_1, "CSimMbmsPacketContext::GetMbmsSessionsCancel called");
 	// Remove the MBMS sessions from iMbmsSessionList
 	
 	CPcktListReadAllAttempt* read=NULL;
@@ -1425,7 +1440,7 @@ TInt CSimMbmsPacketContext::ChangeState(RPacketContext::TContextStatus aNewState
 * @return Error indication if change of state is successful or not
 */
 	{
-	LOGPACKET2("CSimMbmsPacketContext::ChangeState [newState=%d]", aNewState);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CHANGESTATE_1, "CSimMbmsPacketContext::ChangeState [newState=%d]", aNewState);
 	__ASSERT_ALWAYS(aNewState!=RPacketContext::EStatusUnknown,SimPanic(ECallStatusUnknownIllegal));
 
 	if(iState==aNewState)
@@ -1474,7 +1489,7 @@ TInt CSimMbmsPacketContext::ChangeState(RPacketContext::TContextStatus aNewState
 		ReqCompleted(iNotifyStatusChange.iNotifyHandle,KErrNone);
 		}
 
-	LOGPACKET1("<<CSimMbmsPacketContext::ChangeState Completed");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CHANGESTATE_2, "<<CSimMbmsPacketContext::ChangeState Completed");
 	return KErrNone;
 	}
 
@@ -1489,14 +1504,14 @@ TInt CSimMbmsPacketContext::ActionEvent(TMbmsContextEvent aEvent)
 * @return value represents the error state caused by the attempted state machine jump.
 */
 	{
-	LOGPACKET1("<<CSimMbmsPacketContext::ActionEvent Completed");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_ACTIONEVENT_1, "<<CSimMbmsPacketContext::ActionEvent Completed");
 	TInt ret=KErrNone;
 	__ASSERT_ALWAYS(iState!=RPacketContext::EStatusUnknown,SimPanic(ECallStatusUnknownIllegal));
 
 	switch(aEvent)
 		{
 		case EMbmsContextEventActivate:
-			LOGPACKET1("CSimMbmsPacketContext::ActionEvent = [EMbmsContextEventActivate]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_ACTIONEVENT_2, "CSimMbmsPacketContext::ActionEvent = [EMbmsContextEventActivate]");
 			if(iState==RPacketContext::EStatusInactive)
 				{
 				iCurrentEvent=EMbmsContextEventActivate;
@@ -1510,7 +1525,7 @@ TInt CSimMbmsPacketContext::ActionEvent(TMbmsContextEvent aEvent)
 			break;
 
 		case EMbmsContextEventDeactivate:
-			LOGPACKET1("CSimMbmsPacketContext::ActionEvent = [EMbmsContextEventDeactivate]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_ACTIONEVENT_3, "CSimMbmsPacketContext::ActionEvent = [EMbmsContextEventDeactivate]");
 			if(iState==RPacketContext::EStatusActive || iState==RPacketContext::EStatusActivating)
 				{
 				iCurrentEvent=EMbmsContextEventDeactivate;
@@ -1524,7 +1539,7 @@ TInt CSimMbmsPacketContext::ActionEvent(TMbmsContextEvent aEvent)
 			break;
 
 		case EMbmsContextEventDelete:
-			LOGPACKET1("CSimMbmsPacketContext::ActionEvent = [EMbmsContextEventDelete]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_ACTIONEVENT_4, "CSimMbmsPacketContext::ActionEvent = [EMbmsContextEventDelete]");
 			iDeleted = ETrue;
 			if(iState==RPacketContext::EStatusInactive)
 				{
@@ -1535,7 +1550,7 @@ TInt CSimMbmsPacketContext::ActionEvent(TMbmsContextEvent aEvent)
 				ReqCompleted(iDeleteRequestHandle, KErrInUse);
 			break;
 		default:
-			LOGPACKET1("CSimMbmsPacketContext::ActionEvent = [Default Case]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_ACTIONEVENT_5, "CSimMbmsPacketContext::ActionEvent = [Default Case]");
 			break;
 		}
 	return ret;
@@ -1550,7 +1565,7 @@ RPacketService::TStatus CSimMbmsPacketContext::ConvertToPacketServiceStatus(RPac
 * @return RPacketService::TStatus The packet service status conversion
 */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::ConvertToPacketServiceStatus called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_CONVERTTOPACKETSERVICESTATUS_1, "CSimMbmsPacketContext::ConvertToPacketServiceStatus called");
 	RPacketService::TStatus serviceStatus;
 	switch (aNewState)
 		{
@@ -1580,7 +1595,7 @@ TInt CSimMbmsPacketContext::RandTime()
  * synchronous call scenario 
  */
 	{
-	LOGPACKET1("CSimMbmsPacketContext::RandTime called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMMBMSPACKETCONTEXT_RANDTIME_1, "CSimMbmsPacketContext::RandTime called");
 	TInt ranT= Math::Random()%4; 
 	return(ranT);
 	}

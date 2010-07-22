@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -28,7 +28,6 @@ UID             0x1000008D 0x102078E2
 MACRO USING_CTSY_DISPATCHER
 #define USING_CTSY_DISPATCHER
 //#endif
-MACRO TF_SAT_LOGGING
 
 SOURCEPATH      ../src
 // SatTsy (the "main" module)
@@ -98,12 +97,10 @@ CAPABILITY  CommDD PowerMgmt ReadDeviceData WriteDeviceData TrustedUI ProtServ N
 
 USERINCLUDE     ../inc
 USERINCLUDE		../exportinc/utility
+USERINCLUDE		../traces
 
 #ifdef USING_CTSY_DISPATCHER
 USERINCLUDE		../exportinc
-
-//needed for tflogger.h (ideally change all "" to <> and remove)
-USERINCLUDE	../../common_tsy/commontsy/inc
 #endif //USING_CTSY_DISPATCHER
 
 
@@ -118,8 +115,6 @@ LIBRARY         cstktsyutility.lib			// For using BerTlv and other utility metho
 LIBRARY         etelsat.lib		// SAT ETel API
 LIBRARY         etelmm.lib      // ETel Multimode API
 LIBRARY         ETel.lib        // Etel server and core API
-
-#include <comms-infras/commsdebugutility.mmh>
 
 START WINS      
 BASEADDRESS     0x65000000

@@ -46,9 +46,9 @@ SOURCE		pdptiermanager.cpp
 SOURCE		pdpservices.cpp
 SOURCE		mbmsengine.cpp
 SOURCE		pdptiermanagerselector.cpp
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 SOURCE		PDPCPR.cpp
 SOURCE		PDPCPRFactory.cpp
+#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 SOURCE		PDPCPRAvailabilityListener.cpp
 #endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 SOURCE		AuthenticationDialog.cpp
@@ -101,6 +101,7 @@ END
 USERINCLUDE    	../inc
 USERINCLUDE		../umts/spudtel/inc
 USERINCLUDE		../umts/spudfsm/inc
+USERINCLUDE    	../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 

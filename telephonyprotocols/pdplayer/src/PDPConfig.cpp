@@ -20,6 +20,14 @@
  @internalComponent
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "PDPConfigTraces.h"
+#endif
+
+#include <hash.h>
+#include <e32math.h>
 #include <comms-infras/ss_log.h>
 #include <in_sock.h>
 #include <comms-infras/metadata.h>
@@ -30,11 +38,6 @@
 #include "PDPProvision.h"
 
 using namespace ESock;
-
-#if defined(__CFLOG_ACTIVE)
-#define KPDPMCprTag KESockMetaConnectionTag
-_LIT8(KPDPMCprSubTag, "pdpmcpr");
-#endif
 
 //
 // Attribute table for provisioning structure passed to CFProtocol
@@ -158,7 +161,7 @@ void CGPRSProvision::RetrieveGprsCompression(TUint& aCompression, ESock::CCommsD
 		{
 		aCompression |= RPacketContext::KPdpHeaderCompression;
 		}
-	__CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdWCDMADataCompression|KCDTIdWCDMAHeaderCompression [%d]"), this, aCompression));
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEGPRSCOMPRESSION_1, "CGPRSProvision [this=0x%08x]::InitialiseConfigL() KCDTIdWCDMADataCompression|KCDTIdWCDMAHeaderCompression [%u]", (TUint)this, aCompression);
 	}
 
 void CGPRSProvision::RetrieveGprsAnonymousAccess(RPacketContext::TAnonymousAccess& aAnonymous, ESock::CCommsDatIapView* aIapView) const
@@ -170,7 +173,7 @@ void CGPRSProvision::RetrieveGprsAnonymousAccess(RPacketContext::TAnonymousAcces
 	else
 		aAnonymous = RPacketContext::ENotRequired;
 	
-	__CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdWCDMAAnonymousAccess [%d]"), this, aAnonymous));
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEGPRSANONYMOUSACCESS_1, "CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdWCDMAAnonymousAccess [%d]", (TUint)this, aAnonymous);
 	}
 
 void CGPRSProvision::RetrieveApnNameL(TDes8& aApnName, ESock::CCommsDatIapView* aIapView) const
@@ -187,7 +190,7 @@ void CGPRSProvision::RetrieveApnNameL(TDes8& aApnName, ESock::CCommsDatIapView* 
     		{
     		User::Leave(getErr);
     		}
-	__CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdAPN [%S]"), this, &aApnName));
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEAPNNAMEL_1, "CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdAPN [%s]", (TUint)this, aApnName);
 	}
 
 void CGPRSProvision::RetrievePdpTypeL(RPacketContext::TProtocolType& aPdpType, ESock::CCommsDatIapView* aIapView) const	
@@ -196,7 +199,7 @@ void CGPRSProvision::RetrievePdpTypeL(RPacketContext::TProtocolType& aPdpType, E
 
 	aIapView->GetIntL(KCDTIdWCDMPDPType | KCDTIdOutgoingGprsRecord, pdpType);
 	aPdpType = static_cast<RPacketContext::TProtocolType>(pdpType);
-	__CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdWCDMPDPType=%d"), this, aPdpType)); 	
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEPDPTYPEL_1, "CGPRSProvision [this=%08x]::InitialiseConfigL() KCDTIdWCDMPDPType=%d", (TUint)this, aPdpType);
 	}
 
 void CGPRSProvision::RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfigOptionV2& aProtocolConfigOption, ESock::CCommsDatIapView* aIapView)
@@ -204,7 +207,7 @@ void CGPRSProvision::RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfig
     HBufC* buf = NULL;
     TInt getErr;
 
-    __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL()"), this));
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEAUTHENTICATIONINFOL_1, "CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL()", (TUint)this);
 
     getErr = aIapView->GetText(KCDTIdWCDMAIfAuthName | KCDTIdOutgoingGprsRecord, buf);
     if ( getErr == KErrNone )
@@ -214,9 +217,10 @@ void CGPRSProvision::RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfig
         delete buf;
         buf = NULL;
         
-        __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthName [%S] "), this, &aProtocolConfigOption.iAuthInfo.iUsername));
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEAUTHENTICATIONINFOL_2, "CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthName [%s] ", (TUint)this, aProtocolConfigOption.iAuthInfo.iUsername);
         
 		aProtocolConfigOption.iId = 1;
+		
         getErr = aIapView->GetText(KCDTIdWCDMAIfAuthPass | KCDTIdOutgoingGprsRecord, buf);
         if ( getErr == KErrNone )
             {
@@ -225,7 +229,7 @@ void CGPRSProvision::RetrieveAuthenticationInfoL(RPacketContext::TProtocolConfig
             delete buf;
             buf = NULL;
             
-            __CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthPass [%S]"), this, &aProtocolConfigOption.iAuthInfo.iPassword));
+            OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEAUTHENTICATIONINFOL_3, "CGPRSProvision [this=%08x]::RetrieveAuthenticationInfoL() KCDTIdWCDMAIfAuthPass [%S]", (TUint)this, aProtocolConfigOption.iAuthInfo.iPassword);
             }
         else if (getErr != KErrNotFound)
             {
@@ -407,7 +411,7 @@ void CTSYProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
 	
 	aIapView->GetTextL(KCDTIdTsyName, buf);
 	iTsyName.Copy(*buf);
-	__CFLOG_VAR((KPDPMCprTag, KPDPMCprSubTag, _L8("CTSYProvision [this=%08x]::InitialiseConfigL() KCDTIdTsyName=%s"), this, &iTsyName)); 	
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTSYPROVISION_INITIALISECONFIGL_1, "CTSYProvision [this=%08x]::InitialiseConfigL() KCDTIdTsyName=%S", (TUint)this, iTsyName);
 	delete buf;
     }
 

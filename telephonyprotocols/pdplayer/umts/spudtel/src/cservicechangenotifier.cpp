@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,11 +20,17 @@
  @internalComponent
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cservicechangenotifierTraces.h"
+#endif
+
 #include <e32def.h>
 
 #include "cservicechangenotifier.h"
 #include "PDPFSM.h"
-#include "spudteldebuglogger.h"
 #include "pdpfsmnmspace.h"
 
 #include <pcktcs.h>
@@ -65,16 +71,15 @@ void CServiceChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
 	if(aStatus == KErrNone)
 		{
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set ServiceStatus"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSERVICECHANGENOTIFIER_NOTIFY_1, "FSM set ServiceStatus");
 		iPdpFsmInterface.Set(iServiceStatus);
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM input EServiceStatusChangeNetwork"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSERVICECHANGENOTIFIER_NOTIFY_2, "FSM input EServiceStatusChangeNetwork");
 		iPdpFsmInterface.Input(KAllContexts, 
 								PdpFsm::EServiceStatusChangeNetwork);
 		}
 	else
 		{ 
-		SPUDTEL_ERROR_LOG(_L("CServiceChangeNotifier::Notify(), error: %d"), 
-							aStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSERVICECHANGENOTIFIER_NOTIFY_3, "CServiceChangeNotifier::Notify(), error: %d", aStatus.Int());
 		ASSERT(aStatus == KErrCancel); 
 		}
 	}
@@ -84,8 +89,7 @@ void CServiceChangeNotifier::DoCancel()
 	{
 	if(IsActive())
 		{ 
-		SPUDTELVERBOSE_INFO_LOG(
-			_L("CServiceChangeNotifier::DoCancel EPacketNotifyStatusChange"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSERVICECHANGENOTIFIER_DOCANCEL_1, "CServiceChangeNotifier::DoCancel EPacketNotifyStatusChange");
 		iPacketService.CancelAsyncRequest(EPacketNotifyStatusChange); 
 		}
 	}

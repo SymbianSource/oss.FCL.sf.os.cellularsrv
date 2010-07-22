@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -38,8 +38,6 @@
 		#define MTEST_DECLARE_EVENT_COUNTER TInt iCounter;
 //all we are doing is is simulating "events from received from baseband occuring at interval of 5s.
 		#define MTEST_WAIT_FOR_NEXT_EVENT	User::After(500000);iCounter++;	
-				
-		#define MTEST_LOG_RECEIVE_EVENT_NO LOG(_L8("LtsyReceiveThread simulated event = %d"), iCounter);
 		#define MTEST_COUNTER_EXCEEDED_SHUTDOWN_RECEIVETHREAD   if(iCounter>3) err = KShutdownLtsyReceiveThread;
 
 	#else
@@ -56,7 +54,6 @@
 		#define MTEST_QUERY_IND_SUPPORT_MOCKLTSYENGINE(A,B, C)
 		#define MTEST_DECLARE_EVENT_COUNTER
 		#define MTEST_WAIT_FOR_NEXT_EVENT
-		#define MTEST_LOG_RECEIVE_EVENT_NO
 		#define MTEST_COUNTER_EXCEEDED_SHUTDOWN_RECEIVETHREAD   
 	#endif
 

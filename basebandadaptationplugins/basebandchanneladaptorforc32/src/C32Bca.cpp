@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
  @file
  @internalComponent
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "C32BcaTraces.h"
+#endif
 
 #include "C32Bca.h"
 #include <cdbcols.h>
@@ -44,14 +50,12 @@ CCommBase::CCommBase(MC32User& aUser, RComm& aPort, TInt aAoPriority):
 	iPort(aPort)
 	{
 	CActiveScheduler::Add(this);
-	__FLOG_OPEN(KC32BcaLogFolder, KC32BcaLogFile); // Connect to the BCA logger			
 	}
 		
 /**
 C++ destructor */		
 CCommBase::~CCommBase()
 	{
-	__FLOG_CLOSE;
 	}
 
 /**
@@ -173,7 +177,7 @@ Sets the object to monitor the link for the configured Role, DTE or DCE
 void CCommLinkMonitor::Setup(TUint32 aMask)
 	{
 	iNotifyChangeSignalMask = aMask;	
-	__FLOG_1(_L8("CommLinkMonitor setup: Notify on signal mask [0x%X]"),iNotifyChangeSignalMask);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCOMMLINKMONITOR_SETUP_1, "CommLinkMonitor setup: Notify on signal mask [0x%X]",iNotifyChangeSignalMask);
 	}
 
 /**
@@ -189,7 +193,7 @@ void CCommLinkMonitor::NotifyLinkDown()
 	iSavedSignalState = iPort.Signals(iNotifyChangeSignalMask) & iNotifyChangeSignalMask;
 	iPort.NotifySignalChange(iStatus, iSignals, iNotifyChangeSignalMask);
 
-	__FLOG_1(_L8("CommLinkMonitor::NotifyLinkDown: initial signals: [0x%X]"), iSavedSignalState);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCOMMLINKMONITOR_NOTIFYLINKDOWN_1, "CommLinkMonitor::NotifyLinkDown: initial signals: [0x%X]", iSavedSignalState);
 	
 	SetActive();
 	}
@@ -199,7 +203,7 @@ Called when EIA-232 signals change,i.e. on potential link failure
 */
 void CCommLinkMonitor::RunL()
 	{
-	__FLOG_2(_L8("CommLinkMonitor::RunL: Signals changed [0x%X]; new signals [0x%X]"), iSignals & (~0x1F), iSignals & 0x1F);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCOMMLINKMONITOR_RUNL_1, "CommLinkMonitor::RunL: Signals changed [0x%X]; new signals [0x%X]", iSignals & (~0x1F), iSignals & 0x1F);
 	
 	// We report link failure if and only if a monitored line went from high to low.
 	// Method: mask the saved signals using inverted monitored bits in the signal bitmask,
@@ -220,7 +224,7 @@ void CCommLinkMonitor::RunL()
 Cancels notification request of link failure */	
 void CCommLinkMonitor::DoCancel()
 	{
-	__FLOG(_L8("CommLinkMonitor::DoCancel: Cancelling signal change notification."));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCOMMLINKMONITOR_DOCANCEL_1, "CommLinkMonitor::DoCancel: Cancelling signal change notification.");
 	iPort.NotifySignalChangeCancel();
 	}
 	
@@ -233,8 +237,7 @@ void CCommLinkMonitor::DoCancel()
 */
 CC32Bca::CC32Bca()	
 	{
-	__FLOG_OPEN(KC32BcaLogFolder,KC32BcaLogFile);
-	__FLOG_2(_L8("====== CC32Bca::CC32Bca: Shim BCA for C32 [Vesion: major= %d minor= %d] Constructed. ======"), KC32BcaMajorVersionNumber, KC32BcaMinorVersionNumber);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CTOR_1, "====== CC32Bca::CC32Bca: Shim BCA for C32 [Vesion: major= %d minor= %d] Constructed. ======", KC32BcaMajorVersionNumber, KC32BcaMinorVersionNumber);
 	}
 
 /**
@@ -260,7 +263,7 @@ void CC32Bca::ConstructL()
 CC32Bca::~CC32Bca()
 	
 	{
-	__FLOG(_L8("CC32Bca::~CC32Bca: releasing resources..."));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_DTOR_1, "CC32Bca::~CC32Bca: releasing resources...");
 		
 	CloseCommDbConnection(); 
 	CloseCommPort(); 	// Cancels reader / writer / monitor
@@ -272,14 +275,13 @@ CC32Bca::~CC32Bca()
 	delete iWriter;
 	delete iLinkMonitor; // Note: may have never been created.
 
-	__FLOG(_L8("CC32Bca::~CC32Bca: CC32Bca destroyed."));
-	__FLOG_CLOSE;
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_DTOR_2, "CC32Bca::~CC32Bca: CC32Bca destroyed.");
 	}
 	
 /** This method deletes the BCA itself.*/
 void CC32Bca::Release()
 	{
-	__FLOG(_L8("CC32Bca::Release"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_RELEASE_1, "CC32Bca::Release");
 	delete this;
 	}
 	
@@ -299,7 +301,7 @@ void CC32Bca::Open(TRequestStatus& aStatus, const TDesC& aChannelId)
 	TRequestStatus* ptrStatus = &aStatus;
 	if(iCommPortOpen)
 		{
-		__FLOG(_L8("Warning: C32Bca is already Opened."));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_1, "Warning: C32Bca is already Opened.");
 	
 		User::RequestComplete(ptrStatus,KErrNone);
 		return;	
@@ -320,12 +322,12 @@ void CC32Bca::Open(TRequestStatus& aStatus, const TDesC& aChannelId)
 		// So, we just log a warning.
 		if(KErrNone == commPortErr && iCommPort.Size() == 0)
 			{
-			__FLOG(_L8("Warning: Null string read from CommDB. Will try to open Comm Port anyway."));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_2, "Warning: Null string read from CommDB. Will try to open Comm Port anyway.");
 			}		
 		
 		if(KErrNone != commPortErr) // Fatal: we do not have a port name. Can't open RComm.
 			{
-			__FLOG(_L8("Error: Failed to get C32 PortName from CommDB "));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_3, "Error: Failed to get C32 PortName from CommDB ");
 			CloseCommDbConnection();
 			User::RequestComplete(ptrStatus, commPortErr);
 			return;
@@ -338,7 +340,7 @@ void CC32Bca::Open(TRequestStatus& aStatus, const TDesC& aChannelId)
 
 		if (len1 < KErrNone)
 			{
-			__FLOG(_L8("** ERROR: No :: (Double Colon) in aChannelId **"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_4, "** ERROR: No :: (Double Colon) in aChannelId **");
 			User::RequestComplete(ptrStatus, KErrBadName);
 			return;	
 			}
@@ -369,7 +371,7 @@ void CC32Bca::Open(TRequestStatus& aStatus, const TDesC& aChannelId)
 			{
 			// We do not use a hardcoded value (e.g. ECUART), because the client code or the environment are
 			// confused - it is better to fail them, rather than mask their problems.
-			__FLOG(_L8("Error: Failed to get CSY name from CommDB "));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_5, "Error: Failed to get CSY name from CommDB ");
 			CloseCommDbConnection();
 			User::RequestComplete(ptrStatus,getCsyErr);
 			return;
@@ -399,13 +401,13 @@ void CC32Bca::Open(TRequestStatus& aStatus, const TDesC& aChannelId)
 	TInt ret = iCommServ.Connect();
 	if(ret)
 		{
-		__FLOG_1(_L8("Open: C32 Server connection error %d"), ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_6, "Open: C32 Server connection error %d", ret);
 		User::RequestComplete(ptrStatus,ret);
 		return;
 		}
 	ret = iCommServ.LoadCommModule(iCsyName);
 	
-	__FLOG_2(_L16("Open: CSY module [%S] loaded with error %d"), &iCsyName, ret);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_7,"Open: CSY module [%S] loaded with error %d", iCsyName, ret);
 		
 	if(ret)
 		{
@@ -422,7 +424,7 @@ void CC32Bca::Open(TRequestStatus& aStatus, const TDesC& aChannelId)
 		ret = iComm.Open(iCommServ, iCommPort, ECommShared, iCommRole);	
 		}
 	
-	__FLOG_2(_L16("Open: C32 port [%S] opened with error %d"), &iCommPort, ret);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_OPEN_8,"Open: C32 port [%S] opened with error %d", iCommPort, ret);
 					
 	if(ret)
 		{
@@ -460,7 +462,7 @@ void CC32Bca::Shutdown(TRequestStatus& aStatus)
 	
 	TRequestStatus* request = &aStatus;
 	User::RequestComplete(request, KErrNone);
-	__FLOG_1(_L8("C32Bca::Shutdown: BCA shut down with error %d"), KErrNone);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_SHUTDOWN_1, "C32Bca::Shutdown: BCA shut down with error %d", KErrNone);
 	}
 
 /**
@@ -470,7 +472,7 @@ void CC32Bca::Shutdown(TRequestStatus& aStatus)
 void CC32Bca::Close()
 	{
 	CloseCommPort();
-	__FLOG_1(_L8("C32Bca::Close:Close: BCA closed with error %d"), KErrNone);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CLOSE_1, "C32Bca::Close:Close: BCA closed with error %d", KErrNone);
 	}
 
 /**
@@ -525,7 +527,7 @@ void CC32Bca::Write(TRequestStatus& aStatus,const TDesC8& aBuf)
 void CC32Bca:: CancelRead()
 	
 	{
-	__FLOG(_L8("CancelRead: Read is cancelled by client."));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CANCELREAD_1, "CancelRead: Read is cancelled by client.");
 	iReader->Cancel();
 
 	if(iReadRequest != NULL)
@@ -540,7 +542,7 @@ void CC32Bca:: CancelRead()
 void CC32Bca::CancelWrite()
 
     {
-    __FLOG(_L8("CancelWrite: Write is cancelled by client."));
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CANCELWRITE_1, "CancelWrite: Write is cancelled by client.");
 
     iWriter->Cancel();
 
@@ -552,7 +554,7 @@ void CC32Bca::CancelWrite()
     
 
 // Debug dumps:
-#ifdef __FLOG_ACTIVE
+#ifdef OST_TRACE_COMPILER_IN_USE
 
 _LIT8(KLitOptLevelGeneric,    "KBcaOptLevelGeneric");
 _LIT8(KLitOptLevelExtSerial,   "KBcaOptLevelExtSerial");
@@ -637,22 +639,11 @@ static const TDesC8& IoctlOptNameStr(TUint32 aOptName)
 			return KLitOptNameUnsupported;		
 		}
 	}
-#endif // __FLOG_ACTIVE
+#endif // OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG
 
 
-#ifdef __FLOG_ACTIVE
-/**
-Print debug output of the TCommComfig parameters.
 
-@param The configuration whose parameters should be logged.
-*/
-void CC32Bca::LogCommConfig(TCommConfig& c)
-	{
-	__FLOG_5(_L8("Rate[%d] DataBits[%d] StopBits[%d] Parity[%d] Handshake[0x%x]"), c().iRate, c().iDataBits, c().iStopBits, c().iParity, c().iHandshake);	
-	__FLOG_4(_L8("ParityError[%d] Fifo[%d] SpecialRate[%d] terminatorCount[%d]"), c().iParityError, c().iFifo, c().iSpecialRate, c().iTerminatorCount);	
-	__FLOG_1(_L8("Terminator[0x%x]"), c().iTerminator);	
-	}
-#endif // __FLOG_ACTIVE
+
 
 
 /**
@@ -666,7 +657,7 @@ void CC32Bca::LogCommConfig(TCommConfig& c)
 void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TDes8& aOpt)
 
 	{
-	__FLOG_4(_L8("Ioctl: Level[%S](0x%X) Name[%S](0x%X)."), &IoctlOptLevelStr(aOptLevel), aOptLevel, &IoctlOptNameStr(aOptName), aOptName);	
+	OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_1, "Ioctl: Level[%s](0x%X) Name[%s](0x%X).", IoctlOptLevelStr(aOptLevel), aOptLevel, IoctlOptNameStr(aOptName), aOptName);
 	
 	aStatus = KRequestPending;
 	
@@ -696,7 +687,7 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 				{
 				TUint32 tempIapId = *(reinterpret_cast<const TUint32*>(aOpt.Ptr()));
 				
-				__FLOG_1(_L8("Ioctl: IAP ID [%d] specified."),tempIapId);	
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_2, "Ioctl: IAP ID [%d] specified.",tempIapId);
 				
 				if(tempIapId < 1 )
 					{
@@ -745,14 +736,15 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 			
 		case KSerialConfig:
 			{
-			__FLOG(_L8("Ioctl: KSerialConfig"));	
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_3, "Ioctl: KSerialConfig");
 
 			TCommConfig cfg;
 			iComm.Config(cfg);
 
-#ifdef __FLOG_ACTIVE
-			LogCommConfig(cfg);
-#endif // __FLOG_ACTIVE
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_4, "Rate[%d] DataBits[%d] StopBits[%d]", cfg().iRate, cfg().iDataBits, cfg().iStopBits);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_5, "Parity[%d] Handshake[0x%x]", cfg().iParity, cfg().iHandshake);
+			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_6, "ParityError[%d] Fifo[%d] SpecialRate[%d] terminatorCount[%d]", cfg().iParityError, cfg().iFifo, cfg().iSpecialRate, cfg().iTerminatorCount);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_7, "Terminator[0x%x]", cfg().iTerminator);
 
 			TPckgBuf<TCommConfig> cfgBuf(cfg);
 			aOpt.Copy(cfgBuf);
@@ -761,14 +753,15 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 
 		case KSerialSetConfig:
 			{
-			__FLOG(_L8("Ioctl: KSerialSetConfig"));	
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_8, "Ioctl: KSerialSetConfig");
 
 			TCommConfig cfg(*(reinterpret_cast<const TCommConfig*>(aOpt.Ptr())));
 
-#ifdef __FLOG_ACTIVE
-			LogCommConfig(cfg);
-#endif // __FLOG_ACTIVE
-
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_9, "Rate[%d] DataBits[%d] StopBits[%d]", cfg().iRate, cfg().iDataBits, cfg().iStopBits);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_10, "Parity[%d] Handshake[0x%x]", cfg().iParity, cfg().iHandshake);
+			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_11, "ParityError[%d] Fifo[%d] SpecialRate[%d] terminatorCount[%d]", cfg().iParityError, cfg().iFifo, cfg().iSpecialRate, cfg().iTerminatorCount);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_12, "Terminator[0x%x]", cfg().iTerminator);
+			
 			ret = iComm.SetConfig(cfg);
 			break;
 			}
@@ -787,11 +780,11 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 			   				reinterpret_cast<const TName*>(aOpt.Ptr())
 			   				));
 				iCsyNameOverride = ETrue;
-				__FLOG_1(_L8("Ioctl: CSY Name set to [%S]"), &iCsyName);	
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_13, "Ioctl: CSY Name set to [%S]", iCsyName);
 				}
 			else
 				{
-				__FLOG(_L8("Ioctl: Warning: Cannot set the CSY name because the Comm Port is already open."));
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_14, "Ioctl: Warning: Cannot set the CSY name because the Comm Port is already open.");
 				ret = KErrAlreadyExists;
 				}
 			
@@ -804,11 +797,11 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 				{
 				iCommRole = *(reinterpret_cast<const TCommRole*>(aOpt.Ptr()));
 				iCommRoleOverride = ETrue;
-				__FLOG_1(_L8("Ioctl: Comm Role set to [%d]"), iCommRole);	
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_15, "Ioctl: Comm Role set to [%d]", iCommRole);
 				}
 			else
 				{
-				__FLOG(_L8("Ioctl: Warning: Cannot set Comm Role because the Comm Port is already open."));
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_16, "Ioctl: Warning: Cannot set Comm Role because the Comm Port is already open.");
 				ret = KErrAlreadyExists;
 				}
 			break;	
@@ -817,7 +810,7 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 		case KSerialSetTxRxBufferSize:
 			{
 			TInt bufSize = *(reinterpret_cast<const TInt*>(aOpt.Ptr()));
-			__FLOG_1(_L8("Ioctl: Setting Rx Tx buffer size to [%d]"), bufSize); 
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_17, "Ioctl: Setting Rx Tx buffer size to [%d]", bufSize);
 			
 			iComm.SetReceiveBufferLength(bufSize);
 			break;
@@ -838,7 +831,7 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 			else
 				{
 				const TSerialSetControlLines& lines = *(reinterpret_cast<const TSerialSetControlLines*>(aOpt.Ptr()));
-				__FLOG_2(_L8("Ioctl: Setting/clearing control lines %x/%x"), lines.iSetMask, lines.iClearMask); 
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_18, "Ioctl: Setting/clearing control lines %x/%x", lines.iSetMask, lines.iClearMask);
 				iComm.SetSignals(lines.iSetMask, lines.iClearMask);
 				ret = KErrNone;
 				}
@@ -855,7 +848,7 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 		}
 		
 	
-	__FLOG_1(_L8("Ioctl completed with error %d"), ret);			
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_IOCTL_19, "Ioctl completed with error %d", ret);
 	
 	TRequestStatus* ptrStatus = &aStatus;
 	User::RequestComplete(ptrStatus, ret);
@@ -871,7 +864,7 @@ void CC32Bca::Ioctl(TRequestStatus& aStatus, TUint aOptLevel, TUint aOptName, TD
 */
 void CC32Bca::MonitorControlLinesL(TUint32 aArgMask)
 	{
-	__FLOG_1(_L8("Ioctl: argument bitmask = [0x%X] "), aArgMask);	
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_MONITORCONTROLLINESL_1, "Ioctl: argument bitmask = [0x%X] ", aArgMask);
 			
 	if(iLinkMonitor) // We may have never started...  
 			{
@@ -881,12 +874,12 @@ void CC32Bca::MonitorControlLinesL(TUint32 aArgMask)
 	
 	if(KMonitorOff == aArgMask) // Stop monitoring:
 		{
-		__FLOG(_L8("MonitorControlLinesL: Stopping Control Lines monitoring."));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_MONITORCONTROLLINESL_2, "MonitorControlLinesL: Stopping Control Lines monitoring.");
 		// We either never started, or we just cancelled above.
 		}
 	else // Start Monitoring, or change the monitored lines.
 		{
-		__FLOG(_L8("MonitorControlLinesL: Starting to monitor Control Lines."));	
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_MONITORCONTROLLINESL_3, "MonitorControlLinesL: Starting to monitor Control Lines.");
 		
 		if(!iLinkMonitor) // We are starting to monitor for the first time 
 			{			
@@ -935,7 +928,7 @@ void CC32Bca::MonitorControlLinesL(TUint32 aArgMask)
 		iLinkMonitor->Setup(lineMask);
 		iLinkMonitor->NotifyLinkDown();
 		
-		__FLOG(_L8("MonitorControlLinesL: Control Lines monitoring started."));	
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_MONITORCONTROLLINESL_4, "MonitorControlLinesL: Control Lines monitoring started.");
 		}				
 	}
 
@@ -953,7 +946,7 @@ Read Comm Port from CommDB bearer record
 @leave if the value could not be read */
 void CC32Bca::ReadCommPortFromCommDbL(TDes& aPortName)
 	{
-	__FLOG(_L8("CC32Bca::ReadCommPortFromCommDbL()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_READCOMMPORTFROMCOMMDBL_1, "CC32Bca::ReadCommPortFromCommDbL()");
 	ConnectToCommDbBearerRecordL();
 
 	TInt ret(0);
@@ -966,7 +959,7 @@ void CC32Bca::ReadCommPortFromCommDbL(TDes& aPortName)
 
 	if(ret!=KErrNone)
 		{
-		__FLOG_1(_L8("portField->LoadL(*iCommsDat) left with[%d] "), ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_READCOMMPORTFROMCOMMDBL_2, "portField->LoadL(*iCommsDat) left with[%d] ", ret);
 		User::Leave(ret);	
 		}
 
@@ -980,7 +973,7 @@ Read the CSY name from CommDB bearer record.
 @leave if the value could not be read */
 void CC32Bca::ReadCsyNameFromCommDbL(TDes& aCsyName)
 	{
-	__FLOG(_L8("CC32Bca::ReadCsyNameFromCommDbL()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_READCSYNAMEFROMCOMMDBL_1, "CC32Bca::ReadCsyNameFromCommDbL()");
 	ConnectToCommDbBearerRecordL();
 
 	TInt ret(0);
@@ -993,7 +986,7 @@ void CC32Bca::ReadCsyNameFromCommDbL(TDes& aCsyName)
 
 	if(ret!=KErrNone)
 		{
-		__FLOG_1(_L8("csyField->LoadL(*iCommsDat) left with[%d] "), ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_READCSYNAMEFROMCOMMDBL_2, "csyField->LoadL(*iCommsDat) left with[%d] ", ret);
 		User::Leave(ret);	
 		}
 
@@ -1008,7 +1001,7 @@ Read the specified Comm role (DTE / DCE) from CommDB bearer record
 @leave if the value could not be read */	
 void CC32Bca::ReadCommRoleFromCommDbL(TCommRole& aCommRole)
 	{
-	__FLOG(_L8("CC32Bca::ReadCommRoleFromCommDbL()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_READCOMMROLEFROMCOMMDBL_1, "CC32Bca::ReadCommRoleFromCommDbL()");
 	ConnectToCommDbBearerRecordL();
 	TUint32 role(0);
 
@@ -1021,7 +1014,7 @@ void CC32Bca::ReadCommRoleFromCommDbL(TCommRole& aCommRole)
 
 	if(ret!=KErrNone)
 		{
-		__FLOG_1(_L8("roleField->LoadL(*iCommsDat) left with[%d] "), ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_READCOMMROLEFROMCOMMDBL_2, "roleField->LoadL(*iCommsDat) left with[%d] ", ret);
 		User::Leave(ret);	
 		}
 
@@ -1039,7 +1032,7 @@ Opens a connection to the ModemBearer record specified by the provisioned IAP ID
 */
 void CC32Bca::ConnectToCommDbBearerRecordL()
 	{
-	__FLOG(_L8("CC32Bca::ConnectToCommDbBearerRecordL()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CONNECTTOCOMMDBBEARERRECORDL_1, "CC32Bca::ConnectToCommDbBearerRecordL()");
 	if(iCommsDat != NULL) // CommDB is already open, we don't need to do anything
 		{
 		return;	
@@ -1047,7 +1040,7 @@ void CC32Bca::ConnectToCommDbBearerRecordL()
 	
 	if(iIapId < 1) // Can't access CommDB if IAP ID is unknown
 		{
-		__FLOG_1(_L8("iIapId[%d] is unknown"), iIapId);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CONNECTTOCOMMDBBEARERRECORDL_2, "iIapId[%d] is unknown", iIapId);
 		User::Leave(KErrNotReady);	
 		}
 
@@ -1080,7 +1073,7 @@ void CC32Bca::ConnectToCommDbBearerRecordL()
   	TRAPD(ret,iapRecord->LoadL(*iCommsDat));
 	if (ret != KErrNone)
 		{
-		__FLOG_1(_L8("iapRecord->LoadL(*iCommsDat) left with[%d] "), ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CONNECTTOCOMMDBBEARERRECORDL_3, "iapRecord->LoadL(*iCommsDat) left with[%d] ", ret);
 		User::Leave(ret);
 		}    
     
@@ -1100,7 +1093,7 @@ void CC32Bca::ConnectToCommDbBearerRecordL()
 	
 	if(iModemId == 0) // ID not found.
 		{
-		__FLOG_1(_L8("iModemId[%d] is not found"), iModemId);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CONNECTTOCOMMDBBEARERRECORDL_4, "iModemId[%d] is not found", iModemId);
 		User::Leave(KErrNotFound);	
 		}
 	}
@@ -1109,7 +1102,7 @@ void CC32Bca::ConnectToCommDbBearerRecordL()
 /** Cancels an outstanding Ioctl, if any. */
 void CC32Bca::CancelIoctl()
 	{
-	__FLOG(_L8("CancelIoctl(): Ioctl cancel request. No Ioctl to cancel."));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CANCELIOCTL_1, "CancelIoctl(): Ioctl cancel request. No Ioctl to cancel.");
 	}
 	
 
@@ -1136,7 +1129,7 @@ void CC32Bca::CloseCommPort()
 		iCommServ.Close();	
 		iCommPortOpen = EFalse;
 		}
-	__FLOG(_L8("CloseCommPort(): Session with C32 & RComm closed."));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_CLOSECOMMPORT_1, "CloseCommPort(): Session with C32 & RComm closed.");
 	}
 
 /**
@@ -1145,7 +1138,7 @@ C32Bca Panic function
 */		
 void C32Bca::Panic(TC32BcaPanic aPanic)
 	{
-	__FLOG_STATIC2(KC32BcaLogFolder,KC32BcaLogFile,_L8("%S Panic %d"), &KC32BcaPanic(), aPanic);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_PANIC_1, "%S Panic %d", KC32BcaPanic(), aPanic);
 	User::Panic(KC32BcaPanic, aPanic);
 	}
 	
@@ -1173,7 +1166,7 @@ void CC32Bca::CommWriteComplete(TInt aErr)
 // Upcall from the link monitor: Link has gone down.	
 void CC32Bca::CommLinkDown(TInt aErr)
 	{
-	__FLOG_1(_L8("CommLinkDown: Warning: serial link has gone down with error[%d]. Erroring the outstanding Read & Write."), aErr);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CC32BCA_COMMLINKDOWN_1, "CommLinkDown: Warning: serial link has gone down with error[%d]. Erroring the outstanding Read & Write.", aErr);
 	
 	__ASSERT_DEBUG(KErrNone != aErr, Panic(EGeneralLogicError)); // If KErrNone, use has no way to know that the read has failed.
 	if(iReader->IsActive())

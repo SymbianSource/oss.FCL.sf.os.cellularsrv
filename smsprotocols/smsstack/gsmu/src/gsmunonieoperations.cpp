@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "gsmunonieoperationsTraces.h"
+#endif
 
 #include "Gsmumain.h" 
 #include "gsmunonieoperations.h" 
@@ -101,7 +107,7 @@ void CSmsNonIEOperation::operator=(const CSmsNonIEOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsNonIEOperation::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSNONIEOPERATION_OPERATOR_1, "CSmsNonIEOperation::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -118,7 +124,7 @@ TBool CSmsNonIEOperation::operator==(const CSmsNonIEOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsNonIEOperation::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSNONIEOPERATION_OPERATOR1_1, "CSmsNonIEOperation::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -136,7 +142,7 @@ void CSmsCtrlNonIEOperation::operator=(const CSmsCtrlNonIEOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsCtrlNonIEOperation::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCTRLNONIEOPERATION_OPERATOR_1, "CSmsCtrlNonIEOperation::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -153,7 +159,7 @@ TBool CSmsCtrlNonIEOperation::operator==(const CSmsCtrlNonIEOperation&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsCtrlNonIEOperation::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCTRLNONIEOPERATION_OPERATOR1_1, "CSmsCtrlNonIEOperation::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -194,7 +200,7 @@ void CSmsTPSRROperations::operator=(const CSmsTPSRROperations&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsTPSRROperations::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSTPSRROPERATIONS_OPERATOR_1, "CSmsTPSRROperations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -211,7 +217,7 @@ TBool CSmsTPSRROperations::operator==(const CSmsTPSRROperations&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CSmsTPSRROperations::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSTPSRROPERATIONS_OPERATOR1_1, "CSmsTPSRROperations::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -228,13 +234,13 @@ void CSmsTPSRROperations::ValidateOperationL() const
 	{
 	if (iMessage.Version() < CSmsMessage::ESmsMessageV2)
 	    {
-	    LOGGSMU2("CSmsTPSRROperations Operation not supported, Msg Version %d", iMessage.Version());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSTPSRROPERATIONS_VALIDATEOPERATIONL_1, "CSmsTPSRROperations Operation not supported, Msg Version %d", iMessage.Version());
 	    User::Leave(KErrNotSupported); 
 	    }
 
 	if (!MessageTypeSupported())
 	    {
-	    LOGGSMU2("CSmsTPSRROperations Operation not supported by this PDU type, type = %d", iMessage.Type());
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSTPSRROPERATIONS_VALIDATEOPERATIONL_2, "CSmsTPSRROperations Operation not supported by this PDU type, type = %d", iMessage.Type());
 	    User::Leave(KErrNotSupported);
 	    }
 	}
@@ -547,7 +553,7 @@ EXPORT_C void CSmsTPSRROperations::ResetSchemeL()
 CIncompleteClass0MessageInfo::CIncompleteClass0MessageInfo(TSmsNonIEIdentifier aId, CSmsMessage& aMessage)
 	: CSmsNonIEOperation(aId, aMessage)
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo constructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_CTOR_1, "CIncompleteClass0MessageInfo constructor");
 	}
 
 /** 
@@ -564,7 +570,7 @@ CIncompleteClass0MessageInfo::CIncompleteClass0MessageInfo(TSmsNonIEIdentifier a
  */			
 EXPORT_C void CIncompleteClass0MessageInfo::GetIncompleteMessageInfoL(TInt& aStartPos, TInt& aEndPos, TBool& aIsLastIncompleteMessage)
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo::GetIncompleteMessageInfoL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CINCOMPLETECLASS0MESSAGEINFO_GETINCOMPLETEMESSAGEINFOL_1, "CIncompleteClass0MessageInfo::GetIncompleteMessageInfoL");
 	ValidateOperationL();
 	aStartPos = iStartPos;
 	aEndPos = iEndPos;
@@ -585,7 +591,7 @@ EXPORT_C void CIncompleteClass0MessageInfo::GetIncompleteMessageInfoL(TInt& aSta
  */
 EXPORT_C void CIncompleteClass0MessageInfo::SetIncompleteMessageInfoL(TInt aStartPos, TInt aEndPos, TBool aIsLastIncompleteMessage)
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo::SetIncompleteMessageInfoL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CINCOMPLETECLASS0MESSAGEINFO_SETINCOMPLETEMESSAGEINFOL_1, "CIncompleteClass0MessageInfo::SetIncompleteMessageInfoL");
 	ValidateOperationL();
 	iStartPos = aStartPos;
 	iEndPos = aEndPos;
@@ -604,7 +610,7 @@ void CIncompleteClass0MessageInfo::operator=(const CIncompleteClass0MessageInfo&
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CIncompleteClass0MessageInfo::operator=");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_OPERATOR_1, "CIncompleteClass0MessageInfo::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     BULLSEYE_RESTORE
     }
@@ -621,7 +627,7 @@ TBool CIncompleteClass0MessageInfo::operator==(const CIncompleteClass0MessageInf
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    LOGGSMU1("CIncompleteClass0MessageInfo::operator==");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_OPERATOR1_1, "CIncompleteClass0MessageInfo::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented1);
     return EFalse;
     BULLSEYE_RESTORE
@@ -636,7 +642,7 @@ TBool CIncompleteClass0MessageInfo::operator==(const CIncompleteClass0MessageInf
  */
 TBool CIncompleteClass0MessageInfo::MessageTypeSupported() const
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo::MessageTypeSupported");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_MESSAGETYPESUPPORTED_1, "CIncompleteClass0MessageInfo::MessageTypeSupported");
 	CSmsPDU::TSmsPDUType type = iMessage.Type();
 	return (type == CSmsPDU::ESmsDeliver);
 	}
@@ -650,17 +656,17 @@ TBool CIncompleteClass0MessageInfo::MessageTypeSupported() const
  */
 void CIncompleteClass0MessageInfo::ValidateOperationL() const
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo::ValidateOperationL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_VALIDATEOPERATIONL_1, "CIncompleteClass0MessageInfo::ValidateOperationL");
 
 	if (iMessage.Version() != CSmsMessage::ESmsIncompleteClass0MessageV)
 		{
-		LOGGSMU2("CIncompleteClass0MessageInfo Operation not supported, Msg Version %d", iMessage.Version());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_VALIDATEOPERATIONL_2, "CIncompleteClass0MessageInfo Operation not supported, Msg Version %d", iMessage.Version());
 		User::Leave(KErrNotSupported); 
 		}
 
 	if (!MessageTypeSupported())
 		{
-		LOGGSMU2("CIncompleteClass0MessageInfo Operation not supported by this PDU type, type = %d", iMessage.Type());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_VALIDATEOPERATIONL_3, "CIncompleteClass0MessageInfo Operation not supported by this PDU type, type = %d", iMessage.Type());
 		User::Leave(KErrNotSupported);
 		}
 	}
@@ -675,7 +681,7 @@ TInt CIncompleteClass0MessageInfo::Version()
     // class, no need to check the version. Expected to be used if
     // a new version of the class is added
     BULLSEYE_OFF    
-    LOGGSMU1("CIncompleteClass0MessageInfo::Version()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_VERSION_1, "CIncompleteClass0MessageInfo::Version()");
     return iVersion;
     BULLSEYE_RESTORE
     }
@@ -689,7 +695,7 @@ TInt CIncompleteClass0MessageInfo::Version()
  */
 void CIncompleteClass0MessageInfo::SetVersion(TInt aVersion)
 	{
-	LOGGSMU2("CIncompleteClass0MessageInfo::SetVersion()", aVersion);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_SETVERSION_1, "CIncompleteClass0MessageInfo::SetVersion() version:%d", aVersion);
 
 	__ASSERT_DEBUG((aVersion<EMaxSmsIncompleteClass0MessageV),Panic(KGsmuPanicVersionNotSupported));
 
@@ -704,7 +710,7 @@ void CIncompleteClass0MessageInfo::SetVersion(TInt aVersion)
  */
 void CIncompleteClass0MessageInfo::InternalizeL(RReadStream& aStream)
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo::InternalizeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_INTERNALIZEL_1, "CIncompleteClass0MessageInfo::InternalizeL()");
 	iVersion = aStream.ReadInt32L();
 	iStartPos = aStream.ReadInt32L();
 	iEndPos = aStream.ReadInt32L();
@@ -719,7 +725,7 @@ void CIncompleteClass0MessageInfo::InternalizeL(RReadStream& aStream)
  */
 void CIncompleteClass0MessageInfo::ExternalizeL(RWriteStream& aStream) const
 	{
-	LOGGSMU1("CIncompleteClass0MessageInfo::ExternalizeL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CINCOMPLETECLASS0MESSAGEINFO_EXTERNALIZEL_1, "CIncompleteClass0MessageInfo::ExternalizeL()");
 	aStream.WriteInt32L(iVersion);
 	aStream.WriteInt32L(iStartPos);
 	aStream.WriteInt32L(iEndPos);

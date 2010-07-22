@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,9 +19,14 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "RawIP2FlowFactoryTraces.h"
+#endif
+
 #include "RawIP2FlowFactory.h"
 #include "RawIP2Flow.h"
-#include "bttlog.h"
 
 using namespace ESock;
 
@@ -58,14 +63,11 @@ Default SubConnection Flow Factory Constructor
 
 CSubConnectionFlowBase* CRawIP2FlowFactory::DoCreateFlowL(ESock::CProtocolIntfBase* aProtocol, ESock::TFactoryQueryBase& aQuery)
 	{
-#ifdef __BTT_LOGGING__
-	iTheLogger = CBttLogger::NewL(KNifSubDir, KRefFile, User::FastCounter());
-#endif // __BTT_LOGGING__
 
-	_LOG_L1C1(_L8("Raw IP logging started."));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOWFACTORY_DOCREATEFLOWL_1, "Raw IP logging started.");
 
 	const TDefaultFlowFactoryQuery& query = static_cast<const TDefaultFlowFactoryQuery&>(aQuery);
- 	CRawIP2Flow* s = new (ELeave) CRawIP2Flow(*this, query.iSCprId, aProtocol, iTheLogger);
+ 	CRawIP2Flow* s = new (ELeave) CRawIP2Flow(*this, query.iSCprId, aProtocol);
 	CleanupStack::PushL(s);
 	s->ConstructL();
 	CleanupStack::Pop(s);

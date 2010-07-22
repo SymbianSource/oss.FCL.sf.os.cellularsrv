@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -27,7 +27,6 @@
 #include <comms-infras/ss_subconnflow.h>
 #include <comms-infras/ss_protflow.h>
 
-#include "bttlog.h"
 
 /**
 RawIP Flow Implementation UID
@@ -48,8 +47,6 @@ protected:
 	CRawIP2FlowFactory(TUid aFactoryId, ESock::CSubConnectionFlowFactoryContainer& aParentContainer);
 	virtual ESock::CSubConnectionFlowBase* DoCreateFlowL(ESock::CProtocolIntfBase* aProtocol, ESock::TFactoryQueryBase& aQuery);
 
-private:
-	CBttLogger* iTheLogger;		// only here to allow use of _LOG_LnCn() macros within factory
 	};
 
 #endif

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,12 @@
 //
 
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "csatmessagerouterproxyTraces.h"
+#endif
 
 #include <satcs.h>
 // Tsy module files
@@ -55,7 +61,6 @@
 #include "CSatEventDownloadTsy.h"
 #include "CSatDataDownloadTsy.h"
 // Utilities
-#include "tflogger.h"
 #include "msattsy_ipcdefs.h"
 #include "ctsydelegates.h"
 
@@ -94,7 +99,7 @@
 //
 CSatMessageRouterProxy* CSatMessageRouterProxy::NewL(CTsyDelegates& aTsyDelegates) 
     { 
-    TFLOGSTRING( "CSAT: CSatMessageRouterProxy::NewL" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_NEWL_1,  "CSAT: CSatMessageRouterProxy::NewL" );
     
     CSatMessageRouterProxy* satMessageRouterProxy = 
         new ( ELeave ) CSatMessageRouterProxy(aTsyDelegates);
@@ -102,7 +107,7 @@ CSatMessageRouterProxy* CSatMessageRouterProxy::NewL(CTsyDelegates& aTsyDelegate
     satMessageRouterProxy->ConstructL();
     CleanupStack::Pop();
 
-	TFLOGSTRING("CSAT: CSatMessageRouterProxy::NewL, end of method");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_NEWL_2, "CSAT: CSatMessageRouterProxy::NewL, end of method");
     return satMessageRouterProxy;
     }
 
@@ -116,7 +121,7 @@ CSatMessageRouterProxy::~CSatMessageRouterProxy
         void
         )
     {
-    TFLOGSTRING( "CSAT: CSatMessageRouterProxy::~CSatMessageRouterProxy" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_DTOR_1,  "CSAT: CSatMessageRouterProxy::~CSatMessageRouterProxy" );
     }
 
 // -----------------------------------------------------------------------------
@@ -140,7 +145,7 @@ void CSatMessageRouterProxy::ConstructL
         void
         )
     {
-    TFLOGSTRING( "CSAT: CSatMessageRouterProxy::ConstructL, noes nothing" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_CONSTRUCTL_1,  "CSAT: CSatMessageRouterProxy::ConstructL, noes nothing" );
     }
     
 // -----------------------------------------------------------------------------
@@ -154,7 +159,7 @@ MMmMessHandlerBase* CSatMessageRouterProxy::RouteRequest
 		)
 	{
 	// Dummy implementation
-	TFLOGSTRING( "CSAT: CSatMessageRouterProxy::RouteRequest: DUMMY" );
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_ROUTEREQUEST_1,  "CSAT: CSatMessageRouterProxy::RouteRequest: DUMMY" );
 	return NULL;
 	}
 	
@@ -176,8 +181,7 @@ void CSatMessageRouterProxy::RouteCompletion
     
     if ( KErrNone != trapError )
 		{
-		TFLOGSTRING2("CSatMessageRouterProxy::RouteCompletion, trapError=%d", 
-			trapError);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_ROUTECOMPLETION_1, "CSatMessageRouterProxy::RouteCompletion, trapError=%d", trapError);
 		}
     }
 	
@@ -194,7 +198,7 @@ CBase* CSatMessageRouterProxy::GetObjectForCompletion
         CSatDataPackage* /*aDataPackage*/
         )
     {
-    TFLOGSTRING("CSAT: CMmMessageRouterBase::GetObjectForCompletion");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_GETOBJECTFORCOMPLETION_1, "CSAT: CMmMessageRouterBase::GetObjectForCompletion");
     CBase* satObject = NULL;
 
 	CMmMessageManagerBase::TTsyObjects tsyObject = 
@@ -216,7 +220,7 @@ CBase* CSatMessageRouterProxy::GetObjectForCompletion
         ) const
 
     {
-    TFLOGSTRING( "CSAT: CSatMessageRouterProxy::GetTsyObjectFromIpc" );
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_GETTSYOBJECTFROMIPC_1,  "CSAT: CSatMessageRouterProxy::GetTsyObjectFromIpc" );
     // A default value must be given as a initialization, however, nothing will
     // be done if the IPC does not mach as well in RouteCompletion
     CMmMessageManagerBase::TTsyObjects retObject = 
@@ -347,7 +351,7 @@ void CSatMessageRouterProxy::Complete(
     CMmDataPackage* aData, 
     TInt aResult )
 	{
-TFLOGSTRING3("TSY: CMmMessageRouterProxy::Complete. IPC = %d, result: %d", aIpc, aResult);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_COMPLETE_1, "TSY: CMmMessageRouterProxy::Complete. IPC = %d, result: %d", aIpc, aResult);
 	RouteCompletion( aIpc, static_cast<CSatDataPackage*>(aData), aResult ); 
 	}
 	
@@ -376,8 +380,7 @@ void CSatMessageRouterProxy::RouteCompletionL
         TInt aResult
         )
     {
-	TFLOGSTRING3("CSAT: CSatMessageRouterProxy::RouteCompletion ipc=%d, \
-        error: %d", aIpc, aResult);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_ROUTECOMPLETIONL_1, "CSAT: CSatMessageRouterProxy::RouteCompletion ipc=%d, error: %d", aIpc, aResult);
     CBase* object = GetObjectForCompletion( aIpc, aDataPackage );
 
     if ( NULL != object )
@@ -620,7 +623,7 @@ void CSatMessageRouterProxy::RouteCompletionL
         }
 	else
 		{
-		TFLOGSTRING("CSatMessageRouterProxy::RouteCompletion, IPC NOT HANDLED.!!!");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATMESSAGEROUTERPROXY_ROUTECOMPLETIONL_2, "CSatMessageRouterProxy::RouteCompletion, IPC NOT HANDLED.!!!");
 		}
     }
 

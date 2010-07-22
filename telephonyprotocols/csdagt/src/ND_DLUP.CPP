@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,12 @@
  @file Nd_dlup.cpp 
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ND_DLUPTraces.h"
+#endif
+
 #include "ND_DLUP.H"
 #include "ND_ETEL.H"
 #include "ND_SCR.H"
@@ -26,7 +32,6 @@
 #include <comms-infras/eventlogger.h>
 #include "ND_DBACC.H"
 #include "ND_STD.H"
-#include "SLOGGER.H"
 #include "Nd_dlupStates.h"
 #include <comms-infras/nifprvar.h>
 
@@ -116,8 +121,7 @@ Act on / reply to NifMan's notification requests
 		{
 	case ENifToAgentEventTypePPPCallbackGranted:
 		{
-		__FLOG_STMT(_LIT8(logString,"NetDial:\tCallback Request Granted");)
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPAGXSM_NOTIFICATION_1, "NetDial:\tCallback Request Granted");
 		return KErrNone;
 		}
 	case ENifToAgentEventTypeQueryIsDialIn:

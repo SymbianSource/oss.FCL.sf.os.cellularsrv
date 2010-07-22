@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmfaxlinetsyTraces.h"
+#endif
+
 #include "cmmfaxlinetsy.h"
 #include "cmmphonetsy.h"
 #include "cmmfaxcalltsy.h"
@@ -24,7 +30,6 @@
 #include "cmmcalllist.h"
 #include "cmmtsyreqhandlestore.h"
 #include "cmmmessagemanagerbase.h"
-#include <ctsy/tflogger.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
 
 // ======== MEMBER FUNCTIONS ========
@@ -60,8 +65,7 @@ CMmFaxLineTsy* CMmFaxLineTsy::NewL(
 
 CMmFaxLineTsy::~CMmFaxLineTsy()
     {
-    TFLOGSTRING2("TSY: CMmFaxLineTsy::~CMmFaxLineTsy. Line name: %S",
-        &iLineName);
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXLINETSY_DTOR_1, "TSY: CMmFaxLineTsy::~CMmFaxLineTsy. Line name: %S",iLineName);
 
     iLastIncomingFaxCall = NULL;
     }
@@ -258,8 +262,7 @@ void CMmFaxLineTsy::CompleteNotifyIncomingCall(
 
     callDataPackage->GetCallIdAndMode( callId, callMode ); 
 
-    TFLOGSTRING3("TSY: CMmFaxLineTsy::CompleteNotifyIncomingCall - \
-        Line name: %S, Call id: %d", &iLineName, callId );
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXLINETSY_COMPLETENOTIFYINCOMINGCALL_1, "TSY: CMmFaxLineTsy::CompleteNotifyIncomingCall - \Line name: %S, Call id: %d", iLineName, callId );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -348,7 +351,7 @@ void CMmFaxLineTsy::CompleteNotifyIncomingCall(
 void CMmFaxLineTsy::CompleteNotifyDiallingStatus(
     CMmDataPackage* aDataPackage )
     {
-    TFLOGSTRING("TSY: CMmFaxLineTsy::CompleteNotifyDiallingStatus");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXLINETSY_COMPLETENOTIFYDIALLINGSTATUS_1, "TSY: CMmFaxLineTsy::CompleteNotifyDiallingStatus");
     TInt callId( -1 );
     TBool ghostCall( EFalse );
     RMobilePhone::TMobileService callMode( RMobilePhone::EFaxService );
@@ -363,8 +366,7 @@ void CMmFaxLineTsy::CompleteNotifyDiallingStatus(
 
     if ( NULL == mmCall )
         {
-        TFLOGSTRING("TSY: CMmFaxLineTsy::CompleteNotifyDiallingStatus - \
-            GhostCall");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXLINETSY_COMPLETENOTIFYDIALLINGSTATUS_2, "TSY: CMmFaxLineTsy::CompleteNotifyDiallingStatus - \GhostCall");
         ghostCall = ETrue;
         }
     else
@@ -394,8 +396,7 @@ void CMmFaxLineTsy::CompleteNotifyDiallingStatus(
             }
         else
             {
-            TFLOGSTRING("TSY: CMmFaxLineTsy::CompleteNotifyDiallingStatus - \
-                Dial not found");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXLINETSY_COMPLETENOTIFYDIALLINGSTATUS_3, "TSY: CMmFaxLineTsy::CompleteNotifyDiallingStatus - \Dial not found");
             ghostCall = ETrue;
             }
         }
@@ -414,7 +415,7 @@ void CMmFaxLineTsy::CompleteNotifyDiallingStatus(
 //
 void CMmFaxLineTsy::ResetLastIncomingCall()
     {
-    TFLOGSTRING("TSY: CMmFaxLineTsy::ResetLastIncomingCall");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXLINETSY_RESETLASTINCOMINGCALL_1, "TSY: CMmFaxLineTsy::ResetLastIncomingCall");
     iLastIncomingFaxCall = NULL;
     }
     

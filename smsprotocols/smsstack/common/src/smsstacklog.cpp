@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,14 +20,20 @@
  @internalComponent
 */
  
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smsstacklogTraces.h"
+#endif
+
 #include "gsmupdu.h"
 #include "smsstacklog.h"
-
+#include <S32MEM.H>
 
 //
 // All functions in this file are available only if logging is enabled.
 //
-#ifdef _SMS_LOGGING_ENABLED
+#ifdef OST_TRACE_COMPILER_IN_USE
 
 
 /**
@@ -52,7 +58,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	tmpBuf.Copy(aText);
 	tmpBuf.Append(_L8("RAW:  "));
 
-	LOGSMSIFHEXBUF(tmpBuf, aPDU);
+	LogSmsIfHexBuf(tmpBuf, aPDU);
 
 	//
 	// Log the first octet...
@@ -197,8 +203,8 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 		tmpBuf.Append(_L8("    -      -"));
 		}
 
-	LOGSMSIF2("%S      HEX   MTI        RP UDHI  SRX  MMS   RD     VP", &aText);
-	LOGSMSIF4("%SFO:   0x%02X  %S", &aText, firstOctet, &tmpBuf);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_1, "%s      HEX   MTI        RP UDHI  SRX  MMS   RD     VP", aText);
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_2, "%sFO:   0x%02X  %s", aText, (TUint)firstOctet, tmpBuf);
 
 	if (pduType == -1)
 		{
@@ -214,7 +220,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	    pduType == CSmsPDU::ESmsStatusReport  ||
 	    pduType == CSmsPDU::ESmsCommand)
 		{
-        LOGSMSIF3("%SMR:   0x%02X", &aText, aPDU[octetOffset]);
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_3, "%sMR:   0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 		}
 
@@ -223,13 +229,13 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	//
 	if (pduType == CSmsPDU::ESmsCommand)
 		{
-		LOGSMSIF3("%SPID:  0x%02X", &aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_4, "%sPID:  0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 
-		LOGSMSIF3("%SCT:   0x%02X", &aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_5, "%sCT:   0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 
-		LOGSMSIF3("%SMN:   0x%02X", &aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_6, "%sMN:   0x%02X", aText, aPDU[octetOffset]);
         octetOffset++;
 		}
 
@@ -255,11 +261,11 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 		
 		tmpBuf.SetLength(telLength);
 
-		LOGSMSIF4("%STEL:  0x%02X  %S", &aText, typeOfNumber, &tmpBuf);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_7, "%sTEL:  0x%02X  %s", aText, (TUint)typeOfNumber, tmpBuf);
 		}
 	else
 		{
-		LOGSMSIF3("%STEL:  Illegal length value (%d)!", &aText, telLength);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_8, "%sTEL:  Illegal length value (%d)!", aText, telLength);
 		return;
 		}
 
@@ -268,7 +274,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 	//
 	if (pduType == CSmsPDU::ESmsSubmit  ||  pduType == CSmsPDU::ESmsDeliver)
 		{
-		LOGSMSIF3("%SPID:  0x%02X", &aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_9, "%sPID:  0x%02X", aText, aPDU[octetOffset]);
 		octetOffset++;
 
 		tmpBuf.Zero();
@@ -403,8 +409,8 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 			tmpBuf.Append(_L8("-"));
 			}
 
-		LOGSMSIF2("%SDCS:  HEX   CLASS      DCS     INDICATION TYPE", &aText);
-		LOGSMSIF4("%S      0x%02X  %S", &aText, dcs, &tmpBuf);
+		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_10, "%sDCS:  HEX   CLASS      DCS     INDICATION TYPE", aText);
+		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_11, "%s      0x%02X  %s", aText, (TUint) dcs, tmpBuf);
 		}
 
 	//
@@ -414,7 +420,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 		{
 		if (vpf == EVpRel)
 			{
-			LOGSMSIF3("%SVP:   %d (Relative)", &aText, aPDU[octetOffset++]);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_12, "%sVP:   %d (Relative)", aText, aPDU[octetOffset++]);
 			}
 		else if (vpf == EVpAbs)
 			{
@@ -426,7 +432,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 				tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 				}
 			
-			LOGSMSIF3("%SVP:   %S (Absolute)", &aText, &tmpBuf);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_13, "%sVP:   %s (Absolute)", aText, tmpBuf);
 			octetOffset += 7;
 			}
 		else if (vpf == EVpEnh)
@@ -439,7 +445,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 				tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 				}
 			
-			LOGSMSIF3("%SVP:   %S (Enhanced)", &aText, &tmpBuf);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_14, "%sVP:   %s (Enhanced)", aText, tmpBuf);
 			octetOffset += 7;
 			}
 		}
@@ -456,7 +462,7 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 			tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 			}
 			
-		LOGSMSIF3("%SSCTS: %S", &aText, &tmpBuf);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_15, "%sSCTS: %s", aText, tmpBuf);
 		octetOffset += 7;
 		}
 	
@@ -474,10 +480,10 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 			tmpBuf.AppendFormat(_L8("%02X"), aPDU[octetOffset + index]);
 			}
 			
-		LOGSMSIF3("%SDT:   %S", &aText, &tmpBuf);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_16, "%sDT:   %s", aText, tmpBuf);
 		octetOffset += 7;
 
-		LOGSMSIF3("%SST:   %02X", &aText, aPDU[octetOffset]);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_17, "%sST:   %02X", aText, aPDU[octetOffset]);
 		octetOffset++;
 		}
 
@@ -521,39 +527,56 @@ void LogSmsIfPDU(const TDesC8& aText, const TDesC8& aPDU, TBool aCommandPdu)
 					}
 				else
 					{
-					LOGSMSIF3("%SUDL:  Problems with the ieidl_a %d being less that UDHL",
-							  &aText, ieidl_a);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_18, "%sUDL:  Problems with the ieidl_a %d being less that UDHL",aText, ieidl_a);
 					}
 	
 				if ((ieidl_a + 1) > udhl)
 					{
-					LOGSMSIF2("%SUDL:  Corrupted or implement decoding for second iei_b, iei_n!",
-							  &aText);
+					OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_19, "%sUDL:  Corrupted or implement decoding for second iei_b, iei_n!",aText);
 					}
 	
-				LOGSMSIF2("%SUDL:  HEX    UDHL   IEI_A  IEIDL_A   ", &aText);
-				LOGSMSIF7("%S      0x%02X   0x%02X   0x%02X   0x%02X  %S", &aText,
-						  udl, udhl, iei_a, ieidl_a, &tmpBuf);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_20, "%sUDL:  HEX    UDHL   IEI_A  IEIDL_A   ", aText);
+
+				TBuf8<200> data;
+				RDesWriteStream dataStream(data);
+
+				dataStream.WriteInt32L(aText.Length());
+				dataStream.WriteL(aText);
+
+				dataStream.WriteInt32L(udl);
+				dataStream.WriteInt32L(udhl);
+				dataStream.WriteInt32L(iei_a);
+				dataStream.WriteInt32L(ieidl_a);
+
+				dataStream.WriteInt32L(tmpBuf.Length());
+				dataStream.WriteL(tmpBuf);
+
+				dataStream.Close();
+                OstTraceDefData( OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_21, "%s      0x%02X   0x%02X   0x%02X   0x%02X  %s", data.Ptr(), data.Size() );
 				}
 			else
 				{
-				LOGSMSIF2("%SUDL:  Corrupted because TP-UDHP is TRUE and TP-UDHL is less than 1!", &aText);
-				LOGSMSIF2("%SUDL:  HEX   UDHL   IEI_A", &aText);
-				LOGSMSIF4("%S      0x%02X    0x%02X", &aText, udl, udhl);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_22, "%sUDL:  Corrupted because TP-UDHP is TRUE and TP-UDHL is less than 1!", aText);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_23, "%sUDL:  HEX   UDHL   IEI_A", aText);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_24, "%s      0x%02X    0x%02X", aText, udl, udhl);
 				}
 			}
 		else
 			{
 			TInt  udl  = aPDU[octetOffset++];
 			
-			LOGSMSIF2("%SUDL:  HEX    UDHL", &aText);
-			LOGSMSIF3("%S      0x%02X   -", &aText, udl);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_25, "%sUDL:  HEX    UDHL", aText);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFPDU_26, "%s      0x%02X   -", aText, udl);
 			}
 		}
 	} // LogSmsIfPDU
 
 
+#ifdef OST_TRACE_COMPILER_IN_USE
 void LogSmsIfHexBuf(const TDesC8& aText, const TDesC8& aHexBuf)
+#else
+void LogSmsIfHexBuf(const TDesC8& /*aText*/, const TDesC8& aHexBuf)
+#endif
     {
 	//
 	// Print the PDU in hex in rows of upto KHexDumpCharsPerLine bytes...
@@ -579,7 +602,7 @@ void LogSmsIfHexBuf(const TDesC8& aText, const TDesC8& aHexBuf)
 			hexLine.AppendFormat(_L8("%02X"), aHexBuf[position + byteIndex]);
 			}
 
-		LOGSMSIF3("%S%S", &aText, &hexLine);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFHEXBUF_1, "%s%s", aText, hexLine);
 		}
     } // LogSmsIfHexBuf
 
@@ -589,55 +612,59 @@ void LogSmsIfHexBuf(const TDesC8& aText, const TDesC8& aHexBuf)
  *
  *  @param aTON  Enum to log.
  */
+#ifdef OST_TRACE_COMPILER_IN_USE
 void LogSmsIfTypeOfNumber(const TDesC8& aText, RMobilePhone::TMobileTON aTON)
+#else
+void LogSmsIfTypeOfNumber(const TDesC8& /*aText*/, RMobilePhone::TMobileTON aTON)
+#endif
 	{
 	switch (aTON)
 		{
 		case RMobilePhone::EUnknownNumber:
 			{
-			LOGSMSIF2("%SEUnknownNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_1, "%sEUnknownNumber", aText);
 			}
 			break;
 
 		case RMobilePhone::EInternationalNumber:
 			{
-			LOGSMSIF2("%SEInternationalNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_2, "%sEInternationalNumber", aText);
 			}
 			break;
 
 		case RMobilePhone::ENationalNumber:
 			{
-			LOGSMSIF2("%SENationalNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_3, "%sENationalNumber", aText);
 			}
 			break;
 
 		case RMobilePhone::ENetworkSpecificNumber:
 			{
-			LOGSMSIF2("%SENetworkSpecificNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_4, "%sENetworkSpecificNumber", aText);
 			}
 			break;
 
 		case RMobilePhone::ESubscriberNumber:
 			{
-			LOGSMSIF2("%SESubscriberNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_5, "%sESubscriberNumber", aText);
 			}
 			break;
 
 		case RMobilePhone::EAlphanumericNumber:
 			{
-			LOGSMSIF2("%SEAlphanumericNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_6, "%sEAlphanumericNumber", aText);
 			}
 			break;
 
 		case RMobilePhone::EAbbreviatedNumber:
 			{
-			LOGSMSIF2("%SEAbbreviatedNumber", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_7, "%sEAbbreviatedNumber", aText);
 			}
 			break;
 
 		default:
 			{
-			LOGSMSIF3("%S<unknown enum %d>", &aText, aTON);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFTYPEOFNUMBER_8, "%s<unknown enum %d>", aText, aTON);
 			}
 			break;
 		}
@@ -649,67 +676,71 @@ void LogSmsIfTypeOfNumber(const TDesC8& aText, RMobilePhone::TMobileTON aTON)
  *
  *  @param aNPI  Enum to log.
  */
+#ifdef OST_TRACE_COMPILER_IN_USE
 void LogSmsIfNumberingPlan(const TDesC8& aText, RMobilePhone::TMobileNPI aNPI)
+#else
+void LogSmsIfNumberingPlan(const TDesC8& /*aText*/, RMobilePhone::TMobileNPI aNPI)
+#endif
 	{
 	switch (aNPI)
 		{
 		case RMobilePhone::EUnknownNumberingPlan:
 			{
-			LOGSMSIF2("%SEUnknownNumberingPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_1, "%sEUnknownNumberingPlan", aText);
 			}
 			break;
 
 		case RMobilePhone::EIsdnNumberPlan:
 			{
-			LOGSMSIF2("%SEIsdnNumberPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_2, "%sEIsdnNumberPlan", aText);
 			}
 			break;
 
 		case RMobilePhone::EDataNumberPlan:
 			{
-			LOGSMSIF2("%SEDataNumberPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_3, "%sEDataNumberPlan", aText);
 			}
 			break;
 
 		case RMobilePhone::ETelexNumberPlan:
 			{
-			LOGSMSIF2("%SETelexNumberPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_4, "%sETelexNumberPlan", aText);
 			}
 			break;
 
 		case RMobilePhone::EServiceCentreSpecificPlan1:
 			{
-			LOGSMSIF2("%SEServiceCentreSpecificPlan1", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_5, "%sEServiceCentreSpecificPlan1", aText);
 			}
 			break;
 
 		case RMobilePhone::EServiceCentreSpecificPlan2:
 			{
-			LOGSMSIF2("%SEServiceCentreSpecificPlan2", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_6, "%sEServiceCentreSpecificPlan2", aText);
 			}
 			break;
 
 		case RMobilePhone::ENationalNumberPlan:
 			{
-			LOGSMSIF2("%SENationalNumberPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_7, "%sENationalNumberPlan", aText);
 			}
 			break;
 
 		case RMobilePhone::EPrivateNumberPlan:
 			{
-			LOGSMSIF2("%SEPrivateNumberPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_8, "%sEPrivateNumberPlan", aText);
 			}
 			break;
 
 		case RMobilePhone::EERMESNumberPlan:
 			{
-			LOGSMSIF2("%SEERMESNumberPlan", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_9, "%sEERMESNumberPlan", aText);
 			}
 			break;
 
 		default:
 			{
-			LOGSMSIF3("%S<unknown enum %d>", &aText, aNPI);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFNUMBERINGPLAN_10, "%s<unknown enum %d>", aText, aNPI);
 			}
 			break;
 		}
@@ -727,9 +758,8 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 	//
 	// Header and index...
 	//
-	LOGSMSIF2("%SRMobileSmsStore::TMobileGsmSmsEntryV1:", &aText);
-	LOGSMSIF4("%S  iIndex=%d (0x%08x)", &aText, aSmsGsmEntryV1.iIndex,
-			  aSmsGsmEntryV1.iIndex);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_1, "%sRMobileSmsStore::TMobileGsmSmsEntryV1:", aText);
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_2, "%s  iIndex=%d (0x%08x)", aText, aSmsGsmEntryV1.iIndex,aSmsGsmEntryV1.iIndex);
 	
 	//
 	// Message status...
@@ -738,44 +768,43 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 		{
 		case RMobileSmsStore::EStoredMessageUnknownStatus:
 			{
-			LOGSMSIF2("%S  iStoreStats=EStoredMessageUnknownStatus", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_3, "%s  iStoreStats=EStoredMessageUnknownStatus", aText);
 			}
 			break;
 
 		case RMobileSmsStore::EStoredMessageUnread:
 			{
-			LOGSMSIF2("%S  iStoreStats=EStoredMessageUnread", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_4, "%s  iStoreStats=EStoredMessageUnread", aText);
 			}
 			break;
 
 		case RMobileSmsStore::EStoredMessageRead:
 			{
-			LOGSMSIF2("%S  iStoreStats=EStoredMessageRead", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_5, "%s  iStoreStats=EStoredMessageRead", aText);
 			}
 			break;
 
 		case RMobileSmsStore::EStoredMessageUnsent:
 			{
-			LOGSMSIF2("%S  iStoreStats=EStoredMessageUnsent", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_6, "%s  iStoreStats=EStoredMessageUnsent", aText);
 			}
 			break;
 
 		case RMobileSmsStore::EStoredMessageSent:
 			{
-			LOGSMSIF2("%S  iStoreStats=EStoredMessageSent", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_7, "%s  iStoreStats=EStoredMessageSent", aText);
 			}
 			break;
 
 		case RMobileSmsStore::EStoredMessageDelivered:
 			{
-			LOGSMSIF2("%S  iStoreStats=EStoredMessageDelivered", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_8, "%s  iStoreStats=EStoredMessageDelivered", aText);
 			}
 			break;
 
 		default:
 			{
-			LOGSMSIF3("%S  iStoreStats=<unknown enum %d>", &aText,
-					  aSmsGsmEntryV1.iMsgStatus);
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_9, "%s  iStoreStats=<unknown enum %d>", aText,aSmsGsmEntryV1.iMsgStatus);
 			}
 			break;
 		}
@@ -786,7 +815,7 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 	TBuf8<RMobilePhone::KMaxMobileTelNumberSize>  numberIn8bit;
 
 	numberIn8bit.Copy(aSmsGsmEntryV1.iServiceCentre.iTelNumber);
-	LOGSMSIF3("%S  SRC Address=\"%S\"", &aText, &numberIn8bit);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSMSENTRY_10, "%s  SRC Address=\"%s\"", aText, numberIn8bit);
 
 	//
 	// Service Centre Type Of Number...
@@ -796,7 +825,7 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 	tmpBuf.Copy(aText);
 	tmpBuf.Append(_L8("  SRC AddrTON="));
 
-	LOGSMSIFTYPEOFNUMBER(tmpBuf, aSmsGsmEntryV1.iServiceCentre.iTypeOfNumber);
+	LogSmsIfTypeOfNumber(tmpBuf, aSmsGsmEntryV1.iServiceCentre.iTypeOfNumber);
 
 	//
 	// Number Plan...
@@ -804,7 +833,7 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 	tmpBuf.Copy(aText);
 	tmpBuf.Append(_L8("  SRC AddrNPI="));
 
-	LOGSMSIFNUMBERINGPLAN(tmpBuf, aSmsGsmEntryV1.iServiceCentre.iNumberPlan);
+	LogSmsIfNumberingPlan(tmpBuf, aSmsGsmEntryV1.iServiceCentre.iNumberPlan);
 
 	//
 	// PDU...
@@ -812,7 +841,7 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 	tmpBuf.Copy(aText);
 	tmpBuf.Append(_L8("  PDU: "));
 
-	LOGSMSIFPDU(tmpBuf, aSmsGsmEntryV1.iMsgData, EFalse);
+	LogSmsIfPDU(tmpBuf, aSmsGsmEntryV1.iMsgData, EFalse);
 	} // LogSmsIfSmsEntry
 
 
@@ -824,25 +853,25 @@ void LogSmsIfSmsEntry(const TDesC8& aText,
 void LogSmsIfSendAttributes(const TDesC8& aText,
 							const RMobileSmsMessaging::TMobileSmsSendAttributesV1& aAttrib)
 	{
-	LOGSMSIF2("%SRMobileSmsMessaging::TMobileSmsSendAttributesV1:", &aText);
-	LOGSMSIF3("%S  iFlags=0x%08x", &aText, (TInt)(aAttrib.iFlags));
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_1, "%sRMobileSmsMessaging::TMobileSmsSendAttributesV1:", aText);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_2, "%s  iFlags=0x%08x", aText, (TInt)(aAttrib.iFlags));
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KGsmServiceCentre)
 		{
 		TBuf8<128 + RMobilePhone::KMaxMobileTelNumberSize>  tmpBuf;
 		
 		tmpBuf.Copy(aAttrib.iGsmServiceCentre.iTelNumber);
-		LOGSMSIF3("%S  SRC Address=%S", &aText, &tmpBuf);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_3, "%s  SRC Address=%s", aText, tmpBuf);
 
 		tmpBuf.Copy(aText);
 		tmpBuf.Append(_L8("  SRC AddrTON="));
 
-		LOGSMSIFTYPEOFNUMBER(tmpBuf, aAttrib.iGsmServiceCentre.iTypeOfNumber);
+		LogSmsIfTypeOfNumber(tmpBuf, aAttrib.iGsmServiceCentre.iTypeOfNumber);
 
 		tmpBuf.Copy(aText);
 		tmpBuf.Append(_L8("  SRC AddrNPI="));
 
-		LOGSMSIFNUMBERINGPLAN(tmpBuf, aAttrib.iGsmServiceCentre.iNumberPlan);
+		LogSmsIfNumberingPlan(tmpBuf, aAttrib.iGsmServiceCentre.iNumberPlan);
 		}
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KSmsDataFormat)
@@ -851,26 +880,25 @@ void LogSmsIfSendAttributes(const TDesC8& aText,
 			{
 			case RMobileSmsMessaging::EFormatUnspecified:
 				{
-				LOGSMSIF2("%S  iDataFormat=EFormatUnspecified", &aText);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_4, "%s  iDataFormat=EFormatUnspecified", aText);
 				}
 				break;
 
 			case RMobileSmsMessaging::EFormatGsmTpdu:
 				{
-				LOGSMSIF2("%S  iDataFormat=EFormatGsmTpdu", &aText);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_5, "%s  iDataFormat=EFormatGsmTpdu", aText);
 				}
 				break;
 
 			case RMobileSmsMessaging::EFormatCdmaTpdu:
 				{
-				LOGSMSIF2("%S  iDataFormat=EFormatCdmaTpdu", &aText);
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_6, "%s  iDataFormat=EFormatCdmaTpdu", aText);
 				}
 				break;
 
 			default:
 				{
-				LOGSMSIF3("%S  iDataFormat=<unknown enum %d>", &aText,
-						  aAttrib.iDataFormat);
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_7, "%s  iDataFormat=<unknown enum %d>", aText,aAttrib.iDataFormat);
 				}
 				break;
 			}
@@ -878,12 +906,12 @@ void LogSmsIfSendAttributes(const TDesC8& aText,
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KCdmaTeleservice)
 		{
-		LOGSMSIF3("%S  iCdmaTeles=0x08X", &aText, aAttrib.iCdmaTeleservice);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_8, "%s  iCdmaTeles=0x%08X", aText, (TUint)aAttrib.iCdmaTeleservice);
 		}
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KCdmaServiceCategory)
 		{
-		LOGSMSIF3("%S  iCdmaServ=0x08X", &aText, aAttrib.iCdmaServiceCategory);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_9, "%s  iCdmaServ=0x%08X", aText, (TUint)aAttrib.iCdmaServiceCategory);
 		}
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KRemotePartyInfo)
@@ -891,34 +919,34 @@ void LogSmsIfSendAttributes(const TDesC8& aText,
 		TBuf8<RMobilePhone::KMaxMobileTelNumberSize>  tmpBuf;
 		
 		tmpBuf.Copy(aAttrib.iDestination.iTelNumber);
-		LOGSMSIF3("%S  DST Address=%S", &aText, &tmpBuf);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_10, "%s  DST Address=%s", aText, tmpBuf);
 
 		tmpBuf.Copy(aText);
 		tmpBuf.Append(_L8("  DST AddrTON="));
 
-		LOGSMSIFTYPEOFNUMBER(tmpBuf, aAttrib.iDestination.iTypeOfNumber);
+		LogSmsIfTypeOfNumber(tmpBuf, aAttrib.iDestination.iTypeOfNumber);
 
 		tmpBuf.Copy(aText);
 		tmpBuf.Append(_L8("  DST AddrNPI="));
 
-		LOGSMSIFNUMBERINGPLAN(tmpBuf, aAttrib.iDestination.iNumberPlan);
+		LogSmsIfNumberingPlan(tmpBuf, aAttrib.iDestination.iNumberPlan);
 		}
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KMoreToSend)
 		{
 		if (aAttrib.iMore)
 			{
-			LOGSMSIF2("%S  iMore=ETrue", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_11, "%s  iMore=ETrue", aText);
 			}
 		else
 			{
-			LOGSMSIF2("%S  iMore=EFalse", &aText);
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_12, "%s  iMore=EFalse", aText);
 			}
 		}
 
 	if (aAttrib.iFlags & RMobileSmsMessaging::KMessageReference)
 		{
-		LOGSMSIF3("%S  iMsgRef=0x08X", &aText, aAttrib.iMsgRef);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, LOGSMSIFSENDATTRIBUTES_13, "%s  iMsgRef=0x%08X", aText, (TUint)aAttrib.iMsgRef);
 		}
 
 	if(aAttrib.iFlags & RMobileSmsMessaging::KGsmSubmitReport)
@@ -928,8 +956,8 @@ void LogSmsIfSendAttributes(const TDesC8& aText,
 		tmpBuf.Copy(aText);
 		tmpBuf.Append(_L8("  iSubmitReport PDU: "));
 
-		LOGSMSIFPDU(tmpBuf, aAttrib.iSubmitReport, EFalse);
+		LogSmsIfPDU(tmpBuf, aAttrib.iSubmitReport, EFalse);
 		}
 	} // LogSmsIfSendAttributes
 
-#endif // _SMS_LOGGING_ENABLED
+#endif // OST_TRACE_COMPILER_IN_USE

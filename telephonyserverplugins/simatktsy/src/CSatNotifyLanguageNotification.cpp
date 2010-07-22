@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyLanguageNotificationTraces.h"
+#endif
+
 #include <satcs.h>                  		// Etel SAT IPC definitions
 #include "CSatTsy.h"                		// Tsy class header
 #include "CSatNotifyLanguageNotification.h" // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                		// Ber Tlv data handling
 #include "TTlv.h"							// TTlv class
 #include "CSatDataPackage.h"         		// Parameter packing 
-#include "TfLogger.h"               		// For TFLOGSTRING
 #include "TSatUtility.h"            		// Utilities
 #include "CSatTsyReqHandleStore.h"  		// Request handle class
 #include "cmmmessagemanagerbase.h" 			// Message manager class for 
@@ -43,13 +48,13 @@ CSatNotifyLanguageNotification* CSatNotifyLanguageNotification::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_NEWL_1, "CSAT: CSatNotifyLanguageNotification::NewL");
    	CSatNotifyLanguageNotification* const satNotifyLanguageNotification = 
         new ( ELeave ) CSatNotifyLanguageNotification( aNotificationsTsy );
     CleanupStack::PushL( satNotifyLanguageNotification );
     satNotifyLanguageNotification->ConstructL();
     CleanupStack::Pop( satNotifyLanguageNotification );
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_NEWL_2, "CSAT: CSatNotifyLanguageNotification::NewL, end of method");
     return satNotifyLanguageNotification;
     }
 
@@ -63,8 +68,7 @@ CSatNotifyLanguageNotification::~CSatNotifyLanguageNotification
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::\
-        ~CSatNotifyLanguageNotification");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_DTOR_1, "CSAT: CSatNotifyLanguageNotification::~CSatNotifyLanguageNotification");
     }
     
 // -----------------------------------------------------------------------------
@@ -90,7 +94,7 @@ void CSatNotifyLanguageNotification::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_CONSTRUCTL_1, "CSAT: CSatNotifyLanguageNotification::ConstructL");
     }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +108,7 @@ TInt CSatNotifyLanguageNotification::Notify
         const TDataPackage& aPackage   
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_NOTIFY_1, "CSAT: CSatNotifyLanguageNotification::Notify");
     // Save data pointer to client side for completion
     iLanguageNotificationV2Pckg = reinterpret_cast<RSat::
     	TLanguageNotificationV2Pckg*>( aPackage.Des1n() );
@@ -130,7 +134,7 @@ TInt CSatNotifyLanguageNotification::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::CancelNotification"); 
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_CANCELNOTIFICATION_1, "CSAT: CSatNotifyLanguageNotification::CancelNotification");
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
         CSatTsy::ESatNotifyLanguageNotificationPCmdReqType );
@@ -154,7 +158,7 @@ TInt CSatNotifyLanguageNotification::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {
-    TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_COMPLETENOTIFYL_1, "CSAT: CSatNotifyLanguageNotification::CompleteNotifyL");
 
     TInt returnValue( KErrNone );
     TInt ret( KErrNone );
@@ -201,8 +205,7 @@ TInt CSatNotifyLanguageNotification::CompleteNotifyL
 
             if ( !cmdQualifier )
                 {
-                TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::\
-                    CompleteNotifyL, No specific language used");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_COMPLETENOTIFYL_2, "CSAT: CSatNotifyLanguageNotification::CompleteNotifyL, No specific language used");
                 // No specific language used
                 languageNotificationV2.iNotificationType = 
                     RSat::ENonSpecificLangNotification;
@@ -237,8 +240,7 @@ TInt CSatNotifyLanguageNotification::CompleteNotifyL
         }// End of if( CSatTsy::ESatReqHandleUnknown != reqHandle )
     else
         {
-        TFLOGSTRING("CSAT: CSatNotifyLanguageNotification::CompleteNotifyL,\
-            Request not ongoing");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_COMPLETENOTIFYL_3, "CSAT: CSatNotifyLanguageNotification::CompleteNotifyL, Request not ongoing");
         additionalInfo.Zero();
         additionalInfo.Append( KNoCause );
         CreateTerminalRespL( pCmdNumber, RSat::KMeUnableToProcessCmd,
@@ -257,7 +259,7 @@ TInt CSatNotifyLanguageNotification::TerminalResponseL
         TDes8* aRsp
         )
     {
-    TFLOGSTRING("CSAT:CSatNotifyLanguageNotification::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_TERMINALRESPONSEL_1, "CSAT:CSatNotifyLanguageNotification::TerminalResponseL");
     TInt ret( KErrNone );
     TBuf<1> additionalInfo;
     additionalInfo.FillZ(1);
@@ -286,7 +288,7 @@ TInt CSatNotifyLanguageNotification::CreateTerminalRespL
         TDesC16& aAdditionalInfo    
 		)
     {
-    TFLOGSTRING("CSAT:CSatNotifyLanguageNotification::CreateTerminalRespL");	    
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLANGUAGENOTIFICATION_CREATETERMINALRESPL_1, "CSAT:CSatNotifyLanguageNotification::CreateTerminalRespL");
     TTlv tlvSpecificData;
     // Create General Result TLV here
     tlvSpecificData.AddTag( KTlvResultTag );

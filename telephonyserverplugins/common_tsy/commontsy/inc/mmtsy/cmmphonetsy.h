@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -31,7 +31,6 @@
 #include "cmmmessagemanagerbase.h"
 #include "MmTsy_timeoutdefs.h"
 #include <ctsy/serviceapi/mmtsy_defaults.h>
-#include <ctsy/tflogger.h>
 #include "CMmPrivateUtility.h"
 #include <ctsy/serviceapi/ctsydomainpskeys.h>
 #include <ctsy/serviceapi/mctsysatservice.h>

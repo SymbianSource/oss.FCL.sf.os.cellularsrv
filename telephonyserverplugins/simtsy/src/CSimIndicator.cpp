@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,10 +20,16 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimIndicatorTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 #include "CSimIndicator.h"
 #include "CSimPhone.h"
-#include "Simlog.h"
 
 
 const TInt KIndicatorsGranularity=5;		// < Granularity for indicators list array
@@ -67,7 +73,7 @@ void CSimIndicator::ConstructL()
 	{
 	iIndicatorsInfo=new(ELeave) CArrayFixFlat<TPhoneIndicatorsInfo>(KIndicatorsGranularity);
 
-	LOGPHONE1("Starting to parse Indicators config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_1, "Starting to parse Indicators config parameters...");
 	TInt count=CfgFile()->ItemCount(KIndicators);
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
@@ -84,13 +90,13 @@ void CSimIndicator::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,number);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("number",ret,0,&KIndicators);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element NUMBER returned %d (element no. %d) from tag %s.",ret,0,KIndicators);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,error);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("error",ret,1,&KIndicators);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element ERROR returned %d (element no. %d) from tag %s.",ret,1,KIndicators);
 			continue;
 			}
 		TPhoneIndicatorsInfo indicInfo;
@@ -98,14 +104,14 @@ void CSimIndicator::ConstructL()
 		indicInfo.iError=error;
 		iIndicatorsInfo->AppendL(indicInfo);
 		}
-	LOGPHONE2("Finished parsing Indicators config parameters...%d items found", count);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_4, "Finished parsing Indicators config parameters...%d items found", count);
 
 	iIndicatorCheckPeriod = 1;
 	count = CfgFile()->ItemCount(KIndicatorCheckPeriod);
 	if (count > 1)
 		{
-		LOGPHONE1("Warning: Error parsing IndicatorCheckPeriod in config file.");
-		LOGPHONE1("         More than one value found, using default value.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_5, "Warning: Error parsing IndicatorCheckPeriod in config file.");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_6, "         More than one value found, using default value.");
 		}
 	else
 		{
@@ -117,8 +123,8 @@ void CSimIndicator::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,period);
 			if(ret!=KErrNone)
 				{
-				LOGPHONE1("Warning: Error parsing IndicatorCheckPeriod in config file.");
-				LOGPHONE1("         No value for IndicatorCheckPeriod found.");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_7, "Warning: Error parsing IndicatorCheckPeriod in config file.");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CONSTRUCTL_8, "         No value for IndicatorCheckPeriod found.");
 				}
 			else
 				{
@@ -185,7 +191,7 @@ TInt CSimIndicator::GetIndicator(TTsyReqHandle aReqHandle,TDes8* aPckg1)
  * @return TInt			Standard error value.
  */
 	{
-	LOGPHONE2("CSimIndicator::GetIndicator request made: returning %d",iCurrentIndicator);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_GETINDICATOR_1, "CSimIndicator::GetIndicator request made: returning %d",iCurrentIndicator);
 	TPckg<TUint32>* indicPckg=(TPckg<TUint32>*)aPckg1;
 	TUint32& indic=(*indicPckg)();
 	
@@ -204,7 +210,7 @@ TInt CSimIndicator::NotifyIndicatorChange(TTsyReqHandle aReqHandle,TDes8* aPckg1
  * @return TInt			Standard error value.
  */
 	{
-	LOGPHONE1("CSimIndicator::NotifyIndicatorChange notification posted");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_NOTIFYINDICATORCHANGE_1, "CSimIndicator::NotifyIndicatorChange notification posted");
 	TPckg<TUint32>* indicPckg=(TPckg<TUint32>*)aPckg1;
 	TUint32& indic=(*indicPckg)();
 
@@ -224,7 +230,7 @@ void CSimIndicator::NotifyIndicatorChangeCancel()
 	{
 	if(iIndicatorsChangeNotificationPending)
 		{
-		LOGPHONE1("CSimIndicator::NotifyIndicatorChange notification cancelled");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_NOTIFYINDICATORCHANGECANCEL_1, "CSimIndicator::NotifyIndicatorChange notification cancelled");
 		iIndicatorsChangeNotificationPending=EFalse;
 		iPhone->ReqCompleted(iIndicatorsChangeNotificationReqHandle,KErrCancel);
 		}
@@ -262,7 +268,7 @@ void CSimIndicator::CheckNotification()
 // Trigger notification with appropriate data and result codes
 			iIndicatorsChangeNotificationPending=EFalse;
 			*iIndicatorsChangeNofificationValue=iCurrentIndicator;
-			LOGPHONE2("CSimIndicator::NotifyIndicatorChange triggered: returned %d",iCurrentIndicator);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINDICATOR_CHECKNOTIFICATION_1, "CSimIndicator::NotifyIndicatorChange triggered: returned %d",iCurrentIndicator);
 			iPhone->ReqCompleted(iIndicatorsChangeNotificationReqHandle,ret);
 			}
 		}

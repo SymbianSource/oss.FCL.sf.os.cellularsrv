@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,7 +21,12 @@
 
 
 //  Include Files  
-#include "tflogger.h"				// For logging
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ctlvTraces.h"
+#endif
+
 #include "CTlv.h"				    // Header of this class
 #include "TSatUtility.h"			// Utility methods
 
@@ -48,7 +53,7 @@ EXPORT_C TPtrC8 CTlvBase::Data
         // None
         ) const
     {
-    TFLOGSTRING("UTILITY: CTlvBase::Data");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_DATA_1, "UTILITY: CTlvBase::Data");
     return iData;
     }
 
@@ -63,7 +68,7 @@ EXPORT_C void CTlvBase::SetData
         TPtrC8 aData
         )
     {
-    TFLOGSTRING("UTILITY: CTlvBase::SetData");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_SETDATA_1, "UTILITY: CTlvBase::SetData");
     iData.Set( aData );
     }
 
@@ -77,7 +82,7 @@ EXPORT_C TInt CTlvBase::GetSize
         // None
         ) const
     {
-    TFLOGSTRING("UTILITY: CTlvBase::GetSize");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_GETSIZE_1, "UTILITY: CTlvBase::GetSize");
     return iData.Length();
     }
 
@@ -91,7 +96,7 @@ EXPORT_C TUint8 CTlvBase::GetTag
         // None
         ) const
     {
-    TFLOGSTRING("UTILITY: CTlvBase::GetTag");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_GETTAG_1, "UTILITY: CTlvBase::GetTag");
     return TUint8(iData[0] & KTagValueMask);
     }
 
@@ -105,7 +110,7 @@ EXPORT_C TBool CTlvBase::GetComprehensionRequired
         // None
         ) const
     {
-    TFLOGSTRING("UTILITY: CTlvBase::GetComprehensionRequired");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_GETCOMPREHENSIONREQUIRED_1, "UTILITY: CTlvBase::GetComprehensionRequired");
     return (iData[0] & KTagCrMask) ? ETrue : EFalse;
     }
 
@@ -119,7 +124,7 @@ EXPORT_C TUint8 CTlvBase::GetLength
         // None
         ) const
     {
-    TFLOGSTRING("UTILITY: CTlvBase::GetLength");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_GETLENGTH_1, "UTILITY: CTlvBase::GetLength");
     return (KTwoByteLengthCoding == iData[KTlvLengthStartPosition]) ?
         iData[KTlvLengthStartPosition + 1] :
         iData[KTlvLengthStartPosition];
@@ -135,7 +140,7 @@ EXPORT_C TPtrC8 CTlvBase::GetValue
         // None
         ) const
     {
-    TFLOGSTRING("UTILITY: CTlvBase::GetValue");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLVBASE_GETVALUE_1, "UTILITY: CTlvBase::GetValue");
     TInt offset = (KTwoByteLengthCoding == iData[1]) ? 1 : 0;
     return iData.Mid(2+offset, iData[1+offset]);
     }
@@ -163,7 +168,7 @@ EXPORT_C TUint8 CTlv::GetShortInfo
         TTlvSpesificDataType aType // Info spesific data type
         )    
     {
-    TFLOGSTRING2("UTILITY: CTlv::GetShortInfo, type: %d", aType);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETSHORTINFO_1, "UTILITY: CTlv::GetShortInfo, type: %d", aType);
     // Information is generally at index 2.
     TInt ind ( KTlvDataAreaStartPosition ); 
     TUint8 offset( 0 );
@@ -267,7 +272,7 @@ EXPORT_C TUint8 CTlv::GetShortInfo
             } 
         default:
             {
-            TFLOGSTRING("UTILITY: CTlv::GetShortInfo, Type unknown");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETSHORTINFO_2, "UTILITY: CTlv::GetShortInfo, Type unknown");
             break;	
             }                                                                                                                                                              	
         }
@@ -285,7 +290,7 @@ EXPORT_C  TPtrC8 CTlv::GetData
         TTlvSpesificDataType aType //Info spesific data type
         )    
     {
-    TFLOGSTRING2("UTILITY: CTlv::GetData, Data length: %d", iData.Length());
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETDATA_1, "UTILITY: CTlv::GetData, Data length: %d", iData.Length());
     // Information is generally at index 2.
     TInt ind ( 2 ); 
     TUint8 offset( 0 );
@@ -379,20 +384,19 @@ EXPORT_C  TPtrC8 CTlv::GetData
                 }
             else
                 {
-                TFLOGSTRING("UTILITY: CTlv::GetData, Data length 0");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETDATA_2, "UTILITY: CTlv::GetData, Data length 0");
                 return 0;
                 }            
             break;	
             }
         default:
             {
-            TFLOGSTRING("UTILITY: CTlv::GetData, Type unknown");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETDATA_3, "UTILITY: CTlv::GetData, Type unknown");
             break;	
             } 
         }
 
-    TFLOGSTRING3("UTILITY: CTlv::GetData, length: %d, ind: %d", 
-        length, ind);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETDATA_4, "UTILITY: CTlv::GetData, length: %d, ind: %d", length, ind);
     return iData.Mid( ind, length );
     }
 
@@ -406,7 +410,7 @@ EXPORT_C  TUint16 CTlv::GetLongInfo
         TTlvSpesificDataType aType // Info spesific data type
         )
     {
-    TFLOGSTRING2("UTILITY: CTlv::GetLongInfo, type: %d", aType);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETLONGINFO_1, "UTILITY: CTlv::GetLongInfo, type: %d", aType);
     TUint16 ret( 0x0000 );
 
     switch( aType )
@@ -450,7 +454,7 @@ EXPORT_C  TUint16 CTlv::GetLongInfo
             }   
         default:
             {
-            TFLOGSTRING("UTILITY: CTlv::GetLongInfo, Type unknown");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTLV_GETLONGINFO_2, "UTILITY: CTlv::GetLongInfo, Type unknown");
             break;
             }
         }

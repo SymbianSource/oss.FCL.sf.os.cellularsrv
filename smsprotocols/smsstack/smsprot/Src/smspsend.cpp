@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,12 @@
  @file
  @internalAll
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspsendTraces.h"
+#endif
 
 #include "smspsend.h"
 #include "smspstor.h"
@@ -48,7 +54,7 @@ CSmsMessageSend* CSmsMessageSend::NewL(CSmsSegmentationStore& aSegmentationStore
 									   TInt aPriority,
 									   CSmspSetBearer& aSmspSetBearer)
 	{
-	LOGSMSPROT1("CSmsMessageSend::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_NEWL_1, "CSmsMessageSend::NewL()");
 
 	CSmsMessageSend*  self = new (ELeave) CSmsMessageSend(aSegmentationStore,
 														  aSmsSettings,
@@ -71,7 +77,7 @@ CSmsMessageSend* CSmsMessageSend::NewL(CSmsSegmentationStore& aSegmentationStore
  */
 void CSmsMessageSend::ConstructL()
 	{
-	LOGSMSPROT1("CSmsMessageSend::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_CONSTRUCTL_1, "CSmsMessageSend::ConstructL()");
 
 	iSmsEventLogger = CSmsEventLogger::NewL(iSegmentationStore.FileSession(),
 											Priority());
@@ -124,7 +130,7 @@ CSmsMessageSend::~CSmsMessageSend()
 void CSmsMessageSend::Start(CSmsMessage& aSmsMessage, TInt aOptions,
 							const TSmsAddr& aSmsAddr, TRequestStatus& aStatus)
 	{
-	LOGSMSPROT1("CSmsMessageSend::Start()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_START_1, "CSmsMessageSend::Start()");
 
 	__ASSERT_DEBUG(iState == ESmsMessageSendIdle,SmspPanic(KSmspPanicUnexpectedState));
 
@@ -160,7 +166,7 @@ void CSmsMessageSend::Start(CSmsMessage& aSmsMessage, TInt aOptions,
 
 void CSmsMessageSend::DoRunL()
 	{
-	LOGSMSPROT3("CSmsMessageSend::RunL(): iStatus=%d, iState=%d", iStatus.Int(), iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DORUNL_1, "CSmsMessageSend::RunL(): iStatus=%d, iState=%d", iStatus.Int(), iState);
 
 	switch (iState)
 		{
@@ -248,18 +254,15 @@ void CSmsMessageSend::DoRunL()
 
 			if (iStatus.Int() == KErrNone  &&  !IsRPError())
 				{
-				LOGSMSIF2("CSmsMessageSend::RunL(): Submit ACK'd MsgRef=%d",
-				          iMobileSmsSendAttributesV1.iMsgRef);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DORUNL_2, "CSmsMessageSend::RunL(): Submit ACK'd MsgRef=%d",iMobileSmsSendAttributesV1.iMsgRef);
 				}
 			else if (IsRPError())
 				{
-				LOGSMSIF2("CSmsMessageSend::RunL(): Submit N'ACK'D MsgRef=%d",
-				          iMobileSmsSendAttributesV1.iMsgRef);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DORUNL_3, "CSmsMessageSend::RunL(): Submit N'ACK'D MsgRef=%d",iMobileSmsSendAttributesV1.iMsgRef);
 				}
 			else
 				{
-				LOGSMSIF2("CSmsMessageSend::RunL(): MsgRef=%d",
-				          iMobileSmsSendAttributesV1.iMsgRef);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DORUNL_4, "CSmsMessageSend::RunL(): MsgRef=%d",iMobileSmsSendAttributesV1.iMsgRef);
 				}
 
 			//
@@ -352,7 +355,7 @@ void CSmsMessageSend::DoRunL()
 
 void CSmsMessageSend::DoCancel()
 	{
-	LOGSMSPROT2("CSmsMessageSend::DoCancel(): iState=%d", iState);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DOCANCEL_1, "CSmsMessageSend::DoCancel(): iState=%d", iState);
 
 	TimedSetActiveCancel();
 
@@ -422,7 +425,7 @@ void CSmsMessageSend::DoCancel()
  */
 void CSmsMessageSend::DecodeSubmitReportL()
 	{
-	LOGSMSPROT1("CSmsMessageSend::DecodeSubmitReportL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DECODESUBMITREPORTL_1, "CSmsMessageSend::DecodeSubmitReportL()");
 
 	//
 	// Only try to decode the submit report if error is a RP-error, in which case there should be a valid PDU
@@ -450,7 +453,7 @@ void CSmsMessageSend::DecodeSubmitReportL()
 			}
 		else
 			{
-			LOGSMSPROT3("Invalid PDU Type = %d with iStatus = %d",  smsMessage->SmsPDU().Type(),  iStatus.Int()  );
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DECODESUBMITREPORTL_2, "Invalid PDU Type = %d with iStatus = %d",  smsMessage->SmsPDU().Type(),  iStatus.Int()  );
 			}
 
 		CleanupStack::PopAndDestroy(smsMessage);
@@ -465,7 +468,7 @@ void CSmsMessageSend::DecodeSubmitReportL()
  */
 TBool CSmsMessageSend::IsRPError() const
 	{
-	LOGSMSPROT1("CSmsMessageSend::IsRPError()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_ISRPERROR_1, "CSmsMessageSend::IsRPError()");
 	
 	TBool  isRPError = EFalse;
 
@@ -514,7 +517,7 @@ TBool CSmsMessageSend::IsRPError() const
 
 void CSmsMessageSend::SegmentMessage()
 	{
-	LOGSMSPROT1("CSmsMessageSend::SegmentMessage()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_SEGMENTMESSAGE_1, "CSmsMessageSend::SegmentMessage()");
 
 	iState = ESmsMessageSendSegmentingMessage;
 
@@ -526,7 +529,7 @@ void CSmsMessageSend::SegmentMessage()
 
 void CSmsMessageSend::DoSegmentMessageL()
 	{
-	LOGSMSPROT1("CSmsMessageSend::DoSegmentMessageL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DOSEGMENTMESSAGEL_1, "CSmsMessageSend::DoSegmentMessageL()");
 
 	TInt reference=0;
 	if (iSmsMessage->Type()==CSmsPDU::ESmsCommand)
@@ -598,8 +601,8 @@ void CSmsMessageSend::DoSegmentMessageL()
 			 	}
 			}
 
-		LOGSMSPROT3("CSmsMesageSend::DoSegmentMessageL [LogServerId=%d][iSentBefore=%d]",iSmsMessage->LogServerId(),iSentBefore);
-		LOGSMSPROT3("CSmsMesageSend::DoSegmentMessageL [referenceNo=%d] [iCountOfSentBefore=%d ]",reference,iSmsPDUData.iSent);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DOSEGMENTMESSAGEL_2, "CSmsMesageSend::DoSegmentMessageL [LogServerId=%d][iSentBefore=%d]",iSmsMessage->LogServerId(),iSentBefore);
+		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DOSEGMENTMESSAGEL_3, "CSmsMesageSend::DoSegmentMessageL [referenceNo=%d] [iCountOfSentBefore=%d ]",reference,iSmsPDUData.iSent);
 		if(!iSentBefore)
 			{
 			iSegmentationStore.AddSubmitL(iSmsAddr,*iSmsMessage);
@@ -610,7 +613,7 @@ void CSmsMessageSend::DoSegmentMessageL()
 
 void CSmsMessageSend::CreateLogServerEvent()
 	{
-	LOGSMSPROT1("CSmsMessageSend::CreateLogServerEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_CREATELOGSERVEREVENT_1, "CSmsMessageSend::CreateLogServerEvent()");
 
 	iState=ESmsMessageSendCreatingLogServerEvent;
 	TLogId logid=(TLogId) iSmsMessage->LogServerId();
@@ -630,7 +633,7 @@ void CSmsMessageSend::CreateLogServerEvent()
 
 void CSmsMessageSend::SendNextPDU()
 	{
-	LOGSMSPROT3("CSmsMessageSend::SendNextPDU [sending pdu %d of count=%d]",iSmsPDUData.iSent, iSmsArray.Count() );
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_SENDNEXTPDU_1, "CSmsMessageSend::SendNextPDU [sending pdu %d of count=%d]",iSmsPDUData.iSent, iSmsArray.Count() );
 
 	if (iSmsPDUData.iSent<iSmsArray.Count())
 		{
@@ -674,10 +677,13 @@ void CSmsMessageSend::SendNextPDU()
 		//
 		// Debug logging of the PDU we are sending...
 		//
-		LOGSMSIFPDU(_L8("ETEL TX PDU: "), iSmsArray[iSmsPDUData.iSent].Pdu(), ETrue);
-		LOGSMSIFSENDATTRIBUTES(_L8("SENDATTRIBS: "), iMobileSmsSendAttributesV1);
-		LOGSMSIFTIMESTAMP();
-
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+        LogSmsIfPDU(_L8("ETEL TX PDU: "), iSmsArray[iSmsPDUData.iSent].Pdu(), ETrue);
+        LogSmsIfSendAttributes(_L8("SENDATTRIBS: "), iMobileSmsSendAttributesV1);
+        TBuf<40> timestamp;
+        SmsTimeStampL(timestamp);
+        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSMESSAGESEND_SENDNEXTPDU_2, "%S",timestamp);
+#endif
 		//
 		// Send the message and enter the correct state...
 		//
@@ -701,7 +707,7 @@ void CSmsMessageSend::UpdateSegmentationStore()
 
 void CSmsMessageSend::DoUpdateSegmentationStoreL()
 	{
-	LOGSMSPROT1("CSmsMessageSend::DoUpdateSegmentationStoreL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_DOUPDATESEGMENTATIONSTOREL_1, "CSmsMessageSend::DoUpdateSegmentationStoreL()");
 
 	iSmsPDUData.iSent++;  //  This is the end of the sequence for sending an SMS PDU
 	
@@ -723,7 +729,7 @@ void CSmsMessageSend::DoUpdateSegmentationStoreL()
 
 void CSmsMessageSend::UpdateLogServerEvent()
 	{
-	LOGSMSPROT1("CSmsMessageSend::UpdateLogServerEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_UPDATELOGSERVEREVENT_1, "CSmsMessageSend::UpdateLogServerEvent()");
 
 	//
 	//	Fill in log event...
@@ -737,7 +743,7 @@ void CSmsMessageSend::UpdateLogServerEvent()
 
 void CSmsMessageSend::Complete(TInt aStatus)
 	{
-	LOGSMSPROT3("CSmsMessageSend::Complete [iStatus=%d, iState=%d]", iStatus.Int(), iState );
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGESEND_COMPLETE_1, "CSmsMessageSend::Complete [iStatus=%d, iState=%d]", iStatus.Int(), iState );
 
 	//
 	// For completion during log events, use the saved error code instead...

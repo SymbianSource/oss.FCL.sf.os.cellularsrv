@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -42,6 +42,7 @@ SOURCE			SSCREXEC.CPP  SSCRREAD.CPP  SVARLAB.CPP
 USERINCLUDE		../src
 USERINCLUDE		../script 
 USERINCLUDE		../inc
+USERINCLUDE		../traces
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 // The resource file containing csd error messages, generated
@@ -70,7 +71,6 @@ START WINS
 BASEADDRESS		0x47900000
 END
 
-#include	<comms-infras/commsdebugutility.mmh>
 CAPABILITY CommDD PowerMgmt ReadDeviceData WriteDeviceData TrustedUI ProtServ NetworkControl NetworkServices LocalServices ReadUserData WriteUserData
 
 UNPAGED

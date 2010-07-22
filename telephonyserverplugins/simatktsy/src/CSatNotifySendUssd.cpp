@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifySendUssdTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySendUssd.h"     // Tsy class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifySendUssd* CSatNotifySendUssd::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_NEWL_1, "CSAT: CSatNotifySendUssd::NewL");
    	CSatNotifySendUssd* const satNotifySendUssd = 
         new ( ELeave ) CSatNotifySendUssd( aNotificationsTsy );
     CleanupStack::PushL( satNotifySendUssd );
     satNotifySendUssd->ConstructL();
     CleanupStack::Pop( satNotifySendUssd );
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_NEWL_2, "CSAT: CSatNotifySendUssd::NewL, end of method");
     return satNotifySendUssd;
     }
 
@@ -62,7 +67,7 @@ CSatNotifySendUssd::~CSatNotifySendUssd
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::~CSatNotifySendUssd");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_DTOR_1, "CSAT: CSatNotifySendUssd::~CSatNotifySendUssd");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ void CSatNotifySendUssd::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_CONSTRUCTL_1, "CSAT: CSatNotifySendUssd::ConstructL");
     }
    
 // -----------------------------------------------------------------------------
@@ -103,7 +108,7 @@ TInt CSatNotifySendUssd::Notify
         const TDataPackage& aPackage 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_NOTIFY_1, "CSAT: CSatNotifySendUssd::Notify");
 
     // Save data pointer to client side for completion
     iSendUssdV1Pckg = reinterpret_cast<RSat::TSendUssdV1Pckg*>( 
@@ -130,7 +135,7 @@ TInt CSatNotifySendUssd::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::CancelNotification");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_CANCELNOTIFICATION_1, "CSAT: CSatNotifySendUssd::CancelNotification");
     
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -154,7 +159,7 @@ TInt CSatNotifySendUssd::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::CompleteNotifyL");	
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_1, "CSAT: CSatNotifySendUssd::CompleteNotifyL");
 	TInt ret( KErrNone );
 	TInt returnValue( KErrNone );
 	TBuf<1> additionalInfo;
@@ -203,8 +208,7 @@ TInt CSatNotifySendUssd::CompleteNotifyL
 				TUint16 alphaIdLength = alphaIdentifier.GetLength() ;
 				if ( RSat::KAlphaIdMaxSize < alphaIdLength )
 					{
-					TFLOGSTRING("CSAT: CSatNotifySendUssd::CompleteNotifyL,\
-					    Alpha ID length exceeded");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_2, "CSAT: CSatNotifySendUssd::CompleteNotifyL, Alpha ID length exceeded");
 					// String too long
 					additionalInfo.Zero();
                     additionalInfo.Append( KNoCause );
@@ -230,15 +234,13 @@ TInt CSatNotifySendUssd::CompleteNotifyL
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifySendUssd::CompleteNotifyL,\
-					    Alpha ID is NULL");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_3, "CSAT: CSatNotifySendUssd::CompleteNotifyL, Alpha ID is NULL");
 					sendUssdV1.iAlphaId.iStatus = RSat::EAlphaIdNull;
 					}  
 				}
 			else
 				{
-				TFLOGSTRING("CSAT: CSatNotifySendUssd::CompleteNotifyL,\
-				    Alpha ID not present");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_4, "CSAT: CSatNotifySendUssd::CompleteNotifyL, Alpha ID not present");
 				sendUssdV1.iAlphaId.iStatus = RSat::EAlphaIdNotPresent;
 				}
 
@@ -273,8 +275,7 @@ TInt CSatNotifySendUssd::CompleteNotifyL
 	                  && RSat::KStringMaxSize<8*ussdStringLengthInBytes/7))
                 	{
                 	// The Ussd text string is too long.
-                	TFLOGSTRING("CSAT:CSatNotifySendUssd::CompleteNotifyL, \
-                	    USSD String too long");
+                	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_5, "CSAT:CSatNotifySendUssd::CompleteNotifyL, USSD String too long");
 					// Text string too long
 					ret = KErrCorrupt;
 					additionalInfo.Zero();
@@ -311,8 +312,7 @@ TInt CSatNotifySendUssd::CompleteNotifyL
 	                        }
 	                    default:
 	                        {
-	                        TFLOGSTRING("CSAT:CSatNotifySendUssd::CompleteNotifyL, \
-	                            USSD DCS has a reserved value");
+	                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_6, "CSAT:CSatNotifySendUssd::CompleteNotifyL, USSD DCS has a reserved value");
 	                        // The DCS has a reserved value
 	                        ret = KErrCorrupt;
 							additionalInfo.Zero();
@@ -352,8 +352,7 @@ TInt CSatNotifySendUssd::CompleteNotifyL
         } // End of if ( reqHandle != CSatTsy::ESatReqHandleUnknown )	
 	else 
         {
-        TFLOGSTRING("CSAT: CSatNotifySendUssd::CompleteNotifyL,\
-            Request not ongoing");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_COMPLETENOTIFYL_7, "CSAT: CSatNotifySendUssd::CompleteNotifyL, Request not ongoing");
         // Request not on, returning response immediately
         additionalInfo.Zero();
         additionalInfo.Append( KNoCause );
@@ -376,7 +375,7 @@ TInt CSatNotifySendUssd::TerminalResponseL
         TDes8* aRsp 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendUssd::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_TERMINALRESPONSEL_1, "CSAT: CSatNotifySendUssd::TerminalResponseL");
 	
     TInt ret( KErrNone );
     TBuf<RSat::KAdditionalInfoMaxSize> additionalInfo;
@@ -403,8 +402,7 @@ TInt CSatNotifySendUssd::TerminalResponseL
         && ( RSat::KCmdBeyondMeCapabilities != rspV1.iGeneralResult )
         && ( RSat::KUssdReturnError != rspV1.iGeneralResult ) )
         {
-        TFLOGSTRING("CSAT: CSatNotifySendUssd::CompleteNotifyL,\
-            Invalid General Result");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_TERMINALRESPONSEL_2, "CSAT: CSatNotifySendUssd::CompleteNotifyL, Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -421,8 +419,7 @@ TInt CSatNotifySendUssd::TerminalResponseL
         if ( 0 == rspV1.iAdditionalInfo.Length() )
             {
             // No info
-            TFLOGSTRING("CSAT:CSatNotifySendUssd::TerminalResponseL, \
-            	AdditionalInfoType set, but no additional info available");            
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_TERMINALRESPONSEL_3, "CSAT:CSatNotifySendUssd::TerminalResponseL, AdditionalInfoType set, but no additional info available");
             ret = KErrCorrupt;
             }
         else if ( RSat::KTextString == rspV1.iInfoType )
@@ -433,8 +430,7 @@ TInt CSatNotifySendUssd::TerminalResponseL
             // performed successfully, SAT Server uses the 
             // rspV1.iUssdString.iUssdString to return the USSD string
             // sent by the network.
-            TFLOGSTRING("CSAT:CSatNotifySendUssd::TerminalResponseL, \
-            	AdditionalInfoType set to TextString.");            
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_TERMINALRESPONSEL_4, "CSAT:CSatNotifySendUssd::TerminalResponseL, AdditionalInfoType set to TextString.");
             }            
         else
             {
@@ -471,7 +467,7 @@ TInt CSatNotifySendUssd::CreateTerminalRespL
 		TUint8 aDcs		
 		)
     {
-	TFLOGSTRING("CSAT: CSatNotifySendUssd::CreateTerminalRespL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_CREATETERMINALRESPL_1, "CSAT: CSatNotifySendUssd::CreateTerminalRespL");
     TTlv tlvSpecificData;
     TBuf8<RSat::KStringMaxSize> string;
 
@@ -533,9 +529,7 @@ TInt CSatNotifySendUssd::CreateTerminalRespL
                 // Reserved
                 // The general result should in fact prevent reaching this branch of
                 // the switch.
-                TFLOGSTRING("TSY:CSatMessHandler::SendUssdTerminalRespL, \
-                    The DCS sent by the network has a reserved value. The general result \
-                    should have been set to UssdReturnError");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDUSSD_CREATETERMINALRESPL_2, "TSY:CSatMessHandler::SendUssdTerminalRespL, The DCS sent by the network has a reserved value. The general result should have been set to UssdReturnError");
                 break;
                 }                        
             }                   

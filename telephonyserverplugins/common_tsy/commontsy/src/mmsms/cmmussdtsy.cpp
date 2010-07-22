@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmussdtsyTraces.h"
+#endif
+
 #include <etelmm.h>
 #include <mmlist.h>
 #include "cmmussdtsy.h"
@@ -37,7 +43,7 @@ CMmUssdTsy::CMmUssdTsy()
 void CMmUssdTsy::ConstructL(
     CMmPhoneTsy* aMmPhoneTsy )
     {
-TFLOGSTRING("TSY: CMmUssdTsy::ConstructL\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_CONSTRUCTL_1, "TSY: CMmUssdTsy::ConstructL\n" );
     iMmPhone = aMmPhoneTsy;
 
     // register .
@@ -76,7 +82,7 @@ CMmUssdTsy* CMmUssdTsy::NewL(
 
 CMmUssdTsy::~CMmUssdTsy()
     {
-TFLOGSTRING("TSY: CMmUssdTsy::~CMmUssdTsy" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_DTOR_1, "TSY: CMmUssdTsy::~CMmUssdTsy" );
     // unregister.
     if ( iMmPhone )
         {
@@ -126,7 +132,7 @@ TInt CMmUssdTsy::ExtFunc(
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() && 
         ( !IsRequestPossibleInOffline( aIpc ) ) )  
         {
-TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral, 
             KErrGsmOfflineOpNotAllowed );
 
@@ -345,7 +351,7 @@ CTelObject* CMmUssdTsy::OpenNewObjectByNameL(
 TInt CMmUssdTsy::RegisterNotification(
     const TInt aIpc )                             // Notification IPC number
     {
-    TFLOGSTRING2( "TSY: CMmUssdTsy::RegisterNotification. IPC: %d", aIpc );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REGISTERNOTIFICATION_1,  "TSY: CMmUssdTsy::RegisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -376,7 +382,7 @@ TInt CMmUssdTsy::RegisterNotification(
 TInt CMmUssdTsy::DeregisterNotification(
     const TInt aIpc )                             // Notification IPC number
     {        
-    TFLOGSTRING2( "TSY: CMmUssdTsy::DeregisterNotification. IPC: %d", aIpc );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmUssdTsy::DeregisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -516,7 +522,7 @@ void CMmUssdTsy::CompleteReceiveMessage(
     TInt aError, 
 	CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETERECEIVEMESSAGE_1, "TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeUssdReceiveMessage );
 
@@ -557,8 +563,8 @@ TInt CMmUssdTsy::SendMessageL(
     TDes8* aData, 
     TDes8* aAttributes )
     { 
-TFLOGSTRING2("TSY: CMmUssdTsy::SendMessage - Data length: %d", aData->Length() );
-TFLOGSTRING2("TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFdnCheckFlag);  
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_SENDMESSAGEL_1, "TSY: CMmUssdTsy::SendMessage - Data length: %d", aData->Length() );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_SENDMESSAGEL_2, "TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFdnCheckFlag);
     TInt ret = KErrNone;
 
     if ( iSsTransactionOngoing )
@@ -663,7 +669,7 @@ TInt CMmUssdTsy::SendMessageCancel(
 void CMmUssdTsy::CompleteSendMessage(
     TInt aError )
     {
-TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETESENDMESSAGE_1, "TSY: CMmUssdTsy::CompleteSendMessage.\n" );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeUssdSendMessage );
 	
@@ -697,12 +703,12 @@ TInt CMmUssdTsy::SendReleaseL(
         // The request is already in processing because of previous request
         // Complete request with status value informing the client about 
         // the situation.
-TFLOGSTRING("LTSY: CMmUssdTsy::SendRelease - KErrServerBusy");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_SENDRELEASEL_1, "LTSY: CMmUssdTsy::SendRelease - KErrServerBusy");
         ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
         {
-TFLOGSTRING("TSY: CMmUssdTsy::SendRelease called");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_SENDRELEASEL_2, "TSY: CMmUssdTsy::SendRelease called");
 
         TInt ret = KErrGeneral;
 
@@ -758,7 +764,7 @@ void CMmUssdTsy::CompleteSendRelease(
     TInt aErrorCode, 
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendRelease" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETESENDRELEASE_1, "TSY: CMmUssdTsy::CompleteSendRelease" );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
 		EMultimodeUssdSendRelease );
@@ -805,18 +811,18 @@ TInt CMmUssdTsy::NotifyNetworkRelease(
     TDes8* aMsgData,
     TDes8* aMsgAttributes) // aMsgAttributes may be NULL
     {
-TFLOGSTRING("TSY: CMmUssdTsy::NotifyNetworkRelease" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_NOTIFYNETWORKRELEASE_1, "TSY: CMmUssdTsy::NotifyNetworkRelease" );
     
 	if (aMsgData->MaxLength() < sizeof(RMobilePhone::TMobilePhoneSendSSRequestV3Pckg))
 		{
-	    TFLOGSTRING ("TSY: CMmNetTsy::NotifyNetworkRelease Bad size argument (arg1)");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_NOTIFYNETWORKRELEASE_2, "TSY: CMmNetTsy::NotifyNetworkRelease Bad size argument (arg1)");
 	    // Complete the request with appropiate error        
 	    return KErrArgument;		
 		}
 	if (aMsgAttributes && 
 		aMsgAttributes->MaxLength() < sizeof(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg))
 		{
-	    TFLOGSTRING ("TSY: CMmNetTsy::NotifyNetworkRelease Bad size argument (arg2)");
+	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_NOTIFYNETWORKRELEASE_3, "TSY: CMmNetTsy::NotifyNetworkRelease Bad size argument (arg2)");
 	    // Complete the request with appropiate error        
 	    return KErrArgument;			
 		}
@@ -866,7 +872,7 @@ void CMmUssdTsy::CompleteNotifyNetworkRelease(
     CMmDataPackage* aDataPackage )
     {
 
-TFLOGSTRING2("TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETENOTIFYNETWORKRELEASE_1, "TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorCode );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
 		EMultimodeUssdNotifyNetworkRelease );
@@ -1060,7 +1066,7 @@ void CMmUssdTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle, 
     const TInt aError )
     {
-TFLOGSTRING3("TSY: CMmUssdTsy::ReqCompleted. Handle: %d Error: %d", aTsyReqHandle, aError);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REQCOMPLETED_1, "TSY: CMmUssdTsy::ReqCompleted. Handle: %d Error: %d", aTsyReqHandle, aError);
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
     }
 #endif // TF_LOGGING_ENABLED
@@ -1111,7 +1117,7 @@ TBool CMmUssdTsy::IsRequestPossibleInOffline( TInt aIpc ) const
 TInt CMmUssdTsy::SendMessageNoFdnCheckCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmUssdTsy::SendMessageNoFdnCheckCancel" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_SENDMESSAGENOFDNCHECKCANCEL_1, "TSY: CMmUssdTsy::SendMessageNoFdnCheckCancel" );
 
     // reset the req handle
     TTsyReqHandle reqHandle  = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -1137,7 +1143,7 @@ TFLOGSTRING("TSY: CMmUssdTsy::SendMessageNoFdnCheckCancel" );
 void CMmUssdTsy::CompleteSendMessageNoFdnCheck(
     TInt aError )
     {
-TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessageNoFdnCheck.\n" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETESENDMESSAGENOFDNCHECK_1, "TSY: CMmUssdTsy::CompleteSendMessageNoFdnCheck.\n" );
     // get reg handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeUssdSendMessageNoFdnCheck );

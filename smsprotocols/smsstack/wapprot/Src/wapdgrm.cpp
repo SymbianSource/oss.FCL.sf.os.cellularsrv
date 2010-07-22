@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "wapdgrmTraces.h"
+#endif
 
 #include "gsmubuf.h"
 #include "gsmuset.h"
@@ -28,7 +34,7 @@
 //
 CWapDatagram* CWapDatagram::NewL(const CSmsMessage& aSms)
     {
-    LOGWAPPROT2("CWapDatagram::NewL(): aSms=0x%08x", (TInt) &aSms);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_1, "CWapDatagram::NewL(): aSms=0x%08x", (TInt) &aSms);
 
     CWapDatagram* datagram = new (ELeave)CWapDatagram();
 
@@ -36,38 +42,38 @@ CWapDatagram* CWapDatagram::NewL(const CSmsMessage& aSms)
     datagram->ConstructL(aSms);
     CleanupStack::Pop();
 
-    LOGWAPPROT2("CWapDatagram::NewL(): iFromPort: %d", datagram->iFromPort);
-    LOGWAPPROT2("CWapDatagram::NewL(): iToPort: %d", datagram->iToPort);
-    LOGWAPPROT2("CWapDatagram::NewL(): iReference: %d", datagram->iReference);
-    LOGWAPPROT2("CWapDatagram::NewL(): iTotalSegments: %d", datagram->iTotalSegments);
-    LOGWAPPROT2("CWapDatagram::NewL(): iSegmentNumber: %d", datagram->iSegmentNumber);
-    LOGWAPPROT2("CWapDatagram::NewL(): iIsComplete: %d", datagram->iIsComplete);
-    LOGWAPPROT2("CWapDatagram::NewL(): iReference: %d", datagram->iReference);
-    LOGWAPPROT2("CWapDatagram::NewL(): iIsTextHeader: %d", datagram->iIsTextHeader);
-    LOGWAPPROT2("CWapDatagram::NewL(): iLogServerId: %d", datagram->iLogServerId);
-    LOGWAPPROT2("CWapDatagram::NewL(): i16BitPorts: %d", datagram->i16BitPorts);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_2, "CWapDatagram::NewL(): iFromPort: %d", datagram->iFromPort);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_3, "CWapDatagram::NewL(): iToPort: %d", datagram->iToPort);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_4, "CWapDatagram::NewL(): iReference: %d", datagram->iReference);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_5, "CWapDatagram::NewL(): iTotalSegments: %d", datagram->iTotalSegments);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_6, "CWapDatagram::NewL(): iSegmentNumber: %d", datagram->iSegmentNumber);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_7, "CWapDatagram::NewL(): iIsComplete: %d", datagram->iIsComplete);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_8, "CWapDatagram::NewL(): iReference: %d", datagram->iReference);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_9, "CWapDatagram::NewL(): iIsTextHeader: %d", datagram->iIsTextHeader);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_10, "CWapDatagram::NewL(): iLogServerId: %d", datagram->iLogServerId);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_11, "CWapDatagram::NewL(): i16BitPorts: %d", datagram->i16BitPorts);
 
     // assert destination port
 	if (datagram->i16BitPorts)
 		{
 		if (datagram->iToPort>=0  &&  datagram->iToPort<=65535)
 			{
-			LOGWAPPROT1("iToPort OK");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_12, "iToPort OK");
 			}
 		else
 			{
-			LOGWAPPROT1("iToPort FAILED");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_13, "iToPort FAILED");
 			}
 		}
     else
 		{
         if (datagram->iToPort>=0  &&  datagram->iToPort<=255)
 			{
-		    LOGWAPPROT1("iToPort OK");
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_14, "iToPort OK");
 			}
 		else
 			{
-			LOGWAPPROT1("iToPort FAILED");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_15, "iToPort FAILED");
 			}
 		}
 
@@ -75,22 +81,22 @@ CWapDatagram* CWapDatagram::NewL(const CSmsMessage& aSms)
 		{
 		if (datagram->iFromPort>=0  &&  datagram->iFromPort<=65535)
 			{
-			LOGWAPPROT1("iFromPort OK");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_16, "iFromPort OK");
 			}
 		else
 			{
-			LOGWAPPROT1("iFromPort FAILED");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_17, "iFromPort FAILED");
 			}
 		}
     else
 		{
         if (datagram->iFromPort>=0  &&  datagram->iFromPort<=255)
 			{
-		    LOGWAPPROT1("iFromPort OK");
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_18, "iFromPort OK");
 			}
 		else
 			{
-			LOGWAPPROT1("iFromPort FAILED");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL_19, "iFromPort FAILED");
 			}
 		}
 
@@ -103,7 +109,7 @@ CWapDatagram* CWapDatagram::NewL(const CSmsMessage& aSms)
 //
 CWapDatagram* CWapDatagram::NewL(const TDesC8& aSendBuffer)
     {
-    LOGWAPPROT2("CWapDatagram::NewL(): aSendBuffer=0x%08x", (TInt) &aSendBuffer);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_NEWL1_1, "CWapDatagram::NewL(): aSendBuffer=0x%08x", (TInt) &aSendBuffer);
 
     CWapDatagram* datagram = new (ELeave)CWapDatagram();
 
@@ -117,7 +123,7 @@ CWapDatagram* CWapDatagram::NewL(const TDesC8& aSendBuffer)
 
 CWapDatagram::~CWapDatagram()
     {
-    LOGWAPPROT1("CWapDatagram::~CWapDatagram()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_DTOR_1, "CWapDatagram::~CWapDatagram()");
 
 	delete iRecvbuf;
     delete iBuffer;
@@ -131,7 +137,7 @@ CWapDatagram::~CWapDatagram()
 //
 void CWapDatagram::EncodeConcatenatedMessagesL(RFs& aFs, CArrayPtr<CSmsMessage>& aSmsMessageArray)
     {
-    LOGWAPPROT2("CWapDatagram::EncodeConcatenatedMessagesL(): %d messages", aSmsMessageArray.Count());
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_ENCODECONCATENATEDMESSAGESL_1, "CWapDatagram::EncodeConcatenatedMessagesL(): %d messages", aSmsMessageArray.Count());
 
     // Couple of checkings makes sense
     __ASSERT_DEBUG(iToPort >=0 && iToAddress.Length()>=0
@@ -195,7 +201,7 @@ void CWapDatagram::EncodeConcatenatedMessagesL(RFs& aFs, CArrayPtr<CSmsMessage>&
 
 void CWapDatagram::DecodeConcatenatedMessagesL(CArrayPtr<TSegmentData>& aSmsMessageArray)
     {
-    LOGWAPPROT1("CWapDatagram::DecodeConcatenatedMessagesL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_DECODECONCATENATEDMESSAGESL_1, "CWapDatagram::DecodeConcatenatedMessagesL()");
 
     // The TSegmentData elements are in the random order in the array
     TInt Count = aSmsMessageArray.Count();
@@ -361,7 +367,7 @@ void CWapDatagram::ExternalizeBufferL(RWriteStream& aStream) const
 //
 void CWapDatagram::Construct(const TDesC8& aSendBuffer)
     {
-    LOGWAPPROT1("CWapDatagram::Construct()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_CONSTRUCT_1, "CWapDatagram::Construct()");
 	
 	// Set version number to 1, as we have had to make 
 	// changes to CWapDatagram for CR0929
@@ -379,7 +385,7 @@ void CWapDatagram::Construct(const TDesC8& aSendBuffer)
 //
 void CWapDatagram::ConstructL(const CSmsMessage& aSms)
     {
-    LOGWAPPROT1("CWapDatagram::ConstructL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_CONSTRUCTL_1, "CWapDatagram::ConstructL()");
 
 	// Set version number to 1, as we have had to make 
 	// changes to CWapDatagram for CR0929
@@ -446,7 +452,7 @@ void CWapDatagram::ConstructL(const CSmsMessage& aSms)
 //
 void CWapDatagram::GetDatagramSettingsL()
     {
-    LOGWAPPROT1("CWapDatagram::GetDatagramSettingsL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_GETDATAGRAMSETTINGSL_1, "CWapDatagram::GetDatagramSettingsL()");
 
 	/* The WAP stack always receives 8 bit WAP datagrams from the SMS Stack as a single CSmsMessage.
 	This is because 8 bit WAP messages which cannot be encoded into a single PDU are sent in a segmented SMS
@@ -491,7 +497,7 @@ void CWapDatagram::GetDatagramSettingsL()
 //
 void CWapDatagram::GetDatagramSettings(const CSmsMessage& aSms)
     {
-    LOGWAPPROT1("CWapDatagram::GetDatagramSettings()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_GETDATAGRAMSETTINGS_1, "CWapDatagram::GetDatagramSettings()");
 
     const CSmsPDU& Pdu = aSms.SmsPDU();
 
@@ -524,7 +530,7 @@ void CWapDatagram::GetDatagramSettings(const CSmsMessage& aSms)
 //
 void CWapDatagram::ConvertL(const TDesC8& aNarrowChars,CSmsBufferBase& aSmsBuffer) const
     {
-    LOGWAPPROT1("CWapDatagram::ConvertL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_CONVERTL_1, "CWapDatagram::ConvertL()");
 
 	// Convert the data in segments of specified max size
 	const TInt KMaxSegmentSize=CSmsBufferBase::EMaxBufLength;
@@ -555,7 +561,7 @@ void CWapDatagram::ConvertL(const TDesC8& aNarrowChars,CSmsBufferBase& aSmsBuffe
 //
 void CWapDatagram::ConvertL(const CSmsBufferBase& aSmsBuffer,HBufC8** aNarrowChars) const
     {
-    LOGWAPPROT1("CWapDatagram::ConvertL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_CONVERTL1_1, "CWapDatagram::ConvertL()");
 
 	// Convert the data in segments of specified max size
 	const TInt KMaxSegmentSize=CSmsBufferBase::EMaxBufLength;
@@ -600,7 +606,7 @@ void CWapDatagram::ConvertL(const CSmsBufferBase& aSmsBuffer,HBufC8** aNarrowCha
 
 void CWapDatagram::SetSmsMessageSettingsL(CSmsMessage& aSmsMessage, TBool aSetPorts)
     {
-    LOGWAPPROT1("CWapDatagram::SetSmsMessageSettingsL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_SETSMSMESSAGESETTINGSL_1, "CWapDatagram::SetSmsMessageSettingsL()");
 
     CSmsPDU& Pdu = aSmsMessage.SmsPDU();
 
@@ -671,7 +677,7 @@ CWapDatagram::CWapDatagram():
 //
 TInt CWapDatagram::LinkOffset()
 	{
-	LOGWAPPROT1("CWapDatagram::LinkOffset()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_LINKOFFSET_1, "CWapDatagram::LinkOffset()");
 
 
 	return _FOFF(CWapDatagram,iLink);
@@ -680,7 +686,7 @@ TInt CWapDatagram::LinkOffset()
 
 TBool CWapDatagram::SetUTCOffset(const TTimeIntervalSeconds& aUTCOffset)
     {
-    LOGWAPPROT1("CWapDatagram::SetUTCOffset()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_SETUTCOFFSET_1, "CWapDatagram::SetUTCOffset()");
 
     TBool rc = ETrue;
     TInt utcOffset = aUTCOffset.Int();
@@ -692,7 +698,7 @@ TBool CWapDatagram::SetUTCOffset(const TTimeIntervalSeconds& aUTCOffset)
        }
     else
        {
-       LOGWAPPROT2("CWapDatagram:SetUTCOffset offset [out of range] = %d",utcOffset);
+       OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPDATAGRAM_SETUTCOFFSET_2, "CWapDatagram:SetUTCOffset offset [out of range] = %d",utcOffset);
        rc = EFalse;
        }
 

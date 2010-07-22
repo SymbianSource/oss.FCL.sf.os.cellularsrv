@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,6 +21,12 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "RawIP2FlowTraces.h"
+#endif
+
 #include <f32file.h>
 #include <nifman.h>
 #include <nifmbuf.h>
@@ -40,23 +46,16 @@
 using namespace Messages;
 using namespace MeshMachine;
 
-#ifdef __FLOG_ACTIVE
-//These variables are used only if flog is active.
-_LIT8(KTcpDumpFirstTag,"TcpDump");
-static const TUint16 KTcpDumpLinkType = 12;
-#endif
 
-CRawIP2Flow::CRawIP2Flow(ESock::CSubConnectionFlowFactoryBase& aFactory, const Messages::TNodeId& aSubConnId, ESock::CProtocolIntfBase* aProtocolIntf, CBttLogger* aTheLogger)
+CRawIP2Flow::CRawIP2Flow(ESock::CSubConnectionFlowFactoryBase& aFactory, const Messages::TNodeId& aSubConnId, ESock::CProtocolIntfBase* aProtocolIntf)
 /**
  * Constructor.
  *
  * @param aFactory Reference to the factory which created this object.
  * @param aSubConnId Reference to the node id for sub connection.
  * @param aProtocolIntf pointer to the CProtocolIntfBase
- * @param aTheLogger The logging object, ownership is passed to this object
  */
 	: CSubConnectionFlowBase(aFactory, aSubConnId, aProtocolIntf),
-	  iTheLogger(aTheLogger),
 	  iInitError(KErrNone),
 	  iStarted(EFalse),
 	  iStopping(EFalse)
@@ -72,10 +71,10 @@ void CRawIP2Flow::ConstructL()
  * @param aName The name of the NIF (unused)
  */
 	{
-	_LOG_L1C2(_L8("CRawIP2Flow %08x:\tConstructL()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_CONSTRUCTL_1, "CRawIP2Flow %08x:\tConstructL()", this);
 	
     iBinderControl = new (ELeave) TBinderControlProxy(*this);
-	iBcaController = CBcaController::NewL(*this, iTheLogger);
+	iBcaController = CBcaController::NewL(*this);
 	}
 
 CRawIP2Flow::~CRawIP2Flow()
@@ -85,15 +84,11 @@ CRawIP2Flow::~CRawIP2Flow()
 	{
 	// Note that we don't delete iBinder because it's not owned by us.
 	delete iBcaController;
-	// This class also deletes the logging object
-	delete iTheLogger;
 
 	ASSERT(iBinder == NULL);
 	
 	delete iBinderControl;	
 	LOG_NODE_DESTROY(KNifSubDir, CRawIP2Flow);
-	// Cleanup when stop was not called - harmless as it null's the pointer
-	__PACKETLOG_DELETE;
 	}
 
 void CRawIP2Flow::StartFlowL()
@@ -107,7 +102,7 @@ void CRawIP2Flow::StartFlowL()
 	{
 	ASSERT(iStarting==EFalse);
 	iStarting = ETrue;
-	_LOG_L1C2(_L8("CRawIP2Flow %08x:\tStartFlowL()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_STARTFLOWL_1, "CRawIP2Flow %08x:\tStartFlowL()", this);
 
 	// If there were any errors during earlier processing of the ProvisionConfig message
 	// then send an Error message in response to the StartFlow (because ProvisionConfig
@@ -124,7 +119,7 @@ void CRawIP2Flow::StartFlowL()
 	// associate the binder object with the lowersender
 	iBinder->SetSender(&(iBcaController->Bca()->GetSender()));
 	//the name calculation should be done only if logging is enabled
-#ifdef __FLOG_ACTIVE
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 	const TUint KModemNameLen = KCommsDbSvrMaxColumnNameLength + 10;  // need enough for ppp-XXX.txt - e.g. ppp-comm-1.txt, ppp-btcomm-10.txt etc
 	TBuf8<KModemNameLen> modemName;
 
@@ -145,12 +140,7 @@ void CRawIP2Flow::StartFlowL()
 	TUint32 counter = User::FastCounter();
 	logFileName.Format(KTimeFormat, counter);
 
-	TRAPD(err,__PACKETLOG_NEWL(KTcpDumpFirstTag, logFileName, CPacketLogger::ETcpDump, KTcpDumpLinkType));
-	if (err)
-		{
-		_LOG_L1C1(_L8("Trapped leave from __PACKETLOG_NEWL"));
-		}
-
+	
 	const TUint KLogTextLen = KModemNameLen+KTimeStampLen+30;
 	TBuf8<KLogTextLen> logText;
 	_LIT8(KLogTimeText, "TcpDump log file time stamp:");
@@ -159,7 +149,7 @@ void CRawIP2Flow::StartFlowL()
 	logText.Append(logFileName);
 	logText.Append(KLogModemText);
 	logText.Append(modemName);
-	_LOG_L1C1(logText);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_STARTFLOWL_3, logText);
 #endif
 	}
 
@@ -171,7 +161,7 @@ void CRawIP2Flow::LinkLayerUp()
  * ready to go.
  */
 	{
-	_LOG_L1C2(_L8("CRawIP2Flow %08x:\tLinkLayerUp()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_LINKLAYERUP_1, "CRawIP2Flow %08x:\tLinkLayerUp()", this);
 
 	iLastRequestOriginator.ReplyTo(Id(), ESock::TCFDataClient::TStarted().CRef());
 	
@@ -188,8 +178,8 @@ void CRawIP2Flow::LinkLayerDown(TInt aError)
  * @param aError An error code to propagate to NifMan
  */
 	{
-	_LOG_L1C3(_L8("CRawIP2Flow %08x:\tLinkLayerDown(aError %d)"), this, aError);
-	__PACKETLOG_DELETE;
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_LINKLAYERDOWN_1, "CRawIP2Flow %08x:\tLinkLayerDown(aError %d)", (TUint)this, aError);
+
 
 	if (iStopping)
 		{
@@ -219,8 +209,7 @@ void CRawIP2Flow::StopFlow(TInt aError)
  * @param aAction The action to take: disconnect or reconnect
  */
 	{
-	_LOG_L1C3(_L8("CRawIP2Flow %08x:\tStopFlow(aError %d)"), this, aError);
-	__PACKETLOG_DELETE;
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_STOPFLOW_1, "CRawIP2Flow %08x:\tStopFlow(aError %d)",(TUint) this, aError);
 	iStopping = ETrue;
 	ShutDown(aError);
 	}
@@ -237,7 +226,7 @@ void CRawIP2Flow::InitialiseL()
  * @param aError A possible error
  */
 	{
-	_LOG_L1C2(_L8("CRawIPFlow %08x:\tInitialiseL"),this);		
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_INITIALISEL_1, "CRawIPFlow %08x:\tInitialiseL",this);
 
 	// Update local state from TSY information originally from Agent.
 	GetBinder()->UpdateContextConfigL(*iAgentProvision->iGprsConfig);
@@ -258,7 +247,7 @@ void CRawIP2Flow::ShutDown(TInt aError)
  * @param aError A possible error (only during initialisation)
  */
 	{
-	_LOG_L1C3(_L8("CRawIPFlow %08x:\tShutDown(aError %d)"),this, aError);	
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_SHUTDOWN_1, "CRawIPFlow %08x:\tShutDown(aError %d)",(TUint)this, aError);
 			
 	if (aError != KErrNone)
 		{
@@ -301,7 +290,7 @@ void CRawIP2Flow::UpdateContextState(
  * @param aError A possible error
  */
 	{
-	_LOG_L1C3(_L8("CRawIP2Flow %08x:\tUpdateContextState(aState %d)"), this, aState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_UPDATECONTEXTSTATE_1, "CRawIP2Flow %08x:\tUpdateContextState(aState %d)", (TUint)this, aState);
 
 	// Note that we do not need to close the Flow down if there's been an
 	// error, as the context state machine will do this for us.
@@ -326,25 +315,22 @@ ESock::MFlowBinderControl* CRawIP2Flow::DoGetBinderControlL()
 
 ESock::MLowerControl* CRawIP2Flow::GetControlL(const TDesC8& aProtocol)
 	{
-#ifdef __BTT_LOGGING__
-	//TBuf8<256> debugBuffer;
-	//debugBuffer.Copy(aProtocol);
-	_LOG_L1C3(_L8("CRawIP2Flow %08x:\tGetControlL(aProtocol %S)"), this, &aProtocol);
-#endif
+
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_GETCONTROLL_1, "CRawIP2Flow %08x:\tGetControlL(aProtocol %s)", (TUint) this, aProtocol);
 
 	// IPv4 and ICMP Protocols
 	if (aProtocol.CompareF(KDescIp()) == 0 || aProtocol.CompareF(KDescIcmp()) == 0)
 		{
 		if (!iBinder)
 			{
-			iBinder = new (ELeave) CIPv4Binder(*this, iTheLogger);
+			iBinder = new (ELeave) CIPv4Binder(*this);
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS			
  			iBinder->SetType(KIp4FrameType);
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS			
 			}
 		else
 			{
-			_LOG_L1C2(_L8("CRawIP2Flow %08x:\tGetControlL(): IPv4 binder already exists"), this);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_GETCONTROLL_2, "CRawIP2Flow %08x:\tGetControlL(): IPv4 binder already exists", this);
 			}
 		}
 	// IPv6 Protocol
@@ -352,14 +338,14 @@ ESock::MLowerControl* CRawIP2Flow::GetControlL(const TDesC8& aProtocol)
 		{
 		if (!iBinder)
 			{
-			iBinder = new (ELeave) CIPv6Binder(*this, iTheLogger);
+			iBinder = new (ELeave) CIPv6Binder(*this);
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS			
  			iBinder->SetType(KIp6FrameType);
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS						
 			}
 		else
 			{
-			_LOG_L1C2(_L8("CRawIP2Flow %08x:\tGetControlL(): IPv6 binder already exists"), this);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_GETCONTROLL_3, "CRawIP2Flow %08x:\tGetControlL(): IPv6 binder already exists", this);
 			}
 		}		
 	else
@@ -392,7 +378,7 @@ ESock::MLowerDataSender* CRawIP2Flow::BindL(const TDesC8& aProtocol, ESock::MUpp
 
 void CRawIP2Flow::Unbind(ESock::MUpperDataReceiver* aUpperReceiver, ESock::MUpperControl* aUpperControl)
     {
-    _LOG_L1C2(_L8("CRawIP2Flow %08x:\tUnbind()"), this);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_UNBIND_1, "CRawIP2Flow %08x:\tUnbind()", this);
 
 	ASSERT(iBinder);
 	iBinder->Unbind(aUpperReceiver, aUpperControl);
@@ -505,7 +491,6 @@ void CRawIP2Flow::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipi
 			//doesn't notice anything. It does that by swapping the
 			//flows below the binders.
 			CBinderBase* localBinder = iBinder;
-			CBttLogger* logger = localBinder->iTheLogger;
 
 			TBinderControlProxy* localBinderControl = iBinderControl;
 			iBinder = otherFlow->iBinder;
@@ -517,7 +502,6 @@ void CRawIP2Flow::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipi
 			otherFlow->iBinderControl->iFlow = otherFlow;
 			iBinderControl->iFlow = this;
 
-			iBinder->iTheLogger = logger;
 
 			iSubConnectionProvider.Close();
 			iSubConnectionProvider.Open(address_cast<TNodeId>(rejoinMsg.iNodeId));
@@ -577,7 +561,7 @@ Just save the pointer for now - validate it later on StartFlow.
 @param aData provisioning pointer from message
 */
 	{
-	_LOG_L1C2(_L8("CRawIP2Flow %08x:\tProvisionConfig()"), this);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_PROVISIONCONFIG_1, "CRawIP2Flow %08x:\tProvisionConfig()", this);
 	iProvisionError = KErrNone;
 
 	AccessPointConfig().Close();
@@ -588,7 +572,7 @@ Just save the pointer for now - validate it later on StartFlow.
 
     if (iBCAProvisionConfig == NULL)
         {
-        _LOG_L1C1(_L8("CRawIP2Flow:\tProvisionConfigL() - CBCAProvision config incomplete"));
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_PROVISIONCONFIG_2, "CRawIP2Flow:\tProvisionConfigL() - CBCAProvision config incomplete");
 		iProvisionError = KErrCorrupt;
 		return;
         }
@@ -610,7 +594,7 @@ Retrieve provisioning information available only at StartFlow time.
     const CIPConfig* wcdmaIpProvision = static_cast<const CIPConfig*>(AccessPointConfig().FindExtension(STypeId::CreateSTypeId(CIPConfig::EUid, CIPConfig::ETypeId)));
     if (wcdmaIpProvision == NULL)
         {
-        _LOG_L1C2(_L8("CRawIP2Flow %08x:\tDynamicProvisionConfigL() - WCDMA config incomplete"), this);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIP2FLOW_DYNAMICPROVISIONCONFIGL_1, "CRawIP2Flow %08x:\tDynamicProvisionConfigL() - WCDMA config incomplete", this);
 		iProvisionError = KErrCorrupt;
 		return;
         }

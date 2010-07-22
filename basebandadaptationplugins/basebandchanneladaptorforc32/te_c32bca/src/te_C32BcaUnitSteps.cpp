@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1301,13 +1301,17 @@ TVerdict CNoChannelIdNoIapId::RunTestStepL()
 	}
 
 /** 
-Tests C32Bca can read hidden records from the Comms database.           
+Tests C32Bca can read hidden records from the Comms database.
+The test creates an entry in CommsDat for a valid CSY using an invalid (unknown) Port Id.
+The C32Bca reads this entry and tries to connect to the Comms Server, load the packet loopback csy and open channel UNKNOWN:0.
+The Comms Server returns -46, which indicates that it managed to load the packetloop bca csy but returns -46 indicating that
+port is invalid.         
 */
 TVerdict CHiddenIAPRecord::RunTestStepL()
 	{
 		
-	_LIT(KCsyName, "ECUART");
-	_LIT(KCsyPortName, "ECUART::0");
+	_LIT(KCsyName, "PKTLOOPBACK");
+	_LIT(KCsyPortName, "UNKNOWN::0");
 	_LIT(KCsyRecordName, "DummyRecordName");
 	
 	_LIT(KIAPRecordName, "DummyHiddenIAP");
@@ -1540,30 +1544,31 @@ Tests C32 BCA Ioctl option: Getting COMM Config
 TVerdict CIoctlSerialPort1::RunTestStepL()
 	{
 	LoadC32SettingsFromConfigFileL();
-	
+    
 	LoadCsyNameFromConfigFileL();
 	OpenRealCommPortL(iCommPort, iC32CsyName, iC32PortName);
-	
+    
 	LoadUutL();
 	SetProxyCsyL(*iUut, iC32CsyName);
-	
+    
 	iUut->Open(iC32PortName);
 	iUut->WaitForOpenL(KErrNone);
-	
+    
 	TCommConfig actualCommConfig;
 	iCommPort.Config(actualCommConfig);
 	actualCommConfig().iTerminatorCount = 1;
 	actualCommConfig().iTerminator[0] = 0x7E;
-	LogAndLeaveIfErrorL(iCommPort.SetConfig(actualCommConfig), _L("Setting COMM Config on RComm"));
-	
+
+	LogAndLeaveIfErrorL(iCommPort.SetConfig(actualCommConfig), _L("Setting COMM Config on RComm"));    
+    
 	TCommConfig balCommConfig;
 	// sanity check
 	TRAPD(err, CheckBuffersEqualL(balCommConfig, actualCommConfig));
 	if(KErrNone == err)
-		{
-		INFO_PRINTF1(_L("Santify Check Failure: buffers were equal before TCommConfig was retrieved from BCA."));
-		return EInconclusive;
-		}
+	{
+	INFO_PRINTF1(_L("Santify Check Failure: buffers were equal before TCommConfig was retrieved from BCA."));
+	return EInconclusive;
+	}
 
 	TPckgBuf<TCommConfig> argPckg(balCommConfig);
 	iUut->Ioctl(KBcaOptLevelExtSerial, KSerialConfig, argPckg);
@@ -1571,15 +1576,33 @@ TVerdict CIoctlSerialPort1::RunTestStepL()
 	balCommConfig = argPckg();
 
 	CheckBuffersEqualL(balCommConfig, actualCommConfig);
-	
+
+	// Now check that we can accept a V2 structure, although only the V1 attributes are configured for use.
+	TCommConfig2 actualCommConfig2;
+	actualCommConfig2.FillZ();
+	actualCommConfig2().iTerminatorCount = 2;
+	actualCommConfig2().iTerminator[0] = 0x7E;    
+	LogAndLeaveIfErrorL(iCommPort.SetConfig(actualCommConfig2), _L("Setting COMM Config using V2 on RComm"));
+
+	// Now check that we can retrieve a V1 structure correctly.
+	TCommConfig balCommConfig1;
+	balCommConfig1.FillZ();
+	TPckgBuf<TCommConfig> argPckg1(balCommConfig1);
+	iUut->Ioctl(KBcaOptLevelExtSerial, KSerialConfig, argPckg1);
+	iUut->WaitForIoctlL(KErrNone);
+	balCommConfig1 = argPckg1();
+
+	actualCommConfig().iTerminatorCount = 2;    //Modify Comparison Structure to be aligned to balCommConfig1          
+	CheckBuffersEqualL(balCommConfig1, actualCommConfig);
+    
 	iCommPort.Close();
-	
+    
 	iUut->Shutdown();
 	iUut->WaitForShutdownL(KErrNone);
-	
+    
 	UnloadUut();
-	
-	return EPass;
+    
+	return EPass;    
 	}
 
 /**
@@ -1777,7 +1800,7 @@ TVerdict CCleanupBcaRelease::RunTestStepL()
 /** Test C32 BCA open functionality with the different combinations of ChannelId*/
 TVerdict CValidChannelId::RunTestStepL()
 	{
-	TPtrC channelId;
+    TPtrC channelId;
 		
 	if(!GetStringFromConfig(ConfigSection(), _L("Port_Name1"), channelId))
 		{
@@ -1785,10 +1808,19 @@ TVerdict CValidChannelId::RunTestStepL()
 		return EAbort;
 		}
 		
-	// Pass channelId in the form of csyname::portname (ECUART::COMM::0) to the BCA
-	
+	// Pass channelId in the form of:
+	// csyname::portname (ECUART::COMM::0) to the BCA
+	// where csyname  = ECUART
+	//       portname = COMM::0
+	// OR alternatively
+	// csyname::portname (PKTLOOPBACK::PKTLOOPBACK::501) 
+	// where csyname   = PKTLOOPBACK
+	//       portname  = PKTLOOPBACK::501
+	//       (PKTLOOPBACK port names contain a seemingly redundant PKTLOOPBACK in their specification).
 	LoadUutL();
-			
+
+	// Scenario 1 - the CSY name is specified in the descriptor argument passed to the Open()
+	
 	iUut->Open(channelId);
 	iUut->WaitForOpenL(KErrNone);
 	
@@ -1800,10 +1832,16 @@ TVerdict CValidChannelId::RunTestStepL()
 		return EAbort;
 		}
 		
-	// Pass channelId in the form of portname (COMM::0) to the BCA	
-		
-	LoadUutL();
+	// Pass channelId in the form of portname (COMM::0) to the BCA
+	//     OR
+	//                                         (PKTLOOPBACK::501) 
+
+	// Scenario 2 - the CSY name is not specified in the descriptor argument passed to the Open()
+	// In this case, the CSY name is retrieved from CommsDat, based on the IAP.
+	// The client specifies the IAP by call SetProxyIapIdL();
 	
+	LoadUutL();
+
 	SetProxyIapIdL(*iUut, iUutIapId);
 	
 	iUut->Open(channelId);

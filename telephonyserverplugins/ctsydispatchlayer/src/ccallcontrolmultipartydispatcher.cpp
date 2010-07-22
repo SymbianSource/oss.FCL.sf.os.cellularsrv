@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ccallcontrolmultipartydispatcherTraces.h"
+#endif
 
 #include "ccallcontrolmultipartydispatcher.h"
 
@@ -415,7 +421,7 @@ void CCallControlMultipartyDispatcher::CallbackSync(CRequestQueueOneShot::TIpcDa
 		{
 
 	default:
-		LOG(_L8("WARNING: CCallControlMultipartyDispatcher::CallbackSync unhandled IPC=%d"), aIpcDataPackage.iIpc);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCALLCONTROLMULTIPARTYDISPATCHER_CALLBACKSYNC_1, "WARNING: CCallControlMultipartyDispatcher::CallbackSync unhandled IPC=%d", aIpcDataPackage.iIpc);
 		__ASSERT_DEBUG(NULL, CtsyDispatcherPanic(EUnhandledCtsyIpc));
 		break;
 		} // switch (aIpcDataPackage.iIpc)

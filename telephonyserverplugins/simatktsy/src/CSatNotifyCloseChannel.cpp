@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyCloseChannelTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyCloseChannel.h" // Class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifyCloseChannel* CSatNotifyCloseChannel::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_NEWL_1, "CSAT: CSatNotifyCloseChannel::NewL");
    	CSatNotifyCloseChannel* const satNotifyCloseChannel = 
         new ( ELeave ) CSatNotifyCloseChannel( aNotificationsTsy );
     CleanupStack::PushL( satNotifyCloseChannel );
     satNotifyCloseChannel->ConstructL();
     CleanupStack::Pop( satNotifyCloseChannel );
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_NEWL_2, "CSAT: CSatNotifyCloseChannel::NewL, end of method");
     return satNotifyCloseChannel;
     }
 
@@ -62,7 +67,7 @@ CSatNotifyCloseChannel::~CSatNotifyCloseChannel
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::~CSatNotifyCloseChannel");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_DTOR_1, "CSAT: CSatNotifyCloseChannel::~CSatNotifyCloseChannel");
     }
     
 // -----------------------------------------------------------------------------
@@ -88,8 +93,7 @@ void CSatNotifyCloseChannel::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::~CSatNotifyCloseChannel, \
-    	does nothing");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_CONSTRUCTL_1, "CSAT: CSatNotifyCloseChannel::~CSatNotifyCloseChannel, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +108,7 @@ TInt CSatNotifyCloseChannel::Notify
         const TDataPackage& aPackage    
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_NOTIFY_1, "CSAT: CSatNotifyCloseChannel::Notify");
 
     // Save data pointer to client side for completion
     iCloseChannelRspV2Pckg = reinterpret_cast<RSat::TCloseChannelV2Pckg*>( 
@@ -129,7 +133,7 @@ TInt CSatNotifyCloseChannel::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CancelNotification");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_CANCELNOTIFICATION_1, "CSAT: CSatNotifyCloseChannel::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyCloseChannelPCmdReqType );
@@ -152,7 +156,7 @@ TInt CSatNotifyCloseChannel::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_COMPLETENOTIFYL_1, "CSAT: CSatNotifyCloseChannel::CompleteNotifyL");
     TInt ret( KErrNone );
     // Unpack parameters
     TPtrC8* data;
@@ -202,8 +206,7 @@ TInt CSatNotifyCloseChannel::CompleteNotifyL
 	            closeChannelV2.iAlphaId.iStatus = RSat::EAlphaIdNotPresent;            
 		        if ( KErrNotFound != returnValue )
 		            {
-		            TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CompleteNotifyL\
-		            	Alpha ID present");
+		            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_COMPLETENOTIFYL_2, "CSAT: CSatNotifyCloseChannel::CompleteNotifyL Alpha ID present");
 		            TUint16 alphaIdLength = alphaIdentifier.GetLength();
 		            if ( alphaIdLength )
 		                {
@@ -223,8 +226,7 @@ TInt CSatNotifyCloseChannel::CompleteNotifyL
 		                }
 		            else
 		                {
-		                TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CompleteNotifyL\
-		                	Alpha ID is NULL");
+		                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_COMPLETENOTIFYL_3, "CSAT: CSatNotifyCloseChannel::CompleteNotifyL Alpha ID is NULL");
 		                closeChannelV2.iAlphaId.iStatus = RSat::EAlphaIdNull;
 		                }
 		            }
@@ -236,8 +238,7 @@ TInt CSatNotifyCloseChannel::CompleteNotifyL
         	else
         		{
             	// Required values missing
-            	TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CompleteNotifyL,\
-            	    required values missing (Device Identities)");
+            	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_COMPLETENOTIFYL_4, "CSAT: CSatNotifyCloseChannel::CompleteNotifyL, required values missing (Device Identities)");
             	ret = KErrCorrupt;
 	            CreateTerminalRespL( pCmdNumber, RSat::KErrorRequiredValuesMissing, KNullDesC16 );
         		}
@@ -251,8 +252,7 @@ TInt CSatNotifyCloseChannel::CompleteNotifyL
         }
 	else
 		{
-		TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CompleteNotifyL\
-			Request not ongoing");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_COMPLETENOTIFYL_5, "CSAT: CSatNotifyCloseChannel::CompleteNotifyL Request not ongoing");
 		// Request not on, returning response immediately
 		TBuf16<1> additionalInfo;	
         additionalInfo.Append ( RSat::KNoSpecificMeProblem );
@@ -273,7 +273,7 @@ TInt CSatNotifyCloseChannel::TerminalResponseL
         TDes8* aRsp 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_TERMINALRESPONSEL_1, "CSAT: CSatNotifyCloseChannel::TerminalResponseL");
     TInt   ret( KErrNone );
     
     TBuf16<1> additionalInfo;
@@ -298,8 +298,7 @@ TInt CSatNotifyCloseChannel::TerminalResponseL
         && ( RSat::KBearerIndepProtocolError != rspV2.iGeneralResult ) 
         && ( RSat::KFramesError != rspV2.iGeneralResult ))
         {
-        TFLOGSTRING("CSAT: CSatNotifyCloseChannel::TerminalResponseL\
-        	Invalid General Result");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_TERMINALRESPONSEL_2, "CSAT: CSatNotifyCloseChannel::TerminalResponseL Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -312,8 +311,7 @@ TInt CSatNotifyCloseChannel::TerminalResponseL
         	}
     	else
         	{
-        	TFLOGSTRING("CSAT: CSatNotifyCloseChannel::TerminalResponseL\
-        		Invalid Additional Info");
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_TERMINALRESPONSEL_3, "CSAT: CSatNotifyCloseChannel::TerminalResponseL Invalid Additional Info");
         	ret = KErrCorrupt;
         	}
         }
@@ -323,8 +321,7 @@ TInt CSatNotifyCloseChannel::TerminalResponseL
     	}
     else
     	{
-    	TFLOGSTRING("CSAT: CSatNotifyCloseChannel::TerminalResponseL\
-    		Invalid Additional Info type");
+    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_TERMINALRESPONSEL_4, "CSAT: CSatNotifyCloseChannel::TerminalResponseL Invalid Additional Info type");
     	ret = KErrCorrupt;
     	}
             
@@ -350,7 +347,7 @@ TInt CSatNotifyCloseChannel::CreateTerminalRespL
         const TDesC16& aAdditionalInfo	
 		)
     {
-    TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CreateTerminalRespL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_CREATETERMINALRESPL_1, "CSAT: CSatNotifyCloseChannel::CreateTerminalRespL");
     TTlv tlvSpecificData;
     // Append general result tag
     tlvSpecificData.AddTag( KTlvResultTag );
@@ -367,8 +364,7 @@ TInt CSatNotifyCloseChannel::CreateTerminalRespL
         // Unsuccessful result requires an additional info byte
         for ( TInt i = 0; i < aAdditionalInfo.Length(); i++ )
         	{
-        	TFLOGSTRING("CSAT: CSatNotifyCloseChannel::CreateTerminalRespL,\
-        	    Unsuccessful result");
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCLOSECHANNEL_CREATETERMINALRESPL_2, "CSAT: CSatNotifyCloseChannel::CreateTerminalRespL, Unsuccessful result");
         	tlvSpecificData.AddByte( static_cast<TUint8>( 
         	    aAdditionalInfo[i] ) );
         	}

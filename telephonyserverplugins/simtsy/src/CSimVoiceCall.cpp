@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,12 +21,18 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimVoiceCallTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 
 #include "CSimVoiceCall.h"
 #include "CSimPhone.h"
 #include "CSimDtmf.h"
-#include "Simlog.h"
 #include "CSimTsyMode.h"
 
 CSimVoiceCall* CSimVoiceCall::NewL(CSimLine* aLine,const TDesC& aName, CSimPhone* aPhone)
@@ -63,7 +69,7 @@ void CSimVoiceCall::ConstructL()
 * @param aName name of the voice call to be constructed
 */
 	{
-	LOGVOICE1("Starting to parse Voice Call config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_CONSTRUCTL_1, "Starting to parse Voice Call config parameters...");
 	iCaps=Caps();
 	iDiallingPause=iLine->CfgFile()->ItemValue(KDiallingPauseDuration,KDefaultDiallingPauseDuration);
 	iConnectingPause=iLine->CfgFile()->ItemValue(KConnectingPauseDuration,KDefaultConnectingPauseDuration);
@@ -85,17 +91,17 @@ void CSimVoiceCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,delay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("delay",ret,0,&KNotifyRemotePartyInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element DELAY returned %d (element no. %d) from tag %s.",ret,0,KNotifyRemotePartyInfo);
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,callingname);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("callingname",ret,1,&KNotifyRemotePartyInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element CALLINGNAME returned %d (element no. %d) from tag %s.",ret,1,KNotifyRemotePartyInfo);
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,remotenumber);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("remotenumber",ret,2,&KNotifyRemotePartyInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element REMOTENUMBER returned %d (element no. %d) from tag %s.",ret,2,KNotifyRemotePartyInfo);
 			}
 		
 		iNotifyRemotePartyInfoTimer->iDelay = delay;
@@ -111,7 +117,7 @@ void CSimVoiceCall::ConstructL()
 		iNotifyRemotePartyInfoTimer->iRemotePartyInfoV1.iRemoteIdStatus = RMobileCall::ERemoteIdentityUnknown;
 		}
 	
-	LOGVOICE1("...Finished parsing Voice Call config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_CONSTRUCTL_5, "...Finished parsing Voice Call config parameters...");
 	}
 
 CSimVoiceCall::~CSimVoiceCall()
@@ -280,7 +286,7 @@ TInt CSimVoiceCall::Dial(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallPa
 * @return KErrNone
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::Dial");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIAL_1, ">>CSimVoiceCall::Dial");
 	// Note: The telephone number and call parameters should be validated against config file
 	//       values here.
 	
@@ -292,14 +298,14 @@ TInt CSimVoiceCall::Dial(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallPa
 		
 		if(callparams.ExtensionId() == RMobileCall::KETel3rdPartyCallParamsV1)
 			{
-			LOGVOICE1("<<CSimVoiceCall::Dial request from Etel 3rd Party client.");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIAL_2, "<<CSimVoiceCall::Dial request from Etel 3rd Party client.");
 			}
 		}
 
 	iDialRequestHandle=aTsyReqHandle;
 	TInt ret;
 	ret = ActionEvent(ECallEventDial,KErrNone);
-	LOGVOICE1("<<CSimVoiceCall::Dial");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIAL_3, "<<CSimVoiceCall::Dial");
 	return ret;
 	}
 	
@@ -311,7 +317,7 @@ TInt CSimVoiceCall::DialCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone if successfully cancelled
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::DialCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALCANCEL_1, ">>CSimVoiceCall::DialCancel");
 	switch(iState)
 		{
 	case RMobileCall::EStatusIdle:
@@ -342,7 +348,7 @@ TInt CSimVoiceCall::DialCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 	default:
 		break;
 		}
-	LOGVOICE1("<<CSimVoiceCall::DialCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALCANCEL_2, "<<CSimVoiceCall::DialCancel");
 	return KErrNone;
 	}
 
@@ -356,7 +362,7 @@ TInt CSimVoiceCall::DialISV(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCal
 * @return KErrNone
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::DialISV");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALISV_1, ">>CSimVoiceCall::DialISV");
 	// Note: The telephone number and call parameters should be validated against config file
 	//       values here.
 	
@@ -368,14 +374,14 @@ TInt CSimVoiceCall::DialISV(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCal
 		
 		if(callparams.ExtensionId() == RMobileCall::KETel3rdPartyCallParamsV1)
 			{
-			LOGVOICE1("<<CSimVoiceCall::Dial request from Etel 3rd Party client.");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALISV_2, "<<CSimVoiceCall::Dial request from Etel 3rd Party client.");
 			}
 		}
 
 	iDialRequestHandle=aTsyReqHandle;
 	TInt ret;
 	ret = ActionEvent(ECallEventDial,KErrNone);
-	LOGVOICE1("<<CSimVoiceCall::DialISV");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALISV_3, "<<CSimVoiceCall::DialISV");
 	return ret;
 	}
 
@@ -387,7 +393,7 @@ TInt CSimVoiceCall::DialISVCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone if successfully cancelled
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::DialISVCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALISVCANCEL_1, ">>CSimVoiceCall::DialISVCancel");
 	switch(iState)
 		{
 	case RMobileCall::EStatusIdle:
@@ -418,7 +424,7 @@ TInt CSimVoiceCall::DialISVCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 	default:
 		break;
 		}
-	LOGVOICE1("<<CSimVoiceCall::DialISVCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_DIALISVCANCEL_2, "<<CSimVoiceCall::DialISVCancel");
 	return KErrNone;
 	}
 
@@ -433,7 +439,7 @@ TInt CSimVoiceCall::AnswerIncomingCall(const TTsyReqHandle aTsyReqHandle,const T
 * @return KErrNone
 */
 	{
-	LOGVOICE3(">>CSimVoiceCall::AnswerIncomingCall  0x%08x, state %d entry ",this,iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALL_1, ">>CSimVoiceCall::AnswerIncomingCall  0x%08x, state %d entry ",(TUint)this,iState);
 	
 	//see where the answer request has orignated from
 	if(aCallParams)
@@ -443,7 +449,7 @@ TInt CSimVoiceCall::AnswerIncomingCall(const TTsyReqHandle aTsyReqHandle,const T
 		
 		if(callparams.ExtensionId() == RMobileCall::KETel3rdPartyCallParamsV1)
 			{
-			LOGVOICE1("<<CSimVoiceCall::AnswerIncomingCall request from Etel 3rd Party client.");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALL_2, "<<CSimVoiceCall::AnswerIncomingCall request from Etel 3rd Party client.");
 			}
 		}
 	
@@ -470,7 +476,7 @@ TInt CSimVoiceCall::AnswerIncomingCall(const TTsyReqHandle aTsyReqHandle,const T
 		if(ret==KErrNone)
 			ret = ActionEvent(ECallEventAnswerIncoming,KErrNone);		
 		}
-	LOGVOICE3("<<CSimVoiceCall::AnswerIncomingCall  0x%08x, state %d exit",this,iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALL_3, "<<CSimVoiceCall::AnswerIncomingCall  0x%08x, state %d exit",(TUint)this,iState);
 	return ret;
 	}
 
@@ -482,14 +488,14 @@ TInt CSimVoiceCall::AnswerIncomingCallCancel(const TTsyReqHandle /*aTsyReqHandle
 * @return KErrNone if successfully cancelled
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::AnswerIncomingCallCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLCANCEL_1, ">>CSimVoiceCall::AnswerIncomingCallCancel");
 	if(iAnswerIncomingCall.iNotifyPending)
 		{
 		iAnswerIncomingCall.iNotifyPending=EFalse;
 		iLine->ResetAutoAnswerCallObject(this);
 		ReqCompleted(iAnswerIncomingCall.iNotifyHandle,KErrCancel);
 		}
-	LOGVOICE1("<<CSimVoiceCall::AnswerIncomingCallCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLCANCEL_2, "<<CSimVoiceCall::AnswerIncomingCallCancel");
 	return KErrNone;
 	}
 
@@ -504,7 +510,7 @@ TInt CSimVoiceCall::AnswerIncomingCallISVL(const TTsyReqHandle aTsyReqHandle,con
 * @return KErrNone
 */
 	{
-	LOGVOICE3(">>CSimVoiceCall::AnswerIncomingCallISV  0x%08x, state %d entry ",this,iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLISVL_1, ">>CSimVoiceCall::AnswerIncomingCallISV  0x%08x, state %d entry ",(TUint)this,iState);
 	
 	//see where the answer request has orignated from
 	if(aCallParams)
@@ -514,7 +520,7 @@ TInt CSimVoiceCall::AnswerIncomingCallISVL(const TTsyReqHandle aTsyReqHandle,con
 		
 		if(callparams.ExtensionId() == RMobileCall::KETel3rdPartyCallParamsV1)
 			{
-			LOGVOICE1("<<CSimVoiceCall::AnswerIncomingCallISV request from Etel 3rd Party client.");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLISVL_2, "<<CSimVoiceCall::AnswerIncomingCallISV request from Etel 3rd Party client.");
 			}
 		}
 	
@@ -543,7 +549,7 @@ TInt CSimVoiceCall::AnswerIncomingCallISVL(const TTsyReqHandle aTsyReqHandle,con
 				ret = ActionEvent(ECallEventAnswerIncoming,KErrNone);		
 	 		    }		
 		}
-	LOGVOICE3("<<CSimVoiceCall::AnswerIncomingCallISV  0x%08x, state %d exit",this,iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLISVL_3, "<<CSimVoiceCall::AnswerIncomingCallISV  0x%08x, state %d exit",(TUint)this,iState);
 	return ret;
 	}
 
@@ -555,14 +561,14 @@ TInt CSimVoiceCall::AnswerIncomingCallISVCancel(const TTsyReqHandle /*aTsyReqHan
 * @return KErrNone if successfully cancelled
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::AnswerIncomingCallISVCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLISVCANCEL_1, ">>CSimVoiceCall::AnswerIncomingCallISVCancel");
 	if(iAnswerIncomingCall.iNotifyPending)
 		{
 		iAnswerIncomingCall.iNotifyPending=EFalse;
 		iLine->ResetAutoAnswerCallObject(this);
 		ReqCompleted(iAnswerIncomingCall.iNotifyHandle,KErrCancel);
 		}
-	LOGVOICE1("<<CSimVoiceCall::AnswerIncomingCallISVCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ANSWERINCOMINGCALLISVCANCEL_2, "<<CSimVoiceCall::AnswerIncomingCallISVCancel");
 	return KErrNone;
 	}
 
@@ -586,12 +592,12 @@ TInt CSimVoiceCall::HangUp(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::HangUp");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_HANGUP_1, ">>CSimVoiceCall::HangUp");
 	iHangUpRequestHandle=aTsyReqHandle;
 	TInt ret=ActionEvent(ECallEventHangUp,KErrNone);
 	if(ret!=KErrNone)
 		ReqCompleted(aTsyReqHandle,ret);
-	LOGVOICE1("<<CSimVoiceCall::HangUp");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_HANGUP_2, "<<CSimVoiceCall::HangUp");
 	return KErrNone;
 	}
 
@@ -603,7 +609,7 @@ TInt CSimVoiceCall::HangUpCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone if successfully cancelled
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::HangUpCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_HANGUPCANCEL_1, ">>CSimVoiceCall::HangUpCancel");
 	switch(iState)
 		{
 	case RMobileCall::EStatusIdle:
@@ -629,7 +635,7 @@ TInt CSimVoiceCall::HangUpCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 	default:
 		break;
 		}
-	LOGVOICE1("<<CSimVoiceCall::HangUpCancel");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_HANGUPCANCEL_2, "<<CSimVoiceCall::HangUpCancel");
 	return KErrNone;
 	}
 
@@ -855,12 +861,12 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 	TInt ret=KErrNone;
 	__ASSERT_ALWAYS(iState!=RMobileCall::EStatusUnknown,SimPanic(ECallStatusUnknownIllegal));
 	__ASSERT_ALWAYS(aEvent!=ECallEventNtRasConnected,SimPanic(ECallEventIllegal));
-	LOGVOICE3(">>CSimVoiceCall::ActionEvent 0x%08x %d",this,iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_1, ">>CSimVoiceCall::ActionEvent 0x%08x %d",(TUint)this,iState);
 
 	switch(aEvent)
 		{
 	case ECallEventDial:
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventDial]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_2, ">>CSimVoiceCall::ActionEvent = [ECallEventDial]");
 		if(iState==RMobileCall::EStatusIdle)
 			{			
 			TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusDialling,EFalse,EFalse));
@@ -873,7 +879,7 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 
 	case ECallEventHangUp:
 		{
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventHangUp]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_3, ">>CSimVoiceCall::ActionEvent = [ECallEventHangUp]");
 		switch(iState)
 			{
 		case RMobileCall::EStatusDialling:
@@ -898,7 +904,7 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 		break;
 
 	case ECallEventIncomingCall:
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventIncomingCall]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_4, ">>CSimVoiceCall::ActionEvent = [ECallEventIncomingCall]");
 		if(iState==RMobileCall::EStatusIdle)
 			{
 			if(iAnswerIncomingCall.iNotifyPending)
@@ -917,7 +923,7 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 		break;
 
 	case ECallEventAnswerIncoming:
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventAnswerIncoming]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_5, ">>CSimVoiceCall::ActionEvent = [ECallEventAnswerIncoming]");
 		if(iState==RMobileCall::EStatusRinging)
 			{
 			TRAP(ret, ret=ProcessAnswerIncomingCallL());
@@ -931,7 +937,7 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 		break;
 
 	case ECallEventRemoteHangup:
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventRemoteHangup]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_6, ">>CSimVoiceCall::ActionEvent = [ECallEventRemoteHangup]");
 		if(iState==RMobileCall::EStatusConnected)
 			{
 			TRAP(ret, ret=ProcessRemoteHangupL());
@@ -946,31 +952,31 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 
 	case ECallEventTimeOut:
 			{
-			LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventTimeOut]");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_7, ">>CSimVoiceCall::ActionEvent = [ECallEventTimeOut]");
 			switch(iState)
 				{
 			case RMobileCall::EStatusDialling:
-				LOGVOICE1(">>CSimVoiceCall::State = [EStatusDialling]");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_8, ">>CSimVoiceCall::State = [EStatusDialling]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusConnecting,EFalse,EFalse));
 				if(ret==KErrNone)
 					iTimer->Start(iConnectingPause,this);
 				return ret;
 			
 			case RMobileCall::EStatusConnecting:
-				LOGVOICE1(">>CSimVoiceCall::State = [EStatusConnecting]");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_9, ">>CSimVoiceCall::State = [EStatusConnecting]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusConnected,EFalse,EFalse));
 				UpdateRemotePartyInfoDirection(RMobileCall::EStatusConnecting);
 				ReqCompleted(iDialRequestHandle,ret);
 				return ret;
 				
 			case RMobileCall::EStatusDisconnecting:
-				LOGVOICE1(">>CSimVoiceCall::State = [EStatusDisconnecting]");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_10, ">>CSimVoiceCall::State = [EStatusDisconnecting]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusIdle,EFalse,EFalse));
 				ReqCompleted(iHangUpRequestHandle,ret);
 				return ret;
 				
 			case RMobileCall::EStatusAnswering:
-				LOGVOICE1(">>CSimVoiceCall::State = [EStatusAnswering]");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_11, ">>CSimVoiceCall::State = [EStatusAnswering]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusConnected,EFalse,EFalse));
 				UpdateRemotePartyInfoDirection(RMobileCall::EStatusAnswering);
 				ReqCompleted(iAnswerIncomingCall.iNotifyHandle,ret);
@@ -982,7 +988,7 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 			}
 		break;
 	case ECallEventHold:
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventHold]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_12, ">>CSimVoiceCall::ActionEvent = [ECallEventHold]");
 		__ASSERT_ALWAYS(iState==RMobileCall::EStatusConnected,SimPanic(EIllegalStateInconsistancy));
 		TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusHold,aOtherArgument == ECallEventSwap,EFalse));
 		if (ret == KErrNone)
@@ -990,7 +996,7 @@ TInt CSimVoiceCall::ActionEvent(TCallEvent aEvent,TInt aOtherArgument)
 		break;
 
 	case ECallEventResume:
-		LOGVOICE1(">>CSimVoiceCall::ActionEvent = [ECallEventResume]");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_ACTIONEVENT_13, ">>CSimVoiceCall::ActionEvent = [ECallEventResume]");
 		__ASSERT_ALWAYS(iState==RMobileCall::EStatusHold,SimPanic(EIllegalStateInconsistancy));
 		TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusConnected,aOtherArgument == ECallEventSwap,EFalse));
 		if (ret == KErrNone)
@@ -1015,10 +1021,10 @@ void CSimVoiceCall::TimerCallBack(TInt /*aId*/)
 * function for further processing.
 */
 	{
-	LOGVOICE1(">>CSimVoiceCall::TimerCallBack");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_TIMERCALLBACK_1, ">>CSimVoiceCall::TimerCallBack");
 	TInt ret=ActionEvent(ECallEventTimeOut,KErrNone);
 	__ASSERT_ALWAYS(ret==KErrNone,SimPanic(ETimeOutEventActionFailed));
-	LOGVOICE1("<<CSimVoiceCall::TimerCallBack");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_TIMERCALLBACK_2, "<<CSimVoiceCall::TimerCallBack");
 	}
 
 TInt CSimVoiceCall::ProcessAnswerIncomingCallL()
@@ -1029,14 +1035,14 @@ TInt CSimVoiceCall::ProcessAnswerIncomingCallL()
 * call object must be assigned to receive the details of the next incoming call.
 */
 	{
-	LOGVOICE3(">>CSimVoiceCall::ProcessAnswerIncomingCall %d",iState,this);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_PROCESSANSWERINCOMINGCALLL_1, ">>CSimVoiceCall::ProcessAnswerIncomingCall %d , 0x%08x",iState,(TUint)this);
 	TInt ret=ChangeStateL(RMobileCall::EStatusAnswering,EFalse,EFalse);
 	if(ret!=KErrNone)
 		return ret;
 	iTimer->Start(iAnswerIncomingPause,this);
 	iAnswerIncomingCall.iNotifyPending=EFalse;
 	iLine->ResetAutoAnswerCallObject(this);
-	LOGVOICE1("<<CSimVoiceCall::ProcessAnswerIncomingCall");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_PROCESSANSWERINCOMINGCALLL_2, "<<CSimVoiceCall::ProcessAnswerIncomingCall");
 	return ret;
 	}
 
@@ -1048,13 +1054,13 @@ TInt CSimVoiceCall::ProcessRemoteHangupL()
 * call object must be assigned to receive the next remote hangup request.
 */
 	{
-	LOGVOICE3(">>CSimVoiceCall::ProcessRemoteHangupL %d",iState,this);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_PROCESSREMOTEHANGUPL_1, ">>CSimVoiceCall::ProcessRemoteHangupL %d, 0x%08x",iState,(TUint)this);
 	TInt ret=ChangeStateL(RMobileCall::EStatusDisconnecting,EFalse,EFalse);
 	if(ret!=KErrNone)
 		return ret;
 	iTimer->Start(iRemoteHangupPause,this);
 	iLine->ResetRemoteHangupCallObject(this);
-	LOGVOICE1("<<CSimVoiceCall::ProcessRemoteHangupL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICECALL_PROCESSREMOTEHANGUPL_2, "<<CSimVoiceCall::ProcessRemoteHangupL");
 	return ret;
 	}
 

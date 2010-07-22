@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,8 +19,14 @@
  @file Nd_bases.cpp 
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "Nd_BasesTraces.h"
+#endif
+
 #include "Nd_Bases.h"
-#include "SLOGGER.H"
 #include <comms-infras/eventlogger.h>
 #include "ND_ETEL.H"
 #include "ND_DBACC.H"
@@ -29,7 +35,8 @@
 // Netdial SM base class 
 
 CNetdialSM::CNetdialSM(MAgentNotify& aControllerObserver, CDialogProcessor* aDlgPrc, CCommsDbAccess& aDbAccess)
-	: CAgentSMBase(aControllerObserver,aDlgPrc,aDbAccess)
+	: CAgentSMBase(aControllerObserver,aDlgPrc,aDbAccess),
+	  iNdScript(NULL)
 /**
 Constructor.
 
@@ -86,11 +93,9 @@ Determine if a script needs to be used.
 */
 	{
 	TInt len = 0;
-	__FLOG_STMT(_LIT8(logString0,"Netdial:\tGetUseScriptL");)
-	__FLOG_STATIC(KNetDialLogFolder(), KNetDialLogFile(), logString0);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSM_GETUSESCRIPTL_1, "Netdial:\tGetUseScriptL");
 	iDbAccess->GetScriptDetailsL(iUseScript, len);
-	__FLOG_STMT(_LIT8(logString1,"Netdial:\tGetUseScriptL. iUseScript [%d]");)
-	__FLOG_STATIC1(KNetDialLogFolder(), KNetDialLogFile(), logString1, iUseScript);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSM_GETUSESCRIPTL_2, "Netdial:\tGetUseScriptL. iUseScript [%d]",iUseScript);
 	}
 #endif // SYMBIAN_NETWORKING_CSDAGENT_BCA_SUPPORT
 TInt CNetdialSM::GetExcessData(TDes8& aBuffer)
@@ -101,8 +106,7 @@ Get excess data buffer from script engine.
 @return KErrNotFound if script is not found.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tGetting Excess Data");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSM_GETEXCESSDATA_1,"NetDial:\tGetting Excess Data");
 	if (iNdScript!=NULL)
 		return iNdScript->GetExcessData(aBuffer);
 	else
@@ -200,8 +204,7 @@ to script executor, otherwise advance phase to and call ServiceStarted()
 	{
 	if(iStatus!=KErrNone)
 		{
-		__FLOG_STMT(_LIT(logString3,"Get Login Info");)
-		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGETLOGININFO_RUNL_1,"NetDial:\tCompleted Phase 'Get Login Info' with Error %d",  iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdGotLoginInfo,iStatus.Int());
@@ -211,11 +214,11 @@ to script executor, otherwise advance phase to and call ServiceStarted()
 	
 	if (!(iNdEnv->BaseEnv())->IsReconnect())
 		{
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KServiceStartedLogString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGETLOGININFO_RUNL_2,"NetDial:\tService Started");
 		}
 	else
 		{
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KServiceStartedReconnLogString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGETLOGININFO_RUNL_3, "NetDial:\tService Started On Reconnection");
 		}
 	iSMObserver->ServiceStarted();
 	(iNdEnv->BaseEnv())->CompleteState(KErrNone);

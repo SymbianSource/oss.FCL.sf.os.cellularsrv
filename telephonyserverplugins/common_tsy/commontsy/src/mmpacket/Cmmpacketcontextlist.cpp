@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CmmpacketcontextlistTraces.h"
+#endif
+
 #include "Cmmpacketcontextlist.h"
 #include "Cmmpacketservicetsy.h"
 #include "Cmmpacketcontexttsy.h"
@@ -36,7 +42,7 @@ CMmPacketContextList* CMmPacketContextList::NewL(
         CMmPacketServiceTsy* const aPacketService )
     {
 
-TFLOGSTRING("TSY: CMmPacketContextList* CMmPacketContextList::NewL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_NEWL_1, "TSY: CMmPacketContextList* CMmPacketContextList::NewL." );
 
     CMmPacketContextList* const contextList =
         new ( ELeave ) CMmPacketContextList();
@@ -114,7 +120,7 @@ TInt CMmPacketContextList::AddObject(
         const TUint8 /* aObjectId */,
         const TInfoName& aContextName )      
     {
-TFLOGSTRING3("TSY: CMmPacketContextList::AddObject. Context Name: %S Channel Id: %d", &aContextName, aChannelId );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_ADDOBJECT_1, "TSY: CMmPacketContextList::AddObject. Context Name: %S Channel Id: %d", aContextName, aChannelId );
 
     TInt ret( KErrArgument );
 
@@ -184,7 +190,7 @@ TInt CMmPacketContextList::RemoveObject(
         CMmPacketContextTsy* const aContext )
     {
 
-TFLOGSTRING("TSY: CMmPacketContextList::RemoveObject." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_REMOVEOBJECT_1, "TSY: CMmPacketContextList::RemoveObject." );
 
     // Set ret to KErrArgument to check that context is in list
     TInt ret( KErrArgument );
@@ -212,7 +218,7 @@ TFLOGSTRING("TSY: CMmPacketContextList::RemoveObject." );
                         if ( KErrNone == ret )
                             {
 
-TFLOGSTRING2("TSY: CMmPacketContextList::RemoveObject. Context Name: %S", &iContextInfoArray[i].iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_REMOVEOBJECT_2, "TSY: CMmPacketContextList::RemoveObject. Context Name: %S", iContextInfoArray[i].iContextName );
                             // Release Proxy id
                             iProxyIdList[j].iIsFree = ETrue;
             
@@ -500,7 +506,7 @@ void CMmPacketContextList::EnumerateNifs(
 
     *aCount = count;
 
-TFLOGSTRING2("TSY: CMmPacketContextList::EnumerateNifs. Number of Nifs: %d", aCount );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_ENUMERATENIFS_1, "TSY: CMmPacketContextList::EnumerateNifs. Number of Nifs: %d", aCount );
     }
 
 // ---------------------------------------------------------------------------
@@ -514,7 +520,7 @@ TInt CMmPacketContextList::GetNifInfo(
         RPacketService::TNifInfoV2* aNifInfoV2 ) 
     {
 
-TFLOGSTRING("TSY: CMmPacketContextList::GetNifInfo." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_GETNIFINFO_1, "TSY: CMmPacketContextList::GetNifInfo." );
 
     TInt index = *aIndex;
 
@@ -625,7 +631,7 @@ void CMmPacketContextList::EnumerateContextsInNif(
         const TInfoName aExistingContextName, 
         TInt* aCount )
     {
-TFLOGSTRING("TSY: CMmPacketContextList::EnumerateContextsInNif." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_ENUMERATECONTEXTSINNIF_1, "TSY: CMmPacketContextList::EnumerateContextsInNif." );
 
     TInt count( 0 );
 
@@ -701,7 +707,7 @@ TInt CMmPacketContextList::GetContextNameInNif(
         const RPacketService::TContextNameInNif* aContextNameInNif,
         TDes* aContextName )
     {
-TFLOGSTRING("TSY: CMmPacketContextList::GetContextNameInNif." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTLIST_GETCONTEXTNAMEINNIF_1, "TSY: CMmPacketContextList::GetContextNameInNif." );
 
     TInt index = aContextNameInNif->iIndex;
 

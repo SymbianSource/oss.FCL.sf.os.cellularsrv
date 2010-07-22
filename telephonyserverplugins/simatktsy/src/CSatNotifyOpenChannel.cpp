@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifyOpenChannelTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyOpenChannel.h"  // Class header
@@ -27,7 +33,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -42,13 +47,13 @@ CSatNotifyOpenChannel* CSatNotifyOpenChannel::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_NEWL_1, "CSAT: CSatNotifyOpenChannel::NewL");
    	CSatNotifyOpenChannel* const satNotifyOpenChannel = 
         new ( ELeave ) CSatNotifyOpenChannel( aNotificationsTsy );
     CleanupStack::PushL( satNotifyOpenChannel );
     satNotifyOpenChannel->ConstructL();
     CleanupStack::Pop( satNotifyOpenChannel );
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_NEWL_2, "CSAT: CSatNotifyOpenChannel::NewL, end of method");
     return satNotifyOpenChannel;
     }
 
@@ -62,7 +67,7 @@ CSatNotifyOpenChannel::~CSatNotifyOpenChannel
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::~CSatNotifyOpenChannel");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_DTOR_1, "CSAT: CSatNotifyOpenChannel::~CSatNotifyOpenChannel");
     }
     
 // -----------------------------------------------------------------------------
@@ -89,7 +94,7 @@ void CSatNotifyOpenChannel::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_CONSTRUCTL_1, "CSAT: CSatNotifyOpenChannel::ConstructL");
     }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +109,7 @@ TInt CSatNotifyOpenChannel::Notify
         const TDataPackage& aPackage
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_NOTIFY_1, "CSAT: CSatNotifyOpenChannel::Notify");
     // Save data pointers to client side for completion
     iOpenBaseChannelV2Pckg = reinterpret_cast<RSat::TOpenChannelBaseV2Pckg*>( 
         aPackage.Des1n() );  
@@ -134,7 +139,7 @@ TInt CSatNotifyOpenChannel::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::CancelNotification");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_CANCELNOTIFICATION_1, "CSAT: CSatNotifyOpenChannel::CancelNotification");
     
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -161,7 +166,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_1, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL");
 
     TInt ret( KErrNone );	
     // Unpack parameters
@@ -204,9 +209,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                 	{
                 	case KBipCsdBearer:
                     	{
-                    	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                    	    CompleteNotifyL, Command not supported: \
-                    	    Csd Bearer");
+                    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_2, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Command not supported: Csd Bearer");
                     	// Buffer size
             	        iBufferSize = bufferSize.GetLongInfo( 
             	            ETLV_BufferSize );
@@ -214,8 +217,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                     	iBearerType = RSat::ECSDBearer;
                     	iBearer = bearerDescription.GetData( 
                     	    ETLV_BearerParameters ); 
-                        TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                            CompleteNotifyL, BipCsdBearer ");
+                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_3, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, BipCsdBearer ");
                         CreateTerminalRespL( pCmdNumber, 
 							RSat::KCmdBeyondMeCapabilities, KNullDesC16 );
                         ret = KErrCorrupt; 
@@ -272,8 +274,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                 	default:
                     	{
                     	// Bearer not supported (RFU)
-                    	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                    	    CompleteNotifyL, Bearer not supported");
+                    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_4, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Bearer not supported");
                     	// Required values missing
                     	iBearer.FillZ( 1 );
                     	iBufferSize = 0;
@@ -288,8 +289,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
             	}
         	else
             	{
-            	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::CompleteNotifyL,\
-            	    required values missing");
+            	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_5, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, required values missing");
             	// Required values missing
             	iBearer.FillZ( 1 );
             	iBufferSize = 0;
@@ -358,16 +358,14 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                     	}
                 	else
                     	{
-                    	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                    	    CompleteNotifyL, Alpha ID is NULL");
+                    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_6, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Alpha ID is NULL");
                     	openChannelV2->iAlphaId.iStatus = RSat::EAlphaIdNull;
                     	}
                		}
             	// Alpha id not present
             	else
                 	{
-                	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::CompleteNotifyL,\
-                	    Alpha ID not present");
+                	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_7, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Alpha ID not present");
                 	openChannelV2->iAlphaId.iStatus = RSat::EAlphaIdNotPresent;
                 	}
 
@@ -411,8 +409,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                 	}
             	else
                 	{
-                	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::CompleteNotifyL,\
-                	    Protocol not present");
+                	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_8, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Protocol not present");
                 	openChannelV2->iSimMeInterface.iTransportProto =
                     	RSat::EProtocolNotPresent;
                 	}
@@ -487,8 +484,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                         	}
                     	default:
                         	{
-                        	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                        	    CompleteNotifyL, Address not set");
+                        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_9, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Address not set");
                         	openChannelV2->iDestinationAddress.iType = 
                         	    RSat::EAddressNotSet;
                         	break;
@@ -542,9 +538,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                                 		}
                                 	default:
                                     	{
-                                    	TFLOGSTRING("CSAT:\
-                                    	    CSatNotifyOpenChannel::\
-                                    	    CompleteNotifyL, Address not set");
+                                    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_10, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Address not set");
                                 		openCsChannelV2.iLocalAddress.iType = 
                                     		RSat::EAddressNotSet;
                                 		}
@@ -558,8 +552,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                             		}
                        			else
                             		{
-                            		TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                            		    CompleteNotifyL, Address not present");
+                            		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_11, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Address not present");
                             		openCsChannelV2.iLocalAddress.iType = 
                                 		RSat::EAddressNotPresent;
                             		}    
@@ -591,9 +584,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                                     	}
                                     default:
                                     	{
-                                    	TFLOGSTRING("CSAT: \
-                                    	    CSatNotifyOpenChannel::\
-                                    	    CompleteNotifyL, Address not set");
+                                    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_12, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Address not set");
                                     	openGprsChannelV4.iLocalAddress.iType = 
                                         	RSat::EAddressNotSet;
                                     	}
@@ -608,8 +599,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                                 	}
                             	else
                                 	{
-                                	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                                	    CompleteNotifyL, Address not present");
+                                	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_13, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Address not present");
                                 	openGprsChannelV4.iLocalAddress.iType = 
                                     	RSat::EAddressNotPresent;
                                 	}    
@@ -618,8 +608,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
                             	}
                         	default:
                             	{
-                            	TFLOGSTRING("CSAT: CSatNotifyOpenChannel::\
-                            	    CompleteNotifyL, Unknown Bearer type");
+                            	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_14, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Unknown Bearer type");
                             	break;
                             	}
                             	
@@ -629,8 +618,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
             	} // if ( KErrNone == ret )
             else
                 {
-                TFLOGSTRING("CSAT: CSatNotifyOpenChannel::CompleteNotifyL,\
-                    Error when parsing Bearer data");
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_15, "CSAT: CSatNotifyOpenChannel::CompleteNotifyL, Error when parsing Bearer data");
                 }
             } // if ( KErrNone == aErrorCode )
 		else
@@ -643,8 +631,7 @@ TInt CSatNotifyOpenChannel::CompleteNotifyL
     else
         {
         // Request not on, returning response immediately
-        TFLOGSTRING("CSAT:  CSatNotifyOpenChannel::CompleteNotifyL, \
-            Request not ongoing");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_COMPLETENOTIFYL_16, "CSAT:  CSatNotifyOpenChannel::CompleteNotifyL, Request not ongoing");
         // additional info must be provided with KMeUnableToProcessCmd 
 		TBuf16<1> additionalInfo;
 		additionalInfo.Append( RSat::KNoSpecificMeProblem );
@@ -667,7 +654,7 @@ TInt CSatNotifyOpenChannel::TerminalResponseL
         TDes8* aRsp 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifyOpenChannel::TerminalResponseL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_TERMINALRESPONSEL_1, "CSAT: CSatNotifyOpenChannel::TerminalResponseL");
 
     TInt ret( KErrNone );
 
@@ -679,8 +666,7 @@ TInt CSatNotifyOpenChannel::TerminalResponseL
 
     TUint8 pCmdNumber( rspV2.PCmdNumber() );
     
-    TFLOGSTRING2("CSAT: CSatNotifyOpenChannel::TerminalResponseL, \
-        General result: %d", rspV2.iGeneralResult);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_TERMINALRESPONSEL_2, "CSAT: CSatNotifyOpenChannel::TerminalResponseL, General result: %d", rspV2.iGeneralResult);
 
     // Check that general result value is valid
     if ( ( RSat::KSuccess != rspV2.iGeneralResult ) 
@@ -703,8 +689,7 @@ TInt CSatNotifyOpenChannel::TerminalResponseL
         && ( RSat::KAccessTechUnableProcessCmd != rspV2.iGeneralResult )
         && ( RSat::KFramesError != rspV2.iGeneralResult ) )
         {
-        TFLOGSTRING("CSAT: CSatNotifyOpenChannel::TerminalResponseL, \
-            Invalid General Result");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_TERMINALRESPONSEL_3, "CSAT: CSatNotifyOpenChannel::TerminalResponseL, Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -718,8 +703,7 @@ TInt CSatNotifyOpenChannel::TerminalResponseL
         // Check the length of additional info
         if ( rspV2.iAdditionalInfo.Length() <= 0 )
             {
-            TFLOGSTRING("CSAT: CSatNotifyOpenChannel::TerminalResponseL, \
-                Invalid Additional Info");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_TERMINALRESPONSEL_4, "CSAT: CSatNotifyOpenChannel::TerminalResponseL, Invalid Additional Info");
             // Invalid additional info field
             ret = KErrCorrupt;
             }
@@ -742,8 +726,7 @@ TInt CSatNotifyOpenChannel::TerminalResponseL
 	    }
 	else
         {
-        TFLOGSTRING("CSAT: CSatNotifyOpenChannel::TerminalResponseL, \
-                     Invalid Additional Info type");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_TERMINALRESPONSEL_5, "CSAT: CSatNotifyOpenChannel::TerminalResponseL, Invalid Additional Info type");
         ret = KErrCorrupt;
         }
         
@@ -773,7 +756,7 @@ TInt CSatNotifyOpenChannel::CreateTerminalRespL
         const TDesC16& aAdditionalInfo
 		)
     {
-    TFLOGSTRING("CSAT: CSatMessHandler::CreateTerminalRespL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_CREATETERMINALRESPL_1, "CSAT: CSatMessHandler::CreateTerminalRespL");
     // Create and append response data
     TTlv tlvSpecificData;
     // Create General Result TLV here
@@ -800,8 +783,7 @@ TInt CSatNotifyOpenChannel::CreateTerminalRespL
         // Successful result: could/must provide an additional info byte
 		if ( aAdditionalInfo.Length() > 0 )
         	{
-        	TFLOGSTRING2("CSAT: CSatMessHandler::CreateTerminalRespL,\
-				Unsuccessful result: aAddtionalInfo: %d", aAdditionalInfo[0]);
+        	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_CREATETERMINALRESPL_2, "CSAT: CSatMessHandler::CreateTerminalRespL, Unsuccessful result: aAddtionalInfo: %d", aAdditionalInfo[0]);
 			tlvSpecificData.AddByte( static_cast<TUint8>( aAdditionalInfo[0] ) );
             }
         }
@@ -815,8 +797,7 @@ TInt CSatNotifyOpenChannel::CreateTerminalRespL
         }
     else
         {
-        TFLOGSTRING("CSAT: CSatMessHandler::CreateTerminalRespL: \
-        	No Bearer Description data available");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYOPENCHANNEL_CREATETERMINALRESPL_3, "CSAT: CSatMessHandler::CreateTerminalRespL: No Bearer Description data available");
         }
         
     // Append Buffer Size

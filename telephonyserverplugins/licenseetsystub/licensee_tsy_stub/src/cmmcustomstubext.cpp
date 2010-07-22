@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -11,9 +11,14 @@
 // Contributors:
 //
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmcustomstubextTraces.h"
+#endif
+
 #include "cmmmessagerouter.h"
 #include "cmmcustomstubext.h"
-#include "tflogger.h"
 #include <ctsy/pluginapi/cmmdatapackage.h>
 
 const TUint KPhoneInfoDescSize = 15;
@@ -78,7 +83,7 @@ TInt CMmCustomStubExt::DoExtFuncL(
         ret = KErrNone;
         } 
     
- TFLOGSTRING2( "TSY: CMmCustomStubExt::DoExtFuncL. ret: %d ", ret );    
+ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSTUBEXT_DOEXTFUNCL_1,  "TSY: CMmCustomStubExt::DoExtFuncL. ret: %d ", ret );
     return ret; 
     }
 
@@ -103,7 +108,7 @@ TBool CMmCustomStubExt::SupportingIPC(
 void CMmCustomStubExt::InitializeL( 
     MCustomVendorExtComplete& aMCustomVendorExtComplete ) 
     {
-TFLOGSTRING( "TSY: CMmCustomStubExt::InitializeL. " ); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSTUBEXT_INITIALIZEL_1,  "TSY: CMmCustomStubExt::InitializeL. " );
     
     iVendorExtComplete = &aMCustomVendorExtComplete; 
     }
@@ -117,7 +122,7 @@ TFLOGSTRING( "TSY: CMmCustomStubExt::InitializeL. " );
 void CMmCustomStubExt::SetMessageRouter( 
     CMmMessageRouter* aMessageRouter )
     {
-TFLOGSTRING( "TSY: CMmCustomStubExt::SetMessageRouter. " ); 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSTUBEXT_SETMESSAGEROUTER_1,  "TSY: CMmCustomStubExt::SetMessageRouter. " );
     iMessageRouter = aMessageRouter;
     iFirstTime  = ETrue;
     }

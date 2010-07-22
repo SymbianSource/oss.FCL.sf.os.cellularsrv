@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+ Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
  All rights reserved.
  This component and the accompanying materials are made available
   under the terms of "Eclipse Public License v1.0"
@@ -83,9 +83,9 @@
     </IAP> 
              
     <IAP operation="add">
-        <Name>ECUART_Csy_Invalid_Port</Name>
+        <Name>PKTLB_Csy_Invalid_Port</Name>
         <IAPService>OutgoingGPRS.Dummy</IAPService>
-        <IAPBearer>ModemBearer.ECUART_Csy_Invalid_Port</IAPBearer>
+        <IAPBearer>ModemBearer.PKTLB_Csy_Invalid_Port</IAPBearer>
         <IAPNetwork>Network.Intranet</IAPNetwork>
         <IAPNetworkWeighting>0</IAPNetworkWeighting>
         <LocationRef>Location.Mobile</LocationRef>
@@ -223,9 +223,10 @@
 	</ModemBearer>
     
     <ModemBearer operation="add">
-        <Name>ECUART_Csy_Invalid_Port</Name>
-        <CSYName>ECUART</CSYName>
+        <Name>PKTLB_Csy_Invalid_Port</Name>
+        <CSYName>PKTLOOPBACK</CSYName>
         <PortName>INVALID_PORT_NAME</PortName>
+        <CommRole>1</CommRole> 
     </ModemBearer>  
         
     

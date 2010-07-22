@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,11 +16,16 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CmmpacketcontexttsyTraces.h"
+#endif
+
 #include "Cmmpacketcontexttsy.h"
 #include "Cmmpacketcontextlist.h"
 #include "cmmpacketservicegsmwcdmaext.h"
 #include "CMmPacketTsy.h"
-#include <ctsy/tflogger.h>
 #include "MmTsy_timeoutdefs.h"
 #include "MmTsy_numberOfSlots.h"
 
@@ -38,7 +43,7 @@ CMmPacketContextTsy* CMmPacketContextTsy::NewL(
         const TDes& aName,  
         const TUint8 aProxyId ) 
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::NewL. Context name:%S", &aName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NEWL_1,  "TSY: CMmPacketContextTsy::NewL. Context name:%S", aName );
 
     CMmPacketContextTsy* packetContext = new ( ELeave ) CMmPacketContextTsy();
 
@@ -61,7 +66,7 @@ void CMmPacketContextTsy::ConstructL()
     
 CMmPacketContextTsy::~CMmPacketContextTsy()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::~CMmPacketContextTsy. Context name: %S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DTOR_1,  "TSY: CMmPacketContextTsy::~CMmPacketContextTsy. Context name: %S", iContextName );
 	
 	if( iMmPacketService )
 		{
@@ -159,7 +164,7 @@ TInt CMmPacketContextTsy::ExtFunc(
         const TInt aIpc, 
         const TDataPackage& aPackage )  
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, &iContextName );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_EXTFUNC_1,  "TSY: CMmPacketContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, iContextName );
 
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
@@ -217,8 +222,7 @@ TInt CMmPacketContextTsy::DoExtFuncL(
         const TInt aIpc,      
         const TDataPackage& aPackage )   
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::DoExtFuncL. IPC: %d Handle:%d",
-                aIpc, aTsyReqHandle );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DOEXTFUNCL_1,  "TSY: CMmPacketContextTsy::DoExtFuncL. IPC: %d Handle:%d",aIpc, aTsyReqHandle );
 
     TInt ret( KErrNotSupported );
 
@@ -384,7 +388,7 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::DoExtFuncL. IPC: %d Handle:%d",
 CTelObject::TReqMode CMmPacketContextTsy::ReqModeL( 
         const TInt aIpc ) 
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::ReqModeL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQMODEL_1,  "TSY: CMmPacketContextTsy::ReqModeL. IPC: %d", aIpc );
 
     CTelObject::TReqMode reqMode( 0 );
     TBool doLeave( EFalse );
@@ -527,8 +531,7 @@ TInt CMmPacketContextTsy::NumberOfSlotsL(
             break;
 
         }  
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::NumberOfSlotsL. IPC: %d Number of slots: %d",
-                aIpc, numberOfSlots );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NUMBEROFSLOTSL_1,  "TSY: CMmPacketContextTsy::NumberOfSlotsL. IPC: %d Number of slots: %d",aIpc, numberOfSlots );
 
     return numberOfSlots;
 
@@ -550,8 +553,7 @@ TInt CMmPacketContextTsy::CancelService(
         const TInt aIpc,                            
         const TTsyReqHandle aTsyReqHandle )         
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::CancelService. IPC: %d Handle:%d",
-                aIpc, aTsyReqHandle );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_CANCELSERVICE_1,  "TSY: CMmPacketContextTsy::CancelService. IPC: %d Handle:%d",aIpc, aTsyReqHandle );
 
     TInt ret( KErrNone );
 	TTsyReqHandle reqHandle( NULL );
@@ -675,7 +677,7 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::CancelService. IPC: %d Handle:%d",
 TInt CMmPacketContextTsy::RegisterNotification( 
         const TInt aIpc )              
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::RegisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REGISTERNOTIFICATION_1,  "TSY: CMmPacketContextTsy::RegisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -717,7 +719,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::RegisterNotification. IPC: %d", aIpc );
 TInt CMmPacketContextTsy::DeregisterNotification(
         const TInt aIpc )                          
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::DeregisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmPacketContextTsy::DeregisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -754,12 +756,12 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::DeregisterNotification. IPC: %d", aIpc 
 CTelObject* CMmPacketContextTsy::OpenNewObjectL(    
         TDes& aNewName )                          
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::OpenNewObjectL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTL_1,  "TSY: CMmPacketContextTsy::OpenNewObjectL." );
 
     // Each context can have only one QoS
     if ( NULL != iQoSProfile )
         {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectL. Leaves with: %d", KErrAlreadyExists );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTL_2,  "TSY: CMmPacketContextTsy::OpenNewObjectL. Leaves with: %d", KErrAlreadyExists );
         User::Leave( KErrAlreadyExists );
         }
     
@@ -771,7 +773,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectL. Leaves with: %d", KErrA
         iQoSProfileName.Copy( iContextName );
         aNewName.Copy( iQoSProfileName );
         }
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectL. aNewName: %S", &aNewName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTL_3,  "TSY: CMmPacketContextTsy::OpenNewObjectL. aNewName: %S", aNewName );
 
     return iQoSProfile;
     }
@@ -787,11 +789,11 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectL. aNewName: %S", &aNewNam
 CTelObject* CMmPacketContextTsy::OpenNewObjectByNameL(    
         const TDesC& aName )                     
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. aName: %S", &aName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTBYNAMEL_1,  "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. aName: %S", aName );
 
     if ( aName != iQoSProfileName )
         {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. Leaves with: %d", KErrNotFound );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTBYNAMEL_2,  "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. Leaves with: %d", KErrNotFound );
         User::Leave( KErrNotFound );
         }
 
@@ -806,7 +808,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. Leaves with: %d",
 //
 TInt CMmPacketContextTsy::InitialiseContextL(RPacketContext::TDataChannelV2* aDataChannel )
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::InitialiseContextL." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_INITIALISECONTEXTL_1,  "TSY: CMmPacketContextTsy::InitialiseContextL." );
 
     TInt ret( KErrNone );
 
@@ -830,7 +832,7 @@ TFLOGSTRING( "TSY: CMmPacketContextTsy::InitialiseContextL." );
 //
 void CMmPacketContextTsy::CompleteInitialiseContext(const TInt aResult )     
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteInitialiseContext. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmPacketContextTsy::CompleteInitialiseContext. Error: %d", aResult );
 
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -857,7 +859,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteInitialiseContext. Error: %d", 
 //
 TInt CMmPacketContextTsy::ActivateL()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::ActivateL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_ACTIVATEL_1,  "TSY: CMmPacketContextTsy::ActivateL. Context name:%S", iContextName );
 
     TInt ret( KErrGprsServicesNotAllowed );
 
@@ -885,7 +887,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::ActivateL. Context name:%S", &iContextN
 void CMmPacketContextTsy::CompleteActivate( 
         const TInt aResult )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteActivate. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEACTIVATE_1,  "TSY: CMmPacketContextTsy::CompleteActivate. Error: %d", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextActivate );
@@ -906,7 +908,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteActivate. Error: %d", aResult )
 //
 TInt CMmPacketContextTsy::DeactivateL()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::DeactivateL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DEACTIVATEL_1,  "TSY: CMmPacketContextTsy::DeactivateL. Context name:%S", iContextName );
     TInt ret( KErrNone );
 
     // Call Deactivate
@@ -930,7 +932,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::DeactivateL. Context name:%S", &iContex
 void CMmPacketContextTsy::CompleteDeactivate( 
         const TInt aResult )    
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteDeactivate. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEDEACTIVATE_1,  "TSY: CMmPacketContextTsy::CompleteDeactivate. Error: %d", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextDeactivate );
@@ -954,7 +956,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteDeactivate. Error: %d", aResult
 //
 TInt CMmPacketContextTsy::DeleteL()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::DeleteL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DELETEL_1,  "TSY: CMmPacketContextTsy::DeleteL. Context name:%S", iContextName );
 
     TInt ret( KErrNone );
 
@@ -979,7 +981,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::DeleteL. Context name:%S", &iContextNam
 void CMmPacketContextTsy::CompleteDelete( 
         const TInt aResult )        
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteDelete. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEDELETE_1,  "TSY: CMmPacketContextTsy::CompleteDelete. Error: %d", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextDelete );
@@ -1001,7 +1003,7 @@ TInt CMmPacketContextTsy::GetConfig(
         const TTsyReqHandle aTsyReqHandle,    
         TPacketDataConfigBase* const aConfig )  
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::GetConfig. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETCONFIG_1,  "TSY: CMmPacketContextTsy::GetConfig. Context name:%S", iContextName );
 
     // Get config
     TInt ret = iMmPacketContextGsmWcdmaExt->GetConfig( aConfig );
@@ -1022,8 +1024,7 @@ TInt CMmPacketContextTsy::GetConnectionSpeed(
         const TTsyReqHandle aTsyReqHandle,         
         TUint* const aRate ) 
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::GetConnectionSpeed. Context name: %S Connection Speed:%d bps",
-             &iContextName, iConnectionSpeed );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETCONNECTIONSPEED_1,  "TSY: CMmPacketContextTsy::GetConnectionSpeed. Context name: %S Connection Speed:%u bps",iContextName, iConnectionSpeed );
 
     // Get current connection speed rate
     *aRate = iConnectionSpeed;
@@ -1044,7 +1045,7 @@ TInt CMmPacketContextTsy::GetDataVolumeTransferredL(
         const TTsyReqHandle aTsyReqHandle,   
         RPacketContext::TDataVolume* const aVolume ) 
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::GetDataVolumeTransferredL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETDATAVOLUMETRANSFERREDL_1,  "TSY: CMmPacketContextTsy::GetDataVolumeTransferredL. Context name:%S", iContextName );
 
     TInt ret( KErrNone );
 
@@ -1081,7 +1082,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::GetDataVolumeTransferredL. Context name
 void CMmPacketContextTsy::CompleteGetDataVolumeTransferred( 
         const TInt aResult )  
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteGetDataVolumeTransferred. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEGETDATAVOLUMETRANSFERRED_1,  "TSY: CMmPacketContextTsy::CompleteGetDataVolumeTransferred. Error: %d", aResult );
 
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1114,8 +1115,7 @@ TInt CMmPacketContextTsy::GetLastErrorCause(
         const TTsyReqHandle aTsyReqHandle,  
         TInt* const aError )    
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::GetLastErrorCause. Context name:%S Last error cause: %d",
-             &iContextName, iLastErrorCause );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETLASTERRORCAUSE_1,  "TSY: CMmPacketContextTsy::GetLastErrorCause. Context name:%S Last error cause: %d",iContextName, iLastErrorCause );
 
     *aError = iLastErrorCause;
     CMmPacketContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
@@ -1145,8 +1145,7 @@ TInt CMmPacketContextTsy::GetProfileName(
         aQoSProfile->Zero();
         }
 
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::GetProfileName. Context name: %S QoS Profile Name: %S",
-             &iContextName, aQoSProfile );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETPROFILENAME_1,  "TSY: CMmPacketContextTsy::GetProfileName. Context name: %S QoS Profile Name: %S",iContextName, *aQoSProfile );
 
     CMmPacketContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
     return KErrNone;
@@ -1162,8 +1161,7 @@ TInt CMmPacketContextTsy::GetStatus(
         const TTsyReqHandle aTsyReqHandle,   
         RPacketContext::TContextStatus* const aContextStatus )
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::GetStatus. Context name: %S Context Status:%d",
-             &iContextName, iContextStatus );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETSTATUS_1,  "TSY: CMmPacketContextTsy::GetStatus. Context name: %S Context Status:%d",iContextName, iContextStatus );
     *aContextStatus = iContextStatus;
     CMmPacketContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
 
@@ -1179,7 +1177,7 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::GetStatus. Context name: %S Context Sta
 TInt CMmPacketContextTsy::NotifyConfigChanged(
         TPacketDataConfigBase* const aConfig )  
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::NotifyConfigChanged." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NOTIFYCONFIGCHANGED_1,  "TSY: CMmPacketContextTsy::NotifyConfigChanged." );
 
     // Call NotifyConfigChanged from extension
     TInt ret = iMmPacketContextGsmWcdmaExt->NotifyConfigChanged( *aConfig );
@@ -1214,8 +1212,7 @@ TFLOGSTRING( "TSY: CMmPacketContextTsy::NotifyConfigChanged." );
 //
 void CMmPacketContextTsy::CompleteNotifyConfigChanged()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteNotifyConfigChanged.  Context name:%S",
-                &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETENOTIFYCONFIGCHANGED_1,  "TSY: CMmPacketContextTsy::CompleteNotifyConfigChanged.  Context name:%S",iContextName );
 
     // Get and reset req handle for R97/98 config notify
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1255,7 +1252,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteNotifyConfigChanged.  Context n
 TInt CMmPacketContextTsy::NotifyConnectionSpeedChange(
         TUint* const aRate )    
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::NotifyConnectionSpeedChange." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NOTIFYCONNECTIONSPEEDCHANGE_1,  "TSY: CMmPacketContextTsy::NotifyConnectionSpeedChange." );
 
     // Store pointer
     iRetNotifyConnectionSpeed = aRate;
@@ -1278,8 +1275,7 @@ void CMmPacketContextTsy::CompleteNotifyConnectionSpeedChange(
     
     if ( iNotifyConnectionSpeed != iConnectionSpeed )
         {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::CompleteNotifyConnectionSpeedChange. Context name:%S Connection Speed:%d bps",
-            &iContextName, iConnectionSpeed );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETENOTIFYCONNECTIONSPEEDCHANGE_1,  "TSY: CMmPacketContextTsy::CompleteNotifyConnectionSpeedChange. Context name:%S Connection Speed:%u bps",iContextName, iConnectionSpeed );
 
         // Store the connection speed internally
         iNotifyConnectionSpeed = iConnectionSpeed;
@@ -1309,7 +1305,7 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::CompleteNotifyConnectionSpeedChange. Co
 TInt CMmPacketContextTsy::NotifyStatusChange(
         RPacketContext::TContextStatus* const aContextStatus )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::NotifyStatusChange. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NOTIFYSTATUSCHANGE_1,  "TSY: CMmPacketContextTsy::NotifyStatusChange. Context name:%S", iContextName );
     iRetNotifyStatus = aContextStatus;
     iReqHandleType = EMultimodePacketContextNotifyStatusChange;
 
@@ -1329,8 +1325,7 @@ void CMmPacketContextTsy::CompleteNotifyStatusChange(
     if ( aContextStatus != iContextStatus )
         {
         iContextStatus = aContextStatus;
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::CompleteNotifyStatusChange. Context name: %S  Context status:%d",
-                    &iContextName, iContextStatus );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETENOTIFYSTATUSCHANGE_1,  "TSY: CMmPacketContextTsy::CompleteNotifyStatusChange. Context name: %S  Context status:%d",iContextName, iContextStatus );
 
         if ( RPacketContext::EStatusActive == iContextStatus ||
              RPacketContext::EStatusInactive == iContextStatus ||
@@ -1369,7 +1364,7 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::CompleteNotifyStatusChange. Context nam
 TInt CMmPacketContextTsy::SetConfigL(
         TPacketDataConfigBase* const aConfig ) 
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::SetConfigL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_SETCONFIGL_1,  "TSY: CMmPacketContextTsy::SetConfigL. Context name:%S", iContextName );
 
     // Call SetConfigL
     TInt ret = iMmPacketContextGsmWcdmaExt->SetConfigL( aConfig );
@@ -1393,7 +1388,7 @@ void CMmPacketContextTsy::CompleteSetConfig(
         const TInt aError,   
         TBool aIsAddMediaAuthorizationCalled )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteSetConfig. Error: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETESETCONFIG_1,  "TSY: CMmPacketContextTsy::CompleteSetConfig. Error: %d", aError );
     
     TTsyReqHandle reqHandle( EMultimodePacketContextReqHandleUnknown );
     //if context exists eg. its name length is bigger than zero
@@ -1482,7 +1477,7 @@ void CMmPacketContextTsy::SetDataVolume(
         RPacketContext::TDataVolume dataVolume )
     {
 
-TFLOGSTRING( "TSY: CMmPacketContextTsy::SetDataVolume" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_SETDATAVOLUME_1,  "TSY: CMmPacketContextTsy::SetDataVolume" );
    
     if ( dataVolume.iBytesSent < iDataVolume.iBytesSent )
         {
@@ -1516,8 +1511,7 @@ void CMmPacketContextTsy::SetLastErrorCause(
         iLastErrorCause =  aErrorCause;           
         }
 
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::SetLastErrorCause.  aErrorCause: %d iLastErrorCause:%d", 
-             aErrorCause, iLastErrorCause );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_SETLASTERRORCAUSE_1,  "TSY: CMmPacketContextTsy::SetLastErrorCause.  aErrorCause: %d iLastErrorCause:%d", aErrorCause, iLastErrorCause );
 
     }
 
@@ -1540,8 +1534,7 @@ RPacketContext::TContextStatus CMmPacketContextTsy::ContextStatus() const
 //
 void CMmPacketContextTsy::ContextSuspended()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::ContextSuspended. Context status before suspending: %d",
-                iContextStatus );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_CONTEXTSUSPENDED_1,  "TSY: CMmPacketContextTsy::ContextSuspended. Context status before suspending: %d",iContextStatus );
 
     if ( ( RPacketContext::EStatusActivating == iContextStatus ) ||
          ( RPacketContext::EStatusActive == iContextStatus ) ||
@@ -1569,8 +1562,7 @@ void CMmPacketContextTsy::ContextResumed()
 
     iContextStatusBeforeSuspending = RPacketContext::EStatusUnknown;
 
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::ContextResumed. Context status when resumed: %d",
-                iContextStatus );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_CONTEXTRESUMED_1,  "TSY: CMmPacketContextTsy::ContextResumed. Context status when resumed: %d",iContextStatus );
 
     }
 
@@ -1604,7 +1596,7 @@ CMmPacketQoSTsy* CMmPacketContextTsy::PacketQoSTsy() const
 //
 void CMmPacketContextTsy::RemoveQoS()
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::RemoveQoS." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REMOVEQOS_1,  "TSY: CMmPacketContextTsy::RemoveQoS." );
 
     iQoSProfile = NULL;
     iQoSProfileName.Zero();
@@ -1620,8 +1612,7 @@ void CMmPacketContextTsy::ReqCompleted(
         const TTsyReqHandle aTsyReqHandle, 
         const TInt aError )   
     {
-TFLOGSTRING3( "TSY: CMmPacketContextTsy::ReqCompleted. Handle:%d Error:%d", 
-             aTsyReqHandle, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQCOMPLETED_1,  "TSY: CMmPacketContextTsy::ReqCompleted. Handle:%d Error:%d", aTsyReqHandle, aError );
 
     // Set last error cause
     if ( KErrNone != aError )
@@ -1787,7 +1778,7 @@ TBool CMmPacketContextTsy::IsDialUpContext(
 void CMmPacketContextTsy::ResetDialUpContext()
     {
 
-TFLOGSTRING( "TSY: CMmPacketContextTsy::ResetDialUpContext." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_RESETDIALUPCONTEXT_1,  "TSY: CMmPacketContextTsy::ResetDialUpContext." );
 
     iDataVolume.iOverflowCounterSent = 0;
     iDataVolume.iBytesSent = 0;
@@ -1823,7 +1814,7 @@ TInt CMmPacketContextTsy::AddPacketFilterL(
         const TTsyReqHandle aTsyReqHandle,  
         TDes8* const aPacketFilter )  
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::AddPacketFilterL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_ADDPACKETFILTERL_1,  "TSY: CMmPacketContextTsy::AddPacketFilterL. Context name:%S", iContextName );
 
     TInt ret( KErrGeneral );
 
@@ -1865,7 +1856,7 @@ TInt CMmPacketContextTsy::RemovePacketFilter(
         const TTsyReqHandle aTsyReqHandle,  
         TInt *aID ) 
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::RemovePacketFilter. RemovedFilter:%d", *aID );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REMOVEPACKETFILTER_1,  "TSY: CMmPacketContextTsy::RemovePacketFilter. RemovedFilter:%d", *aID );
 
     TInt ret( KErrArgument );
 
@@ -1890,7 +1881,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::RemovePacketFilter. RemovedFilter:%d", 
 //
 TInt CMmPacketContextTsy::ModifyActiveContextL()
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::ModifyActiveContextL. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_MODIFYACTIVECONTEXTL_1,  "TSY: CMmPacketContextTsy::ModifyActiveContextL. Context name:%S", iContextName );
     
     TInt ret( KErrNotReady );
 
@@ -1919,7 +1910,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::ModifyActiveContextL. Context name:%S",
 void CMmPacketContextTsy::CompleteModifyActiveContext(
         const TInt aResult )
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::CompleteModifyActiveContext. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEMODIFYACTIVECONTEXT_1,  "TSY: CMmPacketContextTsy::CompleteModifyActiveContext. Context name:%S", iContextName );
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
            EMultimodePacketContextModifyActiveContext );
@@ -2118,7 +2109,7 @@ TInt CMmPacketContextTsy::GetConnectionInfo(
         const TTsyReqHandle aTsyReqHandle,    
         TConnectionInfoBase* const aInfo )  
     {
-TFLOGSTRING2( "TSY: CMmPacketContextTsy::GetConnectionInfo. Context name:%S", &iContextName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETCONNECTIONINFO_1,  "TSY: CMmPacketContextTsy::GetConnectionInfo. Context name:%S", iContextName );
 
     // Get config
     TInt ret = FillConnectionInfo( aInfo );
@@ -2138,7 +2129,7 @@ TFLOGSTRING2( "TSY: CMmPacketContextTsy::GetConnectionInfo. Context name:%S", &i
 TInt CMmPacketContextTsy::NotifyConnectionInfoChange(
         TConnectionInfoBase* const aInfo )    
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::NotifyConnectionInfoChange." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NOTIFYCONNECTIONINFOCHANGE_1,  "TSY: CMmPacketContextTsy::NotifyConnectionInfoChange." );
 
     // Store pointer
     iRetNotifyConnectionInfo = aInfo;
@@ -2157,7 +2148,7 @@ TFLOGSTRING( "TSY: CMmPacketContextTsy::NotifyConnectionInfoChange." );
 void CMmPacketContextTsy::CompleteNotifyConnectionInfoChange(
         TConnectionInfoBase* const aInfo )    
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::CompleteNotifyConnectionInfoChange." );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETENOTIFYCONNECTIONINFOCHANGE_1,  "TSY: CMmPacketContextTsy::CompleteNotifyConnectionInfoChange." );
 
     if ( NULL != aInfo &&
         TConnectionInfoBase::KConnectionInfoV1 == aInfo->ExtensionId() )
@@ -2206,7 +2197,7 @@ TFLOGSTRING( "TSY: CMmPacketContextTsy::CompleteNotifyConnectionInfoChange." );
 TInt CMmPacketContextTsy::FillConnectionInfo(   
         TConnectionInfoBase* const aInfo )  
     {
-TFLOGSTRING( "TSY: CMmPacketContextTsy::FillConnectionInfo" );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_FILLCONNECTIONINFO_1,  "TSY: CMmPacketContextTsy::FillConnectionInfo" );
 
     TInt ret = KErrNone;
 

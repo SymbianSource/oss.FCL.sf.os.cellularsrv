@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,11 +13,17 @@
 // Description:
 //
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimPacketQoSTraces.h"
+#endif
+
 #include "CSimPacketQoS.h"
 #include "CSimPhone.h"
 #include <pcktcs.h>
 #include "CSimPacketContext.h"
-#include "Simlog.h"
 #include "utils.h"
 #include "CSimPubSubChange.h"
 
@@ -237,7 +243,7 @@ void CSimPacketQoS::ConstructL()
 * @leave Leaves no memory or any data member does not construct for any reason.
 */
 	{
-	LOGPACKET1("CSimPacketQoS: Entered constructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_CONSTRUCTL_1, "CSimPacketQoS: Entered constructor");
 	iQosNetworkNotificationCount = 0;
 	iQosR5NetworkNotificationCount = 0;
 
@@ -246,7 +252,7 @@ void CSimPacketQoS::ConstructL()
  	iSetQoSTimer = CSimTimer::NewL(iPhone);
 	iSimQoSChange = CSimPubSubChange::NewL(this, CSimPubSub::TPubSubProperty(KUidPSSimTsyCategory, KPSSimTsyNetworkQoSChange, KPSSimTsyNetworkQoSChangeKeyType));
 	
-	LOGPACKET1("Starting to Load and Parse Packet Qos Config File");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_CONSTRUCTL_2, "Starting to Load and Parse Packet Qos Config File");
 
 	GetGPRSReqProfilesL();
 	GetGPRSNegProfilesL();
@@ -262,7 +268,7 @@ void CSimPacketQoS::ConstructL()
 	GetProfileFailSettings();
 	GetSetQoSSettings();
 
-	LOGPACKET1("...Finished parsing Packet qos config parameters...");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_CONSTRUCTL_3, "...Finished parsing Packet qos config parameters...");
 	}
 
 void CSimPacketQoS::GetGPRSReqProfilesL()
@@ -287,7 +293,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		TInt ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,0,minPrecedence);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::minPrecedence",ret,0,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::MINPRECEDENCE returned %d (element no. %d) from tag %s.",ret,0,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -299,7 +305,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,reqPrecedence);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::reqPrecedence",ret,1,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::REQPRECEDENCE returned %d (element no. %d) from tag %s.",ret,1,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -311,7 +317,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,minDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::minDelay",ret,2,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::MINDELAY returned %d (element no. %d) from tag %s.",ret,2,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -323,7 +329,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,reqDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::reqDelay",ret,3,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::REQDELAY returned %d (element no. %d) from tag %s.",ret,3,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -335,7 +341,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,minReliability);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::minReliability",ret,4,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::MINRELIABILITY returned %d (element no. %d) from tag %s.",ret,4,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -347,7 +353,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,reqReliability);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::reqReliability",ret,5,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::REQRELIABILITY returned %d (element no. %d) from tag %s.",ret,5,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -359,7 +365,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,minPeek);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::minPeek",ret,6,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::MINPEEK returned %d (element no. %d) from tag %s.",ret,6,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -371,7 +377,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,reqPeek);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::reqPeek",ret,7,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::REQPEEK returned %d (element no. %d) from tag %s.",ret,7,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -383,7 +389,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,minMean);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::minMean",ret,8,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::MINMEAN returned %d (element no. %d) from tag %s.",ret,8,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -395,7 +401,7 @@ void CSimPacketQoS::GetGPRSReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,reqMean);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::reqMean",ret,9,&KQosProfileReqGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSREQPROFILESL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::REQMEAN returned %d (element no. %d) from tag %s.",ret,9,KQosProfileReqGPRS);
 			continue;
 			}
 		else
@@ -429,7 +435,7 @@ void CSimPacketQoS::GetGPRSNegProfilesL()
 		TInt ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,0,negPrecedence);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::negPrecedence",ret,0,&KQosProfileNegGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSNEGPROFILESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::NEGPRECEDENCE returned %d (element no. %d) from tag %s.",ret,0,KQosProfileNegGPRS);
 			continue;
 			}
 		else
@@ -439,7 +445,7 @@ void CSimPacketQoS::GetGPRSNegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,negDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::negDelay",ret,1,&KQosProfileNegGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSNEGPROFILESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::NEGDELAY returned %d (element no. %d) from tag %s.",ret,1,KQosProfileNegGPRS);
 			continue;
 			}
 		else
@@ -449,7 +455,7 @@ void CSimPacketQoS::GetGPRSNegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,negReliability);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::negReliability",ret,2,&KQosProfileNegGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSNEGPROFILESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::NEGRELIABILITY returned %d (element no. %d) from tag %s.",ret,2,KQosProfileNegGPRS);
 			continue;
 			}
 		else
@@ -459,7 +465,7 @@ void CSimPacketQoS::GetGPRSNegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,negPeek);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::negPeek",ret,3,&KQosProfileNegGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSNEGPROFILESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::NEGPEEK returned %d (element no. %d) from tag %s.",ret,3,KQosProfileNegGPRS);
 			continue;
 			}
 		else
@@ -469,7 +475,7 @@ void CSimPacketQoS::GetGPRSNegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,negMean);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqGPRS::negMean",ret,4,&KQosProfileNegGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSNEGPROFILESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQGPRS::NEGMEAN returned %d (element no. %d) from tag %s.",ret,4,KQosProfileNegGPRS);
 			continue;
 			}
 		else
@@ -510,7 +516,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::contextName",ret,0,KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -518,7 +524,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 			profileReq99.iContextName.Copy(contextName);
 			if (profileReq99.iContextName.Match(iPacketContext->ContextName())==KErrNotFound)
 				{
-				LOGPARSERR("QosProfileReqR99::contextName",KErrArgument,0,&KQosProfileReqR99);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::CONTEXTNAME returned %d (element no. %d) from tag %s.",KErrArgument,0,KQosProfileReqR99);
 				continue;
 				}
 			}
@@ -526,7 +532,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,reqTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqTraffic",ret,1,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQTRAFFIC returned %d (element no. %d) from tag %s.",ret,1,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -540,7 +546,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,minTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minTraffic",ret,2,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINTRAFFIC returned %d (element no. %d) from tag %s.",ret,2,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -554,7 +560,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,reqDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqDeliveryOrder",ret,3,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,3,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -568,7 +574,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,minDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minDeliveryOrder",ret,4,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,4,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -582,7 +588,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,reqErroneousSDU);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqErroneousSDU",ret,5,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQERRONEOUSSDU returned %d (element no. %d) from tag %s.",ret,5,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -596,7 +602,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,minErroneousSDU);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minErroneousSDU",ret,6,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINERRONEOUSSDU returned %d (element no. %d) from tag %s.",ret,6,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -610,7 +616,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,maxSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::maxSDUSize",ret,7,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MAXSDUSIZE returned %d (element no. %d) from tag %s.",ret,7,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -621,7 +627,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,minSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minSDUSize",ret,8,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINSDUSIZE returned %d (element no. %d) from tag %s.",ret,8,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -632,7 +638,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,reqUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqUpLinkBitRate",ret,9,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,9,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -643,7 +649,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,reqDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqDownLinkBitRate",ret,10,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,10,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -654,7 +660,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,minUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minUpLinkBitRate",ret,11,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,11,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -675,7 +681,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,reqBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqBitErrorRatio",ret,13,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,13,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -689,7 +695,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,14,minBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minBitErrorRatio",ret,14,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,14,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -703,7 +709,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,15,reqSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("- QosProfileReqR99::reqSDUErrorRatio",ret,15,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element - QOSPROFILEREQR99::REQSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,15,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -717,7 +723,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,16,minSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("- QosProfileReqR99::minSDUErrorRatio",ret,16,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element - QOSPROFILEREQR99::MINSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,16,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -731,7 +737,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,17,reqTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqTrafficHandlingPriority",ret,17,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,17,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -745,7 +751,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,18,minTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minTrafficHandlingPriority",ret,18,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,18,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -759,7 +765,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,19,reqTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqTransferDelay",ret,19,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,19,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -770,7 +776,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,20,minTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minTransferDelay",ret,20,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,20,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -781,7 +787,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,21,reqGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqGuaranteedUpLinkBitRate",ret,21,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,21,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -792,7 +798,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,22,reqGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::reqGuaranteedDownLinkBitRate",ret,22,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::REQGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,22,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -803,7 +809,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,23,minGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minGuaranteedUpLinkBitRate",ret,23,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,23,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -814,7 +820,7 @@ void CSimPacketQoS::GetR99ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,24,minGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR99::minGuaranteedDownLinkBitRate",ret,24,&KQosProfileReqR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99REQPROFILESL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR99::MINGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,24,KQosProfileReqR99);
 			continue;
 			}
 		else 
@@ -849,7 +855,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		TInt ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::contextName",ret,0,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -857,7 +863,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 			profileNeg99.iContextName.Copy(contextName);
 			if (profileNeg99.iContextName.Match(iPacketContext->ContextName())==KErrNotFound)
 				{
-				LOGPARSERR("QosProfileNegR99::contextName",KErrArgument,0,&KQosProfileNegR99);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::CONTEXTNAME returned %d (element no. %d) from tag %s.",KErrArgument,0,KQosProfileNegR99);
 				continue;
 				}
 			}
@@ -865,7 +871,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::duration",ret,1,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::DURATION returned %d (element no. %d) from tag %s.",ret,1,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -877,7 +883,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,negTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negTraffic",ret,2,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGTRAFFIC returned %d (element no. %d) from tag %s.",ret,2,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -889,7 +895,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,negDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negDeliveryOrder",ret,3,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,3,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -901,7 +907,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,negErroneousSDUDelivery);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negErroneousSDUDelivery",ret,4,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGERRONEOUSSDUDELIVERY returned %d (element no. %d) from tag %s.",ret,4,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -913,7 +919,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,negMaxSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negMaxSDUSize",ret,5,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGMAXSDUSIZE returned %d (element no. %d) from tag %s.",ret,5,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -924,7 +930,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,negBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negBitErrorRatio",ret,6,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,6,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -937,7 +943,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,negSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negSDUErrorRatio",ret,7,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,7,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -949,7 +955,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,negTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negTrafficHandlingPriority",ret,8,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,8,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -961,7 +967,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,negTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negTransferDelay",ret,9,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,9,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -972,7 +978,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,negGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negGuaranteedUpLinkBitRate",ret,10,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,10,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -983,7 +989,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,negGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negGuaranteedDownLinkBitRate",ret,11,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,11,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -994,7 +1000,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,12,negMaxUpLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negMaxUpLinkRate",ret,12,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGMAXUPLINKRATE returned %d (element no. %d) from tag %s.",ret,12,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -1005,7 +1011,7 @@ void CSimPacketQoS::GetR99NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,negMaxDownLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR99::negMaxDownLinkRate",ret,13,&KQosProfileNegR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NEGPROFILESL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR99::NEGMAXDOWNLINKRATE returned %d (element no. %d) from tag %s.",ret,13,KQosProfileNegR99);
 			continue;
 			}
 		else
@@ -1053,7 +1059,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::contextName",ret,0,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1064,7 +1070,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::duration",ret,1,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::DURATION returned %d (element no. %d) from tag %s.",ret,1,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1076,7 +1082,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,negTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negTraffic",ret,2,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGTRAFFIC returned %d (element no. %d) from tag %s.",ret,2,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1088,7 +1094,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,negDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negDeliveryOrder",ret,3,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,3,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1100,7 +1106,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,negErroneousSDUDelivery);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negErroneousSDUDelivery",ret,4,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGERRONEOUSSDUDELIVERY returned %d (element no. %d) from tag %s.",ret,4,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1112,7 +1118,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,negMaxSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negMaxSDUSize",ret,5,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGMAXSDUSIZE returned %d (element no. %d) from tag %s.",ret,5,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1123,7 +1129,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,negBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negBitErrorRatio",ret,6,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,6,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1135,7 +1141,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,negSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negSDUErrorRatio",ret,7,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,7,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1147,7 +1153,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,negTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negTrafficHandlingPriority",ret,8,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,8,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1159,7 +1165,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,negTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negTransferDelay",ret,9,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,9,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1170,7 +1176,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,negGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negGuaranteedUpLinkBitRate",ret,10,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,10,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1181,7 +1187,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,negGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negGuaranteedDownLinkBitRate",ret,11,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,11,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1192,7 +1198,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,12,negMaxUpLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negMaxUpLinkRate",ret,12,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGMAXUPLINKRATE returned %d (element no. %d) from tag %s.",ret,12,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1203,7 +1209,7 @@ void CSimPacketQoS::GetR99NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,negMaxDownLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosNetworkNotification::negMaxDownLinkRate",ret,13,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99NETWORKNOTIFICATIONSL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSNETWORKNOTIFICATION::NEGMAXDOWNLINKRATE returned %d (element no. %d) from tag %s.",ret,13,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -1232,7 +1238,7 @@ void CSimPacketQoS::GetR99QosProfileCaps()
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,trafficCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR99::trafficCap",ret,0,&KQosProfileCapsR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99QOSPROFILECAPS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR99::TRAFFICCAP returned %d (element no. %d) from tag %s.",ret,0,KQosProfileCapsR99);
 			}
 		else
 			if(AsciiToNum(trafficCap, digit)==KErrNone)
@@ -1241,7 +1247,7 @@ void CSimPacketQoS::GetR99QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,deliveryOrderReqCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR99::deliveryOrderReqCap",ret,1,&KQosProfileCapsR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99QOSPROFILECAPS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR99::DELIVERYORDERREQCAP returned %d (element no. %d) from tag %s.",ret,1,KQosProfileCapsR99);
 			}
 		else
 			if(AsciiToNum(deliveryOrderReqCap, digit)==KErrNone)
@@ -1250,7 +1256,7 @@ void CSimPacketQoS::GetR99QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,deliverErroneousSDUCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR99::deliverErroneousSDUCap",ret,2,&KQosProfileCapsR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99QOSPROFILECAPS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR99::DELIVERERRONEOUSSDUCAP returned %d (element no. %d) from tag %s.",ret,2,KQosProfileCapsR99);
 			}
 		else
 			if(AsciiToNum(deliverErroneousSDUCap, digit)==KErrNone)
@@ -1259,7 +1265,7 @@ void CSimPacketQoS::GetR99QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,BERCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR99::BERCap",ret,3,&KQosProfileCapsR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99QOSPROFILECAPS_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR99::BERCAP returned %d (element no. %d) from tag %s.",ret,3,KQosProfileCapsR99);
 			}
 		else
 			if(AsciiToNum(BERCap, digit)==KErrNone)
@@ -1268,7 +1274,7 @@ void CSimPacketQoS::GetR99QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,SDUErrorRatioCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR99::SDUErrorRatioCap",ret,4,&KQosProfileCapsR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99QOSPROFILECAPS_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR99::SDUERRORRATIOCAP returned %d (element no. %d) from tag %s.",ret,4,KQosProfileCapsR99);
 			}
 		else
 			if(AsciiToNum(SDUErrorRatioCap, digit)==KErrNone)
@@ -1278,7 +1284,7 @@ void CSimPacketQoS::GetR99QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,trafficHandlingPriorityCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR99::trafficHandlingPriorityCap",ret,5,&KQosProfileCapsR99);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR99QOSPROFILECAPS_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR99::TRAFFICHANDLINGPRIORITYCAP returned %d (element no. %d) from tag %s.",ret,5,KQosProfileCapsR99);
 			}
 		else
 			if(AsciiToNum(trafficHandlingPriorityCap, digit)==KErrNone)
@@ -1302,7 +1308,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,trafficCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::trafficCap",ret,0,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::TRAFFICCAP returned %d (element no. %d) from tag %s.",ret,0,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(trafficCap, digit)==KErrNone)
@@ -1311,7 +1317,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,deliveryOrderReqCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::deliveryOrderReqCap",ret,1,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::DELIVERYORDERREQCAP returned %d (element no. %d) from tag %s.",ret,1,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(deliveryOrderReqCap, digit)==KErrNone)
@@ -1320,7 +1326,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,deliverErroneousSDUCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::deliverErroneousSDUCap",ret,2,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::DELIVERERRONEOUSSDUCAP returned %d (element no. %d) from tag %s.",ret,2,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(deliverErroneousSDUCap, digit)==KErrNone)
@@ -1329,7 +1335,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,BERCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::BERCap",ret,3,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::BERCAP returned %d (element no. %d) from tag %s.",ret,3,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(BERCap, digit)==KErrNone)
@@ -1338,7 +1344,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,SDUErrorRatioCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::SDUErrorRatioCap",ret,4,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::SDUERRORRATIOCAP returned %d (element no. %d) from tag %s.",ret,4,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(SDUErrorRatioCap, digit)==KErrNone)
@@ -1347,7 +1353,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,trafficHandlingPriorityCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::trafficHandlingPriorityCap",ret,5,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::TRAFFICHANDLINGPRIORITYCAP returned %d (element no. %d) from tag %s.",ret,5,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(trafficHandlingPriorityCap, digit)==KErrNone)
@@ -1356,7 +1362,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,signallingIndication);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::signallingIndication",ret,6,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::SIGNALLINGINDICATION returned %d (element no. %d) from tag %s.",ret,6,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(signallingIndication, digit)==KErrNone)
@@ -1365,7 +1371,7 @@ void CSimPacketQoS::GetR5QosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,sourceStatisticsDescriptor);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsR5::sourceStatisticsDescriptor",ret,7,&KQosProfileCapsR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5QOSPROFILECAPS_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSR5::SOURCESTATISTICSDESCRIPTOR returned %d (element no. %d) from tag %s.",ret,7,KQosProfileCapsR5);
 			}
 		else
 			if(AsciiToNum(sourceStatisticsDescriptor, digit)==KErrNone)
@@ -1389,7 +1395,7 @@ void CSimPacketQoS::GetProfileFailSettings()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,numberOfTimes);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("SetProfileFail::numberOfTimes",ret,1,&KSetProfileFail);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETPROFILEFAILSETTINGS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element SETPROFILEFAIL::NUMBEROFTIMES returned %d (element no. %d) from tag %s.",ret,1,KSetProfileFail);
 				}
 			else
 				{
@@ -1400,7 +1406,7 @@ void CSimPacketQoS::GetProfileFailSettings()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,errorCode);
 			if(ret!=KErrNone)
 				{
-				LOGPARSERR("SetProfileFail::errorCode",ret,2,&KSetProfileFail);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETPROFILEFAILSETTINGS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SETPROFILEFAIL::ERRORCODE returned %d (element no. %d) from tag %s.",ret,2,KSetProfileFail);
 				}
 			else
 				{
@@ -1428,7 +1434,7 @@ void CSimPacketQoS::GetGPRSQosProfileCaps()
 		TInt ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,0,negPrecedenceCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsGPRS::negPrecedenceCap",ret,0,&KQosProfileCapsGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSQOSPROFILECAPS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSGPRS::NEGPRECEDENCECAP returned %d (element no. %d) from tag %s.",ret,0,KQosProfileCapsGPRS);
 			}
 		else
 			if(AsciiToNum(negPrecedenceCap, digit)==KErrNone)
@@ -1437,7 +1443,7 @@ void CSimPacketQoS::GetGPRSQosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,negDelayCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsGPRS::negDelayCap",ret,1,&KQosProfileCapsGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSQOSPROFILECAPS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSGPRS::NEGDELAYCAP returned %d (element no. %d) from tag %s.",ret,1,KQosProfileCapsGPRS);
 			}
 		else
 			if(AsciiToNum(negDelayCap, digit)==KErrNone)
@@ -1446,7 +1452,7 @@ void CSimPacketQoS::GetGPRSQosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,negReliabilityCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsGPRS::negReliabilityCap",ret,2,&KQosProfileCapsGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSQOSPROFILECAPS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSGPRS::NEGRELIABILITYCAP returned %d (element no. %d) from tag %s.",ret,2,KQosProfileCapsGPRS);
 			}
 		else
 			if(AsciiToNum(negReliabilityCap, digit)==KErrNone)
@@ -1455,7 +1461,7 @@ void CSimPacketQoS::GetGPRSQosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,negPeekCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsGPRS::negPeekCap",ret,3,&KQosProfileCapsGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSQOSPROFILECAPS_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSGPRS::NEGPEEKCAP returned %d (element no. %d) from tag %s.",ret,3,KQosProfileCapsGPRS);
 			}
 		else
 			if(AsciiToNum(negPeekCap, digit)==KErrNone)
@@ -1464,7 +1470,7 @@ void CSimPacketQoS::GetGPRSQosProfileCaps()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,negMeanCap);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileCapsGPRS::negMeanCap",ret,4,&KQosProfileCapsGPRS);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETGPRSQOSPROFILECAPS_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILECAPSGPRS::NEGMEANCAP returned %d (element no. %d) from tag %s.",ret,4,KQosProfileCapsGPRS);
 			}
 		else
 			if(AsciiToNum(negMeanCap, digit)==KErrNone)
@@ -1505,7 +1511,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::contextName",ret,0,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1513,7 +1519,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 			profileReq5.iContextName.Copy(contextName);
 			if (profileReq5.iContextName.Match(iPacketContext->ContextName())==KErrNotFound)
 				{
-				LOGPARSERR("QosProfileReqR5::contextName",KErrArgument,0,&KQosProfileReqR5);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::CONTEXTNAME returned %d (element no. %d) from tag %s.",KErrArgument,0,KQosProfileReqR5);
 				continue;
 				}
 			}
@@ -1521,7 +1527,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,reqTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqTraffic",ret,1,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQTRAFFIC returned %d (element no. %d) from tag %s.",ret,1,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1535,7 +1541,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,minTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minTraffic",ret,2,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINTRAFFIC returned %d (element no. %d) from tag %s.",ret,2,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1549,7 +1555,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,reqDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqDeliveryOrder",ret,3,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,3,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1563,7 +1569,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,minDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minDeliveryOrder",ret,4,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,4,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1577,7 +1583,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,reqErroneousSDU);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqErroneousSDU",ret,5,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQERRONEOUSSDU returned %d (element no. %d) from tag %s.",ret,5,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1591,7 +1597,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,minErroneousSDU);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minErroneousSDU",ret,6,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINERRONEOUSSDU returned %d (element no. %d) from tag %s.",ret,6,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1605,7 +1611,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,maxSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::maxSDUSize",ret,7,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MAXSDUSIZE returned %d (element no. %d) from tag %s.",ret,7,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1616,7 +1622,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,minSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minSDUSize",ret,8,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINSDUSIZE returned %d (element no. %d) from tag %s.",ret,8,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1627,7 +1633,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,reqUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqUpLinkBitRate",ret,9,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,9,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1638,7 +1644,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,reqDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqDownLinkBitRate",ret,10,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,10,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1649,7 +1655,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,minUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minUpLinkBitRate",ret,11,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,11,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1670,7 +1676,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,reqBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqBitErrorRatio",ret,13,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,13,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1684,7 +1690,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,14,minBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minBitErrorRatio",ret,14,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,14,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1698,7 +1704,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,15,reqSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("- QosProfileReqR5::reqSDUErrorRatio",ret,15,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element - QOSPROFILEREQR5::REQSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,15,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1712,7 +1718,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,16,minSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("- QosProfileReqR5::minSDUErrorRatio",ret,16,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element - QOSPROFILEREQR5::MINSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,16,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1726,7 +1732,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,17,reqTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqTrafficHandlingPriority",ret,17,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,17,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1740,7 +1746,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,18,minTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minTrafficHandlingPriority",ret,18,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,18,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1754,7 +1760,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,19,reqTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqTransferDelay",ret,19,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,19,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1765,7 +1771,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,20,minTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minTransferDelay",ret,20,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,20,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1776,7 +1782,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,21,reqGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqGuaranteedUpLinkBitRate",ret,21,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,21,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1787,7 +1793,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,22,reqGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqGuaranteedDownLinkBitRate",ret,22,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,22,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1798,7 +1804,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,23,minGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minGuaranteedUpLinkBitRate",ret,23,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,23,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1809,7 +1815,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,24,minGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::minGuaranteedDownLinkBitRate",ret,24,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::MINGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,24,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1820,7 +1826,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,25,signallingIndication);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::signallingIndication",ret,25,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_26, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::SIGNALLINGINDICATION returned %d (element no. %d) from tag %s.",ret,25,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1831,7 +1837,7 @@ void CSimPacketQoS::GetR5ReqProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,26,reqTSourceStatisticsDescriptor);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileReqR5::reqTSourceStatisticsDescriptor",ret,26,&KQosProfileReqR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5REQPROFILESL_27, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILEREQR5::REQTSOURCESTATISTICSDESCRIPTOR returned %d (element no. %d) from tag %s.",ret,26,KQosProfileReqR5);
 			continue;
 			}
 		else 
@@ -1871,7 +1877,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		TInt ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::contextName",ret,0,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1879,7 +1885,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 			profileNeg5.iContextName.Copy(contextName);
 			if (profileNeg5.iContextName.Match(iPacketContext->ContextName())==KErrNotFound)
 				{
-				LOGPARSERR("QosProfileNegR5::contextName",KErrArgument,0,&KQosProfileNegR5);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::CONTEXTNAME returned %d (element no. %d) from tag %s.",KErrArgument,0,KQosProfileNegR5);
 				continue;
 				}
 			}
@@ -1887,7 +1893,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::duration",ret,1,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::DURATION returned %d (element no. %d) from tag %s.",ret,1,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1899,7 +1905,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,negTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negTraffic",ret,2,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGTRAFFIC returned %d (element no. %d) from tag %s.",ret,2,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1911,7 +1917,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,negDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negDeliveryOrder",ret,3,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,3,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1923,7 +1929,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,negErroneousSDUDelivery);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negErroneousSDUDelivery",ret,4,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGERRONEOUSSDUDELIVERY returned %d (element no. %d) from tag %s.",ret,4,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1935,7 +1941,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,negMaxSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negMaxSDUSize",ret,5,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGMAXSDUSIZE returned %d (element no. %d) from tag %s.",ret,5,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1946,7 +1952,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,negBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negBitErrorRatio",ret,6,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,6,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1959,7 +1965,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,negSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negSDUErrorRatio",ret,7,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,7,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1971,7 +1977,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,negTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negTrafficHandlingPriority",ret,8,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,8,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1983,7 +1989,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,negTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negTransferDelay",ret,9,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,9,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -1994,7 +2000,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,negGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negGuaranteedUpLinkBitRate",ret,10,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,10,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -2005,7 +2011,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,negGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negGuaranteedDownLinkBitRate",ret,11,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,11,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -2016,7 +2022,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,12,negMaxUpLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negMaxUpLinkRate",ret,12,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGMAXUPLINKRATE returned %d (element no. %d) from tag %s.",ret,12,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -2027,7 +2033,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,negMaxDownLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::negMaxDownLinkRate",ret,13,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::NEGMAXDOWNLINKRATE returned %d (element no. %d) from tag %s.",ret,13,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -2038,7 +2044,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,14,signallingIndication);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::signallingIndication",ret,14,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::SIGNALLINGINDICATION returned %d (element no. %d) from tag %s.",ret,14,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -2049,7 +2055,7 @@ void CSimPacketQoS::GetR5NegProfilesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,15,reqTSourceStatisticsDescriptor);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("QosProfileNegR5::reqTSourceStatisticsDescriptor",ret,15,&KQosProfileNegR5);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NEGPROFILESL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSPROFILENEGR5::REQTSOURCESTATISTICSDESCRIPTOR returned %d (element no. %d) from tag %s.",ret,15,KQosProfileNegR5);
 			continue;
 			}
 		else
@@ -2101,7 +2107,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,contextName);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::contextName",ret,0,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::CONTEXTNAME returned %d (element no. %d) from tag %s.",ret,0,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2112,7 +2118,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,duration);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::duration",ret,1,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::DURATION returned %d (element no. %d) from tag %s.",ret,1,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2124,7 +2130,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,negTraffic);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negTraffic",ret,2,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGTRAFFIC returned %d (element no. %d) from tag %s.",ret,2,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2136,7 +2142,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,negDeliveryOrder);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negDeliveryOrder",ret,3,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGDELIVERYORDER returned %d (element no. %d) from tag %s.",ret,3,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2148,7 +2154,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,negErroneousSDUDelivery);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negErroneousSDUDelivery",ret,4,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGERRONEOUSSDUDELIVERY returned %d (element no. %d) from tag %s.",ret,4,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2160,7 +2166,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,negMaxSDUSize);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negMaxSDUSize",ret,5,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGMAXSDUSIZE returned %d (element no. %d) from tag %s.",ret,5,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2171,7 +2177,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,negBitErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negBitErrorRatio",ret,6,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGBITERRORRATIO returned %d (element no. %d) from tag %s.",ret,6,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2183,7 +2189,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,negSDUErrorRatio);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negSDUErrorRatio",ret,7,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGSDUERRORRATIO returned %d (element no. %d) from tag %s.",ret,7,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2195,7 +2201,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,negTrafficHandlingPriority);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negTrafficHandlingPriority",ret,8,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGTRAFFICHANDLINGPRIORITY returned %d (element no. %d) from tag %s.",ret,8,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2207,7 +2213,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,negTransferDelay);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negTransferDelay",ret,9,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGTRANSFERDELAY returned %d (element no. %d) from tag %s.",ret,9,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2218,7 +2224,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,negGuaranteedUpLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negGuaranteedUpLinkBitRate",ret,10,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGGUARANTEEDUPLINKBITRATE returned %d (element no. %d) from tag %s.",ret,10,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2229,7 +2235,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,negGuaranteedDownLinkBitRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negGuaranteedDownLinkBitRate",ret,11,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGGUARANTEEDDOWNLINKBITRATE returned %d (element no. %d) from tag %s.",ret,11,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2240,7 +2246,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,12,negMaxUpLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negMaxUpLinkRate",ret,12,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGMAXUPLINKRATE returned %d (element no. %d) from tag %s.",ret,12,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2251,7 +2257,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,13,negMaxDownLinkRate);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::negMaxDownLinkRate",ret,13,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::NEGMAXDOWNLINKRATE returned %d (element no. %d) from tag %s.",ret,13,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2262,7 +2268,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,14,signallingIndication);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::signallingIndication",ret,14,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::SIGNALLINGINDICATION returned %d (element no. %d) from tag %s.",ret,14,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2273,7 +2279,7 @@ void CSimPacketQoS::GetR5NetworkNotificationsL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,15,reqTSourceStatisticsDescriptor);
 		if(ret!=KErrNone)
 			{
-			LOGPARSERR("qosR5NetworkNotification::reqTSourceStatisticsDescriptor",ret,15,&KQosNetworkNotificationType);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETR5NETWORKNOTIFICATIONSL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSR5NETWORKNOTIFICATION::REQTSOURCESTATISTICSDESCRIPTOR returned %d (element no. %d) from tag %s.",ret,15,KQosNetworkNotificationType);
 			continue;
 			}
 		else
@@ -2303,7 +2309,7 @@ void CSimPacketQoS::GetSetQoSSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,delay);
 		if(ret!=KErrNone || delay < 0)
 			{
-			LOGPARSERR("SetQoSDelay::delay",ret,0,&KSetQoSDelay);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETSETQOSSETTINGS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element SETQOSDELAY::DELAY returned %d (element no. %d) from tag %s.",ret,0,KSetQoSDelay);
 			}
 		else
 			{
@@ -2314,7 +2320,7 @@ void CSimPacketQoS::GetSetQoSSettings()
 		ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,1,at);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("SetQoSDelay::at",ret,1,&KSetQoSDelay);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETSETQOSSETTINGS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SETQOSDELAY::AT returned %d (element no. %d) from tag %s.",ret,1,KSetQoSDelay);
 			}
 		else
 			{
@@ -2331,7 +2337,7 @@ CSimPacketQoS::~CSimPacketQoS()
 *
 */
 	{
-	LOGPACKET1("CSimPacketQoS: Entered destructor");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_DTOR_1, "CSimPacketQoS: Entered destructor");
 
 	if (iProfiles != NULL)
 	{
@@ -2462,11 +2468,11 @@ TInt CSimPacketQoS::RegisterNotification(const TInt aIpc)
 	switch (aIpc)
 		{
 		case EPacketQoSNotifyProfileChanged:
-			LOGPACKET1("CSimPacketQoS: RegisterNotification - Profile Changed");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_REGISTERNOTIFICATION_1, "CSimPacketQoS: RegisterNotification - Profile Changed");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimPacketQoS: Register error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_REGISTERNOTIFICATION_2, "CSimPacketQoS: Register error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -2487,11 +2493,11 @@ TInt CSimPacketQoS::DeregisterNotification(const TInt aIpc)
 	switch (aIpc)
 		{
 		case EPacketQoSNotifyProfileChanged:
-			LOGPACKET1("CSimPacketQoS: DeregisterNotification - Profile Changed");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_DEREGISTERNOTIFICATION_1, "CSimPacketQoS: DeregisterNotification - Profile Changed");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimPacketQoS: Deregister error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_DEREGISTERNOTIFICATION_2, "CSimPacketQoS: Deregister error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -2510,12 +2516,12 @@ TInt CSimPacketQoS::NumberOfSlotsL(const TInt aIpc)
 	switch (aIpc)
 		{
 		case EPacketQoSNotifyProfileChanged:
-			LOGPACKET1("CGprsDGprsTsy: Registered with 5 slots");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_NUMBEROFSLOTSL_1, "CGprsDGprsTsy: Registered with 5 slots");
 			numberOfSlots=5;
 			break;
 		default:
 			// Unknown or invalid IPC
-			LOGPACKET1("CSimPacketQoS: Number of Slots error, unknown IPC");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_NUMBEROFSLOTSL_2, "CSimPacketQoS: Number of Slots error, unknown IPC");
 			User::Leave(KErrNotSupported);
 			break;
 		}  
@@ -2557,7 +2563,7 @@ TInt CSimPacketQoS::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt aIpc,
  				TRAPD(ret, iSetQoSData->AppendL(setQoSData) );
  				if (ret != KErrNone)
                  	{
-                 	LOGPACKET1("CSimPacketQoS::ExtFunc AppendL call fail");
+                 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_EXTFUNC_1, "CSimPacketQoS::ExtFunc AppendL call fail");
                  	return ret;
                  	}
                  	
@@ -2612,7 +2618,7 @@ TInt CSimPacketQoS::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHan
 * @return err KErrNone if request completes ok
 */
 	{
-	LOGPACKET1("CSimPacketQoS: - CancelService called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_CANCELSERVICE_1, "CSimPacketQoS: - CancelService called");
 	switch (aIpc)
 		{
 		case EPacketQoSSetProfileParams:
@@ -2640,7 +2646,7 @@ TInt CSimPacketQoS::SetProfile(const TTsyReqHandle aTsyReqHandle,const TDesC8* a
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketQoS::SetProfile called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_1, "CSimPacketQoS::SetProfile called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 
@@ -2703,34 +2709,34 @@ TInt CSimPacketQoS::SetProfile(const TTsyReqHandle aTsyReqHandle,const TDesC8* a
 
 				if (MatchContext(profile)==KErrNone)
 					{
-					LOGPACKET1("====REQ QOS===");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_2, "====REQ QOS===");
 	
 					
 					
 				//	LOGPACKET3("Req Traffic [%d] [%d]", qosConfigV1.iReqTrafficClass, profile.iReqTraffic);
 				//	LOGCOMMON3("Min Traffic [%d] [%d]", qosConfigV1.iMinTrafficClass, profile.iMinTraffic);
-					LOGPACKET3("Req Del order [%d] [%d]",qosConfigV1.iReqDeliveryOrderReqd, profile.iReqDeliveryOrder);
-					LOGPACKET3("Min Del order [%d] [%d]",qosConfigV1.iMinDeliveryOrderReqd , profile.iMinDeliveryOrder);
-					LOGPACKET3("Req Del err SDU [%d] [%d]",qosConfigV1.iReqDeliverErroneousSDU , profile.iReqErroneousSDU);
-					LOGPACKET3("Min Del err SDU [%d] [%d]",qosConfigV1.iMinDeliverErroneousSDU , profile.iMinErroneousSDU);
- 					LOGPACKET3("Max Sdu Size [%d] [%d]",qosConfigV1.iReqMaxSDUSize , profile.iMaxSDUSize);
- 					LOGPACKET3("Min Sdu Size [%d] [%d]",qosConfigV1.iMinAcceptableMaxSDUSize , profile.iMinSDUSize);
-  					LOGPACKET3("Req Down [%d] [%d]",qosConfigV1.iReqMaxRate.iDownlinkRate , profile.iReqDownLinkTBitRate);
-  					LOGPACKET3("Req Up [%d] [%d]", qosConfigV1.iReqMaxRate.iUplinkRate , profile.iReqUpLinkTBitRate);
-					LOGPACKET3("Min Guar Down[%d] [%d]",qosConfigV1.iMinGuaranteedRate.iDownlinkRate , profile.iMinGuaranteedDownLinkTBitRate);
-					LOGPACKET3("Min Guar Up [%d] [%d]",qosConfigV1.iMinGuaranteedRate.iUplinkRate , profile.iMinGuaranteedUpLinkTBitRate);
-					LOGPACKET3("Req BER [%d] [%d]",qosConfigV1.iReqBER , profile.iReqTBitErrorRatio);
-					LOGPACKET3("Max BER [%d] [%d]",qosConfigV1.iMaxBER , profile.iMinTBitErrorRatio);
-					LOGPACKET3("Req SDU err ratio [%d] [%d]",qosConfigV1.iReqSDUErrorRatio , profile.iReqTSDUErrorRatio);
-					LOGPACKET3("Max SDU err ration [%d] [%d]",qosConfigV1.iMaxSDUErrorRatio , profile.iMinTSDUErrorRatio);
-					LOGPACKET3("Req Traffic Handling priority [%d] [%d]",qosConfigV1.iReqTrafficHandlingPriority , profile.iReqTTrafficHandlingPriority);
-					LOGPACKET3("Min Traffic Handling priority [%d] [%d]",qosConfigV1.iMinTrafficHandlingPriority , profile.iMinTTrafficHandlingPriority);
-					LOGPACKET3("Req Transfer Delay [%d] [%d]",qosConfigV1.iReqTransferDelay , profile.iReqTransferDelay);
-					LOGPACKET3("Max Transfer Delay [%d] [%d]",qosConfigV1.iMaxTransferDelay , profile.iMinTransferDelay);
-					LOGPACKET3("Req Guar downlink bitrate [%d] [%d]",qosConfigV1.iReqGuaranteedRate.iDownlinkRate , profile.iReqGuaranteedDownLinkTBitRate);
-					LOGPACKET3("Req Guar uplink bitrate [%d] [%d]",qosConfigV1.iReqGuaranteedRate.iUplinkRate , profile.iReqGuaranteedUpLinkTBitRate);
-					LOGPACKET3("Min Guar downlink [%d] [%d]",qosConfigV1.iMinGuaranteedRate.iDownlinkRate , profile.iMinGuaranteedDownLinkTBitRate);
-					LOGPACKET3("Min Guar uplink  [%d] [%d]",qosConfigV1.iMinGuaranteedRate.iUplinkRate , profile.iMinGuaranteedUpLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_3, "Req Del order [%d] [%d]",qosConfigV1.iReqDeliveryOrderReqd, profile.iReqDeliveryOrder);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_4, "Min Del order [%d] [%d]",qosConfigV1.iMinDeliveryOrderReqd , profile.iMinDeliveryOrder);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_5, "Req Del err SDU [%d] [%d]",qosConfigV1.iReqDeliverErroneousSDU , profile.iReqErroneousSDU);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_6, "Min Del err SDU [%d] [%d]",qosConfigV1.iMinDeliverErroneousSDU , profile.iMinErroneousSDU);
+ 					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_7, "Max Sdu Size [%d] [%d]",qosConfigV1.iReqMaxSDUSize , profile.iMaxSDUSize);
+ 					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_8, "Min Sdu Size [%d] [%d]",qosConfigV1.iMinAcceptableMaxSDUSize , profile.iMinSDUSize);
+  					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_9, "Req Down [%d] [%d]",qosConfigV1.iReqMaxRate.iDownlinkRate , profile.iReqDownLinkTBitRate);
+  					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_10, "Req Up [%d] [%d]", qosConfigV1.iReqMaxRate.iUplinkRate , profile.iReqUpLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_11, "Min Guar Down[%d] [%d]",qosConfigV1.iMinGuaranteedRate.iDownlinkRate , profile.iMinGuaranteedDownLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_12, "Min Guar Up [%d] [%d]",qosConfigV1.iMinGuaranteedRate.iUplinkRate , profile.iMinGuaranteedUpLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_13, "Req BER [%d] [%d]",qosConfigV1.iReqBER , profile.iReqTBitErrorRatio);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_14, "Max BER [%d] [%d]",qosConfigV1.iMaxBER , profile.iMinTBitErrorRatio);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_15, "Req SDU err ratio [%d] [%d]",qosConfigV1.iReqSDUErrorRatio , profile.iReqTSDUErrorRatio);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_16, "Max SDU err ration [%d] [%d]",qosConfigV1.iMaxSDUErrorRatio , profile.iMinTSDUErrorRatio);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_17, "Req Traffic Handling priority [%d] [%d]",qosConfigV1.iReqTrafficHandlingPriority , profile.iReqTTrafficHandlingPriority);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_18, "Min Traffic Handling priority [%d] [%d]",qosConfigV1.iMinTrafficHandlingPriority , profile.iMinTTrafficHandlingPriority);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_19, "Req Transfer Delay [%d] [%d]",qosConfigV1.iReqTransferDelay , profile.iReqTransferDelay);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_20, "Max Transfer Delay [%d] [%d]",qosConfigV1.iMaxTransferDelay , profile.iMinTransferDelay);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_21, "Req Guar downlink bitrate [%d] [%d]",qosConfigV1.iReqGuaranteedRate.iDownlinkRate , profile.iReqGuaranteedDownLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_22, "Req Guar uplink bitrate [%d] [%d]",qosConfigV1.iReqGuaranteedRate.iUplinkRate , profile.iReqGuaranteedUpLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_23, "Min Guar downlink [%d] [%d]",qosConfigV1.iMinGuaranteedRate.iDownlinkRate , profile.iMinGuaranteedDownLinkTBitRate);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILE_24, "Min Guar uplink  [%d] [%d]",qosConfigV1.iMinGuaranteedRate.iUplinkRate , profile.iMinGuaranteedUpLinkTBitRate);
 						
 					
 					
@@ -2861,7 +2867,7 @@ TInt CSimPacketQoS::SetProfileCancel(const TTsyReqHandle  aTsyReqHandle )
 * @param aTsyReqHandle Tsy Request handle for the client request
 * @return err KErrNone 
 */
-	LOGPACKET1("CSimPacketQoS::SetProfileCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_SETPROFILECANCEL_1, "CSimPacketQoS::SetProfileCancel called");
 	
 	TInt index  = 0;
 	if (TSetQoSData::Find(iSetQoSData, aTsyReqHandle, index) == KErrNone)
@@ -2891,7 +2897,7 @@ TInt CSimPacketQoS::GetProfile(const TTsyReqHandle aTsyReqHandle,TDes8* aConfig)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketQoS::GetProfile called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETPROFILE_1, "CSimPacketQoS::GetProfile called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 	
@@ -3124,7 +3130,7 @@ TInt CSimPacketQoS::GetProfileCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketQoS::GetProfileCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETPROFILECANCEL_1, "CSimPacketQoS::GetProfileCancel called");
 	return KErrNone;
 	}
 
@@ -3140,7 +3146,7 @@ TInt CSimPacketQoS::GetProfileCaps(const TTsyReqHandle aTsyReqHandle,TDes8* aCon
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketQoS::GetProfileCaps called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETPROFILECAPS_1, "CSimPacketQoS::GetProfileCaps called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aConfig;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 
@@ -3199,7 +3205,7 @@ TInt CSimPacketQoS::GetProfileCapsCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone
 */
 	{
-	LOGPACKET1("CSimPacketQoS::GetProfileCapsCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_GETPROFILECAPSCANCEL_1, "CSimPacketQoS::GetProfileCapsCancel called");
 	return KErrNone;
 	}
 
@@ -3302,7 +3308,7 @@ TInt CSimPacketQoS::NotifyProfileChangedCancel(const TTsyReqHandle aTsyReqHandle
 * @return KErrNone
 */
 {
-	LOGPACKET1("CSimPacketQoS::NotifyProfileChangedCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETQOS_NOTIFYPROFILECHANGEDCANCEL_1, "CSimPacketQoS::NotifyProfileChangedCancel called");
 	if(iNotifyProfileGPRS.iNotifyPending &&	iNotifyProfileGPRS.iNotifyHandle == aTsyReqHandle)
 		{
 		iNotifyProfileGPRS.iNotifyPending=EFalse;
