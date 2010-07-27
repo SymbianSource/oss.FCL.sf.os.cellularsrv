@@ -19,6 +19,7 @@ PRJ_PLATFORMS
 DEFAULT
 
 PRJ_EXPORTS
+../data/drive_c-tele-9600.img		../../nvmemory/
 
 PRJ_MMPFILES
 stltsy.mmp
