@@ -354,14 +354,14 @@ Second-phase constructor
 	for( TInt i=0; i<EMaxNumberOperations; i++)
 		{
 		TRequestStatus dummy(KErrNone);
-		iReqPendingTable.Append(EFalse);
-		iReqStatusTable.Append(&dummy);
+		iReqPendingTable.AppendL(EFalse);
+		iReqStatusTable.AppendL(&dummy);
 		}
 	for( TInt j=0; j<CTelephony::EISVMaxNumOfCalls; j++)
 		{
 		RMobileCall aDummyCall;
-		iCallPool.Append(aDummyCall);
-		iCallPoolStatus.Append(EUnset);
+		iCallPool.AppendL(aDummyCall);
+		iCallPoolStatus.AppendL(EUnset);
 		}
 
 	__ASSERT_DEBUG(iState==EIdle, User::Invariant());
