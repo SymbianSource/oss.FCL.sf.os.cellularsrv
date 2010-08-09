@@ -460,7 +460,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEFACTORYTSY_RE
     User::LeaveIfError(configFile.Size(configFileSize));
 
     RBuf8 fileBuf;
-    fileBuf.Create(configFileSize);
+    User::LeaveIfError(fileBuf.Create(configFileSize));
     CleanupClosePushL(fileBuf);
     User::LeaveIfError(configFile.Read(fileBuf));
 

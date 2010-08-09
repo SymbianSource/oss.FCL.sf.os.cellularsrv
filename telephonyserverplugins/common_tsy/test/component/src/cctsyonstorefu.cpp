@@ -67,6 +67,7 @@ CTestSuite* CCTsyONStoreFU::CreateSuiteL(const TDesC& aName)
     ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001bL);
     ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001cL);
     ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001dL);
+	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0001eL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyONStoreFU, TestGetInfo0004L);
@@ -2675,6 +2676,71 @@ void CCTsyONStoreFU::TestGetInfo0001dL()
         
     CleanupStack::PopAndDestroy(5, this); // this, etc...
     }
+
+
+/**
+@SYMTestCaseID BA-CTSY-PBON-OSGI-0001e
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY for ONStore is closed before complete initialisation
+@SYMTestPriority High
+@SYMTestActions Invokes RMobileONStore::GetInfo
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyONStoreFU::TestGetInfo0001eL()
+    {
+    // Since we can not get the ON store info from the SIM if the ADN storage was not initilized, the 
+    // CTSY must make sure that the ADN storage was initilize before requesting to get the ON store info from 
+    // the LTSY. This test test if the CTSY knows to create a new ADN and wait for the initilization to complete.
+    OpenEtelServerL(EUseExtendedError);
+    CleanupStack::PushL(TCleanupItem(Cleanup,this));
+    OpenPhoneL();
+
+    RBuf8 expData;
+    CleanupClosePushL(expData);
+
+    RBuf8 completeData;
+    CleanupClosePushL(completeData);
+
+    RMobileONStore  onStore;
+    TInt ret = onStore.Open(iPhone);
+    ASSERT_EQUALS(KErrNone, ret);
+    CleanupClosePushL(onStore);
+        
+        
+    TRequestStatus requestStatus;
+    RMobileONStore::TMobileONStoreInfoV1 storeInfo;
+    RMobileONStore::TMobileONStoreInfoV1Pckg storePckg(storeInfo);
+    
+    TName name(KETelIccAdnPhoneBook);
+    expData.Close();
+    TMockLtsyPhoneBookData0 storeInitData(name);
+    storeInitData.SerialiseL(expData);
+    iMockLTSY.ExpectL(EMmTsyPhoneBookStoreInitIPC, expData);   
+
+    onStore.GetInfo(requestStatus, storePckg);      
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+    User::After(KOneSecond);
+    ASSERT_EQUALS(KRequestPending, requestStatus.Int());
+
+    CStorageInfoData storageData;
+    SetStorageInfoData(storageData);
+    
+    ASSERT_EQUALS(KErrNone, iMockLTSY.PauseCompletion());
+    
+    TMockLtsyPhoneBookData1< CStorageInfoData > retStoreInitC(name, storageData);
+    completeData.Close();
+    retStoreInitC.SerialiseL(completeData);
+    onStore.Close();
+    iMockLTSY.CompleteL(EMmTsyPhoneBookStoreInitIPC, KErrNone, completeData, 0);
+
+    ASSERT_EQUALS(KErrNone, iMockLTSY.ResumeCompletion());
+
+    User::After(KOneSecond);
+    
+    CleanupStack::PopAndDestroy(4, this); // this, etc...
+    }
+
 
 /**
 @SYMTestCaseID BA-CTSY-PBON-OSGI-0002

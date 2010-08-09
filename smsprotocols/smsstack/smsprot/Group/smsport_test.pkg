@@ -23,7 +23,9 @@
 
 "\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_SMSSTOR\te_smsstor.script"-"c:\testdata\scripts\te_smsstor.script"
 
-"\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_Smsprt\TE_smsprt.script"-"c:\testdata\scripts\TE_smsprt.script"
+"\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_Smsprt\TE_smsprt_gsmu.script"-"c:\testdata\scripts\TE_smsprt_gsmu.script"
+"\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_Smsprt\TE_smsprt_prot.script"-"c:\testdata\scripts\TE_smsprt_prot.script"
+"\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_Smsprt\TE_smsprt_smsstack.script"-"c:\testdata\scripts\TE_smsprt_smsstack.script"
 
 "\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_Smsprt\Te_SMSStackOutOfDiskSpace.script"-"c:\testdata\scripts\Te_SMSStackOutOfDiskSpace.script"
 "\sf\os\cellularsrv\smsprotocols\smsstack\smsprot\Test\TE_Smsprt\TE_SetupSMSStackOutOfDiskSpace.script"-"c:\testdata\scripts\TE_SetupSMSStackOutOfDiskSpace.script"
