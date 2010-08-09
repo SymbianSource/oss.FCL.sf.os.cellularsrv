@@ -110,7 +110,6 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DTOR_1, "T
         {
         // deregister tsy object from message manager
         iMmPhone->MessageManager()->DeregisterTsyObject(this);
-		iMmPhone->SetONStoreTsy(NULL);
         }
 
     if ( NULL != iTsyReqHandleStore )

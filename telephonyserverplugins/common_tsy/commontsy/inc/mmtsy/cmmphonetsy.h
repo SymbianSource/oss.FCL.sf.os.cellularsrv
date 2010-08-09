@@ -1178,13 +1178,6 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
          */
         CMmONStoreTsy* GetONStoreTsy();
 
-		/**
-         * Set pointer to ONStoreTsy
-         *          
-         *
-         */
-        void SetONStoreTsy(CMmONStoreTsy* aMmONStoreTsy);
-
         /** 
          * Get pointer to DTMF Tsy
          *          

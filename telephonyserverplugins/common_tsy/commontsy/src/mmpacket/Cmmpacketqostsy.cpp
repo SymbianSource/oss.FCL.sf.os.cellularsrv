@@ -281,9 +281,6 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_CANCE
 
         // Notification cancels
         case EPacketQoSNotifyProfileChanged:
-            // Reset the GSM/WCDMA extension from previous notify request
-            iMmPacketQoSGsmWcdmaExt->NotifyProfileChangedCancel();
-            
             // Reset tsy request handle
             iTsyReqHandleStore->ResetTsyReqHandle( 
                 EMultimodePacketQoSNotifyParameterChanged );
