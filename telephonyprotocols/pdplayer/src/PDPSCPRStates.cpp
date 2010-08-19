@@ -58,7 +58,7 @@ _LIT (KPdpSCprPanic,"PpdScprPanic");
 #endif
 
 const TUint8 KGenericNifChallengeSize = 8;
-const TUint KGenericNifIdLength = 1;
+
 
 //-=========================================================
 //
@@ -615,38 +615,38 @@ void TCreatePrimaryPDPCtx::CreateChallengeAndResponseForChapL(RPacketContext::TP
     TUint8 challenge[KGenericNifChallengeSize] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     
     TUint8 i=0;
-    while(i < KGenericNifChallengeSize)
+    while((i < KGenericNifChallengeSize) && (aProtocolConfigOption.iChallenge.Length() < aProtocolConfigOption.iChallenge.MaxLength()))
         {
         challenge[i] = (TUint8)(Math::Rand(seedValue)%256);
         aProtocolConfigOption.iChallenge.Append(challenge[i++]);
         }
 
     //Response
-    TBuf8<KGenericNifIdLength+KCommsDbSvrMaxColumnNameLength+KGenericNifChallengeSize> message;
-    message.Append(aProtocolConfigOption.iId);
-    message.Append(aProtocolConfigOption.iAuthInfo.iPassword);
-    message.Append(aProtocolConfigOption.iChallenge);
-    
-    TInt length = 1 /*iId length */ + aProtocolConfigOption.iAuthInfo.iPassword.Length() + KGenericNifChallengeSize;
-
+    TInt length = 1 /*iId length */ + aProtocolConfigOption.iAuthInfo.iPassword.Length() + aProtocolConfigOption.iChallenge.Length();
     HBufC8* buf = HBufC8::NewL(length);
-    
     CleanupStack::PushL(buf);
      
     TPtr8 ptr((TUint8*)buf->Des().Ptr(),length);
-    
-    ptr.Copy(message);
+    ptr.Append(aProtocolConfigOption.iId);
+    ptr.Append(aProtocolConfigOption.iAuthInfo.iPassword);
+    ptr.Append(aProtocolConfigOption.iChallenge);
     
     CMD5* md5=0;
     md5 = CMD5::NewL();
-    
     CleanupStack::PushL(md5);
-    
     TPtrC8 Response = md5->Hash(ptr);
-    
-    aProtocolConfigOption.iResponse.Copy(Response);
-    
-    CleanupStack::PopAndDestroy(2);		//buf, md5
+   
+    if (Response.Length() < aProtocolConfigOption.iResponse.MaxLength())
+        {
+        aProtocolConfigOption.iResponse.Copy(Response);
+        }
+    else
+        {
+        // Just a defensive measure - this should not happen.
+        User::Leave(KErrCorrupt);
+        }
+
+    CleanupStack::PopAndDestroy(2);     //buf, md5
     }
 
 void TCreatePrimaryPDPCtx::DoL()
@@ -1156,7 +1156,27 @@ TBool TAwaitingParamsChanged::Accept()
 DEFINE_SMELEMENT(TAwaitingContextBlockedOrUnblocked, NetStateMachine::MState, PDPSCprStates::TContext)
 TBool TAwaitingContextBlockedOrUnblocked::Accept()
     {
-    return TAwaitingPDPFSMMessage::Accept(KContextBlockedEvent) || TAwaitingPDPFSMMessage::Accept(KContextUnblockedEvent);
+
+    if (TAwaitingPDPFSMMessage::Accept(KContextBlockedEvent) || TAwaitingPDPFSMMessage::Accept(KContextUnblockedEvent))
+        {
+        //check if there is a data flow as well. Incase we are getting the notification and the Data Client has already
+        //been destroyed, we will just ignore the notification. (ou1cimx1#466386)
+        RNodeInterface* theOnlyDataClient = iContext.iNode.GetFirstClient<TDefaultClientMatchPolicy>(TCFClientType::EData);
+        if (theOnlyDataClient == NULL)
+            {
+            // clear the message and return EFalse.
+            iContext.iMessage.ClearMessageId();
+            return EFalse;
+            }
+        else
+            {
+            return ETrue;
+            }
+        }
+    else
+        {
+        return EFalse;
+        }
     }
 
 DEFINE_SMELEMENT(TForwardContextBlockedOrUnblockedToDC, NetStateMachine::MStateTransition, PDPSCprStates::TContext)

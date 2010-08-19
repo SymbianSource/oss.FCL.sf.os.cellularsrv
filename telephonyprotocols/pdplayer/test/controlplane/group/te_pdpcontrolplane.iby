@@ -18,17 +18,17 @@
 #ifndef TE_PDPCONTROLPLANE_IBY
 #define TE_PDPCONTROLPLANE_IBY
 
-data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside1.xml Testdata\configs\te_controlplanenetworkside1.xml
-data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside_config.txt Testdata\configs\te_controlplanenetworkside_config.txt
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_controlplanenetworkside1.xml testdata\configs\te_controlplanenetworkside1.xml
+data=EPOCROOT##epoc32\data\z\TestData\configs\te_controlplanenetworkside_config.txt testdata\configs\te_controlplanenetworkside_config.txt
 
-data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_PDP_ControlPlane.script Testdata\scripts\te_PDP_ControlPlane.script
-data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworksideloopbackcsy.ini Testdata\configs\te_controlplanenetworksideloopbackcsy.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdp_controlplane.script testdata\scripts\te_pdp_controlplane.script
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_controlplanenetworksideloopbackcsy.ini testdata\configs\te_controlplanenetworksideloopbackcsy.ini
 
-data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_PDP_ControlPlane28.script Testdata\scripts\te_PDP_ControlPlane28.script
-data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside_test28.ini Testdata\configs\te_controlplanenetworkside_test28.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdp_controlplane28.script testdata\scripts\te_pdp_controlplane28.script
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_controlplanenetworkside_test28.ini testdata\configs\te_controlplanenetworkside_test28.ini
 
-data=EPOCROOT##epoc32\data\z\TestData\Scripts\te_PDP_ControlPlane29.script Testdata\scripts\te_PDP_ControlPlane29.script
-data=EPOCROOT##epoc32\data\z\TestData\Configs\te_controlplanenetworkside_test29.ini Testdata\configs\te_controlplanenetworkside_test29.ini
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdp_controlplane29.script testdata\scripts\te_pdp_controlplane29.script
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_controlplanenetworkside_test29.ini testdata\configs\te_controlplanenetworkside_test29.ini
 
 
 #endif // TE_PDPCONTROLPLANE_IBY

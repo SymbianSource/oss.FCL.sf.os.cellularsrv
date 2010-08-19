@@ -3247,17 +3247,11 @@ TInt CMmNetTsy::GetPreferredNetworksListPhase1L(const TTsyReqHandle /*aTsyReqHan
 			
 			// if iGetPrefPLMNList, iClientIdGetPrefPLMN, and/or iBufSizeGetPrefPLMN are not NULL, phase 1 is called twice without calling phase 2.
 			// In this case, we should ignore the previous phase 1 and delete buffers.
-			if(iGetPrefPLMNList != NULL)
-				{
-				delete iGetPrefPLMNList;
-				iGetPrefPLMNList = NULL;
-				}
+			delete iGetPrefPLMNList;
+			iGetPrefPLMNList = NULL;
 			iBufSizeGetPrefPLMN = aBufSize;
-			if(iClientIdGetPrefPLMN != NULL)
-				{
-				delete iClientIdGetPrefPLMN;
-				iClientIdGetPrefPLMN = NULL;
-				}
+			delete iClientIdGetPrefPLMN;
+			iClientIdGetPrefPLMN = NULL;
 			// Copy client id (session and subsession handle). it's used for
             // matching phase 1 and 2 of a request
 			iClientIdGetPrefPLMN = new ( ELeave ) RMobilePhone::TClientId( *aId ); 
@@ -3384,16 +3378,10 @@ TInt CMmNetTsy::GetPreferredNetworksListCancel(const TTsyReqHandle /*aTsyReqHand
 	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle)
 		{
 		iBufSizeGetPrefPLMN = NULL;
-		if(iClientIdGetPrefPLMN)
-			{
-			delete iClientIdGetPrefPLMN;
-			iClientIdGetPrefPLMN = NULL;
-			}
-		if(iGetPrefPLMNList)
-			{
-			delete iGetPrefPLMNList;
-			iGetPrefPLMNList = NULL;
-			}
+		delete iClientIdGetPrefPLMN;
+		iClientIdGetPrefPLMN = NULL;
+		delete iGetPrefPLMNList;
+		iGetPrefPLMNList = NULL;
         iMmPhoneTsy->ReqCompleted( reqHandle, KErrCancel );        
 		}
 	//if reqHandle is 0, it means  phase 1 has completed and the list retrieval cannot be cancelled
@@ -3452,11 +3440,8 @@ void CMmNetTsy::CompleteGetPreferredNetworksListPhase1(TInt aError, CMmDataPacka
 	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown == reqHandle)
 		{
 		TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: reqHandle is 0, cannot complete Phase1 list retrieval request!!");
-		if(iClientIdGetPrefPLMN)
-			{
-			delete iClientIdGetPrefPLMN;
-			iClientIdGetPrefPLMN = NULL;
-			}
+		delete iClientIdGetPrefPLMN;
+		iClientIdGetPrefPLMN = NULL;
 		}
 	else if(KErrNone == aError)
 		{
@@ -3479,7 +3464,6 @@ void CMmNetTsy::CompleteGetPreferredNetworksListPhase1(TInt aError, CMmDataPacka
 				TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: failed to stream the list into the buffer, error = %d!!", trapError);
 				completeError = trapError;
 				}
-			delete list;
 			}
 		else
 			{
@@ -3496,11 +3480,8 @@ void CMmNetTsy::CompleteGetPreferredNetworksListPhase1(TInt aError, CMmDataPacka
 	if(completeError != KErrNone)
 		{
 		iMmPhoneTsy->ReqCompleted( reqHandle, aError );
-		if(iClientIdGetPrefPLMN)
-			{
-			delete iClientIdGetPrefPLMN;
-			iClientIdGetPrefPLMN = NULL;
-			}
+		delete iClientIdGetPrefPLMN;
+		iClientIdGetPrefPLMN = NULL;
 		}
 	
 	iBufSizeGetPrefPLMN = NULL;

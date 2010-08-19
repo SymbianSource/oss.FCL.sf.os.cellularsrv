@@ -275,6 +275,9 @@ TFLOGSTRING3("TSY: CMmPacketQoSTsy::CancelService. IPC: %d  Handle:%d", aIpc, aT
 
         // Notification cancels
         case EPacketQoSNotifyProfileChanged:
+            // Reset the GSM/WCDMA extension from previous notify request
+            iMmPacketQoSGsmWcdmaExt->NotifyProfileChangedCancel();
+            
             // Reset tsy request handle
             iTsyReqHandleStore->ResetTsyReqHandle( 
                 EMultimodePacketQoSNotifyParameterChanged );

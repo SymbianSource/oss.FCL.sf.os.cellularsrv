@@ -64,6 +64,7 @@ public:
     void TestGetInfo0001bL();
     void TestGetInfo0001cL();
     void TestGetInfo0001dL();
+	void TestGetInfo0001eL();
 	void TestGetInfo0002L();
 	void TestGetInfo0003L();
 	void TestGetInfo0004L();

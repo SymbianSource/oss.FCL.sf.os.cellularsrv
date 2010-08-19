@@ -39,7 +39,7 @@ START_TESTCASE TEL-ETEL-NA-2001
 //!                mobile signal, mobile auto redial etc.  
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT
-RUN_TEST_STEP 300 Te_EtelMM TestPhone
+RUN_TEST_STEP 600 Te_EtelMM TestPhone
 
 END_TESTCASE TEL-ETEL-NA-2001
 

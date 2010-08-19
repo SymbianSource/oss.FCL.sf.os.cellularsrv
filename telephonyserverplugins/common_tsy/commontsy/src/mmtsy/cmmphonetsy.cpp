@@ -6659,6 +6659,19 @@ CMmNetTsy* CMmPhoneTsy::GetNetTsy()
     }
 
 // ---------------------------------------------------------------------------
+// CMmPhoneTsy::SetONStoreTsy
+// ONStoreTsy can set iMmONStoreTsy pointer to NULL when it is closed
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmPhoneTsy::SetONStoreTsy(
+        CMmONStoreTsy* aMmONStoreTsy
+        )
+    {
+    iMmONStoreTsy = aMmONStoreTsy;
+    }
+
+// ---------------------------------------------------------------------------
 // CMmPhoneTsy::GetONStoreTsy
 // Returns pointer to CMmONStoreTsy
 // (other items were commented in a header).
@@ -6701,7 +6714,6 @@ CMmSecurityTsy* CMmPhoneTsy::GetSecurityTsy()
     {
     return iMmSecurityTsy;
     }
-
 
 // ---------------------------------------------------------------------------
 // CMmPhoneTsy::IsRequestPossibleInOffLine

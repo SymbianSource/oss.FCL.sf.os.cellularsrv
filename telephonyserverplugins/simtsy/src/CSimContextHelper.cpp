@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -105,8 +105,6 @@ TBool CSimContextHelper::EqualTContextConfigParam(const TContextConfigParam& aCo
 		(aContextConfigLHS.iProtocolConfigOption.iAuthProtocol != aContextConfigRHS.iProtocolConfigOption.iAuthProtocol) ||
 		(aContextConfigLHS.iProtocolConfigOption.iUsername.Compare(aContextConfigRHS.iProtocolConfigOption.iUsername) != 0) ||
 		(aContextConfigLHS.iProtocolConfigOption.iPassword.Compare(aContextConfigRHS.iProtocolConfigOption.iPassword) != 0) ||
-		(aContextConfigLHS.iProtocolConfigOption.iChallenge.Compare(aContextConfigRHS.iProtocolConfigOption.iChallenge) != 0) ||
-		(aContextConfigLHS.iProtocolConfigOption.iResponse.Compare(aContextConfigRHS.iProtocolConfigOption.iResponse) != 0) ||
 		// These line are commented as these parameters currently are usually returned by the network and not required for
 		// setting the context configuration
 		//		(aContextConfigLHS.iProtocolConfigOption.iPrimaryDNS.Compare(aContextConfigRHS.iProtocolConfigOption.iPrimaryDNS) != 0) ||
@@ -114,9 +112,19 @@ TBool CSimContextHelper::EqualTContextConfigParam(const TContextConfigParam& aCo
 		(aContextConfigLHS.iProtocolConfigOption.iId != aContextConfigRHS.iProtocolConfigOption.iId) ||
 		(aContextConfigLHS.iPdpHeaderCompression != aContextConfigRHS.iPdpHeaderCompression) ||
 		(aContextConfigLHS.iPdpDataCompression != aContextConfigRHS.iPdpDataCompression))
-		{
+	    // challenge is generated randomly and response is generated using MD5 in CHAP protocol, so it is not possible to check
+	    {
 		return EFalse;
 		}
+	else if (aContextConfigLHS.iProtocolConfigOption.iAuthProtocol != RPacketContext::EProtocolCHAP) 
+	    {// if not CHAP we still try to check challenge and response just in case
+        if ((aContextConfigLHS.iProtocolConfigOption.iChallenge.Compare(aContextConfigRHS.iProtocolConfigOption.iChallenge) != 0) ||
+	        (aContextConfigLHS.iProtocolConfigOption.iResponse.Compare(aContextConfigRHS.iProtocolConfigOption.iResponse) != 0))
+            {
+            return EFalse;
+            }
+	    }
+
 		// else considered equal.
 		
 	return ETrue;

@@ -1520,6 +1520,46 @@ void CCTsyPacketQoSFU::TestNotifyProfileChanged0002L()
 	AssertMockLtsyStatusL();
 	ASSERT_EQUALS(KErrCancel, requestNotify.Int());
 
+    //-------------------------------------------------------------------------
+    // Test change of profile in the LTSY when the Notification request has
+	// been cancelled by the client
+    //-------------------------------------------------------------------------
+	RPacketQoS::TQoSR5Negotiated qosR5Negotiated;
+	TPckg< RPacketQoS::TQoSR5Negotiated > pckgQoSR5Negotiated(qosR5Negotiated);
+
+	ChangeProfileDataL<RPacketQoS::TQoSR5Requested>(packetContext, packetQoS, contextName, data);
+
+    TRequestStatus requestGet;
+	packetQoS.GetProfileParameters(requestGet, pckgQoSR5Negotiated);
+	
+	User::WaitForRequest(requestGet);
+	AssertMockLtsyStatusL();
+	ASSERT_EQUALS(KErrNone, requestGet.Int());
+	    
+	ASSERT_EQUALS(qosR5Negotiated.iSignallingIndication        , 1                                            );
+	ASSERT_EQUALS(qosR5Negotiated.iSourceStatisticsDescriptor  , RPacketQoS::ESourceStatisticsDescriptorSpeech);
+	ASSERT_EQUALS(qosR5Negotiated.iTrafficClass                , RPacketQoS::ETrafficClassStreaming           );
+	ASSERT_EQUALS(qosR5Negotiated.iDeliveryOrderReqd           , RPacketQoS::EDeliveryOrderRequired           );
+	ASSERT_EQUALS(qosR5Negotiated.iDeliverErroneousSDU         , RPacketQoS::EErroneousSDUDeliveryRequired    );
+	ASSERT_EQUALS(qosR5Negotiated.iMaxSDUSize                  , 0x100                                        );
+	ASSERT_EQUALS(qosR5Negotiated.iMaxRate.iUplinkRate         , 10000                                        );
+	ASSERT_EQUALS(qosR5Negotiated.iMaxRate.iDownlinkRate       , 10000                                        );
+	ASSERT_EQUALS(qosR5Negotiated.iBER                         , RPacketQoS::EBEROnePerHundredThousand        );
+	ASSERT_EQUALS(qosR5Negotiated.iSDUErrorRatio               , RPacketQoS::ESDUErrorRatioOnePerTenThousand  );
+	ASSERT_EQUALS(qosR5Negotiated.iTrafficHandlingPriority     , RPacketQoS::ETrafficPriority2                );
+	ASSERT_EQUALS(qosR5Negotiated.iTransferDelay               , 1000                                         );
+	ASSERT_EQUALS(qosR5Negotiated.iGuaranteedRate.iDownlinkRate, 1000                                         );
+	ASSERT_EQUALS(qosR5Negotiated.iGuaranteedRate.iUplinkRate  , 1000                                         );
+
+	TRequestStatus requestNotify1;
+	packetQoS.NotifyProfileChanged(requestNotify1, pckgQoSGPRSNegotiated);   
+
+    ChangeProfileDataL<RPacketQoS::TQoSGPRSRequested>(packetContext, packetQoS, contextName, data);
+
+	User::WaitForRequest(requestNotify1);
+	AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrNone, requestNotify1.Int());
+
 	CleanupStack::PopAndDestroy(3); // packetService, packetContext, packetQoS
 	CleanupStack::PopAndDestroy(2); // data, this
 	

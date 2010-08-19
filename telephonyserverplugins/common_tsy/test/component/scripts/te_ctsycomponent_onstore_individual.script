@@ -272,6 +272,17 @@ START_TESTCASE BA-CTSY-PBON-OSGI-0001d
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyONStoreFU.TestGetInfo0001dL
 END_TESTCASE BA-CTSY-PBON-OSGI-0001d
 
+START_TESTCASE BA-CTSY-PBON-OSGI-0001e
+//!@SYMTestCaseID BA-CTSY-PBON-OSGI-0001e
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for ONStore is closed before complete initialisation
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileONStore::GetInfo
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyONStoreFU.TestGetInfo0001eL
+END_TESTCASE BA-CTSY-PBON-OSGI-0001e
+
 START_TESTCASE BA-CTSY-PBON-OSGI-0002
 //!@SYMTestCaseID BA-CTSY-PBON-OSGI-0002
 //!@SYMComponent telephony_ctsy

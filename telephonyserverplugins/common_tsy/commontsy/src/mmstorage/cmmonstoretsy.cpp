@@ -104,6 +104,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::~CMmONStoreTsy");
         {
         // deregister tsy object from message manager
         iMmPhone->MessageManager()->DeregisterTsyObject(this);
+		iMmPhone->SetONStoreTsy(NULL);
         }
 
     if ( NULL != iTsyReqHandleStore )

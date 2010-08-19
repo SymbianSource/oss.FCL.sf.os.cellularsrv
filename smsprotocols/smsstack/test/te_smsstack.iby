@@ -62,9 +62,11 @@ data=EPOCROOT##epoc32\data\z\testdata\configs\te_smsemsprt_commdb.cfg           
 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_smsinter.script                         testdata\scripts\te_smsinter.script
 
-data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SMSPRT.script                           testdata\scripts\TE_SMSPRT.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\TE_SMSPRT_setup.script                     testdata\scripts\TE_SMSPRT_setup.script
 data=EPOCROOT##epoc32\data\z\testdata\configs\TE_SMSPRT.cfg                              testdata\configs\te_smsprt.cfg
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_smsprt_gsmu.script                      testdata\scripts\te_smsprt_gsmu.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_smsprt_smsstack.script                  testdata\scripts\te_smsprt_smsstack.script
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_smsprt_prot.script                      testdata\scripts\te_smsprt_prot.script
 
 data=EPOCROOT##epoc32\data\z\sms\smswap.sms-sendTryTimeout.esk                           SMS\smswap.sms-sendTryTimeout.esk
 data=EPOCROOT##epoc32\data\z\sms\smswap.sms-bootTimerTimeout.esk                         SMS\smswap.sms-bootTimerTimeout.esk

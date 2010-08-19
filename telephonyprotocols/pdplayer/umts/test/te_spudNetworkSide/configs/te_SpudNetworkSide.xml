@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+ Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
  All rights reserved.
  This component and the accompanying materials are made available
  under the terms of "Eclipse Public License v1.0"
@@ -133,6 +133,15 @@
     <IAP operation="add">
         <Name>IAP_GRPS_BAD_QOS</Name>
         <IAPService>OutgoingGPRS.GPRS_BAD_QOS</IAPService>
+        <IAPBearer>ModemBearer.Loopback_SPUD_2</IAPBearer>
+        <IAPNetwork>Network.Intranet</IAPNetwork>
+        <IAPNetworkWeighting>0</IAPNetworkWeighting>
+        <LocationRef>Location.Mobile</LocationRef>
+    </IAP>
+	
+	<IAP operation="add">
+        <Name>Loopback_GRPS_11</Name>
+        <IAPService>OutgoingGPRS.SPUD_Echo_5</IAPService>
         <IAPBearer>ModemBearer.Loopback_SPUD_2</IAPBearer>
         <IAPNetwork>Network.Intranet</IAPNetwork>
         <IAPNetworkWeighting>0</IAPNetworkWeighting>
@@ -434,6 +443,18 @@
         <IpDNSAddrFromServer>TRUE</IpDNSAddrFromServer>  
         <IpAddr>192.168.1.2</IpAddr>
         <UmtsR99QoSAndOnRef>UmtsR99QoSAndOn.BAD_QOS</UmtsR99QoSAndOnRef>       
+    </OutgoingGPRS>
+	
+	<OutgoingGPRS operation="add">
+        <Name>SPUD_Echo_5</Name>
+      	<PDPType>IPV4</PDPType>
+        <IfParams>lowernif=RAWIP</IfParams>
+        <IfPromptForAuth>FALSE</IfPromptForAuth>
+        <IpAddrFromServer>TRUE</IpAddrFromServer>
+        <IpDNSAddrFromServer>TRUE</IpDNSAddrFromServer>  
+		<IfAuthPass>aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee</IfAuthPass>
+		<DisablePlainTextAuth>TRUE</DisablePlainTextAuth>
+        <IpAddr>192.168.1.2</IpAddr>
     </OutgoingGPRS>
 </OutgoingGPRSTable>
 

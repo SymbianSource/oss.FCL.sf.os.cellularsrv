@@ -1116,10 +1116,10 @@ void CPhonebookDispatcher::CallbackStoreReadEntry(TInt aError, DispatcherPhonebo
 	if((aError == KErrNone) && (aPhonebook != DispatcherPhonebook::EUnknown))
 		{
 		//fill the CTSY pointer		
-		CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
-		iPhonebookReadPtrs[aPhonebook] = readEntries;
-		
-		TRAP(aError,FillCtsyPhoneBookStoreL(aPhonebookEntries,*(iPhonebookReadPtrs[aPhonebook])));
+        TRAP ( aError, 
+                CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
+                iPhonebookReadPtrs[aPhonebook] = readEntries;
+                FillCtsyPhoneBookStoreL(aPhonebookEntries,*(iPhonebookReadPtrs[aPhonebook])));
 		}
 	
 	CPhoneBookDataPackage phoneBookDataPackage;
@@ -1185,11 +1185,11 @@ void CPhonebookDispatcher::CallbackStoreCache(TInt aError, DispatcherPhonebook::
 	
 	if((aError == KErrNone) && (aPhonebook != DispatcherPhonebook::EUnknown)/* && (iPhonebookCachePtrs[aPhonebook])*/)
 		{
-		CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
-		iPhonebookCachePtrs[aPhonebook] = readEntries;
-			
-		TRAP(aError,FillCtsyPhoneBookStoreL(aPhonebookEntries, *(iPhonebookCachePtrs[aPhonebook])));
-		
+        TRAP(aError,
+                CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
+                iPhonebookCachePtrs[aPhonebook] = readEntries;
+                FillCtsyPhoneBookStoreL(aPhonebookEntries, *(iPhonebookCachePtrs[aPhonebook])));
+        
 		if(aError)
 			{
 			iPhonebookCachePtrs[aPhonebook]->ResetAndDestroy();
