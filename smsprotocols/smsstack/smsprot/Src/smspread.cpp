@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,6 +15,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspreadTraces.h"
+#endif
 
 #include "smspread.h"
 #include "smspmain.h"
@@ -53,7 +59,7 @@ CSmsPDURead* CSmsPDURead::NewL(MSmsComm& aSmsComm,
 								CSmspReceiveMode& aSmspReceiveMode,
 								CSmsMonitorDiskSpace& aSmsMonitorDiskSpace)
     {
-    LOGSMSPROT1("CSmsPDURead::NewL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_NEWL_1, "CSmsPDURead::NewL()");
 
 	CSmsPDURead* smsPduRead = new (ELeave) CSmsPDURead(aSmsComm,
 													   aSmsSettings,
@@ -75,7 +81,7 @@ CSmsPDURead* CSmsPDURead::NewL(MSmsComm& aSmsComm,
 
 void CSmsPDURead::ConstructL()
 	{
-	LOGSMSPROT1("CSmsPDURead::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_CONSTRUCTL_1, "CSmsPDURead::ConstructL()");
 
 	ConstructTimeoutL();
 	User::LeaveIfError(iOOMTimer.CreateLocal());
@@ -128,7 +134,7 @@ CSmsPDURead::CSmsPDURead(MSmsComm& aSmsComm,
  */
 void CSmsPDURead::Start()
     {
-    LOGSMSPROT3("CSmsPDURead::Start(): iStatus=%d, iState=%d", iStatus.Int(), iState );
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_START_1, "CSmsPDURead::Start(): iStatus=%d, iState=%d", iStatus.Int(), iState );
 
 	if (IsSupported()  &&  IsActive() == EFalse  &&  iReassemblyStore.IsFull() == EFalse)
 		{
@@ -142,7 +148,7 @@ void CSmsPDURead::Start()
 
 void CSmsPDURead::ProcessPDUL()
 	{
-	LOGSMSPROT1("CSmsPDURead::ProcessPDUL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_PROCESSPDUL_1, "CSmsPDURead::ProcessPDUL()");
 
 	//
 	// Initilse the Slot location data...
@@ -169,7 +175,7 @@ void CSmsPDURead::ProcessPDUL()
 
 	TRAPD(decodeError, iPduProcessor->DecodeAndProcessPDUL(iSlot, EFalse));
 	iStatus = decodeError;
-	LOGSMSPROT2("CSmsPDURead::ProcessPDUL(): DecodeAndProcessPDUL() returned %d", iStatus.Int());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_PROCESSPDUL_2, "CSmsPDURead::ProcessPDUL(): DecodeAndProcessPDUL() returned %d", iStatus.Int());
 
 	//
 	// If the PDU cannot be decoded, and this was not due to memory or disk
@@ -200,7 +206,7 @@ void CSmsPDURead::ProcessPDUL()
  */
 void CSmsPDURead::DoRunL()
     {
-    LOGSMSPROT3("CSmsPDURead::DoRunL [iStatus=%d, iState=%d]", iStatus.Int(), iState);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DORUNL_1, "CSmsPDURead::DoRunL [iStatus=%d, iState=%d]", iStatus.Int(), iState);
 
 	//
 	// Handle state changes only for successful operations. Any errors will be
@@ -231,8 +237,12 @@ void CSmsPDURead::DoRunL()
             {
 			if (iStatus.Int() == KErrNone)
 				{
-	            LOGSMSIFPDU(_L8("ETEL RX PDU: "), iMsgData, EFalse);
-	            LOGSMSIFTIMESTAMP();
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+                LogSmsIfPDUL(_L8("ETEL RX PDU: "), iMsgData, EFalse); 
+                TBuf<40> timestamp;
+                SmsTimeStampL(timestamp);
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSPDUREAD_DORUNL_2, "%S",timestamp);
+#endif
 	            ProcessPDUL();
 	            }
             }
@@ -266,8 +276,8 @@ void CSmsPDURead::DoRunL()
             {
 			if (iStatus.Int() == KErrNone)
 				{
-	            LOGSMSPROT1("CSmsPDURead::DoRunL in ESmsPDUReadSystemOutOfMemorySendNack2");
-    	        LOGSMSPROT1("CSmsPDURead::DoRunL activate post OOM timer");
+	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DORUNL_3, "CSmsPDURead::DoRunL in ESmsPDUReadSystemOutOfMemorySendNack2");
+    	        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DORUNL_4, "CSmsPDURead::DoRunL activate post OOM timer");
         	    iState = ESmsPDUWaitTimerAfterOOM;
             	iOOMTimer.After(iStatus,KWaitReadPduTime);
             	SetActive();
@@ -311,7 +321,7 @@ void CSmsPDURead::DoRunL()
  */
 void CSmsPDURead::ResumeSmsReception()
     {
-    LOGSMSPROT3("CSmsPDURead::ResumeSmsReception [iStatus=%d, iState=%d]", iStatus.Int(), iState );
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_RESUMESMSRECEPTION_1, "CSmsPDURead::ResumeSmsReception [iStatus=%d, iState=%d]", iStatus.Int(), iState );
 
     if (!IsActive())
         {
@@ -336,7 +346,7 @@ void CSmsPDURead::ResumeSmsReception()
  */
 void CSmsPDURead::Receive()
     {
-    LOGSMSPROT3("CSmsPDURead::Receive [iStatus=%d, iState=%d]", iStatus.Int(), iState );
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_RECEIVE_1, "CSmsPDURead::Receive [iStatus=%d, iState=%d]", iStatus.Int(), iState );
 
 	//
 	// Check if we need to resume reception first. This may be required if a
@@ -374,7 +384,7 @@ void CSmsPDURead::Receive()
  */
 void CSmsPDURead::DoCancel()
     {
-    LOGSMSPROT3("CSmsPDURead::DoCancel [iStatus=%d iState=%d]", iStatus.Int(), iState );
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DOCANCEL_1, "CSmsPDURead::DoCancel [iStatus=%d iState=%d]", iStatus.Int(), iState );
 
 	TimedSetActiveCancel();
 
@@ -455,7 +465,7 @@ void CSmsPDURead::DoCancel()
 
 void CSmsPDURead::AddLogEvent()
 	{
-	LOGSMSPROT1("CSmsPDURead::AddLogEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_ADDLOGEVENT_1, "CSmsPDURead::AddLogEvent()");
 
 	iState = ESmsPDUReadLogging;
 	
@@ -486,7 +496,7 @@ void CSmsPDURead::AddLogEvent()
 
 void CSmsPDURead::DoEncodeDeliverReportL()
     {
-    LOGSMSPROT2("CSmsPDUReadProcess::DoEncodeDeliverReport [iStatus=%d]", iStatus.Int());
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DOENCODEDELIVERREPORTL_1, "CSmsPDUReadProcess::DoEncodeDeliverReport [iStatus=%d]", iStatus.Int());
 
     iDeliverReport.SetPdu(KNullDesC8);
 
@@ -502,8 +512,7 @@ void CSmsPDURead::DoEncodeDeliverReportL()
         case ESmsPDUReadInvalidPDUSendNegativeAck:
         case ESmsPDUReadSystemOutOfMemorySendNegativeAck:
             {
-            LOGSMSPROT4("CSmsPDURead::DoEncodeDeliverReport SendNegativeAck [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",
-                                                                             iStatus.Int(),    iState,    iRpErrorCodesSupported);
+            OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DOENCODEDELIVERREPORTL_2, "CSmsPDURead::DoEncodeDeliverReport SendNegativeAck [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",iStatus.Int(),    iState,    iRpErrorCodesSupported);
 
             deliverReport.SetIsRPError(ETrue);
             const TInt failureCause = ErrorToTPError(iStatus.Int());
@@ -514,15 +523,13 @@ void CSmsPDURead::DoEncodeDeliverReportL()
         case ESmsPDUReadAbsorbInvalidPduSendPositiveAck:
        	case ESmsPDUReadAbsorbValidPduSendPositiveAck:
             {
-            LOGSMSPROT4("CSmsPDURead::DoEncodeDeliverReport SendPositiveAck [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",
-                                                                             iStatus.Int(),    iState,    iRpErrorCodesSupported);
+            OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DOENCODEDELIVERREPORTL_3, "CSmsPDURead::DoEncodeDeliverReport SendPositiveAck [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",iStatus.Int(),    iState,    iRpErrorCodesSupported);
             deliverReport.SetIsRPError(EFalse);
             break;
             }
         default:
             {
-            LOGSMSPROT4("CSmsPDURead::DoEncodeDeliverReport [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",
-                                                             iStatus.Int(), iState, iRpErrorCodesSupported);
+            OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_DOENCODEDELIVERREPORTL_4, "CSmsPDURead::DoEncodeDeliverReport [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",iStatus.Int(), iState, iRpErrorCodesSupported);
             SmspPanic( KSmspPanicUnexpectedStateEncountered );
             break;
             }
@@ -568,7 +575,7 @@ void CSmsPDURead::DoEncodeDeliverReportL()
 void CSmsPDURead::SendDeliverReport()
 	{
 	// Method behaviour based on DEF047323
-    LOGSMSPROT2("CSmsPDUReadProcess::SendDeliverReport(): iStatus=%d ",iStatus.Int());
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_SENDDELIVERREPORT_1, "CSmsPDUReadProcess::SendDeliverReport(): iStatus=%d ",iStatus.Int());
 
     MakeStateTransitionBasedOnErrorCode();
 
@@ -580,7 +587,7 @@ void CSmsPDURead::SendDeliverReport()
         TRAPD(err, DoEncodeDeliverReportL());
         if(err != KErrNone)
             {
-            LOGSMSPROT2("CSmsPDURead::DoEncodeDeliverReport [err=%d]", err);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_SENDDELIVERREPORT_2, "CSmsPDURead::DoEncodeDeliverReport [err=%d]", err);
             }
         }
     else
@@ -611,8 +618,7 @@ void CSmsPDURead::SendDeliverReport()
 
         default:
              {
-             LOGSMSPROT4("CSmsPDURead::DoEncodeDeliverReport [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",
-                                                              iStatus.Int(), iState, iRpErrorCodesSupported);
+             OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_SENDDELIVERREPORT_3, "CSmsPDURead::DoEncodeDeliverReport [iStatus=%d, iState=%d, iRpErrorCodesSupported= %d]",iStatus.Int(), iState, iRpErrorCodesSupported);
              SmspPanic( KSmspPanicUnexpectedStateEncountered );
              }
              break;
@@ -628,7 +634,7 @@ void CSmsPDURead::SendDeliverReport()
  */
 void CSmsPDURead::Complete(TInt aError)
 	{
-    LOGSMSPROT3("CSmsPDURead::Complete [aError=%d, iState=%d]", aError, iState );
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_COMPLETE_1, "CSmsPDURead::Complete [aError=%d, iState=%d]", aError, iState );
 
 	switch (iState)
 		{
@@ -728,7 +734,7 @@ CSmsPDURead::~CSmsPDURead()
  */
 void CSmsPDURead::SetErrorCodeStatus(enum TRpErrorCodeIndex aIndex, TBool aValue)
     {
-    LOGSMSPROT1("CSmsPDURead::SetErrorCodeStatus()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_SETERRORCODESTATUS_1, "CSmsPDURead::SetErrorCodeStatus()");
 
     if (aValue)
     	{
@@ -752,7 +758,7 @@ void CSmsPDURead::SetErrorCodeStatus(enum TRpErrorCodeIndex aIndex, TBool aValue
  */
 TBool CSmsPDURead::GetErrorCodeStatus(enum TRpErrorCodeIndex aIndex)
     {
-    LOGSMSPROT1("CSmsPDURead::GetErrorCodeStatus()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_GETERRORCODESTATUS_1, "CSmsPDURead::GetErrorCodeStatus()");
 
     TBool rc;
     iRpErrorCodesSupported & (((TUint8) 0x01) << aIndex) ? rc = ETrue : rc = EFalse;
@@ -770,7 +776,7 @@ TBool CSmsPDURead::GetErrorCodeStatus(enum TRpErrorCodeIndex aIndex)
  */
 TBool CSmsPDURead::MapRpErrorToIndex(TInt aRpErrorCode, TRpErrorCodeIndex& aIndex)
     {
-    LOGSMSPROT1("CSmsPDURead::MapRpErrorToIndex()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_MAPRPERRORTOINDEX_1, "CSmsPDURead::MapRpErrorToIndex()");
 
     switch( aRpErrorCode )
         {
@@ -903,7 +909,7 @@ void CSmsPDURead::ReadConfigurableSmsSettingsL()
     TRAPD(ret, ini=CESockIniData::NewL(_L("smswap.sms.esk")));
     if(ret!=KErrNone)
         {
-        LOGSMSPROT2("esk read failed, error code = [%d]", ret);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_READCONFIGURABLESMSSETTINGSL_1, "esk read failed, error code = [%d]", ret);
         User::Leave(ret);
         }
 
@@ -980,7 +986,7 @@ void CSmsPDURead::ReadConfigurableSmsSettingsL()
  */
 TBool CSmsPDURead::IsSupported() const
 	{
-	LOGSMSPROT1("CSmsPDURead::IsSupported()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_ISSUPPORTED_1, "CSmsPDURead::IsSupported()");
 
 	if (( iMobileSmsCaps.iSmsControl & RMobileSmsMessaging::KCapsReceiveUnstoredClientAck ) ||
 		( iMobileSmsCaps.iSmsControl & RMobileSmsMessaging::KCapsReceiveUnstoredPhoneAck ) ||
@@ -1007,7 +1013,7 @@ TBool CSmsPDURead::IsSupported() const
  */
 void CSmsPDURead::MakeStateTransitionBasedOnErrorCode()
     {
-    LOGSMSPROT1("CSmsPDURead::MakeStateTransitionBasedOnErrorCode()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_MAKESTATETRANSITIONBASEDONERRORCODE_1, "CSmsPDURead::MakeStateTransitionBasedOnErrorCode()");
 
     if (iState != ESmsPDUReadWaitingForPDU)
         SmspPanic( KSmspPanicUnexpectedStateEncountered );
@@ -1040,7 +1046,7 @@ void CSmsPDURead::MakeStateTransitionBasedOnErrorCode()
 		  (iPduProcessor->IsClass2Message()  &&  iPduProcessor->IsDiscardType0Class2() ) ||
 		  (iPduProcessor->IsClass0Message() == EFalse  &&  iPduProcessor->IsClass2Message() == EFalse)) )
 		    {
-		    	LOGSMSPROT1("CSmsPDURead::MakeStateTransitionBasedOnErrorCode Absorb Valid PDU");
+		    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREAD_MAKESTATETRANSITIONBASEDONERRORCODE_2, "CSmsPDURead::MakeStateTransitionBasedOnErrorCode Absorb Valid PDU");
 	            iState = ESmsPDUReadAbsorbValidPduSendPositiveAck;
 		    }
 	        else
@@ -1061,7 +1067,7 @@ void CSmsPDURead::MakeStateTransitionBasedOnErrorCode()
  */
 CSmsPDUReadLogger* CSmsPDUReadLogger::NewL(RFs& aFs, TInt aPriority)
 	{
-	LOGSMSPROT1("CSmsPDUReadLogger::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_NEWL_1, "CSmsPDUReadLogger::NewL()");
 
 	CSmsPDUReadLogger* self = new (ELeave) CSmsPDUReadLogger(aPriority);
 	CleanupStack::PushL(self);
@@ -1091,7 +1097,7 @@ CSmsPDUReadLogger::CSmsPDUReadLogger(TInt aPriority)
  */
 void CSmsPDUReadLogger::ConstructL(RFs& aFs)
 	{
-	LOGSMSPROT1("CSmsPDUReadLogger::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_CONSTRUCTL_1, "CSmsPDUReadLogger::ConstructL()");
 
 	iLogger = CSmsEventLogger::NewL(aFs, Priority());
 	} // CSmsPDUReadLogger::ConstructL
@@ -1117,7 +1123,7 @@ CSmsPDUReadLogger::~CSmsPDUReadLogger()
  */
 void CSmsPDUReadLogger::ChangeOrAddLogEvent(CSmsMessage& aSmsMessage, const TLogSmsPduData& aSmsPDUData, const TTime* aTime, TRequestStatus& aStatus)
     {
-    LOGSMSPROT1("CSmsPDUReadLogger::ChangeOrAddLogEvent()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_CHANGEORADDLOGEVENT_1, "CSmsPDUReadLogger::ChangeOrAddLogEvent()");
         
     __ASSERT_DEBUG(iState == ESmsPDUReadLoggerIdle, SmspPanic(KSmspPanicUnexpectedState));
 
@@ -1153,7 +1159,7 @@ void CSmsPDUReadLogger::ChangeOrAddLogEvent(CSmsMessage& aSmsMessage, const TLog
  */
 void CSmsPDUReadLogger::AddLogEvent()
 	{
-	LOGSMSPROT1("CSmsPDUReadLogger::AddLogEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_ADDLOGEVENT_1, "CSmsPDUReadLogger::AddLogEvent()");
 
 	iState = ESmsPDUReadLoggerAdd;
 
@@ -1167,7 +1173,7 @@ void CSmsPDUReadLogger::AddLogEvent()
  */
 void CSmsPDUReadLogger::GetLogEvent()
 	{
-	LOGSMSPROT1("CSmsPDUReadLogger::GetLogEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_GETLOGEVENT_1, "CSmsPDUReadLogger::GetLogEvent()");
 
 	__ASSERT_DEBUG(iSmsMessage->LogServerId() != KLogNullId, SmspPanic(KSmspPanicLogIdNull));
 
@@ -1183,7 +1189,7 @@ void CSmsPDUReadLogger::GetLogEvent()
  */
 void CSmsPDUReadLogger::ChangeLogEvent()
 	{
-	LOGSMSPROT1("CSmsPDUReadLogger::ChangeLogEvent()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_CHANGELOGEVENT_1, "CSmsPDUReadLogger::ChangeLogEvent()");
 	
 	iState = ESmsPDUReadLoggerChange;	
 	iLogger->ChangeEvent(iStatus, *iSmsMessage, iTimePtr, *iSmsPDUData);
@@ -1193,7 +1199,7 @@ void CSmsPDUReadLogger::ChangeLogEvent()
 
 void CSmsPDUReadLogger::DoRunL()
 	{
-	LOGSMSPROT1("CSmsPDUReadLogger::DoRunL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_DORUNL_1, "CSmsPDUReadLogger::DoRunL()");
 
 	switch (iState)
 		{
@@ -1243,7 +1249,7 @@ void CSmsPDUReadLogger::DoCancel()
 	// conditions are very difficult to create in a deterministic way.
 	BULLSEYE_OFF
 	
-	LOGSMSPROT1("CSmsPDUReadLogger::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_DOCANCEL_1, "CSmsPDUReadLogger::DoCancel()");
 
 	iLogger->Cancel();
 
@@ -1264,7 +1270,7 @@ void CSmsPDUReadLogger::DoCancel()
 
 void CSmsPDUReadLogger::Complete(TInt aStatus)
     {
-    LOGSMSPROT1("CSmsPDUReadLogger::Complete()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUREADLOGGER_COMPLETE_1, "CSmsPDUReadLogger::Complete()");
     
     // Call the base function to perform the actual complete...
     CSmsuActiveBase::Complete(aStatus);

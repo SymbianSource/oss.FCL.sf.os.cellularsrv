@@ -80,7 +80,7 @@ TVerdict CSpudNetSideTestBase::doTestStepPreambleL()
 
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 TVerdict CSpudNetSideTestBase::doTestStepPostambleL()
-	{	
+	{
 	ClearPolicySelector2QosParametersTableL();
 	return TestStepResult();
 	}
@@ -1646,7 +1646,7 @@ enum TVerdict CSpudSecondaryLowerNifDownStop::RunTestStepL()
 	StopInterfaceL();
 	
 	StopSecondaryL();
-
+	
 	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;
 	}
@@ -1720,7 +1720,7 @@ enum TVerdict CSpudPrimaryDeletionInterfaceStop::RunTestStepL()
 		User::Leave(KErrNotFound);
 		}
 	FailNextPktLoopbackCsyWriteL(loopbackPort, KErrCompletion);
-
+		
 	TRequestStatus sendStatus;
 	iSocket.Send(KCommWriteData, 0, sendStatus);
 	User::WaitForRequest(sendStatus);
@@ -1731,7 +1731,6 @@ enum TVerdict CSpudPrimaryDeletionInterfaceStop::RunTestStepL()
 	// In the meanwhile, we sneak in and stop the interface.
 	
 	StopInterfaceL();
-
 	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;	
 	};
@@ -2141,8 +2140,9 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	VerifySubconnectionCountL(_L("SubConnectionCount1"), PDPIAP);
 #endif
-	// start a secondary context
-	InitiateSecondaryStartL();
+
+   // start a secondary context
+    InitiateSecondaryStartL();
 
 	TInt primaryIapId, secondaryIapId;
 	TestBooleanTrueL(GetIntFromConfig(ConfigSection(), _L("PppIapId1"), primaryIapId), _L("Get Iap ID for first Ppp instance"));
@@ -2152,13 +2152,14 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 	CConnectionStart *primaryIfStart = CConnectionStart::NewLC(iEsock, *this, primaryIapId);
 	CConnectionStart *secondaryIfStart = CConnectionStart::NewLC(iEsock, *this, secondaryIapId);
 
-    TRequestStatus progressReqSt;   
-    primaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
+	TRequestStatus progressReqSt;   
+	primaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp );
 
-    WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0); // We can wait here forever. Set timeout on test step.
+	WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0);
 
-    secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
-    WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0); // We can wait here forever. Set timeout on test step.
+	secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
+	WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0);
+
 
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));

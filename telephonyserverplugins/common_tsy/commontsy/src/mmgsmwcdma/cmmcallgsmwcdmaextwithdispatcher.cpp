@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,6 +14,11 @@
 //
 
 #ifdef USING_CTSY_DISPATCHER
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmcallgsmwcdmaextwithdispatcherTraces.h"
+#endif
 
 /**
  * This file contains additional function definitions for the CMmCallGsmWcdmaExt class
@@ -128,8 +133,7 @@ TInt CMmCallGsmWcdmaExt::TransferL()
     if ( mmCall )
         {
         // Held call Id
-TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::Transfer, CallId: %d", \
-            mmCall->CallId() );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_TRANSFERL1_1, "TSY: CMmCallGsmWcdmaExt::Transfer, CallId: %d", mmCall->CallId() );
 
 		// With the CTSY dispatcher, there are two call IDs sent from the CTSY
 		// The first (packed in iCallId of the data package is the call ID

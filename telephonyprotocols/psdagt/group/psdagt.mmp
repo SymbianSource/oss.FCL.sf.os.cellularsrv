@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -34,11 +34,12 @@ SOURCE			PSDAGTBase.cpp psdagt.cpp psdstates.cpp psdentry.cpp psdlogger.cpp MipC
 
 USERINCLUDE		../src
 USERINCLUDE		../inc
+USERINCLUDE		../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY			euser.lib  etel.lib etelpckt.lib nifman.lib 				etelmm.lib
-#include	<comms-infras/commsdebugutility.mmh>
+
 
 #if defined(WINS)
 deffile    /epoc32/release/wins/agent.def

@@ -20,6 +20,13 @@
  @internalComponent
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "pdpmcprTraces.h"
+#endif
+
+
 #include <etelqos.h>
 #include <comms-infras/agentmcpractivities.h>
 #include <comms-infras/coremcpractivities.h>
@@ -160,8 +167,7 @@ CPdpMetaConnectionProvider::~CPdpMetaConnectionProvider()
 
 void CPdpMetaConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipient, TSignatureBase& aMessage)
     {
-	__CFLOG_VAR((KPdpMCprTag, KPdpMCprSubTag, _L8("CPdpMetaConnectionProvider [this=%08x]::ReceivedL() aMessage=%d"),
-	   this, aMessage.MessageId().MessageId()));
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_RECEIVEDL_1, "CPdpMetaConnectionProvider [this=%08x]::ReceivedL() aMessage=%d",(TUint)this, aMessage.MessageId().MessageId());
 
 	ESOCK_DEBUG_MESSAGE_INTERCEPT(aSender, aMessage, aRecipient);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmfaxcalltsyTraces.h"
+#endif
+
 #include "cmmfaxcalltsy.h"
 #include "cmmfaxlinetsy.h"
 #include "cmmphonetsy.h"
@@ -42,7 +48,7 @@ CMmFaxCallTsy* CMmFaxCallTsy::NewL(
     TDes& aName, 
     CMmMessageManagerBase* aMessageManager )
     {
-	TFLOGSTRING2("TSY: CMmFaxCallTsy::NewL. Call name: %S", &aName);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_NEWL_1, "TSY: CMmFaxCallTsy::NewL. Call name: %S", aName);
 
     CMmFaxCallTsy* mmCall = NULL;
 
@@ -66,8 +72,7 @@ CMmFaxCallTsy* CMmFaxCallTsy::NewL(
 
 CMmFaxCallTsy::~CMmFaxCallTsy()
     {
-    TFLOGSTRING3("TSY: CMmFaxCallTsy::~CMmFaxCallTsy. Call deleted \
-        iCallId:%d iCallName:%S", iCallId, &iCallName);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DTOR_1, "TSY: CMmFaxCallTsy::~CMmFaxCallTsy. Call deleted \iCallId:%d iCallName:%S", iCallId, iCallName);
 
     // If Dial fails, Symbian CSD agent will close the call immediately.
     // This means that TSY has not yet received call status indications, 
@@ -201,8 +206,7 @@ TInt CMmFaxCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-    TFLOGSTRING3("TSY: CMmFaxCallTsy::DoExtFuncL. IPC:%d Handle:%d", aIpc, 
-        aTsyReqHandle);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DOEXTFUNCL_1, "TSY: CMmFaxCallTsy::DoExtFuncL. IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -306,7 +310,7 @@ TInt CMmFaxCallTsy::DoExtFuncL(
 CTelObject::TReqMode CMmFaxCallTsy::ReqModeL(
     const TInt aIpc )
     {
-    TFLOGSTRING2("TSY: CMmFaxCallTsy::ReqModeL. IPC:%d",aIpc); 
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_REQMODEL_1, "TSY: CMmFaxCallTsy::ReqModeL. IPC:%d",aIpc);
 
     CTelObject::TReqMode ret( 0 ); // default return value
     
@@ -549,8 +553,7 @@ TInt CMmFaxCallTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-    TFLOGSTRING3("TSY: CMmFaxCallTsy::CancelService. IPC: %d, Req handle: %d",
-        aIpc, aTsyReqHandle); 
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_CANCELSERVICE_1, "TSY: CMmFaxCallTsy::CancelService. IPC: %d, Req handle: %d",aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -654,10 +657,8 @@ void CMmFaxCallTsy::CompleteNotifyStatusChange(
 
         callDataPackage->UnPackData( callStatus );
 
-        TFLOGSTRING2("TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. aResult:%d",
-            aResult ); 
-        TFLOGSTRING3("TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. \
-            Call status:%d Call name:%S", callStatus, &iCallName); 
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. aResult:%d",aResult );
+        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. \Call status:%d Call name:%S", callStatus, iCallName);
 
         switch( callStatus )
             {
@@ -973,8 +974,7 @@ TInt CMmFaxCallTsy::Dial(
     const TDesC8* aCallParams,
     TDesC* aTelNumber )
     {
-    TFLOGSTRING3("TSY: CMmFaxCallTsy::Dial. Req handle: %d, Call name: %S", 
-        aTsyReqHandle, &iCallName);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DIAL_1, "TSY: CMmFaxCallTsy::Dial. Req handle: %u, Call name: %S", aTsyReqHandle, iCallName);
 
 	CMmCallList* callList = iMmPhone->CallList();
 	TBool dialFlag( EFalse );
@@ -1003,7 +1003,7 @@ TInt CMmFaxCallTsy::Dial(
 
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() )
         {
-        TFLOGSTRING("TSY: Offline mode ON, Dial request is not allowed" );
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DIAL_2, "TSY: Offline mode ON, Dial request is not allowed" );
         TInt ret = CMmCommonStaticUtility::EpocErrorCode(
             KErrGeneral, KErrGsmOfflineOpNotAllowed );
 
@@ -1018,7 +1018,7 @@ TInt CMmFaxCallTsy::Dial(
         //is still in use.
         //Complete request with status value informing the client
         //about the situation.
-        TFLOGSTRING("TSY: CMmFaxCallTsy::Dial - KErrNotReady");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DIAL_3, "TSY: CMmFaxCallTsy::Dial - KErrNotReady");
         ReqCompleted( aTsyReqHandle, KErrNotReady );
         }
     else if ( 0 < dialHandle )
@@ -1026,7 +1026,7 @@ TInt CMmFaxCallTsy::Dial(
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about 
         //the situation.
-        TFLOGSTRING("TSY: CMmFaxCallTsy::Dial - KErrServerBusy");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DIAL_4, "TSY: CMmFaxCallTsy::Dial - KErrServerBusy");
         ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else
@@ -1117,8 +1117,7 @@ TInt CMmFaxCallTsy::Dial(
 TInt CMmFaxCallTsy::DialCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-    TFLOGSTRING3("TSY: CMmFaxCallTsy::DialCancel. Req handle: %d, Call name: %S", 
-        aTsyReqHandle, &iCallName);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DIALCANCEL_1, "TSY: CMmFaxCallTsy::DialCancel. Req handle: %u, Call name: %S", aTsyReqHandle, iCallName);
 
     TInt ret( KErrGeneral );
 
@@ -1144,8 +1143,7 @@ TInt CMmFaxCallTsy::AnswerIncomingCall(
     const TTsyReqHandle aTsyReqHandle,
     const TDesC8* /*aCallParams*/ )
     {
-    TFLOGSTRING2("TSY: CMmFaxCallTsy::AnswerIncomingCall. \n\t\t\t Handle:%d",
-        aTsyReqHandle); 
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_ANSWERINCOMINGCALL_1, "TSY: CMmFaxCallTsy::AnswerIncomingCall. \n\t\t\t Handle:%d",aTsyReqHandle);
 
     TTsyReqHandle iAnswerCallHandle = iTsyReqHandleStore->
         GetTsyReqHandle( EMultimodeCallAnswer );
@@ -1227,8 +1225,7 @@ TInt CMmFaxCallTsy::AnswerIncomingCallCancel(
 TInt CMmFaxCallTsy::HangUp(
     const TTsyReqHandle aTsyReqHandle )
     {
-    TFLOGSTRING3("TSY: CMmFaxCallTsy::HangUp. Req handle: %d, Call name: %S", 
-        aTsyReqHandle, &iCallName);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_HANGUP_1, "TSY: CMmFaxCallTsy::HangUp. Req handle: %u, Call name: %S", aTsyReqHandle, iCallName);
 
     TInt hangUpCause( KErrNone );
     TInt ret( KErrNone );
@@ -1284,7 +1281,7 @@ TInt CMmFaxCallTsy::HangUp(
         //ownership.
         if ( RCall::EStatusRinging == iCallStatus )
             {
-            TFLOGSTRING("TSY: CMmFaxCallTsy::HangUp - Reject incoming call");
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_HANGUP_2, "TSY: CMmFaxCallTsy::HangUp - Reject incoming call");
             }
         //Phone Application is the first client that is started, it 
         //will always be the priority client and thus able to hangup calls
@@ -1732,8 +1729,7 @@ TInt CMmFaxCallTsy::LoanDataPort(
     const TTsyReqHandle aTsyReqHandle,
     RCall::TCommPort* aCommPort )
     {
-TFLOGSTRING2("TSY: CMmFaxCallTsy::LoanDataPort - Client taking control: %S",
-    &iCallName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_LOANDATAPORT_1, "TSY: CMmFaxCallTsy::LoanDataPort - Client taking control: %S",iCallName );
 
     TInt ret( KErrNone );
 
@@ -1839,8 +1835,7 @@ TInt CMmFaxCallTsy::LoanDataPortCancel(
 TInt CMmFaxCallTsy::RecoverDataPort(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING2("TSY: CMmFaxCallTsy::RecoverDataPort - Client returning control: %S",
-    &iCallName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_RECOVERDATAPORT_1, "TSY: CMmFaxCallTsy::RecoverDataPort - Client returning control: %S",iCallName );
 
     TInt ret( KErrNone );
 
@@ -1895,8 +1890,7 @@ TFLOGSTRING2("TSY: CMmFaxCallTsy::RecoverDataPort - Client returning control: %S
 //
 TInt CMmFaxCallTsy::RecoverDataPortAndRelinquishOwnership()
     {
-TFLOGSTRING2("TSY: CMmFaxCallTsy::RecoverDataPortAndRelinquishOwnership - \
-    Client returning control: %S", &iCallName );
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_RECOVERDATAPORTANDRELINQUISHOWNERSHIP_1, "TSY: CMmFaxCallTsy::RecoverDataPortAndRelinquishOwnership - \Client returning control: %S", iCallName );
 
     TInt ret( KErrNone );
 

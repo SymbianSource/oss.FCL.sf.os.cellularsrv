@@ -34,12 +34,6 @@ LOAD_SUITE TE_SpudNetworkSide
 
 START_TESTCASE          CBS-RAWIP-0001
 //! @SYMTestCaseID      CBS-RAWIP-0001
-//! @SYMTestCaseDesc Sanity check: Sends & receives the packets of different size.
-//! @SYMTestActions Open two sockets. Sends & receives data frame of configured size.
-//! @SYMTestExpectedResults  Successfully sends & receives the packet.
-//! @SYMTestPriority Critical
-//! @SYMTestStatus Implemented
-//! @SYMTestType CIT
 RUN_TEST_STEP 2000 TE_SpudNetworkSide CRawIpMinMaxMMU z:\testdata\configs\te_rawipsize.ini MMUInfo
 END_TESTCASE            CBS-RAWIP-0001
 

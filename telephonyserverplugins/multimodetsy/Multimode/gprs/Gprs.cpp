@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -75,7 +75,7 @@ void CGprs::ConstructL()
     iATGprsClass        = CATGprsClass::NewL(iIo, this, iInit, iPhoneGlobals);
     iATGprsNtwkRegStatusChange= CATGprsNtwkRegStatusChange::NewL(iIo,this,iPhoneGlobals);
     iATGprsNtwkRegStatus= CATGprsNtwkRegStatus::NewL(iIo, this, iInit, iPhoneGlobals,iATGprsNtwkRegStatusChange);
-   	iMutex.CreateGlobal(KNullDesC, EOwnerProcess);
+   	User::LeaveIfError(iMutex.CreateGlobal(KNullDesC, EOwnerProcess));
     }
     
 RHandleBase* CGprs::GlobalKernelObjectHandle()

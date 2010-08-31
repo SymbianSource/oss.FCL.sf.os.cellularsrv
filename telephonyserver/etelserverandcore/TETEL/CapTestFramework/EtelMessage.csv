@@ -350,6 +350,7 @@ ETest348,21026,CTestEtelServer,NetworkServices
 ETest349,21027,CTestEtelServer,NetworkServices
 ETest350,21028,CTestEtelServer,NetworkServices
 ETest351,21029,CTestEtelServer,NetworkServices
+ETest1059,21030,CTestEtelServer,NetworkServices
 ETest352,21500,CTestEtelServer,NetworkServices
 ETest353,21501,CTestEtelServer,NetworkServices
 ETest354,21502,CTestEtelServer,NetworkServices
@@ -373,6 +374,7 @@ ETest371,21523,CTestEtelServer,NetworkServices
 ETest372,21524,CTestEtelServer,NetworkServices
 ETest373,21526,CTestEtelServer,NetworkServices
 ETest374,21529,CTestEtelServer,NetworkServices
+ETest1060,21530,CTestEtelServer,NetworkServices
 ETest375,22000,CTestEtelServer,ReadDeviceData
 ETest376,22001,CTestEtelServer,ReadDeviceData 
 ETest377,22002,CTestEtelServer,ReadDeviceData 

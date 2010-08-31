@@ -48,7 +48,6 @@ private:
     RPointerArray<RMobilePhone::TMobilePhoneNetworkInfoV1> iNetworkInfoV1List;
     RPointerArray<RMobilePhone::TMobilePhoneNetworkInfoV2> iNetworkInfoV2List;
     RPointerArray<RMobilePhone::TMobilePhoneNetworkInfoV5> iNetworkInfoV5List;
-    RPointerArray<CMobilePhoneStoredNetworkList> iStoredNetworkLists;    
     };
 
 #endif // CMockPhoneMessHandler_H

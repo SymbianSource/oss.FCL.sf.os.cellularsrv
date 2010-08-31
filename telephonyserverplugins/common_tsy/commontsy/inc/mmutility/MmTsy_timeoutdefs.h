@@ -15,7 +15,7 @@
 *
 */
 
-
+  
 
 #ifndef MMTSY_TIMEOUTDEFS_H
 #define MMTSY_TIMEOUTDEFS_H
@@ -44,6 +44,8 @@
 
     // All Calls Termination
     const TUint8 KMmPhoneTerminateAllCallsTimeOut = 30;
+    // Active Calls Termination
+    const TUint8 KMmPhoneTerminateActiveCallsTimeOut = 30;
     
     //NET
     const TUint8 KMmPhoneSelectNetworkTimeOut = 165;
@@ -106,7 +108,7 @@
     const TUint8 KMmCallAnswerTimeOut = 50;
     const TUint8 KMmCallAnswerCallBackTimeOut = 180;
     const TUint8 KMmCallHangUpTimeOut = 60;
-    const TUint8 KMmCallHoldTimeOut = 5; // Increase timeout to 30 seconds in future.
+    const TUint8 KMmCallHoldTimeOut = 30;
     const TUint8 KMmCallResumeTimeOut = 3;
     const TUint8 KMmCallSwapTimeOut = 3;
     const TUint8 KMmCallDeflectCallTimeOut = 10;

@@ -32,10 +32,8 @@
 #include "BinderBase.h"
 #include "BcaIoController.h"
 #include "MControllerObserver.h"
-#include "bttlog.h"
 #include <comms-infras/linkmessages.h>		// for TLinkMessageId
 
-class CBttLogger;
 class CPacketLogger;
 class TRawIpAgentProvision;
 class CBCAProvision;
@@ -112,7 +110,7 @@ public:	// Context status retrieval.
 	inline RPacketContext::TContextStatus GetContextStatus();
 
 protected:
-	CRawIPFlow(ESock::CSubConnectionFlowFactoryBase& aFactory, const Messages::TNodeId& aSubConnId, ESock::CProtocolIntfBase* aProtocolIntf, CBttLogger* aTheLogger);
+	CRawIPFlow(ESock::CSubConnectionFlowFactoryBase& aFactory, const Messages::TNodeId& aSubConnId, ESock::CProtocolIntfBase* aProtocolIntf);
 	void ConstructL();
 	virtual ~CRawIPFlow();
 
@@ -150,8 +148,6 @@ private:
 private:// Unowned
 	/** networking packet logger for debugging packets */
 	__PACKETLOG_DECLARATION_MEMBER;
-	CBttLogger* iTheLogger;
-
 	// Upstack bound protocol reference
 	CProtocolBase* iProtocol;
 

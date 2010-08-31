@@ -340,6 +340,7 @@ _LIT(KEMobilePhoneSendDTMFTones, "EMobilePhoneSendDTMFTones");
 _LIT(KEMobilePhoneStartDTMFTone, "EMobilePhoneStartDTMFTone");
 _LIT(KEMobilePhoneStopDTMFTone, "EMobilePhoneStopDTMFTone");
 _LIT(KEMobilePhoneTerminateAllCalls, "EMobilePhoneTerminateAllCalls");
+_LIT(KEMobilePhoneTerminateActiveCalls, "EMobilePhoneTerminateActiveCalls");
 _LIT(KEMobileCallActivateCCBSCancel, "EMobileCallActivateCCBSCancel");
 _LIT(KEMobileCallAnswerISVCancel, "EMobileCallAnswerISVCancel");
 _LIT(KEMobileCallAnswerMultimediaCallAsVoiceCancel, "EMobileCallAnswerMultimediaCallAsVoiceCancel");
@@ -363,6 +364,7 @@ _LIT(KEMobilePhoneNotifyStopInDTMFStringCancel, "EMobilePhoneNotifyStopInDTMFStr
 _LIT(KEMobilePhoneReadDTMFTonesCancel, "EMobilePhoneReadDTMFTonesCancel");
 _LIT(KEMobilePhoneSendDTMFTonesCancel, "EMobilePhoneSendDTMFTonesCancel");
 _LIT(KEMobilePhoneTerminateAllCallsCancel, "EMobilePhoneTerminateAllCallsCancel");
+_LIT(KEMobilePhoneTerminateActiveCallsCancel, "EMobilePhoneTerminateActiveCallsCancel");
 _LIT(KEMobileConferenceCallGetMobileCallInfo, "EMobileConferenceCallGetMobileCallInfo");
 _LIT(KEMobilePhoneEnumerateAPNEntries, "EMobilePhoneEnumerateAPNEntries");
 _LIT(KEMobilePhoneGetAPNname, "EMobilePhoneGetAPNname");
@@ -779,6 +781,8 @@ _LIT(KECtsyPacketMbmsInitialiseContextComp, "ECtsyPacketMbmsInitialiseContextCom
 _LIT(KECtsyPacketMbmsContextNotifyConfigChanged, "ECtsyPacketMbmsContextNotifyConfigChanged");
 _LIT(KECtsyPhoneTerminateAllCallsReq, "ECtsyPhoneTerminateAllCallsReq");
 _LIT(KECtsyPhoneTerminateAllCallsComp, "ECtsyPhoneTerminateAllCallsComp");
+_LIT(KECtsyPhoneTerminateActiveCallsReq, "ECtsyPhoneTerminateActiveCallsReq");
+_LIT(KECtsyPhoneTerminateActiveCallsComp, "ECtsyPhoneTerminateActiveCallsComp");
 _LIT(KECtsyPhoneSendNetworkServiceRequestReq, "ECtsyPhoneSendNetworkServiceRequestReq");
 _LIT(KECtsyPhoneSendNetworkServiceRequestIndReq, "ECtsyPhoneSendNetworkServiceRequestIndReq");
 _LIT(KECtsyPhoneSendNetworkServiceRequestInd, "ECtsyPhoneSendNetworkServiceRequestInd");
@@ -1108,6 +1112,7 @@ const TDesC& IpcName(TInt aIpc)
 	case EMobilePhoneStartDTMFTone : return KEMobilePhoneStartDTMFTone;
 	case EMobilePhoneStopDTMFTone : return KEMobilePhoneStopDTMFTone;
 	case EMobilePhoneTerminateAllCalls : return KEMobilePhoneTerminateAllCalls;
+    case EMobilePhoneTerminateActiveCalls : return KEMobilePhoneTerminateActiveCalls;
 	case EMobileCallActivateCCBSCancel : return KEMobileCallActivateCCBSCancel;
 	case EMobileCallAnswerISVCancel : return KEMobileCallAnswerISVCancel;
 	case EMobileCallAnswerMultimediaCallAsVoiceCancel : return KEMobileCallAnswerMultimediaCallAsVoiceCancel;
@@ -1131,6 +1136,7 @@ const TDesC& IpcName(TInt aIpc)
 	case EMobilePhoneReadDTMFTonesCancel : return KEMobilePhoneReadDTMFTonesCancel;
 	case EMobilePhoneSendDTMFTonesCancel : return KEMobilePhoneSendDTMFTonesCancel;
 	case EMobilePhoneTerminateAllCallsCancel : return KEMobilePhoneTerminateAllCallsCancel;
+    case EMobilePhoneTerminateActiveCallsCancel : return KEMobilePhoneTerminateActiveCallsCancel;
 	case EMobileConferenceCallGetMobileCallInfo : return KEMobileConferenceCallGetMobileCallInfo;
 	case EMobilePhoneEnumerateAPNEntries : return KEMobilePhoneEnumerateAPNEntries;
 	case EMobilePhoneGetAPNname : return KEMobilePhoneGetAPNname;
@@ -1552,6 +1558,8 @@ const TDesC& IpcName(TInt aIpc)
 	case ECtsyPacketMbmsContextNotifyConfigChanged : return KECtsyPacketMbmsContextNotifyConfigChanged;
 	case ECtsyPhoneTerminateAllCallsReq : return KECtsyPhoneTerminateAllCallsReq;
 	case ECtsyPhoneTerminateAllCallsComp : return KECtsyPhoneTerminateAllCallsComp;
+    case ECtsyPhoneTerminateActiveCallsReq : return KECtsyPhoneTerminateActiveCallsReq;
+    case ECtsyPhoneTerminateActiveCallsComp : return KECtsyPhoneTerminateActiveCallsComp;
 	case ECtsyPhoneSendNetworkServiceRequestReq : return KECtsyPhoneSendNetworkServiceRequestReq;
 	case ECtsyPhoneSendNetworkServiceRequestIndReq : return KECtsyPhoneSendNetworkServiceRequestIndReq;
 	case ECtsyPhoneSendNetworkServiceRequestInd : return KECtsyPhoneSendNetworkServiceRequestInd;

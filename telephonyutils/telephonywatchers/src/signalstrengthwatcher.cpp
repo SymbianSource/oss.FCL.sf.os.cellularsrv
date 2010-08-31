@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,7 +16,13 @@
 //
 
 // User includes
-#include "watcherlog.h"
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "signalstrengthwatcherTraces.h"
+#endif
+
 #include "signalstrengthwatcher.h"
 
 // System includes
@@ -79,7 +85,7 @@ void CSignalStrengthWatcher::HandlePhoneStateEventL(TInt aCompletionCode)
 		{
 	case ESignalStrengthNotYetInitialised:
 	case ESignalStrengthStateRequestInitialSignalStrength:
-		LOGSIGNAL1("SignalStrengthWatcher : Requesting initial signal strength");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLEPHONESTATEEVENTL_1, "SignalStrengthWatcher : Requesting initial signal strength");
 		Phone().GetSignalStrength(iStatus, iSignalStrength, iSignalBars);
 		SignalStrengthState() = ESignalStrengthWaitingForInitialSignalStrength;
 		SetActive();
@@ -130,10 +136,10 @@ void CSignalStrengthWatcher::ReleasePhoneResources()
 
 void CSignalStrengthWatcher::HandleSignalStrengthUpdateL(TInt aCompletionCode)
 	{
-	LOGSIGNAL1("SignalStrengthNotifier : Handling signal strength update");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLESIGNALSTRENGTHUPDATEL_1, "SignalStrengthNotifier : Handling signal strength update");
 	if	(aCompletionCode < KErrNone)
 		{
-		LOGSIGNAL2("SignalStrengthNotifier : Handling request error (%d)", aCompletionCode);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLESIGNALSTRENGTHUPDATEL_2, "SignalStrengthNotifier : Handling request error (%d)", aCompletionCode);
 
 		// Indicate we don't know what the signal strength is
 		TInt ret = iNetworkStrengthProperty.Set(ESANetworkStrengthUnknown);
@@ -177,8 +183,8 @@ void CSignalStrengthWatcher::HandleSignalStrengthUpdateL(TInt aCompletionCode)
 		}
 	else
 		{
-		LOGSIGNAL2("SignalStrengthNotifier : Signal strength is: %d", (TInt) iSignalStrength);
-		LOGSIGNAL2("SignalStrengthNotifier : Signal bars is: %d", iSignalBars);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLESIGNALSTRENGTHUPDATEL_3, "SignalStrengthNotifier : Signal strength is: %d", (TInt) iSignalStrength);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLESIGNALSTRENGTHUPDATEL_4, "SignalStrengthNotifier : Signal bars is: %d", iSignalBars);
 
 		// What is the signal strength now?
 		TInt newState = ESANetworkStrengthUnknown;
@@ -193,12 +199,12 @@ void CSignalStrengthWatcher::HandleSignalStrengthUpdateL(TInt aCompletionCode)
 			newState = ESANetworkStrengthHigh;
 
 		// Update properties
-		LOGSIGNAL1("SignalStrengthNotifier : Informing properties of signal strength change");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLESIGNALSTRENGTHUPDATEL_5, "SignalStrengthNotifier : Informing properties of signal strength change");
 		TInt ret = iNetworkStrengthProperty.Set(newState);
 		if (!(ret == KErrNone || ret == KErrNotFound))
 			User::Leave(ret);
 				
-		LOGSIGNAL1("SignalStrengthNotifier : Requesting signal strength change notification");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIGNALSTRENGTHWATCHER_HANDLESIGNALSTRENGTHUPDATEL_6, "SignalStrengthNotifier : Requesting signal strength change notification");
 		Phone().NotifySignalStrengthChange(iStatus, iSignalStrength, iSignalBars);
 		SetActive();
 		}

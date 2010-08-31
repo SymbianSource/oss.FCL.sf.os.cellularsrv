@@ -11,7 +11,7 @@
 // Contributors:
 //
 // Description:
-// ipclookup.h
+// ipclookup.h   
 // 
 //
 
@@ -356,6 +356,7 @@ const TIpcToName TIpcLookup[] =
 		{21027, _L8("EMobilePhoneStartDTMFTone")},
 		{21028, _L8("EMobilePhoneStopDTMFTone")},
 		{21029, _L8("EMobilePhoneTerminateAllCalls")},
+		{21030, _L8("EMobilePhoneTerminateActiveCalls")},
 		{21500, _L8("EMobileCallActivateCCBSCancel")},
 		{21501, _L8("EMobileCallAnswerISVCancel")},
 		{21502, _L8("EMobileCallAnswerMultimediaCallAsVoiceCancel")},
@@ -379,6 +380,7 @@ const TIpcToName TIpcLookup[] =
 		{21524, _L8("EMobilePhoneReadDTMFTonesCancel")},
 		{21526, _L8("EMobilePhoneSendDTMFTonesCancel")},
 		{21529, _L8("EMobilePhoneTerminateAllCallsCancel")},
+		{21530, _L8("EMobilePhoneTerminateActiveCallsCancel")},
 		{22000, _L8("EMobileConferenceCallGetMobileCallInfo")},
 		{22001, _L8("EMobilePhoneEnumerateAPNEntries")},
 		{22002, _L8("EMobilePhoneGetAPNname")},

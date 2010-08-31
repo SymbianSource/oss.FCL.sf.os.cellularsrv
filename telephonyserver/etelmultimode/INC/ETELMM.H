@@ -15,7 +15,7 @@
 // Describes the MM ETel API - classes, methods and types.
 // 
 //
-
+   
 /**
  @file
  @publishedPartner
@@ -6813,7 +6813,13 @@ API function member.
 
 	IMPORT_C void StorePreferredWlanSIDListL(TRequestStatus& aReqStatus, CMobilePhoneStoredWlanSIDList* aList) const;
 	IMPORT_C void NotifyPreferredWlanSIDListChange(TRequestStatus& aReqStatus) const;	
-		
+
+	/***********************************************************************************/
+    //
+    // Terminate Active Calls
+    //
+    /***********************************************************************************/
+    IMPORT_C void TerminateActiveCalls(TRequestStatus& aReqStatus) const;
 
 private:
 	CMobilePhonePtrHolder* iMmPtrHolder;

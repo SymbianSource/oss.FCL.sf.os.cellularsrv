@@ -86,6 +86,7 @@ enum TVerdict CTestPhone::doTestStepL()
 	TestMobileAPNControlListServiceStatus(mmPhone, reqStatus);
 	TestMobileAirTime(mmPhone, reqStatus);
 	TestTerminateAllCalls(mmPhone, reqStatus);
+	TestTerminateActiveCalls(mmPhone, reqStatus);
 	TestMobileAutoRedial(mmPhone, reqStatus);
 	TestMobilePersonalisation(mmPhone, reqStatus);
 	TestSmartCardHandling(mmPhone, reqStatus);
@@ -5659,7 +5660,29 @@ void CTestPhone::TestTerminateAllCalls(RMobilePhone& aPhone, TRequestStatus &aRe
 	User::WaitForRequest(aReqStatus);
 	TEST(aReqStatus.Int() == KErrCancel);
 	}	
-	
+
+void CTestPhone::TestTerminateActiveCalls(RMobilePhone& aPhone, TRequestStatus &aReqStatus)
+    {
+    //Test asynchronous TerminateActiveCalls - just returns KErrNone
+    
+    aPhone.TerminateActiveCalls(aReqStatus);
+    User::WaitForRequest(aReqStatus);
+    TEST(aReqStatus.Int()==KErrNone);
+    if (KErrNone == aReqStatus.Int())
+        INFO_PRINTF2(_L("Test %d - RMobilePhone::TerminateActiveCalls (async) passed"), iTestCount++);
+    else
+        ERR_PRINTF2(_L("Test %d - RMobilePhone::TerminateActiveCalls (async) failed"), iTestCount++);
+    //Test asynchronous TerminateActiveCalls & Cancel
+    
+    aPhone.TerminateActiveCalls(aReqStatus);
+    aPhone.CancelAsyncRequest(EMobilePhoneTerminateActiveCalls);
+    User::WaitForRequest(aReqStatus);
+    TEST(aReqStatus.Int() == KErrCancel);
+    if (KErrCancel == aReqStatus.Int())
+        INFO_PRINTF2(_L("Test %d - Cancelation of  RMobilePhone::TerminateActiveCalls (async) passed"), iTestCount++);
+    else
+        ERR_PRINTF2(_L("Test %d - Cancelation of  RMobilePhone::TerminateActiveCalls (async) failed"), iTestCount++);
+    }   
 
 /**************************************************************/
 //

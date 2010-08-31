@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smsstacktestutilitiesTraces.h"
+#endif
 
 #include "smsstacktestutilities.h"
 
@@ -1497,8 +1503,12 @@ EXPORT_C void CSmsStackTestUtils::PrintAndTestDecodeL(const TGsmSms& aPdu, TSmsD
  *  TODO
  */
 	{
-	LOGSMSIFPDU(_L8("TestPduDbToolsL PDU: "), aPdu.Pdu(), EFalse);
-	LOGSMSIFTIMESTAMP();
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) 
+    LogSmsIfPDUL(_L8("TestPduDbToolsL PDU: "), aPdu.Pdu(), EFalse);
+    TBuf<40> timestamp;
+    SmsTimeStampL(timestamp);
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSSTACKTESTUTILS_PRINTANDTESTDECODEL_1, "%S",timestamp);
+#endif
 
 	CSmsPDU* pdu = NULL;
 	TRAPD(err, pdu = CSmsPDU::NewL(aPdu, *iCharConv, iFs, aIsMobileTerminated));

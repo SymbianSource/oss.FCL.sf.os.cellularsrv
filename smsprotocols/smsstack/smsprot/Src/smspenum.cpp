@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspenumTraces.h"
+#endif
 
 #include "smspenum.h"
 #include "smspproc.h"
@@ -52,7 +58,7 @@ CSmsStoreRead* CSmsStoreRead::NewL(MSmsComm& aSmsComm,
 								   TInt aPriority,
 								   CSmsMonitorDiskSpace& aSmsMonitorDiskSpace)
 	{
-	LOGSMSPROT1("CSmsStoreRead::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_NEWL_1, "CSmsStoreRead::NewL()");
 
 	CSmsStoreRead* smsStoreRead = new ( ELeave ) CSmsStoreRead(aSmsComm,
 															   aSmsSettings,
@@ -105,7 +111,7 @@ CSmsStoreRead::CSmsStoreRead(MSmsComm& aSmsComm,
  */
 void CSmsStoreRead::ConstructL()
 	{
-	LOGSMSPROT1("CSmsStoreRead::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_CONSTRUCTL_1, "CSmsStoreRead::ConstructL()");
 
 	ConstructTimeoutL();
 	ReadConfigurableSmsSettingsL();
@@ -154,13 +160,13 @@ void CSmsStoreRead::ConstructL()
  */
 void CSmsStoreRead::ReadConfigurableSmsSettingsL()
     {
-    LOGSMSPROT1("CSmsStoreRead::ReadConfigurableSmsSettingsL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_READCONFIGURABLESMSSETTINGSL_1, "CSmsStoreRead::ReadConfigurableSmsSettingsL()");
 
     CESockIniData*  ini = NULL;
     TRAPD(ret, ini=CESockIniData::NewL(_L("smswap.sms.esk")));
     if(ret!=KErrNone)
         {
-        LOGSMSPROT2("CSmsStoreRead::ReadConfigurableSmsSettingsL(): ret=%d", ret);
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_READCONFIGURABLESMSSETTINGSL_2, "CSmsStoreRead::ReadConfigurableSmsSettingsL(): ret=%d", ret);
         User::Leave(ret);
         }
 
@@ -177,8 +183,7 @@ void CSmsStoreRead::ReadConfigurableSmsSettingsL()
         iConfigAutomaticDeletionForClass2 = status;
         }
 
-	LOGSMSPROT2("CSmsStoreRead::ReadConfigurableSmsSettingsL(): iConfigAutomaticDeletionForClass2=%d",
-				iConfigAutomaticDeletionForClass2);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_READCONFIGURABLESMSSETTINGSL_3, "CSmsStoreRead::ReadConfigurableSmsSettingsL(): iConfigAutomaticDeletionForClass2=%d",iConfigAutomaticDeletionForClass2);
 
     if (ini->FindVar(_L("Release6Configurability"),
     				 _L("DiscardType0_Class2Message"), status))
@@ -186,8 +191,7 @@ void CSmsStoreRead::ReadConfigurableSmsSettingsL()
         iConfigDiscardingType0Class2 = status;
         }
 
-	LOGSMSPROT2("CSmsStoreRead::ReadConfigurableSmsSettingsL(): iConfigDiscardingType0Class2=%d",
-				iConfigDiscardingType0Class2);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_READCONFIGURABLESMSSETTINGSL_4, "CSmsStoreRead::ReadConfigurableSmsSettingsL(): iConfigDiscardingType0Class2=%d",iConfigDiscardingType0Class2);
 
     if (ini->FindVar(_L("Release6Configurability"),
     				 _L("DiscardType0_Class0Message"), status))
@@ -195,8 +199,7 @@ void CSmsStoreRead::ReadConfigurableSmsSettingsL()
         iConfigDiscardingType0Class0 = status;
         }
 
-	LOGSMSPROT2("CSmsStoreRead::ReadConfigurableSmsSettingsL(): iConfigDiscardingType0Class0=%d",
-				iConfigDiscardingType0Class0);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_READCONFIGURABLESMSSETTINGSL_5, "CSmsStoreRead::ReadConfigurableSmsSettingsL(): iConfigDiscardingType0Class0=%d",iConfigDiscardingType0Class0);
 
     CleanupStack::PopAndDestroy(ini);
     } // CSmsStoreRead::ReadConfigurableSmsSettingsL
@@ -211,7 +214,7 @@ void CSmsStoreRead::ReadConfigurableSmsSettingsL()
  */
 void CSmsStoreRead::Start( TRequestStatus& aStatus, TInt aStoreIndex )
 	{
-	LOGSMSPROT1("CSmsStoreRead::Start()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_START_1, "CSmsStoreRead::Start()");
 
 	iState = ESmsStoreReadGettingStoreInfo;
 	// Initialises current slot index
@@ -250,7 +253,7 @@ void CSmsStoreRead::Start( TRequestStatus& aStatus, TInt aStoreIndex )
  */
 void CSmsStoreRead::DoRunL()
 	{
-	LOGSMSPROT2("CSmsStoreRead::DoRunL [iStatus=%d]", iStatus.Int() );
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_DORUNL_1, "CSmsStoreRead::DoRunL [iStatus=%d]", iStatus.Int() );
 
 	TInt status = iStatus.Int();
 
@@ -315,7 +318,9 @@ void CSmsStoreRead::DoRunL()
 				{
 				// Add current message to the list
 				iMobilePhoneGsmSmsList->AddEntryL( iSmsEntry );
-				LOGSMSIFSMSENTRY(_L8("SMSENTRY: "), iSmsEntry);
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+                LogSmsIfSmsEntry(_L8("SMSENTRY: "), iSmsEntry);
+#endif
 				iStoreInfo.iUsedEntries--;
 				}
 			// Reads next single message from the store
@@ -361,7 +366,7 @@ void CSmsStoreRead::DoRunL()
  */
 void CSmsStoreRead::ReadNextSlotL()
 	{
-	LOGSMSPROT1("CSmsStoreRead::ReadNextSlotL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_READNEXTSLOTL_1, "CSmsStoreRead::ReadNextSlotL()");
 
 	//Increments current slot index
 	iCurrentSlotIndex++;
@@ -387,7 +392,7 @@ void CSmsStoreRead::ReadNextSlotL()
  */
 void CSmsStoreRead::ProcessPduL()
 	{
-	LOGSMSPROT1("CSmsStoreRead::ProcessPduL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_PROCESSPDUL_1, "CSmsStoreRead::ProcessPduL()");
 
 	// Increments slot index
 	for ( iCurrentSlotIndex = 0; iCurrentSlotIndex < iMobilePhoneGsmSmsList->Enumerate(); iCurrentSlotIndex++ )
@@ -416,7 +421,7 @@ void CSmsStoreRead::ProcessPduL()
         // but in this case none of the messages have been passed
         // to the client, this has been fixed here
 		TRAPD(ret, pduProcessor->DecodeAndProcessPDUL(iSlot, ETrue));
-		LOGSMSPROT2("CSmsStoreRead::ProcessPduL(): DecodeAndProcessPDUL() returned %d", ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_PROCESSPDUL_2, "CSmsStoreRead::ProcessPduL(): DecodeAndProcessPDUL() returned %d", ret);
 
 		if (ret == KErrNone)
 			{
@@ -462,7 +467,7 @@ void CSmsStoreRead::ProcessPduL()
  */
 void CSmsStoreRead::DoCancel()
 	{
-	LOGSMSPROT1("CSmsStoreRead::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_DOCANCEL_1, "CSmsStoreRead::DoCancel()");
 
 	TimedSetActiveCancel();
 
@@ -522,7 +527,7 @@ void CSmsStoreRead::DoCancel()
  */
 void CSmsStoreRead::Complete(TInt aStatus)
 	{
-	LOGSMSPROT1("CSmsStoreRead::Complete()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSTOREREAD_COMPLETE_1, "CSmsStoreRead::Complete()");
 
 	__ASSERT_DEBUG(iState != ESmsStoreReadIdle, SmspPanic(KSmspPanicUnexpectedState));
 
@@ -583,7 +588,7 @@ CSmsPhoneEnumeration* CSmsPhoneEnumeration::NewL( MSmsComm& aSmsComm,
 												  TInt aPriority,
 												  CSmsMonitorDiskSpace& aSmsMonitorDiskSpace )
 	{
-	LOGSMSPROT1("CSmsPhoneEnumeration::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEENUMERATION_NEWL_1, "CSmsPhoneEnumeration::NewL()");
 
 	CSmsPhoneEnumeration* smsPhoneEnumeration =
 		new ( ELeave ) CSmsPhoneEnumeration( aSmsComm,
@@ -638,7 +643,7 @@ CSmsPhoneEnumeration::~CSmsPhoneEnumeration()
  */
 void CSmsPhoneEnumeration::Start()
 	{
-	LOGSMSPROT1("CSmsPhoneEnumeration::Start()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEENUMERATION_START_1, "CSmsPhoneEnumeration::Start()");
 
 	iState = ESmsPhoneEnumerationInitializing;
 	iCurrentStore = 0;
@@ -668,7 +673,7 @@ void CSmsPhoneEnumeration::Start()
  */
 void CSmsPhoneEnumeration::DoRunL()
 	{
-	LOGSMSPROT3("CSmsPhoneEnumeration::RunL [iStatus=%d], [iState=%d]", iStatus.Int(), iState );
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEENUMERATION_DORUNL_1, "CSmsPhoneEnumeration::RunL [iStatus=%d], [iState=%d]", iStatus.Int(), iState );
 
     switch (iState)
 		{
@@ -716,7 +721,7 @@ void CSmsPhoneEnumeration::DoRunL()
 
 void CSmsPhoneEnumeration::DoCancel()
 	{
-	LOGSMSPROT1("CSmsPhoneEnumeration::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEENUMERATION_DOCANCEL_1, "CSmsPhoneEnumeration::DoCancel()");
 
 	TimedSetActiveCancel();
 
@@ -762,7 +767,7 @@ void CSmsPhoneEnumeration::DoCancel()
  */
 void CSmsPhoneEnumeration::ConstructL(CFacadeSmsReassemblyStore& aReassemblyStore,CSmsSegmentationStore& aSegmentationStore,CSmsMonitorDiskSpace& aSmsMonitorDiskSpace)
 	{
-	LOGSMSPROT1("CSmsPhoneEnumeration::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEENUMERATION_CONSTRUCTL_1, "CSmsPhoneEnumeration::ConstructL()");
 
 	iSmsStoreRead = CSmsStoreRead::NewL(iSmsComm, iSmsSettings, iSmsMessaging, aReassemblyStore, aSegmentationStore, Priority(), aSmsMonitorDiskSpace);
 	ConstructTimeoutL();
@@ -771,7 +776,7 @@ void CSmsPhoneEnumeration::ConstructL(CFacadeSmsReassemblyStore& aReassemblyStor
 
 void CSmsPhoneEnumeration::Complete(TInt aStatus)
 	{
-	LOGSMSPROT2("CSmsPhoneEnumeration::Complete [aStatus=%d]", aStatus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPHONEENUMERATION_COMPLETE_1, "CSmsPhoneEnumeration::Complete [aStatus=%d]", aStatus);
 
 	//
 	// Call the base function to perform the actual complete...
@@ -803,7 +808,7 @@ CSmsMessageWrite* CSmsMessageWrite::NewL( MSmsComm& aSmsComm, const TSmsSettings
 										  CSmsSegmentationStore& aSegmentationStore
 										  )
 	{
-	LOGSMSPROT1("CSmsMessageWrite::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_NEWL_1, "CSmsMessageWrite::NewL()");
 
 	CSmsMessageWrite* smsMessageWrite = new (ELeave) CSmsMessageWrite(aSmsComm, aSmsSettings,
 																	  aGsmPhone,
@@ -820,7 +825,7 @@ CSmsMessageWrite* CSmsMessageWrite::NewL( MSmsComm& aSmsComm, const TSmsSettings
  */
 CSmsMessageWrite::~CSmsMessageWrite()
 	{
-	LOGSMSPROT1("CSmsMessageWrite::~CSmsMessageWrite()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_DTOR_1, "CSmsMessageWrite::~CSmsMessageWrite()");
 
 	Cancel();
 	iSmsStorage.Close();
@@ -839,7 +844,7 @@ void CSmsMessageWrite::Start( CSmsMessage* aSmsMessage, TRequestStatus& aStatus 
 
 
 	iSmsMessage = aSmsMessage;
-    LOGSMSPROT3("CSmsMessageWrite::Start  Storage=[%d]   Type=[%d]", iSmsMessage->Storage(), iSmsMessage->Type());
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_START_1, "CSmsMessageWrite::Start  Storage=[%d]   Type=[%d]", iSmsMessage->Storage(), iSmsMessage->Type());
 	iCurrentStore = 0;
 	iStoreInfo.iName = KNullDesC;
 
@@ -910,7 +915,7 @@ void CSmsMessageWrite::Start( CSmsMessage* aSmsMessage, TRequestStatus& aStatus 
 
 void CSmsMessageWrite::DoRunL()
 	{
-	LOGSMSPROT3("CSmsMessageWrite::DoRunL [iStatus=%d iState=%d]", iStatus.Int() , iState);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_DORUNL_1, "CSmsMessageWrite::DoRunL [iStatus=%d iState=%d]", iStatus.Int() , iState);
 
 	switch (iState)
 		{
@@ -937,7 +942,7 @@ void CSmsMessageWrite::DoRunL()
 					{
 					if ((iStoreInfo.iCaps & RMobilePhoneStore::KCapsWriteAccess) == 0)
 						{
-                        LOGSMSPROT2("CSmsMessageWrite::DoRunL left with KErrNotSuported [iState=%d]", iState);
+                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_DORUNL_2, "CSmsMessageWrite::DoRunL left with KErrNotSuported [iState=%d]", iState);
 						User::Leave(KErrNotSupported);
 						}
 
@@ -955,7 +960,7 @@ void CSmsMessageWrite::DoRunL()
 						}
 					else
 						{
-                        LOGSMSPROT2("CSmsMessageWrite::DoRunL left with KErrNotFound [iState=%d]", iState);            
+                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_DORUNL_3, "CSmsMessageWrite::DoRunL left with KErrNotFound [iState=%d]", iState);
 						User::Leave(KErrNotFound);
 						}
 					}
@@ -999,7 +1004,7 @@ void CSmsMessageWrite::DoRunL()
 
 void CSmsMessageWrite::DoCancel()
 	{
-	LOGSMSPROT1("CSmsMessageWrite::DoCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_DOCANCEL_1, "CSmsMessageWrite::DoCancel()");
 
 	TimedSetActiveCancel();
 
@@ -1058,14 +1063,14 @@ CSmsMessageWrite::CSmsMessageWrite(MSmsComm& aSmsComm, const TSmsSettings& aSmsS
 	iSegmentationStore(aSegmentationStore),
 	iSmsArray(8)
 	{
-	LOGSMSPROT1("CSmsMessageWrite::CSmsMessageWrite()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_CTOR_1, "CSmsMessageWrite::CSmsMessageWrite()");
 
 	} // CSmsMessageWrite::CSmsMessageWrite
 
 
 void CSmsMessageWrite::ConstructL()
 	{
-	LOGSMSPROT1("CSmsMessageWrite::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_CONSTRUCTL_1, "CSmsMessageWrite::ConstructL()");
 
 	ConstructTimeoutL();
 	} // CSmsMessageWrite::ConstructL
@@ -1073,7 +1078,7 @@ void CSmsMessageWrite::ConstructL()
 
 void CSmsMessageWrite::SegmentMessageL()
 	{
-	LOGSMSPROT1("CSmsMessageWrite::SegmentMessageL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_SEGMENTMESSAGEL_1, "CSmsMessageWrite::SegmentMessageL()");
 
 	if (iStoreInfo.iTotalEntries == iStoreInfo.iUsedEntries)
 		{
@@ -1117,7 +1122,7 @@ void CSmsMessageWrite::SegmentMessageL()
 
 void CSmsMessageWrite::WriteNextSlot()
 	{
-	LOGSMSPROT1("CSmsMessageWrite::WriteNextSlot()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_WRITENEXTSLOT_1, "CSmsMessageWrite::WriteNextSlot()");
 
 	if (iSmsArray.Count()>0)
 		{
@@ -1141,7 +1146,7 @@ void CSmsMessageWrite::WriteNextSlot()
 
 void CSmsMessageWrite::Complete(TInt aStatus)
 	{
-	LOGSMSPROT2("CSmsMessageWrite::Complete [aStatus=%d]", aStatus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEWRITE_COMPLETE_1, "CSmsMessageWrite::Complete [aStatus=%d]", aStatus);
 
 	__ASSERT_DEBUG(iState != ESmsMessageWriteIdle, SmspPanic(KSmspPanicUnexpectedState));
 

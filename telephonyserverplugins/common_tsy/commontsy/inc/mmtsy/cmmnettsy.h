@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -329,23 +329,6 @@ NONSHARABLE_CLASS( CMmNetTsy ) : public CBase
         	CMmDataPackage* aDataPackage,
         	TInt aErrorValue );                        
 
-        /**
-         * Completes an outstanding GetPreferredNetworksListPhase1L,
-         * which retrieves Preferred Networks List from LTSY Layer
-         *          
-         * @param aError: Error value
-         * @param aDataPackage: contains Preferred Networks List from LTSY layer
-         */
-        void CompleteGetPreferredNetworksListPhase1(TInt aError, CMmDataPackage* aDataPackage);
-
-        /**
-         * Completes an outstanding StorePreferredNetworksListL,
-         * which stores Preferred Networks List to LTSY layer
-         *          
-         * @param aError: Error value
-         */
-        void CompleteStorePreferredNetworksList(TInt aError);
-        
     private:
     
         /**
@@ -939,68 +922,8 @@ NONSHARABLE_CLASS( CMmNetTsy ) : public CBase
          *         
          * @return KErrNone
          */
-        TInt GetCurrentActiveUSimApplicationCancel();   
-        
-        /**
-         * Returns minimum size of a buffer to retreive the current Preferred Networks List from SIM
-         * 
-         * @param aTsyReqHandle: Request handle
-         * @param aId: pointer to the client id
-         * @param aBufSize: pointer to the size of buffer
-         * @return : Error value.
-         */
-        TInt GetPreferredNetworksListPhase1L(const TTsyReqHandle aTsyReqHandle, 
-            											 RMobilePhone::TClientId const* aId, TInt* aBufSize);
-        
-        /**
-         * Copies the current Preferred Networks List into the given buffer
-         * 
-         * @param aTsyReqHandle: Request handle
-         * @param aId: pointer to the client id
-         * @param aBuffer: pointer to the buffer for retrieving the Preferred Networks List
-         * @return TInt: Error value.
-         */
-        TInt GetPreferredNetworksListPhase2(const TTsyReqHandle aTsyReqHandle, 
-            											 RMobilePhone::TClientId const* aId, TDes8* aBuffer);
-        
-        /**
-         * Stores the Preferred Networks List into the SIM
-         * 
-         * @param aTsyReqHandle: Request handle
-         * @param aBuffer: pointer to the buffer for the Preferred Networks List to be stored
-         * @return TInt: Error value.
-         */
-        TInt StorePreferredNetworksListL(const TTsyReqHandle aTsyReqHandle, TDes8* aBuffer);
-        
-        /**
-         * Cancels the request for Getting Preferred Networks List
-         * 
-         * @param aTsyReqHandle: Request handle
-         * @return : Error value.
-         */
-        TInt GetPreferredNetworksListCancel(const TTsyReqHandle aTsyReqHandle);
+        TInt GetCurrentActiveUSimApplicationCancel();        
 
-        /**
-         * Subscribes the notification for storing Preferred networks List
-         * 
-         * @return TInt: Error value.
-         */
-        TInt NotifyStorePreferredNetworksListChange();
-        
-        /**
-         * Cancels the notification request for storing Preferred Networks List
-         * 
-         * @param aTsyReqHandle: Request handle
-         * @return: Error value.
-         */
-        TInt NotifyStorePreferredNetworksListChangeCancel(const TTsyReqHandle aTsyReqHandle);
-
-        /**
-         * Completes the notification request for storing Preferred Networks List
-         * 
-         */
-        void CompleteNotifyStorePreferredNetworksListChange();
-        
     protected:  // Data
         //None
 
@@ -1158,27 +1081,7 @@ NONSHARABLE_CLASS( CMmNetTsy ) : public CBase
         /**
          * Pointer to the current active usim application.       
          */         
-        RMobilePhone::TAID* iRetCurrentActiveUSimApplication;
-      
-		/*
-		*  Not owned, buffer size for reading preferred networks list
-		*/
-		TInt* iBufSizeGetPrefPLMN;
-
-		/*
-		* Copy of client ID for reading preferred networks list
-		*/
-		RMobilePhone::TClientId* iClientIdGetPrefPLMN; 
-
-		/*
-		* Streamed contents of the retrieved preferred networks list
-		*/
-		CBufBase* iGetPrefPLMNList;
-
-		/*
-		* Client supplied preferred networks list for storing to the SIM
-		*/
-		CMobilePhoneStoredNetworkList* iStorePrefPLMNList;
+        RMobilePhone::TAID* iRetCurrentActiveUSimApplication;            
     };
 
 #endif // CMMNETSY_H

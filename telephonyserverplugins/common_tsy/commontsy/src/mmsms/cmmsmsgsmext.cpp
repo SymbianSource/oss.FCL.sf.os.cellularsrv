@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,10 +16,15 @@
 
 
 // INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmsmsgsmextTraces.h"
+#endif
+
 #include <e32std.h>        // error values
 #include <mmlist.h>
 #include "cmmsmsgsmext.h"
-#include <ctsy/tflogger.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
 #include "cmmphonetsy.h"
 #include <ctsy/serviceapi/cmmsmsutility.h>
@@ -77,7 +82,7 @@ TInt CMmSmsGsmExt::CompleteReceiveMessage(
 
     if ( KSimSmsNotPresent == aSmsMsg->iMessageStatus )
         {
-TFLOGSTRING("TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 0, 1 or 3 message");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSGSMEXT_COMPLETERECEIVEMESSAGE_1, "TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 0, 1 or 3 message");
         
         // SMS message that is routed directly to the TSY. This message is not
         // acknowledge to the network.
@@ -89,7 +94,7 @@ TFLOGSTRING("TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 0, 1 or 3 message"
         }
    else if ( aSmsMsg->iSmsClass2 && ( 0 != aSmsMsg->iLocation ) ) 
         {
-TFLOGSTRING("TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 2 message stored in SIM");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSGSMEXT_COMPLETERECEIVEMESSAGE_2, "TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 2 message stored in SIM");
         // Class 2 SMS message that is stored in SIM. This message is 
         // acknowledged to the network by SMS server.
 		msgAttributes.iStatus = RMobileSmsMessaging::EMtMessageUnknownStatus;
@@ -100,7 +105,7 @@ TFLOGSTRING("TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 2 message stored i
         }
     else
         {
-TFLOGSTRING("TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 2 message not stored in SIM");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSGSMEXT_COMPLETERECEIVEMESSAGE_3, "TSY: CMmSmsGsmExt::CompleteReceiveMessage. Class 2 message not stored in SIM");
         // Class 2 SMS message that is not stored in SIM. This message is 
         // acknowledged to the network by SMS server.
         msgAttributes.iStatus = 
@@ -180,7 +185,7 @@ TInt CMmSmsGsmExt::CompleteReadAllSmsPhase1L(
     CArrayPtrFlat<CListReadAllAttempt>* aSmsReadAllArray, 
     TInt* aReadAllBufSizePtr )
     {
-TFLOGSTRING("TSY: CMmSmsGsmExt::CompleteReadAllSmsPhase1L");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSGSMEXT_COMPLETEREADALLSMSPHASE1L_1, "TSY: CMmSmsGsmExt::CompleteReadAllSmsPhase1L");
     // read the list, store its content and then return size of this 
     // buffer to client
     CMobilePhoneGsmSmsList* list = CMobilePhoneGsmSmsList::NewL();

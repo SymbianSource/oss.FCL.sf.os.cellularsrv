@@ -16,6 +16,12 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CMmMessageRouterProxyTraces.h"
+#endif
+
 #include "cmmmessagerouterproxy.h"
 #include "cmmvoicecalltsy.h"
 #include "cmmdatacalltsy.h"
@@ -63,7 +69,7 @@ CMmMessageRouterProxy::CMmMessageRouterProxy()
  CMmMessageRouterProxy* CMmMessageRouterProxy::NewL( 
     CTsyDelegates& aTsyDelegates )
     {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::NewL." );    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_CTOR_1, "TSY: CMmMessageRouterProxy::NewL." );
     CMmMessageRouterProxy* const routerproxy =
         new ( ELeave ) CMmMessageRouterProxy();
     CleanupStack::PushL( routerproxy );
@@ -92,7 +98,7 @@ void CMmMessageRouterProxy::Complete(
     CMmDataPackage* aData, 
     TInt aResult )
 	{
-TFLOGSTRING3("TSY: CMmMessageRouterProxy::Complete. IPC = %d, result: %d", aIpc, aResult);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_COMPLETE_1, "TSY: CMmMessageRouterProxy::Complete. IPC = %d, result: %d", aIpc, aResult);
 	RouteCompletion( aIpc, aData, aResult ); 
 	}
 	
@@ -256,7 +262,7 @@ void CMmMessageRouterProxy::RouteCompletionL(
 
 	        TName phoneBookName;
 	        phonebookData->GetPhoneBookName( phoneBookName );
-TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: PB Name: %S", &phoneBookName);   
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_1, "TSY: CMmMessageRouterProxy::RouteCompletion: PB Name: %S", phoneBookName);
 
 	        for( TInt i = 0; i < iMmPhone->PBList()->GetNumberOfObjects(); i++ )
 	            {
@@ -270,7 +276,7 @@ TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: PB Name: %S", &phoneB
 	            }
 	        if ( NULL == mmObject )
 	            {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_2, "TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!");
 				iMmPhone->SetPBInitActiveStatus( EFalse );
 	            }
         	}
@@ -684,7 +690,11 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
       			static_cast<CMmPhoneTsy*>( mmObject )->
       				CompleteTerminateAllCallsReq( aResult );
       			break;
-      			
+            case ECtsyPhoneTerminateActiveCallsComp:
+                static_cast<CMmPhoneTsy*>( mmObject )->
+                    CompleteTerminateActiveCallsReq( aResult );
+                break;
+                
             // Conference call functionality
             case EMobileConferenceCallCreateConference:                
                 static_cast<CMmConferenceCallTsy*>( mmObject )->
@@ -772,20 +782,20 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
                     CompletePBStoreInitializationL( 
                     aResult, aDataPackage );
                     TBool done = EFalse;
-
+                    
                     // NOTE: The statement above is redundant, as the loop below calls CompletePBStoreInitializationL
                     // on every phonebook store. However, we need to be certain that changing the order in which
-                    // phonebook stores are initialised won't introduce side effects. (One future improvement)                    
+                    // phonebook stores are initialised won't introduce side effects. (One future improvement)
                     for( TInt i = 0; i < iMmPhone->PBList()->GetNumberOfObjects(); i++ )
         	            {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion:EMmTsyPhoneBookStoreInitIPC for loop, check init statuses ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_3, "TSY: CMmMessageRouterProxy::RouteCompletion:EMmTsyPhoneBookStoreInitIPC for loop, check init statuses ");
         	            CMmPhoneBookStoreTsy* pbStore = iMmPhone->PBList()->
         	                GetMmPBByIndex( i );
                         done = pbStore->IsPBInitDone();
-TFLOGSTRING3("TSY: CMmMessageRouterProxy::RouteCompletion: active: %i, done: %i",iMmPhone->IsPBInitActive(), done);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_4, "TSY: CMmMessageRouterProxy::RouteCompletion: active: %u, done: %u",(TUint)iMmPhone->IsPBInitActive(), (TUint)done);
         	            if ( iMmPhone->IsPBInitActive() && !done ) 
         	                {
-TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S",pbStore->PhoneBookName());
+OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_5, "TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S",*(pbStore->PhoneBookName()));
         	                mmObject = static_cast<CBase*>( pbStore );
         	                static_cast<CMmPhoneBookStoreTsy*>( mmObject )->
                                 CompletePBStoreInitializationL( 
@@ -2602,18 +2612,10 @@ TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S"
                     aDataPackage, aResult );
                 break;
             case EMmTsyPhoneBookStoreFdnInfoIPC:
-				TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: route to phonetsy EMmTsyPhoneBookStoreFdnInfoIPC");               
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_6, "TSY: CMmMessageRouterProxy::RouteCompletion: route to phonetsy EMmTsyPhoneBookStoreFdnInfoIPC");
                 static_cast<CMmPhoneTsy*>( mmObject )->
                     SaveFdnInfoDetails( aResult, aDataPackage );
                 break;
-			case ECtsyPhoneGetPreferredNetworksComp:
-				TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: route to MmNetTsy ECtsyPhoneGetPreferredNetworksComp"); 				
-				static_cast<CMmPhoneTsy*>( mmObject )->GetNetTsy()->CompleteGetPreferredNetworksListPhase1(aResult, aDataPackage);
-				break;
-			case ECtsyPhoneStorePreferredNetworksListComp:
-				TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: route to MmNetTsy ECtsyPhoneStorePreferredNetworksListComp"); 				
-				static_cast<CMmPhoneTsy*>( mmObject )->GetNetTsy()->CompleteStorePreferredNetworksList(aResult);
-				break;
             default:
                 break;
             }
@@ -2653,7 +2655,7 @@ TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S"
                 
                 if ( NULL == mmObject )
                     {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Call object not found for mobile Call Info!");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_7, "TSY: CMmMessageRouterProxy::RouteCompletion: Call object not found for mobile Call Info!");
                     }
                 else
                     {
@@ -2692,7 +2694,7 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Call object not found 
 
                     if ( NULL == mmCall )
                         {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Call object not found for Dial!");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_8, "TSY: CMmMessageRouterProxy::RouteCompletion: Call object not found for Dial!");
                         }
                     else
                         {
@@ -2721,7 +2723,7 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Call object not found 
                                       CMmCallTsy::EMultimodeCallDialISV ) 
                                     && mmCall->CallMode() == callMode ) )
                                     {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Special case before CompleteDial");                                    
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_9, "TSY: CMmMessageRouterProxy::RouteCompletion: Special case before CompleteDial");
                                     mmCall->CompleteDial( aResult );
                                     break;
                                     }
@@ -2730,7 +2732,7 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Special case before Co
                                     CMmCallTsy::EMultimodeCallDialNoFdnCheck ) 
                                     && mmCall->CallMode() == callMode )
                                     {
-TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: Special case before CompleteDialNoFdn");                                          
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETIONL_10, "TSY: CMmMessageRouterProxy::RouteCompletion: Special case before CompleteDialNoFdn");
                                     mmCall->CompleteDialNoFdn( aResult );
                                     break;
                                     }

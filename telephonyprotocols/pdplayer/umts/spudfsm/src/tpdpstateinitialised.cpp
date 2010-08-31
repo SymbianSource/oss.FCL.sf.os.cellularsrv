@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,9 +20,15 @@
  @internalComponent
 */
  
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "tpdpstateinitialisedTraces.h"
+#endif
+
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
-#include "spudfsmdebuglogger.h"
 #include "pdpfsmnmspace.h"
 #include "cpdpfsm.h"
 #include "cpdpfsmfactory.h"
@@ -31,8 +37,8 @@ using namespace SpudMan;
 
 TInt TPdpStateInitialised::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	SPUDFSMVERBOSE_FNLOG("TPdpStateInitialised::Input()");
-	SPUDFSMVERBOSE_LOG2(_L("aOperation : %S(%d)"), LogOperation(aFsm, aOperation), aOperation);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_1, ">>TPdpStateInitialised::Input()");
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
 
 	switch (aOperation)
 	{
@@ -50,7 +56,7 @@ TInt TPdpStateInitialised::Input (CPdpFsm& aFsm, const TInt aOperation, const TI
 			aFsm.ChangeStateToCreatingPrimary();
 			EtelDriverInput (aFsm, EtelDriver::ECreate1ryPdpContext);
 			}
-	
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_3, "<<TPdpStateInitialised::Input()");
 		return KErrNone;
 	case SpudMan::ECreateSecondaryPDPContext:
 		aFsm.ChangeStateToCreatingSecondary();
@@ -58,7 +64,7 @@ TInt TPdpStateInitialised::Input (CPdpFsm& aFsm, const TInt aOperation, const TI
 		aFsm.iContextType = SpudMan::ESecondary;
 
 		EtelDriverInput (aFsm, EtelDriver::ECreate2ryPdpContext);
-	
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_4, "<<TPdpStateInitialised::Input()");
 		return KErrNone;
 		
 		
@@ -66,6 +72,7 @@ TInt TPdpStateInitialised::Input (CPdpFsm& aFsm, const TInt aOperation, const TI
 		aFsm.ChangeStateToCreatingMbms();
 		aFsm.iContextType = SpudMan::EMbms;
 		EtelDriverInput (aFsm, EtelDriver::ECreateMbmsPdpContext);
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_5, "<<TPdpStateInitialised::Input()");
 		return KErrNone;
 		
 	// these stop the default actions which aren't of value in the Initialised state, although we 
@@ -75,12 +82,14 @@ TInt TPdpStateInitialised::Input (CPdpFsm& aFsm, const TInt aOperation, const TI
 	case PdpFsm::EContextStatusChangeNetwork:
 		if (aFsm.iContextStatus == RPacketContext::EStatusDeleted)
 		{
-			return KErrNone;
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_6, "<<TPdpStateInitialised::Input()");
+		return KErrNone;
 		}
 		break;
 	}
 
 	// default error handling
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEINITIALISED_INPUT_7, "<<TPdpStateInitialised::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 
 }

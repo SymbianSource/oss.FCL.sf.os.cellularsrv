@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,12 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmonstoretsyTraces.h"
+#endif
+
 #include "cmmonstoretsy.h"
 #include "cmmtsyreqhandlestore.h"
 #include "CMmPrivateUtility.h"
@@ -35,7 +41,7 @@ CMmONStoreTsy::CMmONStoreTsy()
 
 void CMmONStoreTsy::ConstructL()
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::ConstructL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_CONSTRUCTL_1, "TSY: CMmONStoreTsy::ConstructL");
 
 #ifdef REQHANDLE_TIMER
     // Create req handle store
@@ -98,7 +104,7 @@ CMmONStoreTsy* CMmONStoreTsy::NewL(
 
 CMmONStoreTsy::~CMmONStoreTsy()
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::~CMmONStoreTsy");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DTOR_1, "TSY: CMmONStoreTsy::~CMmONStoreTsy");
 
     if (iMmPhone )
         {
@@ -179,7 +185,7 @@ CTelObject* CMmONStoreTsy::OpenNewObjectL(
 CTelObject::TReqMode CMmONStoreTsy::ReqModeL(
     const TInt aIpc )
     {
-TFLOGSTRING2("TSY: CMmONStoreTsy::ReqModeL IPC %d", aIpc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_REQMODEL_1, "TSY: CMmONStoreTsy::ReqModeL IPC %d", aIpc);
     CTelObject::TReqMode ret=0;
     switch ( aIpc )
         {
@@ -291,7 +297,7 @@ TInt CMmONStoreTsy::ExtFunc(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-TFLOGSTRING3("TSY: CMmONStoreTsy::ExtFunc - IPC:%d Handle:%d", aIpc, aTsyReqHandle);   
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_EXTFUNC_1, "TSY: CMmONStoreTsy::ExtFunc - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
                
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
@@ -334,7 +340,7 @@ TInt CMmONStoreTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-TFLOGSTRING3("TSY: CMmONStoreTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DOEXTFUNCL_1, "TSY: CMmONStoreTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TAny* dataPtr=aPackage.Ptr1();
     TAny* dataPtr2=aPackage.Ptr2();
@@ -459,7 +465,7 @@ CMmONStoreExtInterface* CMmONStoreTsy::ActiveONExtension()
 //
 TInt CMmONStoreTsy::ReadL( TDes8* aEntry )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::ReadL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_READL_1, "TSY: CMmONStoreTsy::ReadL");
     // Initialize ret value
     TInt ret( KErrArgument );
 
@@ -502,7 +508,7 @@ void CMmONStoreTsy::CompleteRead(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteRead");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEREAD_1, "TSY: CMmONStoreTsy::CompleteRead");
     // Response information
     TONStoreMsg* ONStoreResp = NULL;
     // unpack data if exists
@@ -513,7 +519,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteRead");
         }
     else if ( KErrNone == aResult )
         {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteRead result is KErrNone and aDataPackage is NULL!");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEREAD_2, "TSY: CMmONStoreTsy::CompleteRead result is KErrNone and aDataPackage is NULL!");
         aResult = KErrArgument;
         }
 
@@ -579,7 +585,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteRead result is KErrNone and aDataPackag
 TInt CMmONStoreTsy::ReadCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::ReadCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_READCANCEL_1, "TSY: CMmONStoreTsy::ReadCancel");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreRead );
@@ -604,7 +610,7 @@ TInt CMmONStoreTsy::WriteL(
     const TTsyReqHandle aTsyReqHandle,
     TDesC8* aEntry )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::WriteL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_WRITEL_1, "TSY: CMmONStoreTsy::WriteL");
 
     // Unpack entry param to get the location
     RMobileONStore::TMobileONEntryV1Pckg* entryPckg =
@@ -662,7 +668,7 @@ void CMmONStoreTsy::CompleteWrite(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteWrite");   
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEWRITE_1, "TSY: CMmONStoreTsy::CompleteWrite");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreWrite );
@@ -714,7 +720,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteWrite");
 TInt CMmONStoreTsy::WriteCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::WriteCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_WRITECANCEL_1, "TSY: CMmONStoreTsy::WriteCancel");
     // Check if cancelling is possible. If not, return KErrNone
     if ( iIsWriteCancellingPossible )
         {
@@ -743,7 +749,7 @@ TInt CMmONStoreTsy::DeleteL(
     const TTsyReqHandle aTsyReqHandle,
     TInt* aIndex )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::DeleteL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DELETEL_1, "TSY: CMmONStoreTsy::DeleteL");
     // Initialize ret value
     TInt ret( KErrGeneral );
 
@@ -782,7 +788,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::DeleteL");
 void CMmONStoreTsy::CompleteDelete(
     TInt aResult )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDelete");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEDELETE_1, "TSY: CMmONStoreTsy::CompleteDelete");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreDelete );
@@ -812,7 +818,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDelete");
 TInt CMmONStoreTsy::DeleteAllL (
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::DeleteAllL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DELETEALLL_1, "TSY: CMmONStoreTsy::DeleteAllL");
     // Init variable for DeleteAllPhase1
     iDeleteAllContinue = ETrue;
 
@@ -844,7 +850,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::DeleteAllL");
 void CMmONStoreTsy::CompleteDeleteAllPhase1L(
     TInt aResult )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAllPhase1L");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEDELETEALLPHASE1L_1, "TSY: CMmONStoreTsy::CompleteDeleteAllPhase1L");
     // Check that DeleteAll was called
     if ( iDeleteAllContinue )
         {
@@ -890,7 +896,7 @@ void CMmONStoreTsy::CompleteDeleteAll(
     // Check that deleted request handle was valid
     if ( EMultimodeONStoreReqHandleUnknown != reqHandle )
         {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAll");        
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEDELETEALL_1, "TSY: CMmONStoreTsy::CompleteDeleteAll");
         // Complete with error
         ReqCompleted( reqHandle, aResult );
 
@@ -908,7 +914,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAll");
     else if(EMultimodeONStoreReqHandleUnknown !=
 				 iTsyReqHandleStore->GetTsyReqHandle(EMultimodeONStoreStoreAll ))
     	{
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAll requested by StoreAllL.");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEDELETEALL_2, "TSY: CMmONStoreTsy::CompleteDeleteAll requested by StoreAllL.");
     	TInt ret (aResult);
 		    	
     	if(KErrNone == ret)
@@ -929,7 +935,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAll requested by StoreAllL.");
     	}
     else
     	{
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAll - the request has been cancelled or bad req handle");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEDELETEALL_3, "TSY: CMmONStoreTsy::CompleteDeleteAll - the request has been cancelled or bad req handle");
     	}
     }
 
@@ -942,7 +948,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteDeleteAll - the request has been cancel
 TInt CMmONStoreTsy::DeleteAllCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::DeleteAllCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DELETEALLCANCEL_1, "TSY: CMmONStoreTsy::DeleteAllCancel");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreDeleteAll );
@@ -968,7 +974,7 @@ TInt CMmONStoreTsy::GetInfoL(
     const TTsyReqHandle aTsyReqHandle,
     RMobileONStore::TMobileONStoreInfoV1* aInfo )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_1, "TSY: CMmONStoreTsy::GetInfoL");
 
     TInt ret( KErrNone );
 
@@ -989,12 +995,12 @@ TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL");
    	// Don't send request if pb init is still ongoing
 	// instead create an ADN book store and wait for it to initilize
     
-TFLOGSTRING2( "TSY: CMmONStoreTsy::GetInfoL iPBList->GetNumberOfObjects() = %d", iMmPhone->PBList()->GetNumberOfObjects());
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_2,  "TSY: CMmONStoreTsy::GetInfoL iPBList->GetNumberOfObjects() = %d", iMmPhone->PBList()->GetNumberOfObjects());
     CMmPhoneBookStoreTsy* pbStore = NULL;
 	for( TInt i = 0; (i < iMmPhone->PBList()->GetNumberOfObjects()) && (NULL == pbStore) ; i++ )
 	    {
 	    pbStore = iMmPhone->PBList()->GetMmPBByIndex( i );
-TFLOGSTRING2( "TSY: CMmONStoreTsy::GetInfoL index = %d", i);    
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_3,  "TSY: CMmONStoreTsy::GetInfoL index = %d", i);
         if( (pbStore->GetPhonebookType() != KADNPhoneBook) && (pbStore->GetPhonebookType() != KFDNPhoneBook ) ) 
             {
             pbStore = NULL;
@@ -1002,12 +1008,12 @@ TFLOGSTRING2( "TSY: CMmONStoreTsy::GetInfoL index = %d", i);
         else
             {
         
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - found ADN or FDN store");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_4, "TSY: CMmONStoreTsy::GetInfoL - found ADN or FDN store");
 			}
    		}
 	if(NULL == pbStore)
 	    {
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - no ADN nor FDN store- creating ADN");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_5, "TSY: CMmONStoreTsy::GetInfoL - no ADN nor FDN store- creating ADN");
         pbStore = CMmPhoneBookStoreTsy::NewL( iMmPhone, KETelIccAdnPhoneBook );
         TInt addPBSucceeded = iMmPhone->PBList()->AddObject( pbStore );
         if(addPBSucceeded != KErrNone)
@@ -1023,13 +1029,13 @@ TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - no ADN nor FDN store- creating ADN")
 
 	if ( !pbStore->IsPBInitDone())
 	    {
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - waiting for phone book to be initilized");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_6, "TSY: CMmONStoreTsy::GetInfoL - waiting for phone book to be initilized");
         // Save tsy req handle type
         iReqHandleType = EMultimodeONStoreGetInfo;
         return KErrNone;
 	    }
      
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoL - PBInit done, complete");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOL_7, "TSY: CMmONStoreTsy::GetInfoL - PBInit done, complete");
         
     // Request to GSM extension, get used entries,
     // -1 as a index param-> specified location param not needed
@@ -1058,7 +1064,7 @@ void CMmONStoreTsy::CompleteGetInfo(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmONStoreTsy::CompleteGetInfo - Result: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEGETINFO_1, "TSY: CMmONStoreTsy::CompleteGetInfo - Result: %d", aResult );
 
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1083,9 +1089,9 @@ TFLOGSTRING2("TSY: CMmONStoreTsy::CompleteGetInfo - Result: %d", aResult );
 
             *iONStoreInfoChanged = iONStoreInfo;
 
-TFLOGSTRING3("TSY: CMmONStoreTsy::CompleteGetInfo - Name: %S, Type: %d", &iONStoreInfoChanged->iName, iONStoreInfoChanged->iType );
-TFLOGSTRING3("TSY: CMmONStoreTsy::CompleteGetInfo - Total entries: %d, Used entries: %d", iONStoreInfoChanged->iTotalEntries, iONStoreInfoChanged->iUsedEntries );
-TFLOGSTRING3("TSY: CMmONStoreTsy::CompleteGetInfo - Max Number length: %d, Max Name length: %d", iONStoreInfoChanged->iNumberLen, iONStoreInfoChanged->iTextLen );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEGETINFO_2, "TSY: CMmONStoreTsy::CompleteGetInfo - Name: %S, Type: %d", iONStoreInfoChanged->iName, iONStoreInfoChanged->iType );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEGETINFO_3, "TSY: CMmONStoreTsy::CompleteGetInfo - Total entries: %d, Used entries: %d", iONStoreInfoChanged->iTotalEntries, iONStoreInfoChanged->iUsedEntries );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEGETINFO_4, "TSY: CMmONStoreTsy::CompleteGetInfo - Max Number length: %d, Max Name length: %d", iONStoreInfoChanged->iNumberLen, iONStoreInfoChanged->iTextLen );
             }
 
         // NULL the pointer to info supplied to TSY from the client
@@ -1104,7 +1110,7 @@ TFLOGSTRING3("TSY: CMmONStoreTsy::CompleteGetInfo - Max Number length: %d, Max N
 //
 void CMmONStoreTsy::SetInfo()
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::SetInfo");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_SETINFO_1, "TSY: CMmONStoreTsy::SetInfo");
     // The name of the store
     iONStoreInfo.iName = KETelOwnNumberStore;
 
@@ -1136,7 +1142,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::SetInfo");
 TInt CMmONStoreTsy::GetInfoCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::GetInfoCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_GETINFOCANCEL_1, "TSY: CMmONStoreTsy::GetInfoCancel");
 
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeONStoreGetInfo );
 
@@ -1156,7 +1162,7 @@ TInt CMmONStoreTsy::NotifyStoreEvent(
     RMobilePhoneStore::TMobileStoreEvent* aEvent,
     TInt* aIndex )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::NotifyStoreEvent");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_NOTIFYSTOREEVENT_1, "TSY: CMmONStoreTsy::NotifyStoreEvent");
     TTsyReqHandle requestHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeONStoreNotifyStoreEvent );
 
@@ -1183,7 +1189,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::NotifyStoreEvent");
 void CMmONStoreTsy::CompleteNotifyStoreEvent(
     TInt aLocation )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteNotifyStoreEvent");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETENOTIFYSTOREEVENT_1, "TSY: CMmONStoreTsy::CompleteNotifyStoreEvent");
     // Reset request handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreNotifyStoreEvent );
@@ -1212,7 +1218,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteNotifyStoreEvent");
 TInt CMmONStoreTsy::NotifyStoreEventCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::NotifyStoreEventCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_NOTIFYSTOREEVENTCANCEL_1, "TSY: CMmONStoreTsy::NotifyStoreEventCancel");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreNotifyStoreEvent );
@@ -1239,7 +1245,7 @@ TInt CMmONStoreTsy::ReadAllPhase1L(
     const RMobilePhone::TClientId* aId, 
     TInt* aBufSize )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::ReadAllPhase1L");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_READALLPHASE1L_1, "TSY: CMmONStoreTsy::ReadAllPhase1L");
     // Init return value
     TInt ret( KErrNone );
     
@@ -1282,12 +1288,12 @@ void CMmONStoreTsy::InternalRetrieveONListReadSizeL(
     TInt aError,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALRETRIEVEONLISTREADSIZEL_1, "TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL");
     if ( KErrNone == aError )
         {
         TInt size;
         aDataPackage->UnPackData( size );
-TFLOGSTRING2("TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL size=%d",size);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALRETRIEVEONLISTREADSIZEL_2, "TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL size=%d",size);
         if( 0 < size )
             {
             *iReadAllBufSizePtr = size;
@@ -1296,7 +1302,7 @@ TFLOGSTRING2("TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL size=%d",size)
             }
         else
             {
-TFLOGSTRING2("TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL size is %d", size);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALRETRIEVEONLISTREADSIZEL_3, "TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL size is %d", size);
             CompleteReadAllPhase1Req( KErrNotFound );
             }
         }
@@ -1316,7 +1322,7 @@ TFLOGSTRING2("TSY: CMmONStoreTsy::InternalRetrieveONListReadSizeL size is %d", s
 //
 void CMmONStoreTsy::MakeInternalRetrieveONListReadReqL()
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::MakeInternalRetrieveONListReadReqL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_MAKEINTERNALRETRIEVEONLISTREADREQL_1, "TSY: CMmONStoreTsy::MakeInternalRetrieveONListReadReqL");
     // Read one entry from the PhoneBook.
     TInt ret = iMmONStoreExtInterface->
         ReadL( EMmTsyONStoreReadEntryIPC,iReadAllONStoreIndex );
@@ -1343,7 +1349,7 @@ void CMmONStoreTsy::InternalRetrieveONListReadEntryL(
     TInt aError,
     CMmDataPackage* aDataPackage)
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::InternalRetrieveONListReadEntryL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALRETRIEVEONLISTREADENTRYL_1, "TSY: CMmONStoreTsy::InternalRetrieveONListReadEntryL");
     if ( KErrNone == aError )
         {
         // Check if there is data to save
@@ -1389,7 +1395,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::InternalRetrieveONListReadEntryL");
 //
 TInt CMmONStoreTsy::CompleteReadAllPhase1L()
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteReadAllPhase1L");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEREADALLPHASE1L_1, "TSY: CMmONStoreTsy::CompleteReadAllPhase1L");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
         EMultimodeONStoreReadAll );
@@ -1468,7 +1474,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteReadAllPhase1L");
 void CMmONStoreTsy::CompleteReadAllPhase1Req(
     TInt aResult )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::CompleteReadAllPhase1Req");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETEREADALLPHASE1REQ_1, "TSY: CMmONStoreTsy::CompleteReadAllPhase1Req");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreReadAll );
@@ -1497,7 +1503,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::CompleteReadAllPhase1Req");
 //
 void CMmONStoreTsy::DeleteONStoreListArrayElements()
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::DeleteONStoreListArrayElements");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_DELETEONSTORELISTARRAYELEMENTS_1, "TSY: CMmONStoreTsy::DeleteONStoreListArrayElements");
     while( 0 == !iONStoreListArray->Count() )
         {
         // Delete list member
@@ -1520,7 +1526,7 @@ TInt CMmONStoreTsy::ReadAllPhase2(
     const RMobilePhone::TClientId* aId,
     TDes8* aBuffer )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::ReadAllPhase2");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_READALLPHASE2_1, "TSY: CMmONStoreTsy::ReadAllPhase2");
     // Initialize ret value
     TInt ret( KErrCorrupt );
 
@@ -1577,7 +1583,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::ReadAllPhase2");
 TInt CMmONStoreTsy::ReadAllCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::ReadAllCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_READALLCANCEL_1, "TSY: CMmONStoreTsy::ReadAllCancel");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreReadAll );
@@ -1605,7 +1611,7 @@ TInt CMmONStoreTsy::StoreAllL(
     const TTsyReqHandle aTsyReqHandle,
     TDes8* aBuffer )
     {
-TFLOGSTRING("TSY: CMmONStoreTsy::StoreAllL");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_STOREALLL_1, "TSY: CMmONStoreTsy::StoreAllL");
     // Init return value
     TInt ret( KErrNone );
     
@@ -1625,7 +1631,7 @@ TFLOGSTRING("TSY: CMmONStoreTsy::StoreAllL");
     // StoreAll overwrites ON phone store. So, first delete all store.
     ret = iMmONStoreExtInterface->DeleteAllL( 
         EMmTsyONStoreDeleteAllIPC );
-TFLOGSTRING2("CMmONStoreTsy::StoreAllL - DeleteAllL() ret: %d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_STOREALLL_2, "CMmONStoreTsy::StoreAllL - DeleteAllL() ret: %d", ret);
     
     // Message construction failed or phonet sender returned error
     if ( KErrNone != ret )
@@ -1654,13 +1660,13 @@ void CMmONStoreTsy::InternalStoreAllGetSizeL(
     TInt aError,
     CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("CMmONStoreTsy::InternalStoreAllGetSizeL %d",aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALSTOREALLGETSIZEL_1, "CMmONStoreTsy::InternalStoreAllGetSizeL %d",aError);
     if ( KErrNone == aError )
         {
         TInt size;
         aDataPackage->UnPackData( size );
 
-TFLOGSTRING2("CMmONStoreTsy::InternalStoreAllGetSizeL size %d", size);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALSTOREALLGETSIZEL_2, "CMmONStoreTsy::InternalStoreAllGetSizeL size %d", size);
         // Check the size of ONStore and the ONList size from Client
         // Client's ONList size should not be greater than ONStore size
         if ( size > 0 && size >= iStoreAllONListSize )
@@ -1702,7 +1708,7 @@ TFLOGSTRING2("CMmONStoreTsy::InternalStoreAllGetSizeL size %d", size);
 //
 void CMmONStoreTsy::MakeInternalStoreAllWriteReqL()
     {
-TFLOGSTRING("CMmONStoreTsy::MakeInternalStoreAllWriteReqL ");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_MAKEINTERNALSTOREALLWRITEREQL_1, "CMmONStoreTsy::MakeInternalStoreAllWriteReqL ");
     // Create ONList and push it to cleanup stack
     CMobilePhoneONList* aONList=CMobilePhoneONList::NewL();
     CleanupStack::PushL(aONList);
@@ -1778,7 +1784,7 @@ TFLOGSTRING("CMmONStoreTsy::MakeInternalStoreAllWriteReqL ");
 void CMmONStoreTsy::InternalStoreAllWriteEntryL(
     TInt aResult )
     {
-TFLOGSTRING2("CMmONStoreTsy::InternalStoreAllWriteEntryL %d",aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALSTOREALLWRITEENTRYL_1, "CMmONStoreTsy::InternalStoreAllWriteEntryL %d",aResult);
 
 	TTsyReqHandle storeAllRequestHandle = 
 		iTsyReqHandleStore->GetTsyReqHandle(
@@ -1787,7 +1793,7 @@ TFLOGSTRING2("CMmONStoreTsy::InternalStoreAllWriteEntryL %d",aResult);
 	if ( EMultimodeONStoreReqHandleUnknown == storeAllRequestHandle )
 		{
 		// The request has been cancelled or bad req handle
-TFLOGSTRING("The ON store request has been cancelled or bad req handle");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_INTERNALSTOREALLWRITEENTRYL_2, "The ON store request has been cancelled or bad req handle");
 		return;
 		}
 
@@ -1811,7 +1817,7 @@ TFLOGSTRING("The ON store request has been cancelled or bad req handle");
 void CMmONStoreTsy::CompleteStoreAll(
     TInt aResult )
     {
-TFLOGSTRING2("CMmONStoreTsy::CompleteStoreAll %d",aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETESTOREALL_1, "CMmONStoreTsy::CompleteStoreAll %d",aResult);
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreStoreAll );
@@ -1849,7 +1855,7 @@ TFLOGSTRING2("CMmONStoreTsy::CompleteStoreAll %d",aResult);
 TInt CMmONStoreTsy::StoreAllCancel(
     TTsyReqHandle aTsyReqHandle )
     {
-TFLOGSTRING("CMmONStoreTsy::StoreAllCancel");
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_STOREALLCANCEL_1, "CMmONStoreTsy::StoreAllCancel");
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeONStoreStoreAll );
@@ -1906,7 +1912,7 @@ void CMmONStoreTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle, 
     const TInt aError )
     {
-TFLOGSTRING3("TSY: CMmONStoreTsy::ReqCompleted Completed - Handle:%d Error:%d", aTsyReqHandle, aError);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_REQCOMPLETED_1, "TSY: CMmONStoreTsy::ReqCompleted Completed - Handle:%d Error:%d", aTsyReqHandle, aError);
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
     }
@@ -1993,7 +1999,7 @@ void CMmONStoreTsy::Complete(
     TInt aReqHandleType,
     TInt aError )
     {
-TFLOGSTRING3( "TSY: CMmONStoreTsy::Complete - ReqHandleType: %d Error: %d", aReqHandleType, aError );    
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_COMPLETE_1,  "TSY: CMmONStoreTsy::Complete - ReqHandleType: %d Error: %d", aReqHandleType, aError );
     //All possible TSY req handle types are listed in the
     //switch case below.
     switch( aReqHandleType )
@@ -2040,7 +2046,7 @@ TFLOGSTRING3( "TSY: CMmONStoreTsy::Complete - ReqHandleType: %d Error: %d", aReq
 //
 void CMmONStoreTsy::PhoneBookStoreInitCompleteL(TInt aError)
     {
-    TFLOGSTRING("TSY: CMmONStoreTsy::PhoneBookStoreInitCompleteL ");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_PHONEBOOKSTOREINITCOMPLETEL_1, "TSY: CMmONStoreTsy::PhoneBookStoreInitCompleteL ");
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeONStoreGetInfo );   
     if( EMultimodeONStoreReqHandleUnknown != reqHandle )
         {

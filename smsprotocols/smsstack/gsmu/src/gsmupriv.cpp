@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "gsmuprivTraces.h"
+#endif
 
 #include "gsmupriv.h"
 #include "Gsmumain.h"
@@ -42,7 +48,7 @@ TSmsAlphabetPacker::TSmsAlphabetPacker(TSmsDataCodingScheme::TSmsAlphabet aAlpha
  */
 TInt TSmsAlphabetPacker::PackL(TDes8& aOut,const TDesC8& aIn)
 	{
-	LOGGSMU1("TSmsAlphabetPacker::PackL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSALPHABETPACKER_PACKL_1, "TSmsAlphabetPacker::PackL()");
 
 	// Ensure we've got the right length
 	TInt packedOctetsRequired=PackedOctetsRequiredL(aIn.Length());
@@ -90,7 +96,7 @@ TInt TSmsAlphabetPacker::PackL(TDes8& aOut,const TDesC8& aIn)
  */
 TInt TSmsAlphabetPacker::UnpackL(const TDesC8& aIn,TDes8& aOut,TInt aNumUDUnits)
 	{
-	LOGGSMU1("TSmsAlphabetPacker::UnpackL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSALPHABETPACKER_UNPACKL_1, "TSmsAlphabetPacker::UnpackL()");
 
 	TInt length=aNumUDUnits;
 	// Ensure we've got enough input and output buffer
@@ -142,7 +148,7 @@ TInt TSmsAlphabetPacker::UnpackL(const TDesC8& aIn,TDes8& aOut,TInt aNumUDUnits)
  */
 TInt TSmsAlphabetPacker::ConvertAndPackL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs,TDes8& aOut,const TDesC& aIn,TInt& aConvertedNumUDUnits)
     {
-	LOGGSMU1("TSmsAlphabetPacker::ConvertAndPackL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSALPHABETPACKER_CONVERTANDPACKL_1, "TSmsAlphabetPacker::ConvertAndPackL()");
 
 	// Do the conversion
 	// VEP Fix for defect EXT-568BMW, when length of alphanumeric destination address
@@ -164,7 +170,7 @@ TInt TSmsAlphabetPacker::ConvertAndPackL(CCnvCharacterSetConverter& aCharacterSe
  */
 TInt TSmsAlphabetPacker::UnpackAndConvertL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs,const TDesC8& aIn,TDes& aOut,TInt aNumUDUnits)
 	{
-	LOGGSMU1("TSmsAlphabetPacker::UnpackAndConvertL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSALPHABETPACKER_UNPACKANDCONVERTL_1, "TSmsAlphabetPacker::UnpackAndConvertL()");
 
 	// Unpack first
 	HBufC8* unpackedBuffer=HBufC8::NewLC(aNumUDUnits);
@@ -187,7 +193,7 @@ TInt TSmsAlphabetPacker::UnpackAndConvertL(CCnvCharacterSetConverter& aCharacter
  */
 TInt TSmsAlphabetPacker::PackedOctetsRequiredL(TInt aNumUDUnits) const
 	{
-	LOGGSMU1("TSmsAlphabetPacker::PackedOctetsRequiredL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSALPHABETPACKER_PACKEDOCTETSREQUIREDL_1, "TSmsAlphabetPacker::PackedOctetsRequiredL()");
 
 	TInt octetsRequired=0;
 	TInt elementSizeInBits=ElementSizeInBitsL();
@@ -218,7 +224,7 @@ TInt TSmsAlphabetPacker::NumUDUnitsL(TInt aOctets) const
  */
 TInt TSmsAlphabetPacker::ElementSizeInBitsL() const
 	{
-	LOGGSMU1("TSmsAlphabetPacker::ElementSizeInBitsL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSALPHABETPACKER_ELEMENTSIZEINBITSL_1, "TSmsAlphabetPacker::ElementSizeInBitsL()");
 
     TInt ret = 8;
 

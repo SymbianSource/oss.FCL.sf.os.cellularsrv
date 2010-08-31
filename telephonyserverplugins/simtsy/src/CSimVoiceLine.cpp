@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,9 +13,15 @@
 // Description:
 //
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimVoiceLineTraces.h"
+#endif
+
 #include "CSimPhone.h"
 #include "CSimVoiceCall.h"
-#include "Simlog.h"
 #include "et_struct.h"
 
 _LIT(KCommonCallName,"VoiceCall%d");	// < Voice call name template.
@@ -108,13 +114,13 @@ CTelObject* CSimVoiceLine::OpenNewObjectByNameL(const TDesC& aName)
 * @leave Leaves if name given does not match the required name
 */
 	{
-	LOGVOICE1(">>CSimVoiceLine::OpenNewObjectByNameL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICELINE_OPENNEWOBJECTBYNAMEL_1, ">>CSimVoiceLine::OpenNewObjectByNameL");
 	TInt i;
 	TInt count=iCalls->Count();
 
 	for(i=0;i<count;i++)
 		{
-		LOGVOICE2(">>CSimVoiceLine::OpenNewObjectByNameL %s",&(iCalls->At(i)->iName));
+		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICELINE_OPENNEWOBJECTBYNAMEL_2, ">>CSimVoiceLine::OpenNewObjectByNameL %S", iCalls->At(i)->iName);
 		if(iCalls->At(i)->iName.MatchF(aName)==0)
 			{
 			iCalls->At(i)->Open();			
@@ -122,7 +128,7 @@ CTelObject* CSimVoiceLine::OpenNewObjectByNameL(const TDesC& aName)
 			}
 		}
 
-	LOGVOICE1("<<CSimVoiceLine::OpenNewObjectByNameL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICELINE_OPENNEWOBJECTBYNAMEL_3, "<<CSimVoiceLine::OpenNewObjectByNameL");
 	User::Leave(KErrNotFound);
 	return NULL;
 	}
@@ -150,7 +156,7 @@ CSimCall* CSimVoiceLine::CreateNewCallL(TDes& aNewName,TCallType aCallType)
 		{
 		HandleNewCallAddedNotification(aNewName);
 		}
-	LOGVOICE2(">>CSimVoiceLine::CreateNewCallL 0x%08x",newCall);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMVOICELINE_CREATENEWCALLL_1, ">>CSimVoiceLine::CreateNewCallL 0x%08x",newCall);
 	CleanupStack::Pop(newCall);
 	return newCall;
 	}

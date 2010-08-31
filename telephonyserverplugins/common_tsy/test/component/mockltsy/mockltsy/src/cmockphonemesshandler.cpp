@@ -64,7 +64,6 @@ CMockPhoneMessHandler::~CMockPhoneMessHandler()
 	iNetworkInfoV1List.ResetAndDestroy();
 	iNetworkInfoV2List.ResetAndDestroy();
 	iNetworkInfoV5List.ResetAndDestroy();
-	iStoredNetworkLists.ResetAndDestroy();
     }
 
 /**
@@ -357,22 +356,15 @@ TInt CMockPhoneMessHandler::ExtFuncL(TInt aIpc,const CMmDataPackage* aMmDataPack
 						   RMobilePhone::TMobilePhoneCBChangeV1> data(condition, *info);
 			return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc,data);
 			}
-		case ECtsyPhoneTerminateAllCallsReq:
+		case ECtsyPhoneTerminateAllCallsReq:		
 			{
 			TInt callId(0);
 			aMmDataPackage->UnPackData(callId);
 			TMockLtsyData1< TInt > data(callId);
 			return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc, data);
 			}
-        case ECtsyPhoneStorePreferredNetworksListReq:
-            {
-            CMobilePhoneStoredNetworkList* list = NULL;
-            aMmDataPackage->UnPackData(&list);
-            TMockLtsyData1<CMobilePhoneStoredNetworkList*> data(list);
-            return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc,data);
-            }
-        case ECtsyPhoneGetPreferredNetworksReq:
-    	case ECtsyPhoneCellInfoReq:
+        case ECtsyPhoneTerminateActiveCallsReq: 
+		case ECtsyPhoneCellInfoReq:
     	case ECtsyPhoneCellInfoIndReq:			
     	case EMobilePhoneSelectNetworkCancel:
     	case EMobilePhoneGetFdnStatus:
@@ -943,19 +935,11 @@ void CMockPhoneMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt aResu
 			}
 			break;
 		case ECtsyPhoneTerminateAllCallsComp:
-        case ECtsyPhoneStorePreferredNetworksListComp:
+		case ECtsyPhoneTerminateActiveCallsComp:
 			{
 			// no parameter is required
-			}		
-            break;
-        case ECtsyPhoneGetPreferredNetworksComp:
-            {
-            CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
-            iStoredNetworkLists.Append(list);
-            TSerializer<CMobilePhoneStoredNetworkList>::DeserialiseL(aData, *list);
-            dataPackage.PackData(list);
-            }
-            break;
+			}
+			break;
 		default:
 			{
 			// shouldnt get here. will panic MessageManager()->Complete if allowed to continue

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,18 +24,16 @@
 #define TPDPSTATES_H
 
 #include "tpdpstate.h"
-#include "spudfsmdebuglogger.h"
 
 class CPdpFsm;
 
-#if _DEBUG 
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
 #define DEFINE_TPDPSTATE_CLASS(state) _LIT(KName##state, #state); \
 NONSHARABLE_CLASS(TPdpState##state) : public TPdpState \
 { \
 public: \
 	TPdpState##state (CPdpFsmFactory * aPdpFsmFactory) \
 	{ \
-		SPUDFSMVERBOSE_FNLOG("TPdpState" L ## #state L"::TPdpState" L ## #state L"()"); \
 		iName = KName##state; \
 		iPdpFsmFactory = aPdpFsmFactory; \
 	} \
@@ -49,7 +47,6 @@ private: \
 public: \
 	TPdpState##state (CPdpFsmFactory * aPdpFsmFactory) \
 	{ \
-		SPUDFSMVERBOSE_FNLOG("TPdpState" L ## #state L"::TPdpState" L ## #state L"()"); \
 		iPdpFsmFactory = aPdpFsmFactory; \
 	} \
 	TInt Input (CPdpFsm& aFsm, TInt aOperation, TInt aErrorCode); \

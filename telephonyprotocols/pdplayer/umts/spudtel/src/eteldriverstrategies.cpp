@@ -20,11 +20,17 @@
  @internalComponent
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "eteldriverstrategiesTraces.h"
+#endif
+
 #include <e32def.h>
 
 #include "ceteldrivercontext.h"
 #include "eteldriverstrategies.h"
-#include "spudteldebuglogger.h"
 #include "pdpfsmnmspace.h"
 
 #include <pcktcs.h>
@@ -40,7 +46,7 @@ using namespace ConnectionServ;
 */
 void TOpenStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TOpenStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_1, "TOpenStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -61,7 +67,7 @@ void TOpenStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 			
 		default:
 			// incorrect step
-			SPUDTEL_ERROR_LOG0(_L("Incorrect step"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_2, "Incorrect step");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -85,12 +91,12 @@ void TOpenStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStatus& aCom
 	{
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPhoneOpened"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NOTIFYFSM_1, "Notifying FSM: EPhoneOpened");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPhoneOpened);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPhoneOpenedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NOTIFYFSM_2, "Notifying FSM: EPhoneOpenedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPhoneOpenedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -105,14 +111,14 @@ void TOpenStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case EInitPhoneStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel Phone::InitialiseCancel"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_CANCELASYNCREQUEST_1, "Cancel Phone::InitialiseCancel");
 			aContext.Phone().InitialiseCancel();
 			break;
 			}
 			
 		default:
 			// there're NO outstanding async requests
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TOpenStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_CANCELASYNCREQUEST_2, "ERROR: Incorrect case in TOpenStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -129,7 +135,7 @@ void TOpenStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_1, "TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)");
 	
 	TInt err = KErrNone;
 	
@@ -235,7 +241,7 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 			
 		default:
 			// incorrect step
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_2, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -262,12 +268,12 @@ void TContextDeleteStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestSta
 	
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EContextDeleted"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NOTIFYFSM_1, "Notifying FSM: EContextDeleted");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EContextDeleted);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EContextDeletedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NOTIFYFSM_2, "Notifying FSM: EContextDeletedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EContextDeletedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -278,7 +284,7 @@ void TContextDeleteStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestSta
 */
 void TContextDeleteStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 	{
-	SPUDTEL_FNLOG("TContextDeleteStrategy::CancelAsyncRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_CANCELASYNCREQUEST_1, "TContextDeleteStrategy::CancelAsyncRequest()");
 	
 	// When there is no sub-session, the strategy will not call DeactivateContext, but will be in the EDeactivateStep state
 	// In this case we don't want to cancel the deactivate request
@@ -291,21 +297,21 @@ void TContextDeleteStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case EDeactivateStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextDeactivate"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EPacketContextDeactivate");
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextDeactivate);
 			break;
 			}
 			
 		case EDeleteContextStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextDelete"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_CANCELASYNCREQUEST_3, "Cancel PacketContext::EPacketContextDelete");
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextDelete);
 			break;
 			}
 			
 		default:
 			// there're NO outstanding async requests
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_CANCELASYNCREQUEST_4, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			break;
 		}
@@ -322,7 +328,7 @@ void TContextDeleteStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TCreate1ryPdpContextStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_1, "TCreate1ryPdpContextStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -337,7 +343,7 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			err = aContext.PacketContext().OpenNewContext (aContext.PacketService(), aContext.Name());
 			if (err)
 				{
-				SPUDTEL_ERROR_LOG(_L("PacketContextOpenNewContext returned %d"), err);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_2, "PacketContextOpenNewContext returned %d", err);
 				break;
 				}
 				
@@ -364,7 +370,7 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			err = aContext.PacketQoS().OpenNewQoS (aContext.PacketContext(), newName);
 			if (err)
 				{ 
-				SPUDTEL_ERROR_LOG(_L("PacketQoS OpenNewQoS returned %d"), err);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_3, "PacketQoS OpenNewQoS returned %d", err);
 				break; 
 				}
 				
@@ -380,7 +386,7 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 // SYMBIAN_NETWORKING_UMTSR5
 
 
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpReqProfileParameters ();
 #endif			
 			aContext.PacketQoS().SetProfileParameters (*aStatus, aContext.QosRequestedPckg());
@@ -395,7 +401,7 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			}
 			
 		default:
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_4, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -419,12 +425,12 @@ void TCreate1ryPdpContextStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequ
 {
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: E1ryPdpContextCreated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NOTIFYFSM_1, "Notifying FSM: E1ryPdpContextCreated");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::E1ryPdpContextCreated);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: E1ryPdpContextCreatedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NOTIFYFSM_2, "Notifying FSM: E1ryPdpContextCreatedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::E1ryPdpContextCreatedFailed, aCompletionStatus.Int());
 		}
 }
@@ -435,32 +441,32 @@ void TCreate1ryPdpContextStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequ
 */
 void TCreate1ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 	{
-	SPUDTEL_FNLOG("TCreate1ryPdpContextStrategy::CancelAsyncRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_1, "TCreate1ryPdpContextStrategy::CancelAsyncRequest()");
 	
 	switch(aContext.StrategyStep())
 		{
 		case ESetConfigStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextSetConfig"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EPacketContextSetConfig");
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextSetConfig);
 			break;
 			}
 			
 		case ESetProfileParamsStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketQoSSetProfileParams"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_3, "Cancel PacketContext::EPacketQoSSetProfileParams");
 			aContext.PacketQoS().CancelAsyncRequest(EPacketQoSSetProfileParams);
 			break;
 			}
 			
 		case EInitialiseContextStep:
-		    SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextInitialiseContext"));
+		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_4, "Cancel PacketContext::EPacketContextInitialiseContext");
 		    aContext.PacketContext().CancelAsyncRequest(EPacketContextInitialiseContext);
 		    break;
 			
 		default:
 			// there're NO outstanding async requests
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_5, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			break;
 		}
@@ -477,7 +483,7 @@ void TCreate1ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aConte
 */
 void TCreate2ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TCreate2ryPdpContextStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_1, "TCreate2ryPdpContextStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -502,7 +508,7 @@ void TCreate2ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			err = aContext.PacketQoS().OpenNewQoS (aContext.PacketContext(), newName);
 			if (err)
 				{ 
-				SPUDTEL_ERROR_LOG(_L("PacketQoS OpenNewQoS returned %d"), err);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_2, "PacketQoS OpenNewQoS returned %d", err);
 				break; 
 				}
 			aContext.SetStrategyStep (EFinishStep);
@@ -510,7 +516,7 @@ void TCreate2ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			}
 			
 		default:
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_3, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -534,12 +540,12 @@ void TCreate2ryPdpContextStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequ
 {
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: E2ryPdpContextCreated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NOTIFYFSM_1, "Notifying FSM: E2ryPdpContextCreated");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::E2ryPdpContextCreated);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: E2ryPdpContextCreatedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NOTIFYFSM_2, "Notifying FSM: E2ryPdpContextCreatedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::E2ryPdpContextCreatedFailed, aCompletionStatus.Int());
 		}
 }
@@ -550,8 +556,8 @@ void TCreate2ryPdpContextStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequ
 */
 void TCreate2ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& /*aContext*/)
 	{
-	SPUDTEL_FNLOG("TCreate2ryPdpContextStrategy::CancelAsyncRequest()");
-	SPUDTEL_ERROR_LOG0(_L("ERROR: No outstanding requests"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_1, "TCreate2ryPdpContextStrategy::CancelAsyncRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_2, "ERROR: No outstanding requests");
 	}
 
 
@@ -565,7 +571,7 @@ void TCreate2ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& /*aCon
 */
 void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TSetQoSStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_1, "TSetQoSStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -586,7 +592,7 @@ void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 			aContext.QosRequested() = req;	
 
 
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpReqProfileParameters ();
 #endif			
             aContext.PacketQoS().SetProfileParameters (*aStatus, aContext.QosRequestedPckg());
@@ -603,7 +609,7 @@ void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 		default:
 			{
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_2, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -626,12 +632,12 @@ void TSetQoSStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStatus& aC
 	{
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EQoSSet"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NOTIFYFSM_1, "Notifying FSM: EQoSSet");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EQoSSet);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EQoSSetFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NOTIFYFSM_2, "Notifying FSM: EQoSSetFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EQoSSetFailed, aCompletionStatus.Int());
 		}
 	}
@@ -647,13 +653,13 @@ void TSetQoSStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		case ESetProfileParamsStep:
 			{
 			aContext.PacketQoS().CancelAsyncRequest(EPacketQoSSetProfileParams);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketQoS::EPacketQoSSetProfileParams"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketQoS::EPacketQoSSetProfileParams");
 			break;
 			}
 			
 		default:
 			// there're NO outstanding async requests
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TSetQoSStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_CANCELASYNCREQUEST_2, "ERROR: Incorrect case in TSetQoSStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -670,7 +676,7 @@ void TSetQoSStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TSetTftStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_1, "TSetTftStrategy::Next()");
 	
 	TInt err = KErrNone;
 
@@ -685,9 +691,9 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 				{
 				case KAddFilters:
 					aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftInfo());
-					SPUDTELVERBOSE_INFO_LOG1(_L("TftOperationCode - Add Filters"), aContext.TftInfo().FilterCount());
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_2, "TftOperationCode - Add Filters %d", aContext.TftInfo().FilterCount());
 					// Set strategy assumes that TFT has to be created on a first place
-					SPUDTELVERBOSE_INFO_LOG(_L("Creating TFT..."));
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_3, "Creating TFT...");
 					if (aContext.ContextType() != SpudMan::EMbms)
 						{	
 						aContext.PacketContext().CreateNewTFT(*aStatus, aContext.TftInfo().FilterCount());
@@ -701,17 +707,17 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 
 				case KRemoveFilters:
 					err = KErrNotSupported;
-					SPUDTEL_ERROR_LOG(_L("TftOperationCode - Remove is not supported in a Set strategy, return %d"), err);
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_4, "TftOperationCode - Remove is not supported in a Set strategy, return %d", err);
 					break;
 
 				case KDeleteTFT:
 					err = KErrNotSupported;
-					SPUDTEL_ERROR_LOG(_L("TftOperationCode - Delete is not supported in a Set strategy, return %d"), err);
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_5, "TftOperationCode - Delete is not supported in a Set strategy, return %d", err);
 					break;
 
 				default:
 					// wrong case
-					SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_6, "ERROR: Incorrect case");
 					ASSERT(EFalse);
 					err = KErrNotSupported;
 					break;
@@ -771,7 +777,7 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_7, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -794,12 +800,12 @@ void TSetTftStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStatus& aC
 	{
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: ETftSet"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NOTIFYFSM_1, "Notifying FSM: ETftSet");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::ETftSet);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: ETftSetFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NOTIFYFSM_2, "Notifying FSM: ETftSetFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::ETftSetFailed, aCompletionStatus.Int());
 		}
 	}
@@ -815,20 +821,20 @@ void TSetTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		case ECreateNewTFTStep:
 			{
 			aContext.PacketQoS().CancelAsyncRequest(EPacketContextCreateNewTFT);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketQoS::EPacketContextCreateNewTFT"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketQoS::EPacketContextCreateNewTFT");
 			break;
 			}
 			
 		case EAddTftStep:
 			{
 			aContext.PacketQoS().CancelAsyncRequest(EPacketContextAddPacketFilter);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketQoS::EPacketContextAddPacketFilter"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketQoS::EPacketContextAddPacketFilter");
 			break;
 			}
 
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TSetTftStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_CANCELASYNCREQUEST_3, "ERROR: Incorrect case in TSetTftStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -845,7 +851,7 @@ void TSetTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TChangeTftStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_1, "TChangeTftStrategy::Next()");
 	
 	TInt err = KErrNone;
 
@@ -857,18 +863,18 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 			{
 			case KAddFilters:
 				aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftInfo());
-				SPUDTELVERBOSE_INFO_LOG1(_L("TftOperationCode - Add Filters"), aContext.TftInfo().FilterCount());
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_2, "TftOperationCode - Add Filters %d", aContext.TftInfo().FilterCount());
 				aContext.SetStrategyStep (EAddFirstTftStep);
 				break;
 
 			case KRemoveFilters:
 				aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftInfo());
-				SPUDTELVERBOSE_INFO_LOG1(_L("TftOperationCode - Remove %d Filters"), aContext.TftInfo().FilterCount());
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_3, "TftOperationCode - Remove %d Filters", aContext.TftInfo().FilterCount());
 				aContext.SetStrategyStep (ERemoveFirstTftStep);
 				break;
 
 			case KDeleteTFT:
-				SPUDTELVERBOSE_INFO_LOG(_L("TftOperationCode - Delete TFT"));
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_4, "TftOperationCode - Delete TFT");
 				// delete old TFT
 				aContext.PacketContext().DeleteTFT(*aStatus);
 				aContext.SetStrategyStep (EDeleteTftStep);
@@ -877,7 +883,7 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 
 			default:
 				// wrong case
-				SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_5, "ERROR: Incorrect case");
 				ASSERT(EFalse);
 				err = KErrNotSupported;
 				break;
@@ -1004,7 +1010,7 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 				
 			default:
 				// unexpected
-				SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_6, "ERROR: Incorrect case");
 				ASSERT(EFalse);
 				err = KErrNotSupported;
 				break;
@@ -1029,12 +1035,12 @@ void TChangeTftStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStatus&
 	{
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: ETftChanged"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NOTIFYFSM_1, "Notifying FSM: ETftChanged");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::ETftChanged);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: ETftChangedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NOTIFYFSM_2, "Notifying FSM: ETftChangedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::ETftChangedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -1049,28 +1055,28 @@ void TChangeTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case EDeleteTftStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketQoS::EPacketContextDeleteTFTCancel"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketQoS::EPacketContextDeleteTFTCancel");
 			aContext.PacketQoS().CancelAsyncRequest(EPacketContextDeleteTFTCancel);
 			break;
 			}
 		
 		case ERemoveTftStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketQoS::EPacketContextRemovePacketFilterCancel"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketQoS::EPacketContextRemovePacketFilterCancel");
 			aContext.PacketQoS().CancelAsyncRequest(EPacketContextRemovePacketFilterCancel);
 			break;
 			}
 			
 		case EAddTftStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketQoS::EPacketContextAddPacketFilter"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_CANCELASYNCREQUEST_3, "Cancel PacketQoS::EPacketContextAddPacketFilter");
 			aContext.PacketQoS().CancelAsyncRequest(EPacketContextAddPacketFilterCancel);
 			break;
 			}
 
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TChangeTftStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_CANCELASYNCREQUEST_4, "ERROR: Incorrect case in TChangeTftStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -1087,7 +1093,7 @@ void TChangeTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TActivatePdpStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_1, "TActivatePdpStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -1095,7 +1101,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 		{
 		case EStartStep:
 			{
-			SPUDTEL_INFO_LOG(_L("RPacketContext::Activate()"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_3, "RPacketContext::Activate()");
 			aContext.PacketContext().Activate(*aStatus);
 			aContext.SetStrategyStep (EActivateStep);
 			break;
@@ -1104,7 +1110,8 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 		case EActivateStep:
 		case ENotifyStatusChange:
 			{
-            SPUDTEL_INFO_LOG(_L("RPacketContext::GetStatus()"));
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_4, "RPacketContext::GetStatus()");
+
             if (aContext.PacketContext().GetStatus(aContext.ContextStatus()) != KErrNone)
                 {
                 aContext.ContextStatus() = RPacketContext::EStatusInactive;
@@ -1115,7 +1122,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	case RPacketContext::EStatusActive:
                 	// Context is now active
     	            aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextPacketDataConfigBase());
-    	            SPUDTEL_INFO_LOG(_L("RPacketContext::GetConfig()"));
+    	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_5, "RPacketContext::GetConfig()");
     				aContext.PacketContext().GetConfig (*aStatus, aContext.ContextConfig());
     				aContext.SetStrategyStep (EGetConfigStep);
     				break;
@@ -1156,7 +1163,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	
             	default:
             		// Not active, not inactive. Re-request the status and try again
-            	    SPUDTEL_INFO_LOG(_L("RPacketContext::NotifyStatusChange()"));
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_6, "RPacketContext::NotifyStatusChange()");
                     aContext.PacketContext().NotifyStatusChange(*aStatus, aContext.ContextStatus());
                     aContext.SetStrategyStep (ENotifyStatusChange);
                     break;
@@ -1170,7 +1177,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 			if (KPrimaryContextId == aContext.Id())
 				{
                 aContext.PacketQoS().GetProfileParameters (*aStatus, aContext.QosNegotiatedPckg());	
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
                 aContext.DumpNegProfileParameters ();
 #endif
                 aContext.SetStrategyStep (EGetProfileParamsStep);
@@ -1200,7 +1207,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_2, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1224,26 +1231,26 @@ void TActivatePdpStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStatu
 	{
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set: DataChannelV2"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NOTIFYFSM_1, "FSM set: DataChannelV2");
 		aContext.PdpFsmInterface().Set(aContext.Id(), aContext.DataChannelV2());
 
 #ifdef SYMBIAN_NETWORKING_UMTSR5
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set: QoSR5Negotiated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NOTIFYFSM_2, "FSM set: QoSR5Negotiated");
 		aContext.PdpFsmInterface().Set(aContext.Id(), aContext.QosNegotiated().NegotiatedQoSR5());
 
 #else
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set: QoSR99_R4Negotiated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NOTIFYFSM_3, "FSM set: QoSR99_R4Negotiated");
 		aContext.PdpFsmInterface().Set(aContext.Id(), aContext.QosNegotiated().NegotiatedQoSR99_R4());
 #endif 
 // SYMBIAN_NETWORKING_UMTSR5
 
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpActivated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NOTIFYFSM_4, "Notifying FSM: EPdpActivated");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpActivated);
 
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpActivatedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NOTIFYFSM_5, "Notifying FSM: EPdpActivatedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpActivatedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -1258,30 +1265,30 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case EActivateStep:
 			{
-            SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextActivate"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketContext::EPacketContextActivate");
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextActivate);
 			break;
 			}
 			
 		case EGetConfigStep:
 			{
-	        SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextGetConfig"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EPacketContextGetConfig");
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextGetConfig);
 			break;
 			}
-					
+		
 		case ENotifyStatusChange:
 		    {
-            SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextNotifyStatusChange"));
-            aContext.PacketContext().CancelAsyncRequest(EPacketContextNotifyStatusChange);
-            break;
-		    }
-		    
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_3, "Cancel PacketContext::EPacketContextNotifyStatusChange");
+			aContext.PacketContext().CancelAsyncRequest(EPacketContextNotifyStatusChange);	
+			break;
+			}
+			
 		case EGetProfileParamsStep:
 			{
 			if(KPrimaryContextId == aContext.Id())
 				{
-                SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketQoSGetProfileParams"));
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_4, "Cancel PacketContext::EPacketQoSGetProfileParams");
 				aContext.PacketContext().CancelAsyncRequest(EPacketQoSGetProfileParams);	
 				break;
 				}
@@ -1289,7 +1296,7 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TActivatePdpStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_CANCELASYNCREQUEST_5, "ERROR: Incorrect case in TActivatePdpStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -1305,7 +1312,7 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TGetNegQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TGetNegQoSStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_1, "TGetNegQoSStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -1314,7 +1321,7 @@ void TGetNegQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 		case EStartStep:
 			{
 			aContext.PacketQoS().GetProfileParameters (*aStatus, aContext.QosNegotiatedPckg());
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpNegProfileParameters ();
 #endif
 			aContext.SetStrategyStep (EGetProfileParamsStep);
@@ -1329,7 +1336,7 @@ void TGetNegQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_2, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1354,23 +1361,23 @@ void TGetNegQoSStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStatus&
 	if(aCompletionStatus == KErrNone)
 		{
 #ifdef SYMBIAN_NETWORKING_UMTSR5
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set: QoSR5Negotiated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NOTIFYFSM_1, "FSM set: QoSR5Negotiated");
 		aContext.PdpFsmInterface().Set(aContext.Id(), aContext.QosNegotiated().NegotiatedQoSR5());
 
 #else
 // !SYMBIAN_NETWORKING_UMTSR5
 
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set: QoSR99_R4Negotiated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NOTIFYFSM_2, "FSM set: QoSR99_R4Negotiated");
 		aContext.PdpFsmInterface().Set(aContext.Id(), aContext.QosNegotiated().NegotiatedQoSR99_R4());
 #endif
 // SYMBIAN_NETWORKING_UMTSR5
 		
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpNegQoSRetrieved"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NOTIFYFSM_3, "Notifying FSM: EPdpNegQoSRetrieved");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpNegQoSRetrieved);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpNegQoSRetrievedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NOTIFYFSM_4, "Notifying FSM: EPdpNegQoSRetrievedFailed");
 	 	aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpNegQoSRetrievedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -1386,13 +1393,13 @@ void TGetNegQoSStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		case EGetProfileParamsStep:
 			{
 			aContext.PacketContext().CancelAsyncRequest(EPacketQoSGetProfileParams);	
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketQoSGetProfileParams"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketContext::EPacketQoSGetProfileParams");
 			break;
 			}
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TGetNegQoSStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_CANCELASYNCREQUEST_2, "ERROR: Incorrect case in TGetNegQoSStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -1409,7 +1416,7 @@ void TGetNegQoSStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TModifyActiveStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_1, "TModifyActiveStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -1434,7 +1441,7 @@ void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* a
 		case EModifyActiveStep:
 			{
 			aContext.PacketQoS().GetProfileParameters (*aStatus, aContext.QosNegotiatedPckg());
-#ifdef _DEBUG
+#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpNegProfileParameters ();
 #endif
 			aContext.SetStrategyStep (EGetProfileParamsStep);
@@ -1449,7 +1456,7 @@ void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* a
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_2, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1476,22 +1483,22 @@ void TModifyActiveStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestStat
 		if(aContext.ContextType() != SpudMan::EMbms)
 			{
 #ifdef SYMBIAN_NETWORKING_UMTSR5
-			SPUDTELVERBOSE_INFO_LOG(_L("FSM set: QoSR5Negotiated"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NOTIFYFSM_1, "FSM set: QoSR5Negotiated");
 			aContext.PdpFsmInterface().Set(aContext.Id(), aContext.QosNegotiated().NegotiatedQoSR5());
 
 #else
-			SPUDTELVERBOSE_INFO_LOG(_L("FSM set: QoSR99_R4Negotiated"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NOTIFYFSM_2, "FSM set: QoSR99_R4Negotiated");
  			aContext.PdpFsmInterface().Set(aContext.Id(), aContext.QosNegotiated().NegotiatedQoSR99_R4());
 #endif 
 // SYMBIAN_NETWORKING_UMTSR5
 			}
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpContextModified"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NOTIFYFSM_3, "Notifying FSM: EPdpContextModified");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpContextModified);
 
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpContextModifiedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NOTIFYFSM_4, "Notifying FSM: EPdpContextModifiedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpContextModifiedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -1507,20 +1514,20 @@ void TModifyActiveStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		case EModifyActiveStep:
 			{
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextModifyActiveContext);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextModifyActiveContext"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketContext::EPacketContextModifyActiveContext");
 			break;
 			}
 			
 		case EGetProfileParamsStep:
 			{
 			aContext.PacketContext().CancelAsyncRequest(EPacketQoSGetProfileParams);
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketQoSGetProfileParams"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EPacketQoSGetProfileParams");
 			break;
 			}
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TModifyActiveStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_CANCELASYNCREQUEST_3, "ERROR: Incorrect case in TModifyActiveStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -1543,7 +1550,7 @@ void TModifyActiveStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TCreateMbmsPdpContextStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_1, "TCreateMbmsPdpContextStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -1558,7 +1565,7 @@ void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestS
 			err = aContext.MbmsPacketContext().OpenNewContext (aContext.PacketService(), aContext.Name());
 			if (err)
 				{
-				SPUDTEL_ERROR_LOG(_L("PacketContextOpenNewContext returned for MBMS %d"), err);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_2, "PacketContextOpenNewContext returned for MBMS %d", err);
 				break;
 				}
 				
@@ -1582,7 +1589,7 @@ void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestS
 			break;	
 	
 		default:
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_3, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1606,12 +1613,12 @@ void TCreateMbmsPdpContextStrategy::NotifyFsm(CEtelDriverContext& aContext, TReq
 {
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EMbmsPdpContextCreated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NOTIFYFSM_1, "Notifying FSM: EMbmsPdpContextCreated");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EMbmsPdpContextCreated);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: E1ryPdpContextCreatedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NOTIFYFSM_2, "Notifying FSM: E1ryPdpContextCreatedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EMbmsPdpContextCreatedFailed, aCompletionStatus.Int());
 		}
 }
@@ -1622,20 +1629,20 @@ void TCreateMbmsPdpContextStrategy::NotifyFsm(CEtelDriverContext& aContext, TReq
 */
 void TCreateMbmsPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 	{
-	SPUDTEL_FNLOG("TCreate1ryPdpContextStrategy::CancelAsyncRequest()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_1, "TCreate1ryPdpContextStrategy::CancelAsyncRequest()");
 	
 	switch(aContext.StrategyStep())
 		{
 		case ESetConfigStep:
 			{
-			SPUDTEL_INFO_LOG(_L("Cancel PacketContext::EPacketContextSetConfig"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketContext::EPacketContextSetConfig");
 			aContext.PacketContext().CancelAsyncRequest(EPacketContextSetConfig);
 			break;
 			}
 			
 		default:
 			// there're NO outstanding async requests
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_CANCELASYNCREQUEST_3, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			break;
 		}
@@ -1652,7 +1659,7 @@ void TCreateMbmsPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aCont
 */
 void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TActivatePdpStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_1, "TActivatePdpStrategy::Next()");
 	
 	TInt err = KErrNone;
 	
@@ -1695,7 +1702,7 @@ void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus
 			
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_2, "ERROR: Incorrect case");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1719,16 +1726,16 @@ void TActivateMbmsPdpStrategy::NotifyFsm(CEtelDriverContext& aContext, TRequestS
 	{
 	if(aCompletionStatus == KErrNone)
 		{
-		SPUDTELVERBOSE_INFO_LOG(_L("FSM set: DataChannelV2"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NOTIFYFSM_1, "FSM set: DataChannelV2");
 		aContext.PdpFsmInterface().Set(aContext.Id(), aContext.DataChannelV2());
 
 
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpActivated"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NOTIFYFSM_2, "Notifying FSM: EPdpActivated");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpActivated);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: EPdpActivatedFailed"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NOTIFYFSM_3, "Notifying FSM: EPdpActivatedFailed");
 		aContext.PdpFsmInterface().Input(aContext.Id(), PdpFsm::EPdpActivatedFailed, aCompletionStatus.Int());
 		}
 	}
@@ -1744,28 +1751,28 @@ void TActivateMbmsPdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		case EActivateStep:
 			{
 			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextActivate);
-			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EPacketContextActivate"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_CANCELASYNCREQUEST_1, "Cancel MbmsPacketContext::EPacketContextActivate");
 			break;
 			}
 		
 		case EGetConfigStep:
 			{
 			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextGetConfig);
-			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EPacketContextGetConfig"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_CANCELASYNCREQUEST_2, "Cancel MbmsPacketContext::EGetConfigStep");
 			break;
 			}
 		
 		case EInitialiseContextStep:
 			{
 			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextInitialiseContext);	
-			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EPacketContextInitialiseContext"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_CANCELASYNCREQUEST_3, "Cancel MbmsPacketContext::EPacketContextInitialiseContext");
 			break;
 			}
 			
 					
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TActivatePdpStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_CANCELASYNCREQUEST_4, "ERROR: Incorrect case in TActivatePdpStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}
@@ -1781,7 +1788,7 @@ void TActivateMbmsPdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */	
 void TMbmsSessionUpdateStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	SPUDTEL_FNLOG("TMbmsSessionUpdateStrategy::Next()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_1, "TMbmsSessionUpdateStrategy::Next()");
 	
 	TInt err = KErrNone;
 	switch(aContext.StrategyStep())
@@ -1889,12 +1896,12 @@ void TMbmsSessionUpdateStrategy::NotifyFsm(CEtelDriverContext& aContext, TReques
 	{
 		if(aCompletionStatus == KErrNone)
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: TMbmsSessionUpdateStrategy"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NOTIFYFSM_1, "Notifying FSM: TMbmsSessionUpdateStrategy");
 		aContext.PdpFsmInterface().Input(aContext.Id(), SpudMan::EMbmsParameterUpdate);
 		}
 	else
 		{
-		SPUDTEL_INFO_LOG(_L("Notifying FSM: TMbmsSessionUpdateStrategy"));
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NOTIFYFSM_2, "Notifying FSM: TMbmsSessionUpdateStrategy");
 		aContext.PdpFsmInterface().Input(aContext.Id(), SpudMan::EMbmsParameterUpdate, aCompletionStatus.Int());
 		}
 	}
@@ -1910,20 +1917,20 @@ void TMbmsSessionUpdateStrategy::CancelAsyncRequest(CEtelDriverContext& aContext
 		case EUpdateMbmsSessionList:
 			{
 			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextSetConfig);
-			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EUpdateMbmsSessionList"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_CANCELASYNCREQUEST_1, "Cancel MbmsPacketContext::EUpdateMbmsSessionList");
 			break;
 			}
 		
 		case EPrepareSessionList:
 			{
 			aContext.MbmsPacketContext().CancelAsyncRequest(EPacketContextSetConfig);
-			SPUDTEL_INFO_LOG(_L("Cancel MbmsPacketContext::EPrepareSessionList"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_CANCELASYNCREQUEST_2, "Cancel MbmsPacketContext::EPrepareSessionList");
 			break;
 			}
 								
 		default:
 			// unexpected
-			SPUDTEL_ERROR_LOG0(_L("ERROR: Incorrect case in TMbmsSessionUpdateStrategy::CancelAsyncRequest"));
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_CANCELASYNCREQUEST_3, "ERROR: Incorrect case in TMbmsSessionUpdateStrategy::CancelAsyncRequest");
 			ASSERT(EFalse);
 			break;
 		}

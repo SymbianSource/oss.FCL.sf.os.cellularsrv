@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,8 +13,13 @@
 // Description:
 //
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ctsysystemstatepluginTraces.h"
+#endif
+
 #include "ctsysystemstateplugin.h"
-#include <ctsy/tflogger.h>
 
 CCtsySystemStatePlugin* CCtsySystemStatePlugin::NewL()
 	{
@@ -52,7 +57,7 @@ CCtsySystemStatePlugin::~CCtsySystemStatePlugin()
 // ---------------------------------------------------------------------------
 TInt CCtsySystemStatePlugin::Connect()
 	{	
-	TFLOGSTRING("CCtsySystemStatePlugin::Connect()");		
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYSYSTEMSTATEPLUGIN_CONNECT_1, "CCtsySystemStatePlugin::Connect()");
 
 	TInt error (KErrNone);
 	if (!iConnected)	 
@@ -66,7 +71,7 @@ TInt CCtsySystemStatePlugin::Connect()
         error = iSsmEmergencyCallRf.SetAsPriorityClient();
 		if (KErrNone != error)
 			{
-            TFLOGSTRING2("CCtsySystemStatePlugin::Connect()  - SetAsPriorityClient returned %d", error);
+            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYSYSTEMSTATEPLUGIN_CONNECT_2, "CCtsySystemStatePlugin::Connect()  - SetAsPriorityClient returned %d", error);
             error = KErrNone;
 			}
 	}	
@@ -82,7 +87,7 @@ TInt CCtsySystemStatePlugin::Connect()
 void CCtsySystemStatePlugin::ActivateRfForEmergencyCall(MCtsySsmPluginCallback* aSsmPluginCallback,
                                                         TCtsySsmCallbackData& aCallbackData)
 	{
-	TFLOGSTRING("CCtsySystemStatePlugin::ActivateRfForEmergencyCall()" );
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYSYSTEMSTATEPLUGIN_ACTIVATERFFOREMERGENCYCALL_1, "CCtsySystemStatePlugin::ActivateRfForEmergencyCall()" );
 
 	iAoChangeRfForEmergencyCall->ActivateRfForEmergencyCall(aSsmPluginCallback, aCallbackData);	
 	}
@@ -95,12 +100,12 @@ void CCtsySystemStatePlugin::ActivateRfForEmergencyCall(MCtsySsmPluginCallback* 
 // ---------------------------------------------------------------------------
 void CCtsySystemStatePlugin::DeactivateRfAfterEmergencyCall()
 	{	
-	TFLOGSTRING("CCtsySystemStatePlugin::DeactivateRfForEmergencyCall()" );		
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYSYSTEMSTATEPLUGIN_DEACTIVATERFAFTEREMERGENCYCALL_1, "CCtsySystemStatePlugin::DeactivateRfForEmergencyCall()" );
 	//try to connect
 	TInt err = Connect();
 	if (err)
 		{
-	    TFLOGSTRING2("CCtsySystemStatePlugin::DeactivateRfAfterEmergencyCall() failed to connect %d", err);
+	    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYSYSTEMSTATEPLUGIN_DEACTIVATERFAFTEREMERGENCYCALL_2, "CCtsySystemStatePlugin::DeactivateRfAfterEmergencyCall() failed to connect %d", err);
 		//do nothing
 		return;
 		}
@@ -114,7 +119,7 @@ void CCtsySystemStatePlugin::DeactivateRfAfterEmergencyCall()
 // ---------------------------------------------------------------------------	
 void CCtsySystemStatePlugin::Close()
 	{			
-	TFLOGSTRING("CCtsySystemStatePlugin::Close()" );				
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYSYSTEMSTATEPLUGIN_CLOSE_1, "CCtsySystemStatePlugin::Close()" );
 	if (iConnected)	
 		{	
 		// if there is some request...
@@ -159,7 +164,7 @@ CChangeRfForEmergencyCall::~CChangeRfForEmergencyCall()
 void CChangeRfForEmergencyCall::ActivateRfForEmergencyCall(MCtsySsmPluginCallback* aSsmPluginCallback,
 														   TCtsySsmCallbackData& aCallbackData)
    {	
-   TFLOGSTRING("CChangeRfForEmergencyCall::ActivateRfForEmergencyCall()" );     
+   OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHANGERFFOREMERGENCYCALL_ACTIVATERFFOREMERGENCYCALL_1, "CChangeRfForEmergencyCall::ActivateRfForEmergencyCall()" );
 
    if (EDeactivateBusy == iBusy)
       {
@@ -196,7 +201,7 @@ void CChangeRfForEmergencyCall::ActivateRfForEmergencyCall(MCtsySsmPluginCallbac
 // --------------------------------------------------------------------------- 
 void CChangeRfForEmergencyCall::DeactivateRfAfterEmergencyCall()
    {	
-   TFLOGSTRING("CChangeRfForEmergencyCall::DeactivateRfAfterEmergencyCall()" );     
+   OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHANGERFFOREMERGENCYCALL_DEACTIVATERFAFTEREMERGENCYCALL_1, "CChangeRfForEmergencyCall::DeactivateRfAfterEmergencyCall()" );
 
 		// if we've already sent request  
 		if (EActivateBusy == iBusy)

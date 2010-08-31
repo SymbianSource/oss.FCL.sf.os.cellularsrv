@@ -23,6 +23,6 @@
 #include <mmtsy.iby>
 #include <phbksync.iby>
 #include <etelsat.iby>
-#include <fax.iby>
+
 
 #endif

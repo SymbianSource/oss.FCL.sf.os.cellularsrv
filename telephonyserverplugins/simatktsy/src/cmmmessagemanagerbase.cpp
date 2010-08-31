@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,8 +16,13 @@
 
 
 //  INCLUDE FILES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cmmmessagemanagerbaseTraces.h"
+#endif
+
 #include "cmmmessagemanagerbase.h"
-#include "tflogger.h"
 #include "ctsydelegates.h"
 #include "csatmessagerouterproxy.h"
 #include <ctsy/pluginapi/mmessagerouter.h>
@@ -71,7 +76,7 @@ void CMmMessageManagerBase::ConstructL()
 TInt CMmMessageManagerBase::HandleRequestL(    
     const TInt aIpc )        
     {
-TFLOGSTRING2("TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
     return HandleRequestL( 
         aIpc, REINTERPRET_CAST( const CMmDataPackage*, NULL ) );
     }
@@ -86,7 +91,7 @@ TInt CMmMessageManagerBase::HandleRequestL(
     const TInt aIpc,      
     const CMmDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL1_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
    
     return iMessageRouter.ExtFuncL( aIpc, aDataPackage );
     }
@@ -101,7 +106,7 @@ TInt CMmMessageManagerBase::HandleRequestL(
     const TInt aIpc,        
     const TDataPackage* aDataPackage )
     {
-TFLOGSTRING2("TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL2_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
 
     // map the TDataPackage into a CMmDataPackage
     // Non-core Methods from the SOS layer using the DOS layer will perforn

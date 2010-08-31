@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,11 +19,17 @@
  @file Nd_directstates.cpp 
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ND_DIRECTSTATESTraces.h"
+#endif
+
 #include "ND_DIRCT.H"
 #include "ND_SCR.H"
 #include "ND_DBACC.H"
 #include "ND_STD.H"
-#include "SLOGGER.H"
 #include "ND_DIRECTSTATES.H"
 
 CDirCtInit* CDirCtInit::NewL(MAgentStateMachineEnv& aSMObserver, MNetdialEnv& aNdEnv)
@@ -236,8 +242,7 @@ Call ServiceStarted() if not a reconnect.
 	{
 	if(iStatus!=KErrNone)
 		{
-		__FLOG_STMT(_LIT(logString3,"Scan Script");)
-		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),KCompletedPhaseLogString(), &logString3(), iStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTSCANSCRIPT_RUNL_1,"NetDial:\tCompleted Phase Scan Script with Error %d", iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdScannedScript,iStatus.Int());
@@ -247,11 +252,11 @@ Call ServiceStarted() if not a reconnect.
 	iSMObserver->UpdateProgress(ECsdScannedScript,iStatus.Int());
 	if (!(iNdEnv->BaseEnv())->IsReconnect())
 		{
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KServiceStartedLogString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTSCANSCRIPT_RUNL_2, "NetDial:\tService Started");
 		}
 	else
 		{			
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KServiceStartedReconnLogString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTSCANSCRIPT_RUNL_3,"NetDial:\tService Started On Reconnection");
 		}
 	//iSMObserver->ServiceStarted();
 	(iNdEnv->BaseEnv())->CompleteState(KErrNone);
@@ -431,8 +436,7 @@ Complete connect state with KErrNone.
 	{
 	if(iStatus!=KErrNone)
 		{
-		__FLOG_STMT(_LIT(logString3,"Execute Script");)
-		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),KCompletedPhaseLogString(), &logString3(), iStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCONNECT_RUNL_1, "NetDial:\tCompleted Phase Execute Script with Error %d", iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdFinishedConnect,iStatus.Int());
@@ -464,8 +468,7 @@ Executes script if used.  If script is not used, calls JumpToRunl() with KErrNon
 	{
 	if (iNdEnv->UseScript())
 		{
-		__FLOG_STMT(_LIT8(logString,"NetDial:\tExecuting Script");)
-		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCONNECT_DOSTARTSTATEL_1, "NetDial:\tExecuting Script");
 
 		(iNdEnv->Script())->ExecuteL(*this);
 		iStatus=KRequestPending;
@@ -567,8 +570,7 @@ If script is used, close script.
 	{
 	__ASSERT_DEBUG(iStatus==KErrNone,User::Invariant());
 	iSMObserver->UpdateProgress(ECsdConnectionOpen,KErrNone);
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tConnection Open");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTOPEN_RUNL_1, "NetDial:\tConnection Open");
 	if (iNdEnv->Script()!=NULL)
 		iNdEnv->Script()->CloseScript();
 	iSMObserver->ConnectionComplete(ECsdConnectionOpen,KErrNone);
@@ -658,14 +660,12 @@ Call UpdateProgress() with ECsdFinishedHangUp and KErrNone.
 Complete hangup state.
 */
 	{
-	__FLOG_STMT(_LIT(logString3,"Hang Up");)
 	if(iStatus!=KErrNone)
 		{
-		__FLOG_STMT(_LIT8(logString2,"NetDial:\tDisconnection Error %d");)
-		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
-		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString2()), iStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTHANGUP_RUNL_1,"NetDial:\tCompleted Phase Hang Up with Error %d", iStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTHANGUP_RUNL_2, "NetDial:\tDisconnection Error %d", iStatus.Int());
 		}
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString3());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTHANGUP_RUNL_3,"Hang Up");
 	iSMObserver->UpdateProgress(ECsdFinishedHangUp,iStatus.Int());
 	(iNdEnv->BaseEnv())->CompleteState(iStatus.Int());
 	}
@@ -751,8 +751,7 @@ If script is used, call ReConfigureAndCancelCommPort().
 Call DisconnectComplete().
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tDisconnect Complete");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTDISCONNECT_RUNL_1, "NetDial:\tDisconnect Complete");
 
 	iSMObserver->DisconnectComplete();
 	}
@@ -923,8 +922,7 @@ Initiate asynchronous configuration of data port.
 	TRAPD(ret,DoStartStateL());
 	if (ret!=KErrNone)
 		{
-		__FLOG_STMT(_LIT8(logString, "NetDial:\tError %d Configuring Comm Port");)
-		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()), ret);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCONFIGURECOMMPORT_STARTSTATE_1, "NetDial:\tError %d Configuring Comm Port", ret);
 		JumpToRunl(ret);
 		}
 	}
@@ -955,8 +953,8 @@ void CDirCtConfigureCommPort::DoCancel()
 Cancels active requests
 */
 	{
-	__FLOG_STMT(_LIT8(logString, "NetDial:\tCancel Configure Comm Port");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCONFIGURECOMMPORT_DOCANCEL_1,"NetDial:\tCancel Configure Comm Port");
+
 
 	(iNdEnv->Script())->CancelConfigureCommPort();
 	}
@@ -970,8 +968,7 @@ Complete configure comm port state with KErrNone.
 	{
 	if(iStatus!=KErrNone)
 		{
-		__FLOG_STMT(_LIT(logString3,"Configuring Comm Port");)
-		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),KCompletedPhaseLogString(), &logString3(), iStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCONFIGURECOMMPORT_RUNL_1, "NetDial:\tCompleted Phase Configuring Comm Port with Error %d", iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdFinishedConnect,iStatus.Int());
@@ -988,8 +985,8 @@ Retrieves Comm Port configuration parameters from CommsDat and initiates configu
 @exception Leaves if GetCommConfigForDirectConnectL() leaves.
 */
 	{
-	__FLOG_STMT(_LIT8(logString1,"NetDial:\tConfiguring Comm Port");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCONFIGURECOMMPORT_DOSTARTSTATEL_1,"NetDial:\tConfiguring Comm Port");
+
 	(iNdEnv->NetDialDb())->GetCommConfigForDirectConnectL(iConfigPckg);
 
 	iStatus = KRequestPending;
@@ -1050,8 +1047,7 @@ Starts direct connection reconfigure comm port state.
 Reconfigure port to allow signals to be dropped.
 */
 	{
-	__FLOG_STMT(_LIT8(logString, "NetDial:\tReconfiguring Comm Port");)
-	__FLOG_STATIC(KNetDialLogFolder(), KNetDialLogFile(), logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTRECONFIGURECOMMPORT_STARTSTATE_1, "NetDial:\tReconfiguring Comm Port");
 	iStatus = KRequestPending;
 	SetActive();
 	// Reconfigure the Comm Port to allow the signals to be set.
@@ -1114,8 +1110,7 @@ Call CompleteState() with KErrNone.
 	if (!iDropping)
 		{
 		// ReConfigureAndCancelCommPort() has completed to allow us to drop the Comm Port signals.
-		__FLOG_STMT(_LIT8(logString, "NetDial:\tDropping Signals");)
-		__FLOG_STATIC(KNetDialLogFolder(), KNetDialLogFile(), logString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTRECONFIGURECOMMPORT_RUNL_1, "NetDial:\tDropping Signals");
 
 		iDropping = ETrue;
 		iStatus = KRequestPending;
@@ -1223,15 +1218,11 @@ Call CompleteState() with KErrNone.
 	// in response to its earlier Connect()).  Consequently, we can't call either method with an error argument
 	// for a second time (otherwise NIFMAN will panic due to too many ConnectComplete() responses).
 	if (iStatus!=KErrNone)
-		{
-#ifdef __FLOG_ACTIVE
-		_LIT(logString3,"Close Data Port");
-		_LIT8(logstring2,"Saved error = %d");
-#endif
-		__FLOG_STATIC2(KNetDialLogFolder(), KNetDialLogFile(), TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
+	    {
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCLOSEDATAPORT_RUNL_1,  "NetDial:\tCompleted Phase Close Data Port with Error %d", iStatus.Int());
 		if (iError != KErrNone)
 			{
-			__FLOG_STATIC1(KNetDialLogFolder(), KNetDialLogFile(), TRefByValue<const TDesC8>(logstring2()), iError);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDIRCTCLOSEDATAPORT_RUNL_2,"Saved error = %d", iError);
 			}
 		else
 			{

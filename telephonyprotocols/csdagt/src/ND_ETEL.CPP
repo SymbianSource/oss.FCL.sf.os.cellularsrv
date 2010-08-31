@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,10 +19,16 @@
  @file Nd_etel.cpp
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "ND_ETELTraces.h"
+#endif
+
 #include "ND_DBACC.H"
 #include "ND_STD.H"
 #include "ND_ETEL.H"
-#include "SLOGGER.H"
+
 
 /**
 @internalComponent
@@ -77,8 +83,7 @@ Connect to ETel server.
 	{
 	CActiveScheduler::Add(this);
 
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tConnecting Etel Server");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_CONSTRUCTL_1, "NetDial:\tConnecting Etel Server");
 	User::LeaveIfError(iTelServer.Connect());
 	iState=EIdle;
 	iCallType=EUnknown;
@@ -92,11 +97,9 @@ If TSY is loaded, call UnloadPhoneModule() to unload it.
 Close ETel server connection.
 */
 	{
-	__FLOG_STMT(_LIT8(logString1,"NetDial:\tClosing Call");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_DTOR_1,"NetDial:\tClosing Call");
 	CloseCall();
-	__FLOG_STMT(_LIT8(logString2,"NetDial:\tClosing Etel Server");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_DTOR_2, "NetDial:\tClosing Etel Server");
 	if(iTsyLoaded)
 		{
 		iTelServer.UnloadPhoneModule(iTsyName);
@@ -133,8 +136,7 @@ and dial the call.
 @exception Leaves if GetCallParamsL() leaves.
 */
 	{
-	__FLOG_STMT(_LIT(logString,"NetDial:\tDialling %S");)
-	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString()),&iTelNum);
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_DIALL_1, "NetDial:\tDialling %S", iTelNum);
 
 	TInt ret=iDb->GetRedialAttempts(iMaxDialAttempts);
 	if (ret!=KErrNone)
@@ -197,8 +199,7 @@ Enable listening for a baseband disconnect
 @param aObserver a reference to observer.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tListening For Call Status Change");)
-	__FLOG_STATIC(KNetDialLogFolder(), KNetDialLogFile(), logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_LISTENFORSTATUSCHANGE_1, "NetDial:\tListening For Call Status Change");
 	
 	__ASSERT_ALWAYS(EIdle == iState, NetDialPanic(EEtelServerNotIdle));
 	__ASSERT_ALWAYS(iCallOpen, NetDialPanic(EEtelCallNotOpen));
@@ -211,8 +212,7 @@ Enable listening for a baseband disconnect
 	
 void CTelServerProcessor::CancelListenForStatusChange()
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tCancelListenForStatusChange. iState: [%d]. iStatus: [%d]");)
-	__FLOG_STATIC2(KNetDialLogFolder(), KNetDialLogFile(), logString(), iState, iStatus.Int());
+	OstTraceDefEx2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_CANCELLISTENFORSTATUSCHANGE_1, "NetDial:\tCancelListenForStatusChange. iState: [%d]. iStatus: [%d]",iState, iStatus.Int());
 	
 	__ASSERT_ALWAYS(iCallOpen, NetDialPanic(EEtelCallNotOpen));	
 	
@@ -226,8 +226,7 @@ If the call dropped, notify the observer, otherwise re-issue status
 change notification
 */
 	{	
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tCall Status Changed. CallStatus %d Error: %d");)
-	__FLOG_STATIC2(KNetDialLogFolder(), KNetDialLogFile(), logString(), iCallStatus, iStatus.Int());
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_HANDLESTATUSCHANGE_1, "NetDial:\tCall Status Changed. CallStatus %d Error: %d",iCallStatus, iStatus.Int());
 	
 	// Ignore if subscribing to status change notification failed.
 	// It can be that the TSY doesn't support the feature etc.
@@ -281,8 +280,7 @@ call AnswerIncomingCall() and start to wait for incoming call.
 	if (!iCallOpen)
 		OpenNewCallL();
 
-	__FLOG_STMT(_LIT8(logString2,"NetDial:\tWaiting For Incoming Call");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_WAITFORINCOMINGCALLL_1, "NetDial:\tWaiting For Incoming Call");
 
 	if (iCallType==ECoreCallOnly)
 		{
@@ -346,8 +344,7 @@ Set object active to wait for completition of request.
 #endif	
 	Assertions();
 
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tHanging Up Call");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_STARTHANGUP_1, "NetDial:\tHanging Up Call");
 	ActiveCall().HangUp(iStatus);
 	SetActive();
 	}
@@ -361,8 +358,7 @@ Call SetCommPortL() from CommDB accessor to set the comm port into CommDB.
 @exception Leaves if LoanDataPort() returns error or SetCommPortL leaves.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tLoaning Port From Etel");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_GETCOMMPORTL_1, "NetDial:\tLoaning Port From Etel");
 	User::LeaveIfError(ActiveCall().LoanDataPort(aCommPort));
 	iDb->SetCommPortL(aCommPort);
 	iLoaned=ETrue;
@@ -378,8 +374,7 @@ Call RecoverDataPort() to return comm port to ETel server.
 @exception Leaves if RecoverDataPort() returns error.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tRecovering Port To Etel");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_RETURNCOMMPORTL_1, "NetDial:\tRecovering Port To Etel");
 	User::LeaveIfError(ActiveCall().RecoverDataPort());
 	iLoaned=EFalse;
 #ifndef SYMBIAN_NETWORKING_CSDAGENT_BCA_SUPPORT
@@ -393,15 +388,13 @@ If comm port is loaned, call ReturnCommPortL() and trap error.
 If call is open, call Close() from active call object.
 */
 	{
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tClosing Call");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_CLOSECALL_1, "NetDial:\tClosing Call");
 	if (iLoaned)
 		{
 		TRAPD(ret,ReturnCommPortL());		// can't do anything with the error, so just trap
 		if (KErrNone != ret)
 			{
-			__FLOG_STMT(_LIT8(logString2,"ReturnCommPort:\tError Occured");)
-			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_CLOSECALL_2, "ReturnCommPort:\tError Occured");
 			}
 		}
 
@@ -569,8 +562,7 @@ Load the TSY and open a new call from the ETEL server
 	callName.Append(lineInfo.iName);
 	
 	callName.Append(KDoubleColon);
-	__FLOG_STMT(_LIT8(logString,"NetDial:\tOpening Call");)
-	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_OPENNEWCALLL_1, "NetDial:\tOpening Call");
 
 	iDb->CopyIspInitStringToModemL();	// will not leave if the field is blank
 	// Only MultimodeV1 and greater supported!
@@ -595,8 +587,7 @@ void CTelServerProcessor::GetPhoneInfoL(RTelServer::TPhoneInfo& aInfo)
 	User::LeaveIfError(iTelServer.EnumeratePhones(count));
 	if (count<=0)
 		{
-    	__FLOG_STMT(_LIT(logString,"NetDial:\tGetPhoneInfoL(): no phones found - leaving with -1");)
-    	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_GETPHONEINFOL_1,"NetDial:\tGetPhoneInfoL(): no phones found - leaving with -1");
 		User::Leave(KErrNotFound);
 		}
 	TInt i;
@@ -619,8 +610,7 @@ void CTelServerProcessor::GetPhoneInfoL(RTelServer::TPhoneInfo& aInfo)
 
 	if (!found)
 		{
-		__FLOG_STMT(_LIT(logString,"NetDial:\tGetPhoneInfoL(): required phone not found - leaving with -1");)
-    	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_GETPHONEINFOL_2, "NetDial:\tGetPhoneInfoL(): required phone not found - leaving with -1");
 		User::Leave(KErrNotFound);
 		}
 	}
@@ -635,8 +625,7 @@ void CTelServerProcessor::GetLineInfoL(RPhone::TLineInfo& aInfo,const TDesC& aPh
         User::LeaveIfError(phone.EnumerateLines(count));
 	if (count <= 0)
 		{
-    	__FLOG_STMT(_LIT(logString,"NetDial:\tGetLineInfoL(): no line info available - leaving with -1");)
-    	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_GETLINEINFOL_1,"NetDial:\tGetLineInfoL(): no line info available - leaving with -1");
 	        User::Leave(KErrNotFound);
 		}
         
@@ -666,8 +655,7 @@ void CTelServerProcessor::GetLineInfoL(RPhone::TLineInfo& aInfo,const TDesC& aPh
         CleanupStack::PopAndDestroy(&phone);
         if (!found)
         	{
-        	__FLOG_STMT(_LIT(logString,"NetDial:\tGetLineInfoL(): required line not found - leaving with -1");)
-        	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
+        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVERPROCESSOR_GETLINEINFOL_2, "NetDial:\tGetLineInfoL(): required line not found - leaving with -1");
 	        User::Leave(KErrNotFound);
         	}
         }

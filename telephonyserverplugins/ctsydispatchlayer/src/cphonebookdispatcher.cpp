@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,6 +12,12 @@
 //
 // Description:
 //
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "cphonebookdispatcherTraces.h"
+#endif
 
 #include "cphonebookdispatcher.h"
 
@@ -1049,7 +1055,7 @@ void CPhonebookDispatcher::CallbackStoreResetCache(TInt aError, DispatcherPhoneb
  * @param aPhonebook The phonebook to reset the cache for.
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d"), aError, aPhonebook);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d"), aError, aPhonebook);
 
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));
 	
@@ -1071,8 +1077,8 @@ void CPhonebookDispatcher::CallbackStoreSetFdnPhonebookInfoInd(TInt aError, TInt
  * @param aMaxNumberLength The maximum number length in the Fdn phonebook.
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aTotalEntries=%d,aMaxTextLength=%d,aMaxNumberLength=%d"), 
-							aError,aTotalEntries,aMaxTextLength,aMaxNumberLength);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aTotalEntries=%d, aMaxTextLength=%d, aMaxNumberLength=%d"), 
+							aError, aTotalEntries, aMaxTextLength, aMaxNumberLength);
 
 	TName phoneBookName(KETelIccFdnPhoneBook);
 	CPhoneBookDataPackage phoneBookDataPackage;
@@ -1104,7 +1110,7 @@ void CPhonebookDispatcher::CallbackStoreReadEntry(TInt aError, DispatcherPhonebo
  * @see CPhoneBookEntry::ExternalizeToTlvEntry()
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d"), aError, aPhonebook);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d"), aError, aPhonebook);
 	
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));	
 	
@@ -1115,7 +1121,7 @@ void CPhonebookDispatcher::CallbackStoreReadEntry(TInt aError, DispatcherPhonebo
 	
 	if((aError == KErrNone) && (aPhonebook != DispatcherPhonebook::EUnknown))
 		{
-		//fill the CTSY pointer		
+		//fill the CTSY pointer
         TRAP ( aError, 
                 CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
                 iPhonebookReadPtrs[aPhonebook] = readEntries;
@@ -1174,7 +1180,7 @@ void CPhonebookDispatcher::CallbackStoreCache(TInt aError, DispatcherPhonebook::
  * @see CPhoneBookEntry::ExternalizeToTlvEntry()
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d"), aError, aPhonebook);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d"), aError, aPhonebook);
 	
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));
 	
@@ -1189,7 +1195,7 @@ void CPhonebookDispatcher::CallbackStoreCache(TInt aError, DispatcherPhonebook::
                 CArrayPtrSeg<CPhoneBookStoreEntry>* readEntries = new(ELeave) CArrayPtrSeg<CPhoneBookStoreEntry>(1);
                 iPhonebookCachePtrs[aPhonebook] = readEntries;
                 FillCtsyPhoneBookStoreL(aPhonebookEntries, *(iPhonebookCachePtrs[aPhonebook])));
-        
+		
 		if(aError)
 			{
 			iPhonebookCachePtrs[aPhonebook]->ResetAndDestroy();
@@ -1337,7 +1343,7 @@ void CPhonebookDispatcher::CallbackStoreWriteEntry(TInt aError, DispatcherPhoneb
  * @see RMobilePhoneBookStore::Write() 
  */
 	{
-	TSYLOGENTRYEXITARGS(_L8("aError=%d,aPhonebook=%d,aIndex=%d,aMaxNumberLength=%d"), aError, aPhonebook, aIndex, aMaxNumberLength);
+	TSYLOGENTRYEXITARGS(_L8("aError=%d, aPhonebook=%d, aIndex=%d, aMaxNumberLength=%d"), aError, aPhonebook, aIndex, aMaxNumberLength);
 
 	__ASSERT_DEBUG(aPhonebook != DispatcherPhonebook::EUnknown, CtsyDispatcherPanic(EInvalidParameter));
 	
@@ -1509,7 +1515,7 @@ void CPhonebookDispatcher::CallbackSync(CRequestQueueOneShot::TIpcDataPackage& a
 		{
 	
 	default:
-		LOG(_L8("WARNING: CPhonebookDispatcher::CallbackSync unhandled IPC=%d"), aIpcDataPackage.iIpc);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEBOOKDISPATCHER_CALLBACKSYNC_1, "WARNING: CPhonebookDispatcher::CallbackSync unhandled IPC=%d", aIpcDataPackage.iIpc);
 		__ASSERT_DEBUG(NULL, CtsyDispatcherPanic(EUnhandledCtsyIpc));
 		break;		
 		} // switch (aIpcDataPackage.iIpc)

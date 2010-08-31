@@ -31,7 +31,6 @@
 #include "cmmmessagemanagerbase.h"
 #include "MmTsy_timeoutdefs.h"
 #include <ctsy/serviceapi/mmtsy_defaults.h>
-#include <ctsy/tflogger.h>
 #include "CMmPrivateUtility.h"
 #include <ctsy/serviceapi/ctsydomainpskeys.h>
 #include <ctsy/serviceapi/mctsysatservice.h>
@@ -124,13 +123,10 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
             EMultimodePhoneNotifyNWSelectionSettingChange, 
             EMultimodePhoneNotifyNWTimeInfoChange, //15
             EMultimodePhoneSelectNetwork, 
-            EMultimodePhoneSetNWSelectionSetting,
-            EMultimodePhoneGetPreferredNetworksPhase1,
-            EMultimodePhoneStorePreferredNetworksList,
-            EMultimodePhoneNotifyStorePreferredNetworksListChange, // 20
+            EMultimodePhoneSetNWSelectionSetting, 
             EMultimodePhoneSetCallForwardingStatus, 
             EMultimodePhoneGetIdentityServiceStatus,
-            EMultimodePhoneSetCallBarringStatus,
+            EMultimodePhoneSetCallBarringStatus, //20
             EMultimodePhoneSetSSPassword,
             EMultimodePhoneSetCallWaitingStatus,
             EMultimodePhoneSetFdnSetting,
@@ -205,6 +201,7 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
             EMultimodePhoneNotifyAllSendNetworkServiceRequest,
             EMultimodePhoneGetCurrentActiveUSimApplication,             
             EMultimodePhoneTerminateAllCalls,
+            EMultimodePhoneTerminateActiveCalls,
             EMultimodePhoneNotifyDtmfEvent, 
             // ATTENTION:: Declare constant for those requests that need
             // own request handle record in iTsyReqHandleStore above the
@@ -1417,6 +1414,13 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
         void CompleteTerminateAllCallsReq(TInt aErrorCode);
         
         /**
+         * Complete TerminateActiveCalls request
+         * 
+         * @param aErrorCode The result of the request
+         */
+        void CompleteTerminateActiveCallsReq(TInt aErrorCode);
+        
+        /**
         * Notify change of battery info
         *          
         * @param aErrorCode error code
@@ -2177,6 +2181,14 @@ NONSHARABLE_CLASS( CMmPhoneTsy ) : public CPhoneBase,
           */
         TInt TerminateAllCallsL(const TTsyReqHandle aTsyReqHandle);
 
+        /**
+          * Terminate all active calls simultaneously
+          * 
+          * @param aTsyReqHandle TSY req handle
+          * @return Error value
+          */
+        TInt TerminateActiveCallsL(const TTsyReqHandle aTsyReqHandle);
+        
         /*
          * This function return availability of Hareware Resource Manager in the current ROM
          * 

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -14,9 +14,14 @@
 // sblpapi.cpp - SBLP QoS API
 //
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "sblpextnTraces.h"
+#endif
+
 #include "sblpextn.h"
 #include "qosextn_constants.h"
-#include "qosextn_log.h"
 #include <networking/qosparameters.h>
 
 // Buffer size
@@ -64,7 +69,7 @@ EXPORT_C void CSblpParameters::SetMAT(const TAuthorizationToken &aAuthToken )
 
 EXPORT_C CSblpParameters::TFlowIdentifier& CSblpParameters::GetFlowId(TInt aIndex)
 	{
-	__ASSERT_DEBUG(aIndex<iFlowIds.Count(),User::Panic(_L("Sblp"),KErrArgument));
+	__ASSERT_DEBUG(aIndex<iFlowIds.Count(),User::Panic(_L("CSblpParameters::GetFlowId"),KErrArgument));
 	return iFlowIds[aIndex];
 	}
 
@@ -78,7 +83,7 @@ EXPORT_C void CSblpParameters::SetFlowIds(const RArray<TFlowIdentifier> &aFlowId
 		TInt errorCode = this->iFlowIds.Append(aFlowIds[i]);
 		if (errorCode != KErrNone) 
 		    {
-            LOG(Log::Printf(_L("CSblpParameters::SetFlowIds - Not Enough Memory!!!\n"));)
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPARAMETERS_SETFLOWID, "Not Enough Memory");
 		    }
 		}
 	}
@@ -94,7 +99,7 @@ EXPORT_C TInt CSblpParameters::GetFlowIds(RArray<TFlowIdentifier>& aFlowIds)
         errorCode = aFlowIds.Append(this->iFlowIds[i]);
         if (errorCode != KErrNone) 
             {
-            LOG(Log::Printf(_L("CSblpParameters::GetFlowIds - Not Enough Memory!!!\n"));)
+            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPARAMETERS_GETFLOWID, "Not Enough Memory");
             return errorCode;
             }
 		}
@@ -175,7 +180,7 @@ EXPORT_C TDesC8& CSblpPolicy::Data()
 	header.reserved = 0;
 	header.protocol_id = 0;
 	bufPtr.Append((TUint8*)&header, sizeof(pfqos_configure));
-
+	
 	pfqos_extension extensionType;
 	extensionType.pfqos_ext_len = 0;
 	extensionType.pfqos_ext_type = EPfqosExtExtension;
@@ -194,10 +199,10 @@ EXPORT_C TDesC8& CSblpPolicy::Data()
 	iSblp->GetMAT(authToken);
 	SetStringBlockHeader(stringBlock,authToken,KDescSblpMediaAuthorizationToken);
 	bufPtr.Append((TUint8*)&stringBlock, sizeof(pfqos_configblock));
+
 	// put the string now
 	authToken.ZeroTerminate();
 	bufPtr.Append((TUint8*)authToken.Ptr(),KAuthorizationTokenAdjustedStringLength);
-
 
 	// Flowids
 	pfqos_configblock_int ext;
@@ -207,11 +212,13 @@ EXPORT_C TDesC8& CSblpPolicy::Data()
 		CSblpParameters::TFlowIdentifier& flowId = iSblp->GetFlowId(i);
 		SetIntValue(ext,flowId.iMediaComponentNumber,KDescSblpMediaComponentNumber);
 		bufPtr.Append((TUint8*)&ext, sizeof(pfqos_configblock_int));
+
 		SetIntValue(ext,flowId.iIPFlowNumber,KDescSblpIPFlowNumber);
 		bufPtr.Append((TUint8*)&ext, sizeof(pfqos_configblock_int));
 		}
 
 	bufPtr.AppendFill(0, header.pfqos_configure_len * 8 - byte_len);
+
 	return *iData;
 	}
 
@@ -240,32 +247,32 @@ EXPORT_C void CSblpPolicy::SetSblpParameters(const CSblpParameters& aSblp)
 	
 	*iSblp = aSblp;
 
-	LOG(
+
 	// following code is to create logs
 	TAuthorizationToken authToken;
 	iSblp->GetMAT (authToken);
-	RArray<CSblpParameters::TFlowIdentifier> flowIds;
+    RArray<CSblpParameters::TFlowIdentifier> flowIds;
 	iSblp->GetFlowIds(flowIds);
 	// in case of low memory GetFlowIds might return an error and flowIds might not have all the ids, but we still try to log as much as we can
 	TBuf<KAuthorizationTokenSize> label;
 	label.Copy(authToken);
 		
-	Log::Printf(_L("<------------------------------------------------\n"));
-	Log::Printf(_L("CSblpPolicy::SetSblpParameters"));
-	Log::Printf(_L("\n"));
-	Log::Printf(_L("SBLP VALUES SUPPLIED BY CLIENT IS \n"));
-	Log::Printf(_L("\n"));
-	Log::Printf(_L("[MAT string			 :	 = %S]\n"),&label);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_1, "<------------------------------------------------\n");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_2, "CSblpPolicy::SetSblpParameters");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_3, "\n");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_4, "SBLP VALUES SUPPLIED BY CLIENT IS \n");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_5, "\n");
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_6, "[MAT string           :   = %S]\n",label);
 	
 	TInt i;
 	for(i=0; i<flowIds.Count();i++)
 		{
-		Log::Printf(_L("Media component number  :	 = %d]\n"),flowIds[i].iMediaComponentNumber);
-		Log::Printf(_L("IP flow number		  :	 = %d]\n"),flowIds[i].iIPFlowNumber);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_7, "Media component number  :   = %d]\n",flowIds[i].iMediaComponentNumber);
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_8, "IP flow number       :  = %d]\n",flowIds[i].iIPFlowNumber);
 		}
-	Log::Printf(_L("------------------------------------------------>\n"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSBLPPOLICY_SETSBLPPARAMETERS_9, "------------------------------------------------>\n");
 	flowIds.Close();
-	)
+	
 	
 	}
 

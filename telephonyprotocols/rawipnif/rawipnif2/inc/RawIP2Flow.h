@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,11 +30,9 @@
 #include <comms-infras/ss_flowbinders.h>
 #include <comms-infras/ss_subconnflow.h>
 #include "BinderBase.h"
-#include "bttlog.h"
 #include <comms-infras/linkmessages.h>		// for TLinkMessageId
 
 class CBcaController;
-class CBttLogger;
 class CPacketLogger;
 class CBCAProvision;
 
@@ -100,7 +98,7 @@ public:	// Context status retrieval.
 	inline RPacketContext::TContextStatus GetContextStatus();
 	
 protected:
-	CRawIP2Flow(ESock::CSubConnectionFlowFactoryBase& aFactory, const Messages::TNodeId& aSubConnId, ESock::CProtocolIntfBase* aProtocolIntf, CBttLogger* aTheLogger);
+	CRawIP2Flow(ESock::CSubConnectionFlowFactoryBase& aFactory, const Messages::TNodeId& aSubConnId, ESock::CProtocolIntfBase* aProtocolIntf);
 	void ConstructL();
 	virtual ~CRawIP2Flow();
 	
@@ -138,7 +136,7 @@ private:
 private:// Unowned
 	/** networking packet logger for debugging packets */
 	__PACKETLOG_DECLARATION_MEMBER;
-	CBttLogger* iTheLogger;
+	// Upstack bound protocol reference
 
 	// The protocol to use (IPv4).Note: This is not owned by this class.
 	CBinderBase* iBinder;

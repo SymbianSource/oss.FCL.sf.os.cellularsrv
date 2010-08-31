@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -17,9 +17,15 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "csimsmartcardauthTraces.h"
+#endif
+
 #include <testconfigfileparser.h>
 #include "CSimPhone.h"
-#include "Simlog.h"
 #include "csimsmartcardauth.h"
 #include "utils.h"
 
@@ -44,7 +50,7 @@ void CSimSmartCardAuth::ConstructL()
 	ParseAuthInfoL();
 	ParseGBAAuthInfoL();
 	ParseMBMSAuthInfoL();
-	LOGPHONE1("CSimSmartCardAuth created");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_CONSTRUCTL_1, "CSimSmartCardAuth created");
 	}
 
 CSimSmartCardAuth::~CSimSmartCardAuth()
@@ -60,13 +66,13 @@ CSimSmartCardAuth::~CSimSmartCardAuth()
 		iMBMSInfoList->Delete(0,iMBMSInfoList->Count());
 		delete iMBMSInfoList;
 		}
-	LOGPHONE1("CSimSmartCardAuth destroyed");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_DTOR_1, "CSimSmartCardAuth destroyed");
 	}
 
 TInt CSimSmartCardAuth::GetScAuthenticationData(const TTsyReqHandle aTsyReqHandle, TDes8* aPckg1, const RMobilePhone::TAID* aAID)
 	{
 
-	LOGPHONE1("CSimSmartCardAuth::GetScAuthenticationData called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_GETSCAUTHENTICATIONDATA_1, "CSimSmartCardAuth::GetScAuthenticationData called");
 
 	RMobilePhone::TSmartCardAuthenticateDataV6Pckg
 			* authenticateDataPckgd =reinterpret_cast<RMobilePhone::TSmartCardAuthenticateDataV6Pckg*>(aPckg1);
@@ -440,7 +446,7 @@ TInt CSimSmartCardAuth::GetScAuthenticationData(const TTsyReqHandle aTsyReqHandl
 
 TInt CSimSmartCardAuth::GetScAuthenticationDataCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	LOGPHONE1("CSimSmartCardAuth::GetScAuthenticationDataCancel called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_GETSCAUTHENTICATIONDATACANCEL_1, "CSimSmartCardAuth::GetScAuthenticationDataCancel called");
 	iPhone->ReqCompleted(aTsyReqHandle, KErrCancel);
 	return KErrNone;
 	}
@@ -455,11 +461,11 @@ Parses the list of SmartCardAuthInfo tags from the config.txt file.
 */
 void CSimSmartCardAuth::ParseAuthInfoL()
 	{
-	LOGPHONE1("CSimSmartCardAuth::ParseAuthInfoL called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_1, "CSimSmartCardAuth::ParseAuthInfoL called");
 
 	CTestConfigItem* item = NULL;
 
-	LOGPHONE1("Starting to Parse Smart Card Authentication Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_2, "Starting to Parse Smart Card Authentication Info");
 	TInt count = CfgFile()->ItemCount(KScAuthInfo);
 
 	TInt index;
@@ -481,7 +487,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 8, appId);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("appId",ret,8,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element APPID returned %d (element no. %d) from tag %s.",ret,8,KScAuthInfo);
 			_LIT8(emptyAID, "");
 			appId.Set(emptyAID);
 			}
@@ -490,11 +496,11 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 			ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 9, dataFrmt);
 			if(ret != KErrNone)
 				{
-				LOGPARSERR("dataFrmt",ret,9,&KScAuthInfo);
+				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element DATAFRMT returned %d (element no. %d) from tag %s.",ret,9,KScAuthInfo);
 				}
 			else if (dataFrmt >= EMaxConfigDataFormat)
 				{
-				LOGPHONE1("WARNING IN CONFIGURATION FILE PARSING - Invalid format for SC Authenticate tag");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_5, "WARNING IN CONFIGURATION FILE PARSING - Invalid format for SC Authenticate tag");
 				dataFrmt = EConfigDataFormatAscii;
 				}
 
@@ -514,7 +520,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, AUTN);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("AUTN",ret,0,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTN returned %d (element no. %d) from tag %s.",ret,0,KScAuthInfo);
 			continue;
 			}
 		else
@@ -535,7 +541,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, RAND);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("RAND",ret,1,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element RAND returned %d (element no. %d) from tag %s.",ret,1,KScAuthInfo);
 			continue;
 			}
 		else
@@ -556,7 +562,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, RES);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("RES",ret,2,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element RES returned %d (element no. %d) from tag %s.",ret,2,KScAuthInfo);
 			continue;
 			}
 		else
@@ -577,7 +583,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 3, IK);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("IK",ret,3,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element IK returned %d (element no. %d) from tag %s.",ret,3,KScAuthInfo);
 			continue;
 			}
 		else
@@ -598,7 +604,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 4, CK);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("CK",ret,4,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element CK returned %d (element no. %d) from tag %s.",ret,4,KScAuthInfo);
 			continue;
 			}
 		else
@@ -619,7 +625,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 5, Kc);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("Kc",ret,5,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element KC returned %d (element no. %d) from tag %s.",ret,5,KScAuthInfo);
 			continue;
 			}
 		else
@@ -640,7 +646,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 6, AUTS);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("AUTS",ret,6,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTS returned %d (element no. %d) from tag %s.",ret,6,KScAuthInfo);
 			continue;
 			}
 		else
@@ -661,7 +667,7 @@ void CSimSmartCardAuth::ParseAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 7, authErr);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("authErr",ret,7,&KScAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEAUTHINFOL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTHERR returned %d (element no. %d) from tag %s.",ret,7,KScAuthInfo);
 			continue;
 			}
 		else
@@ -679,11 +685,11 @@ Parses the list of GBAAuthInfo tags from the config.txt file.
 */
 void CSimSmartCardAuth::ParseGBAAuthInfoL()
 	{
-	LOGPHONE1("CSimSmartCardAuth::ParseGBAAuthInfoL called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_1, "CSimSmartCardAuth::ParseGBAAuthInfoL called");
 
 	CTestConfigItem* item = NULL;
 
-	LOGPHONE1("Starting to Parse GBA Authentication Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_2, "Starting to Parse GBA Authentication Info");
 	TInt count = CfgFile()->ItemCount(KGBAAuthInfo);
 
 	TInt index;
@@ -706,7 +712,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, AUTN);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("AUTN",ret,0,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTN returned %d (element no. %d) from tag %s.",ret,0,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -718,7 +724,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, RAND);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("RAND",ret,1,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element RAND returned %d (element no. %d) from tag %s.",ret,1,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -730,7 +736,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, appId);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("APPID",ret,2,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element APPID returned %d (element no. %d) from tag %s.",ret,2,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -742,7 +748,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 3, RES);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("RES",ret,3,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element RES returned %d (element no. %d) from tag %s.",ret,3,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -754,7 +760,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 4, AUTS);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("AUTS",ret,4,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTS returned %d (element no. %d) from tag %s.",ret,4,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -766,7 +772,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 5, NAFID);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("NAFID",ret,5,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element NAFID returned %d (element no. %d) from tag %s.",ret,5,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -778,7 +784,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 6, IMPI);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("IMPI",ret,6,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element IMPI returned %d (element no. %d) from tag %s.",ret,6,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -790,7 +796,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 7, KSExtNaf);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("KSExtNaf",ret,7,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element KSEXTNAF returned %d (element no. %d) from tag %s.",ret,7,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -802,7 +808,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 8, BtID);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("BtID",ret,8,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element BTID returned %d (element no. %d) from tag %s.",ret,8,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -814,7 +820,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 9, KeyLifeTime);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("KeyLifeTime",ret,9,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element KEYLIFETIME returned %d (element no. %d) from tag %s.",ret,9,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -826,7 +832,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 10, OtherApplnBusy);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("OtherApplnBusy",ret,10,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element OTHERAPPLNBUSY returned %d (element no. %d) from tag %s.",ret,10,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -838,7 +844,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 11, applnActive);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("applnActive",ret,11,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element APPLNACTIVE returned %d (element no. %d) from tag %s.",ret,11,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -850,7 +856,7 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 12, authErr);
 		if(ret != KErrNone)
 			{
-			LOGPARSERR("authErr",ret,12,&KGBAAuthInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEGBAAUTHINFOL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTHERR returned %d (element no. %d) from tag %s.",ret,12,KGBAAuthInfo);
 			continue;
 			}
 		else
@@ -868,11 +874,11 @@ void CSimSmartCardAuth::ParseGBAAuthInfoL()
 */
 void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 	{
-	LOGPHONE1 ("CSimSmartCardAuth::ParseMBMSAuthInfoL called");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_1, "CSimSmartCardAuth::ParseMBMSAuthInfoL called");
 
 	CTestConfigItem* item = NULL;
 
-	LOGPHONE1 ("Starting to Parse MBMS Authentication Info");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_2, "Starting to Parse MBMS Authentication Info");
 
 	TInt count = CfgFile()->ItemCount (KMBMSInfo);
 	TMBMSInfo tMbmsInfo;
@@ -896,7 +902,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 0, iMikey);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("iMikey", ret, 0, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element IMIKEY returned %d (element no. %d) from tag %s.", ret, 0, KMBMSInfo);
 			continue;
 			}
 		else
@@ -908,7 +914,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 1, oMikey);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("oMikey", ret, 1, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element OMIKEY returned %d (element no. %d) from tag %s.", ret, 1, KMBMSInfo);
 			continue;
 			}
 		else
@@ -920,7 +926,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 2, mtk);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("MTK", ret, 2, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element MTK returned %d (element no. %d) from tag %s.", ret, 2, KMBMSInfo);
 			continue;
 			}
 		else
@@ -933,7 +939,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 				saltKey);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("saltKey", ret, 3, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element SALTKEY returned %d (element no. %d) from tag %s.", ret, 3, KMBMSInfo);
 			continue;
 			}
 		else
@@ -945,7 +951,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 4, keyDmn);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("keyDmn ", ret, 4, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element KEYDMN  returned %d (element no. %d) from tag %s.", ret, 4, KMBMSInfo);
 			continue;
 			}
 		else
@@ -958,7 +964,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 				MskIdgrp);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("MskIdgrp", ret, 5, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element MSKIDGRP returned %d (element no. %d) from tag %s.", ret, 5, KMBMSInfo);
 			continue;
 			}
 		else
@@ -970,7 +976,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 6, MukId);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("MukId ", ret, 6, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element MUKID  returned %d (element no. %d) from tag %s.", ret, 6, KMBMSInfo);
 			continue;
 			}
 		else
@@ -982,7 +988,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 7, MukIdi);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("MukIdi", ret, 7, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element MUKIDI returned %d (element no. %d) from tag %s.", ret, 7, KMBMSInfo);
 			continue;
 			}
 		else
@@ -994,7 +1000,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 8, MukIdr);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("MukIdr ", ret, 8, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element MUKIDR  returned %d (element no. %d) from tag %s.", ret, 8, KMBMSInfo);
 			continue;
 			}
 		else
@@ -1006,7 +1012,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 9,MukTimeStamp);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("iMikey", ret, 9, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element IMIKEY returned %d (element no. %d) from tag %s.", ret, 9, KMBMSInfo);
 			continue;
 			}
 		else
@@ -1018,7 +1024,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 10, appId);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("APPID", ret, 10, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element APPID returned %d (element no. %d) from tag %s.", ret, 10, KMBMSInfo);
 			continue;
 			}
 		else
@@ -1030,7 +1036,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 11,KSIntNaf);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("KSIntNaf", ret, 11, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element KSINTNAF returned %d (element no. %d) from tag %s.", ret, 11, KMBMSInfo);
 			continue;
 			}
 		else
@@ -1042,7 +1048,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 12,applnActive);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("applnActive", ret, 12, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element APPLNACTIVE returned %d (element no. %d) from tag %s.", ret, 12, KMBMSInfo);
 			continue;
 			}
 		else
@@ -1054,7 +1060,7 @@ void CSimSmartCardAuth::ParseMBMSAuthInfoL()
 		ret = CTestConfig::GetElement (item->Value (), KStdDelimiter, 13,authErr);
 		if ( ret != KErrNone)
 			{
-			LOGPARSERR ("authErr", ret, 13, &KMBMSInfo);
+			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDAUTH_PARSEMBMSAUTHINFOL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element AUTHERR returned %d (element no. %d) from tag %s.", ret, 13, KMBMSInfo);
 			continue;
 			}
 		else

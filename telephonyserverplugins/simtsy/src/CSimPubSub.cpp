@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,8 +15,14 @@
 // 
 //
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSimPubSubTraces.h"
+#endif
+
 #include "CSimPubSub.h"
-#include "Simlog.h"
 
 
 /**
@@ -27,12 +33,12 @@ Standard two phase construction.
 */
 CSimPubSub* CSimPubSub::NewL(MPSSimObserver* aPSSimObserver, const CSimPubSub::TPubSubProperty aProperty)
 	{
-	LOGSCOMMON1(">>CSimPubSub::NewL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPUBSUB_NEWL_1, ">>CSimPubSub::NewL");
 	CSimPubSub* pubsub=new(ELeave) CSimPubSub(aPSSimObserver,aProperty);
 	CleanupStack::PushL(pubsub);
 	pubsub->ConstructL();
 	CleanupStack::Pop();
-	LOGSCOMMON1("<<CSimPubSub::NewL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPUBSUB_NEWL_2, "<<CSimPubSub::NewL");
 	return pubsub;
 	}
 

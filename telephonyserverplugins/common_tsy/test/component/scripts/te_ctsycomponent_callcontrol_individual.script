@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,6 +13,9 @@
 //
 // Description:
 //
+//
+
+RUN_SCRIPT z:\TestData\Scripts\mockltsy_copy_ini_file.script
 
 LOAD_SUITE te_ctsy_component
 
@@ -778,6 +781,73 @@ START_TESTCASE BA-CTSY-CCON-MTAC-0005
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateAllCalls0005L
 END_TESTCASE BA-CTSY-CCON-MTAC-0005
 
+START_TESTCASE BA-CTSY-CCON-MTACTC-0001
+//!@SYMTestCaseID BA-CTSY-CCON-MTACTC-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::TerminateActiveCalls When the call status is EStatusHold
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::TerminateActiveCalls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateActiveCalls0001L
+END_TESTCASE BA-CTSY-CCON-MTACTC-0001
+
+START_TESTCASE BA-CTSY-CCON-MTACTC-0001b
+//!@SYMTestCaseID BA-CTSY-CCON-MTACTC-0001b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::TerminateActiveCalls When the call status is EStatusRinging
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::TerminateActiveCalls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateActiveCalls0001bL
+END_TESTCASE BA-CTSY-CCON-MTACTC-0001b
+
+START_TESTCASE BA-CTSY-CCON-MTACTC-0001c
+//!@SYMTestCaseID BA-CTSY-CCON-MTACTC-0001c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::TerminateActiveCalls When the call status is EStatusConnecting
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::TerminateActiveCalls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateActiveCalls0001cL
+END_TESTCASE BA-CTSY-CCON-MTACTC-0001c
+
+
+START_TESTCASE BA-CTSY-CCON-MTACTC-0002
+//!@SYMTestCaseID BA-CTSY-CCON-MTACTC-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling RMobilePhone::TerminateActiveCalls
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::TerminateActiveCalls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateActiveCalls0002L
+END_TESTCASE BA-CTSY-CCON-MTACTC-0002
+
+START_TESTCASE BA-CTSY-CCON-MTACTC-0004
+//!@SYMTestCaseID BA-CTSY-CCON-MTACTC-0004
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests of RMobilePhone::TerminateActiveCalls
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::TerminateActiveCalls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateActiveCalls0004L
+END_TESTCASE BA-CTSY-CCON-MTACTC-0004
+
+START_TESTCASE BA-CTSY-CCON-MTACTC-0005
+//!@SYMTestCaseID BA-CTSY-CCON-MTACTC-0005
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobilePhone::TerminateActiveCalls with timeout
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobilePhone::TerminateActiveCalls and tests for timeout
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestTerminateActiveCalls0005L
+END_TESTCASE BA-CTSY-CCON-MTACTC-0005
+
 START_TESTCASE BA-CTSY-CCON-MSICT-0001
 //!@SYMTestCaseID BA-CTSY-CCON-MSICT-0001
 //!@SYMComponent telephony_ctsy
@@ -997,3 +1067,5 @@ START_TESTCASE BA-CTSY-CCON-CNUA-0001
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyCallControlFU.TestUpdateLifeTime0001L
 END_TESTCASE BA-CTSY-CCON-CNUA-0001
+
+RUN_SCRIPT z:\TestData\Scripts\mockltsy_remove_ini_file.script

@@ -166,52 +166,7 @@ const struct TScript KInCallScriptA[]= {
 	{	ERxString, (TText8*)"ATH",			0, ERxEvent	},
 	{	ETxString, (TText8*)"NO CARRIER",	0, ETxEvent	},
 
-//
-//  Now, finally, we handle an Incoming Call Fax request
-//
-	{	EWait,		NULL,					4,	ETimeOutEvent	},
-	{	ETxString, (TText8*)"\r\n+CRING: FAX\r\n",	0, ETxEvent|EFailIfTimeOut	},
 
-//	{	ERxString, (TText8*)"ATM0L0X3S8=0",	0, ERxEvent	},
-//	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FCLASS=2",	0, ERxEvent	},
-	{	ETxString, (TText8*)"\r\nOK\r\n",	0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT",			0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FDCC=?",	0, ERxEvent	},
-	{	ETxString, (TText8*)"(0-1),(0-3),(0-4),(0-2),(0-3),(0-1),(0-1),(0-7)",
-											0, ETxEvent|EFailIfTimeOut	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FDCC=0,3,0,2,0,0,0,0",	0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FAA=0",		0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FCR=1",		0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FLID=\"",	0, ERxEvent	},
-	{	ERxString, (TText8*)"\"",			0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"ATA",			0, ERxEvent	},
-	{	ETxString, (TText8*)"+FCO",			0, ETxEvent|EFailIfTimeOut	},
-	{	ETxString, (TText8*)"+FCS:0,3,0,2,0,0,0,0",			0, ETxEvent|EFailIfTimeOut	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FDR",		0, ERxEvent	},
-	{	ETxString, (TText8*)"CONNECT",		0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"ATH",			0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"ATE0+FCLASS=0",0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
 
 //
 // Now we handle an incoming data call
@@ -378,49 +333,7 @@ const struct TScript KInCallScriptB[]= {
 	{	ERxString, (TText8*)"ATH",			0, ERxEvent	},
 	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
 
-	{	EWait,		NULL,					4,	ETimeOutEvent	},
-	{	ETxString, (TText8*)"\r\n+CRING: REL ASYNC\r\n",	0, ETxEvent|EFailIfTimeOut	},
 
-//	{	ERxString, (TText8*)"AT",			0, ERxEvent	},
-//	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FCLASS=2",	0, ERxEvent	},
-	{	ETxString, (TText8*)"\r\nOK\r\n",	0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT",			0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FDCC=?",	0, ERxEvent	},
-	{	ETxString, (TText8*)"(0-1),(0-3),(0-4),(0-2),(0-3),(0-1),(0-1),(0-7)",
-											0, ETxEvent|EFailIfTimeOut	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FDCC=0,3,0,2,0,0,0,0",	0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FAA=0",		0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FCR=1",		0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FLID=\"",	0, ERxEvent	},
-	{	ERxString, (TText8*)"\"",			0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"ATA",			0, ERxEvent	},
-	{	ETxString, (TText8*)"+FCO",			0, ETxEvent|EFailIfTimeOut	},
-	{	ETxString, (TText8*)"+FCS:0,3,0,2,0,0,0,0",			0, ETxEvent|EFailIfTimeOut	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"AT+FDR",		0, ERxEvent	},
-	{	ETxString, (TText8*)"CONNECT",		0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"ATH",			0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
-
-	{	ERxString, (TText8*)"ATE0+FCLASS=0",0, ERxEvent	},
-	{	ETxStringOK, NULL,					0, ETxEvent|EFailIfTimeOut	},
 
 //
 // Now we handle an incoming data call

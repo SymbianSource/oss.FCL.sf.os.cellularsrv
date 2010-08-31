@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,6 +20,12 @@
 
 
 //INCLUDES
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "CSatNotifySendSsTraces.h"
+#endif
+
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatCCTsy.h"              // Call Control Tsy class header
@@ -28,7 +34,6 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
-#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -44,13 +49,13 @@ CSatNotifySendSs* CSatNotifySendSs::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendSs::NewL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_NEWL_1, "CSAT: CSatNotifySendSs::NewL");
    	CSatNotifySendSs* const satNotifySendSs = 
         new ( ELeave ) CSatNotifySendSs( aNotificationsTsy );
     CleanupStack::PushL( satNotifySendSs );
     satNotifySendSs->ConstructL();
     CleanupStack::Pop( satNotifySendSs );
-    TFLOGSTRING("CSAT: CSatNotifySendSs::NewL, end of method");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_NEWL_2, "CSAT: CSatNotifySendSs::NewL, end of method");
     return satNotifySendSs;
     }
 
@@ -64,7 +69,7 @@ CSatNotifySendSs::~CSatNotifySendSs
 		// None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendSs::~CSatNotifySendSs");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_DTOR_1, "CSAT: CSatNotifySendSs::~CSatNotifySendSs");
     }
     
 // -----------------------------------------------------------------------------
@@ -90,7 +95,7 @@ void CSatNotifySendSs::ConstructL
         // None
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendSs::ConstructL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CONSTRUCTL_1, "CSAT: CSatNotifySendSs::ConstructL");
     }
    
 // -----------------------------------------------------------------------------
@@ -105,7 +110,7 @@ TInt CSatNotifySendSs::Notify
         const TDataPackage& aPackage
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendSs::Notify");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_NOTIFY_1, "CSAT: CSatNotifySendSs::Notify");
     // Save data pointer to client side for completion
     iSendSsV1Pckg = reinterpret_cast<RSat::TSendSsV1Pckg*>( 
         aPackage.Des1n() );
@@ -130,7 +135,7 @@ TInt CSatNotifySendSs::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendSs::CancelNotification"); 
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CANCELNOTIFICATION_1, "CSAT: CSatNotifySendSs::CancelNotification");
     
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -156,7 +161,7 @@ TInt CSatNotifySendSs::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_1, "CSAT: CSatNotifySendSs::CompleteNotifyL");
 	TInt ret( KErrNone );
 
     // Unpack parameters
@@ -229,15 +234,13 @@ TInt CSatNotifySendSs::CompleteNotifyL
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL,\
-					    Alpha ID is NULL");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_2, "CSAT: CSatNotifySendSs::CompleteNotifyL, Alpha ID is NULL");
 					sendSsV1.iAlphaId.iStatus = RSat::EAlphaIdNull;
 					}
 				}
 			else
 				{
-				TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL,\
-				    Alpha ID not present");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_3, "CSAT: CSatNotifySendSs::CompleteNotifyL, Alpha ID not present");
 				sendSsV1.iAlphaId.iStatus = RSat::EAlphaIdNotPresent;
 				}
 
@@ -293,8 +296,7 @@ TInt CSatNotifySendSs::CompleteNotifyL
 						}
 					else
 						{
-						TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL,\
-							Data corrupted");
+						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_4, "CSAT: CSatNotifySendSs::CompleteNotifyL, Data corrupted");
 						CreateTerminalRespL( pCmdNumber, RSat::KCmdDataNotUnderstood,
 								KNullDesC16 );
 						ret = KErrCorrupt;
@@ -303,8 +305,7 @@ TInt CSatNotifySendSs::CompleteNotifyL
 					}
 				else
 					{
-					TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL,\
-						SS String length exceeded");
+					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_5, "CSAT: CSatNotifySendSs::CompleteNotifyL, SS String length exceeded");
 					// SS string is too long
 					CreateTerminalRespL( pCmdNumber, RSat::KCmdDataNotUnderstood,
 							KNullDesC16 );
@@ -313,8 +314,7 @@ TInt CSatNotifySendSs::CompleteNotifyL
 				}
 			else
 				{
-				TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL,\
-				    SS String missing");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_6, "CSAT: CSatNotifySendSs::CompleteNotifyL, SS String missing");
 				// Mandatory tlv is missing, returning response immediately
 				CreateTerminalRespL(
 					pCmdNumber, RSat::KErrorRequiredValuesMissing, 
@@ -337,8 +337,7 @@ TInt CSatNotifySendSs::CompleteNotifyL
         } // End of if ( reqHandle != CSatTsy::ESatReqHandleUnknown )
     else 
 		{
-        TFLOGSTRING("CSAT: CSatNotifySendSs::CompleteNotifyL,\
-            Request not ongoing");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_COMPLETENOTIFYL_7, "CSAT: CSatNotifySendSs::CompleteNotifyL, Request not ongoing");
         // Request not on, returning response immediately
 		TBuf<1> additionalInfo;
 		additionalInfo.Append( RSat::KNoSpecificMeProblem );
@@ -360,7 +359,7 @@ TInt CSatNotifySendSs::TerminalResponseL
         TDes8* aRsp
         )
     {
-    TFLOGSTRING("CSAT:: CSatNotifySendSs::TerminalResponseL");  
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_TERMINALRESPONSEL_1, "CSAT:: CSatNotifySendSs::TerminalResponseL");
     TInt ret( KErrNone );
     // Buffer for additional information
     TBuf<RSat::KAdditionalInfoMaxSize> additionalInfo;
@@ -387,8 +386,7 @@ TInt CSatNotifySendSs::TerminalResponseL
         && ( RSat::KErrorRequiredValuesMissing != rspV2.iGeneralResult )
         && ( RSat::KInteractionWithCCPermanentError != rspV2.iGeneralResult ) )
         {
-        TFLOGSTRING("CSAT:: CSatNotifySendSs::TerminalResponseL,\
-            Invalid General Result");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_TERMINALRESPONSEL_2, "CSAT:: CSatNotifySendSs::TerminalResponseL, Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -447,8 +445,7 @@ TInt CSatNotifySendSs::TerminalResponseL
     
 	if ( !isValidAddInfo )
 		{
-    	TFLOGSTRING("CSAT: CSatNotifyCloseChannel::TerminalResponseL\
-    		Invalid Additional Info");
+    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_TERMINALRESPONSEL_3, "CSAT: CSatNotifyCloseChannel::TerminalResponseL Invalid Additional Info");
     	ret = KErrCorrupt;
 		}
         
@@ -481,7 +478,7 @@ TInt CSatNotifySendSs::CreateTerminalRespL
         const TDesC16& aAdditionalInfo
 		)
     {
-	TFLOGSTRING("CSAT:: CSatNotifySendSs::CreateTerminalRespL");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CREATETERMINALRESPL_1, "CSAT:: CSatNotifySendSs::CreateTerminalRespL");
     // Create and append response data
     TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );    
@@ -517,7 +514,7 @@ void CSatNotifySendSs::CheckCallForwarding
     	RSat::TSsString& aSsString 
     	)
     {
-    TFLOGSTRING("CSAT:: CSatNotifySendSs::CheckCallForwarding");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CHECKCALLFORWARDING_1, "CSAT:: CSatNotifySendSs::CheckCallForwarding");
     _LIT8(KCFU,"*21*");    // Call forwarding unconditional (CFU)
     _LIT8(KCFB,"*67*");    // Call forwarding on Mobile Subscriber Busy(CFB)
     _LIT8(KCFNRy, "*61*"); // Call forwarding on No Reply (CFNRy)
@@ -539,8 +536,7 @@ void CSatNotifySendSs::CheckCallForwarding
         }
     if ( KErrNotFound != pos )
         {
-        TFLOGSTRING("CSAT:: CSatNotifySendSs::CheckCallForwarding,\
-            String is for call forwarding");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CHECKCALLFORWARDING_2, "CSAT:: CSatNotifySendSs::CheckCallForwarding, String is for call forwarding");
         aSsString.iSsString.Zero();
         aSsString.iSsString.Append( aSource.Left( pos + 4 ) );
         aSsString.iSsString.Append( KPlusMarkCharacterCode );
@@ -561,13 +557,12 @@ TInt CSatNotifySendSs::CheckSsStringValidity
     	TPtrC8 aSsString 
     	)
     {
-    TFLOGSTRING("CSAT:: CSatNotifySendSs::CheckSsStringValidity");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CHECKSSSTRINGVALIDITY_1, "CSAT:: CSatNotifySendSs::CheckSsStringValidity");
     TInt ret( KErrNone );
     
     if ( !aSsString.Length() )
         {
-        TFLOGSTRING("CSAT:: CSatNotifySendSs::CheckSsStringValidity,\
-            String length is NULL");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CHECKSSSTRINGVALIDITY_2, "CSAT:: CSatNotifySendSs::CheckSsStringValidity, String length is NULL");
         // If length is zero
         ret = KErrCorrupt;
         }
@@ -581,8 +576,7 @@ TInt CSatNotifySendSs::CheckSsStringValidity
         || ( KErrNotFound != aSsString.Find( KWild ) )
         || ( KErrNotFound != aSsString.Find( KExpansionDigit ) ) )
         {
-        TFLOGSTRING("CSAT:: CSatNotifySendSs::CheckSsStringValidity,\
-            Incompatible character found");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSS_CHECKSSSTRINGVALIDITY_3, "CSAT:: CSatNotifySendSs::CheckSsStringValidity, Incompatible character found");
         ret = KErrCorrupt;
         }
     return ret;

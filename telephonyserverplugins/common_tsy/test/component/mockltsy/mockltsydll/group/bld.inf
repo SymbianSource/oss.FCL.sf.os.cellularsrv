@@ -14,8 +14,8 @@
 //
 
 PRJ_TESTEXPORTS
-../inc/rmockltsy.h      SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(test/rmockltsy.h)
-../inc/tmockltsydata.h  SYMBIAN_OS_LAYER_PUBLIC_EXPORT_PATH(test/tmockltsydata.h)
+../inc/rmockltsy.h      SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(test/rmockltsy.h)
+../inc/tmockltsydata.h  SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(test/tmockltsydata.h)
 
 PRJ_TESTMMPFILES
 mockltsydll.mmp

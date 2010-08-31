@@ -25,7 +25,6 @@
 #include <et_phone.h>
 #include "TSYCONFG.H"
 #include "ATBASE.H"
-#include "faxstd.h"
 #include <f32file.h>
 //
 // CAcquireEntry
@@ -337,73 +336,5 @@ private:
 	CATHangUpData* iHangUpData;
 	CATSetToOnlineDataMode* iATSetToOnlineDataMode;
 	};
-
-class CATDialFax;
-class CATConnectFax;
-class CATAnswerFax;
-class CATHangUpFax;
-class CFaxHayes;
-class CFaxSession;	// the class defined by the fax server
-class CFaxCompletion;
-class CCallMobileFax : public CCallMobile
-/**
-@internalComponent
-*/
-	{
-public:
-	static CCallMobileFax* NewL(CATIO* aATIO,CATInit* aInit,CPhoneGlobals* aPhoneGlobals,const TName& aName);
-	CCallMobileFax(CATIO* aATIO,CATInit* aInit,CPhoneGlobals* aGlobals);
-	~CCallMobileFax();
-
-// MTelObjectTSY pure virtual
-	virtual CTelObject* OpenNewObjectByNameL(const TDesC&);
-
-// MCallBaseTSY pure virtuals
-	virtual TInt Dial(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallParams,TDesC* aTelNumber);
-	virtual TInt DialCancel(const TTsyReqHandle aTsyReqHandle);
-	virtual TInt Connect(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallParams);
-	virtual TInt ConnectCancel(const TTsyReqHandle aTsyReqHandle);
-	virtual TInt AnswerIncomingCall(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallParams);
-	virtual TInt AnswerIncomingCallCancel(const TTsyReqHandle aTsyReqHandle);
-	virtual TInt HangUp(const TTsyReqHandle aTsyReqHandle);
-	virtual TInt HangUpCancel(const TTsyReqHandle aTsyReqHandle);
-	virtual TInt RelinquishOwnership();
-	virtual TInt GetFaxSettings(const TTsyReqHandle aTsyReqHandle,RCall::TFaxSessionSettings* aSettings);
-	virtual TInt SetFaxSettings(const TTsyReqHandle aTsyReqHandle,const RCall::TFaxSessionSettings* aSettings);
-	virtual TInt SetFaxSharedHeaderFile(const TTsyReqHandle aTsyReqHandle, CFaxSharedFileHandles* aFaxSharedFileHandles);
-// CCallHayes pure virtual
-	virtual void AnswerImmediately();
-
-	virtual void CollateCoreCaps(const TTsyReqHandle aTsyReqHandle, TUint32* aCallCaps);
-
-	TInt FaxConnectHandler(const TTsyReqHandle aTsyReqHandle);
-	TInt ValidateFaxClass(TFaxClass& aFaxClass);
-	void FaxCancelCommand(const TTsyReqHandle aTsyReqHandle);
-	void FaxDial(const TTsyReqHandle aTsyReqHandle,TDesC* aTelNumber);
-	void FaxConnect(const TTsyReqHandle aTsyReqHandle);
-	void FaxAnswer(const TTsyReqHandle aTsyReqHandle);
-	void FaxHangUp(const TTsyReqHandle aTsyReqHandle);
-
-	TInt OpenFax(TDesC* aTelNumber,TFaxMode aFaxMode);
-	void GetFaxBaseL();
-	void RemoveFax(CFaxHayes* aFaxHayes);
-	void CleanUpFaxServer();
-private:
-	void ConstructL(const TName& aName);
-public:
-	CFaxSession* iFaxSession;
-private:
-	CATDialFax* iDialFax;
-	CATConnectFax* iConnectFax;
-	CATAnswerFax* iAnswerFax;
-	CATHangUpFax* iHangUpFax;
-	RCall::TFaxSessionSettings iFaxSettings;
-	CFaxHayes* iFax;
-	CFaxCompletion* iFaxCompletion;
-	RLibrary iFaxServerLib;
-	RFax::TProgress* iFaxProgress;
-	CFaxSharedFileHandles* iFileHandles;
-	};
-
 
 #endif

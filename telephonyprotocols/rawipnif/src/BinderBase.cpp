@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,20 +19,25 @@
  @file
 */
 
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "BinderBaseTraces.h"
+#endif
+
 #include <nifmbuf.h>
 #include "BinderBase.h"
 #include "RawIPFlow.h"
 
 using namespace ESock;
 
-CBinderBase::CBinderBase(CRawIPFlow& aFlow, CBttLogger* aTheLogger)
+CBinderBase::CBinderBase(CRawIPFlow& aFlow)
 /**
  * Constructor
  *
  * @param aNifMain A pointer to CRawIPFlow
  */
-	:iFlow(&aFlow),
-	 iTheLogger(aTheLogger)
+	:iFlow(&aFlow)
 	{
 	}
 
@@ -63,7 +68,7 @@ MLowerDataSender* CBinderBase::Bind(MUpperDataReceiver* aUpperReceiver, MUpperCo
  * @param aUpperControl A pointer to Upper layer control class
  */
 	{
-    _LOG_L1C1(_L8("CBinderBase:\tBind()"));
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_BIND_1, "CBinderBase:\tBind()");
 
 	iUpperReceiver = aUpperReceiver;
 	iUpperControl = aUpperControl;
@@ -72,7 +77,7 @@ MLowerDataSender* CBinderBase::Bind(MUpperDataReceiver* aUpperReceiver, MUpperCo
 
 void CBinderBase::Unbind(MUpperDataReceiver* aUpperReceiver, MUpperControl* aUpperControl)
     {
-	_LOG_L1C1(_L8("CBinderBase:\tUnbind()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_UNBIND_1, "CBinderBase:\tUnbind()");
 	
 #ifndef _DEBUG
 	(void) aUpperReceiver;
@@ -92,7 +97,7 @@ void CBinderBase::StartSending()
  * @param aProtocol A pointer to a protocol
  */
 	{
-	_LOG_L1C1(_L8("CBinderBase:\tStartSending()"));
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_STARTSENDING_1, "CBinderBase:\tStartSending()");
 
 	// Default implementation.
 	// Uses iProtocol instead aProtocol.

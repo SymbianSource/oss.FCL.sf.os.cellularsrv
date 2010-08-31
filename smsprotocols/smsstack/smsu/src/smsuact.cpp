@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,6 +18,12 @@
 /**
  @file
 */
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smsuactTraces.h"
+#endif
 
 #include "smsuact.h"
 #include "SmsuTimer.h"
@@ -56,7 +62,7 @@ EXPORT_C CSmsuActiveBase::~CSmsuActiveBase()
  */
 EXPORT_C void CSmsuActiveBase::ConstructTimeoutL()
 	{
-	LOGSMSU1("CSmsuActiveBase::ConstructTimeoutL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_CONSTRUCTTIMEOUTL_1, "CSmsuActiveBase::ConstructTimeoutL()");
 
 	iSmsuTimeout = CSmsuTimeout::NewL(*this);
 	} // CSmsuActiveBase::ConstructTimeoutL
@@ -70,8 +76,7 @@ EXPORT_C void CSmsuActiveBase::ConstructTimeoutL()
  */
 EXPORT_C void CSmsuActiveBase::TimedSetActive(const TTimeIntervalMicroSeconds32& aTimeIntervalMicroSeconds32)
 	{
-	LOGSMSU2("CSmsuActiveBase::TimedSetActive(): aTimeIntervalMicroSeconds32=%d",
-			 aTimeIntervalMicroSeconds32.Int());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_TIMEDSETACTIVE_1, "CSmsuActiveBase::TimedSetActive(): aTimeIntervalMicroSeconds32=%d",aTimeIntervalMicroSeconds32.Int());
 
 	__ASSERT_DEBUG(iSmsuTimeout != NULL, SmsuPanic(ESmsuTimeoutNull));
 	
@@ -91,7 +96,7 @@ EXPORT_C void CSmsuActiveBase::TimedSetActive(const TTimeIntervalMicroSeconds32&
  */
 EXPORT_C void CSmsuActiveBase::TimedSetActiveCancel()
 	{
-	LOGSMSU1("CSmsuActiveBase::TimedSetActiveCancel()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_TIMEDSETACTIVECANCEL_1, "CSmsuActiveBase::TimedSetActiveCancel()");
 
 	if (iSmsuTimeout != NULL)
 		{
@@ -107,7 +112,7 @@ EXPORT_C void CSmsuActiveBase::TimedSetActiveCancel()
  */
 EXPORT_C TBool CSmsuActiveBase::TimedOut() const
 	{
-	LOGSMSU1("CSmsuActiveBase::TimedOut()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_TIMEDOUT_1, "CSmsuActiveBase::TimedOut()");
 
 	if (iSmsuTimeout != NULL)
 		{
@@ -126,7 +131,7 @@ EXPORT_C TBool CSmsuActiveBase::TimedOut() const
  */
 EXPORT_C void CSmsuActiveBase::Queue(TRequestStatus& aStatus)
 	{
-	LOGSMSU1("CSmsuActiveBase::Queue()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_QUEUE_1, "CSmsuActiveBase::Queue()");
 
 	__ASSERT_DEBUG(iReport==NULL, SmsuPanic(ESmsuAlreadyActive));
 
@@ -144,7 +149,7 @@ EXPORT_C void CSmsuActiveBase::Queue(TRequestStatus& aStatus)
  */
 EXPORT_C void CSmsuActiveBase::RunL()
 	{
-	LOGSMSU1("CSmsuActiveBase::RunL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_RUNL_1, "CSmsuActiveBase::RunL()");
 
 	if (iSmsuTimeout != NULL)
 		{
@@ -174,7 +179,7 @@ EXPORT_C void CSmsuActiveBase::RunL()
  */
 EXPORT_C void CSmsuActiveBase::Complete(TInt aStatus)
 	{
-	LOGSMSU2("CSmsuActiveBase::Complete(): aStatus=%d", aStatus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_COMPLETE_1, "CSmsuActiveBase::Complete(): aStatus=%d", aStatus);
 
 	if (iReport)
 		{
@@ -196,7 +201,7 @@ EXPORT_C void CSmsuActiveBase::Complete(TInt aStatus)
  */
 EXPORT_C TInt CSmsuActiveBase::RunError(TInt aError)
 	{
-	LOGSMSU2("CSmsuActiveBase::RunError(): aError=%d", aError);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_RUNERROR_1, "CSmsuActiveBase::RunError(): aError=%d", aError);
 
 	__ASSERT_DEBUG(!IsActive(), User::Invariant());
 
@@ -217,8 +222,7 @@ EXPORT_C void CSmsuActiveBase::CompleteMyself(TInt aStatus, TBool aSetActive /* 
     {
     // Ignore in code coverage - not used within the SMS stack.
     BULLSEYE_OFF
-    LOGSMSU3("CSmsuActiveBase::CompleteMyself(): aStatus=%d, aSetActive=%d",
-             aStatus, aSetActive);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_COMPLETEMYSELF_1, "CSmsuActiveBase::CompleteMyself(): aStatus=%d, aSetActive=%d",aStatus, aSetActive);
     
     // Initialise iStatus with a pending request...
     iStatus = KRequestPending;
@@ -254,7 +258,7 @@ EXPORT_C void CSmsuActiveBase::CompleteMyself(TInt aStatus, TBool aSetActive /* 
  */
 EXPORT_C void CSmsuActiveBase::CompleteMyselfAfterTimeout(TInt aStatus)
 	{
-	LOGSMSU2("CSmsuActiveBase::CompleteMyselfAfterTimeout(): aStatus=%d", aStatus);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUACTIVEBASE_COMPLETEMYSELFAFTERTIMEOUT_1, "CSmsuActiveBase::CompleteMyselfAfterTimeout(): aStatus=%d", aStatus);
 
 	__ASSERT_DEBUG(iSmsuTimeout != NULL, SmsuPanic(ESmsuTimeoutNull));
 	

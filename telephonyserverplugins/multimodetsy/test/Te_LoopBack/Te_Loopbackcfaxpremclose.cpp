@@ -23,7 +23,6 @@
 
 #include <e32test.h>
 #include <etelmm.h>
-#include <faxstd.h>
 #include "Te_Loopbackcfaxpremclose.h"
 #include "../../hayes/TSYCONFG.H" // for KInternetAccessPoint
 

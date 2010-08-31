@@ -4846,6 +4846,26 @@ Terminates all calls on all lines.
 	Blank(EMobilePhoneTerminateAllCalls,aReqStatus);
 	}
 
+/************************************************************************************/
+//
+// Mobile Active Calls Termination
+//
+/************************************************************************************/
+
+EXPORT_C void RMobilePhone::TerminateActiveCalls(TRequestStatus& aReqStatus) const
+/**
+Terminates all active calls on all lines.
+Active calls are defined as those in either active or held state.
+This will not terminate calls in dialling or connecting state.
+ 
+@param aReqStatus returns the result code after the asynchronous call completes.
+
+@capability NetworkServices
+*/
+    {
+    Blank(EMobilePhoneTerminateActiveCalls,aReqStatus);
+    }
+
 /***********************************************************************************/
 //
 // Auto Redial Functional Unit

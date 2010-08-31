@@ -1,6 +1,6 @@
 EXPORTS
 	LibEntry @ 1 NONAME
-	_ZTI10CATDialFax @ 2 NONAME ; #<TI>#
+	_ZTI10CATDialFax @ 2 NONAME ABSENT
 	_ZTI10CATSetCBST @ 3 NONAME ; #<TI>#
 	_ZTI10CCallEntry @ 4 NONAME ; #<TI>#
 	_ZTI10CCallHayes @ 5 NONAME ; #<TI>#
@@ -14,17 +14,17 @@ EXPORTS
 	_ZTI11CLineMobile @ 13 NONAME ; #<TI>#
 	_ZTI11CNotifyBase @ 14 NONAME ; #<TI>#
 	_ZTI11CPhoneHayes @ 15 NONAME ; #<TI>#
-	_ZTI12CATAnswerFax @ 16 NONAME ; #<TI>#
+	_ZTI12CATAnswerFax @ 16 NONAME ABSENT
 	_ZTI12CATDialVoice @ 17 NONAME ; #<TI>#
 	_ZTI12CATGetSignal @ 18 NONAME ; #<TI>#
 	_ZTI12CATGprsClass @ 19 NONAME ; #<TI>#
-	_ZTI12CATHangUpFax @ 20 NONAME ; #<TI>#
+	_ZTI12CATHangUpFax @ 20 NONAME ABSENT
 	_ZTI12CATQuickInit @ 21 NONAME ; #<TI>#
 	_ZTI12CCommChatter @ 22 NONAME ; #<TI>#
 	_ZTI12CGprsContext @ 23 NONAME ; #<TI>#
 	_ZTI12CPhoneMobile @ 24 NONAME ; #<TI>#
 	_ZTI13CATAnswerData @ 25 NONAME ; #<TI>#
-	_ZTI13CATConnectFax @ 26 NONAME ; #<TI>#
+	_ZTI13CATConnectFax @ 26 NONAME ABSENT
 	_ZTI13CATGetBattery @ 27 NONAME ; #<TI>#
 	_ZTI13CATGprsAttach @ 28 NONAME ; #<TI>#
 	_ZTI13CATGprsDetach @ 29 NONAME ; #<TI>#
@@ -40,9 +40,9 @@ EXPORTS
 	_ZTI14CATNetworkInfo @ 39 NONAME ; #<TI>#
 	_ZTI14CATSmsCommands @ 40 NONAME ; #<TI>#
 	_ZTI14CATWaitForCall @ 41 NONAME ; #<TI>#
-	_ZTI14CCallMobileFax @ 42 NONAME ; #<TI>#
-	_ZTI14CFaxCompletion @ 43 NONAME ; #<TI>#
-	_ZTI14CLineMobileFax @ 44 NONAME ; #<TI>#
+	_ZTI14CCallMobileFax @ 42 NONAME ABSENT
+	_ZTI14CFaxCompletion @ 43 NONAME ABSENT
+	_ZTI14CLineMobileFax @ 44 NONAME ABSENT
 	_ZTI14CMobileONStore @ 45 NONAME ; #<TI>#
 	_ZTI14CNotifications @ 46 NONAME ; #<TI>#
 	_ZTI14CSetLineToIdle @ 47 NONAME ; #<TI>#
@@ -127,8 +127,8 @@ EXPORTS
 	_ZTI7CATBase @ 126 NONAME ; #<TI>#
 	_ZTI7CATInit @ 127 NONAME ; #<TI>#
 	_ZTI8CGprsQoS @ 128 NONAME ; #<TI>#
-	_ZTI9CFaxHayes @ 129 NONAME ; #<TI>#
-	_ZTV10CATDialFax @ 130 NONAME ; #<VT>#
+	_ZTI9CFaxHayes @ 129 NONAME ABSENT
+	_ZTV10CATDialFax @ 130 NONAME ABSENT
 	_ZTV10CATSetCBST @ 131 NONAME ; #<VT>#
 	_ZTV10CCallEntry @ 132 NONAME ; #<VT>#
 	_ZTV10CCallHayes @ 133 NONAME ; #<VT>#
@@ -142,17 +142,17 @@ EXPORTS
 	_ZTV11CLineMobile @ 141 NONAME ; #<VT>#
 	_ZTV11CNotifyBase @ 142 NONAME ; #<VT>#
 	_ZTV11CPhoneHayes @ 143 NONAME ; #<VT>#
-	_ZTV12CATAnswerFax @ 144 NONAME ; #<VT>#
+	_ZTV12CATAnswerFax @ 144 NONAME ABSENT
 	_ZTV12CATDialVoice @ 145 NONAME ; #<VT>#
 	_ZTV12CATGetSignal @ 146 NONAME ; #<VT>#
 	_ZTV12CATGprsClass @ 147 NONAME ; #<VT>#
-	_ZTV12CATHangUpFax @ 148 NONAME ; #<VT>#
+	_ZTV12CATHangUpFax @ 148 NONAME ABSENT
 	_ZTV12CATQuickInit @ 149 NONAME ; #<VT>#
 	_ZTV12CCommChatter @ 150 NONAME ; #<VT>#
 	_ZTV12CGprsContext @ 151 NONAME ; #<VT>#
 	_ZTV12CPhoneMobile @ 152 NONAME ; #<VT>#
 	_ZTV13CATAnswerData @ 153 NONAME ; #<VT>#
-	_ZTV13CATConnectFax @ 154 NONAME ; #<VT>#
+	_ZTV13CATConnectFax @ 154 NONAME ABSENT
 	_ZTV13CATGetBattery @ 155 NONAME ; #<VT>#
 	_ZTV13CATGprsAttach @ 156 NONAME ; #<VT>#
 	_ZTV13CATGprsDetach @ 157 NONAME ; #<VT>#
@@ -168,9 +168,9 @@ EXPORTS
 	_ZTV14CATNetworkInfo @ 167 NONAME ; #<VT>#
 	_ZTV14CATSmsCommands @ 168 NONAME ; #<VT>#
 	_ZTV14CATWaitForCall @ 169 NONAME ; #<VT>#
-	_ZTV14CCallMobileFax @ 170 NONAME ; #<VT>#
-	_ZTV14CFaxCompletion @ 171 NONAME ; #<VT>#
-	_ZTV14CLineMobileFax @ 172 NONAME ; #<VT>#
+	_ZTV14CCallMobileFax @ 170 NONAME ABSENT
+	_ZTV14CFaxCompletion @ 171 NONAME ABSENT
+	_ZTV14CLineMobileFax @ 172 NONAME ABSENT
 	_ZTV14CMobileONStore @ 173 NONAME ; #<VT>#
 	_ZTV14CNotifications @ 174 NONAME ; #<VT>#
 	_ZTV14CSetLineToIdle @ 175 NONAME ; #<VT>#
@@ -255,5 +255,5 @@ EXPORTS
 	_ZTV7CATBase @ 254 NONAME ; #<VT>#
 	_ZTV7CATInit @ 255 NONAME ; #<VT>#
 	_ZTV8CGprsQoS @ 256 NONAME ; #<VT>#
-	_ZTV9CFaxHayes @ 257 NONAME ; #<VT>#
+	_ZTV9CFaxHayes @ 257 NONAME ABSENT
 

@@ -451,10 +451,6 @@ MMockMessHandlerBase* CMmMessageRouter::RouteRequest(const TInt aIpc )
         case EMobilePhoneGetCipheringIndicatorStatus:
         case EMobilePhoneNotifySecurityCapsChange:
         case EMmTsySimRefreshRegisterIPC:
-        case ECtsyPhoneGetPreferredNetworksReq:
-        case ECtsyPhoneGetPreferredNetworksComp:
-        case ECtsyPhoneStorePreferredNetworksListReq:
-        case ECtsyPhoneStorePreferredNetworksListComp:
         
         // APNControl
         case EMobilePhoneGetAPNname: 
@@ -499,6 +495,8 @@ MMockMessHandlerBase* CMmMessageRouter::RouteRequest(const TInt aIpc )
 		case EMmTsyUpdateLifeTimeIPC:                     		
 		case ECtsyPhoneTerminateAllCallsReq:
 		case ECtsyPhoneTerminateAllCallsComp:
+        case ECtsyPhoneTerminateActiveCallsReq:
+        case ECtsyPhoneTerminateActiveCallsComp:
         case EMobilePhoneNotifyIccAccessCapsChange:
 
             messHandler = iPhoneMessHandler;

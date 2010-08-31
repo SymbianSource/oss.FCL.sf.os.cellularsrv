@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -17,6 +17,12 @@
  @file
 */
 
+
+
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "smspprocTraces.h"
+#endif
 
 #include "smspproc.h"
 #include "smspmondsk.h"
@@ -43,7 +49,7 @@ CSmsPDUProcessor* CSmsPDUProcessor::NewL(MSmsComm& aSmsComm, const TSmsSettings&
 										 CSmsSegmentationStore& aSegmentationStore,
 										 CSmsMonitorDiskSpace& aSmsMonitorDiskSpace)
 	{
-	LOGSMSPROT1("CSmsPDUProcessor::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_NEWL_1, "CSmsPDUProcessor::NewL()");
 
 	CSmsPDUProcessor*  smsPDUProcessor = new (ELeave) CSmsPDUProcessor(aSmsComm,
 																	   aSmsSettings,
@@ -87,14 +93,13 @@ CSmsPDUProcessor::CSmsPDUProcessor(MSmsComm& aSmsComm,
  */
 void CSmsPDUProcessor::ConstructL()
 	{
-	LOGSMSPROT1("CSmsPDUProcessor::ConstructL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_CONSTRUCTL_1, "CSmsPDUProcessor::ConstructL()");
 	} // CSmsPDUProcessor::ConstructL
 
 
 void CSmsPDUProcessor::DecodeAndProcessPDUL(TGsmSmsSlot& aSlot, TBool aIsEnumeration)
 	{
-	LOGSMSPROT2("CSmsPDUProcessor::DecodeAndProcessPDUL(): aIsEnumeration=%d",
-				aIsEnumeration);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_DECODEANDPROCESSPDUL_1, "CSmsPDUProcessor::DecodeAndProcessPDUL(): aIsEnumeration=%d",aIsEnumeration);
 
 	//
 	// Store the slot...
@@ -110,8 +115,7 @@ void CSmsPDUProcessor::DecodeAndProcessPDUL(TGsmSmsSlot& aSlot, TBool aIsEnumera
 		iIsMobileTerminated = ETrue;
 		}
 
-	LOGSMSPROT2("CSmsStoreRead::DecodeAndProcessPDUL(): iIsMobileTerminated=%d",
-				iIsMobileTerminated);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_DECODEANDPROCESSPDUL_2, "CSmsStoreRead::DecodeAndProcessPDUL(): iIsMobileTerminated=%d",iIsMobileTerminated);
 
 	//
 	// Put the PDU and Service Center Address in the TGsmSms structure...
@@ -192,7 +196,7 @@ void CSmsPDUProcessor::DecodeAndProcessPDUL(TGsmSmsSlot& aSlot, TBool aIsEnumera
 	//
 	if (iSmsMessage->ToFromAddress().CompareF(KNETWORK) == 0)
 		{
-		LOGSMSPROT1("CSmsPDUProcessor::DecodeAndProcessPDUL(): MOSES OTE message!");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_DECODEANDPROCESSPDUL_3, "CSmsPDUProcessor::DecodeAndProcessPDUL(): MOSES OTE message!");
 		if (iSmsComm.NetworkInfoAvailable())
 			{
 			iSmsMessage->SetToFromAddressL(iSmsComm.NetworkInfo().iDisplayTag);
@@ -313,7 +317,7 @@ void CSmsPDUProcessor::DecodeAndProcessPDUL(TGsmSmsSlot& aSlot, TBool aIsEnumera
 
 void CSmsPDUProcessor::AnalysePDUCharacteristics()
 	{
-	LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_1, "CSmsPDUProcessor::AnalysePDUCharacteristics()");
 
 	CSmsPDU&  pdu = iSmsMessage->SmsPDU();
 
@@ -326,32 +330,32 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
         {
         if (msgClass == TSmsDataCodingScheme::ESmsClass0)
         	{
-			LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 0");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_2, "CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 0");
 	    	iIsClass0Message = ETrue;
         	}
         else if (msgClass == TSmsDataCodingScheme::ESmsClass1)
 			{
-			LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 1");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_3, "CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 1");
 			iIsClass1Message = ETrue;
 			}
         else if (msgClass == TSmsDataCodingScheme::ESmsClass2)
 			{
-			LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 2");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_4, "CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 2");
 			iIsClass2Message = ETrue;
 			}
         else if (msgClass == TSmsDataCodingScheme::ESmsClass3)
 			{
-			LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 3");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_5, "CSmsPDUProcessor::AnalysePDUCharacteristics(): Class 3");
 			iIsClass3Message = ETrue;
 			}
 		else
 			{
-			LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics(): Class Unknown!");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_6, "CSmsPDUProcessor::AnalysePDUCharacteristics(): Class Unknown!");
 			}
 		}
 	else
 		{
-		LOGSMSPROT1("CSmsPDUProcessor::AnalysePDUCharacteristics(): Class-less");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_7, "CSmsPDUProcessor::AnalysePDUCharacteristics(): Class-less");
 		}
 
 	//
@@ -364,8 +368,7 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
 	   iIsPIDType0 = ETrue;
 	   }
 
-	LOGSMSPROT2("CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsPIDType0=%d",
-				iIsPIDType0);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_8, "CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsPIDType0=%d",iIsPIDType0);
 
 	//
 	// Should this message be forwarded to the client?
@@ -378,8 +381,7 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
 		iIsForwardMessageToClient = ETrue;
 		}
 
-	LOGSMSPROT2("CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsForwardMessageToClient=%d",
-				iIsForwardMessageToClient);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_9, "CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsForwardMessageToClient=%d",iIsForwardMessageToClient);
 
 	//
 	// Is it flaged for auto-delete?
@@ -394,8 +396,7 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
             }
         }
 
-	LOGSMSPROT2("CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsMarkedForAutoDelete=%d",
-				iIsMarkedForAutoDelete);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_10, "CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsMarkedForAutoDelete=%d",iIsMarkedForAutoDelete);
 
 	//
 	// Should this PDU be deleted after processing?
@@ -411,8 +412,7 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
  		iIsPDUToBeDeleted = ETrue;
  		}
 
-	LOGSMSPROT2("CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsPDUToBeDeleted=%d",
-				iIsPDUToBeDeleted);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_11, "CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsPDUToBeDeleted=%d",iIsPDUToBeDeleted);
 
 	//
 	// Does the message need to be stored???
@@ -430,8 +430,7 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
 		iIsMessageGoingToBeStored = ETrue;
 		}
 
-	LOGSMSPROT2("CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsMessageGoingToBeStored=%d",
-				iIsMessageGoingToBeStored);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_12, "CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsMessageGoingToBeStored=%d",iIsMessageGoingToBeStored);
 
 	//
 	// Is the message complete? This value may change later, when the segmentation and
@@ -439,8 +438,7 @@ void CSmsPDUProcessor::AnalysePDUCharacteristics()
 	//
 	iIsComplete = iSmsMessage->IsComplete();
 
-	LOGSMSPROT2("CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsComplete=%d",
-				iIsComplete);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ANALYSEPDUCHARACTERISTICS_13, "CSmsPDUProcessor::AnalysePDUCharacteristics(): iIsComplete=%d",iIsComplete);
 	
 	//
 	// Store PDU Data. These values may be updated later.
@@ -462,7 +460,7 @@ void CSmsPDUProcessor::FindOriginalMessageAndProcessStatusReportL()
 	//
 	TBool  found = iSegmentationStore.AddStatusReportL(iIndex, iIsComplete, *iSmsMessage);
 	
-    LOGSMSPROT2("CSmsPDUReadProcess::FindOriginalMessageAndProcessStatusReportL(): found=%d",found);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_FINDORIGINALMESSAGEANDPROCESSSTATUSREPORTL_1, "CSmsPDUReadProcess::FindOriginalMessageAndProcessStatusReportL(): found=%d",found);
 
 	if (found)
 		{
@@ -498,7 +496,7 @@ void CSmsPDUProcessor::FindOriginalMessageAndProcessStatusReportL()
 
 void CSmsPDUProcessor::UpdateStatusReportL()
 	{
-	LOGSMSPROT1("CSmsPDUProcessor::UpdateStatusReportL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_UPDATESTATUSREPORTL_1, "CSmsPDUProcessor::UpdateStatusReportL()");
 
 	//
 	// Update the receive time of the status report...
@@ -531,7 +529,7 @@ void CSmsPDUProcessor::UpdateStatusReportL()
 
 void CSmsPDUProcessor::AddSlotToSmsMessageIfRequiredL()
 	{
-	LOGSMSPROT1("CSmsPDUProcessor::AddSlotToSmsMessageIfRequiredL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ADDSLOTTOSMSMESSAGEIFREQUIREDL_1, "CSmsPDUProcessor::AddSlotToSmsMessageIfRequiredL()");
 
 	//
 	// Add the slot to the message (if it is not going to be deleted and
@@ -567,8 +565,7 @@ void CSmsPDUProcessor::AddSlotToSmsMessageIfRequiredL()
  */
 void CSmsPDUProcessor::AddSegmentOfMessageToReassemblyStoreIfRequiredL()
 	{
-    LOGSMSPROT2("CSmsPDUReadProcess::AddSegmentOfMessageToReassemblyStoreIfRequiredL(): iIsComplete=%d",
-    			iIsComplete);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_ADDSEGMENTOFMESSAGETOREASSEMBLYSTOREIFREQUIREDL_1, "CSmsPDUReadProcess::AddSegmentOfMessageToReassemblyStoreIfRequiredL(): iIsComplete=%d",iIsComplete);
 
 	iReassemblyStore.AddSegmentToReassemblyStoreL(*iSmsMessage, iGsmSms, iIndex, iIsComplete, iIsEnumeration, iSmsPDUData.iReceived, iSmsPDUData.iTotal);
 	} // CSmsPDUProcessor::AddSegmentOfMessageToReassemblyStoreIfRequiredL
@@ -576,7 +573,7 @@ void CSmsPDUProcessor::AddSegmentOfMessageToReassemblyStoreIfRequiredL()
 
 void CSmsPDUProcessor::UpdateLogServerIdL()
 	{
-	LOGSMSPROT1("CSmsPDUProcessor::UpdateLogServerIdL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_UPDATELOGSERVERIDL_1, "CSmsPDUProcessor::UpdateLogServerIdL()");
 
 	//
 	// If this is a SUBMIT or DELIVER PDU,
@@ -592,7 +589,7 @@ void CSmsPDUProcessor::UpdateLogServerIdL()
 
 void CSmsPDUProcessor::ProcessMessageIfCompleteL()
 	{
-    LOGSMSPROT1("CSmsPDUProcessor::ProcessMessageIfCompleteL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_PROCESSMESSAGEIFCOMPLETEL_1, "CSmsPDUProcessor::ProcessMessageIfCompleteL()");
 
 	if ((iIsClass0Message && !iIsWapSms) && iReassemblyStore.IsSeparateClass0StoreSupported())
 		{
@@ -650,7 +647,7 @@ void CSmsPDUProcessor::ProcessMessageIfCompleteL()
 
 void CSmsPDUProcessor::DeletePDUL()
 	{
-    LOGSMSPROT1("CSmsPDUProcessor::DeletePDUL()");
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPDUPROCESSOR_DELETEPDUL_1, "CSmsPDUProcessor::DeletePDUL()");
 
 	//
 	// If the slot number has an index and store assigned, then we can delete

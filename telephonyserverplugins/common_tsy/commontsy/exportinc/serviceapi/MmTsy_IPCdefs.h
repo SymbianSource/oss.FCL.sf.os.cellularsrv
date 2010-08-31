@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -15,7 +15,7 @@
 *
 */
 
-
+   
 
 
 /**
@@ -156,22 +156,20 @@ enum TCtsyIpc
 	ECtsyPhoneCellInfoComp,
 	ECtsyPhoneCellInfoIndReq,
 	ECtsyPhoneCellInfoIndComp,
-	ECtsyPhoneCellInfoInd,	// 5
+	ECtsyPhoneCellInfoInd,
 	ECtsyUpdateLifeTimeReq,
 	ECtsyUpdateLifeTimeComp,
 	ECtsyPacketMbmsInitialiseContextReq,
 	ECtsyPacketMbmsInitialiseContextComp,
-	ECtsyPacketMbmsContextNotifyConfigChanged, // 10
+	ECtsyPacketMbmsContextNotifyConfigChanged,
 	ECtsyPhoneTerminateAllCallsReq,
 	ECtsyPhoneTerminateAllCallsComp,
 	// RMobilePhone::NotifySendNetworkServiceRequest
 	ECtsyPhoneSendNetworkServiceRequestReq,
 	ECtsyPhoneSendNetworkServiceRequestIndReq,
-	ECtsyPhoneSendNetworkServiceRequestInd,	//15
-	ECtsyPhoneGetPreferredNetworksReq,
-	ECtsyPhoneGetPreferredNetworksComp,
-	ECtsyPhoneStorePreferredNetworksListReq,
-	ECtsyPhoneStorePreferredNetworksListComp
+	ECtsyPhoneSendNetworkServiceRequestInd,
+	ECtsyPhoneTerminateActiveCallsReq,
+    ECtsyPhoneTerminateActiveCallsComp
 	};
 #else
 enum TCtsyIpc
@@ -181,18 +179,16 @@ enum TCtsyIpc
 	ECtsyPhoneCellInfoIndReq,
 	ECtsyPhoneCellInfoIndComp,
 	ECtsyUpdateLifeTimeReq,
-	ECtsyUpdateLifeTimeComp,	// 5
+	ECtsyUpdateLifeTimeComp,
 	ECtsyPacketMbmsInitialiseContextReq,
 	ECtsyPacketMbmsInitialiseContextComp,
 	ECtsyPacketMbmsContextNotifyConfigChanged,
 	ECtsyPhoneTerminateAllCallsReq,
-	ECtsyPhoneTerminateAllCallsComp,	//10
+	ECtsyPhoneTerminateAllCallsComp,
 	ECtsyPhoneSendNetworkServiceRequestInd,
 	ECtsyGetPhoneIdV2Comp,
-	ECtsyPhoneGetPreferredNetworksReq,
-	ECtsyPhoneGetPreferredNetworksComp,
-	ECtsyPhoneStorePreferredNetworksListReq,	 //15
-	ECtsyPhoneStorePreferredNetworksListComp
+    ECtsyPhoneTerminateActiveCallsReq,
+    ECtsyPhoneTerminateActiveCallsComp
 	};
 #endif //USING_CTSY_DISPATCHER
 

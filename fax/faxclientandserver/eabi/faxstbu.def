@@ -1,7 +1,0 @@
-EXPORTS
-	LibEntry @ 1 NONAME
-	_ZTI11CFaxSession @ 2 NONAME ; #<TI>#
-	_ZTI9CFaxTimer @ 3 NONAME ; #<TI>#
-	_ZTV11CFaxSession @ 4 NONAME ; #<VT>#
-	_ZTV9CFaxTimer @ 5 NONAME ; #<VT>#
-
