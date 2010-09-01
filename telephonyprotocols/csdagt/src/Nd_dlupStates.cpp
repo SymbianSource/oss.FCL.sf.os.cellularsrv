@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,13 +20,8 @@
 */
 
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "Nd_dlupStatesTraces.h"
-#endif
-
 #include "Nd_dlupStates.h"
+#include "SLOGGER.H"
 #include <comms-infras/eventlogger.h>
 #include <csdprog.h>
 #include "ND_DBACC.H"
@@ -278,7 +273,8 @@ Dialling is always asynchronous, so should not complete if cancelled.
 	{
 	if(iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPDIALLING_RUNL_1, "NetDial:\tCompleted Phase 'Dialling' with Error %d" ,iStatus.Int());
+		__FLOG_STMT(_LIT(logString3,"Dialling");)
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3() ,iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdFinishedDialling,iStatus.Int());
@@ -433,7 +429,8 @@ Call CompleteState() with KErrNone.
 	{
 	if(iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPSCANSCRIPT_RUNL_1, "NetDial:\tCompleted Phase 'Scan Script' with Error %d", iStatus.Int());
+		__FLOG_STMT(_LIT(logString3,"Scan Script");)
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdScannedScript,iStatus.Int());
@@ -506,7 +503,8 @@ Else create login state.
 	{ 
 	if((!aContinue)||(iStatus!=KErrNone))
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPGETLOGININFO_NEXTSTATEL_1, "NetDial:\tGetLoginInfo state cancelling (aContinue %d, iStatus %d)",aContinue, iStatus.Int());
+		__FLOG_STMT(_LIT(logString,"NetDial:\tGetLoginInfo state cancelling (aContinue %d, iStatus %d)");)
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString()), aContinue, iStatus.Int());
 
 		TInt err = iStatus.Int();
 		if (!aContinue && err == KErrNone)
@@ -647,7 +645,8 @@ Call CompleteState() with KErrNone.
 	{
 	if(iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPLOGIN_RUNL_1, _ "NetDial:\tCompleted Phase 'Login' with Error %d", iStatus.Int());
+		__FLOG_STMT(_LIT(logString3,"Login");)
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdFinishedLogIn,iStatus.Int());
@@ -781,7 +780,8 @@ Call ConnectionComplete() with ECsdConnectionOpen and KErrNone.
 #endif					
 	__ASSERT_DEBUG(iStatus==KErrNone,User::Invariant());
 	iSMObserver->UpdateProgress(ECsdConnectionOpen,KErrNone);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPOPEN_RUNL_1, "NetDial:\tConnection Open");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tConnection Open");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	if (iNdEnv->Script()!=NULL)
 		iNdEnv->Script()->CloseScript();
 	iSMObserver->ConnectionComplete(ECsdConnectionOpen,KErrNone);
@@ -920,8 +920,12 @@ Call CompleteState() with iStatus.Int().
 	iNdEnv->Logger()->LogDataUpdateEvent(R_LOG_CON_DISCONNECTED, KLogDataEventTypeUid);
 	if(iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPHANGUP_RUNL_1,"NetDial:\tCompleted Phase 'Hang Up' with Error %d", iStatus.Int());
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPHANGUP_RUNL_2, "NetDial:\tDisconnection Error %d", iStatus.Int());
+#ifdef __FLOG_ACTIVE
+		_LIT(logString3,"Hang Up");
+		_LIT8(logString2,"NetDial:\tDisconnection Error %d");
+#endif
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
+		__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString2()), iStatus.Int());
 		}
 	else
 		{
@@ -1020,7 +1024,8 @@ Disconnect completed.
 Call DisconnectComplete().
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPDISCONNECT_RUNL_1, _"NetDial:\tDisconnect Complete");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tDisconnect Complete");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 
 	iSMObserver->DisconnectComplete();
 	}
@@ -1074,7 +1079,8 @@ Call JumpToRunl() with KErrNone.
 */
 	{
 	ASSERT(iNdEnv);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPOPENDATAPORT_STARTSTATE_1,"NetDial:\tOpening Data Port");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tOpening Data Port"));
+	__FLOG_STATIC(KNetDialLogFolder(), KNetDialLogFile(), logString());
 
 	iSMObserver->UpdateProgress(ECsdScanningScript,KErrNone);
 	TRAPD(ret,iNdEnv->SetUpScriptL());
@@ -1124,7 +1130,10 @@ Call CompleteState() with KErrNone.
 	{
 	if (iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPOPENDATAPORT_RUNL_1, "NetDial:\tCompleted Phase 'Open Data Port' with Error %d", iStatus.Int());
+#ifdef __FLOG_ACTIVE
+		_LIT(logString3,"Open Data Port");
+#endif
+		__FLOG_STATIC2(KNetDialLogFolder(), KNetDialLogFile(), TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
 		if (iNdEnv->Script()!=NULL)
 			iNdEnv->Script()->CloseScript();
 		iSMObserver->ConnectionComplete(ECsdScannedScript,iStatus.Int());
@@ -1184,7 +1193,8 @@ Initiate shutdown of data port
 	ASSERT(iNdEnv);
 	ASSERT (iNdEnv->Script());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPCLOSEDATAPORT_STARTSTATE_1, "NetDial:\tClosing Data Port");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tClosing Data Port"));
+	__FLOG_STATIC(KNetDialLogFolder(), KNetDialLogFile(), logString());
 
 	iNdEnv->Script()->ShutdownChannel(iStatus);
 	iStatus = KRequestPending;
@@ -1201,7 +1211,9 @@ Changes to from Close Data Port state to next state.
 	{
 	if((!aContinue) || (iError != KErrNone) || (iStatus.Int() != KErrNone))
 		{
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPCLOSEDATAPORT_NEXTSTATEL_1, "NetDial:\tCloseDataPort state cancelling (iError %d, aContinue %d, iStatus %d)", iError, aContinue, iStatus.Int());
+		__FLOG_STMT(_LIT(logString,"NetDial:\tCloseDataPort state cancelling (iError %d, aContinue %d, iStatus %d)");)
+		__FLOG_STATIC3(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString()), iError, aContinue, iStatus.Int());
+
 		return CDlUpHangUp::NewL(*iSMObserver,*iNdEnv);
 		}
 	else
@@ -1228,11 +1240,14 @@ Call CompleteState() with KErrNone.
 	// to its earlier Connect()).
 	if (iStatus!=KErrNone)
 		{
-
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPCLOSEDATAPORT_RUNL_1, "NetDial:\tCompleted Phase 'Close Data Port' with Error %d", iStatus.Int());
+#ifdef __FLOG_ACTIVE
+		_LIT(logString3,"Close Data Port");
+		_LIT8(logstring2,"Saved error = %d");
+#endif
+		__FLOG_STATIC2(KNetDialLogFolder(), KNetDialLogFile(), TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
 		if (iError != KErrNone)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLUPCLOSEDATAPORT_RUNL_2, "Saved error = %d", iError);
+			__FLOG_STATIC1(KNetDialLogFolder(), KNetDialLogFile(), TRefByValue<const TDesC8>(logstring2()), iError);
 			}
 		else
 			{

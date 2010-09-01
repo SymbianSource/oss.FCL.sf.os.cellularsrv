@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,28 +19,23 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "BinderBaseTraces.h"
-#endif
-
 #include <nifmbuf.h>
 #include "BinderBase.h"
 #include "RawIP2Flow.h"
 #include "BcaController.h"
 
-CBinderBase::CBinderBase(CRawIP2Flow& aFlow)
+CBinderBase::CBinderBase(CRawIP2Flow& aFlow, CBttLogger* aTheLogger)
 /**
  * Constructor
  *
  * @param aNifMain A pointer to CRawIPFlow
  */
 	:iFlow(&aFlow),
+	iTheLogger(aTheLogger),
 	iStarted(EFalse)
 	{	
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
-	iIPTagHeader = new (ELeave) CIPTagHeader();
+	iIPTagHeader = new (ELeave) CIPTagHeader(iTheLogger);
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
 	}
 
@@ -60,7 +55,7 @@ void CBinderBase::SetType(TUint16 aType)
 /**
  *	Used to specify the type of the IP header.
  */
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_SETTYPE_1, "CBinderBase::SetType");
+	_LOG_L1C1(_L8("CBinderBase::SetType"));
 	
 	iIPTagHeader->SetType(aType);	
 }
@@ -108,7 +103,7 @@ ESock::MLowerDataSender* CBinderBase::Bind(ESock::MUpperDataReceiver* aUpperRece
  * @param aUpperControl A pointer to Upper layer control class
  */
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_BIND_1, "CBinderBase:\tBind()");
+    _LOG_L1C1(_L8("CBinderBase:\tBind()"));
 
 	iUpperReceiver = aUpperReceiver;
 	iUpperControl = aUpperControl;
@@ -117,7 +112,7 @@ ESock::MLowerDataSender* CBinderBase::Bind(ESock::MUpperDataReceiver* aUpperRece
 
 void CBinderBase::Unbind(ESock::MUpperDataReceiver* aUpperReceiver, ESock::MUpperControl* aUpperControl)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_UNBIND_1, "CBinderBase:\tUnbind()");
+	_LOG_L1C1(_L8("CBinderBase:\tUnbind()"));
 	
 #ifndef _DEBUG
 	(void) aUpperReceiver;
@@ -137,7 +132,7 @@ void CBinderBase::StartSending()
  * @param aProtocol A pointer to a protocol
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_STARTSENDING_1, "CBinderBase:\tStartSending()");
+	_LOG_L1C1(_L8("CBinderBase:\tStartSending()"));
 
 	if (!iStarted)
 		{
@@ -157,7 +152,7 @@ void CBinderBase::Error(TInt aErr)
  * @param aProtocol A pointer to a protocol
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBINDERBASE_ERROR_1, "CBinderBase:\tError()");
+	_LOG_L1C1(_L8("CBinderBase:\tError()"));
 
 	// Default implementation.
 	// Uses iProtocol instead aProtocol.

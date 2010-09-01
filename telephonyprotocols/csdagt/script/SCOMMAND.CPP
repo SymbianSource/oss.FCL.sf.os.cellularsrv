@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,15 +19,10 @@
  @file Scommand.cpp 
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "SCOMMANDTraces.h"
-#endif
-
 #include "SSCRREAD.H"
 #include "SSCREXEC.H"
 #include "SIO.H"
+#include "SLOGGER.H"
 
 // Command names
 
@@ -477,7 +472,8 @@ Parses a SET command. Determines variable name and value and adds to variable li
 		{
 		if (!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSETCOMMAND_PARSEL_1, "Script:\tExecuting Set");
+			__FLOG_STMT(_LIT8(KLogStringExecutingSet,"Script:\tExecuting Set");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KLogStringExecutingSet());
 			}
 		iStatus.iOffset=end;
 		EatSpaces(iStatus.iOffset);
@@ -491,7 +487,8 @@ Parses a SET command. Determines variable name and value and adds to variable li
 		if (!iStatus.iSkip)
 			{
 			iVarMan->AddVariableL(varName,value);
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSETCOMMAND_PARSEL_2, "Script:\tSet Var: %S  To %S",varName,value);
+			__FLOG_STMT(_LIT(KLogStringSetVar,"Script:\tSet Var: %S  To %S"));
+			__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KLogStringSetVar()),&varName,&value);
 			}
 		iStatus.iOffset=end;
 		return ETrue;		// Consumed
@@ -553,7 +550,8 @@ Parses SEND command.  Parses expression to send and sends it.
 		{
 		if(!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDCOMMAND_PARSEL_1,"Script:\tExecuting Send");
+			__FLOG_STMT(_LIT8(KLogStringExecutingSend,"Script:\tExecuting Send");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KLogStringExecutingSend());
 			}
 		iStatus.iOffset=end;
 		EatSpaces(iStatus.iOffset);
@@ -564,7 +562,12 @@ Parses SEND command.  Parses expression to send and sends it.
 		if(!iStatus.iSkip)
 			{
 			iScriptIO->Write(iSendString);
-			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSENDCOMMAND_PARSEL_2, "Script:\tSending %s",iSendString);
+#ifdef __FLOG_ACTIVE
+			_LIT(KLogStringSending,"Script:\tSending %S");
+			TBuf16<KLogBufferSize> temp;
+			temp.Copy(iSendString.Left(Min(iSendString.Length(),KLogBufferSize)));
+			__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KLogStringSending()),&temp);
+#endif
 			}
 		CleanupStack::PopAndDestroy();
 		return ETrue;		// Consumed
@@ -711,7 +714,8 @@ Parses WAIT command when not in skip mode.  Parses wait period, strings and labe
 queue a read.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAITCOMMAND_PARSEACTIONL_1, "Script:\tExecuting Wait");
+	__FLOG_STMT(_LIT8(KLogStringExecutingWait,"Script:\tExecuting Wait");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KLogStringExecutingWait());
 	EatSpaces(iStatus.iOffset);
 	TReal waitPeriod=ParseRealL(iStatus.iOffset);
 	EatSpacesAndLinesAndCommentsL();
@@ -736,7 +740,16 @@ queue a read.
 			TPtrC8 waitString(buf->Des());	
 			label->CreateCommChatStringL(waitString,EFalse);
 			iLabelArray->AppendL(label);
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAITCOMMAND_PARSEACTIONL_2, "Script:\tIf %s is found, Goto %S",waitString,label->LabelName());
+			// for logging
+			TBuf<KLogBufferSize> labelName;
+			labelName.Copy(label->LabelName().Left(Min(KLogBufferSize,label->LabelName().Length())));
+			//
+#ifdef __FLOG_ACTIVE
+			_LIT(KLogStringGog,"Script:\tIf %S is found, Goto %S");
+			TBuf16<KLogBufferSize> string;
+			string.Copy(waitString.Left(Min(waitString.Length(),KLogBufferSize)));
+			__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KLogStringGog()),&string,&labelName);
+#endif
 			CleanupStack::Pop();			// label - will be deleted from array
 			CleanupStack::PopAndDestroy();	// buf - will have been copied into label array
 			}			
@@ -880,7 +893,8 @@ Parses LOOP command. Checks how many times to loop and records position of begin
 			User::Leave(KErrNestedLoop);
 		if (!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CLOOPCOMMAND_PARSEL_1,"Script:\tExecuting Loop");
+			__FLOG_STMT(_LIT8(KLogStringExecutingLoop,"Script:\tExecuting Loop");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),KLogStringExecutingLoop());
 			}
 		iStatus.iOffset=end;
 		EatSpaces(iStatus.iOffset);
@@ -894,7 +908,8 @@ Parses LOOP command. Checks how many times to loop and records position of begin
 		iScriptReader->CurrentPos(iLoopPosition,iStatus.iOffset);
 		if (!iStatus.iSkip)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CLOOPCOMMAND_PARSEL_2, "Script:\tLoop Counter %d",iLoopCounter);
+			__FLOG_STMT(_LIT(KLogStringLoopCounter,"Script:\tLoop Counter %d");)
+			__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),KLogStringLoopCounter(),iLoopCounter);
 			}
 		return ETrue;		// Consumed
 		}
@@ -919,8 +934,10 @@ Checks how many times loop has been executed and returns to beginning if necessa
 			else
 				{
 				iScriptReader->SetCurrentPos(iLoopPosition);
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CLOOPCOMMAND_CHECKLOOPL_1,"Script:\tRepeat Loop");
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CLOOPCOMMAND_CHECKLOOPL_2,"Script:\tLoop Counter %d",iLoopCounter);
+				__FLOG_STMT(_LIT8(logString1,"Script:\tRepeat Loop");)
+				__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
+				__FLOG_STMT(_LIT8(logString2,"Script:\tLoop Counter %d");)
+				__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),logString2(),iLoopCounter);
 				}
 			return ETrue;				// Consumed Something
 			}
@@ -982,7 +999,8 @@ Parses GOTO command. Parses label and goto label.
 		{
 		if(!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGOTOCOMMAND_PARSEL_1,"Script:\tExecuting Goto");
+			__FLOG_STMT(_LIT8(logString,"Script:\tExecuting Goto");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 			}
 		iStatus.iOffset=end;
 		EatSpaces(iStatus.iOffset);
@@ -1011,8 +1029,10 @@ Finds label in those passed already, or skip lines until it is found.
 			{
 			iSearchName.Copy(aLabelName);
 			iStatus.iSkipModeToggleReq=ETrue;
-			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGOTOCOMMAND_GOTO_1,"Script:\tSearching for Label %S",aLabelName);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGOTOCOMMAND_GOTO_2, "Script:\tEntering Skip Mode");
+			__FLOG_STMT(_LIT(logString1,"Script:\tSearching for Label %S");)
+			__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString1()),&aLabelName);
+			__FLOG_STMT(_LIT8(logString2,"Script:\tEntering Skip Mode");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
 			}
 		else
 			iScriptReader->SetCurrentPos(pos);
@@ -1037,7 +1057,8 @@ Parses label and adds it to label list. Compares label against one to be found.
 		if (iStatus.iSkip && (iLabelMan->FindLabel(iSearchName,dummyPos)==KErrNone))
 			{
 			iStatus.iSkipModeToggleReq=ETrue;
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGOTOCOMMAND_PARSELABELL_1,"Script:\tExiting Skip Mode");
+			__FLOG_STMT(_LIT8(logString,"Script:\tExiting Skip Mode");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 			}
 		return ETrue;
 		}
@@ -1110,7 +1131,8 @@ Parses DTR command. Drops or raises appropriately.
 		{
 		if(!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDTRCOMMAND_PARSEL_1,"Script:\tExecuting DTR");
+			__FLOG_STMT(_LIT8(logString1,"Script:\tExecuting DTR");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
 			}
 		iStatus.iOffset=end;
 		EatSpaces(iStatus.iOffset);
@@ -1119,7 +1141,8 @@ Parses DTR command. Drops or raises appropriately.
 			{
 			if(!iStatus.iSkip)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDTRCOMMAND_PARSEL_2,"Script:\tRaising DTR");
+				__FLOG_STMT(_LIT8(logString2,"Script:\tRaising DTR");)
+				__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString2());
 				iScriptIO->RaiseDTR(NULL);
 				}	
 			}
@@ -1127,7 +1150,8 @@ Parses DTR command. Drops or raises appropriately.
 			{
 			if(!iStatus.iSkip)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDTRCOMMAND_PARSEL_3,"Script:\tDropping DTR");
+				__FLOG_STMT(_LIT8(logString3,"Script:\tDropping DTR");)
+				__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString3());
 				iScriptIO->DropDTR(NULL);
 				}	
 			}
@@ -1193,7 +1217,8 @@ Parses Read command.
 		{
 		if (!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREADPCTCOMMAND_PARSEL_1, "Script:\tExecuting Read");
+			__FLOG_STMT(_LIT8(logString,"Script:\tExecuting Read");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 			iCharSet=ParseCharacterTypeL(iStatus.iOffset);
 			iScriptExec->ReadPct();
 			}
@@ -1336,7 +1361,8 @@ Parses EXIT command. Parses number or variable and leaves with the appropriate v
 		{
 		if (!iStatus.iSkip)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CEXITCOMMAND_PARSEL_1,"Script:\tExecuting Exit");
+			__FLOG_STMT(_LIT8(logString1,"Script:\tExecuting Exit");)
+			__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString1());
 			}
 		iStatus.iOffset=end;
 		EatSpaces(iStatus.iOffset);
@@ -1360,7 +1386,8 @@ Parses EXIT command. Parses number or variable and leaves with the appropriate v
 				User::Leave(KErrScriptCompleted);
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CEXITCOMMAND_PARSEL_2,"Script:\tExit With Error %d",ret);
+				__FLOG_STMT(_LIT8(logString2,"Script:\tExit With Error %d");)
+				__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString2()),ret);
 				User::Leave(ret);
 				}
 			}

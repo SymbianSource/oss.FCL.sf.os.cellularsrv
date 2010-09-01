@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmtsyreqhandlestoreTraces.h"
-#endif
-
 #include <e32std.h>
 #include "cmmtsyreqhandlestore.h"
 #include "cmmphonetsy.h"
@@ -47,7 +41,7 @@ CMmTsyReqHandleStore* CMmTsyReqHandleStore::NewL(
     TInt aNumberOfRequests, //number of requests
     TTsyReqHandle* aFirstElement ) //pointer to the first element
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_NEWL_1, "TSY:CMmTsyReqHandleStore::NewL aNumberOfRequests=%d aFirstElement=0x%08x",aNumberOfRequests, (TUint)aFirstElement);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::NewL aNumberOfRequests=%d aFirstElement=%x",aNumberOfRequests,aFirstElement);
     
     CMmTsyReqHandleStore* tsyReqHandleStore 
             = new ( ELeave ) CMmTsyReqHandleStore();
@@ -62,7 +56,7 @@ CMmTsyReqHandleStore* CMmTsyReqHandleStore::NewL(
         *( tsyReqHandleStore->iReqHandles + i ) = 0;
 
     CleanupStack::Pop();
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_NEWL_2, "TSY:CMmTsyReqHandleStore::NewL returns tsyReqHandleStore=0x%08x", (TUint)tsyReqHandleStore);
+    TFLOGSTRING2("TSY:CMmTsyReqHandleStore::NewL returns tsyReqHandleStore=%x",tsyReqHandleStore);
     return tsyReqHandleStore;
     }
 
@@ -74,8 +68,8 @@ CMmTsyReqHandleStore* CMmTsyReqHandleStore::NewL(
     TInt aNumberOfRequests, 
     TTsyReqHandle* aFirstElement ) 
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_NEWL1_1, "TSY:CMmTsyReqHandleStore::NewL aCTelObject=0x%08x aPhone=0x%08x",(TUint)aCTelObject, (TUint)aPhone);
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_NEWL1_2, "TSY:CMmTsyReqHandleStore::NewL aNumberOfRequests=%d aFirstElement=0x%08x",aNumberOfRequests,(TUint)aFirstElement);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::NewL aCTelObject=%x aPhone=%x",aCTelObject,aPhone);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::NewL aNumberOfRequests=%d aFirstElement=%x",aNumberOfRequests,aFirstElement);
     CMmTsyReqHandleStore* tsyReqHandleStore 
             = new ( ELeave ) CMmTsyReqHandleStore();
     
@@ -105,7 +99,7 @@ CMmTsyReqHandleStore* CMmTsyReqHandleStore::NewL(
 TTsyReqHandle CMmTsyReqHandleStore::GetTsyReqHandle(
     const TInt aIndex )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_GETTSYREQHANDLE_1, "TSY:CMmTsyReqHandleStore::GetTsyReqHandle aIndex=%d", aIndex);
+    TFLOGSTRING2("TSY:CMmTsyReqHandleStore::GetTsyReqHandle aIndex=%d", aIndex);
     TTsyReqHandle ret( NULL );
 
     //check the bounds
@@ -127,7 +121,7 @@ void CMmTsyReqHandleStore::SetTsyReqHandle(
     const TInt aIndex, 
     const TTsyReqHandle aTsyReqHandle ) 
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_SETTSYREQHANDLE_1, "TSY:CMmTsyReqHandleStore::SetTsyReqHandle aIndex=%d aTsyReqHandle=0x%08x", aIndex, (TUint)aTsyReqHandle);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::SetTsyReqHandle aIndex=%d aTsyReqHandle=%d ", aIndex, aTsyReqHandle);
     if ( aIndex >= 0 && aIndex < iNumOfRequests )
         {
         *( iReqHandles + aIndex ) = aTsyReqHandle;
@@ -150,8 +144,8 @@ void CMmTsyReqHandleStore::SetTsyReqHandle(
     TInt aTimeout, 
     TInt aIPC ) 
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_SETTSYREQHANDLE1_1, "TSY:CMmTsyReqHandleStore::SetTsyReqHandle aIndex=%d, aTsyReqHandle=0x%08x",aIndex,(TUint)aTsyReqHandle);
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_SETTSYREQHANDLE1_2, "TSY:CMmTsyReqHandleStore::SetTsyReqHandle aTimeout=%d  IPC=%d", aTimeout, aIPC);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::SetTsyReqHandle aIndex=%d, aTsyReqHandle=%d",aIndex,aTsyReqHandle);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::SetTsyReqHandle aTimeout=%d  IPC=%d", aTimeout, aIPC);
     
     if ( aIndex >= 0 && aIndex < iNumOfRequests )
         {
@@ -167,7 +161,6 @@ void CMmTsyReqHandleStore::SetTsyReqHandle(
                                                    iCTelObject,
                                                    aTimeout,
                                                    aIPC );
-     
         }
     }
 
@@ -184,7 +177,7 @@ void CMmTsyReqHandleStore::SetTsyReqHandle(
 TTsyReqHandle CMmTsyReqHandleStore::ResetTsyReqHandle(    
     const TInt aIndex ) 
 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_RESETTSYREQHANDLE_1, "TSY:CMmTsyReqHandleStore::ResetTsyReqHandle aIndex=%d", aIndex);
+TFLOGSTRING2("TSY:CMmTsyReqHandleStore::ResetTsyReqHandle aIndex=%d", aIndex);
     //req handle was not used.
     TInt ret = 0;
 
@@ -216,7 +209,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_RES
     
         }
     }
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_RESETTSYREQHANDLE_2, "TSY:CMmTsyReqHandleStore::ResetTsyReqHandle aIndex=%d, ret=%d", aIndex, ret);
+TFLOGSTRING3("TSY:CMmTsyReqHandleStore::ResetTsyReqHandle aIndex=%d, ret=%d", aIndex, ret);
     return ret;
 }
 
@@ -232,7 +225,7 @@ void CMmTsyReqHandleStore::PostponeTimeout(
     const TInt aHandle, 
     const TInt aTimeout ) 
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_POSTPONETIMEOUT_1, "TSY:CMmTsyReqHandleStore::PostponeTimeout aHandle=%d, aTimeout=%d",aHandle,aTimeout);
+    TFLOGSTRING3("TSY:CMmTsyReqHandleStore::PostponeTimeout aHandle=%d, aTimeout=%d",aHandle,aTimeout);
     // call ResetEntryTimeout 
     iPhone->GetTimeStampStore()->ResetEntryTimeout( aHandle,
                                                     this,
@@ -250,7 +243,7 @@ void CMmTsyReqHandleStore::PostponeTimeout(
 void CMmTsyReqHandleStore::StopTimeout(
     const TInt aHandle ) 
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_STOPTIMEOUT_1, "TSY:CMmTsyReqHandleStore::StopTimeout aHandle=%d",aHandle);
+    TFLOGSTRING2("TSY:CMmTsyReqHandleStore::StopTimeout aHandle=%d",aHandle);
     iPhone->GetTimeStampStore()->DeleteEntryByHandle( aHandle, this );
     }
 

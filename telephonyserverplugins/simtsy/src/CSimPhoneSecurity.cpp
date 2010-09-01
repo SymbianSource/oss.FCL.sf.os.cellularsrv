@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,8 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimPhoneSecurityTraces.h"
-#endif
-
 #include "CSimPhone.h"
+#include "Simlog.h"
 #include "utils.h"
 #include "CSimPhoneSecurity.h"
 #include <testconfigfileparser.h>
@@ -72,7 +66,7 @@ void CSimPhoneSecurity::ConstructL()
  * delays from the configuration file.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_1, "Starting to parse PhoneSecurity additional config parameters...");
+	LOGPHONE1("Starting to parse PhoneSecurity additional config parameters...");
 	
 	iNotifySettingsTimer = CIccTimer::NewL();
 	iNotifySecurityEventsTimer = CIccTimer::NewL();
@@ -92,14 +86,14 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,0,KSecurityCodes);
+			LOGPARSERR("temp",ret,0,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iPin1.Copy(temp);
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,1,KSecurityCodes);
+			LOGPARSERR("temp",ret,1,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iPin2.Copy(temp);
@@ -107,7 +101,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,2,KSecurityCodes);
+			LOGPARSERR("temp",ret,2,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iPuk1.Copy(temp);
@@ -115,7 +109,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,3,KSecurityCodes);
+			LOGPARSERR("temp",ret,3,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iPuk2.Copy(temp);
@@ -123,7 +117,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,4,KSecurityCodes);
+			LOGPARSERR("temp",ret,4,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iPhonePassword.Copy(temp);
@@ -131,7 +125,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,5,KSecurityCodes);
+			LOGPARSERR("temp",ret,5,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iSPC.Copy(temp);
@@ -139,7 +133,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,6,KSecurityCodes);
+			LOGPARSERR("temp",ret,6,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iPhBkHiddenKey.Copy(temp);
@@ -147,7 +141,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,7,KSecurityCodes);
+			LOGPARSERR("temp",ret,7,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iUSimAppPin.Copy(temp);
@@ -155,7 +149,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,8,KSecurityCodes);
+			LOGPARSERR("temp",ret,8,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iSecondUSimAppPin.Copy(temp);
@@ -163,7 +157,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,9,KSecurityCodes);
+			LOGPARSERR("temp",ret,9,&KSecurityCodes);
 			}
 		else
 			iSecCodes.iUniversalPin.Copy(temp);
@@ -178,13 +172,14 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s." ,ret,0,KSecurityCodeAttempts);
+			LOGPARSERR(&KSecurityCodeAttempts,ret,0,&KSecurityCodeAttempts);
 			}
 		else
 			{
 			if (temp <= 0)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_13, "Using default value...");
+				LOGPARSERRANGE(&KSecurityCodeAttempts,temp,"> 0",0,&KSecurityCodeAttempts);
+				LOGCONFIG1("Using default value...");
 				temp = KDefaultPinEntryAttempts;
 				}
 			iSecurityCodeRemainigAttempts.iPin1=temp;
@@ -193,14 +188,14 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s." ,ret,1,KSecurityCodeAttempts);
+			LOGPARSERR(&KSecurityCodeAttempts,ret,1,&KSecurityCodeAttempts);
 			}
 		else
 			{
 			if (temp <= 0)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_15, "Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s expected > 0" ,temp,1,KSecurityCodeAttempts);
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_16, "Using default value...");
+				LOGPARSERRANGE(&KSecurityCodeAttempts,temp,"> 0",1,&KSecurityCodeAttempts);
+				LOGCONFIG1("Using default value...");
 				temp = KDefaultPinEntryAttempts;
 				}
 			iSecurityCodeRemainigAttempts.iPin2=temp;
@@ -209,14 +204,14 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s." ,ret,2,KSecurityCodeAttempts);
+			LOGPARSERR(&KSecurityCodeAttempts,ret,2,&KSecurityCodeAttempts);
 			}
 		else
 			{
 			if (temp <= 0)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_18, "Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s expected > 0" ,temp,2,KSecurityCodeAttempts);
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_19, "Using default value...");
+				LOGPARSERRANGE(&KSecurityCodeAttempts,temp,"> 0",2,&KSecurityCodeAttempts);
+				LOGCONFIG1("Using default value...");
 				temp = KDefaultPukEntryAttempts;
 				}
 			iSecurityCodeRemainigAttempts.iPuk1=temp;
@@ -225,14 +220,14 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s."  ,ret,3,KSecurityCodeAttempts);
+			LOGPARSERR(&KSecurityCodeAttempts,ret,3,&KSecurityCodeAttempts);
 			}
 		else
 			{
 			if (temp <= 0)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_21, "Reading element SECURITYCODEATTEMPTS returned %d (element no. %d) from tag %s expected > 0" ,temp,3,KSecurityCodeAttempts);
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_22, "Using default value...");
+				LOGPARSERRANGE(&KSecurityCodeAttempts,temp,"> 0",3,&KSecurityCodeAttempts);
+				LOGCONFIG1("Using default value...");
 				temp = KDefaultPukEntryAttempts;
 				}
 			iSecurityCodeRemainigAttempts.iPuk2=temp;
@@ -241,7 +236,7 @@ void CSimPhoneSecurity::ConstructL()
 		}
 	else
 		{
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_23, "NOTE tag %s not defined, using default values",KSecurityCodeAttempts);
+		LOGPHONE2("NOTE tag %S not defined, using default values",&KSecurityCodeAttempts);
 		iSecurityCodeDefaultRemainigAttempts.iPin1= KDefaultPinEntryAttempts;
 		iSecurityCodeRemainigAttempts.iPin1= iSecurityCodeDefaultRemainigAttempts.iPin1;
 		iSecurityCodeDefaultRemainigAttempts.iPin2= KDefaultPinEntryAttempts;
@@ -260,7 +255,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,0,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,0,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -270,7 +265,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,1,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,1,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -280,7 +275,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_26, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,2,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,2,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -290,7 +285,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_27, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,3,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,3,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -300,7 +295,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_28, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,4,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,4,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -310,7 +305,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_29, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,5,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,5,&KICCLockedAtStart);
 			}
 		else
 			iSecStatus.iSPC=(RMobilePhone::TMobilePhoneLockStatus) temp;
@@ -318,7 +313,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_30, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,6,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,6,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -328,7 +323,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_31, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,7,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,7,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -338,7 +333,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_32, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,8,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,8,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -348,7 +343,7 @@ void CSimPhoneSecurity::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,temp);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_33, "WARNING - CONFIGURATION FILE PARSING - Reading element TEMP returned %d (element no. %d) from tag %s.",ret,9,KICCLockedAtStart);
+			LOGPARSERR("temp",ret,9,&KICCLockedAtStart);
 			}
 		else
 			{
@@ -369,14 +364,14 @@ void CSimPhoneSecurity::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_34, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KICCStatus);
+				LOGPARSERR("duration",ret,0,&KICCStatus);
 				continue;
 				}
 			
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,ICCStatus);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_35, "WARNING - CONFIGURATION FILE PARSING - Reading element ICCSTATUS returned %d (element no. %d) from tag %s.",ret,1,KICCStatus);
+				LOGPARSERR("ICCStatus",ret,1,&KICCStatus);
 				continue;
 				}
 			
@@ -400,28 +395,28 @@ void CSimPhoneSecurity::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_36, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KICCSetting);
+				LOGPARSERR("duration",ret,0,&KICCSetting);
 				continue;
 				}
 				
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,lock);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_37, "WARNING - CONFIGURATION FILE PARSING - Reading element LOCK returned %d (element no. %d) from tag %s.",ret,1,KICCSetting);
+				LOGPARSERR("lock",ret,1,&KICCSetting);
 				continue;
 				}
 			
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,lockSetting);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_38, "WARNING - CONFIGURATION FILE PARSING - Reading element LOCKSETTING returned %d (element no. %d) from tag %s.",ret,2,KICCSetting);
+				LOGPARSERR("lockSetting",ret,2,&KICCSetting);
 				continue;
 				}
 			
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,lockStatus);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CONSTRUCTL_39, "WARNING - CONFIGURATION FILE PARSING - Reading element LOCKSTATUS returned %d (element no. %d) from tag %s.",ret,3,KICCSetting);
+				LOGPARSERR("lockStatus",ret,3,&KICCSetting);
 				continue;
 				}
 			
@@ -642,7 +637,7 @@ TInt CSimPhoneSecurity::NumberOfSlotsL(const TInt aIpc)
 		return KDefaultNumberOfSlots;
 
 	default:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_NUMBEROFSLOTSL_1, "CSimPhoneSecurity: Number of Slots error, unknown IPC");
+		LOGPHONE1("CSimPhoneSecurity: Number of Slots error, unknown IPC");
 		User::Leave(KErrNotSupported);
 		break;
 		}
@@ -699,7 +694,7 @@ const CTestConfigSection* CSimPhoneSecurity::CfgFile()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_CFGFILE_1, ">>CSimPhoneSecurity::CfgFile");
+	LOGPHONE1(">>CSimPhoneSecurity::CfgFile");
 	return iPhone->CfgFile();
 	}
 
@@ -1423,7 +1418,8 @@ void CSimPhoneSecurity::SecurityEvent(RMobilePhone::TMobilePhoneSecurityEvent aE
 		case RMobilePhone::ESPCChanged:
 			//  FALLTHRU
 		default:
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONESECURITY_SECURITYEVENT_1, "CSimPhoneSecurity::SecurityEvent %d OOR [%d,%d]",aEvent, RMobilePhone::ENoICCFound, RMobilePhone::ESPCChanged);
+			LOGPHONE4("CSimPhoneSecurity::SecurityEvent %d OOR [%d,%d]",
+					aEvent, RMobilePhone::ENoICCFound, RMobilePhone::ESPCChanged);
 			return;
 		}
 	

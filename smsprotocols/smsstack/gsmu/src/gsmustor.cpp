@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,12 +19,6 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "gsmustorTraces.h"
-#endif
-
 #include <e32svr.h>
 
 #include "gsmustor.h"
@@ -39,7 +33,7 @@ _LIT(KStoreSubDir, "sms\\");
  */
 void CSARStoreCloseObject(TAny* aObj)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORECLOSEOBJECT_1, "WARNING! Hey, CSARStoreCloseObject called by Untrapper! [0x%08x]", aObj);
+    LOGGSMU2("WARNING! Hey, CSARStoreCloseObject called by Untrapper! [0x%08x]", aObj);
     ((CSARStore*)aObj)->Revert();
     }
 
@@ -131,7 +125,11 @@ EXPORT_C void TSAREntry::ExternalizeL(RWriteStream& aStream) const
  */
 EXPORT_C void CSARStore::OpenL(const TDesC& aFullName, const TUid& aThirdUid)
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_OPENL_1, "CSARStore::OpenL(): '%S'", aFullName);
+#ifdef _SMS_LOGGING_ENABLED
+	TBuf8<80> buf8;
+	buf8.Copy(aFullName);
+	LOGGSMU2("CSARStore::OpenL(): '%S'", &buf8);
+#endif
 
 	// sanity check
 	__ASSERT_DEBUG(iFileStore==NULL,Panic(KGsmuPanicSARStoreAlreadyOpen));
@@ -147,7 +145,7 @@ EXPORT_C void CSARStore::OpenL(const TDesC& aFullName, const TUid& aThirdUid)
  	TRAPD(ret, InternalizeEntryArrayL());
 	if (ret != KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_OPENL_2, "WARNING: InteralizeEntryArrayL left with %d", ret);
+		LOGGSMU2("WARNING: InteralizeEntryArrayL left with %d", ret);
 		}
 
  	if(ret == KErrCorrupt || ret == KErrEof || ret == KErrNotFound)
@@ -168,16 +166,17 @@ EXPORT_C void CSARStore::OpenL(const TDesC& aFullName, const TUid& aThirdUid)
 EXPORT_C void CSARStore::CommitTransactionL()
 // This function does the real work of updating the filestore
 	{
-    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_COMMITTRANSACTIONL_1, "CSARStore::CommitTransactionL(): this=0x%08X iInTransaction=%d iFileStore=0x%08X",(TUint)this, iInTransaction, (TUint)iFileStore);
+    LOGGSMU4("CSARStore::CommitTransactionL(): this=0x%08X iInTransaction=%d iFileStore=0x%08X",
+    		 this, iInTransaction, iFileStore);
 
 	__ASSERT_DEBUG(iFileStore!=NULL, Panic(KGsmuPanicSARStoreNotOpen));
 	__ASSERT_DEBUG(iInTransaction, Panic(KGsmuPanicSARStoreTransaction));
 
-#ifdef OST_TRACE_COMPILER_IN_USE
+#ifdef _SMS_LOGGING_ENABLED
 	TRAPD(err, DoCommitAndCompactL());
 	if (err != KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_COMMITTRANSACTIONL_2, "WARNING! could not CommitL/CompactL due to %d", err);
+		LOGGSMU2("WARNING! could not CommitL/CompactL due to %d", err);
 		User::Leave(err);
 		}
 #else
@@ -200,7 +199,11 @@ EXPORT_C void CSARStore::CommitTransactionL()
  */
 EXPORT_C void CSARStore::Close()
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_CLOSE_1, "CSARStore::Close(): '%S'", iFullName);
+#ifdef _SMS_LOGGING_ENABLED
+	TBuf8<80> buf8;
+	buf8.Copy(iFullName);
+	LOGGSMU2("CSARStore::Close(): '%S'", &buf8);
+#endif
 
 	__ASSERT_DEBUG(!iInTransaction, Panic(KGsmuPanicSARStoreTransaction));
 
@@ -260,7 +263,8 @@ EXPORT_C void CSARStore::PurgeL(const TTimeIntervalMinutes& aTimeIntervalMinutes
 // storing it in the reassembly store.
 //
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_PURGEL_1, "CSARStore::PurgeL(): aTimeIntervalMinutes=%d, aPurgeIncompleteOnly=%d",aTimeIntervalMinutes.Int(), aPurgeIncompleteOnly);
+	LOGGSMU3("CSARStore::PurgeL(): aTimeIntervalMinutes=%d, aPurgeIncompleteOnly=%d",
+			 aTimeIntervalMinutes.Int(), aPurgeIncompleteOnly);
 
 	// TODO - flag
 	// we could also save the call of the method from the consruction of the smsprot
@@ -268,7 +272,7 @@ EXPORT_C void CSARStore::PurgeL(const TTimeIntervalMinutes& aTimeIntervalMinutes
 		return;
 
 	TInt count=iEntryArray.Count();
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_PURGEL_2, "CSARStore::PurgeL(): count=%d", count);
+	LOGGSMU2("CSARStore::PurgeL(): count=%d", count);
 
 	TTime time;
 	time.UniversalTime();
@@ -309,10 +313,11 @@ EXPORT_C void CSARStore::PurgeL(const TTimeIntervalMinutes& aTimeIntervalMinutes
  */
 EXPORT_C void CSARStore::PurgeL(TInt aKSegmentationLifetimeMultiplier,TBool aPurgeIncompleteOnly)
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_PURGEL1_1, "CSARStore::PurgeL(): aKSegmentationLifetimeMultiplier=%d, aPurgeIncompleteOnly=%d",aKSegmentationLifetimeMultiplier, aPurgeIncompleteOnly);
+	LOGGSMU3("CSARStore::PurgeL(): aKSegmentationLifetimeMultiplier=%d, aPurgeIncompleteOnly=%d",
+			 aKSegmentationLifetimeMultiplier, aPurgeIncompleteOnly);
 
 	TInt count=Entries().Count();
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_PURGEL1_2, "CSARStore::PurgeL(): count=%d", count);
+	LOGGSMU2("CSARStore::PurgeL(): count=%d", count);
 	TTime time;
 	time.UniversalTime();
 
@@ -370,7 +375,7 @@ EXPORT_C void CSARStore::PurgeL(TInt aKSegmentationLifetimeMultiplier,TBool aPur
 	    
 	ExternalizeEntryArrayL();
 	CommitTransactionL();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_PURGEL1_3, "CSmsSegmentationStore::PurgeL End");
+	LOGGSMU1("CSmsSegmentationStore::PurgeL End");
 	} // CSARStore::PurgeL
 
 
@@ -384,7 +389,7 @@ EXPORT_C void CSARStore::PurgeL(TInt aKSegmentationLifetimeMultiplier,TBool aPur
  */
 EXPORT_C void CSARStore::DeleteEntryL(TInt aIndex)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_DELETEENTRYL_1, "CSARStore::DeleteEntryL(): aIndex=%d", aIndex);
+	LOGGSMU2("CSARStore::DeleteEntryL(): aIndex=%d", aIndex);
 
 	DoDeleteEntryL(aIndex);
 	ExternalizeEntryArrayL();
@@ -422,7 +427,7 @@ EXPORT_C CSARStore::~CSARStore()
  */
 EXPORT_C CFileStore& CSARStore::FileStore()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_FILESTORE_1, "CSARStore::FileStore()");
+	LOGGSMU1("CSARStore::FileStore()");
 
 	__ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
 	return *iFileStore;
@@ -439,7 +444,7 @@ EXPORT_C const CFileStore& CSARStore::FileStore() const
     {
     // Ignore in code coverage - not used in SMS stack.
     BULLSEYE_OFF
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_FILESTORE1_1, "CSARStore::FileStore()");
+    LOGGSMU1("CSARStore::FileStore()");
     __ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
     return *iFileStore;
     BULLSEYE_RESTORE
@@ -458,7 +463,7 @@ EXPORT_C const CFileStore& CSARStore::FileStore() const
  */
 EXPORT_C void CSARStore::AddEntryL(const TSAREntry& aEntry)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_ADDENTRYL_1, "CSARStore::AddEntryL()");
+	LOGGSMU1("CSARStore::AddEntryL()");
 
 	__ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
 	__ASSERT_DEBUG(aEntry.DataStreamId()!=KNullStreamId,Panic(KGsmuPanicSAREntryDataStreamIdNotSet));
@@ -480,7 +485,7 @@ EXPORT_C void CSARStore::AddEntryL(const TSAREntry& aEntry)
  */
 EXPORT_C void CSARStore::ChangeEntryL(TInt aIndex,const TSAREntry& aNewEntry)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_CHANGEENTRYL_1, "CSARStore::ChangeEntryL(): aIndex=%d", aIndex);
+	LOGGSMU2("CSARStore::ChangeEntryL(): aIndex=%d", aIndex);
 
 	__ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
 	__ASSERT_DEBUG(iEntryArray[aIndex].DataStreamId()==aNewEntry.DataStreamId(),Panic(KGsmuPanicSAREntryDataStreamIdChanged));
@@ -501,7 +506,7 @@ EXPORT_C void CSARStore::ChangeEntryL(TInt aIndex,const TSAREntry& aNewEntry)
  */
 EXPORT_C TStreamId CSARStore::ExtraStreamId() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_EXTRASTREAMID_1, "CSARStore::ExtraStreamId");
+	LOGGSMU1("CSARStore::ExtraStreamId");
 	return iExtraStreamId;
 	} // CSARStore::ExtraStreamId
 
@@ -517,7 +522,7 @@ EXPORT_C TStreamId CSARStore::ExtraStreamId() const
  */
 EXPORT_C void CSARStore::SetExtraStreamIdL(const TStreamId& aExtraStreamId)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_SETEXTRASTREAMIDL_1, "CSARStore::SetExtraStreamIdL(): id=%d", aExtraStreamId.Value());
+	LOGGSMU2("CSARStore::SetExtraStreamIdL(): id=%d", aExtraStreamId.Value());
 
 	__ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
 	TStreamId streamid=iExtraStreamId;
@@ -525,7 +530,7 @@ EXPORT_C void CSARStore::SetExtraStreamIdL(const TStreamId& aExtraStreamId)
 	TRAPD(ret, ExternalizeEntryArrayL());
 	if (ret!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_SETEXTRASTREAMIDL_2, "WARNING! CSARStore::DoExternalizeEntryArrayL left with %d", ret);
+		LOGGSMU2("WARNING! CSARStore::DoExternalizeEntryArrayL left with %d", ret);
 		iExtraStreamId=streamid;	//  Roll back
 		User::Leave(ret);			//  re-leave to allow caller to also roll back
 		}
@@ -543,14 +548,14 @@ EXPORT_C void CSARStore::SetExtraStreamIdL(const TStreamId& aExtraStreamId)
  */
 EXPORT_C void CSARStore::CompactL()
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_COMPACTL_1, "CSARStore::CompactL Start");
+    LOGGSMU1("CSARStore::CompactL Start");
 	__ASSERT_DEBUG(iFileStore!=NULL, Panic(KGsmuPanicSARStoreNotOpen));
 	__ASSERT_DEBUG(iInTransaction, Panic(KGsmuPanicSARStoreTransaction));
 
 	TInt space = iFileStore->CompactL();
 	iFileStore->CommitL();
 
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_COMPACTL_2, "CSARStore::CompactL End [space=%d]", space);
+    LOGGSMU2("CSARStore::CompactL End [space=%d]", space);
 	(void)space;
 	} // CSARStore::CompactL
 
@@ -564,11 +569,11 @@ EXPORT_C void CSARStore::CompactL()
  */
 EXPORT_C void CSARStore::BeginTransactionLC()
 	{
-    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_BEGINTRANSACTIONLC_1, "CSARStore::BeginTransactionLC [this=0x%08X iInTransaction=%d iFileStore=0x%08X]", (TUint)this, iInTransaction, (TUint)iFileStore);
+    LOGGSMU4("CSARStore::BeginTransactionLC [this=0x%08X iInTransaction=%d iFileStore=0x%08X]", this, iInTransaction, iFileStore);
 
 	if (iFileStore == NULL || iInTransaction)
 		{
-	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_BEGINTRANSACTIONLC_2, "WARNING CSARStore::BeginTransactionLC leaving with KErrAccessDenied");
+	    LOGGSMU1("WARNING CSARStore::BeginTransactionLC leaving with KErrAccessDenied");
 		User::Leave(KErrAccessDenied);
 		}
 
@@ -579,7 +584,8 @@ EXPORT_C void CSARStore::BeginTransactionLC()
 
 void CSARStore::Revert()
 	{
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_REVERT_1, "CSARStore::Revert(): this=0x%08X, iInTransaction=%d", (TUint)this, iInTransaction);
+    LOGGSMU3("CSARStore::Revert(): this=0x%08X, iInTransaction=%d",
+    		 this, iInTransaction);
 
 	__ASSERT_DEBUG(iInTransaction, Panic(KGsmuPanicSARStoreTransaction));
 
@@ -598,8 +604,11 @@ void CSARStore::Revert()
  */
 EXPORT_C void CSARStore::DoOpenL()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_DOOPENL_1, "CSARStore::DoOpenL(): '%S' this=0x%08X", iFullName, (TUint)this);
-
+#ifdef _SMS_LOGGING_ENABLED
+	TBuf8<80> buf8;
+	buf8.Copy(iFullName);
+	LOGGSMU3("CSARStore::DoOpenL(): '%S' this=0x%08X", &buf8, this);
+#endif
 
 	TUidType uidtype(KPermanentFileStoreLayoutUid,KSARStoreUid,iThirdUid);
 	TEntry entry;
@@ -617,7 +626,7 @@ EXPORT_C void CSARStore::DoOpenL()
 		TRAP(ret,(iFileStore=CPermanentFileStore::OpenL(iFs,iFullName,EFileShareExclusive|EFileStream|EFileRead|EFileWrite)));
 		if(ret != KErrNone)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_DOOPENL_2, "WARNING! CPermanentFileStore::OpenLC left with %d", ret);
+			LOGGSMU2("WARNING! CPermanentFileStore::OpenLC left with %d", ret);
 			}
 		}
 
@@ -629,8 +638,11 @@ EXPORT_C void CSARStore::DoOpenL()
 		{
 		// create a new file and push the close function on the cleanup stack,
 		// so that the trap handler will close the file automatically
-
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_DOOPENL_3, "CSARStore::DoOpenL(): New file created '%S'", iFullName);
+#ifdef _SMS_LOGGING_ENABLED
+		TBuf8<80> buf8;
+		buf8.Copy(iFullName);
+		LOGGSMU2("CSARStore::DoOpenL(): New file created '%S'", &buf8);
+#endif
 		TInt kerr(iFs.MkDirAll(iFullName)); //the directory may not exist, So create one.
 		if(kerr != KErrAlreadyExists)
 			{
@@ -654,14 +666,18 @@ EXPORT_C void CSARStore::DoOpenL()
  */
 void CSARStore::DoDeleteEntryL(TInt aIndex)
 	{
-#ifdef OST_TRACE_COMPLIER_IN_USE
+#ifdef _SMS_LOGGING_ENABLED
 	const TSmsSegmentationEntry& entry = (const TSmsSegmentationEntry&)iEntryArray[aIndex];
 
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_DODELETEENTRYL_1, "CSARStore::DoDeleteEntryL [aIndex=%d Count=%d]",aIndex, iEntryArray.Count());
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_DODELETEENTRYL_2, "CSARStore::DoDeleteEntryL [aIndex=%d Delivered=%d Failed=%d]",aIndex, entry.Delivered(), entry.Failed());
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_DODELETEENTRYL_3, "CSARStore::DoDeleteEntryL [aIndex=%d Count=%d Total=%d]",aIndex, entry.Count(), entry.Total());
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_DODELETEENTRYL_4, "CSARStore::DoDeleteEntryL [aIndex=%d logId=%d StreamId=%u]",aIndex, entry.LogServerId(), (TUint) entry.DataStreamId().Value());
-#endif // OST_TRACE_COMPLIER_IN_USE
+	LOGGSMU3("CSARStore::DoDeleteEntryL [aIndex=%d Count=%d]",
+			 aIndex, iEntryArray.Count());
+	LOGGSMU4("CSARStore::DoDeleteEntryL [aIndex=%d Delivered=%d Failed=%d]",
+			 aIndex, entry.Delivered(), entry.Failed());
+	LOGGSMU4("CSARStore::DoDeleteEntryL [aIndex=%d Count=%d Total=%d]",
+			 aIndex, entry.Count(), entry.Total());
+	LOGGSMU4("CSARStore::DoDeleteEntryL [aIndex=%d logId=%d StreamId=%d]",
+			 aIndex, entry.LogServerId(), entry.DataStreamId().Value());
+#endif // _SMS_LOGGING_ENABLED
 
 	__ASSERT_DEBUG(iFileStore!=NULL,Panic(KGsmuPanicSARStoreNotOpen));
 	TRAPD(err, iFileStore->DeleteL(iEntryArray[aIndex].DataStreamId()));
@@ -677,7 +693,7 @@ void CSARStore::DoDeleteEntryL(TInt aIndex)
  */
 void CSARStore::InternalizeEntryArrayL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_INTERNALIZEENTRYARRAYL_1, "CSARStore::InternalizeEntryArrayL()");
+	LOGGSMU1("CSARStore::InternalizeEntryArrayL()");
 
 	__ASSERT_DEBUG(iFileStore!=NULL, Panic(KGsmuPanicSARStoreNotOpen));
 
@@ -698,7 +714,7 @@ void CSARStore::InternalizeEntryArrayL()
 
 void CSARStore::RemoveDeletedEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_REMOVEDELETEDENTRIES_1, "CSARStore::RemoveDeletedEntries()");
+	LOGGSMU1("CSARStore::RemoveDeletedEntries()");
 
 	TInt count=iEntryArray.Count();
 	while (count--)
@@ -715,7 +731,7 @@ void CSARStore::RemoveDeletedEntries()
 
 void CSARStore::ReinstateDeletedEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_REINSTATEDELETEDENTRIES_1, "CSARStore::ReinstateDeletedEntries()");
+	LOGGSMU1("CSARStore::ReinstateDeletedEntries()");
 
 	TInt count=iEntryArray.Count();
 	while (count--)
@@ -738,7 +754,8 @@ void CSARStore::ExternalizeEntryArrayL()
 	__ASSERT_DEBUG(iFileStore!=NULL, Panic(KGsmuPanicSARStoreNotOpen));
 	__ASSERT_DEBUG(iInTransaction, Panic(KGsmuPanicSARStoreTransaction));
 
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_EXTERNALIZEENTRYARRAYL_1, "CSARStore::ExternalizeEntryArrayL(): this=0x%08X count=%d headerid=%u]",(TUint)this, iEntryArray.Count(), (TUint)iFileStore->Root().Value());
+	LOGGSMU4("CSARStore::ExternalizeEntryArrayL(): this=0x%08X count=%d headerid=%d]",
+			 this, iEntryArray.Count(), iFileStore->Root().Value());
 
 	TStreamId headerid=iFileStore->Root();
 	RStoreWriteStream stream;
@@ -785,18 +802,11 @@ void CSARStore::ExternalizeEntryArrayL()
  */
 void CSARStore::DoCommitAndCompactL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSARSTORE_DOCOMMITANDCOMPACTL_1, "CSARStore::DoCommitAndCompactL()");
+	LOGGSMU1("CSARStore::DoCommitAndCompactL()");
 
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) 
-    TBuf<40> timestamp;
-    SmsTimeStampL(timestamp);
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSARSTORE_DOCOMMITANDCOMPACTL_2, "%S",timestamp);
-#endif
+	LOGGSMUTIMESTAMP();
 	iFileStore->CommitL();
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) 
-    SmsTimeStampL(timestamp);
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSARSTORE_DOCOMMITANDCOMPACTL_3, "%S",timestamp);
-#endif
+	LOGGSMUTIMESTAMP();
 
 	iCommitCount--;
 	if (iCommitCount < 0)
@@ -816,7 +826,7 @@ void CSARStore::DoCommitAndCompactL()
  */
 EXPORT_C void CSARStore::PrivatePath(TDes& aPath)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSARSTORE_PRIVATEPATH_1, "CSARStore::PrivatePath()");
+	LOGGSMU1("CSARStore::PrivatePath()");
 
 	TDriveUnit driveUnit(KStoreDrive);
 	TDriveName drive=driveUnit.Name();

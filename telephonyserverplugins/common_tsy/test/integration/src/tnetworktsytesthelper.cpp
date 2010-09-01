@@ -613,8 +613,7 @@ void TNetworkTsyTestHelper::WaitForMobilePhoneNotifyNetworkSelectionSettingChang
         {
         aOperatorName = EOperatorAnite;
         }
-    else if ( ptrNetworkName.Find(_L("NTN")) >=0 
-            ||  ptrNetworkName.Find(_L("NOKIA")) >=0)
+    else if ( ptrNetworkName.Find(_L("NTN")) >=0 )
         {
         aOperatorName = EOperatorNTN;
         }

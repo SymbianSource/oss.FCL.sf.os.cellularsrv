@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,17 +20,11 @@
  @internalComponent
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cpdpstatuschangenotifierTraces.h"
-#endif
-
 #include <e32base.h>
 
 #include "cpdpstatuschangenotifier.h"
 #include "PDPFSM.h"
+#include "spudteldebuglogger.h"
 #include "pdpfsmnmspace.h"
 
 #include <pcktcs.h>
@@ -71,7 +65,8 @@ void CPdpStatusChangeNotifier::DoCancel()
 	{
 	if(IsActive())
 		{ 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_DOCANCEL_1, "CPdpStatusChangeNotifier::DoCancel EPacketContextNotifyStatusChange");
+		SPUDTELVERBOSE_INFO_LOG(
+			_L("CPdpStatusChangeNotifier::DoCancel EPacketContextNotifyStatusChange"));
 		iPacketContext.CancelAsyncRequest(EPacketContextNotifyStatusChange); 
 		}
 	}
@@ -84,13 +79,13 @@ void CPdpStatusChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_1, "Notified of context status change");
+		SPUDTELVERBOSE_INFO_LOG(_L("Notified of context status change"));
 		RPacketContext::TContextStatus aOldContextStatus;
 		iPdpFsmInterface.Get(iId,aOldContextStatus);
 		// only notify of change if it has actually changed
 		if (iContextStatus != aOldContextStatus)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_2, "FSM input EContextStatusChangeNetwork");
+			SPUDTELVERBOSE_INFO_LOG(_L("FSM input EContextStatusChangeNetwork"));
 			iPdpFsmInterface.Set(iId, iContextStatus);
             TInt err = KErrNone;
             iPacketContext.GetLastErrorCause(err); // Ignore error return code.
@@ -99,7 +94,8 @@ void CPdpStatusChangeNotifier::Notify(const TRequestStatus& aStatus)
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_3, "CPdpStatusChangeNotifier::Notify(), error: %d", aStatus.Int());
+		SPUDTEL_ERROR_LOG(_L("CPdpStatusChangeNotifier::Notify(), error: %d"), 
+						aStatus.Int());
 		ASSERT(aStatus == KErrCancel); 
 		}
 	}
@@ -143,7 +139,8 @@ void CMbmsPdpStatusChangeNotifier::DoCancel()
 	{
 	if(IsActive())
 		{ 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_DOCANCEL_1, "CMbmsPdpStatusChangeNotifier::DoCancel EPacketContextNotifyStatusChange");
+		SPUDTELVERBOSE_INFO_LOG(
+			_L("CMbmsPdpStatusChangeNotifier::DoCancel EPacketContextNotifyStatusChange"));
 		iMbmsPacketContext.CancelAsyncRequest(EPacketContextNotifyStatusChange); 
 		}
 	}
@@ -156,13 +153,13 @@ void CMbmsPdpStatusChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_1, "Notified of context status change");
+		SPUDTELVERBOSE_INFO_LOG(_L("Notified of context status change"));
 		RPacketContext::TContextStatus aOldContextStatus;
 		iPdpFsmInterface.Get(iId,aOldContextStatus);
 		// only notify of change if it has actually changed
 		if (iContextStatus != aOldContextStatus)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_2, "FSM input EContextStatusChangeNetwork");
+			SPUDTELVERBOSE_INFO_LOG(_L("FSM input EContextStatusChangeNetwork"));
 			iPdpFsmInterface.Set(iId, iContextStatus);
             TInt err = KErrNone;
             iMbmsPacketContext.GetLastErrorCause(err); // Ignore error return code.
@@ -171,7 +168,8 @@ void CMbmsPdpStatusChangeNotifier::Notify(const TRequestStatus& aStatus)
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_3, "CMbmsPdpStatusChangeNotifier::Notify(), error: %d", aStatus.Int());
+		SPUDTEL_ERROR_LOG(_L("CMbmsPdpStatusChangeNotifier::Notify(), error: %d"), 
+						aStatus.Int());
 		ASSERT(aStatus == KErrCancel); 
 		}
 	}

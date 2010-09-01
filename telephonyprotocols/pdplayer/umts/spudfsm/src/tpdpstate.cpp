@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,16 +22,10 @@
  @internalComponent
 */
  
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstateTraces.h"
-#endif
-
 #include <networking/umtsnifcontrolif.h>
 #include "cpdpfsmfactory.h"
 #include "tpdpstate.h"
+#include "spudfsmdebuglogger.h"
 #include "pdpfsmnmspace.h"
 #include "reteldriverinput.h"
 #include "PDPFSM.h"
@@ -94,18 +88,17 @@ _LIT(KUnknown, "Unknown");
 
 
 TPdpState::TPdpState()
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+#ifdef _DEBUG
 	: iName()
 #endif		
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_CTOR_1, ">>TPdpState::TPdpState()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_CTOR_2, "<<TPdpState::TPdpState()");
+	SPUDFSMVERBOSE_FNLOG("TPdpState::TPdpState()");
 }
 
 TInt TPdpState::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt /*aErrorCode*/)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_INPUT_1, ">>TPdpState::Input()");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_INPUT_2, "aOperation : %d", aOperation);
+	SPUDFSMVERBOSE_FNLOG("TPdpState::Input()");
+	SPUDFSMVERBOSE_LOG1(_L("aOperation : %d"), aOperation);
 
 	if (aOperation == PdpFsm::EContextDeleted || aOperation == SpudMan::EContextDelete ||
 		(aOperation == PdpFsm::EContextStatusChangeNetwork && aFsm.iContextStatus == RPacketContext::EStatusDeleted))
@@ -116,26 +109,25 @@ TInt TPdpState::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt /*aError
 		return KErrNone;
 	}
 
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_INPUT_3, "!!! Unhandled Operation (%S)!!!", *(LogOperation (aFsm, aOperation)));
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_INPUT_4, "<<TPdpState::Input()");
+	SPUDFSMVERBOSE_LOG1(_L("!!! Unhandled Operation (%S)!!!"), LogOperation (aFsm, aOperation));
 	return KErrGeneral;
 }
 
 void TPdpState::EtelDriverInput (CPdpFsm& aFsm, EtelDriver::TEtelInput aOperation)
 {
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_ETELDRIVERINPUT_1, "EtelDriverInput : %d", aOperation);
+	SPUDFSMVERBOSE_LOG1(_L("EtelDriverInput : %d"), aOperation);
 	aFsm.EtelInput (aOperation);
 }
 
 void TPdpState::EtelDriverCancel (CPdpFsm& aFsm)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_ETELDRIVERCANCEL_1, "EtelDriverCancel");
+	SPUDFSMVERBOSE_LOG(_L("EtelDriverCancel"));
 	aFsm.EtelCancel();
 }
 
 void TPdpState::SpudManNotify (CPdpFsm& aFsm, TInt aNotification, TInt aParam)
 {
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATE_SPUDMANNOTIFY_1, "SpudManNotify : %d", aNotification);
+	SPUDFSMVERBOSE_LOG1(_L("SpudManNotify : %d"), aNotification);
 	aFsm.SpudInput (aNotification, aParam);
 }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspbearTraces.h"
-#endif
 
 #include <commsdattypesv1_1.h>
 #include <cdbcols.h>
@@ -44,7 +38,7 @@ using namespace CommsDat;
  */
 CSmspSetBearer* CSmspSetBearer::NewL(const TSmsSettings& aSmsSettings,RMobileSmsMessaging& aSmsMessaging, TInt aPriority)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_NEWL_1, "CSmspSetBearer::NewL aPriority = %d", aPriority);
+	LOGSMSPROT2("CSmspSetBearer::NewL aPriority = %d", aPriority);
 
 	CSmspSetBearer* smsSetBearer=new(ELeave) CSmspSetBearer(aSmsSettings,aSmsMessaging, aPriority);
 	CleanupStack::PushL(smsSetBearer);
@@ -60,7 +54,7 @@ CSmspSetBearer* CSmspSetBearer::NewL(const TSmsSettings& aSmsSettings,RMobileSms
  */
 void CSmspSetBearer::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_CONSTRUCTL_1, "CSmspSetBearer::ConstructL()");
+	LOGSMSPROT1("CSmspSetBearer::ConstructL()");
 
 	CSmspCommDbEvent::ConstructL();
 
@@ -98,7 +92,7 @@ CSmspSetBearer::~CSmspSetBearer()
  */
 void CSmspSetBearer::NotifyBearerSet(TRequestStatus& aStatus)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_NOTIFYBEARERSET_1, "CSmspSetBearer::NotifyBearerSet, aStatus = %d", aStatus.Int());
+	LOGSMSPROT2("CSmspSetBearer::NotifyBearerSet, aStatus = %d", aStatus.Int());
 	if (!iBearerSet && IsActive())
 		{
 		Cancel();
@@ -108,12 +102,12 @@ void CSmspSetBearer::NotifyBearerSet(TRequestStatus& aStatus)
 
 	if (iBearerSet)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_NOTIFYBEARERSET_2, "CSmspSetBearer::NotifyBearerSet RequestComplete called");
+		LOGSMSPROT1("CSmspSetBearer::NotifyBearerSet RequestComplete called");
 		CSmsuActiveBase::Complete(KErrNone);
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_NOTIFYBEARERSET_3, "CSmspSetBearer::NotifyBearerSet started");
+		LOGSMSPROT1("CSmspSetBearer::NotifyBearerSet started");
 		Start();
 		}
 	} // CSmspSetBearer::NotifyBearerSet
@@ -124,7 +118,7 @@ void CSmspSetBearer::NotifyBearerSet(TRequestStatus& aStatus)
  */
 void CSmspSetBearer::Start()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_START_1, "CSmspSetBearer::Start");
+	LOGSMSPROT1("CSmspSetBearer::Start");
 	// Cancel any outstanding request
 	TRAPD(err, GetSmsBearerL(iBearer));
 
@@ -132,7 +126,7 @@ void CSmspSetBearer::Start()
 
 	if (err == KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_START_2, "CSmspSetBearer::GetSmsBearerL() left with %d", err);
+		LOGSMSPROT2("CSmspSetBearer::GetSmsBearerL() left with %d", err);
 
 		// Set the previous bearer to the one that has been read
 		// from CommDB so that iPreviousBearer has an initial value
@@ -142,7 +136,7 @@ void CSmspSetBearer::Start()
 		}
 	else
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_START_3, "CSmspSetBearer::Start failed to get SMS bearer, error = %d", err);
+		LOGSMSPROT2("CSmspSetBearer::Start failed to get SMS bearer, error = %d", err);
 		Complete(err);
 		}
 	} // CSmspSetBearer::Start
@@ -157,7 +151,7 @@ void CSmspSetBearer::Start()
  */
 void CSmspSetBearer::DoRunL()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_1, "CSmspSetBearer::DoRunL(): iState=%d iStatus=%d", iState, iStatus.Int());
+	LOGSMSPROT3("CSmspSetBearer::DoRunL(): iState=%d iStatus=%d", iState, iStatus.Int());
 
 	switch (iState)
 		{
@@ -176,13 +170,13 @@ void CSmspSetBearer::DoRunL()
 				TRAPD(err, globalSettingsRecord.LoadL(*dbSession));
 				if (err != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_2, "CSmspSetBearer::DoRunL, could not load global settings, leave error code = %d", err);
+					LOGSMSPROT2("CSmspSetBearer::DoRunL, could not load global settings, leave error code = %d", err);
 					User::Leave(err);
 					}
 
 				iPreviousBearer = iBearer;
 
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_3, "CSmspSetBearer::DoRunL Storing previous bearer setting. Previous bearer now = %d", iBearer);
+				LOGSMSPROT2("CSmspSetBearer::DoRunL Storing previous bearer setting. Previous bearer now = %d", iBearer);
 
 				tempBearer = ((CCDGlobalSettingsRecord*)globalSettingsRecord.iRecords[0])->iSMSBearer;
 				iBearer = static_cast<RMobileSmsMessaging::TMobileSmsBearer>(tempBearer);
@@ -210,10 +204,10 @@ void CSmspSetBearer::DoRunL()
 				// (e.g. KErrNotSupported)
 				// Set global setting to previous value,
 				// then complete.
-				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_4, "CSmspSetBearer::DoRunL TSY failed to set MO SMS bearer. status = %d. Bearer = %d", iStatus.Int(), iBearer);
+				LOGSMSPROT3("CSmspSetBearer::DoRunL TSY failed to set MO SMS bearer. status = %d. Bearer = %d", iStatus.Int(), iBearer);
 
 				iBearer = iPreviousBearer;
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_5, "CSmspSetBearer::DoRunL Setting bearer back to previous setting. Bearer = %d", iBearer);
+				LOGSMSPROT2("CSmspSetBearer::DoRunL Setting bearer back to previous setting. Bearer = %d", iBearer);
 
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 				CMDBSession *dbSession = CMDBSession::NewL(KCDVersion1_2);
@@ -225,7 +219,7 @@ void CSmspSetBearer::DoRunL()
 				TRAPD(err, globalSettingsRecord.LoadL(*dbSession));
 				if (err != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_6, "CSmspSetBearer::DoRunL could not load global settings, error = %d", err);
+					LOGSMSPROT2("CSmspSetBearer::DoRunL could not load global settings, error = %d", err);
 					User::Leave(err);
 					}
 
@@ -233,7 +227,7 @@ void CSmspSetBearer::DoRunL()
 				TRAP(err, globalSettingsRecord.ModifyL(*dbSession));
 				if (err != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DORUNL_7, "CSmspSetBearer::DoRunL could not modify global settings, error = %d", err);
+					LOGSMSPROT2("CSmspSetBearer::DoRunL could not modify global settings, error = %d", err);
 					User::Leave(err);
 					}
 
@@ -262,7 +256,7 @@ void CSmspSetBearer::DoRunL()
  */
 void CSmspSetBearer::DoCancel()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_DOCANCEL_1, "CSmspSetBearer::DoCancel");
+	LOGSMSPROT1("CSmspSetBearer::DoCancel");
 
 	TimedSetActiveCancel();
 
@@ -319,7 +313,7 @@ void CSmspSetBearer::DoCancel()
  */
 void CSmspSetBearer::GetSmsBearerL(RMobileSmsMessaging::TMobileSmsBearer& aBearer)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_GETSMSBEARERL_1, "CSmspSetBearer::GetSmsBearerL()");
+	LOGSMSPROT1("CSmspSetBearer::GetSmsBearerL()");
 	
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	CMDBSession* sess = CMDBSession::NewL(KCDVersion1_2);
@@ -337,7 +331,7 @@ void CSmspSetBearer::GetSmsBearerL(RMobileSmsMessaging::TMobileSmsBearer& aBeare
 	smsBearerField->LoadL(*sess);
 
 	aBearer = static_cast<RMobileSmsMessaging::TMobileSmsBearer>(static_cast<TUint32>(*smsBearerField));
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_GETSMSBEARERL_2, "CSmspSetBearer::GetSmsBearerL(): aBearer=%d", aBearer);
+	LOGSMSPROT2("CSmspSetBearer::GetSmsBearerL(): aBearer=%d", aBearer);
 
 	CleanupStack::PopAndDestroy(smsBearerField);
 	CleanupStack::PopAndDestroy(sess);
@@ -350,7 +344,7 @@ void CSmspSetBearer::GetSmsBearerL(RMobileSmsMessaging::TMobileSmsBearer& aBeare
  */
 void CSmspSetBearer::SetSmsBearer()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_SETSMSBEARER_1, "CSmspSetBearer::SetSmsBearer, iBearer = %d", iBearer);
+	LOGSMSPROT2("CSmspSetBearer::SetSmsBearer, iBearer = %d", iBearer);
 
 	iBearerSet = EFalse;
 	iState = ESmsSetBearerStateSettingBearer;
@@ -365,7 +359,7 @@ void CSmspSetBearer::SetSmsBearer()
  */
 void CSmspSetBearer::NotifyOnEvent()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPSETBEARER_NOTIFYONEVENT_1, "CSmspSetBearer::NotifyOnEvent");
+	LOGSMSPROT1("CSmspSetBearer::NotifyOnEvent");
 
 	iState = ESmsSetBearerNotifyOnEvent;
 	CSmspCommDbEvent::NotifyOnEvent();

@@ -31,7 +31,7 @@ VENDORID 0x70000001
 SOURCEPATH	../Multimode
 SOURCE	      Mbattery.cpp mPHBKCOM.CPP Mphbook.cpp mPHONE.CPP 
 SOURCE	      Msignal.cpp mSLOGGER.CPP Mphbkinf.cpp
-SOURCE	      mnetwork.cpp Mimsi.cpp Mownnum.cpp monstore.cpp
+SOURCE	      ETELFAX.CPP mnetwork.cpp Mimsi.cpp Mownnum.cpp monstore.cpp
 
 SOURCEPATH    ../Multimode/sms
 SOURCE	      mSMSCSCA.CPP
@@ -48,7 +48,7 @@ SOURCE        ATBASE.CPP ATCALL.CPP ATDIAL.CPP ATHANGUP.CPP
 SOURCE        ATIO.CPP CALL.CPP LINE.CPP PHONE.CPP NOTIFY.CPP
 SOURCE        ATINIT.CPP ATANSWER.CPP ATCONNCT.CPP
 SOURCE        ATNOCARR.CPP ATERROR.CPP ATESCAPE.CPP ATO.CPP
-SOURCE	      ATWAIT.CPP SCHAT.CPP
+SOURCE	      ATWAIT.CPP FAX.CPP SCHAT.CPP
 SOURCE        SCOMM.CPP TSYCONFG.CPP PHONEFAC.CPP panic.cpp
 SOURCE        set_cbst.cpp
 
@@ -64,7 +64,7 @@ USERINCLUDE   ../hayes
 USERINCLUDE   ../Multimode
 USERINCLUDE   ../Multimode/sms
 USERINCLUDE   ../Multimode/gprs
-
+USERINCLUDE   ../../../fax/faxclientandserver/FAXSVR
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 USERINCLUDE ../hayes
 

@@ -23,14 +23,16 @@
 #define RECEIVER_H
 
 #include "BcaIoController.h"
+#include "bttlog.h"
 #include "Constants.h"
 #include <nifmbuf.h>
 
+class CBttLogger;
 
 class CReceiver : public CActive
 	{
 public:	
-	static CReceiver* NewL(CBcaIoController& aObserver, TUint aMaxPacketSize);
+	static CReceiver* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize);
 	~CReceiver();
 
 	// Inherited from CActive.
@@ -41,11 +43,12 @@ public:
 	void StartListening();
 	
 private:
-	CReceiver(CBcaIoController& aObserver, TUint aMaxPacketSize);
+	CReceiver(CBcaIoController& aObserver, CBttLogger* aTheLogger, TUint aMaxPacketSize);
 	void ConstructL();
 
 private: // Unowned data.
 	CBcaIoController& iObserver;
+	CBttLogger* iTheLogger;
 	TUint iMaxPacketSize;
 	RBuf8 iData;
 	RMBufPacket iRMBufPacket;

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,12 +12,6 @@
 //
 // Description:
 //
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ET_SVRTraces.h"
-#endif
 
 #include <e32svr.h>
 #include "ET_SSTD.H"
@@ -63,7 +57,7 @@ void CDestroyDummySubSession::RunL()
 // Destroy the tel object and the the server
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDESTROYDUMMYSUBSESSION_RUNL_1, "In RunL and about to Destroy the Tel Objects");
+	LOGTEXT("In RunL and about to Destroy the Tel Objects");
 	iOpen=EFalse;
 	iTelObject->TelObjectClose();
 	}
@@ -103,18 +97,18 @@ void CTelServer::CFMessageShutdown(const CommsFW::TCFShutdownMsg& aMessage)
 	{
 	if((aMessage.Type()==EOptional) || (aMessage.Type()==EGraceful))
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_CFMESSAGESHUTDOWN_1, "CTelServer received Shutdown. Scheduling shutdown when there's no sessions.");
+		LOGTEXT("CTelServer received Shutdown. Scheduling shutdown when there's no sessions.");
 		iShutGracefully = ETrue;
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_CFMESSAGESHUTDOWN_2, "Session Count is %d", iSessionCount);
+		LOGTEXT2("Session Count is %d", iSessionCount);
 		if(iSessionCount==0)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_CFMESSAGESHUTDOWN_3, "Calling AsynOneShot::Call()");
+			LOGTEXT("Calling AsynOneShot::Call()");
 			iSch->Call();
 			}
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_CFMESSAGESHUTDOWN_4, "CTelServer received Shutdown option EUnGraceful. Not supported, ignoring.");
+		LOGTEXT("CTelServer received Shutdown option EUnGraceful. Not supported, ignoring.");
 		}
 	}
 
@@ -149,7 +143,7 @@ void CTelSchedulerStop::RunL()
 // Stop the Active Scheduler (after any libraries have been unloaded)
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSCHEDULERSTOP_RUNL_1, "In RunL and about to stop CActiveScheduler");
+	LOGTEXT("In RunL and about to stop CActiveScheduler");
 	CActiveScheduler::Stop();
 	}
 
@@ -196,7 +190,7 @@ void CTelServer::ConstructL(RCFChannel::TMsgQueues aRxQueues, RCFChannel::TMsgQu
 
 CTelServer::~CTelServer()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_DTOR_1, "CTelServer::~CTelServer()");
+	LOGTEXT("CTelServer::~CTelServer()");
 	delete iChannelHandler;
 	delete iPhoneManager;
 	delete iSch;
@@ -242,19 +236,19 @@ void CTelServer::Dec()
 // Decrement a session stop scheduler if no session
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_DEC_1, "Entered CTelServer::Dec");
+	LOGTEXT("Entered CTelServer::Dec");
 	__ASSERT_ALWAYS((iSessionCount>0),Fault(EEtelFaultNegativeSessionCount));
 	iSessionCount--;
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_DEC_2, "Session Count is %d", iSessionCount);
+	LOGTEXT2("Session Count is %d", iSessionCount);
 	// If iShutGracefully==ETrue the Rootserver has informed us that it wants us to shutdown
 	// next time there is no sessions. If it is EFalse no such notification has arrived and 
 	// ETel continues running even though there are no sessions.
 	if((iSessionCount==0) && (iShutGracefully))
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_DEC_3, "Calling AsynOneShot::Call()");
+		LOGTEXT("Calling AsynOneShot::Call()");
 		iSch->Call();
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_DEC_4, "Exited from CTelServer::Dec");
+	LOGTEXT("Exited from CTelServer::Dec");
 	}
 
 TBool CTelServer::IsPriorityClient(const CTelSession* aSession) const
@@ -449,9 +443,9 @@ EXPORT_C TInt EtelServerThread(TAny* aArg)
 	// RThread::SetProtected is superceded by the security model
 	
 	__UHEAP_MARK;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDERS, ETELSERVERTHREAD_1, "----------New Log----------\015\012");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDERS, ETELSERVERTHREAD_2, "Entered ETel Server thread");
-	OstTraceDef0(OST_TRACE_CATEGORY_PRODUCTION, TRACE_BORDERS, ETELSERVERTHREAD_3, "Entered ETel Server thread");
+	LOGTEXT("----------New Log----------\015\012");
+	LOGTEXT("Entered ETel Server thread");
+	LOGTEXTREL("Entered ETel Server thread");
 	
 	CTrapCleanup* pT;
 	if ((pT=CTrapCleanup::New())==NULL)
@@ -477,17 +471,17 @@ EXPORT_C TInt EtelServerThread(TAny* aArg)
 		Fault(EEtelFaultSvrStartServer);
 		}
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDERS, ETELSERVERTHREAD_4, "ETel:\tMeeting rendezvous\n");
+	LOGTEXT("ETel:\tMeeting rendezvous\n");
 	RThread::Rendezvous(KErrNone);
 	CTelScheduler::Start();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDERS, ETELSERVERTHREAD_5, "ETel:\tScheduler has been stopped\n");
+	LOGTEXT("ETel:\tScheduler has been stopped\n");
 
 	delete pT;
 	delete pServer;
 	delete pScheduler;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDERS, ETELSERVERTHREAD_6, "ETel:\tAbout to exit ETel thread function\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_PRODUCTION, TRACE_BORDERS, ETELSERVERTHREAD_7, "ETel:\tAbout to exit ETel thread function\n");
+	LOGTEXT("ETel:\tAbout to exit ETel thread function\n");
+	LOGTEXTREL("ETel:\tAbout to exit ETel thread function\n");
 	__UHEAP_MARKEND;
 
 	return(KErrNone);
@@ -590,8 +584,8 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	20610,		//range is 20610-20610 inclusive
 	20611,		//range is 20611-20618 inclusive
 	20619,		//range is 20619-20999 inclusive
-	21000,		//range is 21000-21030 inclusive
-	21031,		//range is 21031-21499 inclusive
+	21000,		//range is 21000-21029 inclusive
+	21030,		//range is 21030-21499 inclusive
 	21500,		//range is 21500-21508 inclusive
 	21509,		//range is 21509-21509 inclusive
 	21510,		//range is 21510-21511 inclusive
@@ -602,8 +596,8 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	21525,		//range is 21525-21525 inclusive
 	21526,		//range is 21526
 	21527,		//range is 21527-21528 inclusive
-	21529,		//range is 21529-21530 inclusive
-	21531,		//range is 21531-21999 inclusive
+	21529,		//range is 21529
+	21530,		//range is 21530-21999 inclusive
 	22000,		//range is 22000-22003 inclusive
 	22004,		//range is 22004
 	22005,		//range is 22005-22008 inclusive

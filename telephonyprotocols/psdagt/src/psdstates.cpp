@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -17,12 +17,6 @@
  @file PsdStates.cpp
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "psdstatesTraces.h"
-#endif
-
 #include <comms-infras/cagentsmbase.h>
 #include <etelpckt.h>
 #include <connectprog.h>  // for circuit-switched progress enums
@@ -33,6 +27,7 @@
 #include "psdagt.h"
 #include "psdprog.h"
 
+#include "debuglogger.h"
 #include <logengevents.h>
 
 CPsdOutInit::CPsdOutInit(MAgentStateMachineEnv* aObserver,MPsdEnv* aPsdSM, MPsdCommDbAccess* aDb)
@@ -191,8 +186,9 @@ held by the state machine for use by subsequent states
 */
 	{
 	__ASSERT_DEBUG(iSM,User::Invariant());
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDINITBASE_DOSTARTSTATEL_1, "Packet Data:\tInitialising");
-	
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tInitialising");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1());
+
 	iSMObserver->PreventConnectionRetries();
 	//
 	//	PSD AGX does not allow any more connection retries. It assumes that GenConn has
@@ -278,7 +274,8 @@ void CPsdInitBase::RunL()
 Complete state for the initialisation state for both incomming and outgoing connections.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDINITBASE_RUNL_1, "Packet Data:\tInitialised");
+	__FLOG_STMT(_LIT8(logString2,"Packet Data:\tInitialised");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString2());
 	if (iStatus!=KErrNone)
 		iSMObserver->ConnectionComplete(EPsdStartingConfiguration,iStatus.Int()); // correct progress?
 	else
@@ -327,7 +324,8 @@ void CPsdCheckConfig::DoInitL()
 		{
 		User::Leave(KErrNotSupported);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCHECKCONFIG_DOINITL_1,"Packet Data:\tChecked Config");
+	__FLOG_STMT(_LIT8(logString2,"Packet Data:\tChecked Config");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString2());
 	}
 
 void CPsdCheckConfig::RunL()
@@ -374,7 +372,8 @@ Function called by the genconn state machine framework to start the state
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDNETWORKCHECK_STARTSTATE_1,"Packet Data:\tChecking network availability");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tChecking network availability");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1());
 
 	iSubState = EGettingInitialStatus;
 	iSM->PacketNetwork().GetNtwkRegStatus(iStatus,iRegStatus);
@@ -393,7 +392,8 @@ Checking for Network
 		iRegStatus==RPacketService::ENotRegisteredNotSearching || 
 		iRegStatus==RPacketService::ENotRegisteredAndNotAvailable)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDNETWORKCHECK_DONETWORKCHECK_1, "Packet Data:\tNo network");
+		__FLOG_STMT(_LIT8(logString1,"Packet Data:\tNo network");)
+		__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1());
 		JumpToRunl(KErrNetConNoGPRSNetwork);
 		return;
 		}
@@ -402,7 +402,8 @@ Checking for Network
 		iRegStatus==RPacketService::ENotRegisteredButAvailable ||
 		iRegStatus==RPacketService::EUnknown)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDNETWORKCHECK_DONETWORKCHECK_2,"Packet Data:\tReg status %d. Proceeding",iRegStatus);
+		__FLOG_STMT(_LIT8(logString1,"Packet Data:\tReg status %d. Proceeding");)
+		__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),iRegStatus);
 
 		iSM->BaseEnv().CompleteState(KErrNone);
 		return;
@@ -487,7 +488,8 @@ Function called by the genconn state machine framework to start the state
 	{
 	__ASSERT_DEBUG(iSM,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDWAITFORINCOMING_STARTSTATE_1,"Packet Data:\tWaiting for incoming Packet request");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tWaiting for incoming Packet request");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	iSM->PacketNetwork().NotifyContextActivationRequested(iStatus,iPdpTypeRequested,iAddressRequested);
 	SetActive();
@@ -505,7 +507,8 @@ Complete Connection for wait for incomming state.
 
 	if (iStatus==KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDWAITFORINCOMING_RUNL_1, "Packet Data:\tReceived network context activation request");
+		__FLOG_STMT(_LIT8(logString1,"Packet Data:\tReceived network context activation request");)
+		__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 		
 		if(iSM->Config().QueryIfIncommingConnectionAcceptable(iPdpTypeRequested,iAddressRequested) )
 			{
@@ -586,7 +589,8 @@ Function called by the genconn state machine framework to start the state
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCREATECONTEXT_STARTSTATE_1, "Packet Data:\tCreating context");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tCreating context");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	RPacketService& packetNetwork = iSM->PacketNetwork();
 	RPacketContext& context = iSM->Context();
@@ -613,7 +617,8 @@ Complete Connection for Create Context state.
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCREATECONTEXT_RUNL_1, "Packet Data:\tCompleted with error %d",iStatus.Int());
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tCompleted with error %d");)
+	__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),iStatus.Int());
 
 	if (iStatus==KErrNone)
 		{
@@ -682,7 +687,8 @@ Function called by the genconn state machine framework to start the state
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCREATEQOS_STARTSTATE_1, "Packet Data:\tCreating QoS");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tCreating QoS");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	RPacketContext& context = iSM->Context();
 	RPacketQoS& qoS = iSM->QoS();
@@ -713,7 +719,8 @@ Complete Connection for Create QoS state.
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCREATEQOS_RUNL_1,"Packet Data:\tCompleted with error %d",iStatus.Int());
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tCompleted with error %d");)
+	__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),iStatus.Int());
 
 	if (iStatus==KErrNone)
 		{
@@ -778,8 +785,8 @@ Function called by the genconn state machine framework to start the state
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDACTIVATECONTEXT_STARTSTATE_1, "Packet Data:\tActivating context");
-	
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tActivating context");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	iSMObserver->UpdateProgress(EPsdStartingActivation,KErrNone);
 	// Check if the context is already active since in the reconnect case it may be
@@ -810,7 +817,8 @@ Complete Connection for Activate Context state.
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	__ASSERT_DEBUG(iSMObserver,User::Invariant());
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDACTIVATECONTEXT_RUNL_1, "Packet Data:\tCompleted with error %d",iStatus.Int());
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tCompleted with error %d");)
+	__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),iStatus.Int());
 
 	if( (iSubState==EActivatingContext&&(iStatus==KErrNone || iStatus==KErrNotSupported) )
 		||(iSubState==ELoaningCommPort&&iStatus==KErrNone) ) 
@@ -834,7 +842,8 @@ Complete Connection for Activate Context state.
 				{
 				iSMObserver->UpdateProgress(EPsdFinishedActivation,KErrNone);// may want to do this when it really
 																// activates
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDACTIVATECONTEXT_RUNL_2,"Packet Data:\tHanding control to PPP");
+				__FLOG_STMT(_LIT8(logString1,"Packet Data:\tHanding control to PPP");)
+				__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 				iSMObserver->ServiceStarted();	
 				iSM->BaseEnv().CompleteState(KErrNone);
@@ -933,8 +942,8 @@ Function called by the genconn state machine framework to start the state
 	//stuff.
 	RequestStatusChange();
  
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_STARTSTATE_1, "Packet Data:\tCalling ConnectionComplete");
-
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tCalling ConnectionComplete");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1());
 
 	iSMObserver->Notification(EAgentToNifEventTypeModifyInitialTimer,NULL);
 	iSMObserver->UpdateProgress(KConnectionOpen,KErrNone); // I think NIFMAN just swallows this after
@@ -960,7 +969,8 @@ ensuing times it could be a Suspended->Active transition.
 		if(err != KErrNone)
 			{
 #ifdef __FLOG_ACTIVE
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_LOGACTIVE_1, "CPsdOpen:\t Error in getting remote party %d.",err);
+			_LIT8(logString1,"CPsdOpen:\t Error in getting remote party %d.");
+			__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),err);	
 #endif
 			}
 		iEventLoggerStarted = ETrue;
@@ -1016,14 +1026,16 @@ Update progress for open state.
 	{
 	__ASSERT_DEBUG(iSM && iSMObserver,User::Invariant());
 
+	__FLOG_STMT(_LIT8(logString1,"PacketData:\tStatus change to %s\0");)
+
 	if (iStatus==KErrNone)
 		{
 		switch (iContextStatus)
 			{
 		case RPacketContext::EStatusSuspended:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_1, "PacketData:\tStatus change to suspended");
-			
+			__FLOG_STMT(const TText8 value[] = "suspended";)
+			__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 			iSMObserver->Notification(EAgentToNifEventTypeDisableTimers,NULL);	
 			iSMObserver->UpdateProgress(EPsdSuspended,KErrNone);
 			iSM->Logger()->LogDataUpdateEvent(R_LOG_CON_SUSPENDED, KLogPacketDataEventTypeUid);
@@ -1035,15 +1047,16 @@ Update progress for open state.
 			// if reconnect happened then the logger is allready started and we just do an update
 			if (!iEventLoggerStarted)
 				{
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_2, "PacketData:\tStatus change to log active");
+				__FLOG_STMT(const TText8 value[] = "log active";)
+				__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 				WatchForConfigChangesL();	//those 2 functions should have been called in start state but
 				LogActive();				//RPacketContext was not EStatusActive at that time
 				}
 			else	// the LogCallStart() has completed 
 				{
 				iSM->Logger()->LogDataUpdateEvent(R_LOG_CON_CONNECTED, KLogPacketDataEventTypeUid);
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_3, "PacketData:\tStatus change to active");
-				
+				__FLOG_STMT(const TText8 value[] = "active";)
+				__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 				}
 			iSMObserver->Notification(EAgentToNifEventTypeEnableTimers,NULL);	
 			iSMObserver->UpdateProgress(KConnectionOpen,KErrNone);
@@ -1052,7 +1065,8 @@ Update progress for open state.
 			break;
 		case RPacketContext::EStatusDeactivating:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_4, "PacketData:\tStatus change to deactivating");
+			__FLOG_STMT(const TText8 value[] = "deactivating";)
+			__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 			iSMObserver->UpdateProgress(EPsdStartingDeactivation,KErrNone);
 			iSM->Logger()->LogDataUpdateEvent(R_LOG_CON_DISCONNECTING, KLogPacketDataEventTypeUid);
 			RequestStatusChange();			
@@ -1060,20 +1074,23 @@ Update progress for open state.
 			break;
 		case RPacketContext::EStatusInactive:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_5, "PacketData:\tStatus change to inactive");
+			__FLOG_STMT(const TText8 value[] = "inactive";)
+			__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 			iSM->Logger()->LogDataUpdateEvent(R_LOG_CON_DISCONNECTED, KLogPacketDataEventTypeUid);
 			}
 			break;
 		case RPacketContext::EStatusDeleted:
 			{ 
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_6, "PacketData:\tStatus change to deleted");
+			__FLOG_STMT(const TText8 value[] = "deleted";)
+			__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 			iSMObserver->UpdateProgress(EPsdFinishedDeactivation,KErrNone);
 			iSM->Logger()->LogDataUpdateEvent(R_LOG_CON_DISCONNECTED, KLogPacketDataEventTypeUid);
 			}
 			break;
 		case RPacketContext::EStatusActivating:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDOPEN_RUNL_7, "PacketData:\tStatus change to activating");
+			__FLOG_STMT(const TText8 value[] = "activating";)
+			__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&value);
 			iSM->Logger()->LogDataUpdateEvent(R_LOG_CON_CONNECTING, KLogPacketDataEventTypeUid);
 			RequestStatusChange();
 			}
@@ -1178,7 +1195,8 @@ Function called by the genconn state machine framework to start the state
 	{
 	__ASSERT_DEBUG(iSM && iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDRECOVERCOMMPORT_STARTSTATE_1, "Packet Data:\tRecovering Comm Port to ETel");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tRecovering Comm Port to ETel");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	iSMObserver->UpdateProgress(EPsdStartingDeactivation,KErrNone);
 	iSM->Context().RecoverCommPort(iStatus);
@@ -1192,7 +1210,8 @@ Complete state for Recover comm port state.
 	{
 	__ASSERT_DEBUG(iSM,User::Invariant());
 	// what can we do with errors at this stage in the game?
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDRECOVERCOMMPORT_RUNL_1, "Packet Data:\tRecovered Comm Port");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tRecovered Comm Port");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	iSM->BaseEnv().CompleteState(KErrNone);
 	}
@@ -1260,7 +1279,8 @@ void CPsdCloseLog::StartState()
 Function called by the genconn state machine framework to start the state
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCLOSELOG_STARTSTATE_1, "Packet Data:\tClosing Log");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tClosing Log");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1());
 	// We need to make sure that logging is finished before closing everything.
 	// forward iStatus to the logger, which will be responsible to complete iStatus when it is finished.
 			iStatus = KRequestPending;
@@ -1329,7 +1349,8 @@ Function called by the genconn state machine framework to start the state
 	{
 	__ASSERT_DEBUG(iSM,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDDEACTIVATION_STARTSTATE_1, "Packet Data:\tDeactivating Context");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tDeactivating Context");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	iSM->Context().Deactivate(iStatus);
 	SetActive();
@@ -1342,8 +1363,9 @@ Complete state for deactivation state.
 	{
 	__ASSERT_DEBUG(iSM && iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDDEACTIVATION_RUNL_1,"Packet Data:\tDeactivated Context");
-		
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tDeactivated Context");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
+	
 	iSMObserver->UpdateProgress(EPsdFinishedDeactivation,KErrNone);
 	iSM->BaseEnv().CompleteState(KErrNone);
 
@@ -1407,7 +1429,8 @@ Complete Disconnection for closure state.
 	{
 	__ASSERT_DEBUG(iSM && iSMObserver,User::Invariant());
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDCLOSURE_RUNL_1,"Packet Data:\tClosing down");
+	__FLOG_STMT(_LIT8(logString1,"Packet Data:\tClosing down");)
+	__FLOG_STATIC(KPsdAgxLogFolder(),KPsdAgxLogFile(),logString1);
 
 	RTelServer& etel = iSM->TelServer();
 	RPhone& phone = iSM->Phone();

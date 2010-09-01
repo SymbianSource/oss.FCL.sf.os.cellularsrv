@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,13 +19,6 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimPhoneTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "CSimPhone.h"
 #include "CSimCall.h"
@@ -38,6 +31,7 @@
 #include "CSimDtmf.h"
 #include "CSimIndicator.h"
 #include "utils.h"
+#include "Simlog.h"
 #include "CSimPacketService.h"
 #include "CSimSat.h"
 #include "CSimBatteryCharger.h"
@@ -62,7 +56,7 @@ const TInt KPhonebookStoreGranularity=2;	// < The granularity of the phonebook s
 
 GLDEF_C void SimPanic(TSimPanic aPanicNumber, TInt aLineNumber)
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, SIMPANIC_1, "SMS.TSY Panic %d Line %d", aPanicNumber, aLineNumber);
+	LOGPHONE3("SMS.TSY Panic %d Line %d", aPanicNumber, aLineNumber);
 	(void) aLineNumber;
 	_LIT(panicText,"SIM.TSY");
 	User::Panic(panicText,aPanicNumber);
@@ -148,13 +142,13 @@ void CSimPhone::PopulateServiceTableL(	TInt aMaxSupported,
 				}
 			}
 			*aTable = pTable;	
-			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_POPULATESERVICETABLEL_1, "Successfully populated %s table in simtsy", aLookup);
+			LOGPHONE2("Successfully populated %s table in simtsy", &aLookup);	
 		}
 	else	
 		{
 		delete(pTable);
 		pTable = NULL;
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_POPULATESERVICETABLEL_2, "Failed to populat %s table in simtsy", aLookup);
+		LOGPHONE2("Failed to populat %s table in simtsy", &aLookup);			
 		}
 	}
 
@@ -194,13 +188,13 @@ void CSimPhone::PopulateServiceTableL(	TInt aMaxSupported,
  				}
  			}
  			*aTableV8 = pTable;	
- 			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_POPULATESERVICETABLEV8L_1, "Successfully populated %s table in simtsy", aLookup);
+ 			LOGPHONE2("Successfully populated %s table in simtsy", &aLookup);	
  		}
  	else	
  		{
  		delete(pTable);
  		pTable = NULL;
- 		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_POPULATESERVICETABLEV8L_2, "Failed to populate %s table in simtsy", aLookup);
+ 		LOGPHONE2("Failed to populate %s table in simtsy", &aLookup);			
  		}
  	}
 
@@ -222,7 +216,7 @@ void CSimPhone::PopulateServiceTableL(	TInt aMaxSupported,
          }
     else
         {
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_SETTESTNUMBERANDREADCONFIGURATIONFILE_1, "Section for requested test number (%d) not found in the Config File",testNumber);
+        LOGPHONE2("Section for requested test number (%d) not found in the Config File",testNumber);
         delete iConfigFile;
         iConfigFile = NULL;
 
@@ -247,7 +241,7 @@ void CSimPhone::ConstructL()
 	r=User::LoadLogicalDevice(LDD_NAME);
 #endif
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CONSTRUCTL_1, "Starting to Load and Parse the Config File");
+	LOGPHONE1("Starting to Load and Parse the Config File");
 	
 	User::LeaveIfError(iFs.Connect());
 	
@@ -320,7 +314,7 @@ void CSimPhone::ConstructL()
         TInt ret=CTestConfig::GetElement(itemSubscriberId->Value(),KStdDelimiter,0,IMSI);
         if( ret != KErrNone )
 			{
-            OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element IMSI returned %d (element no. %d) from tag %s.",ret,0,KSubscriberId);
+            LOGPARSERR("IMSI",ret,0,&KSubscriberId);
 			}
         // coverity[check_return]
         CTestConfig::GetElement(itemSubscriberId->Value(),KStdDelimiter,1,iSubscriberId.iError);
@@ -335,9 +329,9 @@ void CSimPhone::ConstructL()
 	//get phone id from config file
 	GetPhoneIdAndCaps();
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CONSTRUCTL_3, "Loading the version configuration");
+	LOGPHONE1("Loading the version configuration");
 	iSimTsyVersion = CfgFile()->ItemValue(KTsyVersionNumber,KSimTsyDefaultVersion);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CONSTRUCTL_4, "Simulated SIMTSY version: %d", iSimTsyVersion);
+	LOGPHONE2("Simulated SIMTSY version: %d", iSimTsyVersion);
 	
 	iPacketService = CSimPacketService::NewL(this);
 	iBatteryCharger = CSimBatteryCharger::NewL(this);
@@ -415,7 +409,7 @@ void CSimPhone::ConstructL()
 	// end of network mode simulation setup
 	iTestNumberObserver = CSimTestNumberObserver::NewL(*this);
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CONSTRUCTL_5, "Completed Loading and Parsing the Config File");
+	LOGPHONE1("Completed Loading and Parsing the Config File");
 	}
 
 CSimReduceTimers* CSimPhone::GetReduceTimersSubject()
@@ -432,12 +426,12 @@ TInt CSimPhone::GetTestNumber(TInt& aTestNumber)
 
 	if (ret == KErrNone  &&  aTestNumber >= 0)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_GETTESTNUMBER_1, "Got system property KUidPSSimTsyCategory/KPSSimTsyTestNumber. testNumber=%d", aTestNumber);
+		LOGPHONE2("Got system property KUidPSSimTsyCategory/KPSSimTsyTestNumber. testNumber=%d", aTestNumber);
 		}
 	else
 		{
 		aTestNumber = KDefaultTestNumber;
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_GETTESTNUMBER_2, "Using the default test number. testNumber=%d", aTestNumber);
+		LOGPHONE2("Using the default test number. testNumber=%d", aTestNumber);
 		}
 
 	return KErrNone;
@@ -453,7 +447,7 @@ TInt CSimPhone::SetTestNumberInUse(TInt aTestNumber)
 
 	if (ret == KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_SETTESTNUMBERINUSE_1, "Set system property KUidPSSimTsyCategory/KPSSimTsyTestNumberInUse. testNumber=%d", aTestNumber);
+		LOGPHONE2("Set system property KUidPSSimTsyCategory/KPSSimTsyTestNumberInUse. testNumber=%d", aTestNumber);
 		}
 
 	return ret;
@@ -566,7 +560,7 @@ CSimPhone::~CSimPhone()
 	delete iTestNumberObserver;
 	
 	CSimTsyMode::FreeMode();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_DTOR_1, "CSimPhone Destroyed");
+	LOGPHONE1("CSimPhone Destroyed");
 	}
 
 void CSimPhone::InitPhoneStatus()
@@ -574,7 +568,7 @@ void CSimPhone::InitPhoneStatus()
 	const CTestConfigItem* item = NULL;
 	TInt ret = KErrNone;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_INITPHONESTATUS_1, "Starting to Load and Parse Phone Config parameters");
+	LOGPHONE1("Starting to Load and Parse Phone Config parameters");
 
 	item = CfgFile()->Item(KPhoneStatus);
 	if(!item)
@@ -599,7 +593,7 @@ void CSimPhone::FindAndCreatePhBkStoresL()
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_1, "Starting to Load and Parse PhoneBookStore Config parameters");
+	LOGPHONE1("Starting to Load and Parse PhoneBookStore Config parameters");
 	TInt i;
 	for(i=0;i<count;i++)
 		{
@@ -612,27 +606,27 @@ void CSimPhone::FindAndCreatePhBkStoresL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,phonebookName);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOKNAME returned %d (element no. %d) from tag %s.",ret,0,KPhBkStore);
+			LOGPARSERR("phonebookName",ret,0,&KPhBkStore);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,maxNumSlots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXNUMSLOTS returned %d (element no. %d) from tag %s.",ret,1,KPhBkStore);
+			LOGPARSERR("maxNumSlots",ret,1,&KPhBkStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,telNumMaxLen);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element TELNUMMAXLEN returned %d (element no. %d) from tag %s.",ret,2,KPhBkStore);
+			LOGPARSERR("telNumMaxLen",ret,2,&KPhBkStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,alphaTagMaxLen);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHATAGMAXLEN returned %d (element no. %d) from tag %s.",ret,3,KPhBkStore);
+			LOGPARSERR("alphaTagMaxLen",ret,3,&KPhBkStore);
 			continue;
 			}
 
@@ -647,7 +641,7 @@ void CSimPhone::FindAndCreatePhBkStoresL()
 
 	count=CfgFile()->ItemCount(KPhBkUSimStore);
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_6, "Starting to Load and Parse USim PhoneBookStore Config parameters");
+	LOGPHONE1("Starting to Load and Parse USim PhoneBookStore Config parameters");
 
 	for(i=0;i<count;i++)
 		{
@@ -662,63 +656,63 @@ void CSimPhone::FindAndCreatePhBkStoresL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,phonebookStore);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOKSTORE returned %d (element no. %d) from tag %s.",ret,0,KPhBkUSimStore);
+			LOGPARSERR("phonebookStore",ret,0,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,phonebookName);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element PHONEBOOKNAME returned %d (element no. %d) from tag %s.",ret,1,KPhBkUSimStore);
+			LOGPARSERR("phonebookName",ret,1,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,maxNumSlots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXNUMSLOTS returned %d (element no. %d) from tag %s.",ret,2,KPhBkUSimStore);
+			LOGPARSERR("maxNumSlots",ret,2,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,telNumMaxLen);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element TELNUMMAXLEN returned %d (element no. %d) from tag %s.",ret,3,KPhBkUSimStore);
+			LOGPARSERR("telNumMaxLen",ret,3,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,alphaTagMaxLen);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHATAGMAXLEN returned %d (element no. %d) from tag %s.",ret,4,KPhBkUSimStore);
+			LOGPARSERR("alphaTagMaxLen",ret,4,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,additional);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONAL returned %d (element no. %d) from tag %s.",ret,5,KPhBkUSimStore);
+			LOGPARSERR("additional",ret,5,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,maxEmail);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXEMAIL returned %d (element no. %d) from tag %s.",ret,6,KPhBkUSimStore);
+			LOGPARSERR("maxEmail",ret,6,&KPhBkUSimStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,maxAdditionalTelNumLen);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_14, "WARNING maxAdditionalTelNumLen missing, defaulting to telNumMaxLen");
+			LOGPHONE1("WARNING maxAdditionalTelNumLen missing, defaulting to telNumMaxLen");
 			maxAdditionalTelNumLen = telNumMaxLen;
 			}
 	
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,maxAdditionalTextLen);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_15, "WARNING maxAdditionalTextLen missing, defaulting to alphaTagMaxLen");
+			LOGPHONE1("WARNING maxAdditionalTextLen missing, defaulting to alphaTagMaxLen");
 			maxAdditionalTextLen = alphaTagMaxLen;
 			}
 
@@ -741,7 +735,7 @@ void CSimPhone::FindAndCreatePhBkStoresL()
 			}
 			if(foundShort) //warn but not fail!
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_16, "WARNING! PhBkUSimStore and PhBkStore duplicate phonebook configuration");
+				LOGPHONE1("WARNING! PhBkUSimStore and PhBkStore duplicate phonebook configuration");
 				}
 		}
 		for(TInt j=0; j < countStores; j++)
@@ -776,7 +770,7 @@ void CSimPhone::FindAndCreatePhBkStoresL()
 		{
 		iPhBkUSimStores->At(i)->PopulateStoreFromConfigFileL();
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_FINDANDCREATEPHBKSTORESL_17, "Finished parsing PhBkStores config parameters");
+	LOGPHONE1("Finished parsing PhBkStores config parameters");
 	}
 
 void CSimPhone::CreateONStoreL()
@@ -784,7 +778,7 @@ void CSimPhone::CreateONStoreL()
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CREATEONSTOREL_1, "Starting to Load and Parse Own Number Config parameters");
+	LOGPHONE1("Starting to Load and Parse Own Number Config parameters");
 
 	TInt i=0;
 	item=CfgFile()->Item(KONStore,i);
@@ -795,21 +789,21 @@ void CSimPhone::CreateONStoreL()
 	ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,maxNumSlots);
 	if(ret!=KErrNone)
 		{
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CREATEONSTOREL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXNUMSLOTS returned %d (element no. %d) from tag %s.",ret,1,KONStore);
+		LOGPARSERR("maxNumSlots",ret,1,&KONStore);
 		return;
 		}
 
 	ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,telNumMaxLen);
 	if(ret!=KErrNone)
 		{
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CREATEONSTOREL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element TELNUMMAXLEN returned %d (element no. %d) from tag %s.",ret,2,KONStore);
+		LOGPARSERR("telNumMaxLen",ret,2,&KONStore);
 		return;
 		}
 
 	ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,alphaTagMaxLen);
 	if(ret!=KErrNone)
 		{
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CREATEONSTOREL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element ALPHATAGMAXLEN returned %d (element no. %d) from tag %s.",ret,3,KONStore);
+		LOGPARSERR("alphaTagMaxLen",ret,3,&KONStore);
 		return;
 		}
 
@@ -818,7 +812,7 @@ void CSimPhone::CreateONStoreL()
 // Populate the Own Number Store 
 	iONStore->PopulateStoreFromConfigFileL();
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CREATEONSTOREL_5, "Finished parsing Own Number Store config parameters");
+	LOGPHONE1("Finished parsing Own Number Store config parameters");
 	}
 
 TInt CSimPhone::ExtFunc(const TTsyReqHandle aReqHandle, const TInt aIpc, const TDataPackage& aPckg)
@@ -1474,7 +1468,7 @@ CTelObject* CSimPhone::OpenNewObjectByNameL(const TDesC& aName)
 * @leave Leaves if incorrect phone name
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_OPENNEWOBJECTBYNAMEL_1, ">>CSimPhone::OpenNewObjectByNameL");
+	LOGPHONE1(">>CSimPhone::OpenNewObjectByNameL");
 
 // Is it a voice line?
 	if (aName.CompareF(KVoiceLineName) == 0)
@@ -1544,18 +1538,18 @@ CTelObject* CSimPhone::OpenNewObjectByNameL(const TDesC& aName)
 
 		if (phoneScEap == NULL)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_OPENNEWOBJECTBYNAMEL_2, "ERROR CSimSmartCardEap object not created, returning KErrGeneral");
+			LOGPHONE1("ERROR CSimSmartCardEap object not created, returning KErrGeneral");
 			User::Leave(KErrGeneral);
 			}
 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_OPENNEWOBJECTBYNAMEL_3, "CSimPhone::OpenNewObjectByNameL CSimSmartCardEap object created [0x%08x]", phoneScEap);
+		LOGPHONE2("CSimPhone::OpenNewObjectByNameL CSimSmartCardEap object created [0x%08x]", phoneScEap);
 		return phoneScEap;
 		} // End of opening Smart Card EAP sub-session
 	else if (aName.CompareF(KETelOwnNumberStore) == 0)
 		{
 		if(iONStore==NULL)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_OPENNEWOBJECTBYNAMEL_4, "ERROR CSimONStore object not found. Please check config file.");
+			LOGPHONE1("ERROR CSimONStore object not found. Please check config file.");
 			User::Leave(KErrNotFound);
 			}
 		else
@@ -2259,7 +2253,7 @@ TInt CSimPhone::ValidateChangeState(CSimLine* aOriginatingLine, RMobileCall::TMo
 
 // If there is no active line defined, then any state changes are fine.  However,
 // we need to watch for a shift to an "active" status.
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_VALIDATECHANGESTATE_1, ">>CSimPhone::ValidateChangeState");
+	LOGPHONE1(">>CSimPhone::ValidateChangeState");
 	if(!iActiveLine)
 		{
 		iMode=ConvertStateToMode(aState);
@@ -2290,7 +2284,7 @@ TInt CSimPhone::ValidateChangeState(CSimLine* aOriginatingLine, RMobileCall::TMo
 	   (aState==RMobileCall::EStatusIdle))
 		return KErrNone;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_VALIDATECHANGESTATE_2, "<<CSimPhone::ValidateChangeState");
+	LOGPHONE1("<<CSimPhone::ValidateChangeState");
 	return KErrGeneral;
 	}
 
@@ -2316,7 +2310,7 @@ TInt CSimPhone::ValidateChangeState(RPacketService::TStatus aState)
 * @return Error indicates whether the change of state is successful or not
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_VALIDATECHANGESTATE1_1, ">>CSimPhone::ValidateChangeState packet");
+	LOGPHONE1(">>CSimPhone::ValidateChangeState packet");
 	__ASSERT_ALWAYS(iMode!=RPhone::EModeUnknown,SimPanic(EPhoneModeUnknownIllegal));
 	__ASSERT_ALWAYS(iNtwkMode!=RMobilePhone::ENetworkModeUnknown,SimPanic(ENetworkModeUnknownIllegal));
 	__ASSERT_ALWAYS(iPacketService->MSClass()!=RPacketService::EMSClassUnknown,SimPanic(EPacketMSClassUnKnown));
@@ -2419,16 +2413,16 @@ void CSimPhone::GetPhoneIdAndCaps()
 		{
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,manufacturer);
 		if(ret!=KErrNone)
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_GETPHONEIDANDCAPS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element MANUFACTURER returned %d (element no. %d) from tag %s.",ret,0,KPhoneId);
+			LOGPARSERR("manufacturer",ret,0,&KPhoneId);
 		ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,1,model);
 		if(ret!=KErrNone)
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_GETPHONEIDANDCAPS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element MODEL returned %d (element no. %d) from tag %s.",ret,1,KPhoneId);
+			LOGPARSERR("model",ret,1,&KPhoneId);
 		ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,2,revision);
 		if(ret!=KErrNone)
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_GETPHONEIDANDCAPS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element REVISION returned %d (element no. %d) from tag %s.",ret,2,KPhoneId);
+			LOGPARSERR("revision",ret,2,&KPhoneId);
 		ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,3,imei);
 		if(ret!=KErrNone)
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_GETPHONEIDANDCAPS_4, "WARNING - CONFIGURATION FILE PARSING - Reading element IMEI returned %d (element no. %d) from tag %s.",ret,3,KPhoneId);
+			LOGPARSERR("imei",ret,3,&KPhoneId);
 		ret = CTestConfig::GetElement(item->Value(),KStdDelimiter,4,iPhoneId.iError);
 
 		iPhoneId.iManufacturerId.Copy(manufacturer);
@@ -3061,13 +3055,13 @@ void CSimPhone::CNetworkModeTimerCallBack::SetHandle(CSimPhone* aPhone)
 */
 void CSimPhone::CNetworkModeTimerCallBack::TimerCallBack(TInt /*aId*/)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CNETWORKMODETIMERCALLBACK_TIMERCALLBACK_1, ">>CSimPhone::CNetworkModeTimerCallBack::TimerCallBack");
+	LOGPACKET1(">>CSimPhone::CNetworkModeTimerCallBack::TimerCallBack");
 	iPhone->TimerCallBackNetworkMode();
 	}
 
 TInt CSimPhone::NotifyModeChange(const TTsyReqHandle aTsyReqHandle, RMobilePhone::TMobilePhoneNetworkMode* aCaps)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_NOTIFYMODECHANGE_1, "CSimPhone::NotifyModeChange called");
+	LOGPACKET1("CSimPhone::NotifyModeChange called");
 	__ASSERT_ALWAYS(!iNotifyNetworkModeChange.iNotifyPending,SimPanic(ENotificationAlreadyPending));
  
 	if (iNetworkModeArray->Count() == 0)
@@ -3090,7 +3084,7 @@ TInt CSimPhone::NotifyModeChange(const TTsyReqHandle aTsyReqHandle, RMobilePhone
 */
 TInt CSimPhone::NotifyModeChangeCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_NOTIFYMODECHANGECANCEL_1, "CSimPhone::NotifyModeChangeCancel called");
+	LOGPACKET1("CSimPhone::NotifyModeChangeCancel called");
 	if( (iNotifyNetworkModeChange.iNotifyPending) && (aTsyReqHandle == iNotifyNetworkModeChange.iNotifyHandle))
 		{
 		iNotifyNetworkModeChange.iNotifyPending=EFalse;
@@ -3336,21 +3330,21 @@ CSimPhone::CSimTestNumberObserver* CSimPhone::CSimTestNumberObserver::NewL(CSimP
 
 void CSimPhone::CSimTestNumberObserver::ConstructL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CSIMTESTNUMBEROBSERVER_CONSTRUCTL_1, "CSimPhone::CSimPhoneObserver::ConstructL");
+    LOGPHONE1("CSimPhone::CSimPhoneObserver::ConstructL");
     User::LeaveIfError(iProperty.Attach(KUidPSSimTsyCategory, KPSSimTsyTestNumber));
     Start();
     }
 
 void CSimPhone::CSimTestNumberObserver::Start()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CSIMTESTNUMBEROBSERVER_START_1, "CSimPhone::CSimPhoneObserver::Start");
+    LOGPHONE1("CSimPhone::CSimPhoneObserver::Start");
     iProperty.Subscribe(iStatus);
     SetActive();
     }
 
 void CSimPhone::CSimTestNumberObserver::RunL()
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CSIMTESTNUMBEROBSERVER_RUNL_1, "CSimPhone::CSimPhoneObserver::RunL [iStatus=%d]", iStatus.Int());
+    LOGPHONE2("CSimPhone::CSimPhoneObserver::RunL [iStatus=%d]", iStatus.Int());
     TInt err = iSimPhone.CheckConfigFile();
     if( err == KErrNone )
         {
@@ -3362,7 +3356,7 @@ void CSimPhone::CSimTestNumberObserver::RunL()
 
 void CSimPhone::CSimTestNumberObserver::DoCancel()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONE_CSIMTESTNUMBEROBSERVER_DOCANCEL_1, "CSimPhone::CSimPhoneObserver::DoCancel");
+    LOGPHONE1("CSimPhone::CSimPhoneObserver::DoCancel");
     iProperty.Cancel();
     }
 

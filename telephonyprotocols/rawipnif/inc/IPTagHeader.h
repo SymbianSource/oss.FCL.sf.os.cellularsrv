@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -24,20 +24,23 @@
 #ifndef IPTAGHEADER_H__
 #define IPTAGHEADER_H__
 
+#include "bttlog.h"
 #include "Constants.h"
 #include <nifmbuf.h>
 
+class CBttLogger;
 
 class CIPTagHeader : public CBase
 	{
 public:
-	CIPTagHeader();
+	CIPTagHeader(CBttLogger* aTheLogger);
 	~CIPTagHeader();
 	void SetType(TUint16 aType);	
 	void AddHeader(TDes8& aDes);
 	TUint16 RemoveHeader(RMBufChain& aPdu);
 
 private: // Unowned data.
+	CBttLogger* iTheLogger;
 
 	//CLASSNAMEDECL(CIPTagHeader);
 

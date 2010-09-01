@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -31,12 +31,10 @@ SOURCE           smspmain.cpp
 SOURCE           smspreassemblystore.cpp
 SOURCE           smspclass0stor.cpp
 
-userinclude		 .
 USERINCLUDE      ../../Inc
 USERINCLUDE   	 ../../../gsmu/inc
 USERINCLUDE      ../../../common/inc
 USERINCLUDE   	 ../../../smsu/inc
-USERINCLUDE      ../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
@@ -45,6 +43,6 @@ LIBRARY       smsu.lib gsmu.lib etelmm.lib// components under test
 LIBRARY       euser.lib efsrv.lib estor.lib bafl.lib esock.lib
 LIBRARY       testexecutelogclient.lib
 LIBRARY	      testexecuteutils.lib
-
+DEBUGLIBRARY  comsdbgutil.lib
 
 SMPSAFE

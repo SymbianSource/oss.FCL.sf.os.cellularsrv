@@ -23,6 +23,7 @@
 #include "ND_SCR.H"
 #include "ND_DBACC.H"
 #include "ND_STD.H"
+#include "SLOGGER.H"
 #include "ND_DIRECTSTATES.H"
 
 CDirCtAgXSM* CDirCtAgXSM::NewL(MAgentNotify& aControllerObserver, CDialogProcessor* aDlgPrc, CCommsDbAccess& aDbAccess)

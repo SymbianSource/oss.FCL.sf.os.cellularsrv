@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,13 +20,9 @@
 */
 
 
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "PDPSCPRFSMTraces.h"
-#endif
-
 #include "PDPFSM.h"
 #include "cpdpfsmfactory.h"
+#include "spudfsmdebuglogger.h"
 #include "PDPDeftSCPR.h"
 
 
@@ -40,15 +36,13 @@ CPdpFsmInterface::CPdpFsmInterface(CPDPDefaultSubConnectionProvider& aOwner)
  iRefCount(1),
  iUmtsRelease(TPacketDataConfigBase::KConfigGPRS)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_CTOR_1, ">>CPdpFsmInterface::()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_CTOR_2, "<<CPdpFsmInterface::()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::()");
     }
 
 CPdpFsmInterface::~CPdpFsmInterface()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_DTOR_1, ">>CPdpFsmInterface::()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::()");
 	delete iPdpFsmFactory;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_DTOR_2, "<<CPdpFsmInterface::()");
     }
 
 TContextId CPdpFsmInterface::NewFsmContextL(MPdpFsmEventHandler& aPdpFsmEventHandler,SpudMan::TPdpContextType aContextType)
@@ -74,12 +68,11 @@ void CPdpFsmInterface::DeleteFsmContext(const TContextId aPdpId)
 */
 void CPdpFsmInterface::NewL(const TName& aTsyName, TInt aUmtsRelease)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_NEWL_1, ">>CPdpFsmInterface::NewL()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::NewL()");
 	
 	iUmtsRelease = aUmtsRelease;
 	iPdpFsmFactory = CPdpFsmFactory::NewL();
 	iPdpFsmFactory->InitL(aTsyName, this);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_NEWL_2, "<<CPdpFsmInterface::NewL()");
     }
 
 /** request to open the FSM
@@ -88,16 +81,15 @@ void CPdpFsmInterface::NewL(const TName& aTsyName, TInt aUmtsRelease)
 */
 void CPdpFsmInterface::Open()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_OPEN_1, ">>CPdpFsmInterface::Open()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Open()");
 	iRefCount++;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_OPEN_2, "<<CPdpFsmInterface::Open()");
     }
     
 /** closes the FSM and frees underlying resources
 */
 void CPdpFsmInterface::Close()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_CLOSE_1, ">>CPdpFsmInterface::Close()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Close()");
     ASSERT( iRefCount > 0 );
 	if (--iRefCount == 0 )
 	    {
@@ -107,9 +99,7 @@ void CPdpFsmInterface::Close()
     	    }
     	delete this;
 	    }
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_CLOSE_2, "<<CPdpFsmInterface::Close()");
     }
-    
 
 
 /** 
@@ -125,7 +115,7 @@ TInt CPdpFsmInterface::Input(TContextId aPdpId, const TInt aOperation, const TIn
     {
 	TInt ret = KErrNone;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_INPUT_1, ">>CPdpFsmInterface::Input(aParam)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Input(aParam)");
 
 	ASSERT(iPdpFsmFactory);
 
@@ -181,7 +171,7 @@ TInt CPdpFsmInterface::Input(TContextId aPdpId, const TInt aOperation, const TIn
 	    {
 		ret = KErrBadHandle;
 	    }
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_INPUT_2, "<<CPdpFsmInterface::Input(aParam)");
+	
 	return ret;
     }
 
@@ -197,13 +187,12 @@ Set context parameters
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketQoS::TQoSR5Requested& aParam)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET_1, ">>CPdpFsmInterface::Set(RPacketQoS::TQoSR5Requested)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketQoS::TQoSR5Requested)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET_2, "<<CPdpFsmInterface::Set(RPacketQoS::TQoSR5Requested)");
 	return KErrNone;
 	}
 
@@ -216,13 +205,12 @@ Set context parameters
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketQoS::TQoSR5Negotiated& aParam)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET1_1, ">>CPdpFsmInterface::Set(RPacketQoS::TQoSR5Negotiated)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketQoS::TQoSR5Negotiated)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET1_2, "<<CPdpFsmInterface::Set(RPacketQoS::TQoSR5Negotiated)");
 	return KErrNone;
 }
 
@@ -238,13 +226,12 @@ Set context parameters
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketQoS::TQoSR99_R4Requested& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET2_1, ">>CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Requested)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Requested)");
 
 	ASSERT(iPdpFsmFactory);
     ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
     iPdpFsmFactory->GetFsmContext(aPdpId,aContextType)->Set(aParam);
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET2_2, "<<CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Requested)");
 	return KErrNone;
     }
 
@@ -257,13 +244,12 @@ Set context parameters
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketQoS::TQoSR99_R4Negotiated& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET3_1, ">>CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Negotiated)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Negotiated)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId,aContextType)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET3_2, "<<CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Negotiated)");
 	return KErrNone;
     }
 
@@ -273,13 +259,12 @@ TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketQoS::TQoSR99_R4Negotia
 
 void CPdpFsmInterface::Set(const TContextId aPdpId,MPdpFsmEventHandler& aPdpFsmEventHandler)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET4_1, ">>CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Negotiated)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Negotiated)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aPdpFsmEventHandler);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET4_2, "<<CPdpFsmInterface::Set(RPacketQoS::TQoSR99_R4Negotiated)");
     }
 
 /** Set context parameters
@@ -290,13 +275,12 @@ void CPdpFsmInterface::Set(const TContextId aPdpId,MPdpFsmEventHandler& aPdpFsmE
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const TTFTInfo& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET5_1, ">>CPdpFsmInterface::Set(TFTInfo)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(TFTInfo)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET5_2, "<<CPdpFsmInterface::Set(TFTInfo)");
 	return KErrNone;
     }
 
@@ -308,13 +292,12 @@ TInt CPdpFsmInterface::Set(TContextId aPdpId,const TTFTInfo& aParam)
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const TTFTOperationCode& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET6_1, ">>CPdpFsmInterface::Set(TTFTOperationCode)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(TTFTOperationCode)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET6_2, "<<CPdpFsmInterface::Set(TTFTOperationCode)");
 	return KErrNone;
     }
 
@@ -326,13 +309,12 @@ TInt CPdpFsmInterface::Set(TContextId aPdpId,const TTFTOperationCode& aParam)
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketContext::TDataChannelV2& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET7_1, ">>CPdpFsmInterface::Set(RPacketContext::TDataChannelV2)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketContext::TDataChannelV2)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET7_2, "<<CPdpFsmInterface::Set(RPacketContext::TDataChannelV2)");
 	return KErrNone;
     }
 
@@ -344,13 +326,12 @@ TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketContext::TDataChannelV
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketContext::TContextStatus& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET8_1, ">>CPdpFsmInterface::Set(RPacketContext::TContextStatus)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketContext::TContextStatus)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET8_2, "<<CPdpFsmInterface::Set(RPacketContext::TContextStatus)");
 	return KErrNone;
     }
 
@@ -362,13 +343,12 @@ TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketContext::TContextStatu
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId, const TPacketDataConfigBase& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET9_1, ">>CPdpFsmInterface::Set(TPacketDataConfigBase)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(TPacketDataConfigBase)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET9_2, "<<CPdpFsmInterface::Set(TPacketDataConfigBase)");
 	return KErrNone;
     }
 
@@ -378,12 +358,11 @@ TInt CPdpFsmInterface::Set(TContextId aPdpId, const TPacketDataConfigBase& aPara
 */
 void CPdpFsmInterface::Set(const RPacketService::TStatus aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET10_1, ">>CPdpFsmInterface::Set(RPacketService::TStatus)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketService::TStatus)");
 
 	ASSERT(iPdpFsmFactory);
 
 	iNetworkStatus = aParam;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET10_2, "<<CPdpFsmInterface::Set(RPacketService::TStatus)");
     }
 
 
@@ -397,13 +376,12 @@ Get context parameters
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketQoS::TQoSR5Requested& aParam) const
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET_1, ">>CPdpFsmInterface::Get(RPacketQos::TQoSR5Requested)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketQos::TQoSR5Requested)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET_2, "<<CPdpFsmInterface::Get(RPacketQos::TQoSR5Requested)");
 	return KErrNone;
 }
 
@@ -417,13 +395,12 @@ Get context parameters
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketQoS::TQoSR5Negotiated& aParam) const
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET1_1, ">>CPdpFsmInterface::Get(RPacketQoS::TQoSR5Negotiated)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketQoS::TQoSR5Negotiated)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET1_2, "<<CPdpFsmInterface::Get(RPacketQoS::TQoSR5Negotiated)");
 	return KErrNone;
 }
 
@@ -439,13 +416,12 @@ Get context parameters
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketQoS::TQoSR99_R4Requested& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET2_1, ">>CPdpFsmInterface::Get(RPacketQos::TQoSRequestedR99_R4)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketQos::TQoSRequestedR99_R4)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET2_2, "<<CPdpFsmInterface::Get(RPacketQos::TQoSRequestedR99_R4)");
 	return KErrNone;
     }
 
@@ -459,13 +435,12 @@ Get context parameters
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketQoS::TQoSR99_R4Negotiated& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET3_1, ">>CPdpFsmInterface::Get(RPacketQoS::TQoSR99_R4Negotiated)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketQoS::TQoSR99_R4Negotiated)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET3_2, "<<CPdpFsmInterface::Get(RPacketQoS::TQoSR99_R4Negotiated)");
 	return KErrNone;
     }
 
@@ -482,13 +457,12 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketQoS::TQoSR99_R4Negotiated& a
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,TTFTInfo& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET4_1, ">>CPdpFsmInterface::Get(TFTInfo)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(TFTInfo)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET4_2, "<<CPdpFsmInterface::Get(TFTInfo)");
 	return KErrNone;
     }
 
@@ -500,13 +474,12 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId,TTFTInfo& aParam) const
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,TTFTOperationCode& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET5_1, ">>CPdpFsmInterface::Get(TFTInfo)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(TFTInfo)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET5_2, "<<CPdpFsmInterface::Get(TFTInfo)");
 	return KErrNone;
     }
 
@@ -520,13 +493,12 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId,TTFTOperationCode& aParam) const
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketContext::TDataChannelV2& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET6_1, ">>CPdpFsmInterface::Get(RPacketContext::TDataChannelV2)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketContext::TDataChannelV2)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET6_2, "<<CPdpFsmInterface::Get(RPacketContext::TDataChannelV2)");
 	return KErrNone;
     }
 
@@ -538,13 +510,12 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketContext::TDataChannelV2& aPa
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId, TPacketDataConfigBase& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET7_1, ">>CPdpFsmInterface::Get(TPacketDataConfigBase)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(TPacketDataConfigBase)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET7_2, "<<CPdpFsmInterface::Get(TPacketDataConfigBase)");
 	return KErrNone;
     }
 
@@ -556,13 +527,12 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId, TPacketDataConfigBase& aParam) con
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketContext::TContextStatus& aParam) const
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET8_1, ">>CPdpFsmInterface::Get(RPacketContext::TContextStatus)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketContext::TContextStatus)");
 
 	ASSERT(iPdpFsmFactory);
 	ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
 	ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET8_2, "<<CPdpFsmInterface::Get(RPacketContext::TContextStatus)");
 	return KErrNone;
     }
 
@@ -574,12 +544,11 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketContext::TContextStatus& aPa
 */
 void CPdpFsmInterface::Get(RPacketService::TStatus& aParam)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET9_1, ">>CPdpFsmInterface::Get(RPacketService::TStatus)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Get(RPacketService::TStatus)");
 
 	ASSERT(iPdpFsmFactory);
 
 	aParam = iNetworkStatus;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET9_2, "<<CPdpFsmInterface::Get(RPacketService::TStatus)");
     }
 
 
@@ -589,10 +558,10 @@ void CPdpFsmInterface::Get(RPacketService::TStatus& aParam)
 */
 const TName& CPdpFsmInterface::TsyName(void)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_TSYNAME_1, ">>CPdpFsmInterface::TsyName");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::TsyName");
 
 	ASSERT(iPdpFsmFactory);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_TSYNAME_2, "<<CPdpFsmInterface::TsyName");
+	
 	return iPdpFsmFactory->TsyName();
 }
 
@@ -608,11 +577,10 @@ Set Mbms context parameters
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId,const RPacketMbmsContext::TContextConfigMbmsV1& aParam)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET11_1, ">>CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 
 	ASSERT(iPdpFsmFactory);
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET11_2, "<<CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 	return KErrNone;
 	}
 
@@ -624,11 +592,10 @@ Get Mbms context parameters
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId,RPacketMbmsContext::TContextConfigMbmsV1& aParam) const 
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET10_1, ">>CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 
 	ASSERT(iPdpFsmFactory);
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET10_2, "<<CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 	return KErrNone;
 	}
 	
@@ -640,11 +607,10 @@ Get Mbms Session  parameters
 */
 TInt CPdpFsmInterface::Set(TContextId aPdpId, const TSessionOperatioInfo& aParam)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET12_1, ">>CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 
 	ASSERT(iPdpFsmFactory);
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Set(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_SET12_2, "<<CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 	return KErrNone;
 	}
 
@@ -657,11 +623,10 @@ Get Mbms Session parameters
 */
 TInt CPdpFsmInterface::Get(TContextId aPdpId, TSessionOperatioInfo& aParam) const 
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET11_1, ">>CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 
 	ASSERT(iPdpFsmFactory);
 	iPdpFsmFactory->GetFsmContext(aPdpId)->Get(aParam);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GET11_2, "<<CPdpFsmInterface::Set(RPacketMbmsContext::TContextConfigMbmsV1)");
 	return KErrNone;
 	}
 

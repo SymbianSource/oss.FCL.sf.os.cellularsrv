@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySelectItemTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySelectItem.h"   // Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifySelectItem* CSatNotifySelectItem::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_NEWL_1, "CSAT: CSatNotifySelectItem::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySelectItem::NewL");
    	CSatNotifySelectItem* const satNotifySelectItem = 
         new ( ELeave ) CSatNotifySelectItem( aNotificationsTsy );
     CleanupStack::PushL( satNotifySelectItem );
     satNotifySelectItem->ConstructL();
     CleanupStack::Pop( satNotifySelectItem );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_NEWL_2, "CSAT: CSatNotifySelectItem::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySelectItem::NewL, end of method");
     return satNotifySelectItem;
     }
 
@@ -67,7 +62,7 @@ CSatNotifySelectItem::~CSatNotifySelectItem
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_DTOR_1, "CSAT: CSatNotifySelectItem::~CSatNotifySelectItem");
+    TFLOGSTRING("CSAT: CSatNotifySelectItem::~CSatNotifySelectItem");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifySelectItem::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_CONSTRUCTL_1, "CSAT: CSatNotifySelectItem::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifySelectItem::ConstructL");
     // Initiliaze Item Next Indicator flag
     iItemNextIndicatorRemoved = EFalse;
     }
@@ -110,7 +105,7 @@ TInt CSatNotifySelectItem::Notify
         const TDataPackage& aPackage    
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_NOTIFY_1, "CSAT: CSatNotifySelectItem::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySelectItem::Notify");
     // Save data pointer to client side for completion
     iSelectItemV2Pckg = reinterpret_cast<RSat::TSelectItemV2Pckg*>( 
         aPackage.Des1n() );
@@ -133,7 +128,7 @@ TInt CSatNotifySelectItem::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_CANCELNOTIFICATION_1, "CSAT: CSatNotifySelectItem::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySelectItem::CancelNotification");  
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifySelectItemPCmdReqType );
@@ -156,7 +151,7 @@ TInt CSatNotifySelectItem::CompleteNotifyL
 		TInt aErrorCode
         )
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_1, "CSAT: CSatNotifySelectItem::CompleteNotifyL");
+	TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL");
 	TInt ret( KErrNone );
     // Unpack parameters
     TPtrC8* data;
@@ -228,7 +223,8 @@ TInt CSatNotifySelectItem::CompleteNotifyL
 						}
 					else
 						{
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_2, "CSAT: CSatNotifySelectItem::CompleteNotifyL, Alpha ID is NULL");
+						TFLOGSTRING("CSAT: CSatNotifySelectItem::\
+						    CompleteNotifyL, Alpha ID is NULL");
 						selectItemV2.iAlphaId.iStatus = RSat::EAlphaIdNull;
 						}
 					}
@@ -236,7 +232,8 @@ TInt CSatNotifySelectItem::CompleteNotifyL
 			// Alpha id not present
 			else 
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_3, "CSAT: CSatNotifySelectItem::CompleteNotifyL Alpha ID not present");
+				TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL\
+				    Alpha ID not present");
 				selectItemV2.iAlphaId.iStatus = RSat::EAlphaIdNotPresent;
 				}
 			// Help information
@@ -247,7 +244,8 @@ TInt CSatNotifySelectItem::CompleteNotifyL
 				}
 			else
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_4, "CSAT: CSatNotifySelectItem::CompleteNotifyL, No Help available");
+				TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL,\
+				    No Help available");
 				// No help
 				selectItemV2.iHelp = RSat::ENoHelpAvailable;
 				}
@@ -326,12 +324,14 @@ TInt CSatNotifySelectItem::CompleteNotifyL
 				}
 			else if ( KErrNotFound == retValue )
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_5, "CSAT: CSatNotifySelectItem::CompleteNotifyL, No Icon ID");
+				TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL,\
+				    No Icon ID");
 				selectItemV2.iIconListQualifier = RSat::ENoIconId;
 				}
 			else
 				{
-        		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_6, "CSAT: CSatNotifySelectItem::CompleteNotifyL, Return value not valid.");
+        		TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL, \
+        			Return value not valid.");
 				}
              
             ret = HandleItemsL( pCmdNumber, &berTlv, ret, iconIdList, 
@@ -350,7 +350,8 @@ TInt CSatNotifySelectItem::CompleteNotifyL
         } // End of if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
 	else 
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_COMPLETENOTIFYL_7, "CSAT: CSatNotifySelectItem::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL,\
+            Request not ongoing");
         // Request not on, returning response immediately       
 		additionalInfo.Zero();
         additionalInfo.Append( KNoCause );
@@ -371,7 +372,7 @@ TInt CSatNotifySelectItem::TerminalResponseL
         TDes8* aRsp 
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_1, "CSAT:: CSatNotifySelectItem::TerminalResponseL");
+    TFLOGSTRING("CSAT:: CSatNotifySelectItem::TerminalResponseL");
 
     TInt   ret( KErrNone );
     TBuf<1> additionalInfo;
@@ -391,7 +392,8 @@ TInt CSatNotifySelectItem::TerminalResponseL
         && ( RSat::KMeUnableToProcessCmd != rspV1.iGeneralResult )
         && ( RSat::KCmdBeyondMeCapabilities != rspV1.iGeneralResult ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_2, "CSAT: CSatNotifySelectItem::CompleteNotifyL, Invalid General Result");
+        TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL,\
+            Invalid General Result");
         ret = KErrCorrupt;
         }
     // If there is ME (Mobile Entity) error or there there should be 
@@ -404,14 +406,17 @@ TInt CSatNotifySelectItem::TerminalResponseL
         // Check the length of additional info
         if ( rspV1.iAdditionalInfo.Length() != 0 )
             {
-            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_3, "CSAT: CSatNotifySelectItem::TerminalResponseL, Additional info: %S", rspV1.iAdditionalInfo);
+            TFLOGSTRING2("CSAT: CSatNotifySelectItem::TerminalResponseL, \
+                Additional info: %S", &rspV1.iAdditionalInfo);
             additionalInfo.Zero();
             additionalInfo.Append( rspV1.iAdditionalInfo[0] );
-            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_4, "CSAT: CSatNotifySelectItem::TerminalResponseL, Additional info: %S", additionalInfo);
+            TFLOGSTRING2("CSAT: CSatNotifySelectItem::TerminalResponseL, \
+                Additional info: %S", &additionalInfo);
 			}
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_5, "CSAT: CSatNotifySelectItem::CompleteNotifyL, Invalid Additional Info");
+            TFLOGSTRING("CSAT: CSatNotifySelectItem::CompleteNotifyL,\
+                Invalid Additional Info");
             ret = KErrCorrupt;
             }
         }
@@ -420,12 +425,14 @@ TInt CSatNotifySelectItem::TerminalResponseL
     	{
     	if (iItemNextIndicatorRemoved)
     		{
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_6, "CSatNotifySelectItem::TerminalResponseL, Partial Comprehension, iItemNextIndicatorRemoved");
+    		TFLOGSTRING("CSatNotifySelectItem::TerminalResponseL, Partial Comprehension, \
+    			iItemNextIndicatorRemoved");
         	rspV1.iGeneralResult = RSat::KPartialComprehension;
     		}
     	if (iItemsIconIdListRemoved)
     		{
-        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_TERMINALRESPONSEL_7, "CSatNotifySelectItem::TerminalResponseL, Partial Comprehension, iItemsIconIdListRemoved");
+        	TFLOGSTRING("CSatNotifySelectItem::TerminalResponseL, Partial Comprehension, \
+        		iItemsIconIdListRemoved");
         	rspV1.iGeneralResult = RSat::KPartialComprehension;
     		}
     	}
@@ -453,7 +460,8 @@ TInt CSatNotifySelectItem::CreateTerminalRespL
 	    TDesC16& aAdditionalInfo			
 	    )	
 	{	    
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_CREATETERMINALRESPL_1, "CSAT: CSatNotifySelectItem::CreateTerminalRespL, Additional info: %S", aAdditionalInfo);
+	TFLOGSTRING2("CSAT: CSatNotifySelectItem::CreateTerminalRespL, \
+        Additional info: %S", &aAdditionalInfo);
 
 	TTlv tlvSpecificData;    
     // Create General Result TLV here
@@ -522,7 +530,7 @@ TInt CSatNotifySelectItem::HandleItemsL
 		RSat::TSelectItemV2* aSelectItemV2
 		)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_HANDLEITEMSL_1, "CSAT: CSatNotifySelectItem::HandleItemsL");
+	TFLOGSTRING("CSAT: CSatNotifySelectItem::HandleItemsL");
 	TInt ret( aRet );
 
 	CTlv item;
@@ -667,7 +675,8 @@ TInt CSatNotifySelectItem::HandleItemsL
 				if ( KErrNoMemory == aSelectItemV2->AddItem( 
 					newItem, itemNextIndicator[i], aIconIdList[i] ) )
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_HANDLEITEMSL_2, "CSAT: CSatNotifySelectItem::HandleItemsL, Icon data length exceeded, AddItem1");
+					TFLOGSTRING("CSAT: CSatNotifySelectItem::HandleItemsL,\
+					    Icon data length exceeded, AddItem1");
 					// Too many or long menu items
 					ret = KErrCorrupt;
 					}
@@ -676,7 +685,8 @@ TInt CSatNotifySelectItem::HandleItemsL
 			else if ( KErrNoMemory == aSelectItemV2->AddItemIcon( 
 				newItem, aIconIdList[i] ) )
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_HANDLEITEMSL_3, "CSAT: CSatNotifySelectItem::HandleItemsL, Icon data length exceeded, AddItemIcon");
+				TFLOGSTRING("CSAT: CSatNotifySelectItem::HandleItemsL,\
+			        Icon data length exceeded, AddItemIcon");
 				// Too many or long menu items
 				ret = KErrCorrupt;
 				}
@@ -690,7 +700,8 @@ TInt CSatNotifySelectItem::HandleItemsL
 				if ( KErrNoMemory == aSelectItemV2->AddItem( 
 					newItem, itemNextIndicator[i] ) )
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_HANDLEITEMSL_4, "CSAT: CSatNotifySelectItem::HandleItemsL, Icon data length exceeded, AddItem2");
+					TFLOGSTRING("CSAT: CSatNotifySelectItem::HandleItemsL,\
+			            Icon data length exceeded, AddItem2");
 					// Too many or long menu items
 					ret = KErrCorrupt;
 					}
@@ -701,7 +712,8 @@ TInt CSatNotifySelectItem::HandleItemsL
 				TInt retAdd = aSelectItemV2->AddItem( newItem );
 				if ( KErrNoMemory == retAdd ) 
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSELECTITEM_HANDLEITEMSL_5, "CSAT: CSatNotifySelectItem::HandleItemsL, AddItem failed -> KErrNoMemory");
+					TFLOGSTRING("CSAT: CSatNotifySelectItem::HandleItemsL,\
+			            AddItem failed -> KErrNoMemory");
 					// Too many or long menu items
 					// If there is not enough space left in the buffer used
 					// by the menu KErrNoMemory is returned.

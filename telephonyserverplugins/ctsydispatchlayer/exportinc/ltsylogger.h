@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -27,11 +27,18 @@
 
 #include <e32base.h>
 
-#ifdef OST_TRACE_COMPILER_IN_USE
+#ifdef _DEBUG
 
+#include <comms-infras/commsdebugutility.h>
 _LIT8(KTsySubSystem, "tsy");
 _LIT8(KTsyCompnt, "ctsydis");
 
+	/** Regular logging macro */
+	#define LOG(format, ARGS...)	\
+		{ \
+		RFileLogger::WriteFormat(KTsySubSystem, KTsyCompnt, format, ##ARGS); \
+		}
+	
 	/** Macros to log function entry and exit */
 	//#define TSYLOGENTRYEXIT(aFunc) 	TLogEntryExit __logger((aFunc), KTsyCompnt)
 	
@@ -77,6 +84,7 @@ TInt TLogEntryExit::SetExitErrorCode(TInt aErr)
 	
 #else // _DEBUG
 
+	#define LOG(format, ARGS...)
 	#define TSYLOGENTRYEXIT
 	#define TSYLOGENTRYEXITARGS(aFunc, aFmt, ARGS...)
 	#define TSYLOGSETEXITERR(aErr)	aErr // So that we don't lose the return code in UREL!

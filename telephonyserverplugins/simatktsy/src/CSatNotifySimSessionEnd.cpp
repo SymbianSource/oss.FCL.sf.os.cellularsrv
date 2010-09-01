@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,16 +20,11 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySimSessionEndTraces.h"
-#endif
-
 #include "CSatTsy.h"                    // Main tsy class header
 #include "CSatNotifySimSessionEnd.h"    // Class header
 #include "CSatNotificationsTsy.h"       // Tsy class header
 #include "CSatDataPackage.h"            // Parameter packing 
+#include "TfLogger.h"                   // For TFLOGSTRING
 #include "CSatTsyReqHandleStore.h"      // Request handle class
 #include "CBerTlv.h"                    // Ber Tlv data handling
 #include "TSatUtility.h"                // (U)SIM Status constants
@@ -44,13 +39,13 @@ CSatNotifySimSessionEnd* CSatNotifySimSessionEnd::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_NEWL_1, "CSAT: CSatNotifySimSessionEnd::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::NewL");
    	CSatNotifySimSessionEnd* const satNotifySimSessionEnd = 
         new ( ELeave ) CSatNotifySimSessionEnd( aNotificationsTsy );
     CleanupStack::PushL( satNotifySimSessionEnd );
     satNotifySimSessionEnd->ConstructL();
     CleanupStack::Pop( satNotifySimSessionEnd );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_NEWL_2, "CSAT: CSatNotifySimSessionEnd::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::NewL, end of method");
     return satNotifySimSessionEnd;
     }
 
@@ -64,7 +59,7 @@ CSatNotifySimSessionEnd::~CSatNotifySimSessionEnd
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_DTOR_1, "CSAT: CSatNotifySimSessionEnd::~CSatNotifySimSessionEnd");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::~CSatNotifySimSessionEnd");
     }
     
 // -----------------------------------------------------------------------------
@@ -90,7 +85,7 @@ void CSatNotifySimSessionEnd::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_CONSTRUCTL_1, "CSAT: CSatNotifySimSessionEnd::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +99,7 @@ TInt CSatNotifySimSessionEnd::Notify
         const TDataPackage& /*aPackage*/   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_NOTIFY_1, "CSAT: CSatNotifySimSessionEnd::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::Notify");
     // Save the request handle
     iNotificationsTsy->iSatTsy->SaveReqHandle( aTsyReqHandle, 
 		CSatTsy::ESatNotifyProactiveSimSessionEndReqType );
@@ -126,7 +121,7 @@ TInt CSatNotifySimSessionEnd::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_CANCELNOTIFICATION_1, "CSAT: CSatNotifySimSessionEnd::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::CancelNotification"); 
     
     // Reset the request handle
     TTsyReqHandle reqHandle = 
@@ -148,7 +143,7 @@ TInt CSatNotifySimSessionEnd::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_COMPLETENOTIFYL_1, "CSAT: CSatNotifySimSessionEnd::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::CompleteNotifyL");
     
     // Unpack data
     TUint8 sw1;
@@ -164,7 +159,8 @@ TInt CSatNotifySimSessionEnd::CompleteNotifyL
 	    // In case the request was ongoing, complete the request to the client.
 	    if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
 	        {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSIMSESSIONEND_COMPLETENOTIFYL_2, "CSAT: CSatNotifySimSessionEnd::CompleteNotifyL, SIM SESSION END");
+            TFLOGSTRING("CSAT: CSatNotifySimSessionEnd::CompleteNotifyL, \
+            	SIM SESSION END");
 	        iNotificationsTsy->iSatTsy->ReqCompleted( reqHandle, aErrorCode );
 	        }
         }

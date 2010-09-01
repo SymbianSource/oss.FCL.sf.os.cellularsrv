@@ -273,7 +273,6 @@ TVerdict CCTSYIntegrationTestCallWaiting0002::doTestStepL()
 			count = 1; //O2 supports only speech
 			break;
 		case EOperatorVodafone:
-		case EOperatorNTN:
 		case EOperatorOrange:
 		case EOperatorTMobile: 
 			count = 4; //vodafone, orange and tmobile support speech, voice and data
@@ -815,7 +814,6 @@ TVerdict CCTSYIntegrationTestCallWaiting0006::doTestStepL()
 			count = 1; //O2 supports only speech
 			break;
 		case EOperatorVodafone:
-		case EOperatorNTN:
 		case EOperatorOrange:
 		case EOperatorTMobile: 
 			count = 3; //vodafone, orange and tmobile support speech, voice and data

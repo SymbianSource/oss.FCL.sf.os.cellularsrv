@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,7 @@
 
 
 //  INCLUDE FILES
+#include <ctsy/tflogger.h>
 #include "cmmfaxext.h"
 #include "cmmphonetsy.h"
 #include "cmmlinelist.h"
@@ -31,7 +32,7 @@ CMmFaxExt::CMmFaxExt(
     CMmCallTsy* aMmCall )   // call that owns this object
     : iMmCall( reinterpret_cast<CMmFaxCallTsy*>( aMmCall ) )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CTOR_1, "TSY: CMmFaxExt::CMmFaxExt: Call Id:%d", iMmCall->CallId() );
+TFLOGSTRING2("TSY: CMmFaxExt::CMmFaxExt: Call Id:%d", iMmCall->CallId() );
     iFax           = NULL;
     iFaxSession    = NULL;
     iFaxCompletion = NULL;
@@ -39,7 +40,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CTOR_1, "TSY: 
 
 void CMmFaxExt::ConstructL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CONSTRUCTL_1, "TSY: CMmFaxExt::ConstructL");
+TFLOGSTRING("TSY: CMmFaxExt::ConstructL");
 
     // Create CMmFaxCompletion class for Fax Server.
     iFaxCompletion = new (ELeave) CMmFaxCompletion();
@@ -49,7 +50,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CONSTRUCTL_1, 
 CMmFaxExt* CMmFaxExt::NewL(
         CMmCallTsy* aMmCall )  // The call object which owns CMmFaxExt  
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_NEWL_1, "TSY: CMmFaxExt::NewL");
+TFLOGSTRING("TSY: CMmFaxExt::NewL");
 
     CMmFaxExt* self = new ( ELeave ) CMmFaxExt( aMmCall );
     CleanupStack::PushL( self );
@@ -68,14 +69,14 @@ CMmFaxExt::~CMmFaxExt()
 
     if ( iFax )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DTOR_1, "TSY: CMmFaxExt::~CMmFaxExt: deleting iFax");
+TFLOGSTRING("TSY: CMmFaxExt::~CMmFaxExt: deleting iFax");
         delete iFax;
         iFax = NULL;
         }
 
     if (iFaxCompletion)
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DTOR_2, "TSY: CMmFaxExt::~CMmFaxExt: deleting iFaxCompletion");
+TFLOGSTRING("TSY: CMmFaxExt::~CMmFaxExt: deleting iFaxCompletion");
         delete iFaxCompletion;
         iFaxCompletion = NULL;
         }
@@ -100,7 +101,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DTOR_2, "TSY: 
 void CMmFaxExt::CompleteOperation(
         TInt aError ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_COMPLETEOPERATION_1, "TSY: CMmFaxExt::CompleteOperation");
+TFLOGSTRING("TSY: CMmFaxExt::CompleteOperation");
      
     if ( iFaxCompletion )
         {
@@ -118,7 +119,7 @@ void CMmFaxExt::ConfigureCompletion(
         const TTsyReqHandle aTsyReqHandle,  
         CTelObject* aTelObject )            
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CONFIGURECOMPLETION_1, "TSY: CMmFaxExt::Configure");
+TFLOGSTRING("TSY: CMmFaxExt::Configure");
 
     iFaxCompletion->Configure( aTsyReqHandle, aTelObject );
     }
@@ -132,7 +133,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CONFIGURECOMPL
 CTelObject* CMmFaxExt::OpenNewObjectByNameL(
         const TDesC& aName )  
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_OPENNEWOBJECTBYNAMEL_1, "TSY: CMmFaxExt::OpenNewObjectByNameL");
+TFLOGSTRING("TSY: CMmFaxExt::OpenNewObjectByNameL");
 
     // check the name of opened object..
     _LIT(KFaxObjectName, "FAX");
@@ -179,7 +180,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_OPENNEWOBJECTB
 //
 TInt CMmFaxExt::FaxConnectHandler()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_FAXCONNECTHANDLER_1, "TSY: CMmFaxExt::FaxConnectHandler");
+TFLOGSTRING("TSY: CMmFaxExt::FaxConnectHandler");
 
     TInt errorCode( KErrNone );
 
@@ -209,7 +210,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_FAXCONNECTHAND
 TInt CMmFaxExt::AnswerIncomingCall(
         const TTsyReqHandle& aTsyReqHandle ) // function identification handle
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_ANSWERINCOMINGCALL_1, "TSY: CMmFaxExt::AnswerIncomingCall");
+TFLOGSTRING("TSY: CMmFaxExt::AnswerIncomingCall");
     
     TInt ret( KErrGeneral );
 
@@ -254,7 +255,7 @@ TInt CMmFaxExt::Dial(
         const TTsyReqHandle& aTsyReqHandle, 
         TDesC* aTelNumber )      
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DIAL_1, "TSY: CMmFaxExt::Dial");
+TFLOGSTRING("TSY: CMmFaxExt::Dial");
     
     TInt ret( KErrGeneral );
 
@@ -293,12 +294,12 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DIAL_1, "TSY: 
                 ConfigureCompletion( aTsyReqHandle, iMmCall );
                 if( EDialAndTransmit == faxMode )
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DIAL_2, "TSY: CMmFaxExt::FaxDial:TxConnect");
+TFLOGSTRING("TSY: CMmFaxExt::FaxDial:TxConnect");
                     iFaxSession->TxConnect();
                     }
                 else
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DIAL_3, "TSY: CMmFaxExt::FaxDial:RxConnect");
+TFLOGSTRING("TSY: CMmFaxExt::FaxDial:RxConnect");
                     iFaxSession->RxConnect();
                     }
                 }
@@ -321,7 +322,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DIAL_3, "TSY: 
 //
 void CMmFaxExt::HangUp()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_HANGUP_1, "TSY: CMmFaxExt::HangUp");
+TFLOGSTRING("TSY: CMmFaxExt::HangUp");
     CleanUpFaxServer();
     }
 
@@ -344,7 +345,7 @@ CFaxSession* CMmFaxExt::GetFaxSession()
 //
 void CMmFaxExt::GetFaxBaseL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_GETFAXBASEL_1, "TSY: CMmFaxExt::GetFaxBaseL");
+TFLOGSTRING("TSY: CMmFaxExt::GetFaxBaseL");
 
     TInt errorCode = iFaxServerLib.Load( KFaxServerName );
 
@@ -410,7 +411,7 @@ TInt CMmFaxExt::OpenFaxServer(
         const TDesC* aTelNumber,  // phone number
         const TFaxMode aFaxMode ) // fax mode
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_OPENFAXSERVER_1, "TSY: CMmFaxExt::OpenFaxServer");
+TFLOGSTRING("TSY: CMmFaxExt::OpenFaxServer");
 
     TInt errorCode ( KErrNone );
     TFaxServerSessionSettings faxSettings;
@@ -515,7 +516,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_OPENFAXSERVER_
 //
 void CMmFaxExt::CleanUpFaxServer()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CLEANUPFAXSERVER_1, "TSY: CMmFaxExt::CleanUpFaxServer");
+TFLOGSTRING("TSY: CMmFaxExt::CleanUpFaxServer");
 
     if ( iFaxSession )
         {
@@ -561,7 +562,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_CLEANUPFAXSERV
  TInt CMmFaxExt::GetFaxSettings(
         RCall::TFaxSessionSettings* aSettings ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_GETFAXSETTINGS_1, "TSY: CMmFaxExt::GetFaxSettings");
+TFLOGSTRING("TSY: CMmFaxExt::GetFaxSettings");
     *aSettings = iFaxSettings;
     return KErrNone;
     }
@@ -575,7 +576,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_GETFAXSETTINGS
  TInt CMmFaxExt::SetFaxSettings(
         const RCall::TFaxSessionSettings* aSettings ) // in: fax settings.
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_SETFAXSETTINGS_1, "TSY: CMmFaxExt::SetFaxSettings");
+TFLOGSTRING("TSY: CMmFaxExt::SetFaxSettings");
         iFaxSettings = *aSettings;
         return KErrNone;
     }
@@ -599,7 +600,7 @@ RCall::TStatus CMmFaxExt::GetCallStatus() const
 //
 void CMmFaxExt::DialCancel()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXEXT_DIALCANCEL_1, "TSY: CMmFaxExt::DialCancel");
+    TFLOGSTRING("TSY: CMmFaxExt::DialCancel");
     if ( iFax ) 
         {
         iFax->Terminate();

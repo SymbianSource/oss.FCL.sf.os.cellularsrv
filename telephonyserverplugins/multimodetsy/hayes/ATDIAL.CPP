@@ -774,3 +774,63 @@ TBool CATDialData::SendBearerCapsCommand(TEventSource /*aSource*/)
 
 	return EFalse;		// We were unable to send a +CBST string 
 	}
+
+
+
+//
+//	CATDialFax
+//
+
+CATDialFax*	 CATDialFax::NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals)
+	{
+	CATDialFax* dial=new(ELeave) CATDialFax(aIo, aTelObject, aInit,aPhoneGlobals);
+	CleanupStack::PushL(dial);
+	dial->ConstructL();
+	CleanupStack::Pop();
+	return dial;
+	}
+
+CATDialFax::CATDialFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals)
+											: CATFaxCallConnectCommands(aIo,aTelObject,aInit,aPhoneGlobals)
+	{}
+
+CATDialFax::~CATDialFax()
+	{
+	iIo->WriteAndTimerCancel(this);	
+	}
+
+void CATDialFax::Start(TTsyReqHandle aTsyReqHandle, TAny* aParams)
+	{
+	LOGTEXT(_L8("Starting dial fax call command"));
+	iTelnum=REINTERPRET_CAST(TDesC*,aParams);
+	CATFaxCallConnectCommands::Start(aTsyReqHandle,aParams);
+	}
+
+void CATDialFax::Stop(TTsyReqHandle aTsyReqHandle)
+	{
+	LOGTEXT(_L8("Cancelling Dial Fax Call Command"));
+	CATFaxCallConnectCommands::Stop(aTsyReqHandle);
+	}
+
+void CATDialFax::EventSignal(TEventSource aSource)
+	{
+	if((aSource==ETimeOutCompletion)
+		&&(iPreConnectState!=EATWaitForATCheckOK))
+		{
+		LOGTEXT(_L8("Timeout Error during Dial"));
+		Complete(KErrTimedOut,aSource);
+		return;
+		}
+
+	if (iPreConnectState!=CATCallConnectCommands::EATInitCompleted
+		&& iPreConnectState!=CATCallConnectCommands::ENotInProgress)
+		{
+		CATCallConnectCommands::PreConnectEventSignal(aSource);
+		}
+	}
+
+void CATDialFax::CompleteSuccessfully()
+	{
+	REINTERPRET_CAST(CCallMobileFax*,iTelObject)->FaxDial(iReqHandle,iTelnum);	
+	}
+

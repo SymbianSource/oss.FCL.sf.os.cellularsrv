@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,13 +20,8 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tsatutilityTraces.h"
-#endif
-
 #include "tsatutility.h"        // Class header
+#include "tflogger.h"           // TFLOGSTRING
 #include <ctsy/serviceapi/cmmsmsutility.h>		// TON and NPI constants
 
 // -----------------------------------------------------------------------------
@@ -41,7 +36,7 @@ EXPORT_C void TSatUtility::TonAndNpi
         RSat::TNumberingPlan* aNpi      
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_TONANDNPI_1,  "UTILITY: TSatUtility::TonAndNpi" );
+    TFLOGSTRING( "UTILITY: TSatUtility::TonAndNpi" );
     TInt ton( ( aTonAndNpi >> 4 ) & KTONMask ); // TON mask value 0x07
 
     switch ( ton )
@@ -157,7 +152,7 @@ EXPORT_C TInt TSatUtility::Packed7to8Unpacked
         TDes8& aTarget    
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_PACKED7TO8UNPACKED_1,  "UTILITY: TSatUtility::Packed7to8Unpacked" );
+    TFLOGSTRING( "UTILITY: TSatUtility::Packed7to8Unpacked" );
     TInt ret( KErrNone );
     // The string is in packed GSM default alphabet format.
     // Converted to 8-bit format
@@ -203,7 +198,9 @@ EXPORT_C TInt TSatUtility::Packed7to8Unpacked
     if ( length < sourceLength )
         {
         ret = KErrOverflow;
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_PACKED7TO8UNPACKED_2,  "UTILITY: TSatUtility::Packed7to8Unpacked,Input data too long. %d bytes could not be converted", ( sourceLength - length ) );
+        TFLOGSTRING2( "UTILITY: TSatUtility::Packed7to8Unpacked,\
+            Input data too long. %d bytes could not be converted", 
+            ( sourceLength - length ) );
         }
   
     return ret;
@@ -220,7 +217,7 @@ EXPORT_C void TSatUtility::UCSToPacked7
         TDes8& aOutput   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_UCSTOPACKED7_1,  "UTILITY: TSatUtility::UCSToPacked7" );
+    TFLOGSTRING( "UTILITY: TSatUtility::UCSToPacked7" );
     
     TBuf8<KMaxUssdStringLengthInBytes> string;
     
@@ -287,7 +284,7 @@ EXPORT_C TInt TSatUtility::BCDToAscii
         TDes8& aOutput   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_BCDTOASCII_1,  "UTILITY: TSatUtility::BCDToAscii" );
+    TFLOGSTRING( "UTILITY: TSatUtility::BCDToAscii" );
     TInt ret( KErrNone );
     
     // Convert Abbreviated dialling numbers format back to ASCII format.
@@ -314,7 +311,8 @@ EXPORT_C TInt TSatUtility::BCDToAscii
     if ( length < aInput.Length() )
         {
         ret = KErrOverflow;
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_BCDTOASCII_2,  "UTILITY: TSatUtility::BCDToAscii,Input data too long.%d bytes could not be converted", ( aInput.Length() - length ) );
+        TFLOGSTRING2( "UTILITY: TSatUtility::BCDToAscii,Input data too long.\
+            %d bytes could not be converted", ( aInput.Length() - length ) );
         }    
         
     return ret;
@@ -332,7 +330,7 @@ EXPORT_C TInt TSatUtility::AsciiToBCD
         TDes8& aOutput        
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_ASCIITOBCD_1,  "UTILITY: TSatUtility::AsciiToBCD" );
+    TFLOGSTRING( "UTILITY: TSatUtility::AsciiToBCD" );
     TInt ret( KErrNone );
     TInt i;
     TInt j;
@@ -375,7 +373,7 @@ EXPORT_C TInt TSatUtility::AsciiToBCD
             	}
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_ASCIITOBCD_2,  "UTILITY: TSatUtility::AsciiToBCD, Overflow!" );
+                TFLOGSTRING( "UTILITY: TSatUtility::AsciiToBCD, Overflow!" );
                 ret = KErrOverflow;
                 }
                 
@@ -383,7 +381,8 @@ EXPORT_C TInt TSatUtility::AsciiToBCD
             }
         else
             {
-            OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_ASCIITOBCD_3, "UTILITY: TSatUtility::AsciiToBCD -- dropped character %d at i=%d", TInt( aInput[i] ), i );
+            TFLOGSTRING3("UTILITY: TSatUtility::AsciiToBCD -- dropped \
+                character %d at i=%d", TInt( aInput[i] ), i );
             }
             
         } // For
@@ -409,7 +408,7 @@ EXPORT_C void TSatUtility::RemoveWildAndExpansionDigit
         TDes8& aOutput   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_REMOVEWILDANDEXPANSIONDIGIT_1,  "UTILITY: TSatUtility::RemoveWildAndExpansionDigit" );
+    TFLOGSTRING( "UTILITY: TSatUtility::RemoveWildAndExpansionDigit" );
     aOutput.Zero();    
     TUint8 i( 0 );
     TInt maxLength = aOutput.MaxLength();
@@ -437,7 +436,7 @@ EXPORT_C void TSatUtility::SetAlphaId
         TDes& aAlphaId  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_SETALPHAID_1,  "UTILITY: TSatUtility::SetAlphaId" );
+    TFLOGSTRING( "UTILITY: TSatUtility::SetAlphaId" );
     if ( ( KUCS2ArabicCoding == aRawData[0] )
         || ( KUCS2GreekCoding == aRawData[0] )
         || ( KUCS2TurkishCoding == aRawData[0] ) )
@@ -464,7 +463,7 @@ EXPORT_C TUint8 TSatUtility::ConvertToSemiOctet
         const TInt aTime  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_CONVERTTOSEMIOCTET_1,  "UTILITY: TSatUtility::ConvertToSemiOctet" );
+    TFLOGSTRING( "UTILITY: TSatUtility::ConvertToSemiOctet" );
     // Converting given time to meet the TP-Service-Centre-Time-Stamp format in
     // 3GPP TS 23.040.
 
@@ -485,7 +484,7 @@ EXPORT_C void TSatUtility::Convert7BitToUnicode16
         TDes16& aOutput  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_CONVERT7BITTOUNICODE16_1,  "UTILITY: TSatUtility::Convert7BitToUnicode16" );
+    TFLOGSTRING( "UTILITY: TSatUtility::Convert7BitToUnicode16" );
     TInt i( 0 );
     
     aOutput.Zero();
@@ -583,7 +582,7 @@ EXPORT_C TInt TSatUtility::ConvertUnicode16To7Bit
         TDes8& aOutput   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_CONVERTUNICODE16TO7BIT_1,  "UTILITY: TSatUtility::ConvertUnicode16To7Bit" );
+    TFLOGSTRING( "UTILITY: TSatUtility::ConvertUnicode16To7Bit" );
     TInt i( 0 );
     TInt j( 0 );
     TInt ret( KErrNone );
@@ -617,7 +616,9 @@ EXPORT_C TInt TSatUtility::ConvertUnicode16To7Bit
     if ( length < aInput.Length() )
         {
         ret = KErrOverflow;
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_CONVERTUNICODE16TO7BIT_2,  "UTILITY: TSatUtility::ConvertUnicode16To7Bit,Input data too long. %d bytes could not be converted", ( aInput.Length() - length ) );
+        TFLOGSTRING2( "UTILITY: TSatUtility::ConvertUnicode16To7Bit,\
+            Input data too long. %d bytes could not be converted", 
+            ( aInput.Length() - length ) );
         }
         
     return ret;
@@ -634,7 +635,7 @@ EXPORT_C void TSatUtility::FillDurationStructure
         RSat::TDuration& aTDuration   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_FILLDURATIONSTRUCTURE_1,  "UTILITY: TSatUtility::FillDurationStructure" );
+    TFLOGSTRING( "UTILITY: TSatUtility::FillDurationStructure" );
     CTlv duration;
     aTDuration.iTimeUnit = RSat::ENoDurationAvailable;
     TInt returnValue( aBerTlv.TlvByTagValue( 
@@ -685,7 +686,7 @@ EXPORT_C void TSatUtility::FillIconStructure
         const TInt aItemNmb            
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_FILLICONSTRUCTURE_1,  "UTILITY: TSatUtility::FillIconStructure" );
+    TFLOGSTRING( "UTILITY: TSatUtility::FillIconStructure" );
     CTlv iconId;
     aTIconId.iQualifier = RSat::ENoIconId;
     TInt returnValue( aBerTlv.TlvByTagValue( &iconId, KTlvIconIdentifierTag, 
@@ -718,7 +719,7 @@ EXPORT_C void TSatUtility::SetText
         TDes& aUnicodeOutput   
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_SETTEXT_1,  "UTILITY: TSatUtility::SetText" );
+    TFLOGSTRING( "UTILITY: TSatUtility::SetText" );
     if ( aTextTlv.GetLength() )
         {
         TPtrC8 sourceString;
@@ -779,7 +780,7 @@ EXPORT_C void TSatUtility::ConvertAlphaFieldsToUnicode
         TDes& aTarget 
         )
     {   
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_CONVERTALPHAFIELDSTOUNICODE_1,  "UTILITY: TSatUtility::ConvertAlphaFieldsToUnicode" );
+    TFLOGSTRING( "UTILITY: TSatUtility::ConvertAlphaFieldsToUnicode" );
     // ArabicCoding, GreekCoding and TurkishCoding have different coding 
     // methods. There is a tag for each type of alphabet (resp. 80, 81 or 82) 
     // before the text, and there are base pointers used for expanding 1 byte 
@@ -882,14 +883,14 @@ EXPORT_C TInt TSatUtility::Copy16to8LE
         TDes8& aTarget            
         )
     {   
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_COPY16TO8LE_1,  "UTILITY: TSatUtility::Copy16to8LE" );
+    TFLOGSTRING( "UTILITY: TSatUtility::Copy16to8LE" );
     TInt ret( KErrNone );
     TInt length( 0 );
     
     // Checks that data length are acceblable
     if ( aSource.Size() > aTarget.MaxSize() )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_COPY16TO8LE_2,  "UTILITY: TSatUtility::Copy16to8LE, Length exceeded!" );
+        TFLOGSTRING( "UTILITY: TSatUtility::Copy16to8LE, Length exceeded!" );
         ret = KErrOverflow;
         length = ( aTarget.MaxSize() / 2 );
         }
@@ -919,7 +920,7 @@ EXPORT_C TInt TSatUtility::Copy8to16LE
         TDes16& aTarget         
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_COPY8TO16LE_1,  "UTILITY: TSatUtility::Copy8to16LE" );
+    TFLOGSTRING( "UTILITY: TSatUtility::Copy8to16LE" );    
     TInt ret( KErrNone );
     // Check out which string is the shortest and use its length as a limit
     TInt length ( Min( ( ( aSource.Length() / 2 ) * 2 ), aTarget.MaxSize() ) );
@@ -934,7 +935,9 @@ EXPORT_C TInt TSatUtility::Copy8to16LE
     if ( length < aSource.Length() )
         {
         ret = KErrOverflow;
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_COPY8TO16LE_2,  "UTILITY: TSatUtility::ConvertUnicode16To7Bit,Input data too long. %d bytes could not be converted", ( aSource.Length() - length ) );
+        TFLOGSTRING2( "UTILITY: TSatUtility::ConvertUnicode16To7Bit,\
+            Input data too long. %d bytes could not be converted", 
+            ( aSource.Length() - length ) );
         }
         
     return ret;
@@ -952,7 +955,7 @@ EXPORT_C TSmsDcs TSatUtility::DecodeCbsDcs
     	const TUint8 aDcs 
     	)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_DECODECBSDCS_1, "UTILITY: TSatUtility::DecodeCbsDcs");
+    TFLOGSTRING("UTILITY: TSatUtility::DecodeCbsDcs");
     
     // Constant values are not defined in order to
     // avoid confusion with too many constants names.
@@ -1035,7 +1038,7 @@ EXPORT_C TSmsDcs TSatUtility::DecodeCbsDcs
         default:
             {
             // the DCS value is reserved.
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_DECODECBSDCS_2, "UTILITY: TSatUtility::DecodeCbsDcs, reserved value");
+            TFLOGSTRING("UTILITY: TSatUtility::DecodeCbsDcs, reserved value");
             break;
             }
         }
@@ -1055,7 +1058,7 @@ EXPORT_C TInt TSatUtility::CopyTwo8toOne16LE
         const TInt aIndex         
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_COPYTWO8TOONE16LE_1, "UTILITY: TSatUtility::CopyTwo8toOne16LE");
+    TFLOGSTRING("UTILITY: TSatUtility::CopyTwo8toOne16LE");
     TInt ret( KErrNone );
     // Check first that we dont try to read data that is not there..
     if ( aSource.Length() > aIndex + 1 )
@@ -1066,7 +1069,8 @@ EXPORT_C TInt TSatUtility::CopyTwo8toOne16LE
     else
         {
         ret = KErrOverflow;
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TSATUTILITY_COPYTWO8TOONE16LE_2, "UTILITY: TSatUtility::CopyTwo8toOne16LE, Index too highIndex: %d, Source data length: %d", aIndex, aSource.Length() );
+        TFLOGSTRING3("UTILITY: TSatUtility::CopyTwo8toOne16LE, Index too high\
+            Index: %d, Source data length: %d", aIndex, aSource.Length() );
         }
         
     return ret;

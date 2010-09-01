@@ -22,6 +22,7 @@
 
 #include <e32test.h>
 #include <etelmm.h>
+#include <faxstd.h>
 #include "Te_LoopBackctwofaxrx.h"
 #include "../../hayes/TSYCONFG.H" // for KInternetAccessPoint
 
@@ -91,6 +92,7 @@ TInt CTestDriveTwoFaxRx::DriveETelApiL()
 	faxCall.SetFaxSettings(faxSessionSettings);
 	faxCall.AnswerIncomingCall(stat2);
 	User::WaitForRequest(stat2);
+	TESTL(stat2==KFaxErrReceiveTimeout);		// We don't actually send any data
 	User::After(300000L);
 	TESTL(faxCall.HangUp()==KErrNone);
 	faxCall.Close();
@@ -118,6 +120,7 @@ TInt CTestDriveTwoFaxRx::DriveETelApiL()
 	faxCall2.SetFaxSettings(faxSessionSettings);
 	faxCall2.AnswerIncomingCall(stat2);
 	User::WaitForRequest(stat2);
+	TESTL(stat2==KFaxErrReceiveTimeout);		// We don't actually send any data
 	User::After(300000L);
 	TESTL(faxCall2.HangUp()==KErrNone);
 	faxCall2.Close();

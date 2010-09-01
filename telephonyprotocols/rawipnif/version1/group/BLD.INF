@@ -1,0 +1,35 @@
+// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Network interface for supporting multiple primary PDP contexts on the telephony reference platform 
+// 
+//
+
+/**
+ @file
+*/
+
+PRJ_PLATFORMS
+
+DEFAULT
+
+PRJ_EXPORTS
+RawIpNif.iby 	/epoc32/rom/include/rawipnif.iby
+
+PRJ_MMPFILES
+
+RawIPNif.mmp
+
+// Note that there is no PRJ_TESTMMPFILES here. This is intentional, because
+// building the NIF unit test stops the other unit tests from working. If you
+// want to run the NIF unit test, build it explicitly.

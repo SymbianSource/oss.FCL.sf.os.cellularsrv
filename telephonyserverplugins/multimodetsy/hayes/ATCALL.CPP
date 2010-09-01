@@ -744,7 +744,11 @@ void CATFaxCallConnectCommands::Stop(TTsyReqHandle aTsyReqHandle)
 		iPreConnectState=ECancelling;
 		AddStdExpectStrings();
 		}
-
+	else
+		{
+		CCallMobileFax* faxCall = REINTERPRET_CAST(CCallMobileFax*,iTelObject);
+		faxCall->FaxCancelCommand(aTsyReqHandle);
+		}
 	}
 
 void CATFaxCallConnectCommands::Complete(TInt aError,TEventSource aSource)

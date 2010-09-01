@@ -33,19 +33,14 @@
 #include <comms-infras/ss_metaconnprov.h>
 #include "PDPProvision.h"
 #include <etel.h>
+#include <networking/cfbearers.h>
 #include "pdpcpravailabilitylistener.h"
 #include <comms-infras/ss_nodemessages.h>
+#include <networking/ipcpr_states.h>
 #include <comms-infras/linkmessages.h>
 #include <elements/nm_interfaces.h>
-
-
-
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
-#include <networking/cfbearers.h>
-#include <networking/ipcpr_states.h>
 #include <cs_genevent.h>
 #include <networking/etelbearers.h>
-#endif
 
 using namespace ESock;
 
@@ -55,7 +50,6 @@ using namespace ESock;
 //
 //-=========================================================	
 
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 namespace PDPCprLinkCharacteristicActivity
 {
 DECLARE_DEFINE_NODEACTIVITY(ECFActivityParamRequest, PDPCprLinkCharacteristic, TCFScpr::TGetParamsRequest)
@@ -73,17 +67,15 @@ DECLARE_DEFINE_NODEACTIVITY(ECFActivityDataClientGoneDown, PDPScprGoneDown, TCFC
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KNonDefault, MeshMachine::TDoNothing)    
 NODEACTIVITY_END()
 }
-#endif
 
 namespace PDPCprActivities
 {
 DEFINE_ACTIVITY_MAP(activityMap)
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     ACTIVITY_MAP_ENTRY(PDPDataClientGoneDownActivity, PDPScprGoneDown)
 	ACTIVITY_MAP_ENTRY(PDPCprLinkCharacteristicActivity, PDPCprLinkCharacteristic)
-#endif
 ACTIVITY_MAP_END_BASE(CprActivities, coreCprActivities)
 }
+
 
 CPDPConnectionProvider* CPDPConnectionProvider::NewL(ESock::CConnectionProviderFactoryBase& aFactory)
     {
@@ -93,6 +85,18 @@ CPDPConnectionProvider* CPDPConnectionProvider::NewL(ESock::CConnectionProviderF
     CleanupStack::Pop(provider);
 	return provider;
     }        
+
+
+void CPDPConnectionProvider::StartListener()
+/**
+ * Start listening for dynamic caps or network mode changes.
+ * @param None
+ * @return void
+ */
+	{
+	iDynamicCapsEventListener->NotifyDynamicCapsChange(this);
+	iNetworkModeEventListener->NotifyNetworkModeChange(this);
+	}
 
 void CPDPConnectionProvider::ConstructL()
 /**
@@ -104,13 +108,23 @@ void CPDPConnectionProvider::ConstructL()
 	CCoreConnectionProvider::ConstructL();
 	}
 
+void CPDPConnectionProvider::StopListener()
+/**
+ * Start listening for dynamic caps or network mode changes.
+ */
+	{
+	if(iDynamicCapsEventListener)
+		{
+		iDynamicCapsEventListener->Cancel();
+		}
+	if(iNetworkModeEventListener)
+		{
+		iNetworkModeEventListener->Cancel();
+		}
+	}
+
 CPDPConnectionProvider::CPDPConnectionProvider(ESock::CConnectionProviderFactoryBase& aFactory)
-	: CCoreConnectionProvider(aFactory, PDPCprActivities::activityMap::Self()),
-	  iDynamicCapsEventListener(NULL),
-	  iNetworkModeEventListener(NULL),
-	  iBearerType(0),
-	  iBearerSet(EFalse)
-	  
+	: CCoreConnectionProvider(aFactory, PDPCprActivities::activityMap::Self())
 /**
  * Construct PDP connection provider.
  */	
@@ -124,9 +138,7 @@ CPDPConnectionProvider::~CPDPConnectionProvider()
  */
     {    
     LOG_NODE_DESTROY(KESockConnectionTag, CPDPConnectionProvider);
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     StopListener();
-#endif
 	delete iDynamicCapsEventListener;
 	delete iNetworkModeEventListener;
     }
@@ -146,7 +158,6 @@ void CPDPConnectionProvider::BearerChangeDetectedL()
  * all the control client.
  */
 	{
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 	//Update bearers.
 	UpdateBearer();
 	
@@ -177,35 +188,10 @@ void CPDPConnectionProvider::BearerChangeDetectedL()
 		msg.iRefCountOwnedNotification->Open();
 		ctl->PostMessage(this->NodeId(), msg);
 		}
-#endif
+
 	}
 
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
-void CPDPConnectionProvider::StartListener()
-/**
- * Start listening for dynamic caps or network mode changes.
- * @param None
- * @return void
- */
-    {
-    iDynamicCapsEventListener->NotifyDynamicCapsChange(this);
-    iNetworkModeEventListener->NotifyNetworkModeChange(this);
-    }
 
-void CPDPConnectionProvider::StopListener()
-/**
- * Start listening for dynamic caps or network mode changes.
- */
-    {
-    if(iDynamicCapsEventListener)
-        {
-        iDynamicCapsEventListener->Cancel();
-        }
-    if(iNetworkModeEventListener)
-        {
-        iNetworkModeEventListener->Cancel();
-        }
-    }
 void CPDPConnectionProvider::UpdateBearer()
 /**
  * Update bearer type based on the change of the dynamic caps or network mode.
@@ -221,6 +207,7 @@ void CPDPConnectionProvider::UpdateBearer()
 	iBearerSet = ETrue;
 	}
 
+
 TUint32 CPDPConnectionProvider::Bearer(TUint aDynamicCaps, RMobilePhone::TMobilePhoneNetworkMode& aNetworkMode)
 /**
  * Determine bearer based on dynamic caps and network mode.
@@ -230,6 +217,7 @@ TUint32 CPDPConnectionProvider::Bearer(TUint aDynamicCaps, RMobilePhone::TMobile
  *
  */
 	{
+	
 	if ((aDynamicCaps & RPacketService::KCapsHSUPA) || (aDynamicCaps & RPacketService::KCapsHSDPA))
 		{
 		return KHsdpaBearer;
@@ -254,6 +242,7 @@ TUint32 CPDPConnectionProvider::Bearer(TUint aDynamicCaps, RMobilePhone::TMobile
 			}
 		}
 	}
+
 
 DEFINE_SMELEMENT(PDPCprStates::TUpdateBundle, NetStateMachine::MStateTransition, PDPCprStates::TContext)
 void PDPCprStates::TUpdateBundle::DoL()
@@ -303,6 +292,5 @@ void PDPCprStates::TUpdateBundle::DoL()
 		iContext.Node().StartListener();
 		}
 	}
-#endif
 
 

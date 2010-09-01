@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
  @internalComponent
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "pdpservicesTraces.h"
-#endif
-
 #include <comms-infras/ss_log.h>
 #include <comms-infras/ss_corepractivities.h> // TODO is this needed?
 #include <comms-infras/coretiermanagerstates.h> // TODO is this needed?
@@ -32,6 +26,11 @@
 #include "pdptiermanager.h"
 #include <pcktcs.h>
 #include <comms-infras/es_connectionserv.h>
+
+#ifdef __CFLOG_ACTIVE
+#define KPDPTierMgrTag KESockMetaConnectionTag
+_LIT8(KMBMSObjectTag, "MBMSObject");
+#endif
 
 using namespace Messages;
 using namespace MeshMachine; // TODO is this needed?
@@ -120,7 +119,7 @@ This function is used to cancel the notification message sent by the client
 */
 void CMBMSServiceRequest::CancelMessage(const TInt aError)
 	{
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_CANCELMESSAGE_1, "CMBMSServiceRequest[%08x]::CancelMessage(%d)", (TUint)this, aError);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::CancelMessage(%d)"), this, aError));
 	if (iRequestType == TCFTierStatusProvider::TTierNotificationRegistration::Id())
 		{
 		iRequestOriginator.PostMessage(
@@ -198,7 +197,7 @@ This is CActive overloaded function.
 */
 TInt CMBMSServiceRequest::RunError(TInt aError)
 	{
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNERROR_1, "CMBMSServiceRequest[%08x]::RunError(%d)", (TUint)this, aError);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::RunError(%d)"), this, aError));
 
 	// Stop the ScanEngine components
 	Cancel();
@@ -226,7 +225,7 @@ void CMBMSServiceRequest::RunL()
 		switch(iScanEngineState)
 			{
 			case EChecking:
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_1, "CMBMSServiceRequest[%08x]::In EChecking State", (TUint)this);
+				__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In EChecking State"), this));
 				User::LeaveIfError(iMBMSEngine.GetRPacketService().GetStatus(iPsdStatus)); // get initial status
 
 				//check the query type
@@ -249,14 +248,14 @@ void CMBMSServiceRequest::RunL()
 
 			case EBearerAvailable:
 				//get MBMS bearer availability.
-				 OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_2, "CMBMSServiceRequest[%08x]::In EBearerAvailable State", (TUint)this);
+				 __CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In EBearerAvailable State"), this));
 				 iMBMSEngine.GetRPacketService().GetMbmsNetworkServiceStatus(iStatus,ETrue,iNetworkServiceStatus);
 			 	 iScanEngineState = ERetrieveBearerAvailability;
 				 SetActive();
 			break;
 
 		   	case ERetrieveBearerAvailability:
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_3, "CMBMSServiceRequest[%08x]::In ERetrieveBearerAvailability State", (TUint)this);
+				__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In ERetrieveBearerAvailability State"), this));
 			    //create a parameter bundle and send the results to the client.
 			    SendResultBundleL();
 
@@ -304,7 +303,7 @@ void CMBMSServiceRequest::RunL()
 
 			case EGetCountMonitorList:
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_4, "CMBMSServiceRequest[%08x]::In ECountActiveServiceList State", (TUint)this);
+				__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In ECountActiveServiceList State"), this));
 				iMBMSEngine.GetRPacketService().EnumerateMbmsMonitorServiceList(iStatus,iCount,iMaxCount);
 
 				SetActive();
@@ -314,7 +313,7 @@ void CMBMSServiceRequest::RunL()
 
 			case EGetCountServiceList:
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_5, "CMBMSServiceRequest[%08x]::In ECountActiveServiceList State", (TUint)this);
+				__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In ECountActiveServiceList State"), this));
 				iMBMSEngine.GetRPacketService().EnumerateMbmsActiveServiceList(iStatus,iCount,iMaxCount);
 
 				SetActive();
@@ -328,14 +327,14 @@ void CMBMSServiceRequest::RunL()
 
 			case ENotifyService:
 				//notify for MBMS Services.
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_6, "CMBMSServiceRequest[%08x]::In ENotifyService State", (TUint)this);
+				__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In ENotifyService State"), this));
 				iMBMSEngine.GetRPacketService().NotifyMbmsServiceAvailabilityChange(iStatus);
 			    SetActive();
 				iScanEngineState = EStartMonitor;
 			break;
 
 			case EStartMonitor:
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_7, "CMBMSServiceRequest[%08x]::In EStartMonitor State", (TUint)this);
+				__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In EStartMonitor State"), this));
 				iRetrievePcktMbms = CRetrievePcktMbmsMonitoredServices::NewL(iMBMSEngine.GetRPacketService());
 			    iRetrievePcktMbms->Start(iStatus);
 
@@ -355,13 +354,13 @@ void CMBMSServiceRequest::RunL()
 		}
 	else if(((iStatus.Int() == KErrMbmsImpreciseServiceEntries))||((iStatus.Int() == KErrNotFound)))
 		 {
-		  OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_8, "CMBMSServiceRequest[%08x]::RunL() KErrMbmsImpreciseServiceEntries || KErrNotFound", (TUint)this);
+		  __CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::RunL() KErrMbmsImpreciseServiceEntries || KErrNotFound"), this));
 		  CancelMessage(iStatus.Int());
 		  iMBMSEngine.RemoveFromRequestListL(GetClientId());
 		 }
 	else
 		{
-		 OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_RUNL_9, "CMBMSServiceRequest[%08x]::RunL() ERROR: Incorrect status, Aborting", (TUint)this);
+		 __CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::RunL() ERROR: Incorrect status, Aborting"), this));
 		 User::Leave(iStatus.Int());
 		}
 
@@ -374,7 +373,7 @@ This function is used to update Mbms Monitored Service List
 */
 CPcktMbmsMonitoredServiceList* CMBMSServiceRequest::UpdateMonitorServiceListL()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_UPDATEMONITORSERVICELISTL_1, "CMBMSServiceRequest[%08x]::In UpdateMonitorServiceListL()", (TUint)this);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In UpdateMonitorServiceListL()"), this));
 
 	//Read the entries in the parameter bundle and pass them to Etel.
 	CPcktMbmsMonitoredServiceList* serviceList= CPcktMbmsMonitoredServiceList::NewL();
@@ -448,7 +447,7 @@ CConnectionServParameterBundle* CMBMSServiceRequest::PrepareMonitorResultBundleL
 	CConnectionServParameterBundle* returnBundle = CConnectionServParameterBundle::NewL();
 	CleanupStack::PushL(returnBundle);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_PREPAREMONITORRESULTBUNDLEL_1, "CMBMSServiceRequest[%08x]::In PrepareMonitorResultBundleL function", (TUint)this);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In PrepareMonitorResultBundleL function"), this));
 	//read the MBMS Service list from Etel after receiving the MBMS Service Availability Notification.
 
 	CPcktMbmsMonitoredServiceList* serviceList = iRetrievePcktMbms->RetrieveListL();
@@ -493,7 +492,7 @@ This function is used to prepare result bundle containing bearer availability.
 */
 CConnectionServParameterBundle* CMBMSServiceRequest::PrepareBearerResultBundleL() const
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_PREPAREBEARERRESULTBUNDLEL_1, "CMBMSServiceRequest[%08x]::In PrepareBearerResultBundleL function", (TUint)this);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In PrepareBearerResultBundleL function"), this));
 
 	CConnectionServParameterBundle* returnBundle = CConnectionServParameterBundle::NewL();
 	CleanupStack::PushL(returnBundle);
@@ -518,7 +517,7 @@ in Monitor/Serice list table.
 */
 CConnectionServParameterBundle* CMBMSServiceRequest::PrepareCountBundleL() const
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_PREPARECOUNTBUNDLEL_1, "CMBMSServiceRequest[%08x]::In PrepareCountBundleL function", (TUint)this);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In PrepareCountBundleL function"), this));
 
 	CConnectionServParameterBundle* returnBundle = CConnectionServParameterBundle::NewL();
 	CleanupStack::PushL(returnBundle);
@@ -544,7 +543,7 @@ This function creates an empty bundle.
 CConnectionServParameterBundle* CMBMSServiceRequest::PrepareRemoveAllBundleL() const
 	{
 	//pass empty bundle
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSSERVICEREQUEST_PREPAREREMOVEALLBUNDLEL_1, "CMBMSServiceRequest[%08x]::In PrepareRemoveAllBundleL function", (TUint)this);
+	__CFLOG_VAR((KPDPTierMgrTag, KMBMSObjectTag, _L8("CMBMSServiceRequest[%08x]::In PrepareRemoveAllBundleL function"), this));
 
 	CConnectionServParameterBundle* returnBundle = CConnectionServParameterBundle::NewL();
 	return returnBundle;

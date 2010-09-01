@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,16 +19,10 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimPhoneIMSAuthTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include <etelmmerr.h>
 #include "CSimPhone.h"
+#include "Simlog.h"
 
 //
 // CSimPhoneIMSAuth
@@ -66,10 +60,10 @@ void CSimPhoneIMSAuth::ConstructL()
 	{
 	iTimer=CSimTimer::NewL(iPhone);
 	iGetAuthorizationData = new CArrayPtrFlat<CListReadAllAttempt>(1);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_CONSTRUCTL_1, "Starting to parse Phone IMS Authorization/Authentication config params...");
+	LOGPHONE1("Starting to parse Phone IMS Authorization/Authentication config params...");
 	ParseAuthorizationInfoL();
 	ParseAuthenticationInfoL();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_CONSTRUCTL_2, "Finished parsing Phone IMS Authorization/Authentication config params...");
+	LOGPHONE1("Finished parsing Phone IMS Authorization/Authentication config params...");
 	}
 
 
@@ -107,7 +101,7 @@ const CTestConfigSection* CSimPhoneIMSAuth::CfgFile()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_CFGFILE_1, ">>CSimPhoneIMSAuth::CfgFile");
+	LOGPHONE1(">>CSimPhoneIMSAuth::CfgFile");
 	return iPhone->CfgFile();
 	}
 
@@ -140,7 +134,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 	TInt IMPUCount, authorizationDataSource, infoChangeDelay;
 	TAuthorizationInfo authorizationInfo;
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_1, "Starting to Parse IMS Authorization Info");
+	LOGPHONE1("Starting to Parse IMS Authorization Info");
 	TInt count = CfgFile()->ItemCount(KAuthorizationInfo);
 	
 	TInt index;
@@ -157,7 +151,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterNum,IMPI);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_2, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 			continue;
 			}
 		else
@@ -170,7 +164,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterNum,IMPUCount);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_3, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 			continue;
 			}
 		else
@@ -186,7 +180,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 				ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterNum,IMPUValue);
 				if(ret!=KErrNone)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_4, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+					LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 					IMPUError = ETrue;
 					break;
 					}
@@ -199,7 +193,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 			
 			if(IMPUError)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_5, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+				LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 				continue;
 				}
 			else
@@ -212,7 +206,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterNum,HNDN);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_6, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 			continue;
 			}
 		else
@@ -225,7 +219,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterNum,authorizationDataSource);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_7, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 			continue;
 			}
 		else
@@ -240,7 +234,7 @@ void CSimPhoneIMSAuth::ParseAuthorizationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,delimiterNum,infoChangeDelay);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHORIZATIONINFOL_8, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHORIZATION INFO TAG");
 			continue;
 			}
 		else
@@ -265,7 +259,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 	TInt authErr;
 	TAuthenticationInfo authenticationInfo;
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_1, "Starting to Parse IMS Authentication Info");
+	LOGPHONE1("Starting to Parse IMS Authentication Info");
 	TInt count = CfgFile()->ItemCount(KAuthenticationInfo);
 	
 	TInt index;
@@ -281,7 +275,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,AUTN);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_2, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -293,7 +287,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,RAND);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_3, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -305,7 +299,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,RES);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_4, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -317,7 +311,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,IK);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_5, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -329,7 +323,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,CK);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_6, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -341,7 +335,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,AUTS);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_7, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -353,7 +347,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,authErr);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PARSEAUTHENTICATIONINFOL_8, "ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
+			LOGPHONE1("ERROR IN CONFIGURATION FILE PARSING: BAD AUTHENTICATION INFO TAG");
 			continue;
 			}
 		else
@@ -368,7 +362,7 @@ void CSimPhoneIMSAuth::ParseAuthenticationInfoL()
 TInt CSimPhoneIMSAuth::GetAuthorizationInfoPhase1(const TTsyReqHandle aTsyReqHandle, 
 			RMobilePhone::TClientId* aClientId,TInt* aBufSize)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_GETAUTHORIZATIONINFOPHASE1_1, "CSimPhoneIMSAuth::GetAuthorizationInfoPhase1 called");
+	LOGPHONE1("CSimPhoneIMSAuth::GetAuthorizationInfoPhase1 called");
 	TInt ret(KErrNone);
 	TInt leaveCode(KErrNone);
 	TRAP(leaveCode, ret=ProcessGetAuthorizationInfoPhase1L(aTsyReqHandle, aClientId, aBufSize););
@@ -384,7 +378,7 @@ TInt CSimPhoneIMSAuth::GetAuthorizationInfoPhase1(const TTsyReqHandle aTsyReqHan
 TInt CSimPhoneIMSAuth::ProcessGetAuthorizationInfoPhase1L(const TTsyReqHandle aTsyReqHandle,
 			RMobilePhone::TClientId* aClientId, TInt* aBufSize)
 	{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_PROCESSGETAUTHORIZATIONINFOPHASE1L_1, "CSimPhoneIMSAuth::GetAuthorizationInfoPhase1 called");
+		LOGPHONE1("CSimPhoneIMSAuth::GetAuthorizationInfoPhase1 called");	
 
 	// Store the streamed list and the client ID
 	CListReadAllAttempt* read=CListReadAllAttempt::NewL(*aClientId,aTsyReqHandle);
@@ -445,7 +439,7 @@ TInt CSimPhoneIMSAuth::ProcessGetAuthorizationInfoPhase1L(const TTsyReqHandle aT
 TInt CSimPhoneIMSAuth::GetAuthorizationInfoPhase2(const TTsyReqHandle aTsyReqHandle,
 			RMobilePhone::TClientId* aClientId, TDes8* aBuffer)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_GETAUTHORIZATIONINFOPHASE2_1, "CSimPhoneIMSAuth::GetAuthorizationInfoPhase2 called");
+	LOGPHONE1("CSimPhoneIMSAuth::GetAuthorizationInfoPhase2 called");	
 	CListReadAllAttempt* read=NULL;
 
 	// Find the get Authorization Info attempt from this client
@@ -472,7 +466,7 @@ TInt CSimPhoneIMSAuth::GetAuthorizationInfoPhase2(const TTsyReqHandle aTsyReqHan
 
 TInt CSimPhoneIMSAuth::GetAuthorizationInfoCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_GETAUTHORIZATIONINFOCANCEL_1, "CSimPhoneIMSAuth::GetAuthorizationInfoCancel called");
+	LOGPHONE1("CSimPhoneIMSAuth::GetAuthorizationInfoCancel called");
 
 	// Remove the read all attempt from iGetAuthorizationData
 	CListReadAllAttempt* read=NULL;
@@ -495,7 +489,7 @@ TInt CSimPhoneIMSAuth::GetAuthorizationInfoCancel(const TTsyReqHandle aTsyReqHan
 
 TInt CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChanged(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_NOTIFYIMSAUTHORIZATIONINFOCHANGED_1, "CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChanged called");
+	LOGPHONE1("CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChanged called");
 	__ASSERT_ALWAYS(!iAuthInfoChangeNotifyPending,SimPanic(ENotificationReqAlreadyOutstanding));
 
 	TInt count=iAuthorizationInfoList.Count();
@@ -514,7 +508,7 @@ TInt CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChanged(const TTsyReqHandle aTs
 
 TInt CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChangedCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_NOTIFYIMSAUTHORIZATIONINFOCHANGEDCANCEL_1, "CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChangedCancel called");
+	LOGPHONE1("CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChangedCancel called");
 	if(iAuthInfoChangeNotifyPending)
 		{
 		if(iTimerStarted)
@@ -532,7 +526,7 @@ TInt CSimPhoneIMSAuth::NotifyImsAuthorizationInfoChangedCancel(const TTsyReqHand
 
 TInt CSimPhoneIMSAuth::GetAuthenticationData(const TTsyReqHandle aTsyReqHandle,TDes8* aAuthenticationData)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_GETAUTHENTICATIONDATA_1, "CSimPhoneIMSAuth::AuthentificationData called");
+	LOGPHONE1("CSimPhoneIMSAuth::AuthentificationData called");
 
 	RMobilePhone::TImsAuthenticateDataV5Pckg* authenticateDataPckgd =
 			(RMobilePhone::TImsAuthenticateDataV5Pckg*)aAuthenticationData;
@@ -580,7 +574,7 @@ TInt CSimPhoneIMSAuth::GetAuthenticationData(const TTsyReqHandle aTsyReqHandle,T
 
 TInt CSimPhoneIMSAuth::GetAuthenticationDataCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEIMSAUTH_GETAUTHENTICATIONDATACANCEL_1, "CSimPhoneIMSAuth::AuthentificationDatCancel called");
+	LOGPHONE1("CSimPhoneIMSAuth::AuthentificationDatCancel called");	
 	iPhone->ReqCompleted(aTsyReqHandle, KErrCancel);
 	return KErrNone;
 	}

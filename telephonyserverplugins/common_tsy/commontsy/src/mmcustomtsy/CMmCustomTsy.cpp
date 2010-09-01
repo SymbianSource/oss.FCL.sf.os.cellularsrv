@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CMmCustomTsyTraces.h"
-#endif
-
 #include "CMmCustomTsy.h"
 #include "CMmCustomGsmExt.h"
 #include "cmmcalllist.h"
@@ -31,6 +25,7 @@
 #include "CMmCommonStaticUtility.h"
 #include "CMmSimLockTsy.h"
 #include "MmTsy_conf.h"
+#include <ctsy/tflogger.h>
 #include "cmmpblist.h"
 #include "cmmphonebookstoretsy.h"
 #include "CMmPacketTsy.h"
@@ -60,7 +55,7 @@ CMmCustomTsy::CMmCustomTsy():
 void CMmCustomTsy::ConstructL(
     CMmPhoneTsy* aMmPhoneTsy )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_1, "TSY: CMmCustomTsy::ConstructL");
+TFLOGSTRING("TSY: CMmCustomTsy::ConstructL");
     iMmPhoneTsy = aMmPhoneTsy;
 
     iMmCustomExtInterface = CMmCustomGsmExt::NewL( aMmPhoneTsy, this );
@@ -103,7 +98,7 @@ void CMmCustomTsy::ConstructL(
     // update/receive Icc Call forward information
     if( iMmPhoneTsy->NosBootState()->iSIMReady )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_2, "TSY: CMmCustomTsy::ConstructL -- GET ICC call forward indicators");
+TFLOGSTRING("TSY: CMmCustomTsy::ConstructL -- GET ICC call forward indicators");       
         // Get Icc cfis values from LTSY
         Phone()->MessageManager()->HandleRequestL( 
             ECustomGetIccCallForwardingStatusIPC );
@@ -113,20 +108,20 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_
  	// if not, query again
     if ( !iMmPhoneTsy->GetHomeZoneParamsChecked() )
     	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_3, "TSY: CMmCustomTsy::ConstructL - GetHomeZoneParamsChecked()");
+TFLOGSTRING("TSY: CMmCustomTsy::ConstructL - GetHomeZoneParamsChecked()");    	
         CMmSIMTsy* simCustomTsy = NULL;
         simCustomTsy = ( CMmSIMTsy* )GetSIMTsyPtr();
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_4, "TSY: CMmCustomTsy::ConstructL - pointer created");
+TFLOGSTRING("TSY: CMmCustomTsy::ConstructL - pointer created");
 	
         if ( simCustomTsy )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_5, "TSY: CMmCustomTsy::ConstructL - CheckViagHomeZoneParamsL()");
+TFLOGSTRING("TSY: CMmCustomTsy::ConstructL - CheckViagHomeZoneParamsL()");
             simCustomTsy->CheckViagHomezoneParamsL();
             iMmPhoneTsy->SetHomeZoneParamsChecked( ETrue );
             }
         else
         	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_6, "TSY: CMmCustomTsy::ConstructL - CheckViagHomeZoneParamsL() False");
+TFLOGSTRING("TSY: CMmCustomTsy::ConstructL - CheckViagHomeZoneParamsL() False");        		
 			iMmPhoneTsy->SetHomeZoneParamsChecked( EFalse );
         	}
     	}     
@@ -135,7 +130,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CONSTRUCTL_
 CMmCustomTsy* CMmCustomTsy::NewL(
     CMmPhoneTsy* aMmPhoneTsy )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NEWL_1, "TSY: CMmCustomTsy::NewL");
+TFLOGSTRING("TSY: CMmCustomTsy::NewL");
     CMmCustomTsy* mmCustomTsy = new ( ELeave ) CMmCustomTsy();
     CleanupClosePushL( *mmCustomTsy );
     mmCustomTsy->ConstructL( aMmPhoneTsy );
@@ -146,7 +141,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NEWL_1, "TS
 
 CMmCustomTsy::~CMmCustomTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DTOR_1, "TSY: CMmCustomTsy::~CMmCustomTsy");
+TFLOGSTRING("TSY: CMmCustomTsy::~CMmCustomTsy");
 
 	iFeatureControl.Close();
 	
@@ -216,7 +211,7 @@ TInt CMmCustomTsy::ExtFunc(
     if ( ERfsStateInfoInactive == iMmPhoneTsy->GetRfStateInfo() &&
         !IsRequestPossibleInOffline( aIpc ) )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
+TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral,
                 KErrGsmOfflineOpNotAllowed );
 
@@ -549,7 +544,7 @@ TInt CMmCustomTsy::DoExtFuncL(
                     break;
                 default:
                     // ret is already set as KErrNotSupported
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DOEXTFUNCL_1, "TSY: CMmCustomTsy::DoExtFuncL unsupported ipc=%d", aIpc);
+TFLOGSTRING2("TSY: CMmCustomTsy::DoExtFuncL unsupported ipc=%d", aIpc);
                     break;
                 }
 
@@ -805,7 +800,7 @@ TInt CMmCustomTsy::NumberOfSlotsL(
 TSecurityPolicy CMmCustomTsy::GetRequiredPlatSecCaps(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_1,  "TSY: CMmCustomTsy::GetRequiredPlatSecCaps ipc=%d", aIpc );
+TFLOGSTRING2( "TSY: CMmCustomTsy::GetRequiredPlatSecCaps ipc=%d", aIpc );
     // assume fail as default return value
     TSecurityPolicy policy( TSecurityPolicy::EAlwaysFail );
 
@@ -814,7 +809,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
     if (ipc >= KIpcCustomExt + EMobileCancelOffset)
         {
         ipc  -= EMobileCancelOffset;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_2, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps cancel for ipc=%d", ipc);
+TFLOGSTRING2("TSY: CMmCustomTsy::GetRequiredPlatSecCaps cancel for ipc=%d", ipc);
         }
 
     switch ( ipc )
@@ -848,7 +843,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         case ECustomNotifyCellInfoChangeIPC:
         case ECustomGetBandSelectionIPC:
         case ECustomNotifyRemoteAlertingToneStatusChangeIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_3, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=None");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=None");
             policy = TSecurityPolicy( TSecurityPolicy::EAlwaysPass );
             break;
 
@@ -857,14 +852,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         case ECustomSetSystemNetworkModeIPC:
         case ECustomSimWarmResetIPC:
         case ECustomSetBandSelectionIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_4, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkControl");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkControl");
             policy = TSecurityPolicy( ECapabilityNetworkControl );
             break;
 
         // NetworkControl, PowerMgmt
         case ECustomPowerSimOnIPC:
         case ECustomPowerSimOffIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_5, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkControl, PowerMgmt");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkControl, PowerMgmt");
             policy = TSecurityPolicy( ECapabilityNetworkControl,
                 ECapabilityPowerMgmt );
             break;
@@ -872,7 +867,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         // NetworkControl, ReadDeviceData
         case ECustomReleaseFileIPC:
         case ECustomRestartFileIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_6, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkControl, ReadDeviceData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkControl, ReadDeviceData");
             policy = TSecurityPolicy( ECapabilityNetworkControl,
                 ECapabilityReadDeviceData );
             break;
@@ -880,13 +875,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         // NetworkServices
         case ECustomTerminateCallIPC:
         case ECustomCancelUssdSessionIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_7, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkServices");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkServices");
             policy = TSecurityPolicy( ECapabilityNetworkServices );
             break;
 
         // NetworkServices, WriteDeviceData
         case ECustomSetDriveModeIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_8, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkServices, WriteDeviceData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=NetworkServices, WriteDeviceData");
             policy = TSecurityPolicy( ECapabilityNetworkServices,
                 ECapabilityWriteDeviceData );
             break;
@@ -907,27 +902,27 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         case ECustomReadHSxPAStatusIPC:
         case ECustomGetIccCallForwardingStatusIPC:
         case ECustomGetCellInfoIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_9, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData");
             policy = TSecurityPolicy( ECapabilityReadDeviceData );
             break;
 
         // ReadDeviceData, Location
         case EReadViagHomeZoneCacheIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_10, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, Location");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, Location");
             policy = TSecurityPolicy( ECapabilityReadDeviceData,
                 ECapabilityLocation );
             break;
 
         // ReadDeviceData, ReadUserData
         case ECustomNotifySsNetworkEventIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_11, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy= ReadDeviceData, ReadUserData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy= ReadDeviceData, ReadUserData");
             policy = TSecurityPolicy( ECapabilityReadDeviceData,
                 ECapabilityReadUserData );
             break;
 
         // ReadDeviceData, ReadUserData, Location
         case ECustomReadSimFileIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_12, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, ReadUserData, Location");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, ReadUserData, Location");
             policy = TSecurityPolicy( ECapabilityReadDeviceData,
                 ECapabilityReadUserData,
                 ECapabilityLocation );
@@ -935,7 +930,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
 
         // ReadDeviceData, ReadUserData, WriteUserData, NetworkControl
         case ECustomGetSimAuthenticationDataIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_13, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, ReadUserData, WriteUserData, NetworkControl");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, ReadUserData, WriteUserData, NetworkControl");
             policy = TSecurityPolicy( ECapabilityReadDeviceData,
                 ECapabilityReadUserData,
                 ECapabilityWriteUserData,
@@ -943,14 +938,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
             break;
 
        	case ECustomGetServiceTableSupportbyApplicationIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_14, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData");
             policy = TSecurityPolicy( ECapabilityReadDeviceData );
             break;
         // ReadDeviceData, WriteDeviceData, ReadUserData, WriteUserData,
         // Location, NetworkServices, NetworkControl
         case ECustomSendAPDUReqIPC:
         case ECustomSendAPDUReqV2IPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_15, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, WriteDeviceData, ReadUserData, WriteUserData, Location, NetworkServices, NetworkControl");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadDeviceData, WriteDeviceData, ReadUserData, WriteUserData, Location, NetworkServices, NetworkControl");
             policy = TSecurityPolicy( ECapabilityReadDeviceData,
                 ECapabilityWriteDeviceData,
                 ECapabilityReadUserData,
@@ -964,7 +959,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         case ECustomStartSimCbTopicBrowsingIPC:
         case ECustomGetNextSimCbTopicIPC:
         case ECustomGetAirTimeDurationIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_16, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadUserData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=ReadUserData");
             policy = TSecurityPolicy( ECapabilityReadUserData );
             break;
 
@@ -979,32 +974,32 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
         case ECustomDisablePhoneLockIPC:
         case ECustomSetSimMessageStatusReadIPC:
         case ECustomWriteHSxPAStatusIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_17, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData");
             policy = TSecurityPolicy( ECapabilityWriteDeviceData );
             break;
 
         // WriteDeviceData, Location
         case EWriteViagHomeZoneCacheIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_18, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData, Location");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData, Location");
             policy = TSecurityPolicy( ECapabilityWriteDeviceData,
                 ECapabilityLocation );
             break;
 
         // WriteUserData
         case ECustomDeleteSimCbTopicIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_19, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteUserData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteUserData");
             policy = TSecurityPolicy( ECapabilityWriteUserData );
             break;
 
         // WriteDeviceData
         case EWriteViagHomeZoneUHZIUESettingsIPC:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_20, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=WriteDeviceData");
             policy = TSecurityPolicy( ECapabilityWriteDeviceData );
             break;
         default:
             // if none of the above then we end up here,
             // as a default we already have caps as alwaysfail.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_21, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=AlwaysFail");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRequiredPlatSecCaps policy=AlwaysFail");
             break;
         }
 
@@ -1310,7 +1305,7 @@ TInt CMmCustomTsy::SimAuthenticationL(
     TInt ret ( KErrNone );
     TInt rfStateInfo ( ERfsStateInfoNormal );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_1,  "CMmCustomTSY: CMmCustomTsy::SimAuthentication" );
+TFLOGSTRING( "CMmCustomTSY: CMmCustomTsy::SimAuthentication" );
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(ECustomTsyGetSimAuthenticationData);
     if(0 < reqHandle)
@@ -1354,69 +1349,69 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTI
     else if ( RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrap ==
         basePtr->ExtensionId() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_2,  "CMmCustomTSY: SimAuthenticationL::in EGbaBootstrap" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::in EGbaBootstrap" );
         iGbaBootstrap = REINTERPRET_CAST( 
 	        RMmCustomAPI::TSimAuthenticationGbaBootstrap*, basePtr );
 
         rand.Append( iGbaBootstrap->iRandomParameters );
 
         authenticationDataPackage.PackData( iGbaBootstrap, &rfStateInfo  ); 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_3,  "CMmCustomTSY: SimAuthenticationL::out EGbaBootstrap" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::out EGbaBootstrap" ); 
         }
     else if ( RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrapUpdate ==
         basePtr->ExtensionId() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_4,  "CMmCustomTSY: SimAuthenticationL::in EGbaBootstrapUpdate" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::in EGbaBootstrapUpdate" );
         iGbaBootstrapUpdate = REINTERPRET_CAST( 
         	RMmCustomAPI::TSimAuthenticationGbaBootstrapUpdate*, basePtr );
 
         authenticationDataPackage.PackData( iGbaBootstrapUpdate, &rfStateInfo  ); 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_5,  "CMmCustomTSY: SimAuthenticationL::out EGbaBootstrapUpdate" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::out EGbaBootstrapUpdate" ); 
         }
     else if ( 
         RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrapNafDerivation ==
         basePtr->ExtensionId() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_6,  "CMmCustomTSY: SimAuthenticationL::in EGbaBootstrapNafDerivation" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::in EGbaBootstrapNafDerivation" );
         iGbaNafDerivation = REINTERPRET_CAST( 
         	RMmCustomAPI::TSimAuthenticationGbaNafDerivation*, basePtr );
 
         authenticationDataPackage.PackData( iGbaNafDerivation, &rfStateInfo  ); 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_7,  "CMmCustomTSY: SimAuthenticationL::out EGbaBootstrapNafDerivation" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::out EGbaBootstrapNafDerivation" );
         }
     else if ( RMmCustomAPI::TSimAuthenticationBase::EMgvMskUpdate ==
         basePtr->ExtensionId() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_8,  "CMmCustomTSY: SimAuthenticationL::in EMgvMskUpdate" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::in EMgvMskUpdate" );  
         iMgvMskUpdate = REINTERPRET_CAST( 
         	RMmCustomAPI::TSimAuthenticationMgvMskUpdate*, basePtr );
 
         authenticationDataPackage.PackData( iMgvMskUpdate, &rfStateInfo  ); 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_9,  "CMmCustomTSY: SimAuthenticationL::out EMgvMskUpdate" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::out EMgvMskUpdate" );
         }
     else if ( RMmCustomAPI::TSimAuthenticationBase::EMgvMtkGeneration ==
         basePtr->ExtensionId() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_10,  "CMmCustomTSY: SimAuthenticationL::in EMgvMtkGeneration" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::in EMgvMtkGeneration" );
         iMgvMtkGeneration = REINTERPRET_CAST( 
         	RMmCustomAPI::TSimAuthenticationMgvMtkGeneration*, basePtr );
 
         authenticationDataPackage.PackData( iMgvMtkGeneration, &rfStateInfo  ); 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_11,  "CMmCustomTSY: SimAuthenticationL::out EMgvMtkGeneration" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::out EMgvMtkGeneration" );
         }
     else if ( RMmCustomAPI::TSimAuthenticationBase::EMgvMskDeletion ==
         basePtr->ExtensionId() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_12,  "CMmCustomTSY: SimAuthenticationL::in EMgvMskDeletion" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::in EMgvMskDeletion" );
         iMgvMskDeletion = REINTERPRET_CAST( 
         	RMmCustomAPI::TSimAuthenticationMgvMskDeletion*, basePtr );
 
         authenticationDataPackage.PackData( iMgvMskDeletion, &rfStateInfo  ); 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_13,  "CMmCustomTSY: SimAuthenticationL::out EMgvMskDeletion" );
+TFLOGSTRING( "CMmCustomTSY: SimAuthenticationL::out EMgvMskDeletion" ); 
         }
     else
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SIMAUTHENTICATIONL_14,  "CMmCustomTSY: Invalid authentication type specified: %d", basePtr->ExtensionId() );
+TFLOGSTRING2( "CMmCustomTSY: Invalid authentication type specified: %d", basePtr->ExtensionId() );
         ret = KErrNotSupported;
 
         iEapSim = NULL;
@@ -1493,7 +1488,7 @@ void CMmCustomTsy::CompleteSimAuthentication(
     CMmDataPackage* aDataPackage,
     TInt aResult )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_1,  "TSY: CMmCustomTsy::CompleteSimAuthentication" );
+TFLOGSTRING( "TSY: CMmCustomTsy::CompleteSimAuthentication" );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyGetSimAuthenticationData );
@@ -1541,7 +1536,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
             else if ( RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrap ==
                 basePtr->ExtensionId() )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_2,  "CMmCustomTSY: CompleteSimAuthentication::in EGbaBootstrap" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::in EGbaBootstrap" );
                 RMmCustomAPI::TSimAuthenticationGbaBootstrap* gbaBootstrap;
 
                 aDataPackage->UnPackData( &gbaBootstrap );
@@ -1553,13 +1548,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 iGbaBootstrap = NULL;
 
                 ReqCompleted( reqHandle, aResult );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_3,  "CMmCustomTSY: CompleteSimAuthentication::out EGbaBootstrap" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::out EGbaBootstrap" );
                 }
             else if ( 
                 RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrapUpdate ==
                 basePtr->ExtensionId() )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_4,  "CMmCustomTSY: CompleteSimAuthentication::in EGbaBootstrapUpdate" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::in EGbaBootstrapUpdate" );                
                 RMmCustomAPI::TSimAuthenticationGbaBootstrapUpdate* 
                     gbaBootstrapUpdate;
 
@@ -1572,13 +1567,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 iGbaBootstrapUpdate = NULL;
 
                 ReqCompleted( reqHandle, aResult );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_5,  "CMmCustomTSY: CompleteSimAuthentication::out EGbaBootstrapUpdate" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::out EGbaBootstrapUpdate" );
                 }
             else if ( 
                 RMmCustomAPI::TSimAuthenticationBase::
                     EGbaBootstrapNafDerivation == basePtr->ExtensionId() )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_6,  "CMmCustomTSY: CompleteSimAuthentication::in EGbaBootstrapNafDerivation" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::in EGbaBootstrapNafDerivation" );                
                 RMmCustomAPI::TSimAuthenticationGbaNafDerivation* 
                     gbaNafDerivation;
 
@@ -1591,12 +1586,12 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 iGbaNafDerivation = NULL;
 
                 ReqCompleted( reqHandle, aResult );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_7,  "CMmCustomTSY: CompleteSimAuthentication::out EGbaBootstrapNafDerivation" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::out EGbaBootstrapNafDerivation" );                
                 }
             else if ( RMmCustomAPI::TSimAuthenticationBase::EMgvMskUpdate ==
                     basePtr->ExtensionId() )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_8,  "CMmCustomTSY: CompleteSimAuthentication::in EMgvMskUpdate" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::in EMgvMskUpdate" );                
                 RMmCustomAPI::TSimAuthenticationMgvMskUpdate* mgvMskUpdate;
 
                 aDataPackage->UnPackData( &mgvMskUpdate );
@@ -1611,12 +1606,12 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 iMgvMskUpdate = NULL;
 
                 ReqCompleted( reqHandle, aResult );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_9,  "CMmCustomTSY: CompleteSimAuthentication::out EMgvMskUpdate" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::out EMgvMskUpdate" );
                 }
             else if ( RMmCustomAPI::TSimAuthenticationBase::
                     EMgvMtkGeneration == basePtr->ExtensionId() )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_10,  "CMmCustomTSY: CompleteSimAuthentication::in EMgvMtkGeneration" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::in EMgvMtkGeneration" );                
                 RMmCustomAPI::TSimAuthenticationMgvMtkGeneration* 
                     mgvMtkGeneration;
 
@@ -1631,7 +1626,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 iMgvMtkGeneration = NULL;
 
                 ReqCompleted( reqHandle, aResult );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_11,  "CMmCustomTSY: CompleteSimAuthentication::out EMgvMtkGeneration" );
+TFLOGSTRING( "CMmCustomTSY: CompleteSimAuthentication::out EMgvMtkGeneration" ); 
                 }
             else if ( RMmCustomAPI::TSimAuthenticationBase::
                     EMgvMskDeletion == basePtr->ExtensionId() )
@@ -1640,7 +1635,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 }
             else
                 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_12,  "CMmCustomTSY: Invalid authentication type specified: %d", basePtr->ExtensionId() );
+TFLOGSTRING2( "CMmCustomTSY: Invalid authentication type specified: %d", basePtr->ExtensionId() );
                 aResult = KErrArgument;
                 ReqCompleted( reqHandle, aResult );
                 }
@@ -1682,7 +1677,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIM
                 else if( RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrap ==
                         basePtr->ExtensionId() )
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESIMAUTHENTICATION_13,  "TSYMH: CompleteSimAuthentication RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrap" );
+TFLOGSTRING( "TSYMH: CompleteSimAuthentication RMmCustomAPI::TSimAuthenticationBase::EGbaBootstrap" );
                     RMmCustomAPI::TSimAuthenticationGbaBootstrap* gbabootstrap;
                     aDataPackage->UnPackData( &gbabootstrap );
 
@@ -1767,7 +1762,7 @@ TInt CMmCustomTsy::CheckRandValidityL(
 
     if ( KErrArgument == ret && 0 == iFreshBitCounter )
        {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKRANDVALIDITYL_1,  "CMmCustomTsy: RAND rejected" );
+TFLOGSTRING( "CMmCustomTsy: RAND rejected" );
        }
 
     return ret;
@@ -1806,7 +1801,7 @@ TInt CMmCustomTsy::CreateRandDb()
 
         if ( KErrNone != ret )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CREATERANDDB_1,  "TSY: CMmCustomTsy: 'rand_db.cur' creation failed!" );
+TFLOGSTRING( "TSY: CMmCustomTsy: 'rand_db.cur' creation failed!" );
             }
         else if ( KErrNone == ret )
             {
@@ -1846,13 +1841,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CREATERANDD
 
                 if ( KErrNone != ret )
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CREATERANDDB_2,  "TSY: CMmCustomTsy: 'rand_db.cur' initialization failed!" );
+TFLOGSTRING( "TSY: CMmCustomTsy: 'rand_db.cur' initialization failed!" );
                     file.Close();
                     }
                 }
             else
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CREATERANDDB_3,  "TSY: CMmCustomTsy: 'rand_db.cur' open failed!" );
+TFLOGSTRING( "TSY: CMmCustomTsy: 'rand_db.cur' open failed!" );
                 }
             }
 
@@ -1868,7 +1863,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CREATERANDD
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CREATERANDDB_4,  "TSY: CMmCustomTsy: Could not connect to file server!" );
+TFLOGSTRING( "TSY: CMmCustomTsy: Could not connect to file server!" );
         }
 
     // Give some time for file.Close() and fs.Close() to complete
@@ -1925,7 +1920,7 @@ TInt CMmCustomTsy::InsertBlobsToRandDb(
                     EFileWrite );
                 if( KErrNone != ret )
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_INSERTBLOBSTORANDDB_1,  "TSY: CMmCustomTsy: rand_db open failed" );
+TFLOGSTRING( "TSY: CMmCustomTsy: rand_db open failed" );
                     }
                 }
             if ( KErrNone != ret )
@@ -1990,7 +1985,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_INSERTBLOBS
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_INSERTBLOBSTORANDDB_2,  "TSY: CMmCustomTsy: Could not connect to file server!" );
+TFLOGSTRING( "TSY: CMmCustomTsy: Could not connect to file server!" );
         return ret;
         }
 
@@ -2088,7 +2083,7 @@ TInt CMmCustomTsy::UpdateBitCounter()
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_UPDATEBITCOUNTER_1,  "TSY: CMmCustomTsy: Could not connect to file server!" );
+TFLOGSTRING( "TSY: CMmCustomTsy: Could not connect to file server!" );
         }
 
     return ret;
@@ -2336,7 +2331,7 @@ TInt CMmCustomTsy::TerminateCallL(
 void CMmCustomTsy::CompleteTerminateCall(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETETERMINATECALL_1,  "TSY: CMmCustomTsy::CompleteTerminateCall - aError: %d", aError );
+TFLOGSTRING2( "TSY: CMmCustomTsy::CompleteTerminateCall - aError: %d", aError );
 
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2361,7 +2356,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETETER
 TInt CMmCustomTsy::NotifyDtmfEvent(
         RMmCustomAPI::TDtmfInfo* aInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYDTMFEVENT_1, "TSY: CMmCustomTsy::NotifyDtmfEvent");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyDtmfEvent");
     // save pointer to client data
     iNotifyInfo = aInfo;
 
@@ -2381,7 +2376,7 @@ void CMmCustomTsy::CompleteNotifyDtmfEvent(
     RMmCustomAPI::TDtmfInfo aInfo,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYDTMFEVENT_1, "TSY: CMmCustomTsy::CompleteNotifyDtmfEvent");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyDtmfEvent");
     // reset request handle. Returns the deleted req handle.
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyNotifyDtmfEvent );
@@ -2448,7 +2443,7 @@ TInt CMmCustomTsy::GetDiagnosticInfo(
 
         if ( 0 != diags )
             {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_1,  "TSY:CMmCustomTsy::GetDiagnosticInfo: Diagnostic info=%d asked for call id=%d", diags, mmCall->CallId() );
+TFLOGSTRING3( "TSY:CMmCustomTsy::GetDiagnosticInfo: Diagnostic info=%d asked for call id=%d", diags, mmCall->CallId() );
             switch ( diags )
                 {                
                 case KDiagnosticInfoBarredWithCUG:
@@ -2480,17 +2475,17 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGN
                     break;
                 }
             }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_2,  "TSY: CMmCustomTsy::GetDiagnosticInfo - ReqCompleted - Error code: %d", errorValue );
+TFLOGSTRING2( "TSY: CMmCustomTsy::GetDiagnosticInfo - ReqCompleted - Error code: %d", errorValue );
         // complete errorvalue to client  - inform change  
         ReqCompleted( aTsyReqHandle, errorValue ); 
         }
     else
         {
          // call is not found
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_3, "TSY: CMmCustomTsy::GetDiagnosticInfo - Call is not found");
+TFLOGSTRING("TSY: CMmCustomTsy::GetDiagnosticInfo - Call is not found");
         ReqCompleted( aTsyReqHandle, KErrNotFound );
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_4,  "TSY: CMmCustomTsy::GetDiagnosticInfo - Error code: %d", errorValue );
+TFLOGSTRING2( "TSY: CMmCustomTsy::GetDiagnosticInfo - Error code: %d", errorValue );
    
     return KErrNone;
     }
@@ -2526,7 +2521,7 @@ TInt CMmCustomTsy::GetRemoteAlertingToneStatus(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TRemoteAlertingToneStatus* aToneStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREMOTEALERTINGTONESTATUS_1, "TSY: CMmCustomTsy::GetRemoteAlertingToneStatus");
+TFLOGSTRING("TSY: CMmCustomTsy::GetRemoteAlertingToneStatus");
     TInt ret = iMmCustomExtInterface->GetRemoteAlertingToneStatus(
         aToneStatus );
 
@@ -2585,7 +2580,7 @@ TInt CMmCustomTsy::GetAlsBlockedL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TGetAlsBlockStatus* aBlockStatus )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSBLOCKEDL_1,  "TSY: CMmCustomTsy::GetAlsBlockedL - Req handle: %d, Block status: %d", aTsyReqHandle, *aBlockStatus );
+TFLOGSTRING3( "TSY: CMmCustomTsy::GetAlsBlockedL - Req handle: %d, Block status: %d", aTsyReqHandle, *aBlockStatus );
     TTsyReqHandle getAlsBlockedHandle =
         iTsyReqHandleStore->GetTsyReqHandle( ECustomTsyGetAlsBlocked );
 
@@ -2630,7 +2625,7 @@ void CMmCustomTsy::CompleteGetAlsBlocked(
     RMmCustomAPI::TGetAlsBlockStatus  aBlockStatus,
     TInt aErrorCode )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSBLOCKED_1,  "TSY: CMmCustomTsy::CompleteGetAlsBlocked - Block status: %d, Error code: %d", aBlockStatus, aErrorCode );
+TFLOGSTRING3( "TSY: CMmCustomTsy::CompleteGetAlsBlocked - Block status: %d, Error code: %d", aBlockStatus, aErrorCode );
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyGetAlsBlocked );
@@ -2732,7 +2727,7 @@ TInt CMmCustomTsy::SetAlsBlockedL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TSetAlsBlock* aBlockStatus )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETALSBLOCKEDL_1,  "TSY: CMmCustomTsy::SetAlsBlockedL - Req handle: %d, Block status: %d", aTsyReqHandle, *aBlockStatus );
+TFLOGSTRING3( "TSY: CMmCustomTsy::SetAlsBlockedL - Req handle: %d, Block status: %d", aTsyReqHandle, *aBlockStatus );
     // get the handle
     TTsyReqHandle setAlsBlockedHandle =
         iTsyReqHandleStore->GetTsyReqHandle( ECustomTsySetAlsBlocked );
@@ -2782,7 +2777,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETALSBL
 void CMmCustomTsy::CompleteSetAlsBlocked(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETALSBLOCKED_1,  "TSY: CMmCustomTsy::CompleteSetAlsBlocked - Error code: %d", aErrorCode );
+TFLOGSTRING2( "TSY: CMmCustomTsy::CompleteSetAlsBlocked - Error code: %d", aErrorCode );
     // get reaq handle for NotifyAlsBlockedChanged
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsyNotifyAlsBlockedChanged );
@@ -2854,7 +2849,7 @@ void CMmCustomTsy::CompleteNotifyAlsBlockedChanged()
             {
             *iRetNotifyAlsBlockStatus = RMmCustomAPI::EBlockStatusInactive;
             }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYALSBLOCKEDCHANGED_1,  "TSY: CMmCustomTsy::CompleteNotifyAlsBlockedChanged - Block status: %d", *iSetBlockStatus );
+TFLOGSTRING2( "TSY: CMmCustomTsy::CompleteNotifyAlsBlockedChanged - Block status: %d", *iSetBlockStatus );
 
         // reset the varible
         iRetNotifyAlsBlockStatus = NULL;
@@ -2896,7 +2891,7 @@ TInt CMmCustomTsy::GetAlsPpSupportL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TAlsSupport* aSupport )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUPPORTL_1,  "TSY: CMmCustomTsy::GetAlsPpSupportL");
+TFLOGSTRING( "TSY: CMmCustomTsy::GetAlsPpSupportL");
     // save pointer to client space
     iAlsSupport = aSupport;
     
@@ -2905,7 +2900,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUP
 
     if ( 0 < reqHandle )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUPPORTL_2,  "TSY: CMmCustomTsy::GetAlsPpSupportL - Already processing, save handle");
+TFLOGSTRING( "TSY: CMmCustomTsy::GetAlsPpSupportL - Already processing, save handle");
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about
 		TCheckAlsPpSupportRequest* req = 
@@ -2926,7 +2921,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUP
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUPPORTL_3,  "TSY: CMmCustomTsy::GetAlsPpSupportL - Save handle");
+TFLOGSTRING( "TSY: CMmCustomTsy::GetAlsPpSupportL - Save handle");
         // Save the req handle type
         iReqHandleType = ECustomTsyGetAlsPpSupport;
 			// save request in queue for completion
@@ -2949,7 +2944,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUP
 //
 TInt CMmCustomTsy::GetAlsPpSupportCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUPPORTCANCEL_1,  "TSY: CMmCustomTsy::GetAlsPpSupportCancel");
+TFLOGSTRING( "TSY: CMmCustomTsy::GetAlsPpSupportCancel");
     // reset the pointer to client data
     iAlsSupport = NULL;
 
@@ -2960,7 +2955,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUP
     // complete
     TInt checkAlsPpSupportRequestsCount = 
         iCheckAlsPpSupportRequests.Count();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETALSPPSUPPORTCANCEL_2,  "TSY: CMmCustomTsy::GetAlsPpSupportCancel - Cancel %d requests", checkAlsPpSupportRequestsCount );
+TFLOGSTRING2( "TSY: CMmCustomTsy::GetAlsPpSupportCancel - Cancel %d requests", checkAlsPpSupportRequestsCount );
 
 	for ( TInt i=0; i < checkAlsPpSupportRequestsCount ; i++ )
 		{
@@ -2986,7 +2981,7 @@ void CMmCustomTsy::CompleteGetAlsPpSupport(
     RMmCustomAPI::TAlsSupport aAlsSupport,
     TInt aErrorCode )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSPPSUPPORT_1,  "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS support: %d, Error: %d", aAlsSupport, aErrorCode );
+TFLOGSTRING3( "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS support: %d, Error: %d", aAlsSupport, aErrorCode );
     TBool status = EFalse;
     
     // Check if the get was called internally during boot
@@ -2994,7 +2989,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETE
         {
     	if( RMmCustomAPI::EAlsSupportOn == aAlsSupport )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSPPSUPPORT_2,  "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS supported by SIM" );
+TFLOGSTRING( "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS supported by SIM" );
             status = ETrue;
             }
         //Update ALS status from sim
@@ -3017,7 +3012,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
 
             if( RMmCustomAPI::EAlsSupportOn == aAlsSupport )
             	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSPPSUPPORT_3,  "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS supported by SIM" );
+TFLOGSTRING( "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS supported by SIM" );
             	status = ETrue;
             	}
             //Update ALS status from sim
@@ -3029,7 +3024,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
         // complete
         TInt checkAlsPpSupportRequestsCount = 
             iCheckAlsPpSupportRequests.Count();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSPPSUPPORT_4,  "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - Complete %d requests", checkAlsPpSupportRequestsCount );
+TFLOGSTRING2( "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - Complete %d requests", checkAlsPpSupportRequestsCount );
 
 		for ( TInt i=0; i < checkAlsPpSupportRequestsCount ; i++ )
 			{
@@ -3211,18 +3206,18 @@ void CMmCustomTsy::CompleteNotifyCipheringInfoChange(
     TBool aCipherStatus,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYCIPHERINGINFOCHANGE_1, "TSY:CMmCustomTsy::CompleteNotifyCipheringInfoChange entered");
+TFLOGSTRING("TSY:CMmCustomTsy::CompleteNotifyCipheringInfoChange entered");
     // this is special case, only called when Ciphering indicator
     // is forced off for some operators
     if ( iMmPhoneTsy->GetNetTsy()->CipheringIndicatorForcedOff() )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYCIPHERINGINFOCHANGE_2, "TSY:CMmCustomTsy::CompleteNotifyCipheringInfoChange: Ciphering forced off");
+TFLOGSTRING("TSY:CMmCustomTsy::CompleteNotifyCipheringInfoChange: Ciphering forced off");
         TTsyReqHandle handle = iTsyReqHandleStore->ResetTsyReqHandle(
             ECustomTsyNotifyCipheringInfoChange );
 
         if ( ECustomTsyReqHandleUnknown != handle )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYCIPHERINGINFOCHANGE_3, "TSY:CMmCustomTsy::CompleteNotifyCipheringInfoChange: Ciphering forced off, request completed");
+TFLOGSTRING("TSY:CMmCustomTsy::CompleteNotifyCipheringInfoChange: Ciphering forced off, request completed");
             iRetNotifyCipheringInfoChange->iIndStatus = EFalse;
             iRetNotifyCipheringInfoChange->iCiphStatus = ETrue;
 
@@ -3522,7 +3517,7 @@ void CMmCustomTsy::Complete(
     TInt aError,
     TInt aIPC )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETE_1,  "TSY: CMmCustomTsy::Complete - ReqHandleType: %d Error: %d", aReqHandleType, aError );
+TFLOGSTRING3( "TSY: CMmCustomTsy::Complete - ReqHandleType: %d Error: %d", aReqHandleType, aError );
     TBool subTsyReqFound = EFalse;
     TInt max = GetMaxNumberOfSubsystems();
     CMmSubTsyBase** subTsyPtr = GetSubsystemArrayPtr();
@@ -3747,7 +3742,7 @@ TInt CMmCustomTsy::CheckEmergencyNumberL(
     RMmCustomAPI::TEmerNumberCheckMode* aNumberMode,
     TBool* aResult )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKEMERGENCYNUMBERL_1, "TSY: CMmCustomTsy::CheckEmergencyNumberL number=%S", (aNumberMode->iNumber) );
+TFLOGSTRING2("TSY: CMmCustomTsy::CheckEmergencyNumberL number=%S", &(aNumberMode->iNumber) );
 
     TInt ret(KErrGeneral);
 
@@ -3757,7 +3752,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKEME
     // 3rd Dial check number
     if( iISVDialNumberCheck && 0 == requestHandle )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKEMERGENCYNUMBERL_2, "TSY: CMmCustomTsy::CheckEmergencyNumberL - 3rd party client nbr check aResult  = %d" , aResult );
+TFLOGSTRING2("TSY: CMmCustomTsy::CheckEmergencyNumberL - 3rd party client nbr check aResult  = %d" , aResult );
         iEmergencyNumberCheckMode   = aNumberMode;
         iEmergencyNumberCheckResult = aResult;
 
@@ -3771,7 +3766,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKEMERGE
     //Normal case
     else
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKEMERGENCYNUMBERL_3, "TSY: CMmCustomTsy::CheckEmergencyNumberL - aResult  = %d" , aResult );
+TFLOGSTRING2("TSY: CMmCustomTsy::CheckEmergencyNumberL - aResult  = %d" , aResult );
 
         if ( ( 0 < requestHandle || iISVDialNumberCheck ) && 0 != aTsyReqHandle )
             {
@@ -3819,7 +3814,7 @@ void CMmCustomTsy::CompleteCheckEmergencyNumber(
     TInt aErrorValue )
     {
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETECHECKEMERGENCYNUMBER_1, "TSY: CMmCustomTsy::CompleteCheckEmergencyNumber" );
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteCheckEmergencyNumber" );
 
     // 3rd party number check completion0
     if( iISVDialNumberCheck )
@@ -3841,7 +3836,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETECHE
     // check is the Dial cancel NULL
     if( iISVDialNumberCheckObject )
       {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETECHECKEMERGENCYNUMBER_2, "TSY: CMmCustomTsy::CompleteCheckEmergencyNumber - Complete3rdPartyCallNbrCheck isEmergencyNbr = %d",isEmergencyNbr );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteCheckEmergencyNumber - Complete3rdPartyCallNbrCheck isEmergencyNbr = %d",isEmergencyNbr );
       iISVDialNumberCheckObject->Complete3rdPartyCallNbrCheck(
         isEmergencyNbr );
       }
@@ -3875,7 +3870,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETECHE
             *iEmergencyNumberCheckResult = EFalse;
             }
         }
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETECHECKEMERGENCYNUMBER_3, "TSY: CMmCustomTsy::CompleteCheckEmergencyNumber number=%S", (iEmergencyNumberCheckMode->iNumber) );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteCheckEmergencyNumber number=%S", &(iEmergencyNumberCheckMode->iNumber) );
 
         // reset the internal variable
         iEmergencyNumberCheckResult = NULL;
@@ -3992,13 +3987,13 @@ TInt CMmCustomTsy::GetPndCacheStatus(
     // used phonebook is Adn
     if ( 0 == aPndName->CompareF( KETelIccAdnPhoneBook ) )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPNDCACHESTATUS_1, "TSY: CMmCustomTsy::GetPndCacheStatus - ADN phonebook status: %d", iAdnCacheStatus);
+TFLOGSTRING2("TSY: CMmCustomTsy::GetPndCacheStatus - ADN phonebook status: %d", iAdnCacheStatus);
         *aPndStatus = iAdnCacheStatus;
         }
     // used phonebook is Fdn
     else if ( 0 == aPndName->CompareF( KETelIccFdnPhoneBook ) )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPNDCACHESTATUS_2, "TSY: CMmCustomTsy::GetPndCacheStatus - FDN phonebook status: %d", iFdnCacheStatus);
+TFLOGSTRING2("TSY: CMmCustomTsy::GetPndCacheStatus - FDN phonebook status: %d", iFdnCacheStatus);
         *aPndStatus = iFdnCacheStatus;
         }
     // used phonebook doesn't have cache
@@ -4006,12 +4001,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPNDCACHE
               ( 0 == aPndName->CompareF( KETelIccSdnPhoneBook ) ) ||
               ( 0 == aPndName->CompareF( KETelIccVoiceMailBox ) ) )
         {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPNDCACHESTATUS_3, "TSY: CMmCustomTsy::GetPndCacheStatus - No cache for: %S ", *aPndName);
+TFLOGSTRING2("TSY: CMmCustomTsy::GetPndCacheStatus - No cache for: %S ", aPndName);
         *aPndStatus = RMmCustomAPI::ECacheNotUsed;
         }
     else
         {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPNDCACHESTATUS_4, "TSY: CMmCustomTsy::GetPndCacheStatus - No cache found for: %S ", *aPndName);
+TFLOGSTRING2("TSY: CMmCustomTsy::GetPndCacheStatus - No cache found for: %S ", aPndName);        
         error = KErrArgument;
         }
 
@@ -4030,7 +4025,7 @@ void CMmCustomTsy::UpdateCacheStatus(
     RMmCustomAPI::TPndCacheStatus aPndStatus,
     TName& aPndName )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_UPDATECACHESTATUS_1, "TSY: CMmCustomTsy::UpdateCacheStatus - Phonebook: %S status: %d", aPndName, aPndStatus);
+TFLOGSTRING3("TSY: CMmCustomTsy::UpdateCacheStatus - Phonebook: %S status: %d", &aPndName, aPndStatus);
     // if used phonebook is Adn
     if ( 0 == aPndName.CompareF( KETelIccAdnPhoneBook ) )
         {
@@ -4138,7 +4133,7 @@ TInt CMmCustomTsy::GetNetworkOperatorNameCancel()
 TInt CMmCustomTsy::SsAdditionalInfoNotification(
     RMmCustomAPI::TSsAdditionalInfo* aSsAdditionalInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SSADDITIONALINFONOTIFICATION_1, "TSY: CMmCustomTsy::SsAdditionalInfoNotification");
+TFLOGSTRING("TSY: CMmCustomTsy::SsAdditionalInfoNotification");
     iRetSsAdditionalInfo = aSsAdditionalInfo;
     iReqHandleType = ECustomTsyNotifySsAdditionalInfo;
 
@@ -4154,7 +4149,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SSADDITIONA
 TInt CMmCustomTsy::SsAdditionalInfoNotificationCancel(
     const TTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SSADDITIONALINFONOTIFICATIONCANCEL_1, "TSY: CMmCustomTsy::SsAdditionalInfoNotificationCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::SsAdditionalInfoNotificationCancel");
     iRetSsAdditionalInfo = NULL;
 
     // reset reqhandle
@@ -4179,7 +4174,7 @@ void CMmCustomTsy::CompleteSsAdditionalInfoNotification(
     RMmCustomAPI::TSsAdditionalInfo* aSsAdditionalInfo,
     TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESSADDITIONALINFONOTIFICATION_1, "TSY: CMmCustomTsy::CompleteSsAdditionalInfoNotification");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteSsAdditionalInfoNotification");
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyNotifySsAdditionalInfo );
@@ -4210,7 +4205,7 @@ TInt CMmCustomTsy::CheckTwoDigitDialSupportL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TTwoDigitDialSupport* aSupport )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_CHECKTWODIGITDIALSUPPORTL_1, "TSY: CMmCustomTsy::CheckTwoDigitDialSupportL");
+TFLOGSTRING("TSY: CMmCustomTsy::CheckTwoDigitDialSupportL");
     // save pointer to client space
     iTwoDigitDialSupport = aSupport;
 
@@ -4651,7 +4646,7 @@ EXPORT_C void CMmCustomTsy::SetSatRefreshStatus(
 TInt CMmCustomTsy::ResetNetServerL(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_RESETNETSERVERL_1, "TSY: CMmCustomTsy::ResetNetServerL");
+TFLOGSTRING("TSY: CMmCustomTsy::ResetNetServerL");
     // call DOS (no packed parameters)
     TInt ret = Phone()->MessageManager()->HandleRequestL(
         ECustomResetNetServerIPC );
@@ -4678,7 +4673,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_RESETNETSER
 void CMmCustomTsy::CompleteResetNetServer(
     TInt aErrorValue )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERESETNETSERVER_1, "TSY: CMmCustomTsy::CompleteResetNetServer - Error: %d", aErrorValue );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteResetNetServer - Error: %d", aErrorValue );
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle =
         iTsyReqHandleStore->ResetTsyReqHandle( ECustomTsyResetNetServer );
@@ -4694,7 +4689,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERES
             aErrorValue = KErrNotReady; 
             }
             
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERESETNETSERVER_2, "TSY: CMmCustomTsy::CompleteResetNetServer - complete with error value: %d", aErrorValue );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteResetNetServer - complete with error value: %d", aErrorValue );
         ReqCompleted( tsyReqHandle, aErrorValue );
         }
     }
@@ -4746,7 +4741,7 @@ void CMmCustomTsy::CompleteNotifyNetworkConnectionFailure()
     // If SIM is inserted complete network connection failure
     if ( iMmPhoneTsy->NosBootState()->iSIMReady )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYNETWORKCONNECTIONFAILURE_1, "TSY: CMmCustomTsy::CompleteNotifyNetworkConnectionFailure");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyNetworkConnectionFailure");
         // reset the reqhandle
         TTsyReqHandle tsyReqHandle =
             iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5012,7 +5007,7 @@ TInt CMmCustomTsy::GetCurrentSystemNetworkModeL(
     const TTsyReqHandle aTsyReqHandle,
     TUint32* aNetworkMode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETCURRENTSYSTEMNETWORKMODEL_1, "CMmCustomTsy::GetCurrentSystemNetworkModeL");
+TFLOGSTRING("CMmCustomTsy::GetCurrentSystemNetworkModeL");
     TTsyReqHandle reqhandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsyGetCurrentSystemNetworkMode );
 
@@ -5052,7 +5047,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETCURRENTS
 TInt CMmCustomTsy::GetCurrentSystemNetworkModeCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETCURRENTSYSTEMNETWORKMODECANCEL_1, "CMmCustomTsy::GetCurrentSystemNetworkModeCancel");
+TFLOGSTRING("CMmCustomTsy::GetCurrentSystemNetworkModeCancel");
 
     // reset pointer to client data
     iCurrentNetworkMode = NULL;
@@ -5080,7 +5075,7 @@ TInt CMmCustomTsy::GetSimFileInfoL(
     TDes8* aSimFileInfoPckg,
     TDes8* aSimResponseBuffer )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEINFOL_1,  "TSY: CMmCustomTsy::GetSimFileInfoL" );
+TFLOGSTRING( "TSY: CMmCustomTsy::GetSimFileInfoL" );
     TTsyReqHandle reqHandle =
         iTsyReqHandleStore->GetTsyReqHandle( ECustomTsyGetSimFileInfo );
 
@@ -5101,7 +5096,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEI
         	&& ( iGetSimFileInfoReq.iOffSet == simFileInfo.iOffSet )
         	&& ( iGetSimFileInfoReq.iSize == simFileInfo.iSize ) )
         	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEINFOL_2,  "TSY: CMmCustomTsy::GetSimFileInfoL - Same info already requested" );
+TFLOGSTRING( "TSY: CMmCustomTsy::GetSimFileInfoL - Same info already requested" );
 
 			TGetSimFileInfoRequest* req = new ( ELeave ) TGetSimFileInfoRequest();
 			req->iReqHandle = aTsyReqHandle;
@@ -5131,7 +5126,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEI
             }
         else
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEINFOL_3,  "TSY: CMmCustomTsy::GetSimFileInfoL - Save handle" );
+TFLOGSTRING( "TSY: CMmCustomTsy::GetSimFileInfoL - Save handle" );
 	        // Save the req handle type
 	        iReqHandleType = ECustomTsyGetSimFileInfo;
 			// Save request in queue for completion
@@ -5153,7 +5148,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEI
 //
 TInt CMmCustomTsy::GetSimFileInfoCancel( TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSIMFILEINFOCANCEL_1,  "TSY: CMmCustomTsy::GetSimFileInfoCancel" );
+TFLOGSTRING( "TSY: CMmCustomTsy::GetSimFileInfoCancel" );
     
 	for ( TInt i = 0; i < iGetSimFileInfoRequests.Count(); i++ )
 		{
@@ -5194,7 +5189,7 @@ void CMmCustomTsy::CompleteGetSimFileInfo(
     TDesC8* aData,
     TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETSIMFILEINFO_1,  "TSY: CMmCustomTsy::CompleteGetSimFileInfo" );
+TFLOGSTRING( "TSY: CMmCustomTsy::CompleteGetSimFileInfo" );
     
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle =
@@ -5205,7 +5200,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
         {
         // complete
         TInt getSimFileInfoRequestsCount = iGetSimFileInfoRequests.Count();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETSIMFILEINFO_2,  "TSY: CMmCustomTsy::CompleteGetSimFileInfo - Complete %d requests", getSimFileInfoRequestsCount );
+TFLOGSTRING2( "TSY: CMmCustomTsy::CompleteGetSimFileInfo - Complete %d requests", getSimFileInfoRequestsCount );
         
 		for ( TInt i = 0; i < getSimFileInfoRequestsCount; i++ )
 		    {
@@ -5249,10 +5244,10 @@ TInt CMmCustomTsy::GetLifeTimeL(
     {
     
     TInt ret( KErrNone );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIMEL_1, "TSY: CMmCustomTsy::GetLifeTimeL");
+    TFLOGSTRING ("TSY: CMmCustomTsy::GetLifeTimeL");
     if ( sizeof(RMmCustomAPI::TLifeTimeData) != aLifeTimerInfoPckg->MaxLength() )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIMEL_2, "TSY: CMmCustomTsy::GetLifeTimeL bad size argument");
+        TFLOGSTRING ("TSY: CMmCustomTsy::GetLifeTimeL bad size argument");
         // Complete the request with appropiate error        
         return KErrArgument;
         }
@@ -5260,7 +5255,7 @@ TInt CMmCustomTsy::GetLifeTimeL(
             ECustomTsyGetLifeTimerInfo  );
     if ( ECustomTsyReqHandleUnknown != reqHandle ) 
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIMEL_3,  "TSY: CMmCustomTsy::GetLifeTimeL - ECustomTsyReqHandleUnknown" );
+TFLOGSTRING( "TSY: CMmCustomTsy::GetLifeTimeL - ECustomTsyReqHandleUnknown" );
         // The request is already in processing because of previous request.
         // Complete request with status value informing the client about 
         // the situation.
@@ -5270,7 +5265,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIME
         {
         // save pointer to the packaged life timer info
         iLifeTimerInfoPckg = aLifeTimerInfoPckg;
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIMEL_4,  "TSY: CMmCustomTsy::GetLifeTimeL - send request" );
+        TFLOGSTRING( "TSY: CMmCustomTsy::GetLifeTimeL - send request" );
         iTsyReqHandleStore->SetTsyReqHandle( 
                         ECustomTsyGetLifeTimerInfo, aTsyReqHandle );
         ret = Phone()->MessageManager()->HandleRequestL(
@@ -5278,13 +5273,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIME
         // Check response of the extension
         if ( KErrNone != ret )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIMEL_5,  "TSY: CMmCustomTsy::GetLifeTimeL - DOS layer returned error " );
+            TFLOGSTRING( "TSY: CMmCustomTsy::GetLifeTimeL - DOS layer returned error " );
             TTsyReqHandle tsyReqHandle =
                 iTsyReqHandleStore->ResetTsyReqHandle( 
                                     ECustomTsyGetLifeTimerInfo );
             if ( ECustomTsyReqHandleUnknown != tsyReqHandle )
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETLIFETIMEL_6,  "TSY: CMmCustomTsy::GetLifeTimeL - DOS error - unknown handle" );
+                TFLOGSTRING( "TSY: CMmCustomTsy::GetLifeTimeL - DOS error - unknown handle" );
                 }
             ReqCompleted( aTsyReqHandle, ret );
             }
@@ -5370,7 +5365,7 @@ TInt CMmCustomTsy::SetDriveModeL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TSetDriveMode* aModeStatus )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETDRIVEMODEL_1, "TSY: CMmCustomTsy::SetDriveModeL - Req handle: %d, Mode status: %d", aTsyReqHandle, *aModeStatus );
+TFLOGSTRING3("TSY: CMmCustomTsy::SetDriveModeL - Req handle: %d, Mode status: %d", aTsyReqHandle, *aModeStatus );
 	if ( (iUsingFeatureManager) && (iFeatureControl.FeatureSupported(NFeature::KDriveModeCanRestrictMtCalls) == KFeatureSupported) )
         {
         // get the handle
@@ -5425,7 +5420,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETDRIVE
 void CMmCustomTsy::CompleteSetDriveMode(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETDRIVEMODE_1,  "TSY: CMmCustomTsy::CompleteSetDriveMode - Error code: %d", aErrorCode );
+TFLOGSTRING2( "TSY: CMmCustomTsy::CompleteSetDriveMode - Error code: %d", aErrorCode );
 	if ( (iUsingFeatureManager) && (iFeatureControl.FeatureSupported(NFeature::KDriveModeCanRestrictMtCalls) == KFeatureSupported) )
         {
         //Reset req handle, returns the deleted req handle
@@ -5598,7 +5593,7 @@ TInt CMmCustomTsy::SetSimMessageStatusReadL(
 void CMmCustomTsy::SetObjectForISVDialNumberCheck(
     CMmVoiceCallTsy* aCallObject )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETOBJECTFORISVDIALNUMBERCHECK_1, "TSY: CMmCustomTsy::SetObjectForISVDialNumberCheck aCallObject=0x%08x", aCallObject );
+TFLOGSTRING2("TSY: CMmCustomTsy::SetObjectForISVDialNumberCheck aCallObject=%x", aCallObject );
     //Save pointer for completion of check emergency number
     iISVDialNumberCheckObject = aCallObject;
     //ISV dial has been requested
@@ -5614,7 +5609,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETOBJECTFO
 TInt CMmCustomTsy::NotifyRauEvent(
     RMmCustomAPI::TRauEventStatus* aEventStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYRAUEVENT_1, "TSY: CMmCustomTsy::NotifyRauEvent");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyRauEvent");
 
     // save pointer to client data
     iRauEventStatus = aEventStatus;
@@ -5635,7 +5630,7 @@ void CMmCustomTsy::CompleteNotifyRauEvent(
     RMmCustomAPI::TRauEventStatus aEventStatus,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYRAUEVENT_1, "TSY: CMmCustomTsy::CompleteNotifyRauEvent");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyRauEvent");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyNotifyRauEvent );
@@ -5691,7 +5686,7 @@ TInt CMmCustomTsy::ReadHSxPAStatusL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::THSxPAStatus* aHSxPAStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_READHSXPASTATUSL_1, "TSY: CMmCustomTsy::ReadHSxPAStatusL");
+TFLOGSTRING("TSY: CMmCustomTsy::ReadHSxPAStatusL");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsyReadHSxPAStatus );
@@ -5734,7 +5729,7 @@ void CMmCustomTsy::CompleteReadHSxPAStatus(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEREADHSXPASTATUS_1, "TSY: CMmCustomTsy::CompleteReadHSxPAStatus");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteReadHSxPAStatus");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyReadHSxPAStatus );
@@ -5746,7 +5741,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEREA
             RMmCustomAPI::THSxPAStatus status;
             aDataPackage->UnPackData( status );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEREADHSXPASTATUS_2, "TSY: CMmCustomTsy::CompleteReadHSxPAStatus, status = %d", status);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteReadHSxPAStatus, status = %d", status);
 
             // Save the status.
             iHSxPAStatus = status;
@@ -5775,7 +5770,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEREA
 //
 TInt CMmCustomTsy::ReadHSxPAStatusCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_READHSXPASTATUSCANCEL_1, "TSY: CMmCustomTsy::ReadHSxPAStatusCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::ReadHSxPAStatusCancel");
 
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5802,7 +5797,7 @@ TInt CMmCustomTsy::WriteHSxPAStatusL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::THSxPAStatus* aHSxPAStatus )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_WRITEHSXPASTATUSL_1, "TSY: CMmCustomTsy::WriteHSxPAStatusL. New status: %d", *aHSxPAStatus);
+TFLOGSTRING2("TSY: CMmCustomTsy::WriteHSxPAStatusL. New status: %d", *aHSxPAStatus);
 
     iSetHSxPAStatus = aHSxPAStatus;
 
@@ -5845,7 +5840,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_WRITEHSXPAS
 void CMmCustomTsy::CompleteWriteHSxPAStatus(
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEWRITEHSXPASTATUS_1, "TSY: CMmCustomTsy::CompleteWriteHSxPAStatus");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteWriteHSxPAStatus");
 
     //reset req handle.
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5874,7 +5869,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEWRI
 //
 TInt CMmCustomTsy::WriteHSxPAStatusCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_WRITEHSXPASTATUSCANCEL_1, "TSY: CMmCustomTsy::WriteHSxPAStatusCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::WriteHSxPAStatusCancel");
 
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5900,7 +5895,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_WRITEHSXPAS
 TInt CMmCustomTsy::NotifyHSxPAStatus(
     RMmCustomAPI::THSxPAStatus* aHSxPAStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYHSXPASTATUS_1, "TSY: CMmCustomTsy::NotifyHSxPAStatus");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyHSxPAStatus");
 
     // save pointer to client data
     iRetNotifyHSxPAStatus = aHSxPAStatus;
@@ -5921,13 +5916,13 @@ void CMmCustomTsy::CompleteNotifyHSxPAStatus(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYHSXPASTATUS_1, "TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, Error: %d", aErrorCode);
 
     RMmCustomAPI::THSxPAStatus status;
     aDataPackage->UnPackData( status );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYHSXPASTATUS_2, "TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, old status: %d", iHSxPAStatus);
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYHSXPASTATUS_3, "TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, new status: %d", status);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, old status: %d", iHSxPAStatus);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, new status: %d", status);
 
     // check if status was changed
     if ( iHSxPAStatus != status )
@@ -5970,7 +5965,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOT
 //
 TInt CMmCustomTsy::NotifyHSxPAStatusCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYHSXPASTATUSCANCEL_1, "TSY: CMmCustomTsy::NotifyHSxPAStatusCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyHSxPAStatusCancel");
 
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5997,7 +5992,7 @@ TInt CMmCustomTsy::GetIccCallForwardingStatusL(
     TTsyReqHandle /*aTsyReqHandle*/,
     TDes8* aCFIndicators )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETICCCALLFORWARDINGSTATUSL_1, "TSY: CMmCustomTsy::GetIccCallForwardingStatusL");
+TFLOGSTRING("TSY: CMmCustomTsy::GetIccCallForwardingStatusL");
 
     TInt ret( KErrGeneral );
 
@@ -6043,7 +6038,7 @@ void CMmCustomTsy::CompleteGetIccCallForwardingStatus(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_1, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus, aErrorCode=%d", aErrorCode );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus, aErrorCode=%d", aErrorCode );
 
     //reset req handle.
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6058,7 +6053,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
             RMmCustomAPI::TCFIndicators& tcfIndicator = ( *tcfIndicatorPckg )();
 
             aDataPackage->UnPackData( iCurrentTCFIndicator );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_2, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus, indicator=%u", iCurrentTCFIndicator.iIndicator );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus, indicator=%u", iCurrentTCFIndicator.iIndicator );
 
             tcfIndicator.iIndicator = iCurrentTCFIndicator.iIndicator;
                 tcfIndicator.iCFNumber.iTypeOfNumber =
@@ -6071,7 +6066,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
 	        // Update CenRep with latest valid data
 	        if( &iCurrentTCFIndicator )
 	            {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_3, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus : Update Central Repository");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus : Update Central Repository");
 	            TPckg<TUint32> tempPckg( iCurrentTCFIndicator.iIndicator );
 	            iCFISCentRep->Set( KCtsyCallForwardingIndicator, tempPckg );
 	
@@ -6096,9 +6091,9 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
             {
             iGetIccCfStatusBootUp = EFalse;
             aDataPackage->UnPackData( iCurrentTCFIndicator );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_4, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus CenRep key UnconditionalCFStatus not RESETED.");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus CenRep key UnconditionalCFStatus not RESETED.");     
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_5, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus : Bootup case, KCtsyCallForwardingIndicator indicator=%u", iCurrentTCFIndicator.iIndicator );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus : Bootup case, KCtsyCallForwardingIndicator indicator=%u", iCurrentTCFIndicator.iIndicator );
 
             TPckg<TUint32> tempPckg( iCurrentTCFIndicator.iIndicator );
             iCFISCentRep->Set( KCtsyCallForwardingIndicator, tempPckg );
@@ -6108,7 +6103,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
             iCurrentTCFIndicator.iCFNumber.iTelNumber );
             iCFISPrivateCentRep->Set( KCtsyCallForwardingMspId,
             iCurrentTCFIndicator.iMultipleSubscriberProfileID );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_6, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus CenRep updated.");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus CenRep updated."); 			
             }
         }
     }
@@ -6122,7 +6117,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
 TInt CMmCustomTsy::GetIccCallForwardingStatusCancel(
 	const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETICCCALLFORWARDINGSTATUSCANCEL_1, "CMmCustomTsy::GetIccCallForwardingStatusCancel");
+TFLOGSTRING("CMmCustomTsy::GetIccCallForwardingStatusCancel");
 	// reset reqhandle
 	iTsyReqHandleStore->ResetTsyReqHandle(
 			ECustomTsyGetIccCallForwardingStatus );
@@ -6184,7 +6179,7 @@ void CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYICCCALLFORWARDINGSTATUSCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange, Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange, Error: %d", aErrorCode);
 
     RMmCustomAPI::TCFIndicators tempNotifyCFIndicator;
     aDataPackage->UnPackData( tempNotifyCFIndicator );
@@ -6204,7 +6199,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOT
 
             TPckg<TUint32> tempPckg( iCurrentTCFIndicator.iIndicator );
 			iCFISCentRep->Set( KCtsyCallForwardingIndicator, tempPckg );	
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYICCCALLFORWARDINGSTATUSCHANGE_2, "TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange : Update CenRep, KCtsyCallForwardingIndicator indicator=%u", iCurrentTCFIndicator.iIndicator );
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange : Update CenRep, KCtsyCallForwardingIndicator indicator=%u", iCurrentTCFIndicator.iIndicator );
 				
         	iCFISPrivateCentRep->Set( KCtsyCallForwardingNumberPlan, 
         	    iCurrentTCFIndicator.iCFNumber.iNumberPlan );
@@ -6215,7 +6210,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOT
         	iCFISPrivateCentRep->Set( KCtsyCallForwardingMspId, 
         	    iCurrentTCFIndicator.iMultipleSubscriberProfileID );
             //CenRep updated
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYICCCALLFORWARDINGSTATUSCHANGE_3, "TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange CenRep updated.");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange CenRep updated."); 	            
             }
 
         // Check if notification was requested
@@ -6314,7 +6309,7 @@ TBool CMmCustomTsy::IsIccCallForwardingStatusChanged(
 TInt CMmCustomTsy::GetCellInfoL(
     TDes8* aCellInfoPckg )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETCELLINFOL_1, "TSY: CMmCustomTsy::GetCellInfo");
+TFLOGSTRING("TSY: CMmCustomTsy::GetCellInfo");
 
     TInt ret = KErrServerBusy;
 
@@ -6354,7 +6349,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETCELLINFO
 //
 TInt CMmCustomTsy::GetCellInfoCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETCELLINFOCANCEL_1, "TSY: CMmCustomTsy::GetCellInfoCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::GetCellInfoCancel");
 
     // reset the req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6382,7 +6377,7 @@ void CMmCustomTsy::CompleteGetCellInfo(
     RMmCustomAPI::TMmCellInfo* aCellInfo,
     TInt aErrorValue )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETCELLINFO_1, "TSY: CMmCustomTsy::CompleteGetCellInfo - aErrorValue %d", aErrorValue);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteGetCellInfo - aErrorValue %d", aErrorValue);
 
     // reset the req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6413,7 +6408,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
 TInt CMmCustomTsy::NotifyCellInfoChange(
     TDes8* aCellInfoPckg )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYCELLINFOCHANGE_1, "TSY: CMmCustomTsy::NotifyCellInfoChange");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyCellInfoChange");
    
     RMmCustomAPI::TMmCellInfo temp;
 	RMmCustomAPI::TMmCellInfoPckg tempPckg(temp);
@@ -6443,7 +6438,7 @@ void CMmCustomTsy::CompleteNotifyCellInfoChange(
     RMmCustomAPI::TMmCellInfo* aCellInfo,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYCELLINFOCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyCellInfoChange Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteNotifyCellInfoChange Error: %d", aErrorCode);
 
     // Check if notification was requested
 	TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6475,7 +6470,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOT
 //
 TInt CMmCustomTsy::NotifyCellInfoChangeCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYCELLINFOCHANGECANCEL_1, "TSY: CMmCustomTsy::NotifyCellInfoChangeCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyCellInfoChangeCancel");
 
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6501,7 +6496,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYCELLI
 RMmCustomAPI::TPndCacheStatus CMmCustomTsy::GetPhonebookCacheStatus( 
     TUint8 aPhoneBookType )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPHONEBOOKCACHESTATUS_1, "TSY: CMmCustomTsy::GetPhonebookCacheStatus");
+TFLOGSTRING("TSY: CMmCustomTsy::GetPhonebookCacheStatus");
     RMmCustomAPI::TPndCacheStatus ret( RMmCustomAPI::ECacheNotUsed );
 
     switch ( aPhoneBookType )
@@ -6531,7 +6526,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPHONEBOO
 void CMmCustomTsy::ReqCompleted( const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_REQCOMPLETED_1, "TSY: CMmCustomTsy::ReqCompleted, aTsyReqHandle=%d, aError=%d", aTsyReqHandle, aError );
+TFLOGSTRING3("TSY: CMmCustomTsy::ReqCompleted, aTsyReqHandle=%d, aError=%d", aTsyReqHandle, aError );
 
 	CTelObject::ReqCompleted ( aTsyReqHandle, aError );
 	}
@@ -6547,7 +6542,7 @@ TInt CMmCustomTsy::GetSystemNetworkBandL(
     RMmCustomAPI::TBandSelection* aSystemNetworkBand,
     RMmCustomAPI::TNetworkModeCaps* aSystemNetworkMode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSYSTEMNETWORKBANDL_1, "TSY: CMmCustomTsy::GetSystemNetworkBandL");
+TFLOGSTRING("TSY: CMmCustomTsy::GetSystemNetworkBandL");
     TTsyReqHandle reqhandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsyGetSystemNetworkBand );
 
@@ -6593,7 +6588,7 @@ void CMmCustomTsy::CompleteGetSystemNetworkBand(
     RMmCustomAPI::TNetworkModeCaps aSystemNetworkMode,
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETSYSTEMNETWORKBAND_1, "TSY: CMmCustomTsy::CompleteGetSystemNetworkBand. Result: %d", aResult);
+TFLOGSTRING2("TSY: CMmCustomTsy::CompleteGetSystemNetworkBand. Result: %d", aResult);
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyGetSystemNetworkBand );
@@ -6626,7 +6621,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
 TInt CMmCustomTsy::GetSystemNetworkBandCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETSYSTEMNETWORKBANDCANCEL_1, "TSY: CMmCustomTsy::GetSystemNetworkBandCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::GetSystemNetworkBandCancel");
     // reset the pointer to client data
     iAvailableSystemNetworkBand = NULL;
     iSystemNetworkModeCaps = NULL;
@@ -6652,7 +6647,7 @@ TInt CMmCustomTsy::SetSystemNetworkBandL(
     RMmCustomAPI::TBandSelection* aSystemNetworkBand,
     RMmCustomAPI::TNetworkModeCaps* aSystemNetworkModeCaps )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETSYSTEMNETWORKBANDL_1, "TSY: CMmCustomTsy::SetSystemNetworkBandL");
+TFLOGSTRING("TSY: CMmCustomTsy::SetSystemNetworkBandL");
     TTsyReqHandle reqhandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsySetSystemNetworkBand );
 
@@ -6702,7 +6697,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETSYSTEMNE
 void CMmCustomTsy::CompleteSetSystemNetworkBand(
     TInt aResult )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETSYSTEMNETWORKBAND_1, "TSY: CMmCustomTsy::CompleteSetSystemNetworkBand");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteSetSystemNetworkBand");
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsySetSystemNetworkBand );
@@ -6723,7 +6718,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESET
 //
 void CMmCustomTsy::SetIccCfBootUpFlag( TBool aBootUp )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETICCCFBOOTUPFLAG_1, "TSY: CMmCustomTsy::SetIccCfBootUpFlag, aBootUp=%d", aBootUp );
+TFLOGSTRING2("TSY: CMmCustomTsy::SetIccCfBootUpFlag, aBootUp=%d", aBootUp );
 
     iGetIccCfStatusBootUp = aBootUp;
     }
@@ -6737,7 +6732,7 @@ TInt CMmCustomTsy::GetUSIMServiceSupportL(
     const TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TAppSupport* aAppSupport )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETUSIMSERVICESUPPORTL_1, "TSY: CMmCustomTsy::GetUSIMServiceSupportL");
+TFLOGSTRING("TSY: CMmCustomTsy::GetUSIMServiceSupportL");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsyGetUSIMServiceSupport );
@@ -6784,7 +6779,7 @@ void CMmCustomTsy::CompleteGetUSIMServiceSupport(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETUSIMSERVICESUPPORT_1, "TSY: CMmCustomTsy::CompleteGetUSIMServiceSupport");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteGetUSIMServiceSupport");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyGetUSIMServiceSupport );
@@ -6821,7 +6816,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGET
 //
 TInt CMmCustomTsy::GetUSIMServiceSupportCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETUSIMSERVICESUPPORTCANCEL_1, "TSY: CMmCustomTsy::GetUSIMServiceSupportCancel");
+TFLOGSTRING("TSY: CMmCustomTsy::GetUSIMServiceSupportCancel");
 
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6847,7 +6842,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETUSIMSERV
 TInt CMmCustomTsy::NotifyRemoteAlertingToneStatusChange(
     RMmCustomAPI::TRemoteAlertingToneStatus* aToneStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_NOTIFYREMOTEALERTINGTONESTATUSCHANGE_1, "TSY: CMmCustomTsy::NotifyRemoteAlertingToneStatusChange");
+TFLOGSTRING("TSY: CMmCustomTsy::NotifyRemoteAlertingToneStatusChange");
 
     // save pointer to client data
     iToneStatus = aToneStatus;
@@ -6868,7 +6863,7 @@ void CMmCustomTsy::CompleteNotifyRemoteAlertingToneStatusChange(
     RMmCustomAPI::TRemoteAlertingToneStatus aToneStatus,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYREMOTEALERTINGTONESTATUSCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyRemoteAlertingToneStatusChange");
+TFLOGSTRING("TSY: CMmCustomTsy::CompleteNotifyRemoteAlertingToneStatusChange");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyNotifyRemoteAlertingToneStatusChange );

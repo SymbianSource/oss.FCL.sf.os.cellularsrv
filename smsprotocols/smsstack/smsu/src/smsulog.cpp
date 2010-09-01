@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,18 +19,13 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smsulogTraces.h"
-#endif
-
 #include "smsulog.h"
 #include "smsumain.h"
 #include "smsstacklog.h"
 #include "gsmubuf.h"
 #include "Gsmumsg.h"
 #include "Gsmuelem.h"
+#include <logwrap.h>
 #include <logwraplimits.h>
 
 
@@ -44,7 +39,7 @@
  */
 EXPORT_C CSmsEventLogger* CSmsEventLogger::NewL(RFs& aFs,TInt aPriority)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEVENTLOGGER_NEWL_1, "CSmsEventLogger::NewL()");
+	LOGSMSU1("CSmsEventLogger::NewL()");
 
 	CSmsEventLogger* smseventlogger = new(ELeave) CSmsEventLogger(aPriority);
 	CleanupStack::PushL(smseventlogger);
@@ -78,7 +73,7 @@ EXPORT_C CSmsEventLogger::~CSmsEventLogger()
  */
 EXPORT_C void CSmsEventLogger::AddEvent(TRequestStatus& aStatus,const CSmsMessage& aSmsMessage,const TLogSmsPduData& aData,TInt* aStatusId)
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEVENTLOGGER_ADDEVENT_1, "CSmsEventLogger::AddEvent");
+    LOGSMSU1("CSmsEventLogger::AddEvent");
 
 	__ASSERT_DEBUG(iState==ESmsEventLoggerIdle,SmsuPanic(KSmsuPanicUnexpectedState));
 	
@@ -113,7 +108,7 @@ EXPORT_C void CSmsEventLogger::AddEvent(TRequestStatus& aStatus,const CSmsMessag
  */
 EXPORT_C void CSmsEventLogger::GetEvent(TRequestStatus& aStatus,TLogId aId)
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEVENTLOGGER_GETEVENT_1, "CSmsEventLogger::GetEvent");
+    LOGSMSU1("CSmsEventLogger::GetEvent");
 
 	__ASSERT_DEBUG(iState==ESmsEventLoggerIdle,SmsuPanic(KSmsuPanicUnexpectedState));
 	iState=ESmsEventLoggerGettingEvent;
@@ -137,7 +132,7 @@ EXPORT_C void CSmsEventLogger::GetEvent(TRequestStatus& aStatus,TLogId aId)
 */
 EXPORT_C void CSmsEventLogger::ChangeEvent(TRequestStatus& aStatus,const CSmsMessage& aSmsMessage, const TTime* aTime, const TLogSmsPduData& aData, TInt* aStatusId)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEVENTLOGGER_CHANGEEVENT_1, "CSmsEventLogger::ChangeEvent");
+    LOGSMSU1("CSmsEventLogger::ChangeEvent");
     
     __ASSERT_DEBUG(iState==ESmsEventLoggerIdle,SmsuPanic(KSmsuPanicUnexpectedState));
     __ASSERT_DEBUG(aSmsMessage.LogServerId()==iLogEvent->Id(),SmsuPanic(KSmsuPanicWrongLogServerId));
@@ -188,7 +183,7 @@ EXPORT_C void CSmsEventLogger::DeleteEvent(TRequestStatus& aStatus)
     {
     // Ignore in code coverage - not used within the SMS stack.
     BULLSEYE_OFF
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSEVENTLOGGER_DELETEEVENT_1, "CSmsEventLogger::DeleteEvent");
+    LOGSMSU1("CSmsEventLogger::DeleteEvent");
     
     __ASSERT_DEBUG(iState==ESmsEventLoggerIdle,SmsuPanic(KSmsuPanicUnexpectedState));
     
@@ -208,7 +203,7 @@ void CSmsEventLogger::DoCancel()
     // message would need to cancel these activities during event the 
     // logger request - too difficult to test. Need to add unit test.
     BULLSEYE_OFF
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOCANCEL_1, "CSmsEventLogger::DoCancel [iStatus=%d, iState=%d]", iStatus.Int(), iState);
+    LOGSMSU3("CSmsEventLogger::DoCancel [iStatus=%d, iState=%d]", iStatus.Int(), iState);
     
     switch( iState )
         {
@@ -247,7 +242,7 @@ CSmsEventLogger::CSmsEventLogger(TInt aPriority):
 
 void CSmsEventLogger::ConstructL(RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_CONSTRUCTL_1, "CSmsEventLogger::ConstructL()");
+	LOGSMSU1("CSmsEventLogger::ConstructL()");
 
 	iLogWrapper=CLogWrapper::NewL(aFs);
 	iLogEvent=CLogEvent::NewL();
@@ -256,7 +251,7 @@ void CSmsEventLogger::ConstructL(RFs& aFs)
 
 void CSmsEventLogger::DoRunL()
 	{
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DORUNL_1, "CSmsEventLogger::DoRunL [iStatus=%d]", iStatus.Int() );
+    LOGSMSU2("CSmsEventLogger::DoRunL [iStatus=%d]", iStatus.Int() );
 
 	switch (iState)
 		{
@@ -295,7 +290,7 @@ void CSmsEventLogger::DoRunL()
 
 void CSmsEventLogger::DoAddEventL(const CSmsMessage& aSmsMessage,TInt* aStatusId)
 	{
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOADDEVENTL_1, "CSmsEventLogger::DoAddEventL [statusID*=%d]", aStatusId);
+    LOGSMSU2("CSmsEventLogger::DoAddEventL [statusID*=%d]", aStatusId);
 
 	 //  Reset event
 	CLogEvent* logevent=CLogEvent::NewL();
@@ -307,32 +302,32 @@ void CSmsEventLogger::DoAddEventL(const CSmsMessage& aSmsMessage,TInt* aStatusId
 		//  Incoming SMS
 		case CSmsPDU::ESmsDeliver:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOADDEVENTL_2, "DoAddEventL ESmsDeliver");
+			LOGSMSU1("DoAddEventL ESmsDeliver");
 			GetStringL(direction,R_LOG_DIR_IN);
 			break;
 			}
 		case CSmsPDU::ESmsStatusReport:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOADDEVENTL_3, "DoAddEventL ESmsStatusReport");
+			LOGSMSU1("DoAddEventL ESmsStatusReport");
 			GetStringL(direction,R_LOG_DIR_IN);
 			break;
 			}
 		//  Outgoing SMS
 		case CSmsPDU::ESmsSubmit:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOADDEVENTL_4, "DoAddEventL ESmsSubmit");
+			LOGSMSU1("DoAddEventL ESmsSubmit");
 			GetStringL(direction,R_LOG_DIR_OUT);
 			break;
 			}
 		case CSmsPDU::ESmsCommand:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOADDEVENTL_5, "DoAddEventL ESmsCommand");
+			LOGSMSU1("DoAddEventL ESmsCommand");
 			GetStringL(direction,R_LOG_DIR_OUT);
 			break;
 			}
 		default:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOADDEVENTL_6, "DoAddEventL ESmsuUnexpectedSmsPDUType");
+			LOGSMSU1("DoAddEventL ESmsuUnexpectedSmsPDUType");
 			SmsuPanic(ESmsuUnexpectedSmsPDUType);
 			}
 		}
@@ -363,7 +358,7 @@ void CSmsEventLogger::SetDataL(const CSmsMessage& aSmsMessage,TInt* aStatusId, c
 	TBuf<KLogMaxStatusLength> status;
 #ifdef _DEBUG
 	if (aStatusId!=NULL)
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_1, "CSmsEventLogger::SetDataL StatusID = %d", *aStatusId);
+		LOGSMSU2("CSmsEventLogger::SetDataL StatusID = %d", *aStatusId);
 #endif
 	if (aStatusId==NULL)
 		{
@@ -375,12 +370,12 @@ void CSmsEventLogger::SetDataL(const CSmsMessage& aSmsMessage,TInt* aStatusId, c
 				{
 				if (iSmsPDUData.iTotal==iSmsPDUData.iReceived)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_2, "SetDataL ESmsDeliver R_LOG_DEL_DONE");
+					LOGSMSU1("SetDataL ESmsDeliver R_LOG_DEL_DONE");
 					GetStringL(status,R_LOG_DEL_DONE);
 					}
 				else if (iSmsPDUData.iTotal>iSmsPDUData.iReceived)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_3, "SetDataL ESmsDeliver R_LOG_DEL_PENDING");
+					LOGSMSU1("SetDataL ESmsDeliver R_LOG_DEL_PENDING");
 					GetStringL(status,R_LOG_DEL_PENDING);
 					}
 				break;
@@ -389,12 +384,12 @@ void CSmsEventLogger::SetDataL(const CSmsMessage& aSmsMessage,TInt* aStatusId, c
 				{
 				if (iSmsPDUData.iTotal==iSmsPDUData.iReceived)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_4, "SetDataL ESmsStatusReport R_LOG_DEL_DONE");
+					LOGSMSU1("SetDataL ESmsStatusReport R_LOG_DEL_DONE");
 					GetStringL(status,R_LOG_DEL_DONE);
 					}
 				else if (iSmsPDUData.iTotal>iSmsPDUData.iReceived)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_5, "SetDataL ESmsStatusReport R_LOG_DEL_PENDING");
+					LOGSMSU1("SetDataL ESmsStatusReport R_LOG_DEL_PENDING");
 					GetStringL(status,R_LOG_DEL_PENDING);
 					}
 				break;
@@ -420,63 +415,63 @@ void CSmsEventLogger::SetDataL(const CSmsMessage& aSmsMessage,TInt* aStatusId, c
 						{
 						// None sent yet
 						GetStringL(status,R_LOG_DEL_NOT_SENT);
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_6, "SetDataL ESmsSubmit R_LOG_DEL_NOT_SENT SR");
+						LOGSMSU1("SetDataL ESmsSubmit R_LOG_DEL_NOT_SENT SR");
 						}
 					else if (iSmsPDUData.iTotal==iSmsPDUData.iDelivered)
 						{
 						// All have been delivered
-						OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_7, "SetDataL ESmsSubmit R_LOG_DEL_DONE SR iSmsPDUData.iDelivered=%d", iSmsPDUData.iDelivered);
+						LOGSMSU2("SetDataL ESmsSubmit R_LOG_DEL_DONE SR iSmsPDUData.iDelivered=%d", iSmsPDUData.iDelivered);
 						GetStringL(status,R_LOG_DEL_DONE);
 						}
 					else if (iSmsPDUData.iSent<=iSmsPDUData.iTotal && iSmsPDUData.iFailed==0)
 						{
 						// One or more sent but not all, no failures
-						OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_8, "SetDataL ESmsSubmit R_LOG_DEL_PENDING SR iSmsPDUData.iSent==%d, iSmsPDUData.iTotal==%d, iFailed==0", iSmsPDUData.iSent, iSmsPDUData.iTotal);
+						LOGSMSU3("SetDataL ESmsSubmit R_LOG_DEL_PENDING SR iSmsPDUData.iSent==%d, iSmsPDUData.iTotal==%d, iFailed==0", iSmsPDUData.iSent, iSmsPDUData.iTotal);
 						GetStringL(status,R_LOG_DEL_PENDING);
 						}
 					else
 						{
 						// One or more failures or corruption of iSmsPDUData values
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_9, "SetDataL ESmsSubmit R_LOG_DEL_FAILED SR");
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_10, "   Total:  %d, Sent: %d",iSmsPDUData.iTotal, iSmsPDUData.iSent );
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_11, "   Failed: %d, Delivered: %d",iSmsPDUData.iFailed, iSmsPDUData.iDelivered );
-                        GetStringL(status,R_LOG_DEL_FAILED);
-                        }
+						LOGSMSU1("SetDataL ESmsSubmit R_LOG_DEL_FAILED SR");
+						LOGSMSU3("	Total:  %d, Sent: %d",iSmsPDUData.iTotal, iSmsPDUData.iSent );
+						LOGSMSU3("	Failed: %d, Delivered: %d",iSmsPDUData.iFailed, iSmsPDUData.iDelivered );
+						GetStringL(status,R_LOG_DEL_FAILED);
+						}
                     if (aDischargeTime != NULL)
                         {
                         iLogEvent->SetTime(*aDischargeTime);
-                        }                   
-                    }
-                else
-                    {
-                    if (iSmsPDUData.iSent<iSmsPDUData.iTotal)
-                        {
-                        // IF not all PDUs sent, state is "NOT SENT".
-                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_12, "SetDataL ESmsSubmit R_LOG_DEL_NOT_SENT NOSR");
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_13, "   Total:  %d, Sent: %d", iSmsPDUData.iTotal, iSmsPDUData.iSent );
-                        GetStringL(status,R_LOG_DEL_NOT_SENT);
-                        }
+                        }					
+					}
+				else
+					{
+					if (iSmsPDUData.iSent<iSmsPDUData.iTotal)
+						{
+						// IF not all PDUs sent, state is "NOT SENT".
+						LOGSMSU1("SetDataL ESmsSubmit R_LOG_DEL_NOT_SENT NOSR");
+						LOGSMSU3("	Total:  %d, Sent: %d", iSmsPDUData.iTotal, iSmsPDUData.iSent );
+						GetStringL(status,R_LOG_DEL_NOT_SENT);
+						}
 					else if (iSmsPDUData.iTotal==iSmsPDUData.iSent)
 						{
 						// All sent
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_14, "SetDataL ESmsSubmit R_LOG_DEL_SENT NOSR");
+						LOGSMSU1("SetDataL ESmsSubmit R_LOG_DEL_SENT NOSR");
 						GetStringL(status,R_LOG_DEL_SENT);
 						}
 					else
 						{
 						// The iSmsPDUData values have become corrupt
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_15, "SetDataL ESmsSubmit R_LOG_DEL_FAILED NOSR");
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_16, "   Total:  %d, Sent: %d",iSmsPDUData.iTotal, iSmsPDUData.iSent );
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_17, "   Failed: %d, Delivered: %d",iSmsPDUData.iFailed, iSmsPDUData.iDelivered );
-                        GetStringL(status,R_LOG_DEL_FAILED);
-                        }
-                    }
-                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_18, "SetDataL [status string=%S]",status);
-                break;
-                }
+						LOGSMSU1("SetDataL ESmsSubmit R_LOG_DEL_FAILED NOSR");
+						LOGSMSU3("	Total:  %d, Sent: %d",iSmsPDUData.iTotal, iSmsPDUData.iSent );
+						LOGSMSU3("	Failed: %d, Delivered: %d",iSmsPDUData.iFailed, iSmsPDUData.iDelivered );
+						GetStringL(status,R_LOG_DEL_FAILED);
+						}
+				    }
+				LOGSMSU2("SetDataL [status string=%S]",&status);
+				break;
+				}
 			default:
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_SETDATAL_19, "SetDataL ESmsuUnexpectedSmsPDUType");
+				LOGSMSU1("SetDataL ESmsuUnexpectedSmsPDUType");
 				SmsuPanic(ESmsuUnexpectedSmsPDUType);
 				}
 			}
@@ -513,7 +508,7 @@ void CSmsEventLogger::SetDataL(const CSmsMessage& aSmsMessage,TInt* aStatusId, c
 
 void CSmsEventLogger::DoComplete(TInt& aStatus)
 	{
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSEVENTLOGGER_DOCOMPLETE_1, "CSmsEventLogger::DoComplete(): aStatus=%d, iState=%d", aStatus, iState);
+    LOGSMSU3("CSmsEventLogger::DoComplete(): aStatus=%d, iState=%d", aStatus, iState);
 
 	//
 	// Check the state is valid and finish up...

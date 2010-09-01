@@ -437,7 +437,6 @@ Map RMobileCall::TMobileCallStatus to CTelephony::TCallStatus
 		aTelCallStatus=CTelephony::EStatusReconnectPending;
 		break;
 	case RMobileCall::EStatusDisconnecting:
-	case RMobileCall::EStatusDisconnectingWithInband:
 		aTelCallStatus=CTelephony::EStatusDisconnecting;
 		break;
 	case RMobileCall::EStatusHold:

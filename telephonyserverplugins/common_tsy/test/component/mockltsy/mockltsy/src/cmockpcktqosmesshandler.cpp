@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,13 +13,8 @@
 // Description:
 //
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmockpcktqosmesshandlerTraces.h"
-#endif
-
 #include "cmockpcktqosmesshandler.h"
+#include <ctsy/tflogger.h>
 #include <pcktcs.h>
 #include <ctsy/pluginapi/mmmessagemanagercallback.h>
 #include "cmockltsyengine.h"
@@ -69,7 +64,7 @@ TInt CMockPcktQoSMessHandler::ExtFuncL(TInt aIpc, const CMmDataPackage* aMmDataP
     	{
     	case EPacketQoSSetProfileParams:
     		{
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMOCKPCKTQOSMESSHANDLER_EXTFUNCL_1, "Mock: CMockPcktQoSMessHandler. aIpc: %d  aMmDataPackage: 0x%08x", aIpc, (TUint)aMmDataPackage );
+TFLOGSTRING3("Mock: CMockPcktQoSMessHandler. aIpc: %d  aMmDataPackage: %d", aIpc, &aMmDataPackage );
     		TDes8* profile = NULL;
     		TContextParams contextParams; 
     		
@@ -78,7 +73,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMOCKPCKTQOSMESSHANDL
    			TPckg<TPacketDataConfigBase>* profilePckg = ( TPckg<TPacketDataConfigBase>* ) profile;
  		    TPacketDataConfigBase& base = ( *profilePckg )();
  		    
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMOCKPCKTQOSMESSHANDLER_EXTFUNCL_2, "Mock: CMockPcktQoSMessHandler. base.ExtensionId(): %d", base.ExtensionId() );
+TFLOGSTRING2("Mock: CMockPcktQoSMessHandler. base.ExtensionId(): %d", base.ExtensionId() );
 
  		    switch(base.ExtensionId())
  		    	{
@@ -153,7 +148,7 @@ void CMockPcktQoSMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt aRe
 			break;
 			case EPacketQoSSetProfileParams:
 			{			
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMOCKPCKTQOSMESSHANDLER_COMPLETEL_1, "Mock: Complete. aIpc = %d, aData = %s", aIpc, aData);
+TFLOGSTRING3("Mock: Complete. aIpc = %d, aData = %S", aIpc, &aData);
 				TMockLtsyData1Buf< TInfoName > ret;
 				ret.DeserialiseL(aData);
 				dataPackage.PackData(ret.Data1Ptr());

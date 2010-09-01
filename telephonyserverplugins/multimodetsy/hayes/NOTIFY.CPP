@@ -13,7 +13,7 @@
 // Description:
 //
 
-
+#include "ETELFAX.H"
 #include "PHONE.H"
 #include "LINE.H"
 #include "CALL.H"

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -18,13 +18,8 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ChargingStatusObserverTraces.h"
-#endif
-
 #include "ChargingStatusObserver.h"
+#include <ctsy/tflogger.h>
 
 // ======== MEMBER FUNCTIONS ========
 
@@ -86,7 +81,7 @@ void CChargingStatusObserver::RunL()
     
 	if ( KErrNone != errorStatus )
 	    {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_RUNL_1, "TSY: CChargingStatusObserver::RunL - iStatus: %d", errorStatus );
+TFLOGSTRING2("TSY: CChargingStatusObserver::RunL - iStatus: %d", errorStatus );
 	    iChargingStatusNotifier.NotifyChargingStatus( errorStatus,
 	        batteryInfo );
         return;
@@ -95,7 +90,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_
     // property updated, get new value
     TInt level( 0 );
     TInt error = iChargingStatus.Get( level );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_RUNL_2, "TSY: CChargingStatusObserver::RunL error: %d", error);
+TFLOGSTRING2("TSY: CChargingStatusObserver::RunL error: %d", error);
 
     if ( KErrNone == error )
         {

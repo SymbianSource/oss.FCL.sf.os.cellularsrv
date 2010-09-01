@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,12 +12,6 @@
 //
 // Description:
 //
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspfacadestorTraces.h"
-#endif
 
 #include "gsmubuf.h"
 #include "smspfacadestor.h"
@@ -38,7 +32,7 @@ construction and leaves nothing on the CleanupStack.
 */
 CFacadeSmsReassemblyStore* CFacadeSmsReassemblyStore::NewL(RFs& aFs, MSmsComm& aSmsComm)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_NEWL_1, "CFacadeSmsReassemblyStore::NewL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::NewL()");
 
 	CFacadeSmsReassemblyStore*  self = new (ELeave) CFacadeSmsReassemblyStore(aFs, aSmsComm);
 	CleanupStack::PushL(self);
@@ -62,7 +56,7 @@ CFacadeSmsReassemblyStore::CFacadeSmsReassemblyStore(RFs& aFs, MSmsComm& aSmsCom
 */
 CFacadeSmsReassemblyStore::~CFacadeSmsReassemblyStore()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_DTOR_1, "~CFacadeSmsReassemblyStore()");
+	LOGSMSPROT1("~CFacadeSmsReassemblyStore()");
 	iReassemblyStore->Close();
 	delete iReassemblyStore;
 
@@ -88,7 +82,7 @@ which will be used to store all type of SMS messages.
 */
 void CFacadeSmsReassemblyStore::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_CONSTRUCTL_1, "CFacadeSmsReassemblyStore::ConstructL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ConstructL()");
 
 	iReassemblyStore = CSmsReassemblyStore::NewL(iFs);
 	/*
@@ -139,7 +133,7 @@ re-assembly stores.
 */
 void CFacadeSmsReassemblyStore::OpenStoreL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_OPENSTOREL_1, "CFacadeSmsReassemblyStore::OpenStoreL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::OpenStoreL()");
 	iReassemblyStore->OpenStoreL();
 	if (iClass0ReassemblyStore)
 		{
@@ -154,7 +148,7 @@ It closes the re-assembly stores.
 */
 void CFacadeSmsReassemblyStore::Close()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_CLOSE_1, "CFacadeSmsReassemblyStore::Close()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::Close()");
 	// Close general Re-assembly store.
 	iReassemblyStore->Close();
 	// Close Class0 re-assembly store.
@@ -188,7 +182,7 @@ This initialization process is required because SMS stack might have been re-sta
 */
 void CFacadeSmsReassemblyStore::InitL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_INITL_1, "CFacadeSmsReassemblyStore::InitL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::InitL()");
 	// Initialize Non-class 0 Re-assembly store.
 	InitializeNonClass0StoreL();
 	// Initialize Class0 re-assembly store.
@@ -208,7 +202,7 @@ Purges the reassembly file stores.
 */
 void CFacadeSmsReassemblyStore::PurgeL(const TTimeIntervalMinutes& aTimeIntervalMinutes,TBool aPurgeIncompleteOnly)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_PURGEL_1, "CFacadeSmsReassemblyStore::PurgeL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::PurgeL()");
 	iReassemblyStore->PurgeL(aTimeIntervalMinutes, aPurgeIncompleteOnly);
 	if (iClass0ReassemblyStore)
 		{
@@ -225,7 +219,7 @@ it return TRUE. Otherwise it returns FALSE.
 */
 TBool CFacadeSmsReassemblyStore::IsFull()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_ISFULL_1, "CFacadeSmsReassemblyStore::IsFull()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::IsFull()");
 
 	//local variable for complete entries
 	TInt count( 0 );
@@ -252,7 +246,7 @@ This function will be called if user choses to cancel the enumeration.
 */
 void CFacadeSmsReassemblyStore::DeleteEnumeratedSIMEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_DELETEENUMERATEDSIMENTRIES_1, "CFacadeSmsReassemblyStore::DeleteEnumeratedSIMEntries()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::DeleteEnumeratedSIMEntries()");
 	DeleteNonClass0EnumeratedSIMEntries();
 	if (iClass0ReassemblyStore)
 		{
@@ -273,7 +267,7 @@ It goes through the re-assembly store and sends all those SMS messages
 */
 TInt CFacadeSmsReassemblyStore::ExternalizeEnumeratedMessagesL(CSmsProvider& aProvider,TInt& aCount)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_EXTERNALIZEENUMERATEDMESSAGESL_1, "CFacadeSmsReassemblyStore::ExternalizeEnumeratedMessagesL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ExternalizeEnumeratedMessagesL()");
 	TInt numNewSegments(0);
 	numNewSegments = ExternalizeEnumeratedNonClass0SmsMessagesL(aProvider, aCount);
 	if (iClass0ReassemblyStore)
@@ -295,7 +289,7 @@ a PDU has been received and successfully processed.
 */
 void CFacadeSmsReassemblyStore::ProcessCompleteSmsMessagesL(MSmsComm& aSmsComm, const CSmsMessage* aCurrentSmsMessage)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_PROCESSCOMPLETESMSMESSAGESL_1, "CFacadeSmsReassemblyStore::ProcessCompleteSmsMessagesL");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ProcessCompleteSmsMessagesL");
 
 	ProcessCompleteNonClass0SmsMessagesL(aSmsComm, aCurrentSmsMessage);
 	if (iClass0ReassemblyStore)
@@ -346,7 +340,8 @@ NOTE:
 */
 void CFacadeSmsReassemblyStore::AddSegmentToReassemblyStoreL(CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms, TInt& aIndex, TBool& aIsComplete, TBool aIsEnumeration, TInt& aCount, TInt& aTotal)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_ADDSEGMENTTOREASSEMBLYSTOREL_1, "CFacadeSmsReassemblyStore::AddSegmentToReassemblyStoreL(): isComplete Message=%d",aSmsMessage.IsComplete());
+	LOGSMSPROT2("CFacadeSmsReassemblyStore::AddSegmentToReassemblyStoreL(): isComplete Message=%d",
+				aSmsMessage.IsComplete());
 
 	TBool toBeStoredInClass0ReassemblyStore = IsForClass0ReassemblyStore(aSmsMessage);
 
@@ -381,7 +376,7 @@ NOTE:
 */
 void CFacadeSmsReassemblyStore::ForwardCompleteClass0SmsMessagesL(MSmsComm& aSmsComm, const CSmsMessage& aSmsMessage,const TSmsAddr* aOriginalSmsAddr,const CSmsMessage* aOriginalSmsMessage,TDes& aDes)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_FORWARDCOMPLETECLASS0SMSMESSAGESL_1, "CFacadeSmsReassemblyStore::ForwardCompleteClass0SmsMessagesL");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ForwardCompleteClass0SmsMessagesL");
 	if (iClass0ReassemblyStore)
 		{
 		iClass0ReassemblyStore->ForwardCompleteClass0SmsMessagesL(aSmsComm, aSmsMessage, aOriginalSmsAddr, aOriginalSmsMessage, aDes);
@@ -400,7 +395,7 @@ NOTE:
 */
 void CFacadeSmsReassemblyStore::ProcessMessageIfExceedLimitationL(MSmsComm& aSmsComm)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_PROCESSMESSAGEIFEXCEEDLIMITATIONL_1, "CFacadeSmsReassemblyStore::ProcessMessageIfExceedLimitationL");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ProcessMessageIfExceedLimitationL");
 	if (iClass0ReassemblyStore)
 		{
 		iClass0ReassemblyStore->ProcessMessageIfExceedLimitationL(aSmsComm);
@@ -420,7 +415,7 @@ NOTE:
 */
 void CFacadeSmsReassemblyStore::SetIncompleteMessageForwardedToClientL(const CSmsMessage& aSmsMessage)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_SETINCOMPLETEMESSAGEFORWARDEDTOCLIENTL_1, "CFacadeSmsReassemblyStore::SetIncompleteMessageForwardedToClientL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::SetIncompleteMessageForwardedToClientL()");
 	if (iClass0ReassemblyStore)
 		{
 		iClass0ReassemblyStore->SetIncompleteMessageForwardedToClientL(aSmsMessage);
@@ -434,7 +429,7 @@ pre-allocated file. Otherwise it stores the message in permanent store file.
 */
 void CFacadeSmsReassemblyStore::SetDiskSpaceState(TSmsDiskSpaceMonitorStatus aDiskSpaceStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_SETDISKSPACESTATE_1, "CFacadeSmsReassemblyStore::SetDiskSpaceState()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::SetDiskSpaceState()");
 	if (iClass0ReassemblyStore)
 		{
 		iClass0ReassemblyStore->SetDiskSpaceState(aDiskSpaceStatus);
@@ -452,7 +447,7 @@ It deletes the given SMS message from re-assembly store.
 */
 void CFacadeSmsReassemblyStore::DeleteMessageL(const CSmsMessage& aSmsMessage, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_DELETEMESSAGEL_1, "CFacadeSmsReassemblyStore::DeleteEntryL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::DeleteEntryL()");
 
 	TBool toBeStoredInClass0ReassemblyStore = IsForClass0ReassemblyStore(aSmsMessage);
 
@@ -476,7 +471,7 @@ It updates log server id of the passed message in re-assembly store.
 */
 void CFacadeSmsReassemblyStore::UpdateLogServerIdL(const CSmsMessage& aSmsMessage, TInt aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_UPDATELOGSERVERIDL_1, "CFacadeSmsReassemblyStore::UpdateLogServerIdL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::UpdateLogServerIdL()");
 
 	TBool toBeStoredInClass0ReassemblyStore = IsForClass0ReassemblyStore(aSmsMessage);
 
@@ -499,7 +494,7 @@ It updates that the given SMS message in re-assembly store is passed to client.
 */
 void CFacadeSmsReassemblyStore::SetMessagePassedToClientL(const CSmsMessage& aSmsMessage, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_SETMESSAGEPASSEDTOCLIENTL_1, "CFacadeSmsReassemblyStore::SetMessagePassedToClientL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::SetMessagePassedToClientL()");
 
 	TBool toBeStoredInClass0ReassemblyStore = IsForClass0ReassemblyStore(aSmsMessage);
 
@@ -574,7 +569,7 @@ This initialization process is required because SMS stack might have been re-sta
 */
 void CFacadeSmsReassemblyStore::InitializeNonClass0StoreL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_INITIALIZENONCLASS0STOREL_1, "CFacadeSmsReassemblyStore::InitializeNonClass0StoreL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::InitializeNonClass0StoreL()");
 	// Initialize Re-assembly store.
 	iReassemblyStore->OpenStoreL();
 	iReassemblyStore->BeginTransactionLC();
@@ -611,7 +606,7 @@ void CFacadeSmsReassemblyStore::DeleteNonClass0EnumeratedSIMEntries()
 	{
 	const TInt count = iReassemblyStore->Entries().Count();
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_DELETENONCLASS0ENUMERATEDSIMENTRIES_1, "CFacadeSmsReassemblyStore::DeleteNonClass0EnumeratedSIMEntries(): %d messages in RAS", count);
+	LOGSMSPROT2("CFacadeSmsReassemblyStore::DeleteNonClass0EnumeratedSIMEntries(): %d messages in RAS", count);
 
 	TInt index;
 
@@ -639,7 +634,7 @@ It deletes the given SMS message from re-assembly store.
 */
 void CFacadeSmsReassemblyStore::DeleteNonClass0MessageL(const CSmsMessage& aSmsMessage, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_DELETENONCLASS0MESSAGEL_1, "CFacadeSmsReassemblyStore::DeleteNonClass0MessageL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::DeleteNonClass0MessageL()");
 	TInt index(0);
 
 	if(!iReassemblyStore->InTransaction())
@@ -666,7 +661,7 @@ It updates that the given SMS message in re-assembly store is passed to client.
 */
 void CFacadeSmsReassemblyStore::SetNonClass0MessagePassedToClientL(const CSmsMessage& aSmsMessage, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_SETNONCLASS0MESSAGEPASSEDTOCLIENTL_1, "CFacadeSmsReassemblyStore::SetNonClass0MessagePassedToClientL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::SetNonClass0MessagePassedToClientL()");
 	TInt index(0);
 
 	iReassemblyStore->BeginTransactionLC();
@@ -682,7 +677,8 @@ It returns the number of complete messages stored in general re-assembly store.
 */
 TInt CFacadeSmsReassemblyStore::NumberOfCompleteNonClass0Messages()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_NUMBEROFCOMPLETENONCLASS0MESSAGES_1, "CFacadeSmsReassemblyStore::NumberOfCompleteMessages(): Entries().Count()=%d",iReassemblyStore->Entries().Count());
+	LOGSMSPROT2("CFacadeSmsReassemblyStore::NumberOfCompleteMessages(): Entries().Count()=%d",
+				iReassemblyStore->Entries().Count());
 
 	//local variable for complete entries
 	TInt count( 0 );
@@ -710,7 +706,7 @@ observer is added or a PDU has been received and successfully processed.
 */
 void CFacadeSmsReassemblyStore::ProcessCompleteNonClass0SmsMessagesL(MSmsComm& aSmsComm, const CSmsMessage* aCurrentSmsMessage)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_PROCESSCOMPLETENONCLASS0SMSMESSAGESL_1, "CFacadeSmsReassemblyStore::ProcessCompleteNonClass0SmsMessagesL [from %d to 0]", iReassemblyStore->Entries().Count()-1);
+	LOGSMSPROT2("CFacadeSmsReassemblyStore::ProcessCompleteNonClass0SmsMessagesL [from %d to 0]", iReassemblyStore->Entries().Count()-1);
 
 	iReassemblyStore->BeginTransactionLC();
 	TInt count = iReassemblyStore->Entries().Count();
@@ -756,7 +752,7 @@ observer is added or a PDU has been received and successfully processed.
 */
 void CFacadeSmsReassemblyStore::ProcessCompleteClass0SmsMessagesL(MSmsComm& aSmsComm, const CSmsMessage* aCurrentSmsMessage)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_PROCESSCOMPLETECLASS0SMSMESSAGESL_1, "CFacadeSmsReassemblyStore::ProcessCompleteClass0SmsMessagesL [from %d to 0]", iClass0ReassemblyStore->Entries().Count()-1);
+	LOGSMSPROT2("CFacadeSmsReassemblyStore::ProcessCompleteClass0SmsMessagesL [from %d to 0]", iClass0ReassemblyStore->Entries().Count()-1);
 
 	iClass0ReassemblyStore->BeginTransactionLC();
 	TInt count = iClass0ReassemblyStore->Entries().Count();
@@ -806,7 +802,7 @@ It goes through the re-assembly store and sends all those SMS messages
 */
 TInt CFacadeSmsReassemblyStore::ExternalizeEnumeratedNonClass0SmsMessagesL(CSmsProvider& aProvider,TInt& aCount)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_EXTERNALIZEENUMERATEDNONCLASS0SMSMESSAGESL_1, "CFacadeSmsReassemblyStore::ExternalizeEnumeratedNonClass0SmsMessagesL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ExternalizeEnumeratedNonClass0SmsMessagesL()");
 	TInt count = iReassemblyStore->Entries().Count();
 	TInt index,numNewSegments(0);
 	for(index = count-1; index >=0; --index)
@@ -825,7 +821,7 @@ TInt CFacadeSmsReassemblyStore::ExternalizeEnumeratedNonClass0SmsMessagesL(CSmsP
 				numNewSegments+=aProvider.ExternalizeMessageL(*smsMessage,EFalse);
 				for(TInt i=0; i< smsMessage->iSlotArray.Count() ;i++)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_EXTERNALIZEENUMERATEDNONCLASS0SMSMESSAGESL_2, "CFacadeSmsReassemblyStore::ExternalizeEnumeratedNonClass0SmsMessagesL %d", smsMessage->iSlotArray[i].iIndex);
+					LOGSMSPROT2("CFacadeSmsReassemblyStore::ExternalizeEnumeratedNonClass0SmsMessagesL %d", smsMessage->iSlotArray[i].iIndex);
 					}
 				++aCount;
 				iReassemblyStore->BeginTransactionLC();
@@ -851,7 +847,7 @@ It goes through the class 0 re-assembly store and sends all those SMS messages
 */
 TInt CFacadeSmsReassemblyStore::ExternalizeEnumeratedClass0SmsMessagesL(CSmsProvider& aProvider,TInt& aCount)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_EXTERNALIZEENUMERATEDCLASS0SMSMESSAGESL_1, "CFacadeSmsReassemblyStore::ExternalizeEnumeratedClass0SmsMessagesL()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::ExternalizeEnumeratedClass0SmsMessagesL()");
 	TInt count = iClass0ReassemblyStore->Entries().Count();
 	TInt index,numNewSegments(0);
 	for(index = count-1; index >=0; --index)
@@ -870,7 +866,7 @@ TInt CFacadeSmsReassemblyStore::ExternalizeEnumeratedClass0SmsMessagesL(CSmsProv
 				numNewSegments+=aProvider.ExternalizeMessageL(*smsMessage,EFalse);
 				for(TInt i=0; i< smsMessage->iSlotArray.Count() ;i++)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_EXTERNALIZEENUMERATEDCLASS0SMSMESSAGESL_2, "CFacadeSmsReassemblyStore::ExternalizeEnumeratedClass0SmsMessagesL() %d", smsMessage->iSlotArray[i].iIndex);
+					LOGSMSPROT2("CFacadeSmsReassemblyStore::ExternalizeEnumeratedClass0SmsMessagesL() %d", smsMessage->iSlotArray[i].iIndex);
 					}
 				++aCount;
 				iClass0ReassemblyStore->BeginTransactionLC();
@@ -917,7 +913,8 @@ NOTE:
 */
 void CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms, TInt& aIndex, TBool& aIsComplete, TBool aIsEnumeration, TInt& aCount, TInt& aTotal)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_ADDSEGMENTTONONCLASS0REASSEMBLYSTOREL_1, "CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(): isComplete Message=%d",aSmsMessage.IsComplete());
+	LOGSMSPROT2("CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(): isComplete Message=%d",
+				aSmsMessage.IsComplete());
 
 	if (aIsComplete ||  aSmsMessage.Type() == CSmsPDU::ESmsStatusReport)
 		{
@@ -941,7 +938,8 @@ void CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(CSmsMessag
 		TInt  segStoreIndex(KErrNotFound);
 
 		iReassemblyStore->MatchPDUToExistingMessage(aSmsMessage, segStoreIndex);
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_ADDSEGMENTTONONCLASS0REASSEMBLYSTOREL_2, "CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(): ""segStoreIndex=%d", segStoreIndex);
+		LOGSMSPROT2("CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(): "
+					"segStoreIndex=%d", segStoreIndex);
 
 		//
 		// If not yet complete, then we must be part of a multiple PDU message.
@@ -960,7 +958,9 @@ void CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(CSmsMessag
 			iReassemblyStore->UpdateExistingMessageL(aSmsMessage, aGsmSms, aIndex,
 													aIsComplete, isDuplicateMsgRef,
 													isDuplicateSlot);
-			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_ADDSEGMENTTONONCLASS0REASSEMBLYSTOREL_3, "CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(): ""aIndex=%d, isComplete=%d, isDuplicateMsgRef=%d, isDuplicateSlot=%d",aIndex, aIsComplete, isDuplicateMsgRef, isDuplicateSlot);
+			LOGSMSPROT5("CFacadeSmsReassemblyStore::AddSegmentToNonClass0ReassemblyStoreL(): "
+						"aIndex=%d, isComplete=%d, isDuplicateMsgRef=%d, isDuplicateSlot=%d",
+						aIndex, aIsComplete, isDuplicateMsgRef, isDuplicateSlot);
 
 			if (isDuplicateMsgRef)
 				{
@@ -1050,7 +1050,8 @@ void CFacadeSmsReassemblyStore::UpdateLogServerIdOfNonClass0MessageL(const CSmsM
 		iReassemblyStore->CommitTransactionL();
 		}
 
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_UPDATELOGSERVERIDOFNONCLASS0MESSAGEL_1, "CFacadeSmsReassemblyStore::UpdateLogServerIdOfNonClass0MessageL(): found=%d, foundIndex=%d",found, foundIndex);
+	LOGSMSPROT3("CFacadeSmsReassemblyStore::UpdateLogServerIdOfNonClass0MessageL(): found=%d, foundIndex=%d",
+				found, foundIndex);
 
 	//
 	// If found and the index is valid, then update the Log Server ID...
@@ -1068,7 +1069,7 @@ void CFacadeSmsReassemblyStore::UpdateLogServerIdOfNonClass0MessageL(const CSmsM
  */
 TBool CFacadeSmsReassemblyStore::IsWapSMS(const CSmsMessage& aSmsMessage)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CFACADESMSREASSEMBLYSTORE_ISWAPSMS_1, "CFacadeSmsReassemblyStore::IsWapSMS()");
+	LOGSMSPROT1("CFacadeSmsReassemblyStore::IsWapSMS()");
 
 	return CSmsProtocol::IsAppPortSMS(aSmsMessage);
 	}

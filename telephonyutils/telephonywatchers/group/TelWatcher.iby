@@ -18,6 +18,7 @@
 #ifndef __TELWATCHER_IBY__
 #define __TELWATCHER_IBY__
 
+#include <watcher.iby>
 #include <etel.iby>
 
 REM Telephony Watchers...

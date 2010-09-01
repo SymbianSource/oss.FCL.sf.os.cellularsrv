@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,8 @@
 
 #include "umtsextn.h"
 #include "qosextn_constants.h"
+#include "qosextn_log.h"
 #include <networking/pfqos.h>
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "umtsextnTraces.h"
-#endif
 //
 // TUmtsQoSParameters
 //
@@ -611,48 +607,48 @@ EXPORT_C TInt CUmtsQoSPolicy::Copy(const CExtensionBase& aExtension)
 EXPORT_C void CUmtsQoSPolicy::SetQoSRequested(const TUmtsQoSParameters& aRequested)
 	{
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_1, "<------------------------------------------------\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_2, "CUmtsQoSPolicy::SetQoSRequested");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_3, "\n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_4, "REQUESTED R99 VALUES SUPPLIED BY CLIENT IS \n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_5, "\n");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_6, " [aRequested.iTrafficClass         = %d]\n",aRequested.iTrafficClass);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_7, " [aRequested.iDeliveryOrder            = %d]\n",aRequested.iDeliveryOrder);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_8, " [aRequested.iDeliveryOfErroneusSdu = %d]\n",aRequested.iDeliveryOfErroneusSdu);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_9, " [aRequested.iMaxSduSize           = %d]\n",aRequested.iMaxSduSize);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_10, " [aRequested.iMaxBitrateUplink    = %d]\n",aRequested.iMaxBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_11, " [aRequested.iMaxBitrateDownlink  = %d]\n",aRequested.iMaxBitrateDownlink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_12, " [aRequested.iResidualBer         = %d]\n",aRequested.iResidualBer);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_13, " [aRequested.iErrorRatio          = %d]\n",aRequested.iErrorRatio);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_14, " [aRequested.iPriority            = %d]\n",aRequested.iPriority);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_15, " [aRequested.iTransferDelay       = %d]\n",aRequested.iTransferDelay);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_16, " [aRequested.iGuaBitrateUplink    = %d]\n",aRequested.iGuaBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_17, " [aRequested.iGuaBitrateDownlink  = %d]\n",aRequested.iGuaBitrateDownlink);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSREQUESTED_18, "------------------------------------------------>\n");
+	LOG(Log::Printf(_L("<------------------------------------------------\n")));
+	LOG(Log::Printf(_L("CUmtsQoSPolicy::SetQoSRequested")));
+    LOG(Log::Printf(_L("\n")));
+    LOG(Log::Printf(_L("REQUESTED R99 VALUES SUPPLIED BY CLIENT IS \n")));
+    LOG(Log::Printf(_L("\n")));
+	LOG(Log::Printf(_L(" [aRequested.iTrafficClass 			= %d]\n"),aRequested.iTrafficClass));
+	LOG(Log::Printf(_L(" [aRequested.iDeliveryOrder 		= %d]\n"),aRequested.iDeliveryOrder));
+	LOG(Log::Printf(_L(" [aRequested.iDeliveryOfErroneusSdu = %d]\n"),aRequested.iDeliveryOfErroneusSdu));
+	LOG(Log::Printf(_L(" [aRequested.iMaxSduSize			= %d]\n"),aRequested.iMaxSduSize));
+	LOG(Log::Printf(_L(" [aRequested.iMaxBitrateUplink		= %d]\n"),aRequested.iMaxBitrateUplink));
+	LOG(Log::Printf(_L(" [aRequested.iMaxBitrateDownlink	= %d]\n"),aRequested.iMaxBitrateDownlink));
+	LOG(Log::Printf(_L(" [aRequested.iResidualBer			= %d]\n"),aRequested.iResidualBer));
+	LOG(Log::Printf(_L(" [aRequested.iErrorRatio			= %d]\n"),aRequested.iErrorRatio));
+	LOG(Log::Printf(_L(" [aRequested.iPriority				= %d]\n"),aRequested.iPriority));
+	LOG(Log::Printf(_L(" [aRequested.iTransferDelay			= %d]\n"),aRequested.iTransferDelay));
+	LOG(Log::Printf(_L(" [aRequested.iGuaBitrateUplink		= %d]\n"),aRequested.iGuaBitrateUplink));
+	LOG(Log::Printf(_L(" [aRequested.iGuaBitrateDownlink	= %d]\n"),aRequested.iGuaBitrateDownlink));
+	LOG(Log::Printf(_L("------------------------------------------------>\n")));
 	
 	iRequested = aRequested;
 	}
 
 EXPORT_C void CUmtsQoSPolicy::SetQoSMinimum(const TUmtsQoSParameters& aMinimum)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_1, "<------------------------------------------------\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_2, "CUmtsQoSPolicy::SetQoSMinimum");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_3, "\n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_4, "MINIMUM R99 VALUES SUPPLIED BY CLIENT IS \n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_5, "\n");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_6, " [aMinimum.iTrafficClass             = %d]\n",aMinimum.iTrafficClass);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_7, " [aMinimum.iDeliveryOrder            = %d]\n",aMinimum.iDeliveryOrder);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_8, " [aMinimum.iDeliveryOfErroneusSdu    = %d]\n",aMinimum.iDeliveryOfErroneusSdu);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_9, " [aMinimum.iMaxSduSize               = %d]\n",aMinimum.iMaxSduSize);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_10, " [aMinimum.iMaxBitrateUplink        = %d]\n",aMinimum.iMaxBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_11, " [aMinimum.iMaxBitrateDownlink      = %d]\n",aMinimum.iMaxBitrateDownlink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_12, " [aMinimum.iResidualBer             = %d]\n",aMinimum.iResidualBer);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_13, " [aMinimum.iErrorRatio              = %d]\n",aMinimum.iErrorRatio);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_14, " [aMinimum.iPriority                = %d]\n",aMinimum.iPriority);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_15, " [aMinimum.iTransferDelay           = %d]\n",aMinimum.iTransferDelay);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_16, " [aMinimum.iGuaBitrateUplink        = %d]\n",aMinimum.iGuaBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_17, " [aMinimum.iGuaBitrateDownlink      = %d]\n",aMinimum.iGuaBitrateDownlink);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSQOSPOLICY_SETQOSMINIMUM_18, "------------------------------------------------>\n");
+	LOG(Log::Printf(_L("<------------------------------------------------\n")));
+	LOG(Log::Printf(_L("CUmtsQoSPolicy::SetQoSMinimum")));
+    LOG(Log::Printf(_L("\n")));
+    LOG(Log::Printf(_L("MINIMUM R99 VALUES SUPPLIED BY CLIENT IS \n")));
+    LOG(Log::Printf(_L("\n")));
+	LOG(Log::Printf(_L(" [aMinimum.iTrafficClass 			= %d]\n"),aMinimum.iTrafficClass));
+	LOG(Log::Printf(_L(" [aMinimum.iDeliveryOrder 			= %d]\n"),aMinimum.iDeliveryOrder));
+	LOG(Log::Printf(_L(" [aMinimum.iDeliveryOfErroneusSdu 	= %d]\n"),aMinimum.iDeliveryOfErroneusSdu));
+	LOG(Log::Printf(_L(" [aMinimum.iMaxSduSize				= %d]\n"),aMinimum.iMaxSduSize));
+	LOG(Log::Printf(_L(" [aMinimum.iMaxBitrateUplink		= %d]\n"),aMinimum.iMaxBitrateUplink));
+	LOG(Log::Printf(_L(" [aMinimum.iMaxBitrateDownlink		= %d]\n"),aMinimum.iMaxBitrateDownlink));
+	LOG(Log::Printf(_L(" [aMinimum.iResidualBer				= %d]\n"),aMinimum.iResidualBer));
+	LOG(Log::Printf(_L(" [aMinimum.iErrorRatio				= %d]\n"),aMinimum.iErrorRatio));
+	LOG(Log::Printf(_L(" [aMinimum.iPriority				= %d]\n"),aMinimum.iPriority));
+	LOG(Log::Printf(_L(" [aMinimum.iTransferDelay			= %d]\n"),aMinimum.iTransferDelay));
+	LOG(Log::Printf(_L(" [aMinimum.iGuaBitrateUplink		= %d]\n"),aMinimum.iGuaBitrateUplink));
+	LOG(Log::Printf(_L(" [aMinimum.iGuaBitrateDownlink		= %d]\n"),aMinimum.iGuaBitrateDownlink));
+	LOG(Log::Printf(_L("------------------------------------------------>\n")));
 	
 	iMinimum = aMinimum;
 	}
@@ -1173,52 +1169,52 @@ EXPORT_C TInt CUmtsR5QoSPolicy::Copy(const CExtensionBase& aExtension)
 EXPORT_C void CUmtsR5QoSPolicy::SetQoSRequested(const TUmtsR5QoSParameters& aRequested)
 	{
     
-   	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_1, "<------------------------------------------------\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_2, "CUmtsR5QoSPolicy::SetQoSRequested");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_3, "\n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_4, "REQUESTED R5 VALUES SUPPLIED BY CLIENT IS \n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_5, "\n");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_6, " [aRequested.iTrafficClass           = %d]\n",aRequested.iTrafficClass);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_7, " [aRequested.iDeliveryOrder          = %d]\n",aRequested.iDeliveryOrder);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_8, " [aRequested.iDeliveryOfErroneusSdu = %d]\n",aRequested.iDeliveryOfErroneusSdu);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_9, " [aRequested.iMaxSduSize             = %d]\n",aRequested.iMaxSduSize);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_10, " [aRequested.iMaxBitrateUplink      = %d]\n",aRequested.iMaxBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_11, " [aRequested.iMaxBitrateDownlink    = %d]\n",aRequested.iMaxBitrateDownlink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_12, " [aRequested.iResidualBer           = %d]\n",aRequested.iResidualBer);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_13, " [aRequested.iErrorRatio            = %d]\n",aRequested.iErrorRatio);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_14, " [aRequested.iPriority              = %d]\n",aRequested.iPriority);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_15, " [aRequested.iTransferDelay         = %d]\n",aRequested.iTransferDelay);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_16, " [aRequested.iGuaBitrateUplink      = %d]\n",aRequested.iGuaBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_17, " [aRequested.iGuaBitrateDownlink    = %d]\n",aRequested.iGuaBitrateDownlink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_18, " [aRequested.iSignallingIndicator   = %d]\n",aRequested.iSignallingIndicator);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_19, " [aRequested.iSrcStatisticsDesc     = %d]\n",aRequested.iSrcStatisticsDesc);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSREQUESTED_20, "------------------------------------------------>\n");
+   	LOG(Log::Printf(_L("<------------------------------------------------\n")));
+	LOG(Log::Printf(_L("CUmtsR5QoSPolicy::SetQoSRequested")));
+    LOG(Log::Printf(_L("\n")));
+    LOG(Log::Printf(_L("REQUESTED R5 VALUES SUPPLIED BY CLIENT IS \n")));
+    LOG(Log::Printf(_L("\n")));
+	LOG(Log::Printf(_L(" [aRequested.iTrafficClass 			= %d]\n"),aRequested.iTrafficClass));
+	LOG(Log::Printf(_L(" [aRequested.iDeliveryOrder 		= %d]\n"),aRequested.iDeliveryOrder));
+	LOG(Log::Printf(_L(" [aRequested.iDeliveryOfErroneusSdu = %d]\n"),aRequested.iDeliveryOfErroneusSdu));
+	LOG(Log::Printf(_L(" [aRequested.iMaxSduSize			= %d]\n"),aRequested.iMaxSduSize));
+	LOG(Log::Printf(_L(" [aRequested.iMaxBitrateUplink		= %d]\n"),aRequested.iMaxBitrateUplink));
+	LOG(Log::Printf(_L(" [aRequested.iMaxBitrateDownlink	= %d]\n"),aRequested.iMaxBitrateDownlink));
+	LOG(Log::Printf(_L(" [aRequested.iResidualBer			= %d]\n"),aRequested.iResidualBer));
+	LOG(Log::Printf(_L(" [aRequested.iErrorRatio			= %d]\n"),aRequested.iErrorRatio));
+	LOG(Log::Printf(_L(" [aRequested.iPriority				= %d]\n"),aRequested.iPriority));
+	LOG(Log::Printf(_L(" [aRequested.iTransferDelay			= %d]\n"),aRequested.iTransferDelay));
+	LOG(Log::Printf(_L(" [aRequested.iGuaBitrateUplink		= %d]\n"),aRequested.iGuaBitrateUplink));
+	LOG(Log::Printf(_L(" [aRequested.iGuaBitrateDownlink	= %d]\n"),aRequested.iGuaBitrateDownlink));
+	LOG(Log::Printf(_L(" [aRequested.iSignallingIndicator	= %d]\n"),aRequested.iSignallingIndicator));
+	LOG(Log::Printf(_L(" [aRequested.iSrcStatisticsDesc	    = %d]\n"),aRequested.iSrcStatisticsDesc));	
+	LOG(Log::Printf(_L("------------------------------------------------>\n")));
 	
 	iRequested = aRequested;
 	}
 
 EXPORT_C void CUmtsR5QoSPolicy::SetQoSMinimum(const TUmtsR5QoSParameters& aMinimum)
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_1, "<------------------------------------------------\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_2, "CUmtsR5QoSPolicy::SetQoSMinimum");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_3, "\n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_4, "MINIMUM R5 VALUES SUPPLIED BY CLIENT IS \n");
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_5, "\n");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_6, " [aMinimum.iTrafficClass           = %d]\n",aMinimum.iTrafficClass);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_7, " [aMinimum.iDeliveryOrder          = %d]\n",aMinimum.iDeliveryOrder);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_8, " [aMinimum.iDeliveryOfErroneusSdu  = %d]\n",aMinimum.iDeliveryOfErroneusSdu);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_9, " [aMinimum.iMaxSduSize             = %d]\n",aMinimum.iMaxSduSize);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_10, " [aMinimum.iMaxBitrateUplink      = %d]\n",aMinimum.iMaxBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_11, " [aMinimum.iMaxBitrateDownlink    = %d]\n",aMinimum.iMaxBitrateDownlink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_12, " [aMinimum.iResidualBer           = %d]\n",aMinimum.iResidualBer);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_13, " [aMinimum.iErrorRatio            = %d]\n",aMinimum.iErrorRatio);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_14, " [aMinimum.iPriority              = %d]\n",aMinimum.iPriority);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_15, " [aMinimum.iTransferDelay         = %d]\n",aMinimum.iTransferDelay);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_16, " [aMinimum.iGuaBitrateUplink      = %d]\n",aMinimum.iGuaBitrateUplink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_17, " [aMinimum.iGuaBitrateDownlink    = %d]\n",aMinimum.iGuaBitrateDownlink);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_18, " [aMinimum.iSignallingIndicator   = %d]\n",aMinimum.iSignallingIndicator);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_19, " [aMinimum.iSrcStatisticsDesc     = %d]\n",aMinimum.iSrcStatisticsDesc);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CUMTSR5QOSPOLICY_SETQOSMINIMUM_20, "------------------------------------------------>\n");
+    LOG(Log::Printf(_L("<------------------------------------------------\n")));
+	LOG(Log::Printf(_L("CUmtsR5QoSPolicy::SetQoSMinimum")));
+    LOG(Log::Printf(_L("\n")));
+    LOG(Log::Printf(_L("MINIMUM R5 VALUES SUPPLIED BY CLIENT IS \n")));
+    LOG(Log::Printf(_L("\n")));
+	LOG(Log::Printf(_L(" [aMinimum.iTrafficClass 			= %d]\n"),aMinimum.iTrafficClass));
+	LOG(Log::Printf(_L(" [aMinimum.iDeliveryOrder 			= %d]\n"),aMinimum.iDeliveryOrder));
+	LOG(Log::Printf(_L(" [aMinimum.iDeliveryOfErroneusSdu 	= %d]\n"),aMinimum.iDeliveryOfErroneusSdu));
+	LOG(Log::Printf(_L(" [aMinimum.iMaxSduSize				= %d]\n"),aMinimum.iMaxSduSize));
+	LOG(Log::Printf(_L(" [aMinimum.iMaxBitrateUplink		= %d]\n"),aMinimum.iMaxBitrateUplink));
+	LOG(Log::Printf(_L(" [aMinimum.iMaxBitrateDownlink		= %d]\n"),aMinimum.iMaxBitrateDownlink));
+	LOG(Log::Printf(_L(" [aMinimum.iResidualBer				= %d]\n"),aMinimum.iResidualBer));
+	LOG(Log::Printf(_L(" [aMinimum.iErrorRatio				= %d]\n"),aMinimum.iErrorRatio));
+	LOG(Log::Printf(_L(" [aMinimum.iPriority				= %d]\n"),aMinimum.iPriority));
+	LOG(Log::Printf(_L(" [aMinimum.iTransferDelay			= %d]\n"),aMinimum.iTransferDelay));
+	LOG(Log::Printf(_L(" [aMinimum.iGuaBitrateUplink		= %d]\n"),aMinimum.iGuaBitrateUplink));
+	LOG(Log::Printf(_L(" [aMinimum.iGuaBitrateDownlink		= %d]\n"),aMinimum.iGuaBitrateDownlink));
+	LOG(Log::Printf(_L(" [aMinimum.iSignallingIndicator	    = %d]\n"),aMinimum.iSignallingIndicator));
+	LOG(Log::Printf(_L(" [aMinimum.iSrcStatisticsDesc	    = %d]\n"),aMinimum.iSrcStatisticsDesc));
+	LOG(Log::Printf(_L("------------------------------------------------>\n")));
 	
 	iMinimum = aMinimum;
 	}

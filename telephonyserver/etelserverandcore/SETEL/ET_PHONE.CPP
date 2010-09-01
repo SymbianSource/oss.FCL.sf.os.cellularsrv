@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ET_PHONETraces.h"
-#endif
 
 #include "ET_SSTD.H"
 #include "et_record.h"
@@ -74,7 +68,7 @@ void CReqEntry::Deque()
 
 void CReqEntry::CompleteAndDeque(TInt aError)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREQENTRY_COMPLETEANDDEQUE_1, "CReqEntry::CompleteAndDeque");
+	LOGTEXT("CReqEntry::CompleteAndDeque");
 	// if client does not interested in this request do not completed
 	if (iClientInterested) 
 		{		
@@ -201,7 +195,7 @@ void CBuffer::IncRead()
 		iRead=0;
 	iOverFlow=EFalse;
 	iBufferFull=EFalse;
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBUFFER_INCREAD_1, "ETel:\tiRead incremented to %d", iRead);
+	LOGTEXT2("ETel:\tiRead incremented to %d", iRead);
 	}
 
 void CBuffer::IncWrite()
@@ -223,7 +217,7 @@ void CBuffer::IncWrite()
 			iOverFlow=ETrue;
 			}
 		}
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBUFFER_INCWRITE_1, "ETel:\tiWrite incremented to %d", iWrite);
+	LOGTEXT2("ETel:\tiWrite incremented to %d", iWrite);
 	}
 
 TUint8* CBuffer::CurrentSlotData1(TWhichSlot aWhichSlot) const
@@ -355,12 +349,12 @@ void CTelObject::CreateDummySessionObjectL(CTelSession* aTelSession)
 	{
 	if (iDestroyDummySubSession==NULL)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CREATEDUMMYSESSIONOBJECTL_1, "CDestroyDummySubSession object does not already exist and will be created.");
+		LOGTEXT("CDestroyDummySubSession object does not already exist and will be created.");
 		iDestroyDummySubSession = CDestroyDummySubSession::NewL(aTelSession->TelServer(),this);
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CREATEDUMMYSESSIONOBJECTL_2, "CDestroyDummySubSession object already exists and will not be created");
+		LOGTEXT("CDestroyDummySubSession object already exists and will not be created");
 		}
 
 	}
@@ -371,14 +365,14 @@ void CTelObject::CreateDummySession(CTelSession* aSession, const TInt aSubSessio
 // function is called.
 //
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CREATEDUMMYSESSION_1, "CreateDummySession() with iDestroyDummySubSession = %x", iDestroyDummySubSession);
+	LOGTEXT2("CreateDummySession() with iDestroyDummySubSession = %x", iDestroyDummySubSession);
 	iCreateDummy=aCreateDummy;
 	
 	if (iDestroyDummySubSession->iOpen == EFalse)
 		{
 		if ( IsActiveReq(aSession,aSubSessionHandle) || aCreateDummy)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CREATEDUMMYSESSION_2, "About to create dummy session");
+			LOGTEXT("About to create dummy session");
 			__ASSERT_ALWAYS(aSession!=NULL,Fault(EEtelFaultBadTelSessionPointer));
 			CObject* theObj=this;
 			while(theObj->Owner())
@@ -393,7 +387,7 @@ void CTelObject::CreateDummySession(CTelSession* aSession, const TInt aSubSessio
 			// has been previously allocated upon the CTelObject creation (by calling
 			// CreateDummySessionObjectL() )
 			iTelServer->Inc();
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CREATEDUMMYSESSION_3, "Added a Dummy Session, producing server's session count of %d", iTelServer->Count());
+			LOGTEXT2("Added a Dummy Session, producing server's session count of %d", iTelServer->Count());
 				
 			iDestroyDummySubSession->iTelServer = iTelServer;
 			iDestroyDummySubSession->iTelObject = this;
@@ -452,7 +446,7 @@ TBool CTelObject::IsActiveReq(CTelSession* aSession,const TInt aSubSessionHandle
 			ret=ETrue;
 			}
 		}
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_ISACTIVEREQ_1, "IsActiveReq found %d active reqs", iActiveReqCount);
+	LOGTEXT2("IsActiveReq found %d active reqs", iActiveReqCount);
 	return ret;
 	}
 
@@ -463,7 +457,7 @@ void CTelObject::CancelActiveReq(CTelSession* aSession,const TInt aSubSessionHan
 // Only go through the list once set the count to zero at start to count number of requests 
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CANCELACTIVEREQ_1, "Entered CancelActiveReq");
+	LOGTEXT("Entered CancelActiveReq");
 	CReqEntry* reqEntry=NULL;
 	TDblQueIter<CReqEntry> iter(PhoneOwner()->ReqActiveList());
 	while(reqEntry=iter++,reqEntry!=NULL) // go through the list from begin to end
@@ -476,7 +470,7 @@ void CTelObject::CancelActiveReq(CTelSession* aSession,const TInt aSubSessionHan
 				{
 				if (reqEntry->iPlacedRequest)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CANCELACTIVEREQ_2, "Calling Cancel Service ActiveReq TsyReq=%d", reqEntry->iTsyReqHandle);
+					LOGTEXT2("Calling Cancel Service ActiveReq TsyReq=%d", reqEntry->iTsyReqHandle);
 					reqEntry->iCancelFnCalled=ETrue;
 					CancelService(reqEntry->iFunction,reqEntry->iTsyReqHandle);
 					
@@ -502,7 +496,7 @@ void CTelObject::CancelActiveReq(CTelSession* aSession,const TInt aSubSessionHan
 					}
 				else
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CANCELACTIVEREQ_3, "Destroying request");
+					LOGTEXT("Destroying request");
 					DestroyReq(reqEntry);
 					CheckAndDestroyDummySubSession();
 					}
@@ -957,7 +951,7 @@ void CTelObject::GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReq
 //
 	{
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_GENERALREQ_1, "CTelObject::GeneralReq - IPC=%d", aMessage.Function());
+	LOGTEXT2("CTelObject::GeneralReq - IPC=%d", aMessage.Function());
 	RECORD_IPC(aMessage,aSession,this,aFromFlowControlResume);
 	if (aFromFlowControlResume && !aFromFlowControlResume){	; } // avoid compiler warning when ETEL_RECORDER is not defined
 	
@@ -1127,7 +1121,7 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 	TInt error = ResolveError(updatedReqEntry->iSession,aError);		// set error as either low or high byte
 
 	ipc=updatedReqEntry->iFunction;
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTELOBJECT_REQCOMPLETED_1, "CTelObject::ReqCompleted, IPC=%d, TsyHandle=%d, Error=%d", ipc, aTsyReqHandle, aError);
+	LOGTEXT4("CTelObject::ReqCompleted, IPC=%d, TsyHandle=%d, Error=%d", ipc, aTsyReqHandle, aError);
 
 	TReqMode reqMode = updatedReqEntry->iReqMode;
 	TBool ret=EFalse;
@@ -1275,7 +1269,7 @@ void CTelObject::CheckAndDestroyDummySubSession()
 	if (iActiveReqCount)
 		{
 		iActiveReqCount--;
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_CHECKANDDESTROYDUMMYSUBSESSION_1, "In CheckAndDestroyDummySubSession(), iActiveReqCount down to %d", iActiveReqCount);
+		LOGTEXT2("In CheckAndDestroyDummySubSession(), iActiveReqCount down to %d", iActiveReqCount);
 		if ((iActiveReqCount==0) && (iCreateDummy==FALSE))
 			{
 			__ASSERT_ALWAYS(iDestroyDummySubSession!=NULL,Fault(EEtelFaultBadTelSessionPointer));
@@ -1492,7 +1486,7 @@ void CTelObject::WriteBackAndCompleteReq(CReqEntry* aReqEntry,const TInt aError)
 //
 	{
 	__ASSERT_ALWAYS(aReqEntry!=NULL,Fault(EEtelFaultCompleteReqWithoutReqEntry));
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_WRITEBACKANDCOMPLETEREQ_1, "CTelObject::WriteBackAndCompleteReq");
+	LOGTEXT("CTelObject::WriteBackAndCompleteReq");
 	TInt basicMessageType = (aReqEntry->iMessage.Int1() & ~KPriorityClientReq);
 
 	switch (basicMessageType)
@@ -1839,7 +1833,7 @@ TInt CSubSessionExtBase::ServiceExtFunc(const RMessage2& aMessage,CReqEntry* aRe
 	__ASSERT_ALWAYS(aReqEntry!=NULL,Fault(EEtelFaultCallTsyServiceWithoutReqPackage));
 	TTsyReqHandle tsyReqHandle=aReqEntry->iTsyReqHandle;
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSUBSESSIONEXTBASE_SERVICEEXTFUNC_1, "Entered ServiceExtFunc with TSY handle %d", tsyReqHandle);
+	LOGTEXT2("Entered ServiceExtFunc with TSY handle %d", tsyReqHandle);
 	TInt ret=KErrNone;
 
 	TInt basicMessageType = aMessage.Int1() & ~(KPriorityClientReq);
@@ -2039,7 +2033,7 @@ EXPORT_C CPhoneFactoryBase::~CPhoneFactoryBase()
 	{
 	if (iLibUnloader)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CPHONEFACTORYBASE_DTOR_1, "About to call iLibUnloader");
+		LOGTEXT("About to call iLibUnloader");
 		iLibUnloader->Call();
 		}
 	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
  @internalComponent
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "pdptiermanagerTraces.h"
-#endif
-
 #include "pdptiermanager.h"
 #include "mbmsengine.h"
 #include "pdptiermanagerselector.h"
@@ -32,11 +26,12 @@
 #include <comms-infras/coretiermanageractivities.h>
 #include <pcktcs.h>
 
+#include "pdpmcpr.h"
+
 #ifdef SYMBIAN_TRACE_ENABLE
 #define KPDPTierMgrTag KESockMetaConnectionTag
+_LIT8(KPDPTierMgrSubTag, "pdptiermgr");
 #endif
-
-#include "pdpmcpr.h"
 
 using namespace Messages;
 using namespace MeshMachine;
@@ -175,11 +170,16 @@ void CPrimaryContextsMonitor::DeleteContextStatusMonitor(const CContextStatusMon
 	iContextMonitors.Remove(monitorIndex);
 	}
 
-void CPrimaryContextsMonitor::ProcessError(TInt aError)
+void CPrimaryContextsMonitor::ProcessError(
+	#ifdef _DEBUG
+		TInt aError
+	#else	//remove compilation warning in release builds
+		TInt /*aError*/
+	#endif
+	)
 	{
 	__ASSERT_DEBUG(aError != KErrNone, User::Invariant());
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPRIMARYCONTEXTSMONITOR_PROCESSERROR_1, ("PDP context monitoring error: %d"), aError);
-	(void)aError;  //needed for debug builds 
+	__FLOG_STATIC1(KPDPTierMgrTag, KPDPTierMgrSubTag, _L("PDP context monitoring error: %d"), aError);
 	}
 
 void CPrimaryContextsMonitor::RunL()
@@ -437,7 +437,7 @@ Create selector for this Tier.
 */
 MProviderSelector* CPDPTierManager::DoCreateProviderSelectorL(const Meta::SMetaData& aSelectionPreferences)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_DOCREATEPROVIDERSELECTORL_1, "CPdpTierManager[%08x]::DoSelectProvider()", (TUint)this);
+	__CFLOG_VAR((KPDPTierMgrTag, KPDPTierMgrSubTag, _L8("CPdpTierManager[%08x]::DoSelectProvider()"), this));
 	return TPdpSelectorFactory::NewSelectorL(aSelectionPreferences);
 	}
 
@@ -448,7 +448,7 @@ This function is used to retrieve tsy name.
 */
 void CPDPTierManager::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_CONSTRUCTL_1, "ConstructL::In CPDPTierManager");
+	__CFLOG_VAR((KPDPTierMgrTag, KPDPTierMgrSubTag, _L8("ConstructL::In CPDPTierManager")));
 	iMBMSEngine = CMBMSEngine::NewL(NodeId(), *this);
 	}
 

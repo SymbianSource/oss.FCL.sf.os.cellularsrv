@@ -525,6 +525,18 @@ RUN_TEST_STEP 30 Te_LoopBack TestDriveSmsDelete
 //
 END_TESTCASE TEL-MMTSY-NA-0039
 
+START_TESTCASE TEL-MMTSY-NA-0040
+//!@SYMTestCaseID TEL-MMTSY-NA-0040
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc
+//!@SYMTestPriority critical
+//!@SYMTestActions Test signal strength information for an incoming fax
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+//
+RUN_TEST_STEP 60 Te_LoopBack TestDriveSsFax
+//
+END_TESTCASE TEL-MMTSY-NA-0040
 
 START_TESTCASE TEL-MMTSY-NA-0041
 //!@SYMTestCaseID TEL-MMTSY-NA-0041
@@ -551,6 +563,32 @@ START_TESTCASE TEL-MMTSY-NA-0042
 RUN_TEST_STEP 30 Te_LoopBack TestDriveDataCallCancel
 //
 END_TESTCASE TEL-MMTSY-NA-0042
+
+START_TESTCASE TEL-MMTSY-NA-0043
+//!@SYMTestCaseID TEL-MMTSY-NA-0043
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Test Drive Prem Close
+//!@SYMTestPriority critical
+//!@SYMTestActions Tests performing a premature closure of a fax session
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+//
+RUN_TEST_STEP 90 Te_LoopBack TestDrivePremClose
+//
+END_TESTCASE TEL-MMTSY-NA-0043
+
+START_TESTCASE TEL-MMTSY-NA-0044
+//!@SYMTestCaseID TEL-MMTSY-NA-0044
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Test Drive Two Fax Rx
+//!@SYMTestPriority critical
+//!@SYMTestActions Test two fax receive
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+//
+RUN_TEST_STEP 90 Te_LoopBack TestDriveTwoFaxRx
+//
+END_TESTCASE TEL-MMTSY-NA-0044
 
 START_TESTCASE TEL-MMTSY-NA-0045
 //!@SYMTestCaseID TEL-MMTSY-NA-0045

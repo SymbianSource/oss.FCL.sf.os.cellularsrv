@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,13 +21,8 @@
 
 
 //  Include Files  
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cbertlvTraces.h"
-#endif
-
 #include "CBerTlv.h"				// Header of this class
+#include "tflogger.h"				// For logging
 
 //  External Data Structures  
 //    none
@@ -81,7 +76,7 @@ EXPORT_C TInt CBerTlv::TlvByTagValue
         TInt itemNbr                // Item number
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CBERTLV_TLVBYTAGVALUE_1, "UTILITY: CBerTlv::TlvByTagValue");
+    TFLOGSTRING("UTILITY: CBerTlv::TlvByTagValue");
     TInt currentTlv( 0 );
     TInt tlvLength( 0 );
     TInt index( 0 );
@@ -151,7 +146,7 @@ EXPORT_C TInt CBerTlv::TlvByTagValueMulti
         TUint8 aTlvTagValue         // Tag of TLV to find
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CBERTLV_TLVBYTAGVALUEMULTI_1, "UTILITY: CBerTlv::TlvByTagValueMulti");
+    TFLOGSTRING("UTILITY: CBerTlv::TlvByTagValueMulti");
     TInt currentTlv( 0 );
     TInt16 tlvLength( 0 );
     TInt indMulti( 0 );

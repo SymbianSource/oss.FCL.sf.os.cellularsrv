@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,14 +16,9 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CMmSIMTsyTraces.h"
-#endif
-
 #include "CMmSIMTsy.h"
 #include <ctsy/pluginapi/cmmdatapackage.h>
+#include <ctsy/tflogger.h>
 
 // ======== MEMBER FUNCTIONS ========
 
@@ -35,7 +30,7 @@ CMmSIMTsy::CMmSIMTsy():
 void CMmSIMTsy::ConstructL(
     CMmCustomTsy* aMmCustomTsy )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_1, "TSY: CMmSIMTsy::ConstructL");
+TFLOGSTRING("TSY: CMmSIMTsy::ConstructL");         
     iMmCustomTsy = aMmCustomTsy;
 
     // Create req handle store
@@ -64,7 +59,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_1, 
         ( KPhEngMaxViagHomeZones * KPhEngMaxCacheId ) ); );
     if ( leaveCode )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_2, "TSY: CMmSIMTsy::ConstructL: Could not construct o2 HomeZone dynamic cache, error=%d", leaveCode);
+TFLOGSTRING2("TSY: CMmSIMTsy::ConstructL: Could not construct o2 HomeZone dynamic cache, error=%d", leaveCode);
         iViagDynamicCache = NULL;
         }
     else
@@ -76,14 +71,14 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_2, 
         iViagDynamicCache->AppendL( zero, ( KPhEngMaxViagHomeZones * 
             KPhEngMaxCacheId ) );
         iViagHomeZoneCacheReady = EFalse;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_3, "TSY: CMmSIMTsy::ConstructL: o2 HomeZone dynamic cache array created.");
+TFLOGSTRING("TSY: CMmSIMTsy::ConstructL: o2 HomeZone dynamic cache array created.");
         }
     }
 
 CMmSIMTsy* CMmSIMTsy::NewL(
     CMmCustomTsy* aMmCustomTsy )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_NEWL_1, "TSY: CMmSIMTsy::NewL");
+TFLOGSTRING("TSY: CMmSIMTsy::NewL");    
     CMmSIMTsy* self = new (ELeave) CMmSIMTsy();
 
     CleanupStack::PushL( self );
@@ -95,7 +90,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_NEWL_1, "TSY: 
 
 CMmSIMTsy::~CMmSIMTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DTOR_1, "TSY: CMmSIMTsy::~CMmSIMTsy()");
+TFLOGSTRING("TSY: CMmSIMTsy::~CMmSIMTsy()");         
     // delete all CB ID related
     ResetAndDestroySimCbTopics();
 
@@ -155,7 +150,7 @@ TInt CMmSIMTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DOEXTFUNCL_1, "TSY: CMmSIMTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmSIMTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
     TInt ret( KErrGeneral );
 
     // Ensure the ReqHandleType is unset.
@@ -375,7 +370,7 @@ TInt CMmSIMTsy::ReadViagHomeZoneParamsL(
     RMmCustomAPI::TViagParams* aViagParameters, 
     RMmCustomAPI::TViagElement* aViagElements )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONEPARAMSL_1, "TSY: CMmSIMTsy::ReadViagHomeZoneParamsL");
+TFLOGSTRING("TSY: CMmSIMTsy::ReadViagHomeZoneParamsL");
     TInt ret( KErrNone);
 
     if ( ESIMTsyReqHandleUnknown != iTsyReqHandleStore->GetTsyReqHandle(
@@ -424,7 +419,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZO
 //
 void CMmSIMTsy::CheckViagHomezoneParamsL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CHECKVIAGHOMEZONEPARAMSL_1, "TSY: CMmSIMTsy::CheckViagHomezoneParamsL");
+TFLOGSTRING("TSY: CMmSIMTsy::CheckViagHomezoneParamsL");
     // Check if the request is pending
     if ( ESIMTsyReqHandleUnknown != iTsyReqHandleStore->GetTsyReqHandle(
         ESIMRequestTypeReadParams )  && iViagParamsReadRequested )
@@ -433,7 +428,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CHECKVIAGHOMEZ
         // read requests, set flag to EFalse.
         iViagParamsReadRequested = EFalse;
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CHECKVIAGHOMEZONEPARAMSL_2, "TSY: CMmSIMTsy::CheckViagHomezoneParamsL - Sending request" );
+TFLOGSTRING("TSY: CMmSIMTsy::CheckViagHomezoneParamsL - Sending request" );
         // send request to DOS (no parameters)
         // Void return value, there is nothing to be done if request fails.
         (void) iMmCustomTsy->Phone()->MessageManager()->HandleRequestL(
@@ -441,7 +436,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CHECKVIAGHOMEZ
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CHECKVIAGHOMEZONEPARAMSL_3, "TSY: CMmSIMTsy::CheckViagHomezoneParamsL - VIAG homezone params not requested");
+TFLOGSTRING("TSY: CMmSIMTsy::CheckViagHomezoneParamsL - VIAG homezone params not requested");
         }
 
     StartDynamicCachingL();
@@ -459,7 +454,7 @@ void CMmSIMTsy::CompleteReadViagHomeZoneParamsResp(
     RMmCustomAPI::TViagElements* aElems, 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_1, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - aError: %d", aError );
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - aError: %d", aError );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeReadParams );
     if ( ESIMTsyReqHandleUnknown != reqHandle )
@@ -467,29 +462,29 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVI
         if ( aError == KErrNone && iViagParams && iViagElems )
             {
             *iViagParams = *aParams;
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_2, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - iSmsC: %S", iViagParams->iSmsC );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_3, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - iScp: %S",  iViagParams->iScp );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_4, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - iSubscribedZoneAndVersion: %d", iViagParams->iSubscribedZoneAndVersion );
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - iSmsC: %S", &iViagParams->iSmsC );
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - iScp: %S",  &iViagParams->iScp );
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - iSubscribedZoneAndVersion: %d", iViagParams->iSubscribedZoneAndVersion );
 
             for ( TUint8 i = 0; i < RMmCustomAPI::KViagElementCount; i++ )
                 {
                 iViagElems[ i ].iCoordinates.iX = aElems->At(i).iCoordinates.iX;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_5, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iX: %d", i, aElems->At(i).iCoordinates.iX );
+TFLOGSTRING3("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iX: %d", i, aElems->At(i).iCoordinates.iX );
 
                 iViagElems[ i ].iCoordinates.iY = aElems->At(i).iCoordinates.iY;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_6, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iY: %d", i, aElems->At(i).iCoordinates.iY );
+TFLOGSTRING3("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iY: %d", i, aElems->At(i).iCoordinates.iY );
 
                 iViagElems[ i ].iCoordinates.iR2 = aElems->
                     At(i).iCoordinates.iR2;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_7, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iR2: %d", i, aElems->At(i).iCoordinates.iR2 );
+TFLOGSTRING3("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iR2: %d", i, aElems->At(i).iCoordinates.iR2 );
 
                 iViagElems[ i ].iCoordinates.iZoneId = aElems->
                     At(i).iCoordinates.iZoneId;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_8, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iZoneId: %d", i, aElems->At(i).iCoordinates.iZoneId );
+TFLOGSTRING3("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iZoneId: %d", i, aElems->At(i).iCoordinates.iZoneId );
 
                 iViagElems[ i ].iName.Copy( aElems->At(i).iName );
                 iViagElems[ i ].iActiveFlag = aElems->At(i).iActiveFlag;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_9, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iActiveFlag: %d", i, aElems->At(i).iActiveFlag );
+TFLOGSTRING3("TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iActiveFlag: %d", i, aElems->At(i).iActiveFlag );
                 }
             }
         iMmCustomTsy->ReqCompleted( reqHandle, aError );
@@ -504,7 +499,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREA
 //
 TInt CMmSIMTsy::ReadViagHomeZoneParamsCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONEPARAMSCANCEL_1, "TSY: CMmSIMTsy::ReadViagHomeZoneParamsCancel");
+TFLOGSTRING("TSY: CMmSIMTsy::ReadViagHomeZoneParamsCancel");
     // reset the pointer to client space
     iViagParams = NULL;
     iViagElems = NULL;
@@ -532,7 +527,7 @@ TInt CMmSIMTsy::ReadViagHomeZoneCacheL(
     RMmCustomAPI::TViagCacheRecordId* aViagRecordId,
     RMmCustomAPI::TViagCacheRecordContent* aViagRecordContent )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONECACHEL_1, "TSY: CMmSIMTsy::ReadViagHomeZoneCacheL");
+TFLOGSTRING("TSY: CMmSIMTsy::ReadViagHomeZoneCacheL");
     TInt ret( KErrGeneral );
 
     if ( ESIMTsyReqHandleUnknown != iTsyReqHandleStore->GetTsyReqHandle(
@@ -569,7 +564,7 @@ void CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL(
     RMmCustomAPI::TViagCacheRecordContent* aViagRecord,
     TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_1, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL");
+TFLOGSTRING("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL");
     iLastViagHomeZoneCacheError = aError;
     if (iCurrentlyRetrievedCache == NULL)
         {
@@ -591,7 +586,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVI
                 ( ( iCurrentlyRetrievedCache->iCacheId - 1 ) * 21 ) +
                 iCurrentlyRetrievedCache->iRecordId;
             iViagDynamicCache->At( arrayIndex ) = *aViagRecord;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_2, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:Entry at cacheId=%d, recordId=%d read.", iCurrentlyRetrievedCache->iCacheId,iCurrentlyRetrievedCache->iRecordId);
+TFLOGSTRING3("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:Entry at cacheId=%d, recordId=%d read.", iCurrentlyRetrievedCache->iCacheId,iCurrentlyRetrievedCache->iRecordId);
 
             TRAP_IGNORE(
                 // loop. loop four caches times 21 entries!
@@ -623,14 +618,14 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREA
                 delete iCurrentlyRetrievedCache;
                 iCurrentlyRetrievedCache = NULL;
                 iViagHomeZoneCacheReady = ETrue;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_3, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:Caching completed successfully!");
+TFLOGSTRING("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:Caching completed successfully!");
 
                 if( 0 < iReadViagHomeZoneCacheRequests.Count() )
                     {
                     
                     for ( TInt i=0; i <iReadViagHomeZoneCacheRequests.Count() ; i++ )
                         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_4, "TSY: CMmSIMTsy::CompleteReadDynamicViagHomeZoneCacheRespL: for i:%d", i);
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadDynamicViagHomeZoneCacheRespL: for i:%d", i);
                         TReadViagHomeZoneCacheRequest* req = 
 		  			    iReadViagHomeZoneCacheRequests[ i ];
 		  			    
@@ -660,13 +655,13 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVI
             // caching aborted
         delete iCurrentlyRetrievedCache;
         iCurrentlyRetrievedCache = NULL;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_5, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:There was a problem reading cache values from SIM, error=%d", aError);
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:There was a problem reading cache values from SIM, error=%d", aError);
             //iViagHomeZoneCacheReady = ETrue;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_6, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL: Caching completed unsuccessfully!");
+TFLOGSTRING("TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL: Caching completed unsuccessfully!");
 
             for (TInt i = 0; i < iReadViagHomeZoneCacheRequests.Count(); i++)
                 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_7, "TSY: CMmSIMTsy::CompleteReadDynamicViagHomeZoneCacheRespL: for i:%d", i);
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteReadDynamicViagHomeZoneCacheRespL: for i:%d", i);
                 TReadViagHomeZoneCacheRequest* req =
                         iReadViagHomeZoneCacheRequests[i];
                 iMmCustomTsy->ReqCompleted(req->iReqHandle, aError);
@@ -685,8 +680,8 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVI
 TInt CMmSIMTsy::ReadViagHomeZoneCacheCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONECACHECANCEL_1, "TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel");
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONECACHECANCEL_2, "TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel - Handle:%d",aTsyReqHandle);
+TFLOGSTRING("TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel");
+TFLOGSTRING2("TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel - Handle:%d",aTsyReqHandle);
     // Reset the pointer to client space
     iViagReadCacheRecord = NULL;
 
@@ -701,7 +696,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZO
             ESIMRequestTypeReadCache );
         if ( ESIMTsyReqHandleUnknown != reqHandle )
         	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONECACHECANCEL_3, "TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel - Completed with Cancel Handle:%d",reqHandle);
+TFLOGSTRING2("TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel - Completed with Cancel Handle:%d",reqHandle);	
 			// Complete request with cancel
 			iMmCustomTsy->ReqCompleted( reqHandle, KErrCancel );
         	}
@@ -719,7 +714,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZO
                 if (aTsyReqHandle == req->iReqHandle)
                 	{
                 	// Complete the request if the request handle is found
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READVIAGHOMEZONECACHECANCEL_4, "TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel - Complete with Cancel from array Handle:%d Id=%d ", req->iReqHandle,i);
+TFLOGSTRING3("TSY: CMmSIMTsy::ReadViagHomeZoneCacheCancel - Complete with Cancel from array Handle:%d Id=%d ", req->iReqHandle,i);
                     iMmCustomTsy->ReqCompleted( req->iReqHandle, KErrCancel );
 	                delete iReadViagHomeZoneCacheRequests[ i ];
 	                iReadViagHomeZoneCacheRequests.Remove(i);
@@ -742,8 +737,8 @@ TInt CMmSIMTsy::ReadDynamicViagHomeZoneCacheL(
     RMmCustomAPI::TViagCacheRecordId* aViagRecordId,
     RMmCustomAPI::TViagCacheRecordContent* aViagRecordContent )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READDYNAMICVIAGHOMEZONECACHEL_1, "TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache:Is ViagHomeZoneCache Ready =%d", iViagHomeZoneCacheReady);
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READDYNAMICVIAGHOMEZONECACHEL_2, "TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache iCacheId %d iRecordId %d",aViagRecordId->iCacheId,aViagRecordId->iRecordId );
+TFLOGSTRING2("TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache:Is ViagHomeZoneCache Ready =%d", iViagHomeZoneCacheReady);
+TFLOGSTRING3("TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache iCacheId %d iRecordId %d",aViagRecordId->iCacheId,aViagRecordId->iRecordId );
     TInt err = KErrNone;
 	//  KPhEngMaxViagHomeZones(4) * KPhEngMaxCacheId(21)
 	if ( 1 > aViagRecordId->iCacheId || 4 < aViagRecordId->iCacheId || 
@@ -753,7 +748,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READDYNAMIC
 		}
     else if ( iViagDynamicCache && iViagHomeZoneCacheReady )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READDYNAMICVIAGHOMEZONECACHEL_3, "TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache: else if : Cache is ready, Reading cache possible");
+TFLOGSTRING("TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache: else if : Cache is ready, Reading cache possible");
         // copy data from dynamic cache to client
         // some arithmetics:
         //     cache ids range 1..4
@@ -766,7 +761,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READDYNAMICVIA
         }
     else if ( !iViagHomeZoneCacheReady )
         {
- OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_READDYNAMICVIAGHOMEZONECACHEL_4, "TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache: else if : Cache is NOT ready, Reading cache NOT possible");
+ TFLOGSTRING("TSY: CMmSIMTsy::ReadDynamicViagHomeZoneCache: else if : Cache is NOT ready, Reading cache NOT possible");
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about
 		TReadViagHomeZoneCacheRequest* req = 
@@ -801,7 +796,7 @@ TInt CMmSIMTsy::WriteViagHomeZoneCacheL(
     RMmCustomAPI::TViagCacheRecordId* aViagRecordId,
     RMmCustomAPI::TViagCacheRecordContent* aViagRecordContent )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_WRITEVIAGHOMEZONECACHEL_1, "TSY: CCMmSIMTsy::WriteViagHomeZoneCacheL iCacheId %d iRecordId %d",aViagRecordId->iCacheId,aViagRecordId->iRecordId );
+TFLOGSTRING3("TSY: CCMmSIMTsy::WriteViagHomeZoneCacheL iCacheId %d iRecordId %d",aViagRecordId->iCacheId,aViagRecordId->iRecordId );
     TInt ret( KErrGeneral );
 
     if ( ESIMTsyReqHandleUnknown != iTsyReqHandleStore->GetTsyReqHandle(
@@ -853,7 +848,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_WRITEVIAGHO
 void CMmSIMTsy::CompleteWriteViagHomeZoneCacheResp(
     TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEWRITEVIAGHOMEZONECACHERESP_1, "TSY: CMmSIMTsy::CompleteWriteViagHomeZoneCacheResp");
+TFLOGSTRING("TSY: CMmSIMTsy::CompleteWriteViagHomeZoneCacheResp");
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeWriteCache );
 
@@ -874,7 +869,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEWRITEV
 void CMmSIMTsy::CompleteWriteViagHomeZoneUHZIUESettingsResp(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEWRITEVIAGHOMEZONEUHZIUESETTINGSRESP_1, "TSY: CMmSIMTsy::CompleteWriteViagHomeZoneUHZIUESettingsResp error = %d",aError);
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteWriteViagHomeZoneUHZIUESettingsResp error = %d",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeWriteSettings );
 
@@ -913,12 +908,12 @@ TInt CMmSIMTsy::WriteViagHomeZoneCacheCancel()
 //
 void CMmSIMTsy::StartDynamicCachingL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_1, "TSY: CMmSIMTsy::StartDynamicCachingL");
+TFLOGSTRING("TSY: CMmSIMTsy::StartDynamicCachingL");
     iLastViagHomeZoneCacheError = KErrNone;
 	// Make sure there are no ongoing dynamic caching requests.. 
 	if( iCurrentlyRetrievedCache ) 
 		{ 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_2, "TSY: CMmSIMTsy::StartDynamicCachingL - iCurrentlyRetrievedCache already exists - no new request done");
+TFLOGSTRING("TSY: CMmSIMTsy::StartDynamicCachingL - iCurrentlyRetrievedCache already exists - no new request done");       
 		return; 
 		} 
 
@@ -927,10 +922,10 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCA
         RMmCustomAPI::TViagCacheRecordId(); );
     if ( trapError )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_3, "TSY: CMmSIMTsy::StartDynamicCachingL:Could not start caching, error=%d", trapError);
+TFLOGSTRING2("TSY: CMmSIMTsy::StartDynamicCachingL:Could not start caching, error=%d", trapError);
         return;
     }
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_4, "TSY: CMmSIMTsy::StartDynamicCachingL:Starting caching now.");
+TFLOGSTRING("TSY: CMmSIMTsy::StartDynamicCachingL:Starting caching now.");
     iCurrentlyRetrievedCache->iCacheId = 1;  // caches range from 1 to 4
     iCurrentlyRetrievedCache->iRecordId = 0; // records range from 0 to 20
     // send request to DOS
@@ -951,7 +946,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCA
 TInt CMmSIMTsy::WriteViagHomeZoneUHZIUESettingsL(
     RMmCustomAPI::TViagUHZIUESettings* aSettings )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_WRITEVIAGHOMEZONEUHZIUESETTINGSL_1, "TSY: CMmSIMTsy::WriteViagHomeZoneUHZIUESettingsL");
+TFLOGSTRING("TSY: CMmSIMTsy::WriteViagHomeZoneUHZIUESettingsL");
     TInt ret( KErrGeneral );
 
     if ( ESIMTsyReqHandleUnknown != iTsyReqHandleStore->GetTsyReqHandle(
@@ -982,7 +977,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_WRITEVIAGHOMEZ
 //
 TInt CMmSIMTsy::WriteViagHomeZoneUHZIUESettingsCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_WRITEVIAGHOMEZONEUHZIUESETTINGSCANCEL_1, "TSY: CMmSIMTsy::WriteViagHomeZoneUHZIUESettingsCancel");
+TFLOGSTRING("TSY: CMmSIMTsy::WriteViagHomeZoneUHZIUESettingsCancel");
     // check if handle is not in use.
     TTsyReqHandle scFileHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( ESIMRequestTypeWriteSettings );
@@ -1014,7 +1009,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_WRITEVIAGHOMEZ
 TInt CMmSIMTsy::StartSimCbTopicBrowsingL(
     const TTsyReqHandle /*aTsyReqHandle */)
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTSIMCBTOPICBROWSINGL_1, "TSY: CMmSIMTsy::StartSimCbTopicBrowsingL");
+TFLOGSTRING("TSY: CMmSIMTsy::StartSimCbTopicBrowsingL");
     // reset variables
     ResetAndDestroySimCbTopics();
     iGetNextSimCbTopicIndex = KNoCbIds;
@@ -1055,7 +1050,7 @@ void CMmSIMTsy::CompleteStartSimCbTopicBrowsing(
     CArrayFixFlat<RMmCustomAPI::TSimCbTopic>* aTopics, 
     TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETESTARTSIMCBTOPICBROWSING_1, "TSY: CMmSIMTsy::CompleteStartSimCbTopicBrowsing");
+TFLOGSTRING("TSY: CMmSIMTsy::CompleteStartSimCbTopicBrowsing");
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeStartSimCbTopicBrowsing );
 
@@ -1098,7 +1093,7 @@ TInt CMmSIMTsy::GetNextSimCbTopic(
     TTsyReqHandle aTsyReqHandle, 
     RMmCustomAPI::TSimCbTopic *aSimCbTopic )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_GETNEXTSIMCBTOPIC_1, "TSY: CMmSIMTsy::GetNextSimCbTopic");
+TFLOGSTRING("TSY: CMmSIMTsy::GetNextSimCbTopic");
     // initialize ret with KErrNotFound
     TInt ret ( KErrNotFound );
 
@@ -1134,7 +1129,7 @@ TInt CMmSIMTsy::DeleteSimCbTopicL(
     const TTsyReqHandle /*aTsyReqHandle */, 
     TUint* aSimCbTopicNumber )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DELETESIMCBTOPICL_1, "TSY: CMmSIMTsy::DeleteSimCbTopicL");
+TFLOGSTRING("TSY: CMmSIMTsy::DeleteSimCbTopicL");
     TInt ret( KErrNone );
     TBool topicInSimMemoryDelete ( EFalse );
 
@@ -1193,7 +1188,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DELETESIMCBTOP
 void CMmSIMTsy::CompleteDeleteSimCbTopic(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEDELETESIMCBTOPIC_1, "TSY: CMmSIMTsy::CompleteDeleteSimCbTopic- aError: %d", aError);
+TFLOGSTRING2("TSY: CMmSIMTsy::CompleteDeleteSimCbTopic- aError: %d", aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeDeleteSimCbTopic );
 
@@ -1303,7 +1298,7 @@ void CMmSIMTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETE_1,  "CustomTSY: CMmSIMTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+TFLOGSTRING3( "CustomTSY: CMmSIMTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
 
     // All possible TSY req handle types are listed in the
     // switch case below.

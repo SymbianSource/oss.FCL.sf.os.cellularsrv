@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyRefreshTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyRefresh.h"  	// Class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -50,13 +45,13 @@ CSatNotifyRefresh* CSatNotifyRefresh::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_NEWL_1, "CSAT: CSatNotifyRefresh::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::NewL");
    	CSatNotifyRefresh* const satNotifyRefresh = 
         new ( ELeave ) CSatNotifyRefresh( aNotificationsTsy );
     CleanupStack::PushL( satNotifyRefresh );
     satNotifyRefresh->ConstructL();
     CleanupStack::Pop( satNotifyRefresh );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_NEWL_2, "CSAT: CSatNotifyRefresh::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::NewL, end of method");
     return satNotifyRefresh;
     }
 
@@ -70,7 +65,7 @@ CSatNotifyRefresh::~CSatNotifyRefresh
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_DTOR_1, "CSAT: CSatNotifyRefresh::~CSatNotifyRefresh");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::~CSatNotifyRefresh");
     }
     
 // -----------------------------------------------------------------------------
@@ -96,7 +91,7 @@ void CSatNotifyRefresh::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_CONSTRUCTL_1, "CSAT: CSatNotifyRefresh::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::ConstructL");
     }
 
 // -----------------------------------------------------------------------------
@@ -110,7 +105,7 @@ TInt CSatNotifyRefresh::Notify
         const TDataPackage& aPackage  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_NOTIFY_1, "CSAT: CSatNotifyRefresh::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::Notify");
 
     // Save data pointer to client side for completion
     iRefreshV2Pckg = reinterpret_cast<RSat::TRefreshV2Pckg*>( 
@@ -141,7 +136,7 @@ TInt CSatNotifyRefresh::NotifyRefreshRequired
         const TDataPackage& aPackage 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_NOTIFYREFRESHREQUIRED_1, "CSAT: CSatNotifyRefresh::NotifyRefreshRequired");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::NotifyRefreshRequired");
 
     // Save data pointer to client side for completion
     iRefreshRequiredV2Pckg = reinterpret_cast<RSat::TRefreshV2Pckg*>( 
@@ -171,7 +166,7 @@ TInt CSatNotifyRefresh::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_CANCELNOTIFICATION_1,  "CSAT: CSatNotifyRefresh::CancelNotification" );
+    TFLOGSTRING( "CSAT: CSatNotifyRefresh::CancelNotification" );
     
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
@@ -196,7 +191,7 @@ TInt CSatNotifyRefresh::CancelRefreshRequiredNotification
     	const TTsyReqHandle aTsyReqHandle
      	)
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_CANCELREFRESHREQUIREDNOTIFICATION_1,  "CSAT: CSatNotifyRefresh::CancelRefreshRequiredNotification" );
+    TFLOGSTRING( "CSAT: CSatNotifyRefresh::CancelRefreshRequiredNotification" );
         
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
@@ -223,14 +218,15 @@ TInt CSatNotifyRefresh::CompleteNotifyL
         TInt aErrorCode                 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_1, "CSAT: CSatNotifyRefresh::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL");
 
     TInt ret( KErrNone );
 	TBuf<1> additionalInfo;	
     // Unpack parameters
     TPtrC8* data;
     aDataPackage->UnPackData( &data );
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_2, "CSAT: CSatNotifyRefresh::CompleteNotifyL, dataLength: %d", data->Length());
+    TFLOGSTRING2("CSAT: CSatNotifyRefresh::CompleteNotifyL, dataLength: %d", 
+        data->Length());
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         TsyReqHandle( CSatTsy::ESatNotifyRefreshPCmdReqType );
@@ -327,7 +323,8 @@ TInt CSatNotifyRefresh::CompleteNotifyL
 	        else if ( KFileChangeNotification == iNotificationsTsy->
 	        	iTerminalRespData.iCommandDetails[KCommandQualifier] )
 	            {
-	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_3, "CSAT: CSatNotifyRefresh::CompleteNotifyL, File list missing");
+	            TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL,\
+	                File list missing");
 	            // File list object is missing, return terminal resp immediately.
 	            ret = KErrCorrupt;
 	            additionalInfo.Zero();
@@ -343,7 +340,9 @@ TInt CSatNotifyRefresh::CompleteNotifyL
 	                {
 	                case KSimInitFullFileChangeNotification:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_4, "CSAT: CSatNotifyRefresh::CompleteNotifyL, Refresh mode: Sim init and full file change notification");
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::\
+	                    	CompleteNotifyL, Refresh mode: Sim init \
+	                    	and full file change notification");
 	                    refreshV2.iType = 
 	                        RSat::ESimInitFullFileChangeNotification;
 	                    iInternalCache = CSatNotificationsTsy::ECacheEFSST + 
@@ -352,8 +351,11 @@ TInt CSatNotifyRefresh::CompleteNotifyL
 	                    }
 	                case KFileChangeNotification:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_5, "CSAT: CSatNotifyRefresh::CompleteNotifyL Refresh mode: File Change Notification");
-	                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_6, "CSAT: CSatNotifyRefresh::CompleteNotifyL Number of files: %d", refreshV2.iFileList.Length() );
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Refresh mode: File Change Notification");
+	                    TFLOGSTRING2("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Number of files: %d", 
+	                    	refreshV2.iFileList.Length() );
 	                    refreshV2.iType = RSat::EFileChangeNotification;
 	                    
 	                    if ( ( KErrNotFound != refreshV2.iFileList.Locate( 
@@ -376,14 +378,19 @@ TInt CSatNotifyRefresh::CompleteNotifyL
 	                    }
 	                case KSimInitFileChangeNotification:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_7, "CSAT: CSatNotifyRefresh::CompleteNotifyL, Refresh mode: Sim init and file change notification");
-	                    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_8, "CSAT: CSatNotifyRefresh::CompleteNotifyL Number of files: %d", refreshV2.iFileList.Length() );
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL,\
+	                    	Refresh mode: Sim init and file \
+	                    	change notification");
+	                    TFLOGSTRING2("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Number of files: %d", 
+	                    	refreshV2.iFileList.Length() );
 	                    refreshV2.iType = RSat::ESimInitFileChangeNotification;
 	                    break;
 	                    }
 	                case KSimInit:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_9, "CSAT: CSatNotifyRefresh::CompleteNotifyL Refresh mode: Sim init ");
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Refresh mode: Sim init ");
 	                    refreshV2.iType = RSat::ESimInit;
 	                    iInternalCache = CSatNotificationsTsy::ECacheEFSST 
 	                    	+ CSatNotificationsTsy::ECacheEFCBMID;
@@ -394,14 +401,16 @@ TInt CSatNotifyRefresh::CompleteNotifyL
 	                case KSimReset:
 	                    {
 	                    refreshV2.iType = RSat::ESimReset;
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_10, "CSAT: CSatNotifyRefresh::CompleteNotifyL Refresh mode: Reset");
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Refresh mode: Reset");
 	                    iInternalCache = CSatNotificationsTsy::ECacheEFSST + 
 	                    	CSatNotificationsTsy::ECacheEFCBMID;
 	                    break;
 	                    }
 	                case KUSIMApplicationReset:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_11, "CSAT: CSatNotifyRefresh::CompleteNotifyL Refresh mode: USIM Application Reset");
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Refresh mode: USIM Application Reset");
 	                    refreshV2.iType = RSat::EUsimApplicationReset;
 	                    iInternalCache = CSatNotificationsTsy::ECacheEFSST + 
 	                    	CSatNotificationsTsy::ECacheEFCBMID;
@@ -409,13 +418,15 @@ TInt CSatNotifyRefresh::CompleteNotifyL
 	                    }
 	                case K3GSessionReset:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_12, "CSAT: CSatNotifyRefresh::CompleteNotifyL Refresh mode: 3G Session Reset");
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Refresh mode: 3G Session Reset");
 	                    refreshV2.iType = RSat::E3GSessionReset;
 	                    break;
 	                    }
 	                default:
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_13, "CSAT: CSatNotifyRefresh::CompleteNotifyL Refresh type not set!");
+	                    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL\
+	                    	Refresh type not set!");
 	                    // This migth be an error case
 	                    refreshV2.iType = RSat::ERefreshTypeNotSet;
 	                    break;
@@ -450,7 +461,8 @@ TInt CSatNotifyRefresh::CompleteNotifyL
         }
     else
     	{        
-    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETENOTIFYL_14, "CSAT: CSatNotifyRefresh::CompleteNotifyL, One or more of the requests not ongoing");
+    	TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteNotifyL,\
+    	    One or more of the requests not ongoing");
         // Some of the request were not on, returning response immediately
         additionalInfo.Zero();
         additionalInfo.Append( RSat::KNoSpecificMeProblem );
@@ -474,7 +486,7 @@ TInt CSatNotifyRefresh::TerminalResponseL
         TDes8* aRsp
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_TERMINALRESPONSEL_1, "CSAT: CSatNotifyRefresh::TerminalResponseL");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::TerminalResponseL");
 
     RSat::TRefreshRspV1Pckg* aRspPckg = 
             reinterpret_cast<RSat::TRefreshRspV1Pckg*>( aRsp );
@@ -496,7 +508,8 @@ TInt CSatNotifyRefresh::TerminalResponseL
     		( RSat::KSuccess != rspV1.iGeneralResult ) ) && 
     		( EImsiNotEqual != iImsiState ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_TERMINALRESPONSEL_2, "CSAT: CSatNotifyRefresh::TerminalResponseL, S60 has done the Refresh" );
+        TFLOGSTRING("CSAT: CSatNotifyRefresh::TerminalResponseL, \
+        	S60 has done the Refresh" );
         // Send terminal response
         CreateTerminalRespL( pCmdNumber, (TUint8) rspV1.iGeneralResult, 
         	additionalInfo );
@@ -526,10 +539,11 @@ void CSatNotifyRefresh::CompleteImsiChange
         // None
     	)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETEIMSICHANGE_1, "CSAT: CSatNotifyRefresh::CompleteImsiChange");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteImsiChange");
     if ( ERefreshSimInitReceived == iImsiState )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETEIMSICHANGE_2, "CSAT: CSatNotifyRefresh::CompleteImsiChange, IMSI not equal");
+        TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteImsiChange, \
+            IMSI not equal");
         iImsiState = EImsiNotEqual;
         }        
     }    
@@ -547,7 +561,7 @@ TInt CSatNotifyRefresh::CreateTerminalRespL
         TDesC16& aAdditionalInfo		   
 		)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_CREATETERMINALRESPL_1, "CSAT: CSatNotifyRefresh::CreateTerminalRespL");
+	TFLOGSTRING("CSAT: CSatNotifyRefresh::CreateTerminalRespL");
     // Create and append response data
     TTlv tlvSpecificData;
     // append result tag
@@ -587,7 +601,7 @@ TInt CSatNotifyRefresh::RefreshAllowedL
 		const TDataPackage& aPackage
     	)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_REFRESHALLOWEDL_1, "CSAT: CSatNotifyRefresh::RefreshAllowed ");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::RefreshAllowed ");       
     RSat::TRefreshRspV1Pckg* aRspPckg = 
             reinterpret_cast<RSat::TRefreshRspV1Pckg*>( aPackage.Des1n() );
     RSat::TRefreshRspV1& rspV1 = ( *aRspPckg ) ();
@@ -611,7 +625,8 @@ TInt CSatNotifyRefresh::RefreshAllowedL
     else
         {
         // Refresh not allowed by the client
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_REFRESHALLOWEDL_2, "CSAT: CSatNotifyRefresh::RefreshAllowed, refresh was not allowed by the client");
+        TFLOGSTRING("CSAT: CSatNotifyRefresh::RefreshAllowed, refresh was not \
+            allowed by the client");
 		TBuf<RSat::KAdditionalInfoMaxSize> additionalInfo;
 		additionalInfo.Append(RSat::KNoSpecificMeProblem);
         if ( RSat::KNoAdditionalInfo != rspV1.iInfoType )
@@ -639,7 +654,7 @@ TInt CSatNotifyRefresh::CompleteTerminalRespDataL
         TInt /*aErrorCode*/              
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETETERMINALRESPDATAL_1, "CSAT: CSatNotifyRefresh::CompleteTerminalRespDataL");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteTerminalRespDataL");
     TInt ret( KErrNone );
     CSatNotificationsTsy::TTerminalRespData* terminalRespData;
     // Send terminal response
@@ -666,11 +681,13 @@ void CSatNotifyRefresh::CompleteRequest
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyRefreshPCmdReqType );
 		
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETEREQUEST_1, "CSAT: CSatNotifyRefresh::CompleteRequest.\n\t\t\t Handle:%d\n\t\t\t Error:%d", reqHandle, aErrorCode);
+    TFLOGSTRING3("CSAT: CSatNotifyRefresh::CompleteRequest.\
+    	 \n\t\t\t Handle:%d\n\t\t\t Error:%d", reqHandle, aErrorCode);
     	 		
     iNotificationsTsy->iSatTsy->ReqCompleted( reqHandle, aErrorCode);
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETEREQUEST_2, "CSAT: CSatNotifyRefresh::CompleteRequest. Request is now completed");
+    TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteRequest. Request is \
+    	now completed");    
     }     
 #else //USING_CTSY_DISPATCHER
 void CSatNotifyRefresh::CompleteRequest
@@ -685,13 +702,15 @@ void CSatNotifyRefresh::CompleteRequest
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyRefreshPCmdReqType );
 
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETEREQUEST1_1, "CSAT: CSatNotifyRefresh::CompleteRequest. \n\t\t\t Handle:%d\n\t\t\t Error:%d", reqHandle, retValue);
+    TFLOGSTRING3("CSAT: CSatNotifyRefresh::CompleteRequest.\
+    	 \n\t\t\t Handle:%d\n\t\t\t Error:%d", reqHandle, retValue);
     	 		   
     if(CSatTsy::ESatReqHandleUnknown != reqHandle) 
     	{
         iNotificationsTsy->iSatTsy->ReqCompleted( reqHandle, retValue );
 
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYREFRESH_COMPLETEREQUEST1_2, "CSAT: CSatNotifyRefresh::CompleteRequest. Request is now completed");
+        TFLOGSTRING("CSAT: CSatNotifyRefresh::CompleteRequest. Request is \
+        	now completed");
     	} 
     
     }

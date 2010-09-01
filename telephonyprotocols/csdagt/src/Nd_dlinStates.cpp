@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,9 @@
  @file Nd_dlinstates.cpp 
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "Nd_dlinStatesTraces.h"
-#endif
-
 #include "ND_DLIN.H"
 #include "Nd_dlinStates.h"
+#include "SLOGGER.H"
 #include <comms-infras/eventlogger.h>
 #include <csdprog.h>
 #include "ND_DBACC.H"
@@ -262,7 +257,8 @@ Answer is always asynchronous, so should never complete when cancelled
 	
 	if(iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLINANSWERING_RUNL_1, "NetDial:\tCompleted Phase Answering with Error %d", iStatus.Int());
+		__FLOG_STMT(_LIT(logString3,"Answering");)
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
 		}
 	else
 		{
@@ -392,7 +388,8 @@ Dial in open start completed.
 Call ConnectionComplete() with EConnectionOpen and iStatus.Int().
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLINOPEN_RUNL_1, "NetDial:\tConnection Open");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tConnection Open");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	iSMObserver->ConnectionComplete(ECsdConnectionOpen,iStatus.Int());
 	}
 
@@ -481,7 +478,8 @@ Dial in disconnect completed.
 Call DisconnectComplete().
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLINDISCONNECT_RUNL_1, "NetDial:\tDisconnect Complete");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tDisconnect Complete");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	
 	iSMObserver->DisconnectComplete();
 	}
@@ -612,7 +610,8 @@ Hangup is always asynchronous, so it should never complete when cancelled.
 	iNdEnv->Logger()->LogDataUpdateEvent(R_LOG_CON_DISCONNECTED, KLogDataEventTypeUid);
 	if(iStatus!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDLINHANGUP_RUNL_1, "NetDial:\tCompleted Phase Hanging Up with Error %d",iStatus.Int());
+		__FLOG_STMT(_LIT(logString3,"Hanging Up");)
+		__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(KCompletedPhaseLogString()), &logString3(), iStatus.Int());
 		}
 	iSMObserver->UpdateProgress(ECsdFinishedHangUp,KErrNone);
 	(iNdEnv->BaseEnv())->CompleteState(iStatus.Int());

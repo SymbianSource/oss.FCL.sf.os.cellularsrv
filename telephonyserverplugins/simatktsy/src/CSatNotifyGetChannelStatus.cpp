@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyGetChannelStatusTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyGetChannelStatus.h"  // Class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifyGetChannelStatus* CSatNotifyGetChannelStatus::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_NEWL_1, "CSAT: CSatNotifyGetChannelStatus::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::NewL");
    	CSatNotifyGetChannelStatus* const satNotifyGetChannelStatus = 
         new ( ELeave ) CSatNotifyGetChannelStatus( aNotificationsTsy );
     CleanupStack::PushL( satNotifyGetChannelStatus );
     satNotifyGetChannelStatus->ConstructL();
     CleanupStack::Pop( satNotifyGetChannelStatus );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_NEWL_2, "CSAT: CSatNotifyGetChannelStatus::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::NewL, end of method");
     return satNotifyGetChannelStatus;
     }
 
@@ -67,7 +62,8 @@ CSatNotifyGetChannelStatus::~CSatNotifyGetChannelStatus
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_DTOR_1, "CSAT: CSatNotifyGetChannelStatus::~CSatNotifyGetChannelStatus");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::~CSatNotifyGetChannelStatus"
+        );
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +89,7 @@ void CSatNotifyGetChannelStatus::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_CONSTRUCTL_1, "CSAT: CSatNotifyGetChannelStatus::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -108,7 +104,7 @@ TInt CSatNotifyGetChannelStatus::Notify
         const TDataPackage& aPackage 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_NOTIFY_1, "CSAT: CSatNotifyGetChannelStatus::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::Notify");
     // Save data pointers to client side for completion
     iGetChannelStatusRspV2Pckg = reinterpret_cast<RSat::TGetChannelStatusV2Pckg*>( 
         aPackage.Des1n() );         
@@ -131,7 +127,7 @@ TInt CSatNotifyGetChannelStatus::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_CANCELNOTIFICATION_1, "CSAT: CSatNotifyGetChannelStatus::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyGetChannelStatusPCmdReqType );
@@ -154,7 +150,7 @@ TInt CSatNotifyGetChannelStatus::CompleteNotifyL
         TInt aErrorCode                 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_COMPLETENOTIFYL_1, "CSAT: CSatNotifyGetChannelStatus::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::CompleteNotifyL");
 
     TInt ret( KErrNone );	
     // Unpack parameters
@@ -181,7 +177,8 @@ TInt CSatNotifyGetChannelStatus::CompleteNotifyL
         // Complete right away if error has occured, otherwise continue..
         if ( KErrNone == aErrorCode )
             {
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_COMPLETENOTIFYL_2, "CSAT: CSatNotifyGetChannelStatus::CompleteNotifyL aErrorCode: %d", aErrorCode );
+            TFLOGSTRING2("CSAT: CSatNotifyGetChannelStatus::CompleteNotifyL\
+                aErrorCode: %d", aErrorCode );
 	        // Fill the Get Channel status structure             
 	        RSat::TGetChannelStatusV2& channelStatusV2 = 
 	            ( *iGetChannelStatusRspV2Pckg )();
@@ -197,7 +194,8 @@ TInt CSatNotifyGetChannelStatus::CompleteNotifyL
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_COMPLETENOTIFYL_3, "CSAT: CSatNotifyGetChannelStatus::CompleteNotifyL Request not ongoing");
+		TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::CompleteNotifyL\
+		    Request not ongoing");
    		// Request not on, returning response immediately
 		TBuf16<1> additionalInfo;
 		additionalInfo.Append( RSat::KNoSpecificMeProblem );
@@ -219,7 +217,7 @@ TInt CSatNotifyGetChannelStatus::TerminalResponseL
         TDes8* aRsp
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_TERMINALRESPONSEL_1, "CSAT: CSatNotifyGetChannelStatus::TerminalResponseL");
+    TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::TerminalResponseL");
     TInt   ret( KErrNone );
     
     TBuf16<RSat::KAdditionalInfoMaxSize> additionalInfo;
@@ -243,7 +241,8 @@ TInt CSatNotifyGetChannelStatus::TerminalResponseL
         && ( RSat::KCmdNumberNotKnown != rspV2.iGeneralResult )
         && ( RSat::KErrorRequiredValuesMissing != rspV2.iGeneralResult ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_TERMINALRESPONSEL_2, "CSAT: CSatNotifyGetChannelStatus::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::TerminalResponseL,\
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -253,7 +252,8 @@ TInt CSatNotifyGetChannelStatus::TerminalResponseL
         {
         if ( !rspV2.iAdditionalInfo.Length() )
         	{
-        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_TERMINALRESPONSEL_3, "CSAT: CSatNotifyGetChannelStatus::TerminalResponseL, Invalid Additional Info");
+        	TFLOGSTRING("CSAT: CSatNotifyGetChannelStatus::TerminalResponseL,\
+                Invalid Additional Info");
 	        ret = KErrCorrupt;
 	        }
 	    else
@@ -287,7 +287,7 @@ TInt CSatNotifyGetChannelStatus::CreateTerminalRespL
         const TDesC16& aAdditionalInfo
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_CREATETERMINALRESPL_1, "CSAT: CSatMessHandler::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatMessHandler::CreateTerminalRespL");
     TTlv tlvSpecificData;
     // Append general result tag
     tlvSpecificData.AddTag( KTlvResultTag );
@@ -319,7 +319,8 @@ TInt CSatNotifyGetChannelStatus::CreateTerminalRespL
         }
    	else
    		{
-    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETCHANNELSTATUS_CREATETERMINALRESPL_2, "CSAT: CSatMessHandler::CreateTerminalRespL - mandatory channel status missing");
+    	TFLOGSTRING("CSAT: CSatMessHandler::CreateTerminalRespL - \
+    		 mandatory channel status missing");
    		}       
 
     // Prepare data

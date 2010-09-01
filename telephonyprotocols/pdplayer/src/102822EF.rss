@@ -59,7 +59,7 @@ interfaces =
                 }
             };
         },
-
+#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     INTERFACE_INFO
         {
         interface_uid = CprInterfaceUid;
@@ -75,7 +75,7 @@ interfaces =
                 }
             };
         },
-
+#endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     INTERFACE_INFO
         {
         interface_uid = ScprInterfaceUid;

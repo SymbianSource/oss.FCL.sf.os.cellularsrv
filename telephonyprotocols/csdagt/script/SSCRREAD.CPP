@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,9 @@
  @file Scrread.cpp 
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "SSCRREADTraces.h"
-#endif
-
 #include "SSCRREAD.H"
 #include "ND_STD.H"
+#include "SLOGGER.H"
 
 // TLinePosition definitions 
 
@@ -122,7 +117,8 @@ Instantiate member variables.
 @param aBufferSize is buffer size for script reader.
 */
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTREADER_CONSTRUCTL_1,"Script:\tCreating Buffer Of Size %d", aBufferSize);
+	__FLOG_STMT(_LIT8(logString,"Script:\tCreating Buffer Of Size %d");)
+	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()),aBufferSize);
 	iScriptBuffer=HBufC::NewL(aBufferSize);
 	TPtr temp=iScriptBuffer->Des();
 	iScript.Set(temp);
@@ -218,13 +214,17 @@ Get current line.
 	iCurrentPosition.iLineCount++;
 	if (iLoggingOn)
 		{
+		TBuf<KLogBufferSize> line;
+		line.Copy(activeDes.Left(Min(KLogBufferSize,iCurrentPosition.iLineLength)));
 		if (iSkip)
 			{
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTREADER_GETCURRENTLINE_1, "Script Line #%d:\t[Skip] : %S", iCurrentPosition.iLineCount,activeDes);
+			__FLOG_STMT(_LIT(logString1,"Script Line #%d:\t[Skip] : %S");)
+			__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString1()),iCurrentPosition.iLineCount,&line);
 			}
 		else
 			{
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSCRIPTREADER_GETCURRENTLINE_2, "Script Line #%d:\t%S", iCurrentPosition.iLineCount,activeDes);
+			__FLOG_STMT(_LIT(logString2,"Script Line #%d:\t%S");)
+			__FLOG_STATIC2(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC>(logString2()),iCurrentPosition.iLineCount,&line);
 			}
 		}
 	return KErrNone;

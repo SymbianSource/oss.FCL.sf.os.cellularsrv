@@ -20,11 +20,6 @@
  @internalComponent
 */
 
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "PDPDeftSCPRTraces.h"
-#endif
-
 #include <comms-infras/corescpractivities.h>
 #include "PDPDeftSCPR.h"
 #include "PDPSCPRStates.h"
@@ -33,7 +28,7 @@
 #include <comms-infras/commsdebugutility.h>
 #include <elements/nm_signatures.h>
 
-#if defined(SYMBIAN_TRACE_ENABLE)
+#if defined(__CFLOG_ACTIVE) || defined(SYMBIAN_TRACE_ENABLE)
 #define KPDPSCprTag KESockSubConnectionTag
 _LIT8(KPDPSCprSubTag, "pdpscpr");
 #endif
@@ -282,8 +277,8 @@ void CPDPDefaultSubConnectionProvider::AuthenticateL()
     iUsername.Copy(configOption->iAuthInfo.iUsername);
     iPassword.Copy(configOption->iAuthInfo.iPassword);
 
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATE_1, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] ", (TUint)this, iUsername);
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATE_2, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] ", (TUint)this, iPassword);
+    __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &iUsername));
+    __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &iPassword));
     
     iAuthDialog = CAuthenticationDialog::NewL();
     iAuthDialog->Authenticate(*this, iUsername, iPassword);
@@ -298,9 +293,9 @@ void CPDPDefaultSubConnectionProvider::AuthenticationCompleteL(TInt aError)
 
         configOption->iAuthInfo.iUsername.Copy(iUsername);
         configOption->iAuthInfo.iPassword.Copy(iPassword);
-       
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATIONCOMPLETE_1, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%s] ", (TUint)this, configOption->iAuthInfo.iUsername);
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_AUTHENTICATIONCOMPLETE_2, "CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%s] ", (TUint)this, configOption->iAuthInfo.iPassword);
+
+        __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &configOption->iAuthInfo.iUsername));
+        __CFLOG_VAR((KPDPSCprTag, KPDPSCprSubTag, _L8("CPDPSubConnectionProvider [this=%08x]::AuthenticationCompleteL() KCDTIdWCDMAIfAuthName [%S] "), this, &configOption->iAuthInfo.iPassword));
         }
 
     //Send AuthenticateComplete message

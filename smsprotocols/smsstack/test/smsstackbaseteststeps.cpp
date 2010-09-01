@@ -307,13 +307,12 @@ EXPORT_C CSmsMessage* CSmsBaseTestStep::RecvSmsL(RSocket& aSocket, TInt aIoctl)
     RSmsSocketReadStream readstream(aSocket);
     TRAPD(ret, readstream >> *smsMessage);
  
+    TPckgBuf<TUint> sbuf;
     TRequestStatus status;
-    
-    // aDesc arguments passed to Ioctl() method have been changed to NULL to keep it compliant with
-    // usage rules and to prevent OOM tests from failing
+
     if(ret==KErrNone)
         {
-        aSocket.Ioctl(aIoctl, status, NULL, KSolSmsProv);
+        aSocket.Ioctl(aIoctl, status, &sbuf, KSolSmsProv);
         User::WaitForRequest(status);
         CleanupStack::Pop(smsMessage);
         TESTCHECK(status.Int(), KErrNone, "Notifying the SMS stack that message was received successfully");
@@ -322,7 +321,7 @@ EXPORT_C CSmsMessage* CSmsBaseTestStep::RecvSmsL(RSocket& aSocket, TInt aIoctl)
     //An error has occured, no message has been received
     else
         {
-        aSocket.Ioctl(KIoctlReadMessageFailed, status, NULL, KSolSmsProv);
+        aSocket.Ioctl(KIoctlReadMessageFailed, status, &sbuf, KSolSmsProv);
         User::WaitForRequest(status);
         TESTCHECK(status.Int(), KErrNone, "Notifying the SMS stack that message was not received");
         ERR_PRINTF2(_L("Receiving message failed %d"), ret);

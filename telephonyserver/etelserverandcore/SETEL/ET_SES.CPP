@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,15 +18,10 @@
 */
 
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ET_SESTraces.h"
-#endif
-
 #include "ET_SSTD.H"
 #include "e32svr.h"
 #include "et_record.h"
+
 
 #define DOUBLE_COLON		_L("::")
 #define ETEL_NAME			_L("Etel")
@@ -103,7 +98,7 @@ CTelSession::~CTelSession()
 		CObject* theObj=NULL;
 		TInt count=iObjectIx->Count();
 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_DTOR_1, "CTelSession::~CTelSession iObjectIx->Count()=%d", count);
+		LOGTEXT2("CTelSession::~CTelSession iObjectIx->Count()=%d", count);
 		
 		for(TInt i=0;i<count;i++)
 			{
@@ -135,14 +130,14 @@ CTelSession::~CTelSession()
 					}
 				}
 			}
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_DTOR_2, "Delete iObjectIx");
+		LOGTEXT("Delete iObjectIx");
 		delete iObjectIx;
 		}
 
 
 	if (iTsyModulesIx)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_DTOR_3, "Delete TsyModulesIx");
+		LOGTEXT("Delete TsyModulesIx");
 		delete iTsyModulesIx;
 		}
 	UnsetPriorityClient();
@@ -167,7 +162,7 @@ void CTelSession::ServiceL(const RMessage2 &aMessage)
 // Handle messages for this session
 //
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_SERVICEL_1, "CTelSession::Service Called, IPC: %d", aMessage.Function());
+	LOGTEXT2("CTelSession::Service Called, IPC: %d", aMessage.Function());
 
 	iMessage=aMessage;
 
@@ -818,7 +813,7 @@ void CTelSession::NewTelObject(TTelObjectOpenSource aSource)
 	TRAP(res,(newObject=iPhoneManager->OpenPhoneFromFactoryL(phoneFactory,name)));
 	if(res!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_NEWTELOBJECT_1, "Open Phone from Factory returned %d", res);
+		LOGTEXT2("Open Phone from Factory returned %d", res);
 		if(newObject)
 			newObject->TelObjectClose();
 		else

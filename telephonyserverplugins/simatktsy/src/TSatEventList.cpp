@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,13 +19,8 @@
 
 
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "TSatEventListTraces.h"
-#endif
-
 #include "TSatEventList.h"   // Class header
+#include "TfLogger.h"        // For TFLOGSTRING
 
 // -----------------------------------------------------------------------------
 // TSatEventList::TSatEventList
@@ -37,7 +32,7 @@ TSatEventList::TSatEventList
         void 
         ) : iEvents( 0 )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS ,TSATEVENTLIST_CTOR_1,  "CSAT: TSatEventList::TSatEventList" );
+    TFLOGSTRING( "CSAT: TSatEventList::TSatEventList" );
     }
 
 // -----------------------------------------------------------------------------
@@ -53,12 +48,14 @@ TBool TSatEventList::IsEnabled
 
     if( iEvents & TUint32( aEvent ) )
         {
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSATEVENTLIST_ISENABLED_1,  "CSAT: TSatEventList::IsEventEnabled, Event Enabled: %d", aEvent );
+        TFLOGSTRING2( "CSAT: TSatEventList::IsEventEnabled, \
+            Event Enabled: %d", aEvent );
         return ETrue;
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSATEVENTLIST_ISENABLED_2,  "CSAT: TSatEventList::IsEventEnabled, Event Not enabled" );
+        TFLOGSTRING( "CSAT: TSatEventList::IsEventEnabled, \
+            Event Not enabled" );
         return EFalse;
         }
 
@@ -74,7 +71,7 @@ void TSatEventList::RemoveFromEventList
         RSat::TEventList aEvent
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSATEVENTLIST_REMOVEFROMEVENTLIST_1,  "CSAT: TSatEventList::RemoveFromEventList" );
+    TFLOGSTRING( "CSAT: TSatEventList::RemoveFromEventList" );
     iEvents &= ~TUint32( aEvent );
     }
 
@@ -88,7 +85,7 @@ void TSatEventList::AddToEventList
         RSat::TEventList aEvent
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSATEVENTLIST_ADDTOEVENTLIST_1,  "CSAT: TSatEventList::AddToEventList" );
+    TFLOGSTRING( "CSAT: TSatEventList::AddToEventList" );
     iEvents |= TUint32( aEvent );
     }
 
@@ -102,7 +99,7 @@ void TSatEventList::SetEventList
         TUint32 aEvent
         )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSATEVENTLIST_SETEVENTLIST_1,  "CSAT: TSatEventList::SetEventList aEvent:%d", aEvent );
+    TFLOGSTRING2( "CSAT: TSatEventList::SetEventList aEvent:%d", aEvent );
     iEvents = aEvent;
     }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -17,12 +17,6 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ET_MANTraces.h"
-#endif
 
 #include <e32svr.h>
 #include <f32file.h>
@@ -256,18 +250,22 @@ CPhoneFactoryBase* CPhoneManager::LoadPhoneModuleL(const TDesC& aFileName)
 	TInt found=iTsyModulesCon->FindByName(findHandle,name,foundName);	// Is already loaded?
 	if(found==KErrNone)
 		{	// The TSY is already loaded, we'll just open, and bump up the reference count.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_LOADPHONEMODULEL_1, "LoadPhoneModuleL\tTSY already loaded - inc ref count");
+		LOGTEXT("LoadPhoneModuleL\tTSY already loaded - inc ref count");
 		CPhoneFactoryBase* s=REINTERPRET_CAST(CPhoneFactoryBase*,iTsyModulesCon->At(findHandle));
 		s->Open();
 		return s;
 		}
 
 	RLibrary lib;
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_LOADPHONEMODULEL_2, "Loading %S", aFileName);
+#ifdef _DEBUG
+	TBuf8<128> buf;
+	buf.Copy(aFileName);
+#endif // _DEBUG
+	LOGTEXT2("Loading %S", &buf);
 	TInt r=lib.Load(aFileName);
 	if (r!=KErrNone)
 		User::Leave(r);
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_LOADPHONEMODULEL_3, "Loaded %S", aFileName);
+	LOGTEXT2("Loaded %S", &buf);
 	TCleanupItem libClose(CloseLibrary,&lib);
 	CleanupStack::PushL(libClose);
 
@@ -278,12 +276,12 @@ CPhoneFactoryBase* CPhoneManager::LoadPhoneModuleL(const TDesC& aFileName)
 	TPhoneFactoryBaseNewL libEntry=(TPhoneFactoryBaseNewL)lib.Lookup(1);
 	if (libEntry==NULL)
 		User::Leave(KErrBadLibraryEntryPoint);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_LOADPHONEMODULEL_4, "About to get CPhoneFactoryBase ptr");
+	LOGTEXT("About to get CPhoneFactoryBase ptr");
 	CPhoneFactoryBase* s=NULL;
 	s=(*libEntry)();	// libEntry may leave.
 	if(s==NULL)
 		User::Leave(KErrNoMemory);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_LOADPHONEMODULEL_5, "Got CPhoneFactoryBase ptr");
+	LOGTEXT("Got CPhoneFactoryBase ptr");
 	TRAPD(error, s->ConstructL(lib));
 	if(error)
 		{
@@ -473,9 +471,9 @@ TInt CPhoneManager::RenameDuplicatePhoneName() const
 				TName newName(tsyName);
 				newName.Append(KDash);
 				newName.Append(infoToMatch.iName);	// Create unique name
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_RENAMEDUPLICATEPHONENAME_1, "new name = %S", newName);
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_RENAMEDUPLICATEPHONENAME_2, "tsy name = %S", tsyName);
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEMANAGER_RENAMEDUPLICATEPHONENAME_3, "old name = %S", infoToMatch.iName);
+				LOGTEXT2("new name = %S", &newName);
+				LOGTEXT2("tsy name = %S", &tsyName);
+				LOGTEXT2("old name = %S", &infoToMatch.iName);	
 				TRAPD(ret,StoreDuplicateNameL(tsyName,infoToMatch.iName,newName));// even if this returns with 
 									//KErrAlreadyExists, carry on searching for another match
 				if (ret!=KErrNone && ret!=KErrAlreadyExists)

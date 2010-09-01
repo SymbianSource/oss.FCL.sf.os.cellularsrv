@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspcdbTraces.h"
-#endif
 
 #include "smspcdb.h"
 #include "smspmain.h"
@@ -54,7 +48,7 @@ CSmspCommDbEvent::~CSmspCommDbEvent()
 
 void CSmspCommDbEvent::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPCOMMDBEVENT_CONSTRUCTL_1, "CSmspCommDbEvent::ConstructL()");
+	LOGSMSPROT1("CSmspCommDbEvent::ConstructL()");
 
 	ConstructTimeoutL();
 	} // CSmspCommDbEvent::ConstructL
@@ -66,7 +60,7 @@ void CSmspCommDbEvent::ConstructL()
  */
 void CSmspCommDbEvent::NotifyOnEvent()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPCOMMDBEVENT_NOTIFYONEVENT_1, "CSmspCommDbEvent::NotifyOnEvent()");
+	LOGSMSPROT1("CSmspCommDbEvent::NotifyOnEvent()");
 
 	iProperty.Subscribe(iStatus);
 	SetActive();
@@ -80,7 +74,7 @@ void CSmspCommDbEvent::NotifyOnEvent()
  */
 void CSmspCommDbEvent::Complete(TInt aError)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPCOMMDBEVENT_COMPLETE_1, "CSmspCommDbEvent::Complete()");
+	LOGSMSPROT1("CSmspCommDbEvent::Complete()");
 
 	//
 	// Call the base function to perform the actual complete...

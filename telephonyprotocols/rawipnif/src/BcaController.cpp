@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "BcaControllerTraces.h"
-#endif
 
 #include <e32uid.h>
 #include <nifmbuf.h>
@@ -48,6 +42,7 @@ CBcaController::CBcaController(MControllerObserver& aObserver,
  * Constructor. 
  */
 	: iObserver(aObserver),  
+	  iTheLogger(aTheLogger),
 	  iTxFlowControl(EFlowControlOff), 
 	  iTxContextActive(ETrue), 
 	  iSendState(EIdle),
@@ -73,13 +68,11 @@ CBcaController::~CBcaController()
 
 void CBcaController::BaseConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_BASECONSTRUCTL_1, "CBcaController::BaseConstructL");
+	_LOG_L1C1(_L8("CBcaController::BaseConstructL"));
 	
-    #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS         
-	iIPTagHeader = new (ELeave) CIPTagHeader();        
-    #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
-	
-	iIPTagHeader = new (ELeave) CIPTagHeader(iTheLogger);
+#ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
+    iIPTagHeader = new (ELeave) CIPTagHeader(iTheLogger);
+#endif // RAWIP_HEADER_APPENDED_TO_PACKETS
     
 #if defined (__EABI__)
     // Default value for queue length
@@ -98,7 +91,6 @@ void CBcaController::BaseConstructL()
 	UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMaxTxIPPacketSize",&iMaxTxPacketSize);
 	UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMaxRxIPPacketSize",&iMaxRxPacketSize);
 #endif
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_BASECONSTRUCTL_2, "RawIp ini file %S not found. Default values will be used.", KRawIpIniFile);
 	}
 
 void CBcaController::UpdateInternalFlowFlag(TFlowControl aValue)
@@ -109,12 +101,13 @@ void CBcaController::UpdateInternalFlowFlag(TFlowControl aValue)
  * @param aValue the new state of iInternalFlow
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_UPDATEINTERNALFLOWFLAG_1, "CBcaController::UpdateInternalFlowFlag[NewValue=%d, iSendState=%d]",aValue, iSendState);
+	_LOG_L1C3(_L8("CBcaController::UpdateInternalFlowFlag[NewValue=%d, iSendState=%d]"),
+		aValue, iSendState);
 
 	if(iTxFlowControl == aValue)
 		{
 		// C32 Sent the same indication signal twice. Nif will ignore it.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_UPDATEINTERNALFLOWFLAG_2, "WARNING CBcaController: Received same indication twice");
+		_LOG_L2C1(_L8("WARNING CBcaController: Received same indication twice"));
 		return;
 		}
 	
@@ -146,7 +139,8 @@ void CBcaController::UpdateContextStateFlag(TBool aValue)
  * @param aValue the new state of iTxContextState
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_UPDATECONTEXTSTATEFLAG_1, "CBcaController::UpdateContextStateFlag[NewValue=%d, OldValue=%d]",aValue, iTxContextActive);
+	_LOG_L1C3(_L8("CBcaController::UpdateContextStateFlag[NewValue=%d, OldValue=%d]"),
+		aValue, iTxContextActive);
 	
 	if(iTxContextActive == aValue)
 		{
@@ -181,12 +175,12 @@ TInt CBcaController::Send(RMBufChain& aPdu)
  *	@param aPdu a data packet
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_1, ">>CBcaController::Send");
+	_LOG_L1C1(_L8(">>CBcaController::Send"));
 
 	// Check if NIF is shutting down
 	if (iSendState == EShuttingDown)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_2, "    ERROR: Nif is shutting down");
+		_LOG_L2C1(_L8("    ERROR: Nif is shutting down"));
 		
 		aPdu.Free();
 
@@ -197,8 +191,8 @@ TInt CBcaController::Send(RMBufChain& aPdu)
 	// add it to our queue
 	if ((aPdu.Length() - aPdu.First()->Length()) > BcaSendBufferLength())
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_3, "Packet is too large - discarding");
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_4, "<<CSender::Send -> Error");
+		_LOG_L2C1(_L8("Packet is too large - discarding"));
+		_LOG_L1C1(_L8("<<CSender::Send -> Error"));
 
 		aPdu.Free();
 		return KErrArgument;
@@ -212,14 +206,14 @@ TInt CBcaController::Send(RMBufChain& aPdu)
 		// queue becomes full the IP layer shouldnt send any more packets until it is told to
 		if (!IsSendQueueFull())
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_5, "    Sender busy, appending packet to queue");
+			_LOG_L1C1(_L8("    Sender busy, appending packet to queue"));
 			//We know that flow control is off and context isnt suspended so can add to queue
 			AppendToSendQueue(aPdu);
 			
 			return IsSendQueueFull() ? KStopSending : KContinueSending;
 			}
 			
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_6, "    Queue is full, upper layer is still sending packets, potential memory problems.");
+		_LOG_L1C1(_L8("    Queue is full, upper layer is still sending packets, potential memory problems."));
 		AppendToSendQueue(aPdu);
 		return KStopSending;
 		}
@@ -233,12 +227,12 @@ TInt CBcaController::Send(RMBufChain& aPdu)
 		//make sure that we don't change the order of packets!
 		//first send what has already been lined up
 		RMBufChain tmpPdu;
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_7, "    Packet removed from queue to send");
+		_LOG_L1C1(_L8("    Packet removed from queue to send"));
 		RemoveFromSendQueue(tmpPdu);
 		AppendToSendQueue(aPdu);
 		
 		// Update module state
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_8, "     set State to ESending");
+		_LOG_L2C1(_L8("     set State to ESending"));
 		iSendState = ESending;
 		
 		BcaSend(tmpPdu);
@@ -246,13 +240,13 @@ TInt CBcaController::Send(RMBufChain& aPdu)
 	else
 		{
 		// Update module state
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_9, "     set State to ESending");
+		_LOG_L2C1(_L8("     set State to ESending"));
 		iSendState = ESending;
 		 
 		BcaSend(aPdu);
 		}
 		
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SEND_10, "<<CBcaController::Send - return StopSending/ContinueSending");
+	_LOG_L2C1(_L8("<<CBcaController::Send - return StopSending/ContinueSending"));
 	return IsSendQueueFull() ? KStopSending : KContinueSending;
 	}
 
@@ -263,8 +257,8 @@ void CBcaController::SendComplete()
  *  protocol indicating that is available to send more packets.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SENDCOMPLETE_1, "CBcaController::SendComplete");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SENDCOMPLETE_2, "     set State to EIdle");
+	_LOG_L1C1(_L8("CBcaController::SendComplete"));
+	_LOG_L2C1(_L8("     set State to EIdle"));
 	
 	iSendState = EIdle;
 
@@ -279,7 +273,8 @@ TBool CBcaController::IsTxPossible()
  * @return The Flow control state
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_ISTXPOSSIBLE_1, "CBcaController::IsTxPossible (contextActive %d, flowcontrol %d)", iTxContextActive, iTxFlowControl);
+	_LOG_L1C3(_L8("CBcaController::IsTxPossible (contextActive %d, flowcontrol %d)"), 
+		iTxContextActive, iTxFlowControl);
 
 	if(iTxContextActive && (iTxFlowControl == EFlowControlOff))
 		return ETrue;
@@ -294,7 +289,7 @@ void CBcaController::Process(TDesC8& aPdu)
  * @param aPdu a data packet
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_PROCESS_1, ">>CBcaController::Process");
+	_LOG_L1C1(_L8(">>CBcaController::Process"));
 
 	TInt ret;
 
@@ -304,7 +299,7 @@ void CBcaController::Process(TDesC8& aPdu)
 	if (ret != KErrNone)
 		{
 		// Couldn't create package. Packet will be ignored...
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_PROCESS_2, "<<CBcaController::Process couldn't create MBuf [ret=%d]", ret);
+		_LOG_L1C2(_L8("<<CBcaController::Process couldn't create MBuf [ret=%d]"), ret);
 		return;
 		}
 	else
@@ -321,7 +316,7 @@ void CBcaController::Process(TDesC8& aPdu)
 		GetObserver().Process(packet, protocolCode);
 		}
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_PROCESS_3, "<<CBcaController::Process");
+	_LOG_L1C1(_L8("<<CBcaController::Process"));
 	}
 
 void CBcaController::ResumeSending()
@@ -330,7 +325,7 @@ void CBcaController::ResumeSending()
  *	process more packets.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RESUMESENDING_1, "CBcaIoController::ResumeSending");
+	_LOG_L1C1(_L8("CBcaIoController::ResumeSending"));
 
 	// If there are still some packets in the queue to be sent, then carry
 	// on sending them.
@@ -340,11 +335,11 @@ void CBcaController::ResumeSending()
 		if(!IsSendQueueEmpty())
 			{
 			RMBufChain tmpPdu;
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RESUMESENDING_2, "    Packet removed from queue to send");
+			_LOG_L1C1(_L8("    Packet removed from queue to send"));
 			RemoveFromSendQueue(tmpPdu);
 			
 			// Update module state
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RESUMESENDING_3, "     set State to ESending");
+			_LOG_L2C1(_L8("     set State to ESending"));
 			iSendState = ESending;
 			
 			BcaSend(tmpPdu);
@@ -363,7 +358,7 @@ void CBcaController::SetType(TUint16 aType)
 /**
  *  Used to specify the type of the IP header.
  */
- 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_SETTYPE_1, "CBcaController::SetType");
+ 	_LOG_L1C1(_L8("CBcaController::SetType"));
  	
  	iIPTagHeader->SetType(aType);	
 	}
@@ -373,7 +368,7 @@ void CBcaController::AddHeader(TDes8& aDes)
  *  Used to add the IP header to the packet before sending to the BCA.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_ADDHEADER_1, "CBcaController::AddHeader");
+	_LOG_L1C1(_L8("CBcaController::AddHeader"));
 
 	iIPTagHeader->AddHeader(aDes);
 	}
@@ -385,7 +380,7 @@ TUint16 CBcaController::RemoveHeader(RMBufChain& aPdu)
  * @return The IP header that has been removed from the packet
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_REMOVEHEADER_1, "CBcaController::RemoveHeader");
+	_LOG_L1C1(_L8("CBcaController::RemoveHeader"));
 
 	return (iIPTagHeader->RemoveHeader(aPdu));
 	}	

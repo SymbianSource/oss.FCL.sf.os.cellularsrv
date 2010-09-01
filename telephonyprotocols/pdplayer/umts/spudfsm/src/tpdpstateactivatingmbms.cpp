@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,22 +20,16 @@
  @internalComponent
 */
  
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstateactivatingmbmsTraces.h"
-#endif
-
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
+#include "spudfsmdebuglogger.h"
 #include "pdpfsmnmspace.h"
 #include "cpdpfsm.h"
 
 TInt TPdpStateActivatingMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_1, ">>TPdpStateActivatingMbms::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
+	SPUDFSMVERBOSE_FNLOG("TPdpStateActivatingMbms::Input()");
+	SPUDFSMVERBOSE_LOG2(_L("aOperation : %S(%d)"), LogOperation(aFsm, aOperation), aOperation);
 
 	switch (aOperation)
 	{
@@ -45,18 +39,15 @@ TInt TPdpStateActivatingMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const
 		aFsm.Set(RPacketContext::EStatusActive);
 		aFsm.ChangeStateToCreatedMbms();//there is no Qos to be set
 		SpudManNotify (aFsm, KContextActivateEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_3, "<<TPdpStateActivatingMbms::Input()");
 		return KErrNone;
 	case PdpFsm::EPdpActivatedFailed:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_4, "*** FAILURE ***");
+		SPUDFSMVERBOSE_LOG(_L("*** FAILURE ***"));
 		aFsm.ChangeStateToCreatedMbms();
 		SpudManNotify (aFsm, KContextActivateEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_5, "<<TPdpStateActivatingMbms::Input()");
 		return KErrNone;
 	// no default
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_6, "<<TPdpStateActivatingMbms::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }

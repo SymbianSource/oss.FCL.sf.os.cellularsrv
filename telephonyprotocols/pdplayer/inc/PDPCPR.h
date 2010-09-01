@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -37,7 +37,7 @@ namespace PDPCprActivities
     }
 
 
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
+
 namespace PDPCprStates
 {
 typedef MeshMachine::TNodeContext<CPDPConnectionProvider, CprStates::TContext> TContext;
@@ -51,8 +51,8 @@ DECLARE_AGGREGATED_TRANSITION2(
    TUpdateBundle,
    PRStates::TRespondWithRetrievedParams
    )
+
 }
-#endif
 
 
 class CPDPConnectionProvider : public CCoreConnectionProvider, MPDPCPRBearerObserver
@@ -62,29 +62,21 @@ class CPDPConnectionProvider : public CCoreConnectionProvider, MPDPCPRBearerObse
 */
     {
 	friend class CPDPConnectionProviderFactory;
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 	friend class PDPCprStates::TUpdateBundle;
-#endif
 
 public:
     typedef CPDPConnectionProviderFactory FactoryType;
 	
 	static CPDPConnectionProvider* NewL(ESock::CConnectionProviderFactoryBase& aFactory);
-
-	// from MPDPCPRBearerObserver
+	
 	virtual void BearerChangeDetectedL();
-
-private:	
+	
+protected:	
     CPDPConnectionProvider(ESock::CConnectionProviderFactoryBase& aFactory);
-   
-protected:
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     void StartListener();
     void StopListener();
-    void UpdateBearer();
     TUint32 Bearer(TUint aDynamicCaps, RMobilePhone::TMobilePhoneNetworkMode& aNetworkMode);
-#endif
-    
+    void UpdateBearer();
     virtual ~CPDPConnectionProvider();
     virtual void ReceivedL(const Messages::TRuntimeCtxId& aSender, const Messages::TNodeId& aRecipient, Messages::TSignatureBase& aMessage);
 	void ConstructL();

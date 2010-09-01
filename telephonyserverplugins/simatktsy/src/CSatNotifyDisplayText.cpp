@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyDisplayTextTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyDisplayText.h"  // Class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -48,13 +43,13 @@ CSatNotifyDisplayText* CSatNotifyDisplayText::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )  
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_NEWL_1, "CSAT: CSatNotifyDisplayText::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::NewL");
    	CSatNotifyDisplayText* const satNotifyDisplayText = 
         new ( ELeave ) CSatNotifyDisplayText( aNotificationsTsy );
     CleanupStack::PushL( satNotifyDisplayText );
     satNotifyDisplayText->ConstructL();
     CleanupStack::Pop( satNotifyDisplayText );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_NEWL_2, "CSAT: CSatNotifyDisplayText::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::NewL, end of method");
     return satNotifyDisplayText;
     }
 
@@ -65,7 +60,7 @@ CSatNotifyDisplayText* CSatNotifyDisplayText::NewL
 //  
 CSatNotifyDisplayText::~CSatNotifyDisplayText()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_DTOR_1, "CSAT: CSatNotifyDisplayText::~CSatNotifyDisplayText");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::~CSatNotifyDisplayText");
     }
         
 // -----------------------------------------------------------------------------
@@ -91,7 +86,7 @@ void CSatNotifyDisplayText::ConstructL
         void
         )
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_CONSTRUCTL_1, "CSAT: CSatNotifyDisplayText::ConstructL");
+	TFLOGSTRING("CSAT: CSatNotifyDisplayText::ConstructL");
 	}
        	
 // -----------------------------------------------------------------------------
@@ -106,7 +101,7 @@ TInt CSatNotifyDisplayText::Notify
         const TDataPackage& aPackage 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_NOTIFY_1, "CSAT: CSatNotifyDisplayText::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::Notify");
     // Save data pointer to client side for completion
     iDisplayTextV2Pckg = reinterpret_cast<RSat::TDisplayTextV2Pckg*>( 
         aPackage.Des1n() );    
@@ -129,7 +124,7 @@ TInt CSatNotifyDisplayText::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_CANCELNOTIFICATION_1, "CSAT: CSatNotifyDisplayText::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::CancelNotification");    
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyDisplayTextPCmdReqType );
@@ -152,13 +147,14 @@ TInt CSatNotifyDisplayText::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_COMPLETENOTIFYL_1, "CSAT: CSatNotifyDisplayText::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::CompleteNotifyL");
     TInt ret( KErrNone );
 
     // Unpack parameters
     TPtrC8* data;
     aDataPackage->UnPackData( &data );
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_COMPLETENOTIFYL_2, "CSAT: CSatNotifyDisplayText::CompleteNotifyL, dataLength: %d", data->Length());
+    TFLOGSTRING2("CSAT: CSatNotifyDisplayText::CompleteNotifyL, dataLength: \
+        %d", data->Length());
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( 
@@ -251,7 +247,8 @@ TInt CSatNotifyDisplayText::CompleteNotifyL
                 // Return terminal response immediately.
                 else
                     {            
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_COMPLETENOTIFYL_3, "CSAT: CSatNotifyDisplayText::CompleteNotifyL, Text string empty");
+                    TFLOGSTRING("CSAT: CSatNotifyDisplayText::CompleteNotifyL,\
+                        Text string empty");  
 					CreateTerminalRespL( pCmdNumber, 
 					    RSat::KCmdDataNotUnderstood, KNullDesC16 );
 					// Indicate Client that response was corrupted
@@ -260,7 +257,8 @@ TInt CSatNotifyDisplayText::CompleteNotifyL
                 }    
 			else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_COMPLETENOTIFYL_4, "CSAT: CSatNotifyDisplayText::CompleteNotifyL, Test string missing");
+                TFLOGSTRING("CSAT: CSatNotifyDisplayText::CompleteNotifyL,\
+                    Test string missing");
 	            CreateTerminalRespL( 
 					pCmdNumber, RSat::KErrorRequiredValuesMissing,  
 					KNullDesC16 );
@@ -287,7 +285,8 @@ TInt CSatNotifyDisplayText::CompleteNotifyL
         } // End of if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
     else 
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_COMPLETENOTIFYL_5, "CSAT: CSatNotifyDisplayText::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifyDisplayText::CompleteNotifyL,\
+            Request not ongoing");
     	TBuf16<1> additionalInfo;
         // Request not on, returning response immediately
         additionalInfo.Append( RSat::KNoSpecificMeProblem );
@@ -307,7 +306,7 @@ TInt CSatNotifyDisplayText::TerminalResponseL
         TDes8* aRsp  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_TERMINALRESPONSEL_1, "CSAT: CSatNotifyDisplayText::TerminalResponseL");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::TerminalResponseL");
 
     TInt ret( KErrNone );
     TBuf16<1> additionalInfo;
@@ -329,7 +328,8 @@ TInt CSatNotifyDisplayText::TerminalResponseL
         && ( RSat::KCmdBeyondMeCapabilities != rspV1.iGeneralResult )
         )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_TERMINALRESPONSEL_2, "CSAT: CSatNotifyDisplayText::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT: CSatNotifyDisplayText::TerminalResponseL,\
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -344,7 +344,8 @@ TInt CSatNotifyDisplayText::TerminalResponseL
 			}
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_TERMINALRESPONSEL_3, "CSAT: CSatNotifyDisplayText::TerminalResponseL, Invalid Additional Info");
+            TFLOGSTRING("CSAT: CSatNotifyDisplayText::TerminalResponseL,\
+                Invalid Additional Info");
             // Invalid additional info field
             ret = KErrCorrupt;
             }
@@ -369,7 +370,7 @@ TInt CSatNotifyDisplayText::CreateTerminalRespL
         const TDesC16& aAdditionalInfo
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYDISPLAYTEXT_CREATETERMINALRESPL_1, "CSAT: CSatNotifyDisplayText::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifyDisplayText::CreateTerminalRespL");
     TTlv tlvSpecificData;
     // Create General Result TLV here
     tlvSpecificData.AddTag( KTlvResultTag );

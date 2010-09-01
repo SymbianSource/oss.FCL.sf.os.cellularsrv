@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,15 +19,9 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimONStoreTraces.h"
-#endif
-
 #include "CSimONStore.h"
 #include "CSimPhone.h"
+#include "Simlog.h"
 #include <testconfigfileparser.h>
 
 //
@@ -76,7 +70,7 @@ void CSimONStore::ConstructL(TInt aMaxNumSlots, TInt aMaxNumLen, TInt aMaxTextLe
  * @param aMaxTextLen	The maximum length of an alpha tag.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_CONSTRUCTL_1, "Starting to parse Own Number store additional config parameters...");
+	LOGPHBK1("Starting to parse Own Number store additional config parameters...");
 	__ASSERT_ALWAYS(aMaxNumLen<=KONMaxTelNumSize,SimPanic(EOwnNumberNameOrNumberTooLarge));
 	__ASSERT_ALWAYS(aMaxTextLen<=KONMaxTextSize,SimPanic(EOwnNumberNameOrNumberTooLarge));
 
@@ -97,7 +91,7 @@ void CSimONStore::ConstructL(TInt aMaxNumSlots, TInt aMaxNumLen, TInt aMaxTextLe
 		if(ret!=KErrNone)
 			{
 			iONStoreCaps=KDefaultONPhoneStoreCaps;
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element VALUE returned %d (element no. %d) from tag %s.",ret,0,KONPhoneStoreCaps);
+			LOGPARSERR("value",ret,0,&KONPhoneStoreCaps);
 			}	
 		else
 			{
@@ -113,7 +107,7 @@ void CSimONStore::ConstructL(TInt aMaxNumSlots, TInt aMaxNumLen, TInt aMaxTextLe
 		iONStoreCaps=KDefaultONPhoneStoreCaps;
 
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_CONSTRUCTL_3, "...Finished parsing Own Number store additional config parameters...");
+	LOGPHBK1("...Finished parsing Own Number store additional config parameters...");
 	}
 
 void CSimONStore::PopulateStoreFromConfigFileL()
@@ -126,7 +120,7 @@ void CSimONStore::PopulateStoreFromConfigFileL()
  * "PhBkStoreEntry = <store name>, <slot number>, <telephone number>, <alphatag>"
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_POPULATESTOREFROMCONFIGFILEL_1, "Starting to read Own Number store entries...");
+	LOGPHBK1("Starting to read Own Number store entries...");
 	iONIndividualPause=CfgFile()->ItemValue(KONStoreIndividualReqPause,KDefaultONStoreIndividualReqPause);
 
 	TInt count=CfgFile()->ItemCount(KONStoreEntry);
@@ -149,7 +143,7 @@ void CSimONStore::PopulateStoreFromConfigFileL()
 		ret=GetONEntry(item,0,index,telNum,name,typeOfNumber,service,mode,numberPlan);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_POPULATESTOREFROMCONFIGFILEL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element OWN NUMBER ENTRY returned %d (element no. %d) from tag %s.",ret,index,KONStoreEntry);
+			LOGPARSERR("Own Number Entry",ret,index,&KONStoreEntry);
 			continue;
 			}
 
@@ -161,7 +155,7 @@ void CSimONStore::PopulateStoreFromConfigFileL()
 		iONStoreEntries[index].iNumberPlan=numberPlan;
 		}
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_POPULATESTOREFROMCONFIGFILEL_3, "...Finished reading Own Number store entries...");
+	LOGPHBK1("...Finished reading Own Number store entries...");
 
 	}
 
@@ -550,6 +544,6 @@ const CTestConfigSection* CSimONStore::CfgFile()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMONSTORE_CFGFILE_1, ">>CSimONStore::CfgFile");
+	LOGPHBK1(">>CSimONStore::CfgFile");
 	return iPhone->CfgFile();
 	}

@@ -19,7 +19,7 @@
 // associated with them.
 // 
 //
-   
+
 /**
  @file
 */
@@ -322,8 +322,7 @@ enum
 	EMobilePhoneSendDTMFTones,                                            // 21026
 	EMobilePhoneStartDTMFTone,                                            // 21027
 	EMobilePhoneStopDTMFTone,                                             // 21028
-	EMobilePhoneTerminateAllCalls,                                        // 21029
-	EMobilePhoneTerminateActiveCalls                                      // 21030
+	EMobilePhoneTerminateAllCalls                                         // 21029
 	};
 
 enum
@@ -350,8 +349,7 @@ enum
 	EMobilePhoneNotifyStopInDTMFStringCancel = EMobilePhoneNotifyStopInDTMFString + EMobileCancelOffset,                                       // 21523
 	EMobilePhoneReadDTMFTonesCancel = EMobilePhoneReadDTMFTones + EMobileCancelOffset,                                                         // 21524
 	EMobilePhoneSendDTMFTonesCancel = EMobilePhoneSendDTMFTones + EMobileCancelOffset,                                                         // 21526
-	EMobilePhoneTerminateAllCallsCancel = EMobilePhoneTerminateAllCalls + EMobileCancelOffset,                                                 // 21529
-	EMobilePhoneTerminateActiveCallsCancel = EMobilePhoneTerminateActiveCalls + EMobileCancelOffset                                            // 21530
+	EMobilePhoneTerminateAllCallsCancel = EMobilePhoneTerminateAllCalls + EMobileCancelOffset                                                  // 21529
 	};
 
 //

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySendDataTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySendData.h" 	// Class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifySendData* CSatNotifySendData::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_NEWL_1, "CSAT: CSatNotifySendData::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySendData::NewL");
    	CSatNotifySendData* const satNotifySendData = 
         new ( ELeave ) CSatNotifySendData( aNotificationsTsy );
     CleanupStack::PushL( satNotifySendData );
     satNotifySendData->ConstructL();
     CleanupStack::Pop( satNotifySendData );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_NEWL_2, "CSAT: CSatNotifySendData::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySendData::NewL, end of method");
     return satNotifySendData;
     }
 
@@ -67,7 +62,7 @@ CSatNotifySendData::~CSatNotifySendData
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_DTOR_1, "CSAT: CSatNotifySendData::~CSatNotifySendData");
+    TFLOGSTRING("CSAT: CSatNotifySendData::~CSatNotifySendData");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifySendData::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_CONSTRUCTL_1, "CSAT: CSatNotifySendData::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifySendData::ConstructL, does nothing");
     }
     
 // -----------------------------------------------------------------------------
@@ -108,7 +103,7 @@ TInt CSatNotifySendData::Notify
         const TDataPackage& aPackage    
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_NOTIFY_1, "CSAT: CSatNotifySendData::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySendData::Notify");
     // Save data pointer to client side for completion
     iSendDataRspV2Pckg = reinterpret_cast<RSat::TSendDataV2Pckg*>( 
         aPackage.Des1n() );
@@ -131,7 +126,7 @@ TInt CSatNotifySendData::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_CANCELNOTIFICATION_1, "CSAT: CSatNotifySendData::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySendData::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifySendDataPCmdReqType );
@@ -154,7 +149,7 @@ TInt CSatNotifySendData::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_COMPLETENOTIFYL_1, "CSAT: CSatNotifySendData::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifySendData::CompleteNotifyL");  
     TInt ret( KErrNone );
 	TBuf<1> noAdditionalInfo( 0 );
     // Unpack parameters
@@ -228,7 +223,8 @@ TInt CSatNotifySendData::CompleteNotifyL
 	                
 	            if ( KErrNotFound != returnValue )
 	                {
-	                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_COMPLETENOTIFYL_2, "CSAT: CSatNotifySendData::CompleteNotifyL Alpha ID found");
+	                TFLOGSTRING("CSAT: CSatNotifySendData::CompleteNotifyL \
+	                	Alpha ID found");
 	                TUint16 alphaIdLength = alphaIdentifier.GetLength();
 	                if ( alphaIdLength )
 	                    {
@@ -243,7 +239,8 @@ TInt CSatNotifySendData::CompleteNotifyL
 	                    }
 	                else
 	                    {
-	                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_COMPLETENOTIFYL_3, "CSAT: CSatNotifySendData::CompleteNotifyL Alpha id is NULL");
+	                    TFLOGSTRING("CSAT: CSatNotifySendData::CompleteNotifyL\
+	                    	Alpha id is NULL");
 	                    sendDataV2.iAlphaId.iStatus = RSat::EAlphaIdNull;
 	                    }
 	                }
@@ -255,7 +252,8 @@ TInt CSatNotifySendData::CompleteNotifyL
 	            }
 	        else
 	            {
-	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_COMPLETENOTIFYL_4, "CSAT: CSatNotifySendData::CompleteNotifyL Required values missing");
+	            TFLOGSTRING("CSAT: CSatNotifySendData::CompleteNotifyL \
+	            	Required values missing");
 	            // Required values missing
 	            TUint8 channelDataLength( 0 );
 	            CreateTerminalRespL( 
@@ -274,7 +272,8 @@ TInt CSatNotifySendData::CompleteNotifyL
         }
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_COMPLETENOTIFYL_5, "CSAT: CSatNotifySendData::CompleteNotifyL Request not ongoing");
+		TFLOGSTRING("CSAT: CSatNotifySendData::CompleteNotifyL \
+	    	Request not ongoing");
 		// Request not on, returning response immediately       
         TUint8 channelDataLength( 0 );
 		TBuf16<1> additionalInfo;	
@@ -297,7 +296,7 @@ TInt CSatNotifySendData::TerminalResponseL
         TDes8* aRsp
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_TERMINALRESPONSEL_1, "CSAT: CSatNotifySendData::TerminalResponseL");
+    TFLOGSTRING("CSAT: CSatNotifySendData::TerminalResponseL");
     TInt   ret( KErrNone );
     
     TBuf16<RSat::KAdditionalInfoMaxSize> additionalInfo;
@@ -323,7 +322,8 @@ TInt CSatNotifySendData::TerminalResponseL
         && ( RSat::KErrorRequiredValuesMissing != rspV2.iGeneralResult )
         && ( RSat::KBearerIndepProtocolError != rspV2.iGeneralResult ) )
         {
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_TERMINALRESPONSEL_2, "CSAT: CSatNotifySendData::TerminalResponseL, Invalid general result: %d", rspV2.iGeneralResult);
+        TFLOGSTRING2("CSAT: CSatNotifySendData::TerminalResponseL, \
+        	Invalid general result: %d", rspV2.iGeneralResult);
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -336,7 +336,8 @@ TInt CSatNotifySendData::TerminalResponseL
         	}
 	    else
 	        {
-	        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_TERMINALRESPONSEL_3, "CSAT: CSatNotifySendData::TerminalResponseL, Additional Info corrupted ");
+	        TFLOGSTRING("CSAT: CSatNotifySendData::TerminalResponseL, \
+        		Additional Info corrupted ");
 	        ret = KErrCorrupt;
 	        }
 		}     
@@ -361,7 +362,7 @@ TInt CSatNotifySendData::CreateTerminalRespL
         TUint8 aChannelDataLength	
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_CREATETERMINALRESPL_1, "CSAT: CSatNotifySendData::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifySendData::CreateTerminalRespL");
     TTlv tlvSpecificData;
     // Append general result tag
     tlvSpecificData.AddTag( KTlvResultTag );
@@ -396,7 +397,8 @@ TInt CSatNotifySendData::CreateTerminalRespL
 	        }
 	    default:
 	    	{
-	    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDDATA_CREATETERMINALRESPL_2, "CSAT: CSatNotifySendData::CreateTerminalRespL Unknown General result");
+	    	TFLOGSTRING("CSAT: CSatNotifySendData::CreateTerminalRespL\
+	    		Unknown General result");
 	    	}
 	    }
     

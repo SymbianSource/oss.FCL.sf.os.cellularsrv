@@ -44,7 +44,6 @@ USERINCLUDE     ../../common/inc
 USERINCLUDE   ../../gsmu/inc
 USERINCLUDE   ../../smsprot/Inc
 USERINCLUDE   ../../smsu/inc
-USERINCLUDE   ../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 
@@ -53,6 +52,8 @@ LIBRARY         mbufmgr.lib esocksvr.lib
 
 LIBRARY		commsdat.lib
 
+
+DEBUGLIBRARY    comsdbgutil.lib
 
 //#if defined(WINS)
 // libraries needed by CCover

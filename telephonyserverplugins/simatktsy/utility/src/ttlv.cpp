@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,13 +21,8 @@
 
 
 //  Include Files  
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ttlvTraces.h"
-#endif
-
 #include "TTlv.h"				    // Header of this class
+#include "tflogger.h"				// For logging
 
 //  External Data Structures  
 //    none
@@ -80,7 +75,7 @@ EXPORT_C void TTlvBase::Begin
         TUint8 aTag 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TTLVBASE_BEGIN_1, "UTILITY: TTlvBase::Begin");
+    TFLOGSTRING("UTILITY: TTlvBase::Begin"); 
     iData.Zero();
     iData.Append( aTag );
     iData.Append( 0 );
@@ -96,7 +91,7 @@ EXPORT_C void TTlvBase::AddTag
         TUint8 aTag 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TTLVBASE_ADDTAG_1, "UTILITY: TTlvBase::AddTag");
+    TFLOGSTRING("UTILITY: TTlvBase::AddTag");
     iData.Append( aTag );           // tag
     iData.Append( 0 );              // length
     iLenIndex = iData.Length() - 1; // index to tag length
@@ -112,7 +107,7 @@ EXPORT_C void TTlvBase::AddByte
         TUint8 aValue  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TTLVBASE_ADDBYTE_1, "UTILITY: TTlvBase::AddByte");
+    TFLOGSTRING("UTILITY: TTlvBase::AddByte");
     iData.Append( aValue );
     iData[iLenIndex]++;
     }
@@ -127,7 +122,7 @@ EXPORT_C void TTlvBase::AddData
         const TDesC8& aValue 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TTLVBASE_ADDDATA_1, "UTILITY: TTlvBase::AddData");
+    TFLOGSTRING("UTILITY: TTlvBase::AddData");
     iData.Append( aValue );
     iData[ iLenIndex ] = static_cast<TUint8>( iData[ iLenIndex ] + 
         aValue.Length() );
@@ -145,7 +140,7 @@ EXPORT_C const TDesC8& TTlvBase::End
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TTLVBASE_END_1, "UTILITY: TTlvBase::End");
+    TFLOGSTRING("UTILITY: TTlvBase::End");
     _LIT8( KLenTag, "\x81" );
 
     TInt i( 3 ); // Index to tag length
@@ -186,7 +181,7 @@ EXPORT_C const TDesC8& TTlvBase::GetDataWithoutTopLevelTag
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TTLVBASE_GETDATAWITHOUTTOPLEVELTAG_1, "UTILITY: TTlvBase::GetDataWithoutTopLevelTag");
+    TFLOGSTRING("UTILITY: TTlvBase::GetDataWithoutTopLevelTag");
     _LIT8( KLenTag, "\x81" );
 
     TInt i( 1 ); // Index to tag length

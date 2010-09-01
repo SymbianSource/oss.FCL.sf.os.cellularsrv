@@ -282,6 +282,14 @@ CTelObject* CPhoneHayes::OpenNewObjectByNameL(const TDesC& aName)
 			iPhoneGlobals->iPhoneStatus.iLineStatus = RCall::EStatusIdle;
 		return iDataLine;
 		}
+	else if (!aName.CompareF(KFaxLineName))
+		{
+		__ASSERT_ALWAYS(iFaxLine==NULL,Panic(ELineAlreadyExists));
+		iFaxLine=CLineMobileFax::NewL(iIo,iInit,iPhoneGlobals,aName);
+		if (iPhoneGlobals->iPhoneStatus.iLineStatus == RCall::EStatusUnknown)
+			iPhoneGlobals->iPhoneStatus.iLineStatus = RCall::EStatusIdle;
+		return iFaxLine;
+		}
 	
 	else if (!aName.CompareF(KVoiceLineName)) //Added for Java Demo 4.4.99
 		{
@@ -459,7 +467,21 @@ TInt CPhoneHayes::GetLineInfo(const TTsyReqHandle aTsyReqHandle, TLineInfoIndex*
 //
 	{
 	LOGTEXT(_L8("Phone:\tGet Line Info"));
-	 if (aParams->iIndex==KDataLineIndex)
+	if (aParams->iIndex==KFaxLineIndex)
+		{
+		if (iFaxLine!=NULL)
+			{
+			aParams->iInfo.iStatus = iPhoneGlobals->iPhoneStatus.iLineStatus;
+			aParams->iInfo.iName = iFaxLine->iLineName;
+			aParams->iInfo.iLineCapsFlags = (RLine::KCapsFax|RLine::KCapsEventIncomingCall);
+			}
+		else
+			{
+			aParams->iInfo = iDefaultFaxLineInfo;
+			}
+		ReqCompleted(aTsyReqHandle,KErrNone);
+		}
+	else if (aParams->iIndex==KDataLineIndex)
 		{
 		if (iDataLine!=NULL)
 			{
@@ -501,6 +523,8 @@ void CPhoneHayes::RemoveLine(CLineHayes* aLineHayes)
 	{
 	if (aLineHayes == iDataLine)
 		iDataLine=NULL;
+	if (aLineHayes == iFaxLine)
+		iFaxLine=NULL;
 	if (aLineHayes == iVoiceLine)
 		iVoiceLine=NULL;
 	}
@@ -527,6 +551,9 @@ void CPhoneHayes::SetCallRinging(TInt aIndex)
 		CLineHayes* line=NULL;
 		switch (aIndex)
 			{
+		case KFaxLineIndex:
+			line=iFaxLine;
+			break;
 		case KDataLineIndex:
 			line=iDataLine;
 			break;
@@ -572,7 +599,25 @@ void CPhoneHayes::SetAmbiguousDataFaxCallRinging()
 		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tInterpretting as data call"));
 		return;
 		}
-	// So both lines MIGHT exist.  It's then down to Notify on incoming call notifications,
+	if((iFaxLine)&&(iFaxLine->AnswerIfPossible()))		// Second priority: if we're waiting for a Fax call, answer it
+		{
+		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tInterpretting as fax call"));
+		return;
+		}
+// If there are no "answer an incoming call" requests, then see if we can determine it from the lines that are open...
+	if(!iFaxLine && iDataLine)	
+		{
+		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tLine object creation: SetPreAllocCall on DataLine"));
+		iDataLine->SetPreAllocCall();
+		return;
+		}
+	if(!iDataLine && iFaxLine)
+		{
+		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tLine object creation: SetPreAllocCall on FaxLine"));
+		iFaxLine->SetPreAllocCall();
+		return;
+		}
+// So both lines MIGHT exist.  It's then down to Notify on incoming call notifications,
 // and we'll make a priority call in favour of data...
 // First ensure that either a Data line or a Fax line does exist (Nokia 7110 fix: returns
 // +CRING: REL ASYNC for a voice call (hence a voice line is created). This response
@@ -581,7 +626,8 @@ void CPhoneHayes::SetAmbiguousDataFaxCallRinging()
 		{
 		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tA DataLine has been found. Now checking for an outstanding Notification"));
 		
-		if(iDataLine->IsNotifyIncomingCallOutstanding())
+		if((iDataLine->IsNotifyIncomingCallOutstanding())&&
+		   (!iFaxLine->IsNotifyIncomingCallOutstanding()))
 			{
 			LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tNotify: SetPreAllocCall on DataLine"));
 			iDataLine->SetPreAllocCall();
@@ -589,6 +635,18 @@ void CPhoneHayes::SetAmbiguousDataFaxCallRinging()
 		}
 	else 
 		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tNo DataLine has been found; this may be a voice call"));
+	if (iFaxLine)
+		{
+		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tA FaxLine has been found. Now checking for an outstanding Notification"));
+		if ((iFaxLine->IsNotifyIncomingCallOutstanding()) &&
+			(!iDataLine->IsNotifyIncomingCallOutstanding()))
+			{	
+			LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tNotify: SetPreAllocCall on FaxLine"));
+			iFaxLine->SetPreAllocCall();
+			}
+		}
+	else 
+		LOGTEXT(_L8("SetAmbiguousDataFaxCallRinging()\tNo FaxLine has been found; this may be a voice call"));
 	}
 
 void CPhoneHayes::StopRinging()
@@ -599,6 +657,11 @@ void CPhoneHayes::StopRinging()
 		iDataLine->ResetPreAllocCall();	// this may not revert the call to PreAlloc status as
 										// the call may have been opened by a client but not
 										// answered.
+		}
+	if (iFaxLine)
+		{
+		(void)iFaxLine->StopMyCallRinging();
+		iFaxLine->ResetPreAllocCall();	// ditto
 		}
 	if (iVoiceLine)
 		{
@@ -617,7 +680,8 @@ void CPhoneHayes::SetHookStatus(RCall::THookStatus aHookStatus)
 	{
 	if (iDataLine)
 		iDataLine->SetCallsHookStatus(aHookStatus);
-	
+	if (iFaxLine)
+		iFaxLine->SetCallsHookStatus(aHookStatus);
 	}
 
 TBool CPhoneHayes::CheckForOutstandingAnswer() const
@@ -628,7 +692,8 @@ TBool CPhoneHayes::CheckForOutstandingAnswer() const
 	TBool check=EFalse;
 	if (iDataLine)
 		check = iDataLine->CheckForOutstandingAnswer();
-	
+	if (!check && iFaxLine)
+		check = iFaxLine->CheckForOutstandingAnswer();
 	if (!check && iVoiceLine)
 		check = iVoiceLine->CheckForOutstandingAnswer();
 	return check;
@@ -636,6 +701,12 @@ TBool CPhoneHayes::CheckForOutstandingAnswer() const
 
 void CPhoneHayes::CancelOtherRingingCall(CLineHayes* aLine) const
 	{
+	if (iFaxLine && aLine!=iFaxLine)
+		{
+		(void)iFaxLine->StopMyCallRinging();
+		iFaxLine->ResetPreAllocCall();	
+		}
+
 	if (iDataLine && aLine!=iDataLine)
 		{
 		(void)iDataLine->StopMyCallRinging();

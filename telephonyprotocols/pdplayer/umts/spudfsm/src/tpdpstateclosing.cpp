@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,49 +20,39 @@
  @internalComponent
 */
  
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstateclosingTraces.h"
-#endif
-
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
+#include "spudfsmdebuglogger.h"
 #include "pdpfsmnmspace.h"
 #include "PDPFSM.h"
 #include "cpdpfsm.h"
 
 TInt TPdpStateClosing::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_1, "<<TPdpStateClosing::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
+	SPUDFSMVERBOSE_FNLOG("TPdpStateClosing::Input()");
+	SPUDFSMVERBOSE_LOG2(_L("aOperation : %S(%d)"), LogOperation(aFsm, aOperation), aOperation);
 
 	switch (aOperation)
 	{
 	case PdpFsm::EContextDeleted:
 		aFsm.ChangeStateToInitialised();
 		SpudManNotify (aFsm, KContextDeleteEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_3, ">>TPdpStateClosing::Input()");
 		return KErrNone;			
 	case PdpFsm::EContextDeletedFailed:
 		// There isn't any corrective action that can be taken here. 
 		// It is assumed when this context is used again, there will be a failure 
 		// or a failure elsewhere down the line that will correct the situation, ultimately
 		// involving the user. FSM and ETelDriver are not in a position to take any corrective action.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_4, "**** DELETE FAILURE ****");
+		SPUDFSMVERBOSE_LOG(_L("**** DELETE FAILURE ****"));
 		aFsm.ChangeStateToInitialised();
 		SpudManNotify (aFsm, KContextDeleteEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_5, ">>TPdpStateClosing::Input()");
 		return KErrNone;			
 	case SpudMan::EContextDelete:
 		// already doing this and don't want default action
-	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_6, ">>TPdpStateClosing::Input()");
 		return KErrInUse;
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECLOSING_INPUT_7, ">>TPdpStateClosing::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

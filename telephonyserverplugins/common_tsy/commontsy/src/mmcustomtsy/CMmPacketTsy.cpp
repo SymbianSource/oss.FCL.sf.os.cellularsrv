@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,11 +15,7 @@
 
 
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CMmPacketTsyTraces.h"
-#endif
+#include <ctsy/tflogger.h>
 
 #include "CMmCustomTsy.h"
 #include "CMmPacketTsy.h"
@@ -51,7 +47,7 @@ CMmPacketTsy* CMmPacketTsy::NewL(
     CMmCustomTsy* aMmCustomTsy, 
     CMmPhoneTsy* aMmPhone )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_NEWL_1,  "CustomTSY: CMmPacketTsy::NewL" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::NewL" );
     CMmPacketTsy* mmPacketTsy = new ( ELeave ) CMmPacketTsy();
     CleanupStack::PushL( mmPacketTsy );
     mmPacketTsy->iMmCustomTsy = aMmCustomTsy;
@@ -64,7 +60,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_NEWL_1,  "C
 
 CMmPacketTsy::~CMmPacketTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DTOR_1,  "CustomTSY: CMmPacketTsy::~CMmPacketTsy" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::~CMmPacketTsy" );
     delete iTsyReqHandleStore;
     }
 
@@ -164,7 +160,7 @@ TInt CMmPacketTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUNCL_1,  "CustomTSY: CMmPacketTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle );
+TFLOGSTRING3( "CustomTSY: CMmPacketTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle );
     TInt ret( KErrNotSupported );
 
     switch ( aIpc )
@@ -176,7 +172,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUN
             ret = GetEGprsInfo( aTsyReqHandle, aPackage.Des1n() );
             break;
         case ECustomSetAlwaysOnMode:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUNCL_2,  "TSY:CMmPacketTsy::DoExtFuncL ECustomSetAlwaysOnMode");
+TFLOGSTRING( "TSY:CMmPacketTsy::DoExtFuncL ECustomSetAlwaysOnMode");
             ret = SetAlwaysOnL( aTsyReqHandle,
                ( REINTERPRET_CAST( RMmCustomAPI::TSetAlwaysOnMode*,
                               					aPackage.Ptr1() ) ) );
@@ -282,7 +278,7 @@ TInt CMmPacketTsy::CancelService(
     const TInt aIpc, 
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_CANCELSERVICE_1,  "CustomTSY: CMmPacketTsy::CancelService IPC:%d", aIpc );
+TFLOGSTRING2( "CustomTSY: CMmPacketTsy::CancelService IPC:%d", aIpc );
     TInt ret( KErrNone );
 
     // Req handle type
@@ -338,7 +334,7 @@ void CMmPacketTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle, 
     const TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_REQCOMPLETED_1,  "CustomTSY: CMmPacketTsy::ReqCompleted Handle:%d Error:%d", aTsyReqHandle, aError );
+TFLOGSTRING3( "CustomTSY: CMmPacketTsy::ReqCompleted Handle:%d Error:%d", aTsyReqHandle, aError );
     iMmCustomTsy->ReqCompleted( aTsyReqHandle, aError );
     }
 
@@ -352,7 +348,7 @@ TInt CMmPacketTsy::NotifyEGprsInfoChange(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8* aGprsInformation )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_NOTIFYEGPRSINFOCHANGE_1,  "CustomTSY: CMmPacketTsy::NotifyEGprsInfoChange" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::NotifyEGprsInfoChange" );
 
     RMmCustomAPI::TGprsInformation temp;
 	RMmCustomAPI::TGprsInformationPckg tempPckg(temp);
@@ -386,7 +382,7 @@ TInt CMmPacketTsy::GetEGprsInfo(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8* aGprsInformation )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_GETEGPRSINFO_1,  "CustomTSY: CMmPacketTsy::GetEGprsInfo" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::GetEGprsInfo" );
 
     RMmCustomAPI::TGprsInformation temp;
 	RMmCustomAPI::TGprsInformationPckg tempPckg(temp);
@@ -423,14 +419,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_GETEGPRSINF
 	    // if gprsSupportInCell is ETrue -> cell is supporting EGPRS connection 
 	    if ( edgeGprsSupportInCell )
 	        {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_GETEGPRSINFO_2,  "CustomTSY: CMmPacketTsy::GetEGprsInfo  RMmCustomAPI::EEdgeGprs" );
+	TFLOGSTRING( "CustomTSY: CMmPacketTsy::GetEGprsInfo  RMmCustomAPI::EEdgeGprs" );
 	        gprsInformation.iGprsInfo = RMmCustomAPI::EEdgeGprs; 
 	        }
 
 	    // else EGPRS connection is not supported
 	    else 
 	        {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_GETEGPRSINFO_3,  "CustomTSY: CMmPacketTsy::GetEGprsInfo  RMmCustomAPI::EGprs" );
+	TFLOGSTRING( "CustomTSY: CMmPacketTsy::GetEGprsInfo  RMmCustomAPI::EGprs" );
 	        gprsInformation.iGprsInfo = RMmCustomAPI::EGprs;
 	        }
 
@@ -452,7 +448,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_GETEGPRSINF
 void CMmPacketTsy::CompleteNotifyEGprsInfoChange(
     const TBool aGprsSupportInCell )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_COMPLETENOTIFYEGPRSINFOCHANGE_1,  "CustomTSY: CMmPacketTsy::CompleteNotifyEGprsInfoChange" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::CompleteNotifyEGprsInfoChange" );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextNotifyEGprsInfoChange );
 
@@ -465,14 +461,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_COMPLETENOT
         // if aGprsSupportInCell is ETrue -> cell is supporting edge GPRS
         if ( aGprsSupportInCell )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_COMPLETENOTIFYEGPRSINFOCHANGE_2,  "CustomTSY: CMmPacketTsy::CompleteNotifyEGprsInfoChange  RMmCustomAPI::EEdgeGprs" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::CompleteNotifyEGprsInfoChange  RMmCustomAPI::EEdgeGprs" );
             gprsInformation.iGprsInfo = RMmCustomAPI::EEdgeGprs;
             }
 
         // if aGprsSupportInCell is EFalse -> cell is not supporting edge GPRS
         else 
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_COMPLETENOTIFYEGPRSINFOCHANGE_3,  "CustomTSY: CMmPacketTsy::CompleteNotifyEGprsInfoChange  RMmCustomAPI::EGprs" );
+TFLOGSTRING( "CustomTSY: CMmPacketTsy::CompleteNotifyEGprsInfoChange  RMmCustomAPI::EGprs" );
             gprsInformation.iGprsInfo = RMmCustomAPI::EGprs;
             }
                     
@@ -493,7 +489,7 @@ TInt CMmPacketTsy::SetAlwaysOnL(
 	TTsyReqHandle aTsyReqHandle,
 	RMmCustomAPI::TSetAlwaysOnMode* aMode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_SETALWAYSONL_1,  "CMmPacketTsy::SetAlwaysOn Reg Handle = %d", aTsyReqHandle );
+TFLOGSTRING2( "CMmPacketTsy::SetAlwaysOn Reg Handle = %d", aTsyReqHandle );
 	
 	TInt ret( KErrGeneral );
 	
@@ -510,7 +506,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_SETALWAYSON
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_SETALWAYSONL_2,  "CMmPacketTsy::SetAlwaysOn packetDataSession is NULL " );
+TFLOGSTRING( "CMmPacketTsy::SetAlwaysOn packetDataSession is NULL " );		
         }	
 		
     return ret;
@@ -526,7 +522,7 @@ void CMmPacketTsy::CompleteSetAlwaysOn(
 	TTsyReqHandle aReqHandle, 
 	TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_COMPLETESETALWAYSON_1,  "CMmPacketTsy::CompleteSetAlwaysOn" );
+TFLOGSTRING( "CMmPacketTsy::CompleteSetAlwaysOn" );
 
 	ReqCompleted( aReqHandle, aError );
 
@@ -540,7 +536,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_COMPLETESET
 //
 void CMmPacketTsy::CancelSetAlwaysOn( TTsyReqHandle aReqHandle )
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_CANCELSETALWAYSON_1,  "CMmPacketTsy::CancelSetAlwaysOn" );
+TFLOGSTRING( "CMmPacketTsy::CancelSetAlwaysOn" );
 	
 	//Direct request to Service Tsy
 	iMmPhone->PacketDataSession()->CancelSetAlwaysOn( aReqHandle );

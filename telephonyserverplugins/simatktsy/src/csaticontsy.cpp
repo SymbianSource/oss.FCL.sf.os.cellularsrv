@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,15 +20,10 @@
 
 
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "csaticontsyTraces.h"
-#endif
-
 #include <satcs.h>					// ETel Ipcs
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
 //#include <TSatIconInfo.h>           // For icon color coding
+#include "TfLogger.h"              // For TFLOGSTRING
 
 #include "CSatDataPackage.h"        // Parameter packing 
 #include "CSatIconTsy.h"            // Class header
@@ -48,13 +43,13 @@ CSatIconTsy* CSatIconTsy::NewL
         CSatTsy* aSatTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_NEWL_1, "CSAT: CSatIconTsy::NewL");
+    TFLOGSTRING("CSAT: CSatIconTsy::NewL");
     CSatIconTsy* const satIconTsy = new ( ELeave ) CSatIconTsy();
     CleanupStack::PushL( satIconTsy );
     satIconTsy->iSatTsy = aSatTsy;
     satIconTsy->ConstructL();
     CleanupStack::Pop( satIconTsy );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_NEWL_2, "CSAT: CSatIconTsy::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatIconTsy::NewL, end of method");
     return satIconTsy;
     }
 
@@ -69,7 +64,7 @@ CSatIconTsy::~CSatIconTsy
         void   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_DTOR_1, "CSAT: CSatIconTsy::~CSatIconTsy");
+    TFLOGSTRING("CSAT: CSatIconTsy::~CSatIconTsy");
     // Unregister.
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatIconTsyObjType, NULL );
@@ -85,7 +80,7 @@ void CSatIconTsy::ConstructL
         void
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_CONSTRUCTL_1, "CSAT: CSatIconTsy::ConstructL\n" );
+    TFLOGSTRING("CSAT: CSatIconTsy::ConstructL\n" );
     iIconReqTypeOngoing = ERequestTypeUnknown;
     // Register.
     iSatTsy->MessageManager()->RegisterTsyObject(
@@ -122,7 +117,8 @@ TInt CSatIconTsy::DoExtFuncL
         )
     {
 
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_DOEXTFUNCL_1, "CSAT: CSatIconTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d", aIpc, aTsyReqHandle);
+    TFLOGSTRING3("CSAT: CSatIconTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \
+        \t\t\t Handle:%d", aIpc, aTsyReqHandle);
 
 	TInt ret( KErrNone );
 
@@ -153,7 +149,8 @@ TInt CSatIconTsy::DoExtFuncL
             }
         default:
             {
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_DOEXTFUNCL_2, "CSAT: CSatIconTsy::DoExtFuncL unsupported IPC %d",aIpc);
+            TFLOGSTRING2("CSAT: CSatIconTsy::DoExtFuncL unsupported IPC %d",
+                 aIpc);
             break;
             }
         }
@@ -173,7 +170,7 @@ void CSatIconTsy::CompleteGetIcon
 		TInt aResult                   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETICON_1, "CSAT: CSatIconTsy::CompleteGetIcon");
+    TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetIcon");
     TPtrC8* icon = NULL;
     TInt iconLength = 0; 
 
@@ -190,24 +187,28 @@ void CSatIconTsy::CompleteGetIcon
         {
         if ( KErrNone == aResult && iconLength )
             {
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETICON_2, "CSAT: CSatIconTsy::CompleteGetIcon, Icon data length: %d", iconLength);
+            TFLOGSTRING2("CSAT: CSatIconTsy::CompleteGetIcon,\
+                Icon data length: %d", iconLength);
             // Check the size...
             if ( iIconData->MaxLength() >= iconLength )
                 {      
                 iIconData->Copy( icon->Ptr(), iconLength );
-                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETICON_3, "CSAT: CSatIconTsy::CompleteGetIcon, iIconData length: %d", iIconData->Length() );
+                TFLOGSTRING2("CSAT: CSatIconTsy::CompleteGetIcon,\
+                    iIconData length: %d", iIconData->Length() );             
                 iRecordData.Copy( *iIconData );  
                 }
             else  // Data is too big for client's buffer
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETICON_4, "CSAT: CSatIconTsy::CompleteGetIcon, Icon data length exceeded");
+                TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetIcon,\
+                    Icon data length exceeded");
                 aResult = KErrOverflow;
                 iIconData->Zero();
                 }
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETICON_5, "CSAT: CSatIconTsy::CompleteGetIcon, Error occured in LSAT, or Icon length is 0");
+            TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetIcon,\
+                Error occured in LSAT, or Icon length is 0");
             // Reset the length
             iIconData->Zero();
             }
@@ -228,7 +229,7 @@ void CSatIconTsy::CompleteGetImageInstance
 		TInt aResult                   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETIMAGEINSTANCE_1, "CSAT: CSatIconTsy::CompleteGetImageInstance");
+    TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetImageInstance");
     TPtrC8* icon = NULL;
     TDes8* info;
 
@@ -249,7 +250,8 @@ void CSatIconTsy::CompleteGetImageInstance
             // Check the size....
             if ( iIconData->MaxLength() >= iconLength )
                 {
-                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETIMAGEINSTANCE_2, "CSAT: CSatIconTsy::CompleteGetImageInstance, Icon length: %d", iconLength);
+                TFLOGSTRING2("CSAT: CSatIconTsy::CompleteGetImageInstance,\
+                    Icon length: %d", iconLength);
                 // Icon body
                 if( info->Length() == KIconInfoLength )
                     {
@@ -260,7 +262,8 @@ void CSatIconTsy::CompleteGetImageInstance
                     // between the color and b&w icons
                     if ( RSat::KBasic == colorCoding )
                         {
-                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETIMAGEINSTANCE_3, "CSAT: CSatIconTsy::CompleteGetImageInstance,B&W");
+                        TFLOGSTRING("CSAT: CSatIconTsy::\
+                            CompleteGetImageInstance,B&W");
                         iIconData->Copy( ( *info ).Mid( 0, 2) );
                         }
                     else
@@ -278,14 +281,16 @@ void CSatIconTsy::CompleteGetImageInstance
                 }
             else // Data is too big for client's buffer
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETIMAGEINSTANCE_4, "CSAT: CSatIconTsy::CompleteGetImageInstance, Icon length exceeded");
+                TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetImageInstance,\
+                    Icon length exceeded");
                 aResult = KErrOverflow;
                 iIconData->Zero();
                 }
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETIMAGEINSTANCE_5, "CSAT: CSatIconTsy::CompleteGetImageInstance, Error occured in LSAT or Icon length is 0");
+            TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetImageInstance,\
+                Error occured in LSAT or Icon length is 0");
             // Reset the length
             iIconData->Zero();
             }
@@ -308,7 +313,7 @@ void CSatIconTsy::CompleteGetClut
 		TInt aResult                   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETCLUT_1, "CSAT: CSatIconTsy::CompleteGetClut");
+    TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetClut");
     TPtrC8* clut = NULL;
 
 	// Unpack parameters 
@@ -330,14 +335,16 @@ void CSatIconTsy::CompleteGetClut
                 }
             else // Data is too big for client's buffer
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETCLUT_2, "CSAT: CSatIconTsy::CompleteGetClut, Clut length exceeded");
+                TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetClut,\
+                    Clut length exceeded");
                 aResult = KErrOverflow;
                 iIconData->Zero();
                 }
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_COMPLETEGETCLUT_3, "CSAT: CSatIconTsy::CompleteGetClut, Error occured in LSAT or Icon length is 0");
+            TFLOGSTRING("CSAT: CSatIconTsy::CompleteGetClut,\
+                Error occured in LSAT or Icon length is 0");
             // Reset the length
             iIconData->Zero();
             }
@@ -362,7 +369,7 @@ TInt CSatIconTsy::GetIconL
         RSat::TIcon* aIconEf              
         )   
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_GETICONL_1, "CSAT: CSatIconTsy::GetIconL");
+    TFLOGSTRING("CSAT: CSatIconTsy::GetIconL");
 	TInt ret = KErrNone;
 	
 	iImageInstanceNoInRecord = 0;
@@ -374,7 +381,7 @@ TInt CSatIconTsy::GetIconL
     // In case the request was ongoing, complete right away..
     if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
     	{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_GETICONL_2, "CSAT: CSatIcon::GetIconL, KErrServerBusy");
+        TFLOGSTRING("CSAT: CSatIcon::GetIconL, KErrServerBusy");
     	iSatTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy);
         }
     else
@@ -441,7 +448,7 @@ TInt CSatIconTsy::GetImageInstanceL
         TDes8* aInstance                 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_GETIMAGEINSTANCEL_1, "CSAT: CSatIconTsy::GetImageInstanceL");
+    TFLOGSTRING("CSAT: CSatIconTsy::GetImageInstanceL");
     TInt ret = KErrNone;
 	
     // Get possibly existing request handle
@@ -451,7 +458,7 @@ TInt CSatIconTsy::GetImageInstanceL
     // In case the request was ongoing, complete right away..
     if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
     	{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_GETIMAGEINSTANCEL_2, "CSAT: CSatIcon::GetImageInstanceL, KErrServerBusy");
+        TFLOGSTRING("CSAT: CSatIcon::GetImageInstanceL, KErrServerBusy");
     	iSatTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy);
         }
     else
@@ -527,7 +534,7 @@ TInt CSatIconTsy::GetClutL
         TDes8* aClut                        
         )   
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_GETCLUTL_1, "CSAT: CSatIconTsy::GetClutL");
+    TFLOGSTRING("CSAT: CSatIconTsy::GetClutL");
     TInt ret = KErrNone;
 	
     // Get possibly existing request handle
@@ -537,7 +544,7 @@ TInt CSatIconTsy::GetClutL
     // In case the request was ongoing, complete right away..
     if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
     	{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATICONTSY_GETCLUTL_2, "CSAT: CSatIcon::GetClutL : KErrServerBusy");
+        TFLOGSTRING("CSAT: CSatIcon::GetClutL : KErrServerBusy");
     	iSatTsy->ReqCompleted( aTsyReqHandle, KErrServerBusy);
         }
     else

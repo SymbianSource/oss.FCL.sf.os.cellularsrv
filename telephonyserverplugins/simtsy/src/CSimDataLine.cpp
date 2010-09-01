@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,15 +13,9 @@
 // Description:
 //
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimDataLineTraces.h"
-#endif
-
 #include "CSimPhone.h"
 #include "CSimDataCall.h"
+#include "Simlog.h"
 #include "et_struct.h"
 
 _LIT(KCommonCallName,"DataCall%d");	// < Data call name template.
@@ -114,7 +108,7 @@ CTelObject* CSimDataLine::OpenNewObjectByNameL(const TDesC& aName)
 * @leave			Leaves if name given does not match the required name
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATALINE_OPENNEWOBJECTBYNAMEL_1, ">>CSimDataLine::OpenNewObjectByNameL");
+	LOGDATA1(">>CSimDataLine::OpenNewObjectByNameL");
 	TInt i;
 	for(i=0;i<iCalls->Count();i++)
 		{
@@ -124,7 +118,7 @@ CTelObject* CSimDataLine::OpenNewObjectByNameL(const TDesC& aName)
 			return iCalls->At(i);
 			}
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATALINE_OPENNEWOBJECTBYNAMEL_2, "<<CSimDataLine::OpenNewObjectByNameL");
+	LOGDATA1("<<CSimDataLine::OpenNewObjectByNameL");
 	User::Leave(KErrNotFound);
 	return NULL;
 	}
@@ -153,7 +147,7 @@ CSimCall* CSimDataLine::CreateNewCallL(TDes& aNewName,TCallType aCallType)
 		HandleNewCallAddedNotification(aNewName);
 		}
 	iNameOfLastCallAdded.Copy(aNewName);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATALINE_CREATENEWCALLL_1, ">>CSimDataLine::CreateNewCallL 0x%08x",newCall);
+	LOGDATA2(">>CSimDataLine::CreateNewCallL 0x%08x",newCall);
 	CleanupStack::Pop(newCall);
 	return newCall;
 	}
@@ -224,7 +218,7 @@ TInt CSimDataLine::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHand
 		return NotifyMobileLineStatusChangeCancel(aTsyReqHandle);
 
 	default:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATALINE_CANCELSERVICE_1, "CSimDataLine::CancelService: No IPC match in SIM TSY, defering to core cancelservice function.");
+		LOGDATA1("CSimDataLine::CancelService: No IPC match in SIM TSY, defering to core cancelservice function.");
 		break;
 		}
 

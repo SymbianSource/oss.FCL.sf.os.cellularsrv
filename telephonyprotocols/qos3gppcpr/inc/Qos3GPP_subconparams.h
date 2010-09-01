@@ -26,6 +26,8 @@
 #define QOS3GPP_SUBCONPARAMS_H
 
 #include <es_sock.h>
+#include <comms-infras/metadata.h>
+#include <comms-infras/metatype.h>
 
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <etelqos.h>

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,13 +16,8 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CmmpacketservicetsyTraces.h"
-#endif
-
 #include "Cmmpacketservicetsy.h"
+#include <ctsy/tflogger.h>
 #include <ctsy/serviceapi/mmtsy_defaults.h>
 #include "MmTsy_timeoutdefs.h"
 #include "MmTsy_numberOfSlots.h"
@@ -51,7 +46,7 @@ CMmPacketServiceTsy* CMmPacketServiceTsy::NewL(
         CMmMessageManagerBase* const aMessageManager,
         MLtsyFactoryBase* aFactory  ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NEWL_1, "TSY: CMmPacketServiceTsy::NewL" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NewL" );
     CMmPacketServiceTsy* const packetService =
         new ( ELeave ) CMmPacketServiceTsy();
 
@@ -61,7 +56,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NEWL
     packetService->ConstructL( aFactory );
     CleanupStack::Pop();
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NEWL_2, "TSY: CMmPacketServiceTsy::NewL." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NewL." );
     return packetService;
 
     }
@@ -83,7 +78,7 @@ void CMmPacketServiceTsy::ConstructL( MLtsyFactoryBase* aFactory )
 
 CMmPacketServiceTsy::~CMmPacketServiceTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DTOR_1, "TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy" );
 
     if ( iMmPhone )
         {
@@ -113,19 +108,19 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DTOR
 
     if ( NULL != iDialUpContext )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DTOR_2, "TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy: Close Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy: Close Dial-up Object." );
 
         iDialUpContext->Close();
         }
 
     if ( NULL != iSecondaryDialUpContext )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DTOR_3, "TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy: Close Secondary Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy: Close Secondary Dial-up Object." );
 
         iSecondaryDialUpContext->Close();
         }
         
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DTOR_4, "TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy: Closing iMutex Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::~CMmPacketServiceTsy: Closing iMutex Object." );
     iMutex.Close();
 
 #ifdef USING_CTSY_DISPATCHER
@@ -307,7 +302,7 @@ void CMmPacketServiceTsy::UpdateAttachedPacketStatus(
 		    RPacketService::EStatusAttached, KErrNone );
 
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_UPDATEATTACHEDPACKETSTATUS_1, "TSY: CMmPacketServiceTsy::UpdateAttachedPacketStatus. Service Status: %d", iInternalSavedData.iServiceStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::UpdateAttachedPacketStatus. Service Status: %d", iInternalSavedData.iServiceStatus );
     }
 
 //----------------------------------------------------------------------------
@@ -367,14 +362,14 @@ void CMmPacketServiceTsy::CompletePacketStatusChanged(
 
             if ( iDialUpContext != NULL )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEPACKETSTATUSCHANGED_1, "TSY: CMmPacketServiceTsy::CompletePacketStatusChanged.  DialUp Context Resumed" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompletePacketStatusChanged.  DialUp Context Resumed" );
 
                 iDialUpContext->ContextResumed();
                 }
 
             if ( iSecondaryDialUpContext != NULL )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEPACKETSTATUSCHANGED_2, "TSY: CMmPacketServiceTsy::CompletePacketStatusChanged. Secondary DialUp Context Resumed" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompletePacketStatusChanged. Secondary DialUp Context Resumed" );
 
                 iSecondaryDialUpContext->ContextResumed();
                 }
@@ -515,13 +510,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 
                     if ( iDialUpContext != NULL )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEPACKETSTATUSCHANGED_3, "TSY: CMmPacketServiceTsy::CompletePacketStatusChanged.  DialUp Context Suspended" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompletePacketStatusChanged.  DialUp Context Suspended" );
                         iDialUpContext->ContextSuspended();
                         }
 
                     if ( iSecondaryDialUpContext != NULL )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEPACKETSTATUSCHANGED_4, "TSY: CMmPacketServiceTsy::CompletePacketStatusChanged.  DialUp Context Suspended" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompletePacketStatusChanged.  DialUp Context Suspended" );
                         iSecondaryDialUpContext->ContextSuspended();
                         }
 
@@ -537,7 +532,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
                 break;
             }
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEPACKETSTATUSCHANGED_5, "TSY: CMmPacketServiceTsy::CompletePacketStatusChanged. Service Status: %d", iInternalSavedData.iServiceStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompletePacketStatusChanged. Service Status: %d", iInternalSavedData.iServiceStatus );
     }
 
 //----------------------------------------------------------------------------
@@ -552,7 +547,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 void CMmPacketServiceTsy::ContextStatusChanged(
     const RPacketContext::TContextStatus aContextStatus )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_CONTEXTSTATUSCHANGED_1, "TSY: CMmPacketServiceTsy::ContextStatusChanged. Context Status: %d", aContextStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::ContextStatusChanged. Context Status: %d", aContextStatus );
 
     if ( !iSuspended && ( RPacketService::EStatusUnattached !=
          iInternalSavedData.iServiceStatus ) )
@@ -609,7 +604,7 @@ void CMmPacketServiceTsy::PreferredBearerChanged(
 
 	aPackage->UnPackData( preferredBearer );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_PREFERREDBEARERCHANGED_1, "TSY: CMmPacketServiceTsy::PreferredBearerChanged. PreferredBearer: %d", preferredBearer );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::PreferredBearerChanged. PreferredBearer: %d", preferredBearer );
 
     iInternalSavedData.iPreferredBearer = preferredBearer;
 
@@ -625,7 +620,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_PREF
 //
 TInt CMmPacketServiceTsy::AttachL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ATTACHL_1, "TSY: CMmPacketServiceTsy::AttachL." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::AttachL." );
 
     TInt ret( KErrAlreadyExists );
 
@@ -670,7 +665,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ATTA
 void CMmPacketServiceTsy::CompleteAttach(
     const TInt aError )  //error value
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEATTACH_1, "TSY: CMmPacketServiceTsy::CompleteAttach. Error Value: %d", aError );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteAttach. Error Value: %d", aError );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -694,7 +689,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 //
 TInt CMmPacketServiceTsy::DetachL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DETACHL_1, "TSY: CMmPacketServiceTsy::DetachL." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::DetachL." );
 
     TInt ret( KErrAlreadyExists );
 
@@ -767,7 +762,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DETA
 void CMmPacketServiceTsy::CompleteDetachL(
     const TInt aError ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEDETACHL_1, "TSY: CMmPacketServiceTsy::CompleteDetachL. Error Value: %d", aError );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteDetachL. Error Value: %d", aError );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -802,7 +797,7 @@ TInt CMmPacketServiceTsy::EnumerateContexts(
     *aCount = iPacketContextList->NumberOfContexts();
     *aMaxAllowed = KMmMaxNumberOfContexts;
 
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATECONTEXTS_1, "TSY: CMmPacketServiceTsy::EnumerateContexts. Count: %d Max Allowed: %d", *aCount, *aMaxAllowed );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::EnumerateContexts. Count: %d Max Allowed: %d", *aCount, *aMaxAllowed );
     // Complete the request with KErrNone
     CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );
 
@@ -817,7 +812,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_E
 TInt CMmPacketServiceTsy::GetAttachModeL(
     RPacketService::TAttachMode* const aMode ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETATTACHMODEL_1, "TSY: CMmPacketServiceTsy::GetAttachModeL. Mode:%d", *aMode );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::GetAttachModeL. Mode:%d", *aMode );
 
     TInt ret( KErrServerBusy );
 
@@ -848,7 +843,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETA
 void CMmPacketServiceTsy::CompleteGetAttachMode(
     const RPacketService::TAttachMode aAttachMode, TInt aResult ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEGETATTACHMODE_1, "TSY: CMmPacketServiceTsy::CompleteGetAttachMode. Attach Mode: %d", aAttachMode );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteGetAttachMode. Attach Mode: %d", aAttachMode );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -885,7 +880,7 @@ TInt CMmPacketServiceTsy::GetContextInfo(
         ret = iPacketContextList->GetContextNameByIndex(
             *aIndex, aInfo->iName );
 
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETCONTEXTINFO_1, "TSY: CMmPacketServiceTsy::GetContextInfo. Context Status: %d Context Name: %S", aInfo->iStatus, aInfo->iName );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::GetContextInfo. Context Status: %d Context Name: %S", aInfo->iStatus, &aInfo->iName );
         }
 
     // Complete request with ret
@@ -907,7 +902,7 @@ TInt CMmPacketServiceTsy::GetDynamicCaps(
     {
     // Call DynamicCaps() from extension
     iMmPacketServiceGsmWcdmaExt->GetDynamicCaps( aCaps );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETDYNAMICCAPS_1, "TSY: CMmPacketServiceTsy::GetDynamicCaps." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GetDynamicCaps." );
 
     // Complete the request with KErrNone
     CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );
@@ -930,7 +925,7 @@ TInt CMmPacketServiceTsy::GetMSClass(
     {
     *aCurrentClass = iInternalSavedData.iMsClass;
     *aMaxClass = KMaxMsClass;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETMSCLASS_1, "TSY: CMmPacketServiceTsy::GetMSClass. Current Class: %d Max Class: %d", *aCurrentClass, *aMaxClass );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::GetMSClass. Current Class: %d Max Class: %d", *aCurrentClass, *aMaxClass );
 
     // Complete the request with KErrNone
     CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );
@@ -949,7 +944,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_G
 TInt CMmPacketServiceTsy::GetNtwkRegStatusL(
     RPacketService::TRegistrationStatus* const aRegistrationStatus ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETNTWKREGSTATUSL_1, "TSY: CMmPacketServiceTsy::GetNtwkRegStatusL. Tsy Req Handle: %d", iTsyReqHandle );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::GetNtwkRegStatusL. Tsy Req Handle: %d", iTsyReqHandle );
 
     const TTsyReqHandle regHandle( iTsyReqHandleStore->GetTsyReqHandle(
         EMultimodePacketServiceGetNtwkRegStatus ) );
@@ -1005,7 +1000,7 @@ void CMmPacketServiceTsy::CompleteGetNtwkRegStatus(
         CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus(
 												aRegistrationStatus );
         }
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEGETNTWKREGSTATUS_1, "TSY: CMmPacketServiceTsy::CompleteGetNtwkRegStatus. TSY Req Handle: %d Registration Status: %d", reqHandle, aRegistrationStatus );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::CompleteGetNtwkRegStatus. TSY Req Handle: %d Registration Status: %d", reqHandle, aRegistrationStatus );
     }
 
 //----------------------------------------------------------------------------
@@ -1021,7 +1016,7 @@ TInt CMmPacketServiceTsy::GetPreferredBearer(
     RPacketService::TPreferredBearer* const aBearer )   
     {
     *aBearer = iInternalSavedData.iPreferredBearer;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETPREFERREDBEARER_1, "TSY: CMmPacketServiceTsy::GetPreferredBearer. Preferred Bearer: %d", *aBearer );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::GetPreferredBearer. Preferred Bearer: %d", *aBearer );
 
     // Complete the request with KErrNone
     CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );
@@ -1049,7 +1044,7 @@ TInt CMmPacketServiceTsy::GetStaticCaps(
         case RPacketContext::EPdpTypePPP:
         case RPacketContext::EPdpTypeCDPD:
             iMmPacketServiceGsmWcdmaExt->GetStaticCaps( aCaps );
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETSTATICCAPS_1, "TSY: CMmPacketServiceTsy::GetStaticCaps." );
+            TFLOGSTRING("TSY: CMmPacketServiceTsy::GetStaticCaps." );
             
             // Complete the request with KErrNone
             CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, ret );
@@ -1072,7 +1067,7 @@ TInt CMmPacketServiceTsy::GetStatus(
     {
     *aPacketStatus = iInternalSavedData.iServiceStatus;
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETSTATUS_1, "TSY: CMmPacketServiceTsy::GetStatus. Service Status: %d", *aPacketStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::GetStatus. Service Status: %d", *aPacketStatus );
 
     // Complete the request with KErrNone
     CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );
@@ -1090,7 +1085,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETS
 TInt CMmPacketServiceTsy::NotifyChangeOfNtwkRegStatus(
     RPacketService::TRegistrationStatus* const aRegistrationStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYCHANGEOFNTWKREGSTATUS_1, "TSY: CMmPacketServiceTsy::NotifyChangeOfNtwkRegStatus." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyChangeOfNtwkRegStatus." );
 
     // Set request handle and save pointer to aRegistrationStatus
     iNotifyDataPointers.iChangeOfNtwkRegStatus = aRegistrationStatus;
@@ -1107,7 +1102,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTI
 void CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus(
     const RPacketService::TRegistrationStatus aRegistrationStatus )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCHANGEOFNTWKREGSTATUS_1, "TSY: CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus. Current reg Status: %d New reg Status: %d", iInternalSavedData.iRegistrationStatus, aRegistrationStatus );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus. Current reg Status: %d New reg Status: %d", iInternalSavedData.iRegistrationStatus, aRegistrationStatus );
 
     // If registration status changed
     if ( aRegistrationStatus != iInternalSavedData.iRegistrationStatus )
@@ -1141,7 +1136,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_C
 void CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus(
     CMmDataPackage* aDataPackage, TInt aResult )		
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCHANGEOFNTWKREGSTATUS1_1, "TSY: CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus.");
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyChangeOfNtwkRegStatus.");
 
 	//Unpack necessary data from datapackage
 	RPacketService::TRegistrationStatus registrationStatus;
@@ -1186,7 +1181,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::NotifyContextActivationRequested(
     TPacketDataConfigBase* const aContextParameters ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYCONTEXTACTIVATIONREQUESTED_1, "TSY: CMmPacketServiceTsy::NotifyContextActivationRequested." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyContextActivationRequested." );
 
     TInt ret = KErrNone;
 
@@ -1246,7 +1241,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTI
 void CMmPacketServiceTsy::CompleteNotifyContextActivationRequested(
     CMmDataPackage* aDataPackage )		//contains initial data
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTACTIVATIONREQUESTED_1, "TSY: CMmPacketServiceTsy::CompleteNotifyContextActivationRequested.");
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyContextActivationRequested.");
 
 	//Check if there is client request
 	if ( EMultimodePacketServiceReqHandleUnknown != 
@@ -1479,7 +1474,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::NotifyContextAdded(
     const TDataPackage& aPackage )   
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYCONTEXTADDED_1, "TSY: CMmPacketServiceTsy::NotifyContextAdded." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyContextAdded." );
 
 	TDes* const context = aPackage.Des1u();
 
@@ -1512,7 +1507,7 @@ void CMmPacketServiceTsy::CompleteNotifyContextAdded(
 
 	aPackage->UnPackData( contextName, result  );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTADDED_1, "TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded." );
 
 	if ( KErrNone != result )
         {
@@ -1523,7 +1518,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
             // Context name forced to External2.
             contextName.Copy( KStringExternal2 );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTADDED_2, "TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Create Secondary Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Create Secondary Dial-up Object." );
         
             // Create object for externally created dial-up context
             TRAP( trapError, iSecondaryDialUpContext = CMmPacketContextTsy::NewL(
@@ -1536,7 +1531,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
             // Context name forced to External.
             contextName.Copy( KStringExternal );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTADDED_3, "TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Create Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Create Dial-up Object." );
         
             // Create object for externally created dial-up context
             TRAP( trapError, iDialUpContext = CMmPacketContextTsy::NewL(
@@ -1586,7 +1581,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
         //Check if dial-up context is created, and set default params
         if ( contextName.Compare( KStringExternal2 ) == 0 )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTADDED_4, "TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Reset Secondary Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Reset Secondary Dial-up Object." );
             // Reset secondary dial-up context
             if(iSecondaryDialUpContext)
             	{
@@ -1596,7 +1591,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
             }
         else if ( contextName.Compare( KStringExternal ) == 0 )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTADDED_5, "TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Reset Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded :Reset Dial-up Object." );
             // Reset dial-up context
             if(iDialUpContext)
             	{
@@ -1615,7 +1610,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
         // Add context name to the etel side memory
         *iNotifyDataPointers.iContextAdded = contextName;
         iNotifyDataPointers.iContextAdded = NULL;
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYCONTEXTADDED_6, "TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded. Context Name: %S", contextName );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteNotifyContextAdded. Context Name: %S", &contextName );
 
         // Complete request with KErrNone
         CMmPacketServiceTsy::ReqCompleted( reqHandle, KErrNone );
@@ -1636,7 +1631,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_C
 TInt CMmPacketServiceTsy::NotifyDynamicCapsChange(
     RPacketService::TDynamicCapsFlags* const aCaps ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYDYNAMICCAPSCHANGE_1, "TSY: CMmPacketServiceTsy::NotifyDynamicCapsChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyDynamicCapsChange." );
 
     // Save pointer to aCaps
     iNotifyDataPointers.iDynamicCapsChange = aCaps;
@@ -1655,7 +1650,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTI
 void CMmPacketServiceTsy::CompleteNotifyDynamicCapsChange(
     const RPacketService::TDynamicCapsFlags aCaps ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYDYNAMICCAPSCHANGE_1, "TSY: CMmPacketServiceTsy::CompleteNotifyDynamicCapsChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyDynamicCapsChange." );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1681,7 +1676,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::NotifyMSClassChange(
     RPacketService::TMSClass* const aNewClass ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYMSCLASSCHANGE_1, "TSY: CMmPacketServiceTsy::NotifyMSClassChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyMSClassChange." );
 
     // Save aNewClass internally
     iNotifyDataPointers.iMSClassChange = aNewClass;
@@ -1699,7 +1694,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTI
 void CMmPacketServiceTsy::CompleteNotifyMSClassChange(
     CMmDataPackage* aDataPackage )				
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYMSCLASSCHANGE_1, "TSY: CMmPacketServiceTsy::CompleteNotifyMSClassChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyMSClassChange." );
 
 	RPacketService::TMSClass newClass;
 	aDataPackage->UnPackData( newClass );
@@ -1719,7 +1714,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
             *iNotifyDataPointers.iMSClassChange = newClass;
             iNotifyDataPointers.iMSClassChange = NULL;
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYMSCLASSCHANGE_2, "TSY: CMmPacketServiceTsy::CompleteNotifyMSClassChange. New Ms Class: %d", newClass );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteNotifyMSClassChange. New Ms Class: %d", newClass );
             // Complete request with KErrNone
             CMmPacketServiceTsy::ReqCompleted( reqHandle, KErrNone );
             }
@@ -1737,7 +1732,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::NotifyStatusChange(
     RPacketService::TStatus* const aPacketStatus ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYSTATUSCHANGE_1, "TSY: CMmPacketServiceTsy::NotifyStatusChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyStatusChange." );
 
     // Save aPacketStatus to internal memory
     iNotifyDataPointers.iStatusChange = aPacketStatus;
@@ -1757,7 +1752,7 @@ void CMmPacketServiceTsy::CompleteNotifyStatusChange(
     const RPacketService::TStatus& aPacketStatus,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmPacketServiceTsy::CompleteNotifyStatusChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyStatusChange." );
     if ( aPacketStatus != iInternalSavedData.iServiceStatus )
         {
         iInternalSavedData.iServiceStatus = aPacketStatus;
@@ -1771,7 +1766,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
             *iNotifyDataPointers.iStatusChange = aPacketStatus;
             iNotifyDataPointers.iStatusChange = NULL;
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmPacketServiceTsy::CompleteNotifyStatusChange. Service Status:%d", aPacketStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteNotifyStatusChange. Service Status:%d", aPacketStatus );
             CMmPacketServiceTsy::ReqCompleted( reqHandle, aErrorCode );
             }
         }
@@ -1791,7 +1786,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 //
 TInt CMmPacketServiceTsy::RejectActivationRequestL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REJECTACTIVATIONREQUESTL_1, "TSY: CMmPacketServiceTsy::RejectActivationRequestL." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::RejectActivationRequestL." );
 
     const TTsyReqHandle tsyRegHandle( iTsyReqHandleStore->GetTsyReqHandle(
         EMultimodePacketServiceRejectActivationRequest ) );
@@ -1821,7 +1816,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REJE
 //
 void CMmPacketServiceTsy::CompleteRejectActivationRequest()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEREJECTACTIVATIONREQUEST_1, "TSY: CMmPacketServiceTsy::CompleteRejectActivationRequest." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteRejectActivationRequest." );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1842,7 +1837,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::SetAttachModeL(
     const RPacketService::TAttachMode* aMode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETATTACHMODEL_1, "TSY: CMmPacketServiceTsy::SetAttachModeL." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::SetAttachModeL." );
 
     iAttachMode = *aMode;
 
@@ -1873,7 +1868,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETA
 void CMmPacketServiceTsy::CompleteSetAttachMode(
     const TInt aError )  //error value
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETESETATTACHMODE_1, "TSY: CMmPacketServiceTsy::CompleteSetAttachMode. Error Value: %d", aError );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteSetAttachMode. Error Value: %d", aError );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1901,7 +1896,7 @@ TInt CMmPacketServiceTsy::SetPreferredBearerL(
     {
 	TAny* const dataPtr = aPackage.Ptr1();
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETPREFERREDBEARERL_1, "TSY: CMmPacketServiceTsy::SetPreferredBearerL. Preferred Bearer: %d", &dataPtr );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::SetPreferredBearerL. Preferred Bearer: %d", &dataPtr );
 
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->GetTsyReqHandle(
         EMultimodePacketServiceSetPreferredBearer ) );
@@ -1936,7 +1931,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETP
 void CMmPacketServiceTsy::CompleteSetPreferredBearer(
     const TInt aError )  //epoc error code
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETESETPREFERREDBEARER_1, "TSY: CMmPacketServiceTsy::CompleteSetPreferredBearer. Error: %d", aError );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteSetPreferredBearer. Error: %d", aError );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1948,7 +1943,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
             {
             iInternalSavedData.iPreferredBearer =
                 iTemporarySavedData.iPreferredBearer;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETESETPREFERREDBEARER_2, "TSY: CMmPacketServiceTsy::CompleteSetPreferredBearer. Preferred Bearer: %d", iInternalSavedData.iPreferredBearer );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteSetPreferredBearer. Preferred Bearer: %d", iInternalSavedData.iPreferredBearer );
             }
 
         // Complete the client request
@@ -1968,7 +1963,7 @@ TInt CMmPacketServiceTsy::ExtFunc(
     const TInt aIpc,                    
     const TDataPackage& aPackage )     
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_EXTFUNC_1, "TSY: CMmPacketServiceTsy::ExtFunc. IPC: %d", aIpc );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::ExtFunc. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
@@ -2027,7 +2022,7 @@ TInt CMmPacketServiceTsy::DoExtFuncL(
     const TInt aIpc,                
     const TDataPackage& aPackage )  
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DOEXTFUNCL_1, "TSY: CMmPacketServiceTsy::DoExtFuncL. IPC: %d TSY Req Handle:%d", aIpc, iTsyReqHandle);
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::DoExtFuncL. IPC: %d TSY Req Handle:%d", aIpc, iTsyReqHandle);
 
     TInt ret( KErrNotSupported );
 
@@ -2234,7 +2229,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_D
 CTelObject::TReqMode CMmPacketServiceTsy::ReqModeL(
     const TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REQMODEL_1, "TSY: CMmPacketServiceTsy::ReqModeL. IPC: %d", aIpc );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::ReqModeL. IPC: %d", aIpc );
 
     CTelObject::TReqMode reqMode( 0 );
     switch ( aIpc )
@@ -2312,7 +2307,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REQM
 TInt CMmPacketServiceTsy::NumberOfSlotsL(
     const TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NUMBEROFSLOTSL_1, "TSY: CMmPacketServiceTsy::NumberOfSlotsL. IPC: %d", aIpc );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::NumberOfSlotsL. IPC: %d", aIpc );
 
     TInt numberOfSlots( 0 );
     switch ( aIpc )
@@ -2365,7 +2360,7 @@ TInt CMmPacketServiceTsy::CancelService(
     const TInt aIpc,                    
     const TTsyReqHandle aTsyReqHandle ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_CANCELSERVICE_1, "TSY: CMmPacketServiceTsy::CancelService. IPC: %d Tsy Req Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::CancelService. IPC: %d Tsy Req Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
     
@@ -2507,7 +2502,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_C
 TInt CMmPacketServiceTsy::RegisterNotification(
     const TInt aIpc ) 
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REGISTERNOTIFICATION_1, "TSY: CMmPacketServiceTsy::RegisterNotification. IPC: %d", aIpc );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::RegisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -2540,7 +2535,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REGI
 TInt CMmPacketServiceTsy::DeregisterNotification(
     const TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_DEREGISTERNOTIFICATION_1, "TSY: CMmPacketServiceTsy::DeregisterNotification. IPC: %d", aIpc );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::DeregisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -2575,7 +2570,7 @@ TInt CMmPacketServiceTsy::GetMbmsNetworkServiceStatus(
 		TBool aAttemptAttach, 
 		TMbmsNetworkServiceStatus* aMBMSServiceStatus )
 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETMBMSNETWORKSERVICESTATUS_1, "TSY: CMmPacketServiceTsy:: TMbmsNetworkServiceStatus = %d", aMBMSServiceStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy:: TMbmsNetworkServiceStatus = %d", aMBMSServiceStatus );	
 
    const TTsyReqHandle regHandle( iTsyReqHandleStore->GetTsyReqHandle(
    EMultimodePacketServiceGetMBMSStatus ) );
@@ -2627,7 +2622,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETM
 void CMmPacketServiceTsy::CompleteGetMbmsNetworkServiceStatus( 
 	CMmDataPackage* aDataPackage, TInt aError )
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEGETMBMSNETWORKSERVICESTATUS_1, "TSY: CMmPacketServiceTsy::CompleteGetMbmsNetworkServiceStatus.");
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteGetMbmsNetworkServiceStatus.");
 
 	//Update the cache
 	TMbmsNetworkServiceStatus mbmsNetworkServiceStatus = EMbmsSupportUnknown;
@@ -2668,7 +2663,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::NotifyMbmsNetworkServiceStatusChange(
 	TMbmsNetworkServiceStatus* aMBMSServiceStatus )
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYMBMSNETWORKSERVICESTATUSCHANGE_1, "TSY: CMmPacketServiceTsy::NotifyMbmsNetworkServiceStatusChange TMbmsNetworkServiceStatus = %d", aMBMSServiceStatus );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::NotifyMbmsNetworkServiceStatusChange TMbmsNetworkServiceStatus = %d", aMBMSServiceStatus );
 	
 	// Set request handle and save pointer to aMBMSServiceStatus
     iNotifyDataPointers.iMBMSStatusChange = aMBMSServiceStatus;
@@ -2685,7 +2680,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTI
 void CMmPacketServiceTsy::CompleteNotifyMbmsNetworkServiceStatusChange( 
 	CMmDataPackage* aDataPackage, TInt aResult )
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYMBMSNETWORKSERVICESTATUSCHANGE_1, "TSY: CMmPacketServiceTsy::NotifyMbmsNetworkServiceStatusChange.");
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyMbmsNetworkServiceStatusChange.");
 	        
 	TInt result = aResult;        
 	if (aResult == KErrNone)
@@ -2739,7 +2734,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 //
 TInt CMmPacketServiceTsy::NotifyMbmsServiceAvailabilityChange()
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_NOTIFYMBMSSERVICEAVAILABILITYCHANGE_1, "TSY: CMmPacketServiceTsy::NotifyMbmsServiceAvailabilityChange.");
+TFLOGSTRING("TSY: CMmPacketServiceTsy::NotifyMbmsServiceAvailabilityChange.");
 	
 	// Set request handle
     iReqHandleType =  EMultimodePacketServiceNotifyMbmsServiceAvailabilityChange;
@@ -2824,7 +2819,7 @@ TInt CMmPacketServiceTsy::EnumerateMonitorServiceList( TInt& aCount, TInt& aMaxA
 			}
     	aMaxAllowed = iMaxMonitoredServices;
     	
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATEMONITORSERVICELIST_1, "TSY: CMmPacketServiceTsy::EnumerateMonitorServiceList." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::EnumerateMonitorServiceList." ); 
       		
        	// Complete the request with KErrNone
     	CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );	  
@@ -2897,7 +2892,7 @@ TInt CMmPacketServiceTsy::UpdateMbmsMonitorServiceListL( TMbmsAction aAction,
     }
 
 //----------------------------------------------------------------------------
-// CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceListL
+// CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceList
 // Completes update monitored service list request
 //----------------------------------------------------------------------------
 //
@@ -2905,7 +2900,7 @@ void CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceList(
     CMmDataPackage* aDataPackage, 
     const TInt aResult)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEUPDATEMBMSMONITORSERVICELIST_1,  "TSY: CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceListL." );
+	TFLOGSTRING( "TSY: CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceListL." );
 
 	TInt result= aResult;
 	TInt err(KErrNone);
@@ -2955,7 +2950,7 @@ void CMmPacketServiceTsy::CompleteUpdateMbmsMonitorServiceList(
 //
 TInt CMmPacketServiceTsy::UpdateMbmsMonitorServiceListCancel( TTsyReqHandle aTsyReqHandle )	
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_UPDATEMBMSMONITORSERVICELISTCANCEL_1,  "TSY: CMmPacketServiceTsy::UpdateMbmsMonitorServiceListCancel ReqHandle %d", aTsyReqHandle );
+	TFLOGSTRING2( "TSY: CMmPacketServiceTsy::UpdateMbmsMonitorServiceListCancel ReqHandle %d", aTsyReqHandle );
 	
 	if ( aTsyReqHandle != EMultimodePacketServiceReqHandleUnknown )
         {
@@ -2978,7 +2973,7 @@ TInt CMmPacketServiceTsy::UpdateMbmsMonitorServiceListCancel( TTsyReqHandle aTsy
 //
 TInt CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase1L(RMobilePhone::TClientId* aClient,  TUint& aBufSize)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETMBMSMONITOREDSERVICESPHASE1L_1, "TSY: CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase1L called.");
+	TFLOGSTRING("TSY: CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase1L called.");
 	// Initialize ret value
 	TInt ret( KErrNone );
 	TInt leaveCode( KErrNone );
@@ -3014,7 +3009,7 @@ TInt CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase1L(RMobilePhone::TClientI
 TInt CMmPacketServiceTsy::GetSizeOfMonitoredServiceListL(RMobilePhone::TClientId* aClient,  TUint& aBufSize)
 	{
 	// read the list, store its content and then return size of this buffer to client
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETSIZEOFMONITOREDSERVICELISTL_1, "TSY: CMmPacketServiceTsy::GetSizeOfMonitoredServiceList called.");
+	TFLOGSTRING("TSY: CMmPacketServiceTsy::GetSizeOfMonitoredServiceList called.");
 	// create new list
 	CPcktMbmsMonitoredServiceList* currentList=CPcktMbmsMonitoredServiceList::NewL();
 	CleanupStack::PushL(currentList);
@@ -3046,7 +3041,7 @@ TInt CMmPacketServiceTsy::GetSizeOfMonitoredServiceListL(RMobilePhone::TClientId
 	
     // return the CBufFlat's size to client
 	aBufSize=(read->iListBuf)->Size();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETSIZEOFMONITOREDSERVICELISTL_2, "TSY: CMmPacketServiceTsy::GetSizeOfMonitoredServiceList: size=%d",aBufSize);
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::GetSizeOfMonitoredServiceList: size=%d",aBufSize);  	
     // Complete first phase of list retrieval
     ReqCompleted( iTsyReqHandle, KErrNone );
     CleanupStack::PopAndDestroy( currentList ); // Pop & destroy list
@@ -3063,7 +3058,7 @@ TInt CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase2(RMobilePhone::TClientId
 	// Initialize ret value
     TInt ret( KErrNotFound );
     
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETMBMSMONITOREDSERVICESPHASE2_1, "TSY: CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase2 called");
+	TFLOGSTRING("TSY: CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase2 called");
 	CListReadAllAttempt* read=NULL;
 	
 	// Find the get Mbms monitored services from this client
@@ -3113,7 +3108,7 @@ TInt CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase2(RMobilePhone::TClientId
 TInt CMmPacketServiceTsy::GetMbmsMonitoredServicesCancel( TTsyReqHandle aTsyReqHandle )
 	{
 	
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETMBMSMONITOREDSERVICESCANCEL_1, "TSY: CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase1LCancel called");
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GetMbmsMonitoredServicesPhase1LCancel called");	
     // Remove the read all attempt
     CListReadAllAttempt* read = NULL;
 
@@ -3153,7 +3148,7 @@ CMmMBMSContextList* CMmPacketServiceTsy::MBMSContextList()
 CTelObject* CMmPacketServiceTsy::OpenNewObjectL(
     TDes& aNewName )  
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_1, "TSY: CMmPacketServiceTsy::OpenNewObjectL. %S", aNewName );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectL. %S", &aNewName );
     CTelObject* newContext = NULL;
     TUint8 proxyId( 0 );    
     TInt ret( KErrNone );
@@ -3164,7 +3159,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_O
 
         if( KErrNone != ret )
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_2, "TSY: CMmPacketServiceTsy::OpenNewObjectL. Mbms Leaves with: %d", ret );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectL. Mbms Leaves with: %d", ret );
             User::Leave( ret );            
             }
             
@@ -3176,12 +3171,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPEN
             // Call Close() to context to remove it completely
             context->Close();
             context = NULL;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_3, "TSY: CMmPacketServiceTsy::OpenNewObjectL. Mbms Leaves  with: %d", ret );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectL. Mbms Leaves  with: %d", ret );
             User::Leave( ret );
             }
         else
             {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_4, "TSY: CMmPacketServiceTsy::OpenNewObjectL. New MBMS Context Name: %S Proxy Id: %d",aNewName, proxyId );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::OpenNewObjectL. New MBMS Context Name: %S Proxy Id: %d",&aNewName, proxyId );            
             newContext = context;            
             }        
         }
@@ -3196,7 +3191,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_O
             // of context supported by this phone ( value KMmMaxNumberOfContexts )
             ret = CMmCommonStaticUtility::EpocErrorCode(
                 KErrOverflow, KErrUmtsMaxNumOfContextExceededByPhone );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_5, "TSY: CMmPacketServiceTsy::OpenNewObjectL. Leaves with: %d", ret );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectL. Leaves with: %d", ret );
             User::Leave( ret );
             }
         CMmPacketContextTsy* context = CMmPacketContextTsy::NewL( this, iHostCID, aNewName, proxyId );
@@ -3210,12 +3205,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPEN
             // Call Close() to context to remove it completely
             context->Close();
             context = NULL;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_6, "TSY: CMmPacketServiceTsy::OpenNewObjectL. Leaves with: %d", ret );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectL. Leaves with: %d", ret );
             User::Leave( ret );
             }
         else
             {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTL_7, "TSY: CMmPacketServiceTsy::OpenNewObjectL. New Context Name: %S Proxy Id: %d",aNewName, proxyId );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::OpenNewObjectL. New Context Name: %S Proxy Id: %d",&aNewName, proxyId );            
             newContext = context;            
             }
         }               
@@ -3230,12 +3225,12 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_O
 CTelObject* CMmPacketServiceTsy::OpenNewObjectByNameL(
     const TDesC& aName )   
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTBYNAMEL_1, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL. Context Name: %S", aName );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL. Context Name: %S", &aName );
 
     // length of object's name cannot be over 16 chars
     if ( 16 < aName.Length() )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTBYNAMEL_2, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL. Leaves with: %d", KErrOverflow  );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL. Leaves with: %d", KErrOverflow  );
         User::Leave( KErrOverflow  );
         }
 
@@ -3244,12 +3239,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPEN
 
     if ( mmPacketContextName.Compare( KStringExternal ) == 0 )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTBYNAMEL_3, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Open Existing Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Open Existing Dial-up Object." );
         mmPacketContext = iDialUpContext;
         }
     else if ( mmPacketContextName.Compare( KStringExternal2 ) == 0 )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTBYNAMEL_4, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Open Existing Secondary Dial-up Object." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Open Existing Secondary Dial-up Object." );
         mmPacketContext = iSecondaryDialUpContext;
         }
     else
@@ -3261,7 +3256,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPEN
     // If not found, Leaves
     if ( NULL == mmPacketContext )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_OPENNEWOBJECTBYNAMEL_5, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL. Leaves with: %d", KErrNotFound );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL. Leaves with: %d", KErrNotFound );
         User::Leave( KErrNotFound );
         }
 
@@ -3430,14 +3425,14 @@ void CMmPacketServiceTsy::Complete(
         }
     else if ( aObject == iDialUpContext && NULL != iDialUpContext )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETE_1, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Complete Dial-up Object Request." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Complete Dial-up Object Request." );
 
         iDialUpContext->Complete( aReqHandleType, aError );
         }
     else if ( aObject == iSecondaryDialUpContext 
               && NULL != iSecondaryDialUpContext )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETE_2, "TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Complete Dial-up Object Request." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::OpenNewObjectByNameL :Complete Dial-up Object Request." );
 
         iSecondaryDialUpContext->Complete( aReqHandleType, aError );
 
@@ -3576,7 +3571,7 @@ void CMmPacketServiceTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,  
     const TInt aError )                   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_REQCOMPLETED_1, "TSY: CMmPacketServiceTsy::Request Completed. TSY Req Handle: %d Error:%d", aTsyReqHandle, aError );
+TFLOGSTRING3("TSY: CMmPacketServiceTsy::Request Completed. TSY Req Handle: %d Error:%d", aTsyReqHandle, aError );
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
     }
@@ -3626,7 +3621,7 @@ TInt CMmPacketServiceTsy::PrepareOpenSecondary(
 TInt CMmPacketServiceTsy::EnumerateNifs(
     TInt* aCount )   
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATENIFS_1, "TSY: CMmPacketServiceTsy::EnumerateNifs." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::EnumerateNifs." );
 
     iPacketContextList->EnumerateNifs( aCount );
 
@@ -3644,7 +3639,7 @@ TInt CMmPacketServiceTsy::GetNifInfo(
     TInt* aIndex,                            
     RPacketService::TNifInfoV2* aNifInfoV2 ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETNIFINFO_1, "TSY: CMmPacketServiceTsy::GetNifInfo." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GetNifInfo." );
 
     TInt ret = iPacketContextList->GetNifInfo( aIndex, aNifInfoV2 );
 
@@ -3666,7 +3661,7 @@ TInt CMmPacketServiceTsy::EnumerateContextsInNif(
     TDesC* aExistingContextName,    
     TInt* aCount )                   
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATECONTEXTSINNIF_1, "TSY: CMmPacketServiceTsy::EnumerateContextsInNif." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::EnumerateContextsInNif." );
 
 	TInt ret = KErrNone;
 	if (aExistingContextName->Length() > KMaxInfoName)
@@ -3694,7 +3689,7 @@ TInt CMmPacketServiceTsy::GetContextNameInNif(
     RPacketService::TContextNameInNif* aContextNameInNif,
     TDes* aContextName )                
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETCONTEXTNAMEINNIF_1, "TSY: CMmPacketServiceTsy::GetContextNameInNif." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GetContextNameInNif." );
 
     TInt ret = iPacketContextList->GetContextNameInNif( aContextNameInNif,
         aContextName );
@@ -3712,7 +3707,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETC
 TInt CMmPacketServiceTsy::SetDefaultContextParamsL(
     const TDataPackage& aPackage )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETDEFAULTCONTEXTPARAMSL_1, "TSY: CMmPacketServiceTsy::SetDefaultContextParamsL." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::SetDefaultContextParamsL." );
 
     TInt ret(KErrServerBusy);
 
@@ -3742,7 +3737,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETD
 void CMmPacketServiceTsy::CompleteSetDefaultContextParams(
     TInt aCause )    
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETESETDEFAULTCONTEXTPARAMS_1, "TSY: CMmPacketServiceTsy::CompleteSetDefaultContextParams. aCause: %d", aCause );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteSetDefaultContextParams. aCause: %d", aCause );
 
     // Reset request handle. Returns the deleted request handle
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -3763,7 +3758,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::GetDefaultContextParams(
     TPacketDataConfigBase* aContextConfig )      
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GETDEFAULTCONTEXTPARAMS_1, "TSY: CMmPacketServiceTsy::GetDefaultContextParams." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GetDefaultContextParams." );
 
     TInt ret = iMmPacketServiceGsmWcdmaExt->GetDefaultContextParams(
         aContextConfig );
@@ -3799,7 +3794,7 @@ TBool CMmPacketServiceTsy::IsActivationAllowed()
                 if ( RCall::EStatusUnknown != status &&
                      RCall::EStatusIdle != status )
                     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ISACTIVATIONALLOWED_1, "TSY: CMmPacketServiceTsy::IsActivationAllowed. CS call active, Context Activation not allowed" );
+    TFLOGSTRING("TSY: CMmPacketServiceTsy::IsActivationAllowed. CS call active, Context Activation not allowed" );
                     isAllowed = EFalse;
                     i = iMmPhone->CallList()->GetNumberOfObjects();
                     }
@@ -3828,7 +3823,7 @@ CMmMessageManagerBase* CMmPacketServiceTsy::MessageManager()
 void CMmPacketServiceTsy::CompleteNotifyEGprsInfoChange(
     CMmDataPackage* aDataPackage )		
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENOTIFYEGPRSINFOCHANGE_1, "TSY: CMmPacketServiceTsy::CompleteNotifyEGprsInfoChange." );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::CompleteNotifyEGprsInfoChange." );
 
 	//Unpack data
 	TBool lastEdgeGprsSupport;
@@ -3892,7 +3887,7 @@ void CMmPacketServiceTsy::CompleteNetworkModeChange(
     //Unpack data
     aDataPackage->UnPackData( ntwkMode );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETENETWORKMODECHANGE_1, "TSY: CMmPacketServiceTsy::CompleteNetworkModeChange. ntwkMode: %d", ntwkMode );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::CompleteNetworkModeChange. ntwkMode: %d", ntwkMode );
     iCurrentMode = ntwkMode;
     }
 
@@ -3921,7 +3916,7 @@ CMmPacketContextTsy* CMmPacketServiceTsy::ContextTsy(
 //
 RHandleBase* CMmPacketServiceTsy::GlobalKernelObjectHandle()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GLOBALKERNELOBJECTHANDLE_1, "TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle" );
 
     if ( KNullHandle == iMutex.Handle() )
         {
@@ -3929,16 +3924,16 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GLOB
     
         if ( KErrNone == ret )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GLOBALKERNELOBJECTHANDLE_2, "TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle - Mutex created" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle - Mutex created" );
             }
         else
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GLOBALKERNELOBJECTHANDLE_3, "TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle - Mutex creation failed" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle - Mutex creation failed" );
             }                  
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_GLOBALKERNELOBJECTHANDLE_4, "TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle - Mutex creation skipped" );
+TFLOGSTRING("TSY: CMmPacketServiceTsy::GlobalKernelObjectHandle - Mutex creation skipped" );
         }
          
     return &iMutex;
@@ -3953,8 +3948,8 @@ TInt CMmPacketServiceTsy::SetAlwaysOnL(
     TTsyReqHandle aTsyReqHandle,
     RMmCustomAPI::TSetAlwaysOnMode aMode )
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETALWAYSONL_1, "TSY: CMmPacketServiceTsy::SetAlwaysOn Mode = %d", aMode );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETALWAYSONL_2,  "TSY: CMmPacketServiceTsy::SetAlwaysOn ReqHandle %d", aTsyReqHandle );
+TFLOGSTRING2("TSY: CMmPacketServiceTsy::SetAlwaysOn Mode = %d", aMode );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::CompleteSetAlwaysOn ReqHandle %d", aTsyReqHandle );
 	TInt ret( KErrServerBusy );
 	
 	//Check if request is allready pending
@@ -3989,12 +3984,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_SETA
 void CMmPacketServiceTsy::CompleteSetAlwaysOn( 
     TInt aError )
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETESETALWAYSON_1,  "TSY: CMmPacketServiceTsy::CompleteSetAlwaysOn Error %d", aError );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::CompleteSetAlwaysOn Error %d", aError );	
 
     const TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
             								  EMultimodePacketSetAlwaysOn ) );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETESETALWAYSON_2,  "TSY: CMmPacketServiceTsy::CompleteSetAlwaysOn ReqHandle %d", reqHandle );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::CompleteSetAlwaysOn ReqHandle %d", reqHandle );
 
     if ( EMultimodePacketServiceReqHandleUnknown != reqHandle )
     	{
@@ -4020,7 +4015,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 void CMmPacketServiceTsy::CancelSetAlwaysOn( 
     TTsyReqHandle aTsyReqHandle )
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_CANCELSETALWAYSON_1,  "TSY: CMmPacketServiceTsy::CancelSetAlwaysOn ReqHandle %d", aTsyReqHandle );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::CancelSetAlwaysOn ReqHandle %d", aTsyReqHandle );
 	
 	if ( aTsyReqHandle != EMultimodePacketServiceReqHandleUnknown )
         {
@@ -4039,12 +4034,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_CANC
 //
 TInt CMmPacketServiceTsy::EnumerateMbmsActiveServiceList( TInt &aCount, TInt &aMaxAllowed )
     {   
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATEMBMSACTIVESERVICELIST_1,  "TSY: CMmPacketServiceTsy::EnumerateMbmsActiveServiceList. max: %d", aMaxAllowed );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::EnumerateMbmsActiveServiceList. max: %d", aMaxAllowed );     
      
     aCount = EnumerateMbmsActiveServices();
     aMaxAllowed = iMaxActiveServices;
     
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATEMBMSACTIVESERVICELIST_2,  "TSY: CMmPacketServiceTsy::EnumerateActiveServiceList Count: %d, Max allowed %d", aCount, aMaxAllowed );
+TFLOGSTRING3( "TSY: CMmPacketServiceTsy::EnumerateActiveServiceList Count: %d, Max allowed %d", aCount, aMaxAllowed );     
     // Complete the request with KErrNone
     CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, KErrNone );
     return KErrNone;    
@@ -4057,7 +4052,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_E
 //   
 TInt CMmPacketServiceTsy::EnumerateMbmsActiveServices()
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_ENUMERATEMBMSACTIVESERVICES_1,  "TSY: CMmPacketServiceTsy::EnumerateMbmsActiveService. max: %d", iMaxActiveServices );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::EnumerateMbmsActiveService. max: %d", iMaxActiveServices );     
     TInt ret( 0 );    
     
     for( TInt i = 0; i< iMBMSContextList->NumberOfContexts(); i++ )
@@ -4094,7 +4089,7 @@ void CMmPacketServiceTsy::CompleteEnumerateMbmsActiveServiceList(
     CMmDataPackage* aDataPackage,
     const TInt aResult)
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMPLETEENUMERATEMBMSACTIVESERVICELIST_1,  "TSY: CMmPacketServiceTsy::CompleteEnumerateMbmsActiveServiceList. Error: %d", aResult );
+TFLOGSTRING2( "TSY: CMmPacketServiceTsy::CompleteEnumerateMbmsActiveServiceList. Error: %d", aResult ); 
            
     if( KErrNone == aResult && NULL != aDataPackage )
         {

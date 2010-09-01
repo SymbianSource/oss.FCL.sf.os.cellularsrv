@@ -92,6 +92,21 @@ private:
 		} iState;
 	};
 
-
+class CCallMobileFax;
+class CATAnswerFax : public CATFaxCallConnectCommands
+/**
+@internalComponent
+*/
+	{
+public:
+	static CATAnswerFax* NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
+	~CATAnswerFax();
+	void Start(TTsyReqHandle aTsyReqHandle, TAny* aParams);
+	void Stop(TTsyReqHandle aTsyReqHandle);
+protected:
+	CATAnswerFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
+	virtual void EventSignal(TEventSource aSource);
+	virtual void CompleteSuccessfully();
+	};
 
 #endif

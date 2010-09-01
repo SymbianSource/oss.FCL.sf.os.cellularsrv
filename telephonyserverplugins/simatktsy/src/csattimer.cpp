@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,13 +20,8 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "csattimerTraces.h"
-#endif
-
 #include "CSatTimer.h"              // Class header
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "CSatNotificationsTsy.h"   // Sat Tsy class
 #include "CSatDataPackage.h"	        // For data packages
 
@@ -56,7 +51,7 @@ void CSatTimer::ConstructL
         )
     {
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_CONSTRUCTL_1,  "CSAT: CSatTimer::ConstructL" );
+    TFLOGSTRING( "CSAT: CSatTimer::ConstructL" );
     iSatNotificationsTsy = aSatNotificationsTsy;
     iTimerTable = new ( ELeave ) RArray<TTimer>( KMaxNumberOfParallelTimers );  
     // Neutral priority, 0
@@ -85,7 +80,7 @@ CSatTimer::~CSatTimer
         //None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_DTOR_1,  "CSAT: CSatTimer::~CSatTimer" );
+    TFLOGSTRING( "CSAT: CSatTimer::~CSatTimer" );
     if ( iTimer )
         {
         // Stop calling Beat...
@@ -111,7 +106,7 @@ TInt CSatTimer::Start
         TUint32 aTimerValue // Timer value
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_START_1,  "CSAT: CSatTimer::Start" );
+    TFLOGSTRING( "CSAT: CSatTimer::Start" );
     TInt ret( KErrNone );
 
      // Check if the entry is already in the table 
@@ -151,7 +146,7 @@ void CSatTimer::Stop
         //None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_STOP_1,  "CSAT: CSatTimer::Stop" );
+    TFLOGSTRING( "CSAT: CSatTimer::Stop" );
     // Check if active 
     if ( iTimer->IsActive () ) 
         { 
@@ -193,7 +188,8 @@ void CSatTimer::Beat
                 if ( trapError )
 					{
 					ret = trapError;
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_BEAT_1, "CSAT: CSatTimer::Beat, Trap error: %d", trapError);
+					TFLOGSTRING2("CSAT: CSatTimer::Beat, Trap error: %d", 
+						trapError);
 					}
 					
                 // Remove timer from the table
@@ -221,7 +217,7 @@ void CSatTimer::Synchronize
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_SYNCHRONIZE_1,  "CSAT: CSatTimer::Synchronize" );
+    TFLOGSTRING( "CSAT: CSatTimer::Synchronize" );
     iBeatCounter++;
     }
 
@@ -236,7 +232,7 @@ TBool CSatTimer::CheckTimerTable
         )
     {
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_CHECKTIMERTABLE_1,  "CSAT: CSatTimer::CheckTimerTable" );
+    TFLOGSTRING( "CSAT: CSatTimer::CheckTimerTable" );
     TBool ret( EFalse );
 
     // Create the entry with meaningful values only
@@ -266,7 +262,7 @@ TInt CSatTimer::DeleteTimerById
         )
     { 
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_DELETETIMERBYID_1,  "CSAT: CSatTimer::DeleteTimerById" );
+    TFLOGSTRING( "CSAT: CSatTimer::DeleteTimerById" );
     TInt ret( KErrNotFound );
 
     // Create the entry with meaningful values only
@@ -304,7 +300,7 @@ TUint32 CSatTimer::CurrentValueOfTimerById
         TInt aTimerId // Timer identifier
         )
     { 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_CURRENTVALUEOFTIMERBYID_1,  "CSAT: CSatTimer::CurrentValueOfTimerById" );
+    TFLOGSTRING( "CSAT: CSatTimer::CurrentValueOfTimerById" );
     TInt ret( KErrNotFound );
 
     // Create the entry with meaningful values only
@@ -348,7 +344,7 @@ void CSatTimer::SetProactiveCommandOnGoingStatus
         TBool aStatus 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_SETPROACTIVECOMMANDONGOINGSTATUS_1,  "CSAT: CSatTimer::SetProactiveCommandOnGoingStatus" );
+    TFLOGSTRING( "CSAT: CSatTimer::SetProactiveCommandOnGoingStatus" );
     iIsProactiveCommandOnGoing = aStatus;
     }
 
@@ -365,7 +361,7 @@ CSatTimer::TTimer::TTimer
         ): iTimerId( aTimerId ), iStartTime( aStartTime ), 
            iTimeStamp( aTimeStamp )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_TTIMER_1,  "CSAT: TTimer::TTimer" );
+    TFLOGSTRING( "CSAT: TTimer::TTimer" );
     }
 
 // -----------------------------------------------------------------------------
@@ -378,7 +374,7 @@ TUint32 CSatTimer::TTimer::TimeStamp
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_TIMESTAMP_1,  "CSAT: TTimer::TimeStamp" );
+    TFLOGSTRING( "CSAT: TTimer::TimeStamp" );
     return iTimeStamp;
     }
 
@@ -392,7 +388,7 @@ TInt CSatTimer::TTimer::TimerId
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_TIMERID_1,  "CSAT: TTimer::TimerId" );
+    TFLOGSTRING( "CSAT: TTimer::TimerId" );
     return iTimerId;
     }
 
@@ -406,7 +402,7 @@ TUint32 CSatTimer::TTimer::TimerStartTime
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_TIMERSTARTTIME_1,  "CSAT: TTimer::TimerStartTime" );
+    TFLOGSTRING( "CSAT: TTimer::TimerStartTime" );
     return iStartTime;
     }
 
@@ -421,7 +417,7 @@ TBool CSatTimer::TTimer::CompareEntries
         const CSatTimer::TTimer& aArg2 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_COMPAREENTRIES_1,  "CSAT: CSatTimer::TTimer::CompareEntries" );
+    TFLOGSTRING( "CSAT: CSatTimer::TTimer::CompareEntries" );
     TBool ret( EFalse ); 
 
     // We are interested only in the timer id
@@ -431,7 +427,7 @@ TBool CSatTimer::TTimer::CompareEntries
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_COMPAREENTRIES_2,  "CSAT: CSatTimer::TTimer::CompareEntries, Not equal" );
+        TFLOGSTRING( "CSAT: CSatTimer::TTimer::CompareEntries, Not equal" );
         }
     return ret;
     }
@@ -447,7 +443,7 @@ TInt CSatTimer::TTimer::OrderEntries
         const CSatTimer::TTimer& aArg2  
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_ORDERENTRIES_1,  "CSAT: CSatTimer::TTimer::OrderEntries" );
+    TFLOGSTRING( "CSAT: CSatTimer::TTimer::OrderEntries" );
     TInt ret( KFirstTimeStampSmaller );
 
     // We are interested only in the time stamp
@@ -461,7 +457,8 @@ TInt CSatTimer::TTimer::OrderEntries
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTIMER_TTIMER_ORDERENTRIES_2,  "CSAT: CSatTimer::TTimer::OrderEntries, KFirstTimeStampSmaller" );
+        TFLOGSTRING( "CSAT: CSatTimer::TTimer::OrderEntries, \
+            KFirstTimeStampSmaller" );
         }
 
     return ret;

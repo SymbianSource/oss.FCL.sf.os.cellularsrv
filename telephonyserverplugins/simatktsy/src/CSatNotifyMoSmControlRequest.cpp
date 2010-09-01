@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyMoSmControlRequestTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyMoSmControlRequest.h"  // Class header
@@ -34,6 +28,7 @@
 #include "BerTlv_defs.h"            // Ber Tlv specific definitions
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h" 	// Message manager class for forwarding req.
@@ -49,13 +44,13 @@ CSatNotifyMoSmControlRequest* CSatNotifyMoSmControlRequest::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_NEWL_1, "CSAT: CSatNotifyMoSmControlRequest::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::NewL");
    	CSatNotifyMoSmControlRequest* const satNotifyMoSmControlRequest = 
         new ( ELeave ) CSatNotifyMoSmControlRequest( aNotificationsTsy );
     CleanupStack::PushL( satNotifyMoSmControlRequest );
     satNotifyMoSmControlRequest->ConstructL();
     CleanupStack::Pop( satNotifyMoSmControlRequest );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_NEWL_2, "CSAT: CSatNotifyMoSmControlRequest::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::NewL, end of method");
     return satNotifyMoSmControlRequest;
     }
 
@@ -69,7 +64,8 @@ CSatNotifyMoSmControlRequest::~CSatNotifyMoSmControlRequest
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_DTOR_1, "CSAT: CSatNotifyMoSmControlRequest::~CSatNotifyMoSmControlRequest");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::\
+    	~CSatNotifyMoSmControlRequest");
     }
     
 // -----------------------------------------------------------------------------
@@ -95,13 +91,14 @@ void CSatNotifyMoSmControlRequest::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_CONSTRUCTL_1, "CSAT: CSatNotifyMoSmControlRequest::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ConstructL");
     // Checks if MO-SMS control should be activated
     iNotificationsTsy->iSatTsy->MessageManager()->HandleRequestL( 
     		ESatTsyMoSmsControlActivation );	
     // Initialize MO-SMS Control to deactivated
     iIsMoSmsCtrlActivated = EFalse; 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_CONSTRUCTL_2, "CSAT: CSatNotifyMoSmControlRequest::ConstructL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ConstructL, \
+    	end of method"); 	
     }
 
 // -----------------------------------------------------------------------------
@@ -116,7 +113,7 @@ TInt CSatNotifyMoSmControlRequest::Notify
         const TDataPackage& aPackage 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_NOTIFY_1, "CSAT: CSatNotifyMoSmControlRequest::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::Notify");
 
     // Save data pointer to client side for completion      
     iMoSmControlV1Pckg = reinterpret_cast<RSat::TMoSmControlV1Pckg*>(
@@ -140,7 +137,7 @@ TInt CSatNotifyMoSmControlRequest::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_CANCELNOTIFICATION_1, "CSAT: CSatNotifyMoSmControlRequest::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::CancelNotification");
     
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -165,7 +162,7 @@ TInt CSatNotifyMoSmControlRequest::CompleteNotifyL
         TInt aErrorCode                
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_1, "CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL" );
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL" );
     
     CSatNotificationsTsy::TMoSmCtrlData moSmCtrlData;
 
@@ -189,11 +186,13 @@ TInt CSatNotifyMoSmControlRequest::CompleteNotifyL
 		TDesC8* atkData = NULL;
 		aDataPackage->UnPackData( &atkData );
     	
-    	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_2, "CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL Data length: %d", ( *atkData ).Length() );
+    	TFLOGSTRING2("CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL\
+    	    Data length: %d", ( *atkData ).Length() );
     	
 	    if ( KTlvMaxSize < ( *atkData ).Length() )
 	    	{
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_3, "CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL, Data length exceeded" );
+            TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL, \
+                Data length exceeded" );                
             // Data not consistent, reject the call
             moSmCtrlData.iResult = KMoSmCtrlResultNotAllowed;
 	        isDataOk = EFalse;
@@ -206,7 +205,8 @@ TInt CSatNotifyMoSmControlRequest::CompleteNotifyL
 
             if ( KMoSmCtrlResultAllowedWithModifications == ( *atkData )[0] )
                 {
-                OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_4, "CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL Addr1: %s, Addr2: %s", addr1, addr2 );
+                TFLOGSTRING3("CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL\
+    	            Addr1: %s, Addr2: %s", &addr1, &addr2 );
                 simRespDataConsistent = VerifyNotificationData( addr1, addr2 );      
                 }
                 
@@ -217,7 +217,8 @@ TInt CSatNotifyMoSmControlRequest::CompleteNotifyL
                 }
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_5, "CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL, NAA response data not consistent" );
+                TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::CompleteNotifyL, \
+                	NAA response data not consistent" );                
                 // Data not consistent, reject the sms
                 moSmCtrlData.iResult = KMoSmCtrlResultNotAllowed;
 	        	isDataOk = EFalse;
@@ -299,12 +300,15 @@ TInt CSatNotifyMoSmControlRequest::CompleteNotifyL
 	        } // If MO SM Ctrl Activated and data ok
 	    else
 	        {
-	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_6, "LSAT: CSatMoSmsCtrlMessHandler::CompleteNotifyL, iIsMoSmsCtrlActivated: %d, isDataOk: %d ", iIsMoSmsCtrlActivated, isDataOk);
+	        TFLOGSTRING3("LSAT: CSatMoSmsCtrlMessHandler::CompleteNotifyL, \
+    	        iIsMoSmsCtrlActivated: %d, isDataOk: %d ", 
+    	        iIsMoSmsCtrlActivated, isDataOk);
 	        }
     	} // if KErrNone
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_COMPLETENOTIFYL_7, "LSAT: CSatMoSmsCtrlMessHandler::CompleteNotifyL, Error in notification ");
+        TFLOGSTRING("LSAT: CSatMoSmsCtrlMessHandler::CompleteNotifyL, \
+        	Error in notification ");
         moSmCtrlData.iResult = KMoSmCtrlResultNotAllowed;
         // Pack data and send response right away to NAA
     	CSatDataPackage dataPackage;
@@ -328,11 +332,13 @@ void CSatNotifyMoSmControlRequest::CreateMoSmsCtrlEnvelopeL
 	    TInt /*aResult*/
 	    )   
     {   
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_CREATEMOSMSCTRLENVELOPEL_1, "CSAT: CSatNotifyMoSmControlRequest::CreateMoSmsCtrlEnvelopeL");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::\
+        CreateMoSmsCtrlEnvelopeL"); 
     // Check first if the MO-SMS is activated
     if ( iIsMoSmsCtrlActivated )
         {  
-    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_CREATEMOSMSCTRLENVELOPEL_2, "CSAT: CSatNotifyMoSmControlRequest::CreateMoSmsCtrlEnvelopeL, MO SM Ctrl Activated");
+    	TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::\
+    		CreateMoSmsCtrlEnvelopeL, MO SM Ctrl Activated");
     	
 	    CSatNotificationsTsy::TAddressData* addressData;
 	    
@@ -384,7 +390,8 @@ void CSatNotifyMoSmControlRequest::SetActivationStatus
     {
     // Unpack data
     aDataPackage->UnPackData( iIsMoSmsCtrlActivated );
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_SETACTIVATIONSTATUS_1, "CSAT: CSatNotifyMoSmControlRequest::SetActivationStatus, %d",iIsMoSmsCtrlActivated );
+    TFLOGSTRING2("CSAT: CSatNotifyMoSmControlRequest::SetActivationStatus, %d",
+    	iIsMoSmsCtrlActivated );
     }
 
 // -----------------------------------------------------------------------------
@@ -397,7 +404,7 @@ TBool CSatNotifyMoSmControlRequest::ActivationStatus
 		void
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_ACTIVATIONSTATUS_1, "CSAT: CSatNotifyMoSmControlRequest::ActivationStatus");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ActivationStatus");
     return iIsMoSmsCtrlActivated;
     }
     
@@ -412,7 +419,7 @@ void CSatNotifyMoSmControlRequest::CleanAddressData
 		TDes8& aAddr 
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_CLEANADDRESSDATA_1, "CSAT: CSatNotifyMoSmControlRequest::CleanAddressData");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::CleanAddressData");
     // Starts from index 1, since index 0 is for TON/NPI    
     for ( TInt i=1; i < aAddr.Length(); i++ )
         {
@@ -445,7 +452,7 @@ void CSatNotifyMoSmControlRequest::ParseNotification
 	    RSat::TAlphaId& aAlphaId
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_PARSENOTIFICATION_1, "CSAT: CSatNotifyMoSmControlRequest::ParseNotification");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ParseNotification");
     
     // Input data:
     // aAtkData[0] : result
@@ -489,7 +496,8 @@ void CSatNotifyMoSmControlRequest::ParseNotification
         // Check which TLV is received
         if ( ( KTlvAddressTag == tag ) && ( !address1_got ) )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_PARSENOTIFICATION_2, "CSAT: CSatNotifyMoSmControlRequest::ParseNotification Address 1");
+            TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ParseNotification\
+                Address 1");
             // RP address first
             address1_got = ETrue;
             // Copy data to output variable
@@ -502,7 +510,8 @@ void CSatNotifyMoSmControlRequest::ParseNotification
             }
         else if ( KTlvAddressTag == tag )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_PARSENOTIFICATION_3, "CSAT: CSatNotifyMoSmControlRequest::ParseNotification Address 2");
+            TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ParseNotification\
+                Address 2");
             // TP address. Copy data to output variable
             aAddr2.Copy( aAtkData.Mid( indexInBerTlv + nn + 2, lengthTlv ) );         
             if ( KReservedTonNpi1 != aAddr2[0] && 
@@ -513,7 +522,8 @@ void CSatNotifyMoSmControlRequest::ParseNotification
             }
         else if ( KTlvAlphaIdentifierTag == tag )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_PARSENOTIFICATION_4, "CSAT: CSatNotifyMoSmControlRequest::ParseNotification Alpha ID");
+            TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::ParseNotification\
+                Alpha ID");
             // Alpha id must be converted to TBuf16/unicode
             if ( lengthTlv )
                 {
@@ -524,7 +534,8 @@ void CSatNotifyMoSmControlRequest::ParseNotification
                 }
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_PARSENOTIFICATION_5, "CSAT: CSatNotifyMoSmControlRequest:: ParseNotification. Alpha ID is NULL");
+                TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest:: \
+                	ParseNotification. Alpha ID is NULL");
                 aAlphaId.iStatus = RSat::EAlphaIdNull;
                 }  
             }
@@ -548,7 +559,7 @@ TBool CSatNotifyMoSmControlRequest::VerifyNotificationData
 		TDes8& aTPAddr 
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMOSMCONTROLREQUEST_VERIFYNOTIFICATIONDATA_1, "CSAT: CSatNotifyMoSmControlRequest::VerifyNotificationData");
+    TFLOGSTRING("CSAT: CSatNotifyMoSmControlRequest::VerifyNotificationData");
     TBool ret( ETrue );    
     if ( ( 0 == aRPAddr.Length() && 0 == aTPAddr.Length() ) || 
          ( KMoSmCtrlMaxLengthAddr1Addr2 <= ( 

@@ -36,7 +36,6 @@
 
 // c32.exe SID is 101F7989
 data=ZPRIVATE\101f7989\operatorVariants.ini		private\101f7989\operatorVariants.ini
-data=ZPRIVATE\101f7989\ltsydata.ini				private\101f7989\ltsydata.ini
 
 //*** customapi ***
 file=ABI_DIR\DEBUG_DIR\CUSTOMAPI.DLL        Sys\Bin\CUSTOMAPI.DLL

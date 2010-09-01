@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,12 +12,6 @@
 //
 // Description:
 //
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ws_mainTraces.h"
-#endif
 
 #include "es_ver.h"
 #include "es_prot.h"
@@ -43,7 +37,7 @@ CWapSmsProtocolFamily::CWapSmsProtocolFamily()
 //
 CWapSmsProtocolFamily * CWapSmsProtocolFamily::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOLFAMILY_NEWL_1, "CWapSmsProtocolFamily::NewL()");
+	LOGWAPPROT1("CWapSmsProtocolFamily::NewL()");
 
 	return new (ELeave)CWapSmsProtocolFamily;
 	} // CWapSmsProtocolFamily::NewL
@@ -54,7 +48,7 @@ CWapSmsProtocolFamily * CWapSmsProtocolFamily::NewL()
 //
 TInt CWapSmsProtocolFamily::Install()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOLFAMILY_INSTALL_1, "CWapSmsProtocolFamily::Install()");
+	LOGWAPPROT1("CWapSmsProtocolFamily::Install()");
 
 	return KErrNone;
 	} // CWapSmsProtocolFamily::Install
@@ -65,7 +59,7 @@ TInt CWapSmsProtocolFamily::Install()
 //
 TInt CWapSmsProtocolFamily::Remove()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOLFAMILY_REMOVE_1, "CWapSmsProtocolFamily::Remove()");
+	LOGWAPPROT1("CWapSmsProtocolFamily::Remove()");
 
 	return KErrNone;
 	} // CWapSmsProtocolFamily::Remove
@@ -76,7 +70,7 @@ TInt CWapSmsProtocolFamily::Remove()
 //
 CProtocolBase * CWapSmsProtocolFamily::NewProtocolL(TUint aSockType,TUint /*aProtocol*/)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOLFAMILY_NEWPROTOCOLL_1, "CWapSmsProtocolFamily::NewProtocolL()");
+	LOGWAPPROT1("CWapSmsProtocolFamily::NewProtocolL()");
 
 	if (aSockType!=KSockDatagram)
 		return NULL;
@@ -90,7 +84,7 @@ CProtocolBase * CWapSmsProtocolFamily::NewProtocolL(TUint aSockType,TUint /*aPro
 //
 TUint CWapSmsProtocolFamily::ProtocolList(TServerProtocolDesc *& aProtocolList)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CWAPSMSPROTOCOLFAMILY_PROTOCOLLIST_1, "CWapSmsProtocolFamily::ProtocolList()");
+	LOGWAPPROT1("CWapSmsProtocolFamily::ProtocolList()");
 
 	TRAPD(ret, (aProtocolList=new(ELeave) TServerProtocolDesc[1]) );
 	if(ret!=KErrNone)
@@ -119,7 +113,11 @@ TUint CWapSmsProtocolFamily::ProtocolList(TServerProtocolDesc *& aProtocolList)
 //
 EXPORT_C CProtocolFamilyBase * InstallWAPSMS(void)
 	{
-    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, INSTALLWAPSMS_1, "InstallWAPSMS [version %u.%u.%u]",KWapSmsMajorVersionNumber, KWapSmsMinorVersionNumber, KWapSmsBuildVersionNumber);
+	LOGWAPPROT4("InstallWAPSMS [version %d.%d.%d]",
+			 KWapSmsMajorVersionNumber,
+			 KWapSmsMinorVersionNumber,
+			 KWapSmsBuildVersionNumber
+			 );
 
 	CWapSmsProtocolFamily* wapProt=NULL;
 	TRAPD(ret, (wapProt=CWapSmsProtocolFamily::NewL()) );

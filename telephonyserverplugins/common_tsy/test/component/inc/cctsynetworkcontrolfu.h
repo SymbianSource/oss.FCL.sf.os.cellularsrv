@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -105,11 +105,23 @@ public:
 	void TestSetNetworkSelectionSetting0005L();
 	void TestGetLastUsedAccessTechnology0001L();
 	void TestStorePreferredNetworksListL0001L();
+    void TestStorePreferredNetworksListL0001aL();
+    void TestStorePreferredNetworksListL0001bL();
+    void TestStorePreferredNetworksListL0002L();
+    void TestStorePreferredNetworksListL0004L();    
+	void TestRetrieveMobilePhonePreferredNetworks0001L();
+	void TestRetrieveMobilePhonePreferredNetworks0001aL();
+	void TestRetrieveMobilePhonePreferredNetworks0001bL();
+	void TestRetrieveMobilePhonePreferredNetworks0001cL();
+	void TestRetrieveMobilePhonePreferredNetworks0002L();
+    void TestRetrieveMobilePhonePreferredNetworks0004L();	
 	void TestGetNetworkRegistrationStatus0001L();
 	void TestGetNetworkRegistrationStatus0002L();
 	void TestGetNetworkRegistrationStatus0004L();
 	void TestGetNetworkRegistrationStatus0005L();
 	void TestNotifyPreferredNetworksListChange0001L();
+    void TestNotifyPreferredNetworksListChange0002L();
+    void TestNotifyPreferredNetworksListChange0004L();    
 	void TestNotifyNetworkSelectionSettingChange0001L();
 	void TestNotifyNetworkSelectionSettingChange0002L();
 	void TestNotifyNetworkSelectionSettingChange0004L();

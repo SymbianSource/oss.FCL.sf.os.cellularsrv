@@ -1,0 +1,23 @@
+EXPORTS
+	_ZN15CFaxHeaderLines16ReadRawFontLineLEiR5TBuf8ILi216EE @ 1 NONAME
+	_ZN15CFaxHeaderLines17WriteRawFontLineLEiR5TBuf8ILi216EE @ 2 NONAME
+	_ZN15CFaxHeaderLines18ReadFaxHeaderInfoLER14TFaxHeaderInfo @ 3 NONAME
+	_ZN15CFaxHeaderLines18ReadRawHeaderLineLEiR5TBuf8ILi216EE @ 4 NONAME
+	_ZN15CFaxHeaderLines19WriteFaxHeaderInfoLER14TFaxHeaderInfo @ 5 NONAME
+	_ZN15CFaxHeaderLines19WriteRawHeaderLineLEiR5TBuf8ILi216EE @ 6 NONAME
+	_ZN15CFaxHeaderLines4NewLEv @ 7 NONAME
+	_ZN15CFaxHeaderLines5NewLCEv @ 8 NONAME
+	_ZN6CFaxT414DecodeScanLineER5TDes8RK6TDesC8 @ 9 NONAME
+	_ZN6CFaxT414EncodeScanLineERK6TDesC8R5TDes8 @ 10 NONAME
+	_ZN6CFaxT414PageInitializeE14TFaxResolution15TFaxCompressioni @ 11 NONAME
+	_ZN6CFaxT416DecodeScanLine1DER5TDes8RK6TDesC8 @ 12 NONAME
+	_ZN6CFaxT416DecodeScanLine2DER5TDes8RK6TDesC8 @ 13 NONAME
+	_ZN6CFaxT416EncodeScanLine1DERK6TDesC8R5TDes8 @ 14 NONAME
+	_ZN6CFaxT416EncodeScanLine2DERK6TDesC8R5TDes8 @ 15 NONAME
+	_ZN6CFaxT44NewLEv @ 16 NONAME
+	_ZN6CFaxT45NewLCEv @ 17 NONAME
+	_ZTI15CFaxHeaderLines @ 18 NONAME ; #<TI>#
+	_ZTV15CFaxHeaderLines @ 19 NONAME ; #<VT>#
+	_ZN15CFaxHeaderLines26GeneratePathForHeaderFileLER6TDes16 @ 20 NONAME
+	_ZN15CFaxHeaderLines5NewLCEP5RFile @ 21 NONAME
+

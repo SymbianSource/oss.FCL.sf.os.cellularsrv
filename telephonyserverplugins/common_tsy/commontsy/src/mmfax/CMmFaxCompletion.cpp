@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,6 +16,7 @@
 
 
 // INCLUDE FILES
+#include <ctsy/tflogger.h>
 #include "cmmfaxcompletion.h"
 #include "cmmcalltsy.h"
 
@@ -24,15 +25,15 @@
 CMmFaxCompletion::CMmFaxCompletion() : CBase(), iTsyReqHandle ( 0 ),
 	iTelObject( NULL )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_CTOR_1, "TSY: CMmFaxCompletion::CMmFaxCompletion" );
+TFLOGSTRING("TSY: CMmFaxCompletion::CMmFaxCompletion" );
     }
 
 CMmFaxCompletion::~CMmFaxCompletion()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_DTOR_1, "TSY: CMmFaxCompletion::~CMmFaxCompletion");
+TFLOGSTRING("TSY: CMmFaxCompletion::~CMmFaxCompletion");
     if ( iTsyReqHandle )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_DTOR_2, "TSY: CMmFaxCompletion::~CMmFaxCompletion: request %d not completed!", iTsyReqHandle);
+TFLOGSTRING2("TSY: CMmFaxCompletion::~CMmFaxCompletion: request %d not completed!", iTsyReqHandle);
         // Completion should not be done here, because in some cases
         // operations are completed automatically by ETel!
         // CompleteOperation(KErrCancel);
@@ -49,7 +50,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_DTOR_2,
 void CMmFaxCompletion::CompleteOperation(
         TInt aError )     // error Value         
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_COMPLETEOPERATION_1, "TSY: CMmFaxCompletion::CompleteOperation iTsyReqHandle: %d", iTsyReqHandle );
+TFLOGSTRING2("TSY: CMmFaxCompletion::CompleteOperation iTsyReqHandle: %d", iTsyReqHandle );
     if ( 0 < iTsyReqHandle )
         {
         iTelObject->ReqCompleted( iTsyReqHandle, aError );
@@ -69,7 +70,8 @@ void CMmFaxCompletion::Configure(
     {
     if ( 0 < iTsyReqHandle )
         {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_CONFIGURE_1, "TSY: CMmFaxCompletion::Configure overwriting previous request %d with %d",iTsyReqHandle, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmFaxCompletion::Configure overwriting previous request %d with %d",
+            iTsyReqHandle, aTsyReqHandle);
         }
     
     iTsyReqHandle = aTsyReqHandle; 
@@ -86,7 +88,7 @@ void CMmFaxCompletion::GetCadenceAndTimeOfLastRing(
         TTimeIntervalMicroSeconds& /*aCadence*/,    // cadence time
         TTime& /*aTime*/ )                          // time     
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_GETCADENCEANDTIMEOFLASTRING_1, "TSY: CMmFaxCompletion::GetCadenceAndTimeOfLastRing");
+TFLOGSTRING("TSY: CMmFaxCompletion::GetCadenceAndTimeOfLastRing");
     // Checking the usage of aCadence and aTime in the calling function
     // (fax server) shows that we don't need to change the values.
     // REINTERPRET_CAST(CTsyPhone*,iMmCall->Owner()->Owner())->
@@ -102,7 +104,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_GETCADE
 void CMmFaxCompletion::RxConnectComplete(
         TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_RXCONNECTCOMPLETE_1, "TSY: CMmFaxCompletion::RXConnectComplete ErrorValue: %d", aError);
+TFLOGSTRING2("TSY: CMmFaxCompletion::RXConnectComplete ErrorValue: %d", aError);
     CMmCallTsy* mmCall = REINTERPRET_CAST(CMmCallTsy*, iTelObject);
 
     // This is a good place to fill missing remote party phone number.
@@ -138,7 +140,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_RXCONNE
 void CMmFaxCompletion::RxFaxDataComplete(
         TInt aError ) // in: an error value
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_RXFAXDATACOMPLETE_1, "TSY: CMmFaxCompletion::RxFaxDataComplete ErrorValue: %d", aError);
+TFLOGSTRING2("TSY: CMmFaxCompletion::RxFaxDataComplete ErrorValue: %d", aError);
     if ( 0 < iTsyReqHandle )
         {
         iTelObject->ReqCompleted( iTsyReqHandle, aError );
@@ -156,7 +158,7 @@ void CMmFaxCompletion::RxPostPageComplete(
         TInt aError )
     {
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_RXPOSTPAGECOMPLETE_1, "TSY: CMmFaxCompletion::RxPostPageComplete ErrorValue: %d", aError );
+TFLOGSTRING2("TSY: CMmFaxCompletion::RxPostPageComplete ErrorValue: %d", aError );
     if ( 0 < iTsyReqHandle)
         {
         iTelObject->ReqCompleted( iTsyReqHandle, aError );
@@ -173,7 +175,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_RXPOSTP
 void CMmFaxCompletion::TxConnectComplete(
         TInt aError )	
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_TXCONNECTCOMPLETE_1, "TSY: CMmFaxCompletion::TXConnectComplete ErrorValue: %d", aError);
+TFLOGSTRING2("TSY: CMmFaxCompletion::TXConnectComplete ErrorValue: %d", aError);
 
     CMmCallTsy* mmCall = REINTERPRET_CAST(CMmCallTsy*,iTelObject);
 
@@ -199,7 +201,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_TXCONNE
 void CMmFaxCompletion::TxFaxDataComplete(
         TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_TXFAXDATACOMPLETE_1, "TSY: CMmFaxCompletion::TxFaxDataComplete ErrorValue: %d", aError);
+TFLOGSTRING2("TSY: CMmFaxCompletion::TxFaxDataComplete ErrorValue: %d", aError);
 
     if ( 0 < iTsyReqHandle )
         {
@@ -217,7 +219,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_TXFAXDA
 void CMmFaxCompletion::TxPostPageComplete(
         TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_TXPOSTPAGECOMPLETE_1, "TSY: CMmFaxCompletion::TxPostPageComplete ErrorValue: %d", aError );
+TFLOGSTRING2("TSY: CMmFaxCompletion::TxPostPageComplete ErrorValue: %d", aError );
 
     if ( 0 < iTsyReqHandle )
         {
@@ -235,7 +237,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_TXPOSTP
 void CMmFaxCompletion::FillAnswerback(
         CMmCallTsy* aMmCall ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_FILLANSWERBACK_1, "TSY: CMmFaxCompletion::FillAnswerback");
+TFLOGSTRING("TSY: CMmFaxCompletion::FillAnswerback");
 
     if ( aMmCall )
         {
@@ -246,7 +248,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_FILLANS
 
             if ( 0 == faxProgress->iAnswerback.Length() )
                 { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCOMPLETION_FILLANSWERBACK_2, "TSY: CMmFaxCompletion::FillAnswerback Getting missing remote number from call info");
+TFLOGSTRING("TSY: CMmFaxCompletion::FillAnswerback Getting missing remote number from call info");
                 // Copy remote party phone number to Progress chunk's 
                 // answerback field. Answerback will hold only leftmost 20 
                 // numbers if the number is longer than that.

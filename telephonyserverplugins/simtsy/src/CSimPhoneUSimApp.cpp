@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,8 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimPhoneUSimAppTraces.h"
-#endif
-
 #include "CSimPhone.h"
+#include "Simlog.h"
 #include <testconfigfileparser.h>
 
 /**
@@ -71,7 +65,7 @@ specified in the SimTsy configuration file.
 */
 void CSimPhoneUSimApp::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_1, "Starting to parse PhoneUSim applications additional config parameters...");
+	LOGPHONE1("Starting to parse PhoneUSim applications additional config parameters...");
 	
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
@@ -83,7 +77,7 @@ void CSimPhoneUSimApp::ConstructL()
 	iUSimAppInfo=new(ELeave) CArrayFixFlat<RMobilePhone::TUSimApplicationInfoV2>(KMaxUSimApps+1);
 	TInt count=CfgFile()->ItemCount(KUSIMAppInfo);
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_2, "Starting to Load and Parse USim Application Info");
+	LOGPHONE1("Starting to Load and Parse USim Application Info");
 
 	for(i=0;i<count;i++)
 		{
@@ -94,7 +88,7 @@ void CSimPhoneUSimApp::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0, aid);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element AID returned %d (element no. %d) from tag %s.",ret,0,KUSIMAppInfo);
+			LOGPARSERR("aid",ret,0,&KUSIMAppInfo);
 			continue;
 			}
 		else
@@ -106,7 +100,7 @@ void CSimPhoneUSimApp::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1, label);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element LABEL returned %d (element no. %d) from tag %s.",ret,1,KUSIMAppInfo);
+			LOGPARSERR("label",ret,1,&KUSIMAppInfo);
 			continue;
 			}
 		else 
@@ -122,7 +116,7 @@ void CSimPhoneUSimApp::ConstructL()
 
 	count=CfgFile()->ItemCount(KUSIMAppSwitching);
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_5, "Starting to Load and Parse USim Application Info");
+	LOGPHONE1("Starting to Load and Parse USim Application Info");
 
 	for(i=0;i<count;i++)
 		{
@@ -133,7 +127,7 @@ void CSimPhoneUSimApp::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0, duration);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KUSIMAppSwitching);
+			LOGPARSERR("duration",ret,0,&KUSIMAppSwitching);
 			continue;
 			}
 		else
@@ -142,7 +136,7 @@ void CSimPhoneUSimApp::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1, aid);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CONSTRUCTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element AID returned %d (element no. %d) from tag %s.",ret,1,KUSIMAppSwitching);
+			LOGPARSERR("aid",ret,1,&KUSIMAppSwitching);
 			continue;
 			}
 		else 
@@ -312,7 +306,7 @@ TInt CSimPhoneUSimApp::NumberOfSlotsL(const TInt aIpc)
 		return KDefaultNumberOfSlots;
 
 	default:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_NUMBEROFSLOTSL_1, "CSimPhoneUSimApp: Number of Slots error, unknown IPC");
+		LOGPHONE1("CSimPhoneUSimApp: Number of Slots error, unknown IPC");
 		User::Leave(KErrNotSupported);
 		break;
 		}
@@ -361,7 +355,7 @@ Returns a pointer to the SimTsy configuration file section.
 */
 const CTestConfigSection* CSimPhoneUSimApp::CfgFile()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPHONEUSIMAPP_CFGFILE_1, ">>CSimPhoneUSimApp::CfgFile");
+	LOGPHONE1(">>CSimPhoneUSimApp::CfgFile");
 	return iPhone->CfgFile();
 	}
 

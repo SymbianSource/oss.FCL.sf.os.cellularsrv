@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyTimerMgmtTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyTimerMgmt.h"    // Class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
 #include "MSatTsy_IPCDefs.h"        // Sat Tsy internal request types
@@ -48,13 +43,13 @@ CSatNotifyTimerMgmt* CSatNotifyTimerMgmt::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_NEWL_1, "CSAT: CSatNotifyTimerMgmt::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::NewL");
    	CSatNotifyTimerMgmt* const satNotifyTimerMgmt = 
         new ( ELeave ) CSatNotifyTimerMgmt( aNotificationsTsy );
     CleanupStack::PushL( satNotifyTimerMgmt );
     satNotifyTimerMgmt->ConstructL();
     CleanupStack::Pop( satNotifyTimerMgmt );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_NEWL_2, "CSAT: CSatNotifyTimerMgmt::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::NewL, end of method");
     return satNotifyTimerMgmt;
     }
 
@@ -68,7 +63,7 @@ CSatNotifyTimerMgmt::~CSatNotifyTimerMgmt
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_DTOR_1, "CSAT: CSatNotifyTimerMgmt::~CSatNotifyTimerMgmt");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::~CSatNotifyTimerMgmt");
     }
     
 // -----------------------------------------------------------------------------
@@ -94,7 +89,7 @@ void CSatNotifyTimerMgmt::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_CONSTRUCTL_1, "CSAT: CSatNotifyTimerMgmt::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -108,7 +103,7 @@ TInt CSatNotifyTimerMgmt::CompleteNotifyL
         TInt aErrorCode                  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_1, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::CompleteNotifyL");
 
     TInt ret( KErrNone );
     TInt returnValue( KErrNone );
@@ -190,19 +185,22 @@ TInt CSatNotifyTimerMgmt::CompleteNotifyL
 
                             if ( KErrNone != ret )
                                 {
-                                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_2, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL, Unable to process cmd");
+                                TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::\
+                                    CompleteNotifyL, Unable to process cmd");
                                 generalResult = RSat::KMeUnableToProcessCmd;
                                 }
                             }
                         else
                             {
-                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_3, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL, Data not understood");
+                            TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::\
+                                CompleteNotifyL, Data not understood");
                             generalResult = RSat::KCmdDataNotUnderstood;
                             }
                         }
                     else
                         {
-                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_4, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL, Timer value missing");
+                        TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::\
+                            CompleteNotifyL, Timer value missing");
                         generalResult = RSat::KErrorRequiredValuesMissing;
                         }
                     }
@@ -245,20 +243,23 @@ TInt CSatNotifyTimerMgmt::CompleteNotifyL
                         }
                     else
                         {
-                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_5, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL, Contradiction with timer state");
+                        TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::\
+                            CompleteNotifyL, Contradiction with timer state");
                         generalResult = RSat::KContradictionWithTimerState;
                         }
                     }
                 else
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_6, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL, Cmd type not understood");
+                    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::\
+                        CompleteNotifyL, Cmd type not understood");
                     generalResult = RSat::KCmdTypeNotUnderstood;
                     }
                 }
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_COMPLETENOTIFYL_7, "CSAT: CSatNotifyTimerMgmt::CompleteNotifyL, Required values missing");
+            TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::\
+                CompleteNotifyL, Required values missing");
             generalResult = RSat::KErrorRequiredValuesMissing;
             }
 
@@ -281,7 +282,7 @@ TInt CSatNotifyTimerMgmt::CreateTerminalRespL
         TUint8 aGeneralResult	
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_CREATETERMINALRESPL_1, "CSAT: CSatNotifyTimerMgmt::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::CreateTerminalRespL");
 
     // Create and append response data
     TTlv tlvSpecificData;
@@ -350,7 +351,7 @@ TUint32 CSatNotifyTimerMgmt::ConvertToSeconds
          TPtrC8 time
          )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYTIMERMGMT_CONVERTTOSECONDS_1, "CSAT: CSatNotifyTimerMgmt::ConvertToSeconds");
+    TFLOGSTRING("CSAT: CSatNotifyTimerMgmt::ConvertToSeconds");
     TUint32 timeValue( 0 );
     // Value of a timer, expressed using 
     // the format hour, minute, second

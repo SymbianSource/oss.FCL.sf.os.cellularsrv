@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,16 +21,10 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimDataCallTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "CSimDataCall.h"
 #include "CSimPhone.h"
+#include "Simlog.h"
 
 CSimDataCall* CSimDataCall::NewL(CSimLine* aLine,const TDesC& aName, CSimPhone* aPhone)
 /**
@@ -67,7 +61,7 @@ void CSimDataCall::ConstructL()
  * @param aName name of the data call to be constructed
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_1, "Starting to parse Data Call config parameters...");
+	LOGDATA1("Starting to parse Data Call config parameters...");
 
 	iDiallingPause=iLine->CfgFile()->ItemValue(KDiallingPauseDuration,KDefaultDiallingPauseDuration);
 	iConnectingPause=iLine->CfgFile()->ItemValue(KConnectingPauseDuration,KDefaultConnectingPauseDuration);
@@ -89,7 +83,7 @@ void CSimDataCall::ConstructL()
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,speedCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SPEEDCAPS returned %d (element no. %d) from tag %s.",ret,0,KDataCallCaps);
+			LOGPARSERR("speedCaps",ret,0,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(speedCaps, digit)==KErrNone)
@@ -98,7 +92,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,protocolCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCAPS returned %d (element no. %d) from tag %s.",ret,1,KDataCallCaps);
+			LOGPARSERR("protocolCaps",ret,1,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(protocolCaps, digit)==KErrNone)
@@ -107,7 +101,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,serviceCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SERVICECAPS returned %d (element no. %d) from tag %s.",ret,2,KDataCallCaps);
+			LOGPARSERR("serviceCaps",ret,2,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(serviceCaps, digit)==KErrNone)
@@ -117,7 +111,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,qosCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element QOSCAPS returned %d (element no. %d) from tag %s.",ret,3,KDataCallCaps);
+			LOGPARSERR("qosCaps",ret,3,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(qosCaps, digit)==KErrNone)
@@ -126,7 +120,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,hscsdSupport);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element HSCSDSUPPORT returned %d (element no. %d) from tag %s.",ret,4,KDataCallCaps);
+			LOGPARSERR("hscsdSupport",ret,4,&KDataCallCaps);
 			}
 		else
 			iMobileCallCaps.iHscsdSupport = hscsdSupport;
@@ -134,7 +128,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,mClass);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element MCLASS returned %d (element no. %d) from tag %s.",ret,5,KDataCallCaps);
+			LOGPARSERR("mClass",ret,5,&KDataCallCaps);
 			}
 		else
 			iMobileCallCaps.iMClass = mClass;
@@ -142,7 +136,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,MaxRxTimeslots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXRXTIMESLOTS returned %d (element no. %d) from tag %s.",ret,6,KDataCallCaps);
+			LOGPARSERR("MaxRxTimeslots",ret,6,&KDataCallCaps);
 			}
 		else
 			iMobileCallCaps.iMaxRxTimeSlots = MaxRxTimeslots;
@@ -150,7 +144,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,MaxTxTimeslots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXTXTIMESLOTS returned %d (element no. %d) from tag %s.",ret,7,KDataCallCaps);
+			LOGPARSERR("MaxTxTimeslots",ret,7,&KDataCallCaps);
 			}
 		else
 			iMobileCallCaps.iMaxTxTimeSlots = MaxTxTimeslots;
@@ -159,7 +153,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,totalRxTxTimeslots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element TOTALRXTXTIMESLOTS returned %d (element no. %d) from tag %s.",ret,8,KDataCallCaps);
+			LOGPARSERR("totalRxTxTimeslots",ret,8,&KDataCallCaps);
 			}
 		else
 			iMobileCallCaps.iTotalRxTxTimeSlots = totalRxTxTimeslots;
@@ -168,7 +162,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,codingCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element CODINGCAPS returned %d (element no. %d) from tag %s.",ret,9,KDataCallCaps);
+			LOGPARSERR("codingCaps",ret,9,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(codingCaps, digit)==KErrNone)
@@ -177,7 +171,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,asymmetryCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element ASYMMETRYCAPS returned %d (element no. %d) from tag %s.",ret,10,KDataCallCaps);
+			LOGPARSERR("asymmetryCaps",ret,10,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(asymmetryCaps, digit)==KErrNone)
@@ -186,7 +180,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,11,userInitUpgrade);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element USERINITUPGRADE returned %d (element no. %d) from tag %s.",ret,11,KDataCallCaps);
+			LOGPARSERR("userInitUpgrade",ret,11,&KDataCallCaps);
 			}
 		else
 			iMobileCallCaps.iUserInitUpgrade = userInitUpgrade;
@@ -195,7 +189,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,rlpVersionCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element RLPVERSIONCAPS returned %d (element no. %d) from tag %s.",ret,10,KDataCallCaps);
+			LOGPARSERR("rlpVersionCaps",ret,10,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(rlpVersionCaps, digit)==KErrNone)
@@ -204,7 +198,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,10,v42bisCaps);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element V42BISCAPS returned %d (element no. %d) from tag %s.",ret,10,KDataCallCaps);
+			LOGPARSERR("v42bisCaps",ret,10,&KDataCallCaps);
 			}
 		else
 			if(AsciiToNum(v42bisCaps, digit)==KErrNone)
@@ -247,7 +241,7 @@ void CSimDataCall::ConstructL()
 			TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,iRlpVersion);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element IRLPVERSION returned %d (element no. %d) from tag %s.",ret,0,KDataRLPparams);
+				LOGPARSERR("iRlpVersion",ret,0,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iRlpVersion = iRlpVersion;
@@ -255,7 +249,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,iIWSMax);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element IIWSMAX returned %d (element no. %d) from tag %s.",ret,0,KDataRLPparams);
+				LOGPARSERR("iIWSMax",ret,0,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iIWSMax = iIWSMax;
@@ -263,7 +257,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,iIWSMin);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element IIWSMIN returned %d (element no. %d) from tag %s.",ret,1,KDataRLPparams);
+				LOGPARSERR("iIWSMin",ret,1,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iIWSMin = iIWSMin;
@@ -271,7 +265,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,iMWSMax);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element IMWSMAX returned %d (element no. %d) from tag %s.",ret,2,KDataRLPparams);
+				LOGPARSERR("iMWSMax",ret,2,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iMWSMax = iMWSMax;
@@ -280,7 +274,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,iMWSMin);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element IMWSMIN returned %d (element no. %d) from tag %s.",ret,3,KDataRLPparams);
+				LOGPARSERR("iMWSMin",ret,3,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iMWSMin = iMWSMin;
@@ -288,7 +282,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,iT1Max);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element IT1MAX returned %d (element no. %d) from tag %s.",ret,4,KDataRLPparams);
+				LOGPARSERR("iT1Max",ret,4,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iT1Max = iT1Max;
@@ -296,7 +290,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,iT1Min);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element IT1MIN returned %d (element no. %d) from tag %s.",ret,5,KDataRLPparams);
+				LOGPARSERR("iT1Min",ret,5,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iT1Min = iT1Min;
@@ -304,7 +298,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,iN2Max);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element IN2MAX returned %d (element no. %d) from tag %s.",ret,6,KDataRLPparams);
+				LOGPARSERR("iN2Max",ret,6,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iN2Max = iN2Max;
@@ -312,7 +306,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,iN2Min);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element IN2MIN returned %d (element no. %d) from tag %s.",ret,7,KDataRLPparams);
+				LOGPARSERR("iN2Min",ret,7,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iN2Min = iN2Min;
@@ -320,7 +314,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,iT4Max);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element IT4MAX returned %d (element no. %d) from tag %s.",ret,8,KDataRLPparams);
+				LOGPARSERR("iT4Max",ret,8,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iT4Max = iT4Max;
@@ -328,7 +322,7 @@ void CSimDataCall::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,iT4Min);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_26, "WARNING - CONFIGURATION FILE PARSING - Reading element IT4MIN returned %d (element no. %d) from tag %s.",ret,9,KDataRLPparams);
+				LOGPARSERR("iT4Min",ret,9,&KDataRLPparams);
 				}
 			else
 				iMobileCallRLPItem.iMobileCallRLP.iT4Min = iT4Min;
@@ -363,7 +357,7 @@ void CSimDataCall::ConstructL()
 		TInt ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,iAiur);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_27, "WARNING - CONFIGURATION FILE PARSING - Reading element IAIUR returned %d (element no. %d) from tag %s.",ret,0,KDynamicHSCSDInfo);
+			LOGPARSERR("iAiur",ret,0,&KDynamicHSCSDInfo);
 			}
 		else
 			if(AsciiToNum(iAiur, digit)==KErrNone)
@@ -372,7 +366,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,iRxTimeSlots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_28, "WARNING - CONFIGURATION FILE PARSING - Reading element IRXTIMESLOTS returned %d (element no. %d) from tag %s.",ret,1,KDynamicHSCSDInfo);
+			LOGPARSERR("iRxTimeSlots",ret,1,&KDynamicHSCSDInfo);
 			}
 		else
 			iHscsdInfo.iRxTimeSlots = iRxTimeSlots;
@@ -380,7 +374,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,iTxTimeSlots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_29, "WARNING - CONFIGURATION FILE PARSING - Reading element ITXTIMESLOTS returned %d (element no. %d) from tag %s.",ret,2,KDynamicHSCSDInfo);
+			LOGPARSERR("iTxTimeSlots",ret,2,&KDynamicHSCSDInfo);
 			}
 		else
 			iHscsdInfo.iTxTimeSlots = iTxTimeSlots;
@@ -388,7 +382,7 @@ void CSimDataCall::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,iCodings);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_30, "WARNING - CONFIGURATION FILE PARSING - Reading element ICODINGS returned %d (element no. %d) from tag %s.",ret,3,KDynamicHSCSDInfo);
+			LOGPARSERR("iCodings",ret,3,&KDynamicHSCSDInfo);
 			}
 		else
 			if(AsciiToNum(iCodings, digit)==KErrNone)
@@ -409,7 +403,7 @@ void CSimDataCall::ConstructL()
 		TInt err=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,csyName);	// The 3rd parameter (0) represents the index of the variable on the config file line
 		if (err!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_31, "WARNING - CONFIGURATION FILE PARSING - Reading element CSYNAME returned %d (element no. %d) from tag %s.",err,0,KCommSetup);
+			LOGPARSERR("csyName",err,0,&KCommSetup);
 			iCsyName.Copy(KDefaultCsyName);
 			}
 		else
@@ -418,7 +412,7 @@ void CSimDataCall::ConstructL()
 		err=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,portName);		// The 3rd parameter (1) represents the index of the variable on the config file line
 		if (err!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_32, "WARNING - CONFIGURATION FILE PARSING - Reading element PORTNAME returned %d (element no. %d) from tag %s.",err,1,KCommSetup);
+			LOGPARSERR("portName",err,1,&KCommSetup);
 			iPortName.Copy(KDefaultPortName);
 			}
 		else
@@ -428,7 +422,7 @@ void CSimDataCall::ConstructL()
 		err=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,dataRate);		// The 3rd parameter (2) represents the index of the variable on the config file line
 		if (err!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_33, "WARNING - CONFIGURATION FILE PARSING - Reading element DATARATE returned %d (element no. %d) from tag %s.",err,2,KCommSetup);
+			LOGPARSERR("dataRate",err,2,&KCommSetup);
 			iConfig.iRate=KDefaultCommPortRate;
 			}
 		else
@@ -437,7 +431,7 @@ void CSimDataCall::ConstructL()
 		err=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,handshake);		// The 3rd parameter (3) represents the index of the variable on the config file line
 		if (err!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_34, "WARNING - CONFIGURATION FILE PARSING - Reading element HANDSHAKE returned %d (element no. %d) from tag %s.",err,3,KCommSetup);
+			LOGPARSERR("handshake",err,3,&KCommSetup);
 			iConfig.iHandshake=KDefaultHandshake;
 			}
 		else
@@ -459,7 +453,7 @@ void CSimDataCall::ConstructL()
 		TInt err=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,bearerCaps);	// The 3rd parameter (0) represents the index of the variable on the config file line
 		if (err!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_35, "WARNING - CONFIGURATION FILE PARSING - Reading element BEARERCAPS returned %d (element no. %d) from tag %s.",err,0,KBearerService);
+			LOGPARSERR("bearerCaps",err,0,&KBearerService);
 			iBearerService.iBearerCaps=KDefaultBearerCaps;
 			}
 		else
@@ -468,7 +462,7 @@ void CSimDataCall::ConstructL()
 		err=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,bearerSpeed);		// The 3rd parameter (1) represents the index of the variable on the config file line
 		if (err!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_36, "WARNING - CONFIGURATION FILE PARSING - Reading element BEARERSPEED returned %d (element no. %d) from tag %s.",err,1,KBearerService);
+			LOGPARSERR("bearerSpeed",err,1,&KBearerService);
 			iBearerService.iBearerSpeed=KDefaultBearerSpeed;
 			}
 		else
@@ -498,17 +492,17 @@ void CSimDataCall::ConstructL()
  		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,delay);
  		if(ret!=KErrNone)
  			{
- 			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_37, "WARNING - CONFIGURATION FILE PARSING - Reading element DELAY returned %d (element no. %d) from tag %s.",ret,0,KNotifyRemotePartyInfo);
+ 			LOGPARSERR("delay",ret,0,&KNotifyRemotePartyInfo);
  			}
  		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,callingname);
  		if(ret!=KErrNone)
  			{
- 			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_38, "WARNING - CONFIGURATION FILE PARSING - Reading element CALLINGNAME returned %d (element no. %d) from tag %s.",ret,1,KNotifyRemotePartyInfo);
+ 			LOGPARSERR("callingname",ret,1,&KNotifyRemotePartyInfo);
  			}
  		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,remotenumber);
  		if(ret!=KErrNone)
  			{
- 			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_39, "WARNING - CONFIGURATION FILE PARSING - Reading element REMOTENUMBER returned %d (element no. %d) from tag %s.",ret,2,KNotifyRemotePartyInfo);
+ 			LOGPARSERR("remotenumber",ret,2,&KNotifyRemotePartyInfo);
  			}
  		
  		iNotifyRemotePartyInfoTimer->iDelay = delay;
@@ -524,7 +518,7 @@ void CSimDataCall::ConstructL()
  		iNotifyRemotePartyInfoTimer->iRemotePartyInfoV1.iRemoteIdStatus = RMobileCall::ERemoteIdentityUnknown;
  		}
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CONSTRUCTL_40, "...Finished parsing Data Call config parameters...");
+	LOGDATA1("...Finished parsing Data Call config parameters...");
 	}
 
 CSimDataCall::~CSimDataCall()
@@ -559,7 +553,7 @@ TInt CSimDataCall::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt aIpc,con
 	TAny* dataPtr=aPackage.Ptr1();
 	TAny* dataPtr2=aPackage.Ptr2();
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_EXTFUNC_1, "CSimDataCall::ExtFunc: IPC Number is %d",aIpc);
+	LOGDATA2("CSimDataCall::ExtFunc: IPC Number is %d",aIpc);
 	// The request data has to extracted from TDataPackage and the TAny* pointers have to
 	// be "cast" to the expected request data type
 
@@ -615,7 +609,7 @@ TInt CSimDataCall::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt aIpc,con
  		return NotifyRemotePartyInfoChange(aTsyReqHandle, aPackage.Des1n());
 
 	default:
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_EXTFUNC_2, "CSimDataCall::ExtFunc: Unsupported IPC detected - number %d",aIpc);
+		LOGDATA2("CSimDataCall::ExtFunc: Unsupported IPC detected - number %d",aIpc);
 		break;
 		}
 
@@ -657,7 +651,7 @@ TInt CSimDataCall::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHand
  		return NotifyRemotePartyInfoChangeCancel();
 
 	default:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_CANCELSERVICE_1, "CSimDataCall::CancelService: No match for IPC, defering to base function");
+		LOGDATA1("CSimDataCall::CancelService: No match for IPC, defering to base function");
 		break;
 		}
 	return CCallBase::CancelService(aIpc,aTsyReqHandle);
@@ -673,7 +667,7 @@ TInt CSimDataCall::Dial(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallPar
  * @return KErrNone
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_DIAL_1, ">>CSimDataCall::Dial");
+	LOGDATA1(">>CSimDataCall::Dial");
 	iDialRequestHandle=aTsyReqHandle;
 	PopulateCallParams(aCallParams);
 
@@ -681,7 +675,7 @@ TInt CSimDataCall::Dial(const TTsyReqHandle aTsyReqHandle,const TDesC8* aCallPar
 	if(err!=KErrNone)
 		ReqCompleted(aTsyReqHandle,err);
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_DIAL_2, "<<CSimDataCall::Dial");
+	LOGDATA1("<<CSimDataCall::Dial");
 	return KErrNone;
 	}
 
@@ -693,7 +687,7 @@ TInt CSimDataCall::DialCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone if successfully cancelled
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_DIALCANCEL_1, ">>CSimDataCall::DialCancel");
+	LOGDATA1(">>CSimDataCall::DialCancel");
 	switch(iState)
 		{
 	case RMobileCall::EStatusIdle:
@@ -719,10 +713,10 @@ TInt CSimDataCall::DialCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 		break;
 
 	default:
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_DIALCANCEL_2, "CSimDataCall::DialCancel: No action taken - state: %d",iState);
+		LOGDATA2("CSimDataCall::DialCancel: No action taken - state: %d",iState);
 		break;
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_DIALCANCEL_3, "<<CSimDataCall::DialCancel");
+	LOGDATA1("<<CSimDataCall::DialCancel");
 	return KErrNone;
 	}
 
@@ -737,7 +731,7 @@ TInt CSimDataCall::AnswerIncomingCall(const TTsyReqHandle aTsyReqHandle,const TD
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ANSWERINCOMINGCALL_1, ">>CSimDataCall::AnswerIncomingCall");
+	LOGDATA1(">>CSimDataCall::AnswerIncomingCall");
 	TInt err=iLine->SetAutoAnswerCallObject(this);
 	if(err!=KErrNone)
 		{
@@ -760,7 +754,7 @@ TInt CSimDataCall::AnswerIncomingCall(const TTsyReqHandle aTsyReqHandle,const TD
 			ret = ActionEvent(ECallEventAnswerIncoming,KErrNone);	
 			}
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ANSWERINCOMINGCALL_2, "<<CSimDataCall::AnswerIncomingCall");
+	LOGDATA1("<<CSimDataCall::AnswerIncomingCall");
 	return ret;
 	}
 
@@ -772,14 +766,14 @@ TInt CSimDataCall::AnswerIncomingCallCancel(const TTsyReqHandle /*aTsyReqHandle*
 * @return KErrNone if successfully cancelled
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ANSWERINCOMINGCALLCANCEL_1, ">>CSimDataCall::AnswerIncomingCallCancel");
+	LOGDATA1(">>CSimDataCall::AnswerIncomingCallCancel");
 	if(iAnswerIncomingCall.iNotifyPending)
 		{
 		iAnswerIncomingCall.iNotifyPending=EFalse;
 		iLine->ResetAutoAnswerCallObject(this);
 		ReqCompleted(iAnswerIncomingCall.iNotifyHandle,KErrCancel);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ANSWERINCOMINGCALLCANCEL_2, "<<CSimDataCall::AnswerIncomingCallCancel");
+	LOGDATA1("<<CSimDataCall::AnswerIncomingCallCancel");
 	return KErrNone;
 	}
 
@@ -803,12 +797,12 @@ TInt CSimDataCall::HangUp(const TTsyReqHandle aTsyReqHandle)
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_HANGUP_1, ">>CSimDataCall::HangUp");
+	LOGDATA1(">>CSimDataCall::HangUp");
 	iHangUpRequestHandle=aTsyReqHandle;
 	TInt err=ActionEvent(ECallEventHangUp,KErrNone);
 	if(err!=KErrNone)
 		ReqCompleted(aTsyReqHandle,err);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_HANGUP_2, "<<CSimDataCall::HangUp");
+	LOGDATA1("<<CSimDataCall::HangUp");
 	return KErrNone;
 	}
 
@@ -820,7 +814,7 @@ TInt CSimDataCall::HangUpCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone if successfully cancelled
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_HANGUPCANCEL_1, ">>CSimDataCall::HangUpCancel");
+	LOGDATA1(">>CSimDataCall::HangUpCancel");
 	switch(iState)
 		{
 	case RMobileCall::EStatusIdle:
@@ -844,10 +838,10 @@ TInt CSimDataCall::HangUpCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 		break;
 
 	default:
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_HANGUPCANCEL_2, "CSimDataCall::HangUpCancel: No action taken - state: %d",iState);
+		LOGDATA2("CSimDataCall::HangUpCancel: No action taken - state: %d",iState);
 		break;
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_HANGUPCANCEL_3, "<<CSimDataCall::HangUpCancel");
+	LOGDATA1("<<CSimDataCall::HangUpCancel");
 	return KErrNone;
 	}
 
@@ -1007,7 +1001,7 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 	switch(aEvent)
 		{
 	case ECallEventDial:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_1, ">>CSimDataCall::ActionEvent = [ECallEventDial]");
+		LOGDATA1(">>CSimDataCall::ActionEvent = [ECallEventDial]");
 		if(iState==RMobileCall::EStatusIdle)
 			{
 			TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusDialling,EFalse,EFalse));
@@ -1020,7 +1014,7 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 
 	case ECallEventHangUp:
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_2, ">>CSimDataCall::ActionEvent = [ECallEventHangUp]");
+		LOGDATA1(">>CSimDataCall::ActionEvent = [ECallEventHangUp]");
 		switch(iState)
 			{
 		case RMobileCall::EStatusConnected:
@@ -1043,7 +1037,7 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 		break;
 
 	case ECallEventIncomingCall:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_3, ">>CSimDataCall::ActionEvent = [ECallEventIncomingCall]");
+		LOGDATA1(">>CSimDataCall::ActionEvent = [ECallEventIncomingCall]");
 		if(iState==RMobileCall::EStatusIdle)
 			{
 			if(iAnswerIncomingCall.iNotifyPending)
@@ -1062,7 +1056,7 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 		break;
 
 	case ECallEventAnswerIncoming:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_4, ">>CSimDataCall::ActionEvent = [ECallEventAnswerIncoming]");
+		LOGDATA1(">>CSimDataCall::ActionEvent = [ECallEventAnswerIncoming]");
 		if(iState==RMobileCall::EStatusRinging)
 			{
 			TRAP(ret, ret=ProcessAnswerIncomingCallL());
@@ -1072,7 +1066,7 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 		break;
 
 	case ECallEventRemoteHangup:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_5, ">>CSimDataCall::ActionEvent = [ECallEventRemoteHangup]");
+		LOGDATA1(">>CSimDataCall::ActionEvent = [ECallEventRemoteHangup]");
 		if(iState==RMobileCall::EStatusConnected)
 			{
 			TRAP(ret, ret=ProcessRemoteHangupL());
@@ -1083,18 +1077,18 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 
 	case ECallEventTimeOut:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_6, ">>CSimVoiceCall::ActionEvent = [ECallEventTimeOut]");
+			LOGDATA1(">>CSimVoiceCall::ActionEvent = [ECallEventTimeOut]");
 			switch(iState)
 				{
 			case RMobileCall::EStatusDialling:
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_7, ">>CSimDataCall::State = [EStatusDialling]");
+				LOGDATA1(">>CSimDataCall::State = [EStatusDialling]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusConnecting,EFalse,EFalse));
 				if(ret==KErrNone)
 					iTimer->Start(iConnectingPause,this);
 				return ret;
 
 			case RMobileCall::EStatusConnecting:
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_8, ">>CSimDataCall::State = [EStatusConnecting]");
+				LOGDATA1(">>CSimDataCall::State = [EStatusConnecting]");
 // If the config file has not spec'ed a CSY, then fail the dial...
 				if(iCsyName.Length()==0)
 					{
@@ -1110,19 +1104,19 @@ TInt CSimDataCall::ActionEvent(TCallEvent aEvent,TInt aStatus)
 				return ret;
 
 			case RMobileCall::EStatusDisconnecting:
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_9, ">>CSimDataCall::State = [EStatusDisconnecting]");
+				LOGDATA1(">>CSimDataCall::State = [EStatusDisconnecting]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusIdle,EFalse,EFalse));
 				ReqCompleted(iHangUpRequestHandle,ret);
 				return ret;
 
 			case RMobileCall::EStatusAnswering:
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_10, ">>CSimDataCall::State = [EStatusAnswering]");
+				LOGDATA1(">>CSimDataCall::State = [EStatusAnswering]");
 				TRAP(ret, ret=ChangeStateL(RMobileCall::EStatusConnected,EFalse,EFalse));
 				ReqCompleted(iAnswerIncomingCall.iNotifyHandle,ret);
 				return ret;
 
 			default:
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_ACTIONEVENT_11, ">>CSimDataCall::State = [%d]",iState);
+				LOGDATA2(">>CSimDataCall::State = [%d]",iState);
 				break;
 				}
 			}
@@ -1158,10 +1152,10 @@ void CSimDataCall::TimerCallBack(TInt /*aId*/)
 * function for further processing.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_TIMERCALLBACK_1, ">>CSimDataCall::TimerCallBack");
+	LOGDATA1(">>CSimDataCall::TimerCallBack");
 	TInt err=ActionEvent(ECallEventTimeOut,KErrNone);
 	__ASSERT_ALWAYS(err==KErrNone,SimPanic(ETimeOutEventActionFailed));
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_TIMERCALLBACK_2, "<<CSimDataCall::TimerCallBack");
+	LOGDATA1("<<CSimDataCall::TimerCallBack");
 	}
 
 TInt CSimDataCall::ProcessAnswerIncomingCallL()
@@ -1172,14 +1166,14 @@ TInt CSimDataCall::ProcessAnswerIncomingCallL()
 * call object must be assigned to receive the details of the next incoming call.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_PROCESSANSWERINCOMINGCALLL_1, ">>CSimDataCall::ProcessAnswerIncomingCall");
+	LOGDATA1(">>CSimDataCall::ProcessAnswerIncomingCall");
 	TInt ret=ChangeStateL(RMobileCall::EStatusAnswering,EFalse,EFalse);
 	if(ret!=KErrNone)
 		return ret;
 	iTimer->Start(iAnswerIncomingPause,this);
 	iAnswerIncomingCall.iNotifyPending=EFalse;
 	iLine->ResetAutoAnswerCallObject(this);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_PROCESSANSWERINCOMINGCALLL_2, "<<CSimDataCall::ProcessAnswerIncomingCall");
+	LOGDATA1("<<CSimDataCall::ProcessAnswerIncomingCall");
 	return ret;
 	}
 
@@ -1191,13 +1185,13 @@ TInt CSimDataCall::ProcessRemoteHangupL()
 * call object must be assigned to be the next remotely hung up call.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_PROCESSREMOTEHANGUPL_1, ">>CSimDataCall::ProcessRemoteHangupL");
+	LOGDATA1(">>CSimDataCall::ProcessRemoteHangupL");
 	TInt ret=ChangeStateL(RMobileCall::EStatusDisconnecting,EFalse,EFalse);
 	if(ret!=KErrNone)
 		return ret;
 	iTimer->Start(iRemoteHangupPause,this);
 	iLine->ResetRemoteHangupCallObject(this);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDATACALL_PROCESSREMOTEHANGUPL_2, "<<CSimDataCall::ProcessRemoteHangupL");
+	LOGDATA1("<<CSimDataCall::ProcessRemoteHangupL");
 	return ret;
 	}
 

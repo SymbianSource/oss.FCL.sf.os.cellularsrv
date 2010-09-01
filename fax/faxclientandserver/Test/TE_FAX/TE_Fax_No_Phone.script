@@ -1,0 +1,68 @@
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// TE_Fax_Transmit.script
+// 
+//
+
+RUN_SCRIPT z:\TestData\Scripts\TE_Fax_Setup_Comm0.script
+
+LOAD_SUITE TE_Fax
+
+START_TESTCASE TEL-FAX-NA-0001
+//!@SYMTestCaseID TEL-FAX-NA-0001
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Test Creation of fax definition
+//!@SYMTestPriority Critical
+//!@SYMTestActions  This test simply tests the initialisation of fax variables and nothing else. On Armv5 due to compiler warnings half the test is ifdef'd out
+//!@SYMTestExpectedResults Pass  
+//!@SYMTestType CT
+RUN_TEST_STEP 120 TE_Fax TestFaxDefinition
+
+END_TESTCASE TEL-FAX-NA-0001
+
+START_TESTCASE TEL-FAX-NA-0002
+//!@SYMTestCaseID TEL-FAX-NA-0002
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Tests Storage of fax data on local disk
+//!@SYMTestPriority
+//!@SYMTestActions Creates a fax file using the fax api  
+//!@SYMTestExpectedResults Pass 
+//!@SYMTestType CT
+RUN_TEST_STEP 120 TE_Fax TestFaxStorage
+
+END_TESTCASE TEL-FAX-NA-0002
+
+START_TESTCASE TEL-FAX-NA-0003
+//!@SYMTestCaseID TEL-FAX-NA-0003
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Test Fax Coding
+//!@SYMTestPriority Critical
+//!@SYMTestActions   Tests the encoding of 1D and 2D fax data   
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 120 TE_Fax TestFaxCoding
+
+END_TESTCASE TEL-FAX-NA-0003
+
+START_TESTCASE TEL-FAX-NA-0004
+//!@SYMTestCaseID TEL-FAX-NA-0004
+//!@SYMREQ REQ0000
+//!@SYMTestCaseDesc Test Fax header Definition 
+//!@SYMTestPriority Critical 
+//!@SYMTestActions Tests Creation of a fax header using a the 3 different font sizes   
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 120 TE_Fax TestFaxHeaderDefinition
+END_TESTCASE TEL-FAX-NA-0004
+

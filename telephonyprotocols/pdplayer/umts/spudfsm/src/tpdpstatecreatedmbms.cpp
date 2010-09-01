@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,15 +20,9 @@
  @internalComponent
 */
  
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstatecreatedmbmsTraces.h"
-#endif
-
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
+#include "spudfsmdebuglogger.h"
 #include "pdpfsmnmspace.h"
 #include "pdpfsmnmspace.h"
 #include "PDPFSM.h"
@@ -39,8 +33,8 @@
 
 TInt TPdpStateCreatedMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDMBMS_INPUT_1, "TPdpStateCreatedMbms::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDMBMS_INPUT_2, "aOperation : %S(%d)", *LogOperation(aFsm, aOperation), aOperation);
+	SPUDFSMVERBOSE_FNLOG("TPdpStateCreatedMbms::Input()");
+	SPUDFSMVERBOSE_LOG2(_L("aOperation : %S(%d)"), LogOperation(aFsm, aOperation), aOperation);
 
 	switch (aOperation)
 	{

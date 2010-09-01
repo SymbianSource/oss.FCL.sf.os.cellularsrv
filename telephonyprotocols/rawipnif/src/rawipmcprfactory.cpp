@@ -20,11 +20,6 @@
  @internalComponent
 */
 
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "rawipmcprfactoryTraces.h"
-#endif
-
 #include "rawipmcprfactory.h"
 #include "rawipmcpr.h"
 #include <comms-infras/ss_log.h>
@@ -32,6 +27,10 @@
 
 #include <comms-infras/ss_msgintercept.h>
 
+#ifdef __CFLOG_ACTIVE
+#define KRawIPMCprFactoryTag KESockMetaConnectionTag
+// _LIT8(KRawIPMCprFactorySubTag, "rawipmcprfactory");
+#endif // __CFLOG_ACTIVE
 
 using namespace ESock;
 
@@ -42,15 +41,14 @@ using namespace ESock;
 //-=========================================================	
 CRawIpMetaConnectionProviderFactory* CRawIpMetaConnectionProviderFactory::NewL(TAny* aParentContainer)
 	{
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPMETACONNECTIONPROVIDERFACTORY_NEWL_1, "CRawIpMetaConnectionProviderFactory ::\tNewL(%08x)",(TUint)aParentContainer);
+	__CFLOG_VAR((KRawIPMCprFactoryTag, KRawIPMCprFactorySubTag, _L8("CRawIpMetaConnectionProviderFactory ::\tNewL(%08x)"), aParentContainer));
  	return new (ELeave) CRawIpMetaConnectionProviderFactory(TUid::Uid(CRawIpMetaConnectionProviderFactory::iUid), *(reinterpret_cast<CMetaConnectionFactoryContainer*>(aParentContainer)));
 	}
 
 CRawIpMetaConnectionProviderFactory::CRawIpMetaConnectionProviderFactory(TUid aFactoryId, CMetaConnectionFactoryContainer& aParentContainer)
 	: CMetaConnectionProviderFactoryBase(aFactoryId,aParentContainer)
 	{
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPMETACONNECTIONPROVIDERFACTORY_NEWL_2, "CRawIpMetaConnectionProviderFactory %08x:\tCRawIpMetaConnectionProviderFactory Constructor",(TUint)this);
-
+	__CFLOG_VAR((KRawIPMCprFactoryTag, KRawIPMCprFactorySubTag, _L8("CRawIpMetaConnectionProviderFactory %08x:\tCRawIpMetaConnectionProviderFactory Constructor"), this));
 	}
 
 ACommsFactoryNodeId* CRawIpMetaConnectionProviderFactory::DoCreateObjectL(ESock::TFactoryQueryBase& aQuery)

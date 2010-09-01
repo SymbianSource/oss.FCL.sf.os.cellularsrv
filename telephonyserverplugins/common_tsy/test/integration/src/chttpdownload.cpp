@@ -24,8 +24,8 @@ RSocketServ CHTTPDownload::iSocketServer;
 // Declare a static, counter fot active downloads, to know when to open and close the server socket session
 TInt CHTTPDownload::iActiveDownload = 0;
 
-_LIT(KDefaultHost, "developer.symbian.org");
-_LIT(KDefaultPage, "/wiki/images/1/12/Common_Design_Patterns_for_Symbian_OS_Sample_Chapter.pdf");
+_LIT(KDefaultHost, "www.smartphoneshow.com");
+_LIT(KDefaultPage, "/newt/l/downloads/symbian/presentations/Day1Pres1_NigelClifford_Symbian_keynote.pdf");
 const TInt KDefaultPort = 80;
 const TInt KBufferSize = 4096;
 

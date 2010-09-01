@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,20 +20,14 @@
  @internalComponent
 */
  
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cpdpfsmfactoryTraces.h"
-#endif
-
 #include "cpdpfsmfactory.h"
+#include "spudfsmdebuglogger.h"
 
 // NewL 
 CPdpFsmFactory* CPdpFsmFactory::NewL ()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWL_1, ">>CPdpFsmFactory::NewL()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWL_2, "<<CPdpFsmFactory::NewL()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::NewL()");
+	
 	return new (ELeave) CPdpFsmFactory ();	
     }
 
@@ -70,26 +64,24 @@ CPdpFsmFactory::CPdpFsmFactory()
   iStateActivatingMbms(this),
   iStateCreatedMbms(this)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CTOR_1, ">>CPdpFsmFactory::CPdpFsmFactory()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CTOR_2, "<<CPdpFsmFactory::CPdpFsmFactory()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::CPdpFsmFactory()");
     }
 
 
 CPdpFsmFactory::~CPdpFsmFactory()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DTOR_1, ">>CPdpFsmFactory::~CPdpFsmFactory()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::~CPdpFsmFactory()");
 
 	iContexts.DeleteAll();
     iContexts.Reset();
 	
     delete iEtelDriverInput;   
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DTOR_2, "<<CPdpFsmFactory::~CPdpFsmFactory()");
     }
 
 
 void CPdpFsmFactory::InitL(const TName& aTsyName, CPdpFsmInterface * aPdpFsmInterface)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_INITL_1, ">>CPdpFsmFactory::InitL()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::InitL()");
 
 	iPdpFsmInterface = aPdpFsmInterface;
 	
@@ -100,21 +92,20 @@ void CPdpFsmFactory::InitL(const TName& aTsyName, CPdpFsmInterface * aPdpFsmInte
 	iEtelDriverInput = new (ELeave) REtelDriverInput;
 
 	iEtelDriverInput->OpenL (*iPdpFsmInterface);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_INITL_2, "<<CPdpFsmFactory::InitL()");
+
 	// Only create PDP contexts if specifically requested.
     }
 
 
 void CPdpFsmFactory::Close (void)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CLOSE_1, ">>CPdpFsmFactory::Close()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::Close()");
 	// in OOM conditions iEtelDriveInput may not have successfully
 	// been created, check here for safety.
 	if (iEtelDriverInput != NULL)
 	    {
         iEtelDriverInput->Close();
 	    }
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CLOSE_2, "<<CPdpFsmFactory::Close()");
     }
 
 
@@ -123,8 +114,8 @@ void CPdpFsmFactory::Close (void)
 */
 CPdpFsm* CPdpFsmFactory::GetFsmContext (TContextId aPdpId)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_GETFSMCONTEXT_1, ">>CPdpFsmFactory::GetContext()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_GETFSMCONTEXT_2, "<<CPdpFsmFactory::GetContext()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::GetContext()");
+
 	return iContexts[aPdpId];
     }
 
@@ -140,7 +131,7 @@ TInt CPdpFsmFactory::NewFsmContext(TContextId aPdpId)
 TContextId CPdpFsmFactory::NewFsmContextL(MPdpFsmEventHandler& aPdpFsmEventHandler,SpudMan::TPdpContextType aContextType)
 #endif
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_1, ">>CPdpFsmFactory::NewFsmContext()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::NewFsmContext()");
 
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	TInt ret = KErrNone;
@@ -154,7 +145,6 @@ TContextId CPdpFsmFactory::NewFsmContextL(MPdpFsmEventHandler& aPdpFsmEventHandl
 	         iContexts[aPdpId] = p;       
 	         );
 	    }
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_2, "<<CPdpFsmFactory::NewFsmContext()");
    return ret;
 #else
 	TInt i=0;
@@ -168,19 +158,18 @@ TContextId CPdpFsmFactory::NewFsmContextL(MPdpFsmEventHandler& aPdpFsmEventHandl
         iContexts[i] = p;
         iEtelDriverInput->CreatePdpL(i, aContextType);
         }
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_3, "<<CPdpFsmFactory::NewFsmContext()");
-    return i;
+        return i;
 #endif	
     }
    
 TInt CPdpFsmFactory::DeleteFsmContext(TContextId aPdpId)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DELETEFSMCONTEXT_1, ">>CPdpFsmFactory::DeleteFsmContext()");
+	SPUDFSMVERBOSE_FNLOG("CPdpFsmFactory::DeleteFsmContext()");
 	ASSERT(ContextIsValid(aPdpId));
 
     delete iContexts[aPdpId];
     iContexts[aPdpId] = NULL;
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DELETEFSMCONTEXT_2, "<<CPdpFsmFactory::DeleteFsmContext()");
+    
 	return KErrNone;
     }
     

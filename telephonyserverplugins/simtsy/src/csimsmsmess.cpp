@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -17,15 +17,9 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "csimsmsmessTraces.h"
-#endif
-
 #include "csimsmsmess.h"
 #include <testconfigfileparser.h>
+#include "Simlog.h"
 #include <etelmm.h>
 #include "CSimTsyMode.h"
 
@@ -80,7 +74,7 @@ void CSimSmsMessaging::ConstructL()
 
 void CSimSmsMessaging::InitializeL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_INITIALIZEL_1, "Starting to Load and Parse Sms Messaging Config ");
+	LOGSMS1("Starting to Load and Parse Sms Messaging Config ");
 	iRxTimer=CSimTimer::NewL(iPhone);
 	iTxTimer=CSimTimer::NewL(iPhone);
 	iSmspTimer=CSimTimer::NewL(iPhone);
@@ -102,7 +96,7 @@ void CSimSmsMessaging::InitializeL()
 	// NOTE - no need to start iRxTimer; this will be started once a EMobileSmsMessagingReceiveMessage
 	// request is received and/or Send Sms contrainst satisfied (see CompleteTxPendingReq)
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_INITIALIZEL_2, "Finished parsing SMS Messaging config parameters");
+	LOGSMS1("Finished parsing SMS Messaging config parameters");
 	}
 
 
@@ -184,7 +178,7 @@ void CSimSmsMessaging::FindAndCreateRxAttributesL()
 	TInt i;
 	TSmsRxParametersGsm smsRxParameterGsm;
 	
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_1, "CSimSmsMessaging::FindAndCreateRxAttributesL IN [count=%d]", count);
+	LOGSMS2("CSimSmsMessaging::FindAndCreateRxAttributesL IN [count=%d]", count);
 
 	// Need to do this *before* entering the loop (so that we know 
 	// whether or not to read a delivery report pdu off the config file).
@@ -200,7 +194,7 @@ void CSimSmsMessaging::FindAndCreateRxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,smsPdu);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SMSPDU returned %d (element no. %d) from tag %s.",ret,0,KSmsRx);
+			LOGPARSERR("smsPdu",ret,0,&KSmsRx);
 			continue;
 			}
 		else
@@ -212,7 +206,7 @@ void CSimSmsMessaging::FindAndCreateRxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,sca);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element SCA returned %d (element no. %d) from tag %s.",ret,1,KSmsRx);
+			LOGPARSERR("sca",ret,1,&KSmsRx);
 			continue;
 			}
 		else
@@ -228,7 +222,7 @@ void CSimSmsMessaging::FindAndCreateRxAttributesL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,deliveryReportPdu);
 			if( (ret!=KErrNone) && (ret!=KErrGeneral) )
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element DELIVERYREPORTPDU returned %d (element no. %d) from tag %s.",ret,2,KSmsRx);
+				LOGPARSERR("deliveryReportPdu",ret,2,&KSmsRx);
 				}
 			else
 				{
@@ -252,9 +246,9 @@ void CSimSmsMessaging::FindAndCreateRxAttributesL()
 	if (iSmsControlCaps & RMobileSmsMessaging::KCapsReceiveUnstoredClientAck)
 		iSmsReceiveMode=RMobileSmsMessaging::EReceiveUnstoredClientAck;
 	else iSmsReceiveMode=RMobileSmsMessaging::EReceiveModeUnspecified;
-	OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_5, "iSmsRxPeriod =%d, iAckNackCompletePause=%d, iResumeCompletePause=%d, iSmsControlCaps=%d",iSmsRxPeriod, iAckNackCompletePause, iResumeCompletePause, iSmsControlCaps);
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_6, "iSmsModeCaps =%d, iSmsRxStartDelay = %d, iSmsReceiveMode = %d",iSmsModeCaps , iSmsRxStartDelay, iSmsReceiveMode);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATERXATTRIBUTESL_7, "CSimSmsMessaging::FindAndCreateRxAttributesL OUT [count=%d]", iSmsRxParameterListGsm->Count());
+	LOGSMS5("iSmsRxPeriod =%d, iAckNackCompletePause=%d, iResumeCompletePause=%d, iSmsControlCaps=%d",iSmsRxPeriod, iAckNackCompletePause, iResumeCompletePause, iSmsControlCaps); 
+	LOGSMS4("iSmsModeCaps =%d, iSmsRxStartDelay = %d, iSmsReceiveMode = %d",iSmsModeCaps , iSmsRxStartDelay, iSmsReceiveMode);	
+	LOGSMS2("CSimSmsMessaging::FindAndCreateRxAttributesL OUT [count=%d]", iSmsRxParameterListGsm->Count());	
 	}
 
 void CSimSmsMessaging::FindAndCreateTxAttributesL()
@@ -281,7 +275,7 @@ void CSimSmsMessaging::FindAndCreateTxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,smsTx);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATETXATTRIBUTESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element SMSTX returned %d (element no. %d) from tag %s.",ret,0,KSmsTx);
+			LOGPARSERR("smsTx",ret,0,&KSmsTx);
 			continue;
 			}
 		else
@@ -295,7 +289,7 @@ void CSimSmsMessaging::FindAndCreateTxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,sca);
 		if (ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATETXATTRIBUTESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SCA returned %d (element no. %d) from tag %s.",ret,1,KSmsTx);
+			LOGPARSERR("sca",ret,1,&KSmsTx);
 			continue;
 			}
 		else
@@ -308,7 +302,7 @@ void CSimSmsMessaging::FindAndCreateTxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,reference);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATETXATTRIBUTESL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element REFERENCE returned %d (element no. %d) from tag %s.",ret,2,KSmsTx);
+			LOGPARSERR("reference",ret,2,&KSmsTx);
 			smsTxParametersGsm.iRef=KNoMessageReferenceInCofigurationFile;	
 			}
 		else
@@ -321,7 +315,7 @@ void CSimSmsMessaging::FindAndCreateTxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,submitReportPdu);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATETXATTRIBUTESL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SUBMITREPORTPDU returned %d (element no. %d) from tag %s.",ret,3,KSmsTx);
+			LOGPARSERR("submitReportPdu",ret,3,&KSmsTx);
 			continue;
 			}
 		else
@@ -335,7 +329,7 @@ void CSimSmsMessaging::FindAndCreateTxAttributesL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,errorCode);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATETXATTRIBUTESL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element ERRORCODE returned %d (element no. %d) from tag %s.",ret,4,KSmsTx);
+			LOGPARSERR("errorCode",ret,4,&KSmsTx);
 			continue;
 			}
 		else
@@ -371,7 +365,7 @@ void CSimSmsMessaging::FindAndCreateConstraints()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,ipc);//only :SendMessage() is supported
 		if(ret!=KErrNone || ipc!=4207)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATECONSTRAINTS_1, "WARNING - CONFIGURATION FILE PARSING - Reading element IPC returned %d (element no. %d) from tag %s.",ret,0,KSmsStartRxDelay);
+			LOGPARSERR("ipc",ret,0,&KSmsStartRxDelay);
 			continue;
 			}
 
@@ -380,7 +374,7 @@ void CSimSmsMessaging::FindAndCreateConstraints()
 			constraint.iIpcCnt=noBefore;
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATECONSTRAINTS_2, "WARNING - CONFIGURATION FILE PARSING - Reading element NOBEFORE returned %d (element no. %d) from tag %s.",ret,1,KSmsStartRxDelay);
+			LOGPARSERR("noBefore",ret,1,&KSmsStartRxDelay);
 			continue;
 			}
 
@@ -389,7 +383,7 @@ void CSimSmsMessaging::FindAndCreateConstraints()
 			constraint.iRxCnt=noAfter;
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATECONSTRAINTS_3, "WARNING - CONFIGURATION FILE PARSING - Reading element NOAFTER returned %d (element no. %d) from tag %s.",ret,2,KSmsStartRxDelay);
+			LOGPARSERR("noAfter",ret,2,&KSmsStartRxDelay);
 			continue;
 			}
 		
@@ -419,14 +413,14 @@ void CSimSmsMessaging::FindAndCreateSmsStoresL(CSimPhone* aPhone)
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,storeName);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSSTORESL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element STORENAME returned %d (element no. %d) from tag %s.",ret,0,KSmsStore);
+			LOGPARSERR("storeName",ret,0,&KSmsStore);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,maxNumSlots);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSSTORESL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element MAXNUMSLOTS returned %d (element no. %d) from tag %s.",ret,1,KSmsStore);
+			LOGPARSERR("maxNumSlots",ret,1,&KSmsStore);
 			continue;
 			}
 
@@ -478,7 +472,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			entry.iIndex=index;
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_1, "WARNING - CONFIGURATION FILE PARSING - Reading element INDEX returned %d (element no. %d) from tag %s.",ret,0,KSmsParamEntry);
+			LOGPARSERR("index",ret,0,&KSmsParamEntry);
 			continue;
 			}
 
@@ -487,7 +481,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			entry.iText.Copy(smspName);
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element SMSPNAME returned %d (element no. %d) from tag %s.",ret,1,KSmsParamEntry);
+			LOGPARSERR("smspName",ret,1,&KSmsParamEntry);
 			continue;
 			}
 
@@ -499,7 +493,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element PID returned %d (element no. %d) from tag %s.",ret,2,KSmsParamEntry);
+			LOGPARSERR("pid",ret,2,&KSmsParamEntry);
 			continue;
 			}
 
@@ -511,7 +505,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element DCS returned %d (element no. %d) from tag %s.",ret,3,KSmsParamEntry);
+			LOGPARSERR("dcs",ret,3,&KSmsParamEntry);
 			continue;
 			}
 
@@ -523,7 +517,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element VALIDITYPERIOD returned %d (element no. %d) from tag %s.",ret,4,KSmsParamEntry);
+			LOGPARSERR("validityPeriod",ret,4,&KSmsParamEntry);
 			continue;
 			}
 
@@ -534,7 +528,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element DESTADDRESS returned %d (element no. %d) from tag %s.",ret,5,KSmsParamEntry);
+			LOGPARSERR("destAddress",ret,5,&KSmsParamEntry);
 			continue;
 			}
 
@@ -545,7 +539,7 @@ void CSimSmsMessaging::FindAndCreateSmsParamsL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_FINDANDCREATESMSPARAMSL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element SCA returned %d (element no. %d) from tag %s.",ret,6,KSmsParamEntry);
+			LOGPARSERR("sca",ret,6,&KSmsParamEntry);
 			continue;
 			}
 
@@ -587,7 +581,7 @@ void CSimSmsMessaging::RecordDestination(const TDesC8& aAsciiAddr, RMobileSmsMes
 		}	
 	}
 
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)	// to stop the UREL build warnings
+#ifdef _DEBUG	// to stop the UREL build warnings
 void CSimSmsMessaging::LogRequest(const TBool aEntering, TInt aIpc, TInt aError)
 #else
 void CSimSmsMessaging::LogRequest(const TBool aEntering, TInt aIpc, TInt /*aError*/)
@@ -717,13 +711,11 @@ void CSimSmsMessaging::LogRequest(const TBool aEntering, TInt aIpc, TInt /*aErro
 
 	if (aEntering!=EFalse)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGREQUEST1_1, ">>%d,CSimSmsMessaging::%s",aIpc, ipcBuf );
+		LOGSMS3(">>%d,CSimSmsMessaging::%S",aIpc, &ipcBuf );
 		}
 	else
 		{
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)    // to stop the UREL build warnings	
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGREQUEST1_2, "<<%d, CSimSmsMessaging::%s with error %d",aIpc, ipcBuf, aError);
-#endif		
+		LOGSMS4("<<%d, CSimSmsMessaging::%S with error %d",aIpc, &ipcBuf, aError);
 		}
 	}
 
@@ -857,12 +849,12 @@ TBool CSimSmsMessaging::IpcMatch()
 		if(iSmsTxCnt==(iConstraints[i].iIpcCnt))
 			{
 			iCurrentConstraint=i;
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_IPCMATCH_1, "New Constraint : %d", iCurrentConstraint);
+			LOGSMS2("New Constraint : %d", iCurrentConstraint);
 			if(i!=0)
 				{
 				if( !constraintEllapsed )
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_IPCMATCH_2, "Panic The constraints are overlapping...Compare test code and config file");
+					LOGSMS1("Panic The constraints are overlapping...Compare test code and config file");
 					}
 				__ASSERT_ALWAYS(constraintEllapsed!=EFalse,SimPanic(EConstraintsOverlapping));
 				}
@@ -877,7 +869,7 @@ CTelObject* CSimSmsMessaging::OpenNewObjectByNameL(const TDesC& aName)
  *
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_OPENNEWOBJECTBYNAMEL_1, ">>CSimSmsMessaging::OpenNewObjectByNameL");
+	LOGSMS1(">>CSimSmsMessaging::OpenNewObjectByNameL");
 	TBuf8<KMaxName> name;
 	name.Copy(aName);		// Do simple 16 bit to 8 bit conversion
 	for(TInt i=0;i<iSmsStores->Count();i++)
@@ -1039,7 +1031,7 @@ TInt CSimSmsMessaging::ActionRxEventUnstoredClientAck(TSmsRxEvent aRxEvent)
  *  
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ACTIONRXEVENTUNSTOREDCLIENTACK_1, ">>CSimSmsMessaging::ActionRxEventUnstoredClientAck [iRxState=%d aRxEvent=%d]", iRxState, aRxEvent);
+	LOGSMS3(">>CSimSmsMessaging::ActionRxEventUnstoredClientAck [iRxState=%d aRxEvent=%d]", iRxState, aRxEvent);
 	switch(iRxState)
 		{
 	case ESmsRxStateIdle:
@@ -1074,7 +1066,7 @@ TInt CSimSmsMessaging::ActionRxEventUnstoredClientAck(TSmsRxEvent aRxEvent)
 			iRxState=ESmsRxStateWaitingForNetworkAckNackResponse;
 			if (!iRxTimer->IsActive() && !iRxTimer->Running())
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ACTIONRXEVENTUNSTOREDCLIENTACK_2, ">>CSimSmsMessaging::ActionRxEventUnstoredClientAck Starting Rx Timer");
+				LOGSMS1(">>CSimSmsMessaging::ActionRxEventUnstoredClientAck Starting Rx Timer");
 				iRxTimer->Start(iAckNackCompletePause,this, ETimerIdSmsMessRx);
 				}
 
@@ -1136,7 +1128,7 @@ TInt CSimSmsMessaging::ActionRxEventUnstoredPhoneAck(TSmsRxEvent aRxEvent)
  *  
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ACTIONRXEVENTUNSTOREDPHONEACK_1, ">> ActionRxEventUnstoredPhoneAck Enter function. Event=%d, State=%d",aRxEvent,iRxState);
+	LOGSMS3(">> ActionRxEventUnstoredPhoneAck Enter function. Event=%d, State=%d",aRxEvent,iRxState);
 	
 	TInt ret = KErrGeneral;
 	
@@ -1177,7 +1169,7 @@ TInt CSimSmsMessaging::ActionRxEventStored(TSmsRxEvent aRxEvent)
  *  
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ACTIONRXEVENTSTORED_1, ">> ActionRxEventStored Enter function. Event=%d, State=%d",aRxEvent,iRxState);
+	LOGSMS3(">> ActionRxEventStored Enter function. Event=%d, State=%d",aRxEvent,iRxState);
 	TInt ret = KErrGeneral;
 	
 	switch(iRxState)
@@ -1246,7 +1238,7 @@ TInt CSimSmsMessaging::ReceiveMessageL(const TTsyReqHandle aReqHandle, TDes8* aS
 
 	iSmsRxAttrib=&attrib;
 	iSmsRxReqOutstanding=ETrue;
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_RECEIVEMESSAGEL_1, ">>ReceiveMessageL. aSmsPdu&=0x%x, aParam2&=0x%x",(TUint)aSmsPdu,(TUint)iSmsRxAttrib);
+	LOGSMS3(">>ReceiveMessageL. aSmsPdu&=%x, aParam2&=%x",aSmsPdu,iSmsRxAttrib);
 	
 	//  Print received PDU to simTSY log.
 	__ASSERT_ALWAYS(iSmsReceiveMode!=RMobileSmsMessaging::EReceiveModeUnspecified,SimPanic(EMobileSmsMessagingPhoneNotSetToAReceiveMode));
@@ -1430,7 +1422,7 @@ TInt CSimSmsMessaging::ActionTxEvent(TSmsTxEvent aTxEvent)
  *
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ACTIONTXEVENT_1, ">>ActionTxEvent ");
+	LOGSMS1(">>ActionTxEvent ");
 	switch(iTxState)
 	{
 	case ESmsTxStateIdle:
@@ -1479,7 +1471,7 @@ TInt CSimSmsMessaging::SendMessageL(const TTsyReqHandle aReqHandle,TDes8* aSmsPd
 		}
 		
 	iSmsTxAttrib=&attrib;
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+#ifdef _DEBUG
 		LogTMobileSmsAttributesV1(*iSmsTxAttrib);
 #endif // _DEBUG
 		
@@ -1548,7 +1540,7 @@ TInt CSimSmsMessaging::AttemptSmsRxComplete()
  * update the constraint count
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ATTEMPTSMSRXCOMPLETE_1, ">>AttemptSmsRxComplete ");
+	LOGSMS1(">>AttemptSmsRxComplete ");
 
 	if (CSimTsyMode::GetMode() != CSimTsyMode::ECdmaV1)
 		{
@@ -1560,7 +1552,7 @@ TInt CSimSmsMessaging::AttemptSmsRxComplete()
 		{
 		if (iSmsReceiveMode==RMobileSmsMessaging::EReceiveStored)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_ATTEMPTSMSRXCOMPLETE_2, ">>Populating SMS Structures. iSmsRxPdu&=0x%x, iSmsRxAttrib&=0x%x, iSmsRxCnt=%d.",(TUint)iSmsRxPdu,(TUint)iSmsRxAttrib,iSmsRxCnt);
+			LOGSMS4(">>Populating SMS Structures. iSmsRxPdu&=%x, iSmsRxAttrib&=%x, iSmsRxCnt=%d.",iSmsRxPdu,iSmsRxAttrib,iSmsRxCnt);
 			RMobileSmsStore::TMobileGsmSmsEntryV1 sms;
 
 			*iSmsRxPdu=iSmsRxParameterListGsm->At(iSmsRxCnt).iPdu;
@@ -1601,7 +1593,7 @@ void CSimSmsMessaging::CompleteTxPendingReq(TInt aError)
  *
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_COMPLETETXPENDINGREQ_1, ">>CompleteTxPendingReq ");
+	LOGSMS1(">>CompleteTxPendingReq ");
 	iSmsTxCnt++;
 	if(IpcMatch())
 		{
@@ -1631,7 +1623,7 @@ void CSimSmsMessaging::CompleteTxPendingReq(TInt aError)
 			{
 			// No pending client receive request - need to wait for it before
 			// simulating received SMS from network.
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_COMPLETETXPENDINGREQ_2, " - no pending receive req from client - do not start Rx timer");
+			LOGSMS1(" - no pending receive req from client - do not start Rx timer");
 			}
 		}
 	ReqCompleted(iSmsTxReqHandle, aError);
@@ -1639,7 +1631,7 @@ void CSimSmsMessaging::CompleteTxPendingReq(TInt aError)
 
 void CSimSmsMessaging::StartSmsMtTimer()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_STARTSMSMTTIMER_1, ">>StartSmsMtTimer ");
+	LOGSMS1(">>StartSmsMtTimer ");
 	TInt count = 0;
 	count = iSmsRxCnt<iSmsRxParameterListGsm->Count();
 			
@@ -1647,9 +1639,9 @@ void CSimSmsMessaging::StartSmsMtTimer()
 			{
 			if((iConstraints.Count()==0) ||	(iConstraintRxCnt<iConstraints[iCurrentConstraint].iRxCnt))	// If there are no constraints, or there are constraints and they're not exhausted.
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_STARTSMSMTTIMER_2, ">>StartSmsMtTimer Starting");
+				LOGSMS1(">>StartSmsMtTimer Starting");
 				iRxTimer->Start(iSmsRxPeriod,this, ETimerIdSmsMessRx);
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_STARTSMSMTTIMER_3, ">>StartSmsMtTimer Started");
+				LOGSMS1(">>StartSmsMtTimer Started");
 				}
 			}
 	}
@@ -1662,7 +1654,7 @@ void CSimSmsMessaging::PopulateSmsRxAttrib(const TDesC8& aAsciiScaAddr,RMobileSm
  * accordingly.  The address can then be copied into the iTelNumber structure.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_POPULATESMSRXATTRIB_1, ">>PopulateSmsRxAttrib, ");
+	LOGSMS1(">>PopulateSmsRxAttrib, ");
 	aAttrib->iOriginator.iTelNumber.SetLength(0);
 	
 	switch (iSmsReceiveMode)
@@ -2033,11 +2025,11 @@ TInt CSimSmsMessaging::StoreSmspList(const TTsyReqHandle aTsyReqHandle, TDes8* a
 			return leaveCode;
 		iSmspReqHandle=aTsyReqHandle;
 		iSmspTimer->Start(iSmspBatchPause,this, ETimerIdSmsMessSmsp);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_STORESMSPLIST_1, "<<StoreSmsList,Exit function");
+		LOGSMS1("<<StoreSmsList,Exit function");
 		return KErrNone;
 		}
 	else
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_STORESMSPLIST_2, "<<StoreSmsList,Exit function");
+		LOGSMS1("<<StoreSmsList,Exit function");
 		return KErrInUse;
 	
 	}
@@ -2077,7 +2069,7 @@ void CSimSmsMessaging::TimerCallBack(TInt aId)
  * 
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_TIMERCALLBACK_1, ">>CSimSmsMesaging::TimerCallBack IN [aId=%d iSmsReceiveMode=%d]", aId, iSmsReceiveMode);
+	LOGSMS3(">>CSimSmsMesaging::TimerCallBack IN [aId=%d iSmsReceiveMode=%d]", aId, iSmsReceiveMode);
 	switch(aId)
 		{
 		case ETimerIdSmsMessTx:
@@ -2105,7 +2097,7 @@ void CSimSmsMessaging::TimerCallBack(TInt aId)
 				ret=ActionRxEventUnstoredPhoneAck(ESmsEventRxTimer);
 				break;
 			case RMobileSmsMessaging::EReceiveStored:
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_TIMERCALLBACK_2, "Recieve Stored SMS Rx Event.");
+				LOGSMS1("Recieve Stored SMS Rx Event.");
 				ret=ActionRxEventStored(ESmsEventRxTimer);
 				break;
 			default://other receive modes cannot be set
@@ -2114,7 +2106,7 @@ void CSimSmsMessaging::TimerCallBack(TInt aId)
 
 			if (ret != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_TIMERCALLBACK_3, "ERROR: Unexpected ret code %d", ret);
+				LOGSMS2("ERROR: Unexpected ret code %d", ret);
 				__ASSERT_ALWAYS(ret==KErrNone,SimPanic(EIllegalSmsRxEvent, __LINE__));	// There should be no error from this action, but to check...
 				}
 
@@ -2139,7 +2131,7 @@ void CSimSmsMessaging::TimerCallBack(TInt aId)
 		default:
 			break;
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_TIMERCALLBACK_4, ">>CSimSmsMesaging::TimerCallBack OUT");
+	LOGSMS1(">>CSimSmsMesaging::TimerCallBack OUT");
 	}
 
 const CTestConfigSection* CSimSmsMessaging::CfgFileSection()
@@ -2149,7 +2141,7 @@ const CTestConfigSection* CSimSmsMessaging::CfgFileSection()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_CFGFILESECTION_1, ">>CSimSmsMessaging::CfgFileSection");
+	LOGSMS1(">>CSimSmsMessaging::CfgFileSection");
 	return iPhone->CfgFile();
 	}
 
@@ -2204,7 +2196,7 @@ HBufC8* CSimSmsMessaging::PduToAscii(TDesC8& aSmsPdu)
 	return hexBuf;
 	}
 
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) // to prevent UREL build warnings
+#ifdef _DEBUG // to prevent UREL build warnings
 void CSimSmsMessaging::DumpPdu(const TDesC8& aText, TDesC8& aSmsPdu, HBufC8* aPduInAscii)
 #else
 void CSimSmsMessaging::DumpPdu(const TDesC8& /*aText*/, TDesC8& aSmsPdu, HBufC8* aPduInAscii)
@@ -2216,9 +2208,7 @@ Print PDU in a loop, 150 chars per line
 @param aPduInAscii - aSmsPdu in ASCII format (default NULL).
 */
     {
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)    // to stop the UREL build warnings    
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_DUMPPDU1_1, "%s pdu length=%d", aText, aSmsPdu.Length());
-#endif	
+	LOGSMS3("%S pdu length=%d", &aText, aSmsPdu.Length());
 
     if( !aSmsPdu.Length() )
         return;
@@ -2234,14 +2224,14 @@ Print PDU in a loop, 150 chars per line
 	    {
 		TInt len = Min(100, hexBuf->Mid(i).Length());
         TPtrC8 pduChunk(hexBuf->Mid(i).Left(len).Ptr(), len);
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_DUMPPDU1_2, "PDU Chunk: %s:", pduChunk);
+		LOGSMS2("PDU Chunk: %S:", &pduChunk);
 		}
 
 	if (0 == aPduInAscii)
 	  delete hexBuf;
     }
 
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+#ifdef _DEBUG
 
 /**
 Appends Type of number and Numbering plan identification to TBuf8 buffer.
@@ -2367,30 +2357,30 @@ void CSimSmsMessaging::LogTMobileSmsAttributesV1(const RMobileSmsMessaging::TMob
 
 	TBuf8<KTextWidth> buffer;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_1, "Send Sms Attributes:");
+	LOGSMS1("Send Sms Attributes:");
 	
 	buffer.Zero();
 	buffer.Copy(KFLAGS);
 	buffer.Append(_L8("0x"));
 	buffer.AppendFormat(_L8("%08X") , ((TInt)(aSmsAttributesV1.iFlags)));
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_2, "Buffer: %s", buffer);
+	LOGSMS2("Buffer: %S", &buffer);
 
 	if(aSmsAttributesV1.iFlags & RMobileSmsMessaging::KGsmServiceCentre)
 		{
 		buffer.Zero();
 		buffer.Copy(KSCADDR);
 		buffer.Append(aSmsAttributesV1.iGsmServiceCentre.iTelNumber);
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_3, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 
 		buffer.Zero();
 		buffer.Copy(KSCADDRTON);
 		AppendTonToBuffer(buffer,(aSmsAttributesV1.iGsmServiceCentre.iTypeOfNumber));
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_4, "Buffer: %s", buffer);;
+		LOGSMS2("buffer: %S", &buffer);
 
 		buffer.Zero();
 		buffer.Copy(KSCADDRNPI);
 		AppendNpiToBuffer(buffer,(aSmsAttributesV1.iGsmServiceCentre.iNumberPlan));		   
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_5, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 		}
 	if(aSmsAttributesV1.iFlags & RMobileSmsMessaging::KSmsDataFormat)
 		{
@@ -2404,7 +2394,7 @@ void CSimSmsMessaging::LogTMobileSmsAttributesV1(const RMobileSmsMessaging::TMob
 			{
 			buffer.Append(_L("EFormatGsmTpdu"));
 			}		
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_6, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 		}
 	if(aSmsAttributesV1.iFlags & RMobileSmsMessaging::KRemotePartyInfo)
 		{
@@ -2413,17 +2403,17 @@ void CSimSmsMessaging::LogTMobileSmsAttributesV1(const RMobileSmsMessaging::TMob
 		buffer.Zero();
 		buffer.Copy(KDEADDR);
 		buffer.Append(smsSendAttributesV1.iDestination.iTelNumber);
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_7, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 
 		buffer.Zero();
 		buffer.Copy(KDEADDRTON);
 		AppendTonToBuffer(buffer,(smsSendAttributesV1.iDestination.iTypeOfNumber));
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_8, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 
 		buffer.Zero();
 		buffer.Copy(KDEADDRNPI);
 		AppendNpiToBuffer(buffer,(smsSendAttributesV1.iDestination.iNumberPlan)); 
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_9, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 		}
 	if(aSmsAttributesV1.iFlags & RMobileSmsMessaging::KMoreToSend)
 		{
@@ -2440,7 +2430,7 @@ void CSimSmsMessaging::LogTMobileSmsAttributesV1(const RMobileSmsMessaging::TMob
 			{
 			buffer.Append(_L8("EFalse"));
 			}
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_10, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 		}
 	if(aSmsAttributesV1.iFlags & RMobileSmsMessaging::KMessageReference)
 		{
@@ -2450,7 +2440,7 @@ void CSimSmsMessaging::LogTMobileSmsAttributesV1(const RMobileSmsMessaging::TMob
 		buffer.Copy(KMSGREF);
 		buffer.Append(_L("0x"));
 		buffer.AppendFormat(_L8("%08X") , smsSendAttributesV1.iMsgRef);
-		OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_11, "Buffer: %s", buffer);
+		LOGSMS2("buffer: %S", &buffer);
 		}
 
 	if(aSmsAttributesV1.iFlags & RMobileSmsMessaging::KGsmSubmitReport)
@@ -2476,7 +2466,7 @@ void CSimSmsMessaging::LogTMobileSmsAttributesV1(const RMobileSmsMessaging::TMob
 				buffer.AppendFormat(_L8("%X") , smsSendAttributesV1.iSubmitReport[j]);
 				j++;
 				}
-			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSMESSAGING_LOGTMOBILESMSATTRIBUTESV1_12, "Buffer: %s", buffer);
+			LOGSMS2("buffer: %S", &buffer);
 			buffer.Zero();
 			i=0;
 			l+=KTextWidth;

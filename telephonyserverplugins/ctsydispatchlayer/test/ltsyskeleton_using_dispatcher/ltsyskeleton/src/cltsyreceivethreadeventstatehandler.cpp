@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,11 +13,6 @@
 // Description:
 // Implements AO to retrieve lists
 //
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cltsyreceivethreadeventstatehandlerTraces.h"
-#endif
 
 #include "cltsyreceivethreadeventstatehandler.h"
 #include <ctsy/ltsy/ltsylogger.h>
@@ -83,7 +78,7 @@ TInt CLtsyReceiveThreadEventStateHandler::HandleReceivedEvent()
 	//Add LTSY specific handling here.
 	
 	// Can be removed in real LTSY implementation
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CLTSYRECEIVETHREADEVENTSTATEHANDLER_HANDLERECEIVEEVENT_1,"LtsyReceiveThread simulated event = %d", iCounter);
+	MTEST_LOG_RECEIVE_EVENT_NO
 	MTEST_COUNTER_EXCEEDED_SHUTDOWN_RECEIVETHREAD
 	//
 	 

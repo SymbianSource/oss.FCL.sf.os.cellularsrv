@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "GsmuelemTraces.h"
-#endif
 
 #include <gsmuelem.h>
 #include <gsmumsg.h>
@@ -188,7 +182,7 @@ TSmsStatus::TSmsStatus():
 
 CSmsCommandData* CSmsCommandData::NewL(TSmsFirstOctet& aFirstOctet)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_NEWL_1, "CSmsCommandData::NewL()");
+	LOGGSMU1("CSmsCommandData::NewL()");
 
 	CSmsCommandData* commanddata=new(ELeave) CSmsCommandData(aFirstOctet);
 	CleanupStack::PushL(commanddata);
@@ -213,7 +207,7 @@ CSmsCommandData::~CSmsCommandData()
  */
 CSmsCommandData* CSmsCommandData::DuplicateL() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_DUPLICATEL_1, "CSmsCommandData::DuplicateL()");
+	LOGGSMU1("CSmsCommandData::DuplicateL()");
 
 	CSmsCommandData*  smsCommandData = CSmsCommandData::NewL(iFirstOctet);
 	CleanupStack::PushL(smsCommandData);
@@ -234,7 +228,7 @@ CSmsCommandData* CSmsCommandData::DuplicateL() const
 
 CSmsInformationElement& CSmsCommandData::InformationElement(TInt aIndex) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_INFORMATIONELEMENT_1, "CSmsCommandData::InformationElement()");
+	LOGGSMU1("CSmsCommandData::InformationElement()");
 
 	CSmsInformationElement* ie=iInformationElementArray[aIndex];
 	return *ie;
@@ -246,7 +240,7 @@ CSmsInformationElement*& CSmsCommandData::InformationElementPtr(TInt aIndex)
     // Ignore in code coverage - not used in SMS stack and not exported
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_INFORMATIONELEMENTPTR_1, "CSmsCommandData::InformationElementPtr()");
+    LOGGSMU1("CSmsCommandData::InformationElementPtr()");
     return iInformationElementArray[aIndex];
     BULLSEYE_RESTORE
     }
@@ -254,7 +248,7 @@ CSmsInformationElement*& CSmsCommandData::InformationElementPtr(TInt aIndex)
 TBool CSmsCommandData::InformationElementIndex(CSmsInformationElement::TSmsInformationElementIdentifier aIdentifier,
 		TInt& aIndex) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_INFORMATIONELEMENTINDEX_1, "CSmsCommandData::InformationElementIndex()");
+	LOGGSMU1("CSmsCommandData::InformationElementIndex()");
 
 	TBool found=EFalse;
 	TInt count=NumInformationElements();
@@ -270,7 +264,7 @@ TBool CSmsCommandData::InformationElementIndex(CSmsInformationElement::TSmsInfor
 
 void CSmsCommandData::AddInformationElementL(const TSmsId aIdentifier,const TDesC8& aData)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_ADDINFORMATIONELEMENTL_1, "CSmsCommandData::AddInformationElementL()");
+	LOGGSMU1("CSmsCommandData::AddInformationElementL()");
 
 	//
 	// Currently there is no restriction on how many instances of an information element can be
@@ -290,7 +284,7 @@ void CSmsCommandData::AddInformationElementL(const TSmsId aIdentifier,const TDes
 
 void CSmsCommandData::RemoveInformationElement(TInt aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_REMOVEINFORMATIONELEMENT_1, "CSmsCommandData::RemoveInformationElement()");
+	LOGGSMU1("CSmsCommandData::RemoveInformationElement()");
 	// Since iInformationElementArray[aIndex] is removed from iInformationElementArray, no double free issue.
 	// coverity[double_free]
 	delete iInformationElementArray[aIndex];
@@ -306,7 +300,7 @@ void CSmsCommandData::RemoveInformationElement(TInt aIndex)
 
 TPtrC8 CSmsCommandData::Data() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_DATA_1, "CSmsCommandData::Data()");
+	LOGGSMU1("CSmsCommandData::Data()");
 
 	TPtrC8 ptr;
 	ptr.Set(iBuffer->Des());
@@ -316,7 +310,7 @@ TPtrC8 CSmsCommandData::Data() const
 
 void CSmsCommandData::SetDataL(const TDesC8& aData)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_SETDATAL_1, "CSmsCommandData::SetDataL()");
+	LOGGSMU1("CSmsCommandData::SetDataL()");
 
 	TInt length=aData.Length();
 	__ASSERT_DEBUG(length<=KSmsMaxDataSize,Panic(KGsmuPanicCommandDataLengthTooLong));
@@ -330,7 +324,7 @@ void CSmsCommandData::SetDataL(const TDesC8& aData)
 
 TUint8* CSmsCommandData::EncodeL(TUint8* aPtr) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_ENCODEL_1, "CSmsCommandData::EncodeL()");
+	LOGGSMU1("CSmsCommandData::EncodeL()");
 
 	__ASSERT_DEBUG(iBuffer->Length()<=MaxDataLength(),Panic(KGsmuPanicCommandDataBufferTooLong));
 	TSmsOctet datalength=iBuffer->Length()+TSmsOctet(TotalHeaderLengthInUDLUnits());
@@ -355,7 +349,7 @@ TUint8* CSmsCommandData::EncodeL(TUint8* aPtr) const
 
 void CSmsCommandData::DecodeL(TGsmuLex8& aPdu)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_DECODEL_1, "CSmsCommandData::DecodeL()");
+	LOGGSMU1("CSmsCommandData::DecodeL()");
 
 	iInformationElementArray.ResetAndDestroy();
 	const TBool headerPresent=HeaderPresent();
@@ -423,7 +417,7 @@ CSmsCommandData::CSmsCommandData(TSmsFirstOctet& aFirstOctet):
 
 TInt CSmsCommandData::HeaderLength() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_HEADERLENGTH_1, "CSmsCommandData::HeaderLength()");
+	LOGGSMU1("CSmsCommandData::HeaderLength()");
 
 	TInt headerLength=0;
 	for (TInt i=0; i<NumInformationElements(); i++)
@@ -434,7 +428,7 @@ TInt CSmsCommandData::HeaderLength() const
 
 TInt CSmsCommandData::TotalHeaderLengthInUDLUnits() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_TOTALHEADERLENGTHINUDLUNITS_1, "CSmsCommandData::TotalHeaderLengthInUDLUnits()");
+	LOGGSMU1("CSmsCommandData::TotalHeaderLengthInUDLUnits()");
 
 	if (iInformationElementArray.Count()==0)
 		return 0;
@@ -445,7 +439,7 @@ TInt CSmsCommandData::TotalHeaderLengthInUDLUnits() const
 
 TBool CSmsCommandData::HeaderPresent() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_HEADERPRESENT_1, "CSmsCommandData::HeaderPresent()");
+	LOGGSMU1("CSmsCommandData::HeaderPresent()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsUDHIMask)==TSmsFirstOctet::ESmsUDHIHeaderPresent;
 	} // CSmsCommandData::HeaderPresent
@@ -453,7 +447,7 @@ TBool CSmsCommandData::HeaderPresent() const
 
 void CSmsCommandData::SetHeaderPresent(TBool aHeaderPresent)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSCOMMANDDATA_SETHEADERPRESENT_1, "CSmsCommandData::SetHeaderPresent()");
+	LOGGSMU1("CSmsCommandData::SetHeaderPresent()");
 
 	iFirstOctet=aHeaderPresent? (iFirstOctet&(~TSmsFirstOctet::ESmsUDHIMask))|TSmsFirstOctet::ESmsUDHIHeaderPresent: (iFirstOctet&(~TSmsFirstOctet::ESmsUDHIMask))|TSmsFirstOctet::ESmsUDHIHeaderNotPresent;
 	} // CSmsCommandData::SetHeaderPresent
@@ -486,7 +480,7 @@ TSmsProtocolIdentifier::TSmsTelematicDeviceIndicator TSmsProtocolIdentifier::Tel
 
 void TSmsProtocolIdentifier::SetTelematicDeviceIndicator(TSmsTelematicDeviceIndicator aIndicator)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSPROTOCOLIDENTIFIER_SETTELEMATICDEVICEINDICATOR_1, "TSmsProtocolIdentifier::SetTelematicDeviceIndicator()");
+	LOGGSMU1("TSmsProtocolIdentifier::SetTelematicDeviceIndicator()");
 
 	__ASSERT_DEBUG(PIDType()==ESmsPIDTelematicInterworking,Panic(KGsmuPanicNoTelematicInterworking));
 
@@ -504,7 +498,7 @@ TSmsProtocolIdentifier::TSmsTelematicDeviceType TSmsProtocolIdentifier::Telemati
 
 void TSmsProtocolIdentifier::SetTelematicDeviceType(TSmsTelematicDeviceType aDeviceType)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSPROTOCOLIDENTIFIER_SETTELEMATICDEVICETYPE_1, "TSmsProtocolIdentifier::SetTelematicDeviceType()");
+	LOGGSMU1("TSmsProtocolIdentifier::SetTelematicDeviceType()");
 
 	__ASSERT_DEBUG(TelematicDeviceIndicator()==ESmsTelematicDevice,Panic(KGsmuPanicNoTelematicDevice));
 	iValue=(TUint8) ((iValue&(~ESmsTelematicDeviceTypeMask))|aDeviceType);
@@ -516,7 +510,7 @@ TInt TSmsProtocolIdentifier::ShortMessageALProtocol() const
     // Ignore in code coverage - not used in SMS stack and not exported
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSPROTOCOLIDENTIFIER_SHORTMESSAGEALPROTOCOL_1, "TSmsProtocolIdentifier::ShortMessageALProtocol()");
+    LOGGSMU1("TSmsProtocolIdentifier::ShortMessageALProtocol()");
     
     __ASSERT_DEBUG(TelematicDeviceIndicator()==ESmsNoTelematicDevice,Panic(KGsmuPanicNoTelematicDevice));
     return (TSmsShortMessageALProtocol) (iValue&ESmsShortMessageALProtocolMask);
@@ -528,7 +522,7 @@ void TSmsProtocolIdentifier::SetShortMessageALProtocol(TSmsShortMessageALProtoco
     // Ignore in code coverage - not used in SMS stack and not exported
     // but cannot be removed as impacts public header.
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSPROTOCOLIDENTIFIER_SETSHORTMESSAGEALPROTOCOL_1, "TSmsProtocolIdentifier::SetShortMessageALProtocol()");
+    LOGGSMU1("TSmsProtocolIdentifier::SetShortMessageALProtocol()");
     
     __ASSERT_DEBUG(TelematicDeviceIndicator()==ESmsNoTelematicDevice,Panic(KGsmuPanicNoTelematicDevice));
     iValue=(TUint8) ((iValue&(~ESmsShortMessageALProtocolMask))|aProtocol);
@@ -537,7 +531,7 @@ void TSmsProtocolIdentifier::SetShortMessageALProtocol(TSmsShortMessageALProtoco
 
 TInt TSmsProtocolIdentifier::ShortMessageType() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSPROTOCOLIDENTIFIER_SHORTMESSAGETYPE_1, "TSmsProtocolIdentifier::ShortMessageType()");
+	LOGGSMU1("TSmsProtocolIdentifier::ShortMessageType()");
 
 	__ASSERT_DEBUG(PIDType()==ESmsPIDShortMessageType,Panic(KGsmuPanicNoShortMessageType));
 	return (TSmsShortMessageType) (iValue&ESmsShortMessageTypeMask);
@@ -546,7 +540,7 @@ TInt TSmsProtocolIdentifier::ShortMessageType() const
 
 void TSmsProtocolIdentifier::SetShortMessageType(TSmsShortMessageType aShortMessageType)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSPROTOCOLIDENTIFIER_SETSHORTMESSAGETYPE_1, "TSmsProtocolIdentifier::SetShortMessageType()");
+	LOGGSMU1("TSmsProtocolIdentifier::SetShortMessageType()");
 
 	__ASSERT_DEBUG(PIDType()==ESmsPIDShortMessageType,Panic(KGsmuPanicNoShortMessageType));
 	//iValue=(TUint8) ((iValue&(~ESmsPIDTypeMask))|aShortMessageType);
@@ -565,7 +559,7 @@ TSmsDataCodingScheme::TSmsDataCodingScheme():
 
 TBool TSmsDataCodingScheme::TextCompressed() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_TEXTCOMPRESSED_1, "TSmsDataCodingScheme::TextCompressed()");
+	LOGGSMU1("TSmsDataCodingScheme::TextCompressed()");
 
 	TInt bits7to4=Bits7To4();
 	return (bits7to4==ESmsDCSTextCompressedWithNoClassInfo)    || (bits7to4==ESmsDCSTextCompressedWithClassInfo)      ||
@@ -575,7 +569,7 @@ TBool TSmsDataCodingScheme::TextCompressed() const
 
 void TSmsDataCodingScheme::SetTextCompressed(TBool aCompressed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETTEXTCOMPRESSED_1, "TSmsDataCodingScheme::SetTextCompressed()");
+	LOGGSMU1("TSmsDataCodingScheme::SetTextCompressed()");
 
 	TInt bits7to4=Bits7To4();
 	if (aCompressed)
@@ -653,7 +647,7 @@ void TSmsDataCodingScheme::SetTextCompressed(TBool aCompressed)
 
 TSmsDataCodingScheme::TSmsAlphabet TSmsDataCodingScheme::Alphabet() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_ALPHABET_1, "TSmsDataCodingScheme::TSmsAlphabet()");
+	LOGGSMU1("TSmsDataCodingScheme::TSmsAlphabet()");
 
 	TInt bits7to4=Bits7To4();
 	TInt alphabet=ESmsAlphabet7Bit;
@@ -688,7 +682,7 @@ TSmsDataCodingScheme::TSmsAlphabet TSmsDataCodingScheme::Alphabet() const
 			break;
 			}
 		default:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_ALPHABET_2, "TSmsDataCodingScheme::Alphabet() WARNING! default case has been reached");
+		    LOGGSMU1("TSmsDataCodingScheme::Alphabet() WARNING! default case has been reached");
             break;
  		}
 	return (TSmsAlphabet) alphabet;
@@ -696,7 +690,7 @@ TSmsDataCodingScheme::TSmsAlphabet TSmsDataCodingScheme::Alphabet() const
 
 void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETALPHABET_1, "TSmsDataCodingScheme::SetAlphabet()");
+	LOGGSMU1("TSmsDataCodingScheme::SetAlphabet()");
 
 	TInt bits7to4=Bits7To4();
 	switch (bits7to4)
@@ -725,7 +719,7 @@ void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
 			{
             if (aAlphabet!=ESmsAlphabet7Bit)
                 {
-                OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETALPHABET_2, "TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
+                LOGGSMU3("TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
                 }
 			break;
 			}
@@ -737,7 +731,7 @@ void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
  			    }
  			else 
                 {
-        		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETALPHABET_3, "TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
+        		LOGGSMU3("TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
 			    }	     
 			break;
 			}
@@ -749,12 +743,12 @@ void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
 			    }
 			else 
 			    {
-				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETALPHABET_4, "TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
+				LOGGSMU3("TSmsDataCodingScheme::SetAlphabet() WARNING! Not Supported With Discard Message  [Bits7To4=%d], [aAlphabet=%d]", bits7to4, aAlphabet);
 			    }
 			break;
 			}
 		default:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETALPHABET_5, "TSmsDataCodingScheme::SetAlphabet() WARNING! default case has been reached");
+		    LOGGSMU1("TSmsDataCodingScheme::SetAlphabet() WARNING! default case has been reached");
             break;
       		}
 	} // TSmsDataCodingScheme::SetAlphabet
@@ -762,7 +756,7 @@ void TSmsDataCodingScheme::SetAlphabet(TSmsAlphabet aAlphabet)
 
 TBool TSmsDataCodingScheme::Class(TSmsClass& aClass) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_CLASS_1, "TSmsDataCodingScheme::Class()");
+	LOGGSMU1("TSmsDataCodingScheme::Class()");
 
 	switch (Bits7To4())
 		{
@@ -781,7 +775,7 @@ TBool TSmsDataCodingScheme::Class(TSmsClass& aClass) const
 
 void TSmsDataCodingScheme::SetClass(TBool aClassDefined,TSmsDataCodingScheme::TSmsClass aClass)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETCLASS_1, "TSmsDataCodingScheme::SetClass()");
+	LOGGSMU1("TSmsDataCodingScheme::SetClass()");
 
 	TInt bits7to4=Bits7To4();
 	if (aClassDefined)
@@ -819,7 +813,7 @@ void TSmsDataCodingScheme::SetClass(TBool aClassDefined,TSmsDataCodingScheme::TS
 				break;
 				}
 			default:
-		        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETCLASS_2, "WARNING! default case has been reached");
+		        LOGGSMU1("WARNING! default case has been reached");
                 break;
 			}
 		}
@@ -869,7 +863,7 @@ void TSmsDataCodingScheme::SetClass(TBool aClassDefined,TSmsDataCodingScheme::TS
 
 TSmsDataCodingScheme::TSmsIndicationState TSmsDataCodingScheme::IndicationState() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_INDICATIONSTATE_1, "TSmsDataCodingScheme::IndicationState()");
+	LOGGSMU1("TSmsDataCodingScheme::IndicationState()");
 
 	TInt bits7to4=Bits7To4();
 	TSmsIndicationState state=ESmsIndicationInactive;
@@ -883,7 +877,7 @@ TSmsDataCodingScheme::TSmsIndicationState TSmsDataCodingScheme::IndicationState(
 			break;
 			}
 		default:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_INDICATIONSTATE_2, "WARNING! default case has been reached");
+		    LOGGSMU1("WARNING! default case has been reached");
             break;
   		}
 	return state;
@@ -892,7 +886,7 @@ TSmsDataCodingScheme::TSmsIndicationState TSmsDataCodingScheme::IndicationState(
 
 void TSmsDataCodingScheme::SetIndicationState(TSmsIndicationState aState)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETINDICATIONSTATE_1, "TSmsDataCodingScheme::SetIndicationState()");
+	LOGGSMU1("TSmsDataCodingScheme::SetIndicationState()");
 
 	TInt bits7to4=Bits7To4();
 	switch (bits7to4)
@@ -905,7 +899,7 @@ void TSmsDataCodingScheme::SetIndicationState(TSmsIndicationState aState)
 			break;
 			}
 		default:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETINDICATIONSTATE_2, "TSmsDataCodingScheme::SetIndicationState() WARNING! default case has been reached");
+		    LOGGSMU1("TSmsDataCodingScheme::SetIndicationState() WARNING! default case has been reached");
             break;
   		}
 	} // TSmsDataCodingScheme::SetIndicationState
@@ -913,7 +907,7 @@ void TSmsDataCodingScheme::SetIndicationState(TSmsIndicationState aState)
 
 TSmsDataCodingScheme::TSmsIndicationType TSmsDataCodingScheme::IndicationType() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_INDICATIONTYPE_1, "TSmsDataCodingScheme::IndicationType()");
+	LOGGSMU1("TSmsDataCodingScheme::IndicationType()");
 
 	TInt bits7to4=Bits7To4();
 	TSmsIndicationType type=ESmsVoicemailMessageWaiting;
@@ -927,7 +921,7 @@ TSmsDataCodingScheme::TSmsIndicationType TSmsDataCodingScheme::IndicationType() 
 			break;
 			}
 		default:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_INDICATIONTYPE_2, "TSmsDataCodingScheme::IndicationType() WARNING default case has been reached");
+		    LOGGSMU1("TSmsDataCodingScheme::IndicationType() WARNING default case has been reached");
             break;
 		}
 	return type;
@@ -936,7 +930,7 @@ TSmsDataCodingScheme::TSmsIndicationType TSmsDataCodingScheme::IndicationType() 
 
 void TSmsDataCodingScheme::SetIndicationType(TSmsIndicationType aType)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETINDICATIONTYPE_1, "TSmsDataCodingScheme::SetIndicationType()");
+	LOGGSMU1("TSmsDataCodingScheme::SetIndicationType()");
 
 	TInt bits7to4=Bits7To4();
 	switch (bits7to4)
@@ -949,7 +943,7 @@ void TSmsDataCodingScheme::SetIndicationType(TSmsIndicationType aType)
 			break;
 			}
 		default:
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSDATACODINGSCHEME_SETINDICATIONTYPE_2, "TSmsDataCodingScheme::SetIndicationType() WARNING! default case has been reached");
+		    LOGGSMU1("TSmsDataCodingScheme::SetIndicationType() WARNING! default case has been reached");
             break;
  		}
 	} // TSmsDataCodingScheme::SetIndicationType
@@ -968,7 +962,7 @@ void TSmsDataCodingScheme::SetIndicationType(TSmsIndicationType aType)
  */
 EXPORT_C CSmsAlphabetConverter* CSmsAlphabetConverter::NewLC(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs,TSmsDataCodingScheme::TSmsAlphabet aSmsAlphabet,TBool aIsBinary)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSALPHABETCONVERTER_NEWLC_1, "CSmsAlphabetConverter::NewLC()");
+	LOGGSMU1("CSmsAlphabetConverter::NewLC()");
 
 	CSmsAlphabetConverter* converter=new (ELeave)CSmsAlphabetConverter(aCharacterSetConverter,aFs,aSmsAlphabet,aIsBinary);
 	CleanupStack::PushL(converter);
@@ -1009,7 +1003,7 @@ CSmsAlphabetConverter::CSmsAlphabetConverter(CCnvCharacterSetConverter& aCharact
 //
 void CSmsAlphabetConverter::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONSTRUCTL_1, "CSmsAlphabetConverter::ConstructL()");
+	LOGGSMU1("CSmsAlphabetConverter::ConstructL()");
 
 
 	if (!iIsBinary)
@@ -1041,7 +1035,7 @@ void CSmsAlphabetConverter::ConstructL()
 //
 void CSmsAlphabetConverter::ConversionPropertiesL(TSmsAlphabetConversionProperties& aConversionProperties) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERSIONPROPERTIESL_1, "CSmsAlphabetConverter::ConversionPropertiesL()");
+	LOGGSMU1("CSmsAlphabetConverter::ConversionPropertiesL()");
 
 
 	// Set defaults
@@ -1083,7 +1077,7 @@ void CSmsAlphabetConverter::ConversionPropertiesL(TSmsAlphabetConversionProperti
  */
 EXPORT_C TPtrC8 CSmsAlphabetConverter::ConvertFromNativeL(const TDesC& aNativeCharacters)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSALPHABETCONVERTER_CONVERTFROMNATIVEL_1, "CSmsAlphabetConverter::ConvertFromNativeL()");
+	LOGGSMU1("CSmsAlphabetConverter::ConvertFromNativeL()");
 
 	TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters;
 
@@ -1113,7 +1107,7 @@ EXPORT_C TPtrC8 CSmsAlphabetConverter::ConvertFromNativeL(const TDesC& aNativeCh
                                                           TInt& aNumberOfUnconvertibleCharacters,
 			                                              TInt& aNumberOfDowngradedCharacters)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSALPHABETCONVERTER_CONVERTFROMNATIVEL1_1, "CSmsAlphabetConverter::ConvertFromNativeL(): aEncoding=%d", aEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::ConvertFromNativeL(): aEncoding=%d", aEncoding);
 	
 	aNumberOfUnconvertibleCharacters = 0;
 	aNumberOfDowngradedCharacters    = 0;
@@ -1306,7 +1300,7 @@ EXPORT_C TPtrC8 CSmsAlphabetConverter::ConvertFromNativeL(const TDesC& aNativeCh
  */
 EXPORT_C TPtrC CSmsAlphabetConverter::ConvertToNativeL(const TDesC8& aUDElements)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSALPHABETCONVERTER_CONVERTTONATIVEL_1, "CSmsAlphabetConverter::ConvertToNativeL()");
+	LOGGSMU1("CSmsAlphabetConverter::ConvertToNativeL()");
 
 	return ConvertToNativeL(aUDElements, ESmsEncodingNone);
 	} // CSmsAlphabetConverter::ConvertToNativeL
@@ -1326,7 +1320,7 @@ EXPORT_C TPtrC CSmsAlphabetConverter::ConvertToNativeL(const TDesC8& aUDElements
 EXPORT_C TPtrC CSmsAlphabetConverter::ConvertToNativeL(const TDesC8& aUDElements,
 													   TSmsEncoding aEncoding)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSALPHABETCONVERTER_CONVERTTONATIVEL1_1, "CSmsAlphabetConverter::ConvertToNativeL(): aEncoding=%d", aEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::ConvertToNativeL(): aEncoding=%d", aEncoding);
 
 	// Check for some shortcuts
 	if (iIsBinary ||  iSmsAlphabet == TSmsDataCodingScheme::ESmsAlphabet8Bit)
@@ -1399,6 +1393,33 @@ EXPORT_C TPtrC CSmsAlphabetConverter::ConvertToNativeL(const TDesC8& aUDElements
 
 
 /**
+ *  Tests if the character is supported by the current character set.
+ *  This function can be used with 7bit and 8bit alphabets.
+ * 
+ *  @param aChar  Character to investigate.
+ * 
+ *  @return  ETrue if the character is supported.
+ * 
+ *  @note Since the function is based on the old behaviour (pre-PREQ2090)
+ *        it does not accept a downgraded character or alternative encoding
+ *        as being supported.
+ */
+TBool CSmsAlphabetConverter::IsSupportedL(TChar aChar)
+	{
+	LOGGSMU2("[1] CSmsAlphabetConverter::IsSupportedL(aChar=0x%04x)", (TUint) aChar);
+
+	TBool isDowngrade, isRequiresAlternativeEncoding;
+
+    TBool  supported = IsSupportedL(aChar, ESmsEncodingNone,
+            isDowngrade, isRequiresAlternativeEncoding);
+	
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
+
+	return supported;
+	} // CSmsAlphabetConverter::IsSupportedL
+
+
+/**
  *  Tests if the descriptor text is supported by the current character set.
  *  This function can be used with 7bit and 8bit alphabets.
  * 
@@ -1413,32 +1434,133 @@ EXPORT_C TPtrC CSmsAlphabetConverter::ConvertToNativeL(const TDesC8& aUDElements
 TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TInt& aNumberOfUnconvertibleCharacters,
                                           TInt& aIndexOfFirstUnconvertibleCharacter)
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_1, "[1] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", aDes);
+	LOGGSMU2("[2] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", &aDes);
 
 	TInt desLength = aDes.Length();
+	//
+	// Initialise the exit params...
+	//
+	aNumberOfUnconvertibleCharacters    = 0;
+	aIndexOfFirstUnconvertibleCharacter = desLength;
 
     //
-    // Create buffer for restored text string...
+    // Create buffers for the input converted to 7Bit and a buffer for it once
+    // converted back again...
     //
+    HBufC8* encodedBuf       = HBufC8::NewLC(desLength*2); // worse case
     HBufC*  backToUnicodeAfterStdBuf = HBufC::NewLC(desLength);
+    TPtr8  encoded(encodedBuf->Des());
     TPtr  backToUnicodeAfterStd(backToUnicodeAfterStdBuf->Des());
+
+    //
+    // Convert the input string to standard 7bit (with downgrades if needed)...
+    // 
+    PrepareForConversionFromNativeL(ESmsEncodingNone);
+
+    TInt  notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
+
+    if (notConverted > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notConverted;
+        }
+    else if (notConverted < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
     
     //
-    // Convert the string...
-    //   
-	TInt numberOfDowngradedCharacters;
-	TBool isCountDowngrade = EFalse; // Don't count downgrades
-	ConvertWith7BitEncodingL(aDes, backToUnicodeAfterStd, 
-            aNumberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
-            aIndexOfFirstUnconvertibleCharacter, isCountDowngrade);
-	
+    // Convert it back again to the native format...
+    //
+    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
+    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicodeAfterStd, encoded, state);
+
+    if (notRestored > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notRestored;
+        }
+    else if (notRestored < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
+
+    //
+    // Work out if the string is acceptable as it is (e.g. no unconvertible
+    // and no downgrades). We only need do this if the previous conversions were
+    // complete with no issues.
+    //
+    for (TInt pos = desLength-1;  pos >= 0;  --pos)
+        {
+        if (backToUnicodeAfterStd[pos] != aDes[pos])
+            {
+            aNumberOfUnconvertibleCharacters++;
+            aIndexOfFirstUnconvertibleCharacter = pos;
+            }
+        }
+    
     CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
+    CleanupStack::PopAndDestroy(encodedBuf);
 	
+	//
+	// Useful logging...
+	//
 	TBool  supported = (aNumberOfUnconvertibleCharacters == 0);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_2, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_3, "CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL_4, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
+
+	return supported;
+	} // CSmsAlphabetConverter::IsSupportedL
+
+
+/**
+ *  Tests if the character is supported by the current character set.
+ *  This function can be used with 7bit and 8bit alphabets.
+ * 
+ *  @param aChar                         Character to investigate.
+ *  @param aEncoding                     Alternative 7bit encoding (if used).
+ *  @param aIsDowngrade                  Exit param set to ETrue if the
+ *                                       character has to be downgraded.
+ *  @param aRequiresAlternativeEncoding  Exit param set to ETrue if the
+ *                                       alternative encoding has to be
+ *                                       used to encode it.
+ * 
+ *  @return  ETrue if the character is supported.
+ */
+TBool CSmsAlphabetConverter::IsSupportedL(TChar aChar, TSmsEncoding aEncoding,
+		                                  TBool& aIsDowngrade,
+                                          TBool& aRequiresAlternativeEncoding)
+	{
+	LOGGSMU2("[3] CSmsAlphabetConverter::IsSupportedL(aChar=0x%04x)", (TUint) aChar);
+
+	//
+	// Convert the character...
+	//
+	TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
+            numberRequiringAlternativeEncoding, indexOfFirstUnconvertibleCharacter;
+	TBuf<4>   toEncode;
+
+	toEncode.SetLength(1);
+	toEncode[0]=(TText)aChar;
+
+	TBool supported = IsSupportedL(toEncode, aEncoding, 
+	        numberOfUnconvertibleCharacters,
+	        numberOfDowngradedCharacters,
+	        numberRequiringAlternativeEncoding,
+	        indexOfFirstUnconvertibleCharacter);
+
+	//
+	// Calculate the exit params...
+	//
+	aIsDowngrade                 = (numberOfDowngradedCharacters > 0);
+	aRequiresAlternativeEncoding = (numberRequiringAlternativeEncoding > 0);
+	    
+	//
+	// Useful logging...
+	//
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aIsDowngrade=%d.", aIsDowngrade);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aRequiresAlternativeEncoding=%d.", aRequiresAlternativeEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
 
 	return supported;
 	} // CSmsAlphabetConverter::IsSupportedL
@@ -1468,28 +1590,77 @@ TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
                                           TInt& aNumberRequiringAlternativeEncoding,
                                           TInt& aIndexOfFirstUnconvertibleCharacter)
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_1, "[2] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", aDes);
+	LOGGSMU2("[4] CSmsAlphabetConverter::IsSupportedL(aDes=\"%S\")", &aDes);
 
 	TInt desLength = aDes.Length();
 	//
-	// Initialise the exit param...
+	// Initialise the exit params...
 	//
+	aNumberOfUnconvertibleCharacters    = 0;
+	aNumberOfDowngradedCharacters       = 0;
 	aNumberRequiringAlternativeEncoding = 0;
+	aIndexOfFirstUnconvertibleCharacter = desLength;
 	
 	//
-	// Create buffer for restored text string...
+	// Create buffers for the input converted to 7Bit and a buffer for it once
+	// converted back again...
 	//
+    HBufC8* encodedBuf       = HBufC8::NewLC(desLength*2); // worse case
     HBufC*  backToUnicodeAfterStdBuf = HBufC::NewLC(desLength);
+    TPtr8  encoded(encodedBuf->Des());
     TPtr  backToUnicodeAfterStd(backToUnicodeAfterStdBuf->Des());
-    TBool  isCountDowngrade = ETrue; // Count downgraded chars
+
+    //
+    // Convert the input string to standard 7bit (with downgrades if needed)...
+    // 
+    PrepareForConversionFromNativeL(ESmsEncodingNone);
+
+    TInt  notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
+
+    if (notConverted > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notConverted;
+        }
+    else if (notConverted < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
     
     //
-    // Convert the character...
-    //   
-    ConvertWith7BitEncodingL(aDes, backToUnicodeAfterStd, 
-            aNumberOfUnconvertibleCharacters, aNumberOfDowngradedCharacters, 
-            aIndexOfFirstUnconvertibleCharacter, isCountDowngrade);
-    
+    // Convert it back again to the native format...
+    //
+    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
+    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicodeAfterStd, encoded, state);
+
+    if (notRestored > 0)
+        {
+        aNumberOfUnconvertibleCharacters += notRestored;
+        }
+    else if (notRestored < 0)
+        {
+        aNumberOfUnconvertibleCharacters = desLength;
+        }
+
+    //
+    // Work out if the string is acceptable as it is (e.g. no unconvertible
+    // and no downgrades).
+    //
+    for (TInt pos = desLength-1;  pos >= 0;  --pos)
+        {
+        if (backToUnicodeAfterStd[pos] != aDes[pos])
+            {
+            if (backToUnicodeAfterStd[pos] != KReplacementCharacter)
+                {
+                aNumberOfDowngradedCharacters++;
+                }
+            else
+                {
+                aNumberOfUnconvertibleCharacters++;
+                aIndexOfFirstUnconvertibleCharacter = pos;
+                }
+            }
+        }
+
     TInt  totalCharFaultsSoFar = aNumberOfUnconvertibleCharacters + 
                                     aNumberOfDowngradedCharacters;
     
@@ -1523,12 +1694,73 @@ TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
         TInt  tmpDowngradedCharacters        = 0;
         TInt  tmpUnconvertibleCharacters     = 0;
         TInt  tmpIndexOfFirstUnconvertibleCharacter = desLength;
-        
-        ConvertWithAlternativeEncodingL(aDes, backToUnicodeAfterStd, aEncoding,
-                tmpUnconvertibleCharacters, tmpDowngradedCharacters,
-                aNumberRequiringAlternativeEncoding,
-                tmpIndexOfFirstUnconvertibleCharacter);       
-        
+		
+        //
+        // Convert the input string to the alternative encoding...
+        //
+        PrepareForConversionFromNativeL(aEncoding);
+
+        notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
+        if (notConverted > 0)
+            {
+            tmpUnconvertibleCharacters = notConverted;
+            }
+        else if (notConverted < 0)
+            {
+            tmpUnconvertibleCharacters = desLength;
+            }
+
+        //
+        // Convert it back again to the native format...
+        //
+        HBufC*  backToUnicodeAfterAltBuf = HBufC::NewLC(desLength);
+        TPtr  backToUnicodeAfterAlt(backToUnicodeAfterAltBuf->Des());
+        TInt  state       = CCnvCharacterSetConverter::KStateDefault;
+        TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicodeAfterAlt, encoded, state);
+
+        if (notRestored > 0)
+            {
+            tmpUnconvertibleCharacters += notRestored;
+            }
+        else if (notRestored < 0)
+            {
+            tmpUnconvertibleCharacters = desLength;
+            }
+
+        //
+        // Now work out which characters are downgrades, require alternative encoding
+        // or are unsupported.
+        //
+        for (TInt pos = desLength-1;  pos >= 0;  --pos)
+            {
+            if (backToUnicodeAfterStd[pos] != aDes[pos])
+                {
+                // Not supported by standard encoder...
+                if (backToUnicodeAfterAlt[pos] == aDes[pos])
+                    {
+                    // Supported by alternative encoder...
+                    aNumberRequiringAlternativeEncoding++;
+                    }
+                else if (backToUnicodeAfterStd[pos] != KReplacementCharacter)
+                    {
+                    // Downgraded by standard encoder...
+                    tmpDowngradedCharacters++;
+                    }
+                else if (backToUnicodeAfterAlt[pos] != KReplacementCharacter)
+                    {
+                    // Downgraded by alternative encoder...
+                    tmpDowngradedCharacters++;
+                    aNumberRequiringAlternativeEncoding++;
+                    }
+                else
+                    {
+                    // Unconvertible...
+                    tmpUnconvertibleCharacters++;
+                    tmpIndexOfFirstUnconvertibleCharacter = pos;
+                    }
+                }
+            }
+
         // Is this better?  
         if ( totalCharFaultsSoFar >= (tmpUnconvertibleCharacters + tmpDowngradedCharacters) )
             {
@@ -1542,236 +1774,27 @@ TBool CSmsAlphabetConverter::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
             // Best conversion is the standard conversion
             aNumberRequiringAlternativeEncoding = 0;
             }
+        
+        CleanupStack::PopAndDestroy(backToUnicodeAfterAltBuf);
         }
     
-    CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);   
- 
+    CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
+    CleanupStack::PopAndDestroy(encodedBuf);
+
 	//
 	// Useful logging...
 	//
 	TBool  supported = (aNumberOfUnconvertibleCharacters == 0);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_2, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_3, "CSmsAlphabetConverter::IsSupportedL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_4, "CSmsAlphabetConverter::IsSupportedL(): aNumberRequiringAlternativeEncoding=%d.", aNumberRequiringAlternativeEncoding);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_5, "CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_ISSUPPORTEDL1_6, "CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aNumberRequiringAlternativeEncoding=%d.", aNumberRequiringAlternativeEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
+	LOGGSMU2("CSmsAlphabetConverter::IsSupportedL(): supported=%d.", supported);
 
 	return supported;
 	} // CSmsAlphabetConverter::IsSupportedL
 
-
-/**
- *  Tests if the descriptor text is supported by the current character set.
- * 
- *  @param aDes                                 Text string to check.
- *  @param aRestoredDes                         Exit restored text string after conversion.
- *  @param aNumberOfUnconvertibleCharacters     Exit param for the number of
- *                                              characters unconvertible.
- *  @param aNumberOfDowngradedCharacters        Exit param for the number of
- *                                              downgraded characters.
- *  @param aIndexOfFirstUnconvertibleCharacter  Exit param for the first
- *                                              unconverted character.
- *  @param aIsCountDowngrade                    Flag for counting downgrades.
- */
-void CSmsAlphabetConverter::ConvertWith7BitEncodingL(const TDesC& aDes, TDes& aRestoredDes,
-                                          TInt& aNumberOfUnconvertibleCharacters,
-                                          TInt& aNumberOfDowngradedCharacters,
-                                          TInt& aIndexOfFirstUnconvertibleCharacter,
-                                          TBool aIsCountDowngrade)
-    {
- 	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_1, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(aDes=\"%S\")", aDes);
-
-    TInt desLength = aDes.Length();
-    //
-    // Initialise the exit params...
-    //
-    aNumberOfUnconvertibleCharacters    = 0;
-    aNumberOfDowngradedCharacters       = 0;
-    aIndexOfFirstUnconvertibleCharacter = desLength;
-    
-    //
-    // Create buffer for the input converted to 7Bit.
-    //
-    HBufC8* encodedBuf       = HBufC8::NewLC(desLength*2); // worse case
-    TPtr8  encoded(encodedBuf->Des());
-
-    //
-    // Convert the input string to standard 7bit (with downgrades if needed)...
-    // 
-    PrepareForConversionFromNativeL(ESmsEncodingNone);
-
-    TInt  notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
-
-    if (notConverted > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notConverted;
-        }
-    else if (notConverted < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
-    
-    //
-    // Convert it back again to the native format...
-    //
-    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
-    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(aRestoredDes, encoded, state);
-
-    if (notRestored > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notRestored;
-        }
-    else if (notRestored < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
-
-    //
-    // Work out if the string is acceptable as it is (e.g. no unconvertible
-    // and no downgrades).
-    //
-    for (TInt pos = desLength-1;  pos >= 0;  --pos)
-        {
-        if (aRestoredDes[pos] != aDes[pos])
-            {
-            if (aRestoredDes[pos] != KReplacementCharacter
-                    && aIsCountDowngrade)
-                {
-                ++aNumberOfDowngradedCharacters;
-                }
-            else
-                {
-                ++aNumberOfUnconvertibleCharacters;
-                aIndexOfFirstUnconvertibleCharacter = pos;
-                }
-            }
-        }
-    
-    CleanupStack::PopAndDestroy(encodedBuf);
-    
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_2, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_3, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITH7BITENCODINGL_4, "CSmsAlphabetConverter::ConvertWith7BitEncodingL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
-    } // CSmsAlphabetConverter::ConvertWith7BitEncodingL    
-
-/**
- *  Tests if the descriptor text is supported by given encoding.
- *  This function can be used with 7bit and 8bit alphabets.
- * 
- *  @param aDes                                 Text string to check.
- *  @param aRestoredStdDes                      Text string restored from 7bit encoding.
- *  @param aEncoding                            Alternative 7bit encoding.
- *  @param aNumberOfUnconvertibleCharacters     Exit param for the number of
- *                                              characters unconvertible.
- *  @param aNumberOfDowngradedCharacters        Exit param for the number of
- *                                              downgraded characters.
- *  @param aNumberRequiringAlternativeEncoding  Exit param for the number of
- *                                              characters requiring use of
- *                                              the alternative encoder.
- *  @param aIndexOfFirstUnconvertibleCharacter  Exit param for the first
- */
-void CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(const TDesC& aDes, const TDesC& aRestoredStdDes, 
-                                          TSmsEncoding aEncoding,
-                                          TInt& aNumberOfUnconvertibleCharacters,
-                                          TInt& aNumberOfDowngradedCharacters,
-                                          TInt& aNumberRequiringAlternativeEncoding,
-                                          TInt& aIndexOfFirstUnconvertibleCharacter)
-    {
-  	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_1, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(aDes=\"%S\")", aDes);
-  
-    TInt desLength = aDes.Length();
-    //
-    // Initialise the exit params...
-    //
-    aNumberOfUnconvertibleCharacters    = 0;
-    aNumberOfDowngradedCharacters       = 0;
-    aNumberRequiringAlternativeEncoding = 0;
-    aIndexOfFirstUnconvertibleCharacter = desLength;
-        
-    //
-    // Create buffer for the input converted to 7Bit.
-    //
-    HBufC8* encodedBuf = HBufC8::NewLC(desLength*2); // worse case
-    TPtr8  encoded(encodedBuf->Des());
- 
-    //
-    // Convert the input string to the alternative encoding...
-    //
-    PrepareForConversionFromNativeL(aEncoding);
-
-    TInt notConverted = iCharacterSetConverter.ConvertFromUnicode(encoded, aDes);
-    if (notConverted > 0)
-        {
-        aNumberOfUnconvertibleCharacters = notConverted;
-        }
-    else if (notConverted < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
-
-    //
-    // Create buffer for restored text...
-    //
-    HBufC*  backToUnicodeBuf = HBufC::NewLC(desLength);
-    TPtr  backToUnicode(backToUnicodeBuf->Des());
-
-    //
-    // Convert it back again to the native format...
-    //
-    TInt  state       = CCnvCharacterSetConverter::KStateDefault;
-    TInt  notRestored = iCharacterSetConverter.ConvertToUnicode(backToUnicode, encoded, state);
-
-    if (notRestored > 0)
-        {
-        aNumberOfUnconvertibleCharacters += notRestored;
-        }
-    else if (notRestored < 0)
-        {
-        aNumberOfUnconvertibleCharacters = desLength;
-        }
-
-    //
-    // Now work out which characters are downgrades, require alternative encoding
-    // or are unsupported.
-    //
-    for (TInt pos = desLength-1;  pos >= 0;  --pos)
-        {
-        if (aRestoredStdDes[pos] != aDes[pos])
-            {
-            // Not supported by standard encoder...
-            if (backToUnicode[pos] == aDes[pos])
-                {
-                // Supported by alternative encoder...
-                ++aNumberRequiringAlternativeEncoding;
-                }
-            else if (aRestoredStdDes[pos] != KReplacementCharacter)
-                {
-                // Downgraded by standard encoder...
-                ++aNumberOfDowngradedCharacters;
-                }
-            else if (backToUnicode[pos] != KReplacementCharacter)
-                {
-                // Downgraded by alternative encoder...
-                ++aNumberOfDowngradedCharacters;
-                ++aNumberRequiringAlternativeEncoding;
-                }
-            else
-                {
-                // Unconvertible...
-                ++aNumberOfUnconvertibleCharacters;
-                aIndexOfFirstUnconvertibleCharacter = pos;
-                }
-            }
-        }
-
-    CleanupStack::PopAndDestroy(2, encodedBuf); // backToUnicode, encodedBuf
-    
- 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_2, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aNumberOfUnconvertibleCharacters=%d.", aNumberOfUnconvertibleCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_3, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aNumberOfDowngradedCharacters=%d.", aNumberOfDowngradedCharacters);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_4, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aNumberRequiringAlternativeEncoding=%d.", aNumberRequiringAlternativeEncoding);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CONVERTWITHALTERNATIVEEENCODINGL_5, "CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(): aIndexOfFirstUnconvertibleCharacter=%d.", aIndexOfFirstUnconvertibleCharacter);
-    } // CSmsAlphabetConverter::ConvertWithAlternativeEncodingL    
 
 /**
  *  Given a piece of text and an alternative encoding, this function works out
@@ -1785,7 +1808,8 @@ void CSmsAlphabetConverter::ConvertWithAlternativeEncodingL(const TDesC& aDes, c
 TSmsEncoding CSmsAlphabetConverter::FindBestAlternativeEncodingL(const TDesC& aNativeCharacters,
 									                     		 TSmsEncoding aSuggestedEncoding)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_FINDBESTALTERNATIVEENCODINGL_1, "CSmsAlphabetConverter::FindBestAlternativeEncodingL(): aSuggestedEncoding=%d",aSuggestedEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::FindBestAlternativeEncodingL(): aSuggestedEncoding=%d",
+			 aSuggestedEncoding);
 
 	TSmsEncoding  encodingToUse = ESmsEncodingNone;
 
@@ -1796,7 +1820,6 @@ TSmsEncoding CSmsAlphabetConverter::FindBestAlternativeEncodingL(const TDesC& aN
 	if (aSuggestedEncoding != ESmsEncodingNone  &&
 		iSmsAlphabet == TSmsDataCodingScheme::ESmsAlphabet7Bit)
 		{
-        TInt desLength = aNativeCharacters.Length();
 		TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters;
 		TInt  numberRequiringAlternativeEncoding, indexOfFirstUnconvertibleCharacter;
 		
@@ -1804,62 +1827,53 @@ TSmsEncoding CSmsAlphabetConverter::FindBestAlternativeEncodingL(const TDesC& aN
 		// First try the default encoding (but in this case treat downgrades
 		// as unconverted, since later encoders might do better)...
 		//
-		HBufC*  backToUnicodeAfterStdBuf = HBufC::NewLC(desLength);
-	    TPtr  backToUnicodeAfterStd(backToUnicodeAfterStdBuf->Des());
-	    TBool  isCountDowngrade = ETrue; // Count downgraded chars
-		
-	    ConvertWith7BitEncodingL(aNativeCharacters, backToUnicodeAfterStd, 
-	            numberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
-	            indexOfFirstUnconvertibleCharacter, isCountDowngrade);
-		
+		IsSupportedL(aNativeCharacters, ESmsEncodingNone,
+					 numberOfUnconvertibleCharacters,
+                     numberOfDowngradedCharacters,
+                     numberRequiringAlternativeEncoding,
+                     indexOfFirstUnconvertibleCharacter);
 
 		TInt leastUnconvertibleCharacters = numberOfUnconvertibleCharacters + numberOfDowngradedCharacters;
 
-		if (leastUnconvertibleCharacters > 0)
-		    {
-            //
-            // Create a list of alternative encodings to try...
-            //
-            TSmsEncoding  encodingList[8];
-            TInt          encodingCount = 0;
-            
-            if (aSuggestedEncoding == ESmsEncodingTurkishLockingAndSingleShift)
-                {
-                encodingList[encodingCount++] = ESmsEncodingTurkishSingleShift;
-                encodingList[encodingCount++] = ESmsEncodingTurkishLockingShift;
-                }
-            else if (aSuggestedEncoding == ESmsEncodingPortugueseLockingAndSingleShift)
-                {
-                encodingList[encodingCount++] = ESmsEncodingPortugueseSingleShift;
-                encodingList[encodingCount++] = ESmsEncodingPortugueseLockingShift;
-                }
-            
-            encodingList[encodingCount++] = aSuggestedEncoding;
-
-            //
-            // Now try the all the alternatives...
-            //
-            for (TInt  encoder = 0;  encoder < encodingCount && leastUnconvertibleCharacters > 0;  ++encoder)
-                {
-                ConvertWithAlternativeEncodingL(aNativeCharacters, backToUnicodeAfterStd, 
-                        encodingList[encoder], 
-                        numberOfUnconvertibleCharacters, 
-                        numberOfDowngradedCharacters,
-                        numberRequiringAlternativeEncoding,
-                        indexOfFirstUnconvertibleCharacter);       
-
-                if (numberOfUnconvertibleCharacters + numberOfDowngradedCharacters < leastUnconvertibleCharacters)
-                    {
-                    encodingToUse = encodingList[encoder];
-                    leastUnconvertibleCharacters = numberOfUnconvertibleCharacters + numberOfDowngradedCharacters;
-                    }
-                }
-		    }
+		//
+		// Create a list of alternative encodings to try...
+		//
+		TSmsEncoding  encodingList[8];
+		TInt          encodingCount = 0;
 		
-            CleanupStack::PopAndDestroy(backToUnicodeAfterStdBuf);
+		if (aSuggestedEncoding == ESmsEncodingTurkishLockingAndSingleShift)
+			{
+			encodingList[encodingCount++] = ESmsEncodingTurkishSingleShift;
+			encodingList[encodingCount++] = ESmsEncodingTurkishLockingShift;
+			}
+		else if (aSuggestedEncoding == ESmsEncodingPortugueseLockingAndSingleShift)
+			{
+			encodingList[encodingCount++] = ESmsEncodingPortugueseSingleShift;
+			encodingList[encodingCount++] = ESmsEncodingPortugueseLockingShift;
+			}
+
+		encodingList[encodingCount++] = aSuggestedEncoding;
+		encodingList[encodingCount++] = ESmsEncodingNone;
+
+		//
+		// Now try the all the alternatives...
+		//
+		for (TInt  encoder = 0;  encoder < encodingCount;  encoder++)
+			{
+			IsSupportedL(aNativeCharacters, encodingList[encoder],
+						 numberOfUnconvertibleCharacters,
+	                     numberOfDowngradedCharacters,
+	                     numberRequiringAlternativeEncoding,
+	                     indexOfFirstUnconvertibleCharacter);
+			if (numberOfUnconvertibleCharacters + numberOfDowngradedCharacters < leastUnconvertibleCharacters)
+				{
+				encodingToUse = encodingList[encoder];
+				leastUnconvertibleCharacters = numberOfUnconvertibleCharacters + numberOfDowngradedCharacters;
+				}
+			}
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_FINDBESTALTERNATIVEENCODINGL_2, "CSmsAlphabetConverter::FindBestAlternativeEncodingL(): encodingToUse=%d", encodingToUse);
+	LOGGSMU2("CSmsAlphabetConverter::FindBestAlternativeEncodingL(): encodingToUse=%d", encodingToUse);
 
 	return encodingToUse;
 	} // CSmsAlphabetConverter::FindBestAlternativeEncoding
@@ -1903,7 +1917,8 @@ void CSmsAlphabetConverter::ConfirmAlternativeEncoderL(TSmsEncoding aEncoding) c
  */
 void CSmsAlphabetConverter::PrepareForConversionFromNativeL(TSmsEncoding aEncoding)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_PREPAREFORCONVERSIONFROMNATIVEL_1, "CSmsAlphabetConverter::PrepareForConversionFromNativeL(): aEncoding=%d",aEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::PrepareForConversionFromNativeL(): aEncoding=%d",
+			 aEncoding);
 
 	__ASSERT_DEBUG(iIsBinary==EFalse,Panic(KGsmuPanicUnsupportedAlphabet));
 	switch (iSmsAlphabet)
@@ -1923,7 +1938,8 @@ void CSmsAlphabetConverter::PrepareForConversionFromNativeL(TSmsEncoding aEncodi
 					{
 					CCnvCharacterSetConverter::TAvailability  availability;
 		
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_PREPAREFORCONVERSIONFROMNATIVEL_2, "CSmsAlphabetConverter::PrepareForConversionFromNativeL(): Converter 0x%08x",alternativeEncoderID);
+					LOGGSMU2("CSmsAlphabetConverter::PrepareForConversionFromNativeL(): Converter 0x%08x",
+							 alternativeEncoderID);
 					
 					availability = iCharacterSetConverter.PrepareToConvertToOrFromL(alternativeEncoderID, iFs);
 					if (availability == CCnvCharacterSetConverter::EAvailable)
@@ -1992,7 +2008,8 @@ void CSmsAlphabetConverter::PrepareForConversionFromNativeL(TSmsEncoding aEncodi
  */
 void CSmsAlphabetConverter::PrepareForConversionToNativeL(TSmsEncoding aEncoding)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_PREPAREFORCONVERSIONTONATIVEL_1, "CSmsAlphabetConverter::PrepareForConversionToNativeL(): aEncoding=%d",aEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::PrepareForConversionToNativeL(): aEncoding=%d",
+			 aEncoding);
 
 	switch (iSmsAlphabet)
 		{
@@ -2011,7 +2028,8 @@ void CSmsAlphabetConverter::PrepareForConversionToNativeL(TSmsEncoding aEncoding
 					{
 					CCnvCharacterSetConverter::TAvailability  availability;
 		
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_PREPAREFORCONVERSIONTONATIVEL_2, "CSmsAlphabetConverter::PrepareForConversionFromNativeL(): Converter 0x%08x",alternativeEncoderID);
+					LOGGSMU2("CSmsAlphabetConverter::PrepareForConversionFromNativeL(): Converter 0x%08x",
+							 alternativeEncoderID);
 					
 					availability = iCharacterSetConverter.PrepareToConvertToOrFromL(alternativeEncoderID, iFs);
 					if (availability == CCnvCharacterSetConverter::EAvailable)
@@ -2066,7 +2084,7 @@ void CSmsAlphabetConverter::PrepareForConversionToNativeL(TSmsEncoding aEncoding
  */
 void CSmsAlphabetConverter::GetAlternativeEncoderIDL(TSmsEncoding aEncoding, TUint& aEncoderID) const
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_GETALTERNATIVEENCODERIDL_1, "CSmsAlphabetConverter::GetAlternativeEncoderIDL(%d)", aEncoding);
+	LOGGSMU2("CSmsAlphabetConverter::GetAlternativeEncoderIDL(%d)", aEncoding);
 
 	aEncoderID = 0;
 	
@@ -2139,7 +2157,7 @@ void CSmsAlphabetConverter::GetAlternativeEncoderIDL(TSmsEncoding aEncoding, TUi
 //
 TPtr16 CSmsAlphabetConverter::CheckAllocBufferL(HBufC16** aBuffer,TInt aMaxLength,TInt aUsedLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CHECKALLOCBUFFERL_1, "CSmsAlphabetConverter::CheckAllocBufferL()");
+	LOGGSMU1("CSmsAlphabetConverter::CheckAllocBufferL()");
 
 	if (*aBuffer!=NULL)
 		{
@@ -2162,7 +2180,7 @@ TPtr16 CSmsAlphabetConverter::CheckAllocBufferL(HBufC16** aBuffer,TInt aMaxLengt
 //
 TPtr8 CSmsAlphabetConverter::CheckAllocBufferL(HBufC8** aBuffer,TInt aMaxLength,TInt aUsedLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSALPHABETCONVERTER_CHECKALLOCBUFFERL1_1, "CSmsAlphabetConverter::CheckAllocBufferL()");
+	LOGGSMU1("CSmsAlphabetConverter::CheckAllocBufferL()");
 
 	if (*aBuffer!=NULL)
 		{
@@ -2190,7 +2208,7 @@ TPtr8 CSmsAlphabetConverter::CheckAllocBufferL(HBufC8** aBuffer,TInt aMaxLength,
  */
 EXPORT_C TBool TGsmSmsTelNumber::IsInstanceOf(TTypeOfIndicator aType)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TGSMSMSTELNUMBER_ISINSTANCEOF_1, "TGsmSmsTelNumber::IsInstanceOf()");
+    LOGGSMU1("TGsmSmsTelNumber::IsInstanceOf()");
 
     TBool rc = EFalse;
 
@@ -2213,7 +2231,7 @@ EXPORT_C TBool TGsmSmsTelNumber::IsInstanceOf(TTypeOfIndicator aType)
 
 CSmsAddress* CSmsAddress::NewL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_NEWL_1, "CSmsAddress::NewL()");
+	LOGGSMU1("CSmsAddress::NewL()");
 
 	CSmsAddress* address=new(ELeave) CSmsAddress(aCharacterSetConverter,aFs);
 	CleanupStack::PushL(address);
@@ -2237,7 +2255,7 @@ CSmsAddress::~CSmsAddress()
  */
 CSmsAddress* CSmsAddress::DuplicateL() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_DUPLICATEL_1, "CSmsAddress::DuplicateL()");
+	LOGGSMU1("CSmsAddress::DuplicateL()");
 
 	CSmsAddress*  address = CSmsAddress::NewL(iCharacterSetConverter, iFs);
 	CleanupStack::PushL(address);
@@ -2252,7 +2270,7 @@ CSmsAddress* CSmsAddress::DuplicateL() const
 
 TPtrC CSmsAddress::Address() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_ADDRESS_1, "CSmsAddress::Address()");
+	LOGGSMU1("CSmsAddress::Address()");
 
 	TPtrC ptr;
 	if (iBuffer)
@@ -2263,7 +2281,7 @@ TPtrC CSmsAddress::Address() const
 
 void CSmsAddress::SetRawAddressL(TGsmSmsTypeOfAddress aTypeOfAddress, TPtrC aBufferPtr)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_SETRAWADDRESSL_1, "CSmsAddress::SetRawAddressL()");
+    LOGGSMU1("CSmsAddress::SetRawAddressL()");
 
     iTypeOfAddress = aTypeOfAddress;
 
@@ -2275,7 +2293,7 @@ void CSmsAddress::SetRawAddressL(TGsmSmsTypeOfAddress aTypeOfAddress, TPtrC aBuf
 
 TGsmSmsTypeOfAddress& CSmsAddress::TypeOfAddress()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_TYPEOFADDRESS_1, "CSmsAddress::TypeOfAddress()");
+    LOGGSMU1("CSmsAddress::TypeOfAddress()");
 
     return iTypeOfAddress;
     } // CSmsAddress::TypeOfAddress
@@ -2283,7 +2301,7 @@ TGsmSmsTypeOfAddress& CSmsAddress::TypeOfAddress()
 
 void CSmsAddress::SetAddressL(const TDesC& aAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_SETADDRESSL_1, "CSmsAddress::SetAddressL()");
+	LOGGSMU1("CSmsAddress::SetAddressL()");
 
 	TInt length=aAddress.Length();
 	NewBufferL(length);
@@ -2343,7 +2361,7 @@ void CSmsAddress::ParsedAddress(TGsmSmsTelNumber& aParsedAddress) const
 
 void CSmsAddress::SetParsedAddressL(const TGsmSmsTelNumber& aParsedAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_SETPARSEDADDRESSL_1, "CSmsAddress::SetParsedAddressL()");
+	LOGGSMU1("CSmsAddress::SetParsedAddressL()");
 
 	iTypeOfAddress=aParsedAddress.iTypeOfAddress;
 	DoSetParsedAddressL(aParsedAddress.iTelNumber);
@@ -2352,7 +2370,7 @@ void CSmsAddress::SetParsedAddressL(const TGsmSmsTelNumber& aParsedAddress)
 
 TUint8 CSmsAddress::SizeL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_SIZEL_1, "CSmsAddress::SizeL()");
+    LOGGSMU1("CSmsAddress::SizeL()");
 
     TUint8 size = 0;
 
@@ -2712,7 +2730,7 @@ CSmsAddress::CSmsAddress(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& 
 
 void CSmsAddress::NewBufferL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_NEWBUFFERL_1, "CSmsAddress::NewBufferL()");
+	LOGGSMU1("CSmsAddress::NewBufferL()");
 
     HBufC* buffer=HBufC::NewL(aLength);
     delete iBuffer;
@@ -2724,7 +2742,7 @@ void CSmsAddress::NewBufferL(TInt aLength)
 
 void CSmsAddress::DoSetParsedAddressL(const TDesC& aAddress)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSADDRESS_DOSETPARSEDADDRESSL_1, "CSmsAddress::DoSetParsedAddressL() the length of the Address [Length = %d", aAddress.Length());
+	LOGGSMU2("CSmsAddress::DoSetParsedAddressL() the length of the Address [Length = %d", aAddress.Length());
 
 	TInt length=aAddress.Length();
 	if ((iTypeOfAddress.TON()==EGsmSmsTONInternationalNumber) &&
@@ -2758,7 +2776,7 @@ void TSmsServiceCenterTimeStamp::SetTimeOffset(TInt aNumQuarterHours)
 
 TUint8* TSmsServiceCenterTimeStamp::EncodeL(TUint8* aPtr) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSSERVICECENTERTIMESTAMP_ENCODEL_1, "TSmsServiceCenterTimeStamp::EncodeL()");
+    LOGGSMU1("TSmsServiceCenterTimeStamp::EncodeL()");
 
     TInt numquarterhours=iTimeZoneNumQuarterHours;
 
@@ -2800,7 +2818,7 @@ TUint8* TSmsServiceCenterTimeStamp::EncodeL(TUint8* aPtr) const
 
 void TSmsServiceCenterTimeStamp::DecodeL(TGsmuLex8& aPdu, TInt& aTimeError)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSSERVICECENTERTIMESTAMP_DECODEL_1, "TSmsServiceCenterTimeStamp::DecodeL()");
+	LOGGSMU1("TSmsServiceCenterTimeStamp::DecodeL()");
 
 	TSmsOctet octet;
 	octet.DecodeL(aPdu);
@@ -2887,7 +2905,7 @@ TSmsValidityPeriod::TSmsValidityPeriod(TSmsFirstOctet& aFirstOctet):
 
 TTime TSmsValidityPeriod::Time() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSVALIDITYPERIOD_TIME_1, "TSmsValidityPeriod::Time()");
+	LOGGSMU1("TSmsValidityPeriod::Time()");
 
 	TTime time;
 	time.UniversalTime();
@@ -2898,7 +2916,7 @@ TTime TSmsValidityPeriod::Time() const
 
 TUint8* TSmsValidityPeriod::EncodeL(TUint8* aPtr) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSVALIDITYPERIOD_ENCODEL_1, "TSmsValidityPeriod::EncodeL()");
+	LOGGSMU1("TSmsValidityPeriod::EncodeL()");
 
 	TInt validityperiodformat=ValidityPeriodFormat();
 	switch (validityperiodformat)
@@ -2944,7 +2962,7 @@ TUint8* TSmsValidityPeriod::EncodeL(TUint8* aPtr) const
 	
 TUint8* TSmsValidityPeriod::EncodeL(TUint8* aPtr, const TEncodeParams* aEncodeParams) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSVALIDITYPERIOD_ENCODEL1_1, "TSmsValidityPeriod::EncodeL()");
+	LOGGSMU1("TSmsValidityPeriod::EncodeL()");
 
 	TInt validityperiodformat=ValidityPeriodFormat();
 	switch (validityperiodformat)
@@ -2996,7 +3014,7 @@ TUint8* TSmsValidityPeriod::EncodeL(TUint8* aPtr, const TEncodeParams* aEncodePa
 
 void TSmsValidityPeriod::DecodeL(TGsmuLex8& aPdu)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSVALIDITYPERIOD_DECODEL_1, "TSmsValidityPeriod::DecodeL()");
+	LOGGSMU1("TSmsValidityPeriod::DecodeL()");
 
 	TInt validityperiodformat=ValidityPeriodFormat();
 	switch (validityperiodformat)
@@ -3051,7 +3069,7 @@ void TSmsValidityPeriod::ExternalizeL(RWriteStream& aStream) const
 
 CSmsInformationElement* CSmsInformationElement::NewL(TSmsInformationElementIdentifier aIdentifier,const TDesC8& aData)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_NEWL_1, "CSmsInformationElement::NewL()");
+	LOGGSMU1("CSmsInformationElement::NewL()");
 
 	CSmsInformationElement* informationelement=new(ELeave) CSmsInformationElement(aIdentifier);
 	CleanupStack::PushL(informationelement);
@@ -3063,7 +3081,7 @@ CSmsInformationElement* CSmsInformationElement::NewL(TSmsInformationElementIdent
 
 CSmsInformationElement* CSmsInformationElement::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_NEWL1_1, "CSmsInformationElement::NewL()");
+	LOGGSMU1("CSmsInformationElement::NewL()");
 
 	CSmsInformationElement* informationelement=new(ELeave) CSmsInformationElement(ESmsIEIConcatenatedShortMessages8BitReference);
 	CleanupStack::PushL(informationelement);
@@ -3091,7 +3109,7 @@ CSmsInformationElement::~CSmsInformationElement()
  */
 EXPORT_C TPtr8 CSmsInformationElement::Data()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSINFORMATIONELEMENT_DATA_1, "CSmsInformationElement::Data()");
+	LOGGSMU1("CSmsInformationElement::Data()");
 
 	return iData->Des();
 	} // CSmsInformationElement::Data
@@ -3105,7 +3123,7 @@ EXPORT_C TPtr8 CSmsInformationElement::Data()
  */
 EXPORT_C const TDesC8& CSmsInformationElement::Data() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSINFORMATIONELEMENT_DATA1_1, "CSmsInformationElement::Data()");
+	LOGGSMU1("CSmsInformationElement::Data()");
 
 	return *iData;
 	} // CSmsInformationElement::Data
@@ -3125,7 +3143,7 @@ EXPORT_C CSmsInformationElement::TSmsInformationElementIdentifier CSmsInformatio
 
 TUint8* CSmsInformationElement::EncodeL(TUint8* aPtr) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_ENCODEL_1, "CSmsInformationElement::EncodeL()");
+	LOGGSMU1("CSmsInformationElement::EncodeL()");
 
 	TSmsOctet id=iIdentifier;
 	aPtr=id.EncodeL(aPtr);
@@ -3139,7 +3157,7 @@ TUint8* CSmsInformationElement::EncodeL(TUint8* aPtr) const
 
 void CSmsInformationElement::DecodeL(TGsmuLex8& aPdu)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_DECODEL_1, "CSmsInformationElement::DecodeL()");
+	LOGGSMU1("CSmsInformationElement::DecodeL()");
 
 	TSmsOctet id;
 	id.DecodeL(aPdu);
@@ -3246,7 +3264,7 @@ void CSmsInformationElement::ExternalizeL(RWriteStream& aStream) const
 
 void CSmsInformationElement::ConstructL(const TDesC8& aData)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_CONSTRUCTL_1, "CSmsInformationElement::ConstructL()");
+	LOGGSMU1("CSmsInformationElement::ConstructL()");
 
 	NewDataL(aData.Length());
 	iData->Des().Copy(aData);
@@ -3255,7 +3273,7 @@ void CSmsInformationElement::ConstructL(const TDesC8& aData)
 
 void CSmsInformationElement::NewDataL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_NEWDATAL_1, "CSmsInformationElement::NewDataL()");
+	LOGGSMU1("CSmsInformationElement::NewDataL()");
 
 	HBufC8* data=HBufC8::NewL(aLength);
 	delete iData;
@@ -3266,7 +3284,7 @@ void CSmsInformationElement::NewDataL(TInt aLength)
 
 TUint CSmsInformationElement::Length()const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSINFORMATIONELEMENT_LENGTH_1, "CSmsInformationElement::Length()");
+	LOGGSMU1("CSmsInformationElement::Length()");
 
 	return 2+iData->Length();  // 2 stands for IEID and IEDL
 	} // CSmsInformationElement::Length
@@ -3287,7 +3305,7 @@ TUint CSmsInformationElement::Length()const
  */
 TBool TSmsInformationElementCategories::TranslateCategoryToIndex(TInformationElementId aId, TInt& aIndex)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSINFORMATIONELEMENTCATEGORIES_TRANSLATECATEGORYTOINDEX_1, "CSmsMessage::TranslateCategoryToIndex");
+    LOGGSMU1("CSmsMessage::TranslateCategoryToIndex");
 
     TBool rc = ETrue;
 
@@ -3366,7 +3384,7 @@ TBool TSmsInformationElementCategories::TranslateCategoryToIndex(TInformationEle
     else
         {
         rc = EFalse;
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSINFORMATIONELEMENTCATEGORIES_TRANSLATECATEGORYTOINDEX_2, "CSmsMessage::TranslateCategoryToIndex id = %d, found = %d", aId, rc);
+        LOGGSMU3("CSmsMessage::TranslateCategoryToIndex id = %d, found = %d", aId, rc);
         }
     return rc;
     } // TSmsInformationElementCategories::TranslateCategoryToIndex
@@ -3387,7 +3405,7 @@ TBool TSmsInformationElementCategories::TranslateCategoryToIndex(TInformationEle
  */
 TBool TSmsInformationElementCategories::GetCategoryDefinition(TInformationElementId aId, TInformationElementCategory& aCategory)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSINFORMATIONELEMENTCATEGORIES_GETCATEGORYDEFINITION_1, "TSmsInformationElementCategories::GetCategoryDefinition");
+    LOGGSMU1("TSmsInformationElementCategories::GetCategoryDefinition");
     TInt index;
 
     if (TranslateCategoryToIndex(aId,index))
@@ -3396,7 +3414,7 @@ TBool TSmsInformationElementCategories::GetCategoryDefinition(TInformationElemen
         }
     else
         {
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSMSINFORMATIONELEMENTCATEGORIES_GETCATEGORYDEFINITION_2, "TSmsInformationElementCategories::GetCategoryDefinition, Failure, aId = %d", aId);
+        LOGGSMU2("TSmsInformationElementCategories::GetCategoryDefinition, Failure, aId = %d", aId);
         return EFalse;
         }
 
@@ -3418,7 +3436,7 @@ const TSmsInformationElementCategories::TInformationElementCategory TSmsInformat
 
 CSmsUserData* CSmsUserData::NewL(CCnvCharacterSetConverter& aCharacterSetConverter,RFs& aFs,TSmsFirstOctet& aFirstOctet,const TSmsDataCodingScheme& aDataCodingScheme)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_NEWL_1, "CSmsUserData::NewL()");
+	LOGGSMU1("CSmsUserData::NewL()");
 
 	CSmsUserData* userdata=new(ELeave) CSmsUserData(aCharacterSetConverter,aFs,aFirstOctet,aDataCodingScheme);
 	CleanupStack::PushL(userdata);
@@ -3447,7 +3465,7 @@ CSmsUserData::~CSmsUserData()
  */
 EXPORT_C  CSmsInformationElement& CSmsUserData::InformationElement(TInt aIndex) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_INFORMATIONELEMENT_1, "CSmsUserData::InformationElement()");
+	LOGGSMU1("CSmsUserData::InformationElement()");
 
 	return *iInformationElementArray[aIndex];
 	} // CSmsUserData::InformationElement
@@ -3455,7 +3473,7 @@ EXPORT_C  CSmsInformationElement& CSmsUserData::InformationElement(TInt aIndex) 
 
 CSmsInformationElement*& CSmsUserData::InformationElementPtr(TInt aIndex)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_INFORMATIONELEMENTPTR_1, "CSmsUserData::InformationElementPtr()");
+    LOGGSMU1("CSmsUserData::InformationElementPtr()");
 
     return iInformationElementArray[aIndex];
     } // CSmsUserData::InformationElementPtr
@@ -3475,7 +3493,7 @@ CSmsInformationElement*& CSmsUserData::InformationElementPtr(TInt aIndex)
  */
 EXPORT_C TBool CSmsUserData::InformationElementIndex(CSmsInformationElement::TSmsInformationElementIdentifier aIdentifier,TInt& aIndex) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_INFORMATIONELEMENTINDEX_1, "CSmsUserData::InformationElementIndex()");
+	LOGGSMU1("CSmsUserData::InformationElementIndex()");
 
 	TBool found=EFalse;
 	TInt count=NumInformationElements();
@@ -3503,7 +3521,7 @@ EXPORT_C TBool CSmsUserData::InformationElementIndex(CSmsInformationElement::TSm
  */
 EXPORT_C TBool CSmsUserData::InformationElementLastIndex(CSmsInformationElement::TSmsInformationElementIdentifier aIdentifier,TInt& aIndex) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_INFORMATIONELEMENTLASTINDEX_1, "CSmsUserData::InformationElementLastIndex()");
+	LOGGSMU1("CSmsUserData::InformationElementLastIndex()");
 
 	TBool found=EFalse;
 	TInt count=NumInformationElements();
@@ -3530,7 +3548,7 @@ EXPORT_C TBool CSmsUserData::InformationElementLastIndex(CSmsInformationElement:
  */
 void CSmsUserData::InformationElementIndicesL(CSmsInformationElement::TSmsInformationElementIdentifier aIdentifier, CArrayFixFlat<TInt>& aIndices) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_INFORMATIONELEMENTINDICESL_1, "CSmsUserData::InformationElementIndicesL()");
+    LOGGSMU1("CSmsUserData::InformationElementIndicesL()");
 
     aIndices.Reset();
     
@@ -3553,7 +3571,7 @@ void CSmsUserData::InformationElementIndicesL(CSmsInformationElement::TSmsInform
  */
 TBool CSmsUserData::EmsInformationElementWillFitL(CEmsInformationElement* aIe,CSmsEMSBufferSegmenter& aSeg,TUint& aCharsAddedToCurrentPDU)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_EMSINFORMATIONELEMENTWILLFITL_1, "CSmsUserData::EmsInformationElementWillFitL()");
+	LOGGSMU1("CSmsUserData::EmsInformationElementWillFitL()");
 
 	// Before using an EmsInformationElement polymorphically as an SmsIE,
 	// we need to make sure that the IE has been encoded
@@ -3586,7 +3604,7 @@ TBool CSmsUserData::EmsInformationElementWillFitL(CEmsInformationElement* aIe,CS
  */
 TBool CSmsUserData::ControlInformationElementWillFitL(CSmsInformationElement* aIe)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_CONTROLINFORMATIONELEMENTWILLFITL_1, "CSmsUserData::ControlInformationElementWillFitL()");
+    LOGGSMU1("CSmsUserData::ControlInformationElementWillFitL()");
 
     if (aIe == NULL)
         {
@@ -3649,7 +3667,7 @@ TBool CSmsUserData::ControlInformationElementWillFitL(CSmsInformationElement* aI
  */
 EXPORT_C void CSmsUserData::AddInformationElementL(TSmsId aIdentifier,const TDesC8& aData)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_ADDINFORMATIONELEMENTL_1, "CSmsUserData::AddInformationElementL");
+    LOGGSMU1("CSmsUserData::AddInformationElementL");
 
     if  ((aIdentifier >= 0x21) && (aIdentifier <= 0x23) ||
          (aIdentifier >= 0x26) && (aIdentifier <= 0x6F) ||
@@ -3674,7 +3692,7 @@ EXPORT_C void CSmsUserData::AddInformationElementL(TSmsId aIdentifier,const TDes
  */
 void CSmsUserData::UpdateInformationElementArrayL(TSmsId aIdentifier,const TDesC8& aData)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_1, "CSmsUserData::UpdateInformationElementsL");
+    LOGGSMU1("CSmsUserData::UpdateInformationElementsL");
 
     TInt count=NumInformationElements();
     if(!CEmsFactory::Supported(aIdentifier))
@@ -3696,7 +3714,7 @@ void CSmsUserData::UpdateInformationElementArrayL(TSmsId aIdentifier,const TDesC
                         {
                         if (InformationElement(i).Identifier() == CSmsInformationElement::ESmsIEISpecialSMSMessageIndication)
                             {
-                            OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_2, "CSmsUserData::AddInformationElementL1 category = %d, identifier = %d",category,aIdentifier);
+                            LOGGSMU3("CSmsUserData::AddInformationElementL1 category = %d, identifier = %d",category,aIdentifier);
 
                             //if Msg type is the same, swap with the most recent value
                             if ((InformationElement(i).Data()[0] & ((TUint8) EGsmSmsSpecialMessageIndicationTypeMask)) ==
@@ -3707,7 +3725,7 @@ void CSmsUserData::UpdateInformationElementArrayL(TSmsId aIdentifier,const TDesC
                             }
                         else
                             {
-                            OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_3, "CSmsUserData::AddInformationElementL3 category = %d, identifier = %d, data = %s",category,aIdentifier, aData);
+                            LOGGSMU4("CSmsUserData::AddInformationElementL3 category = %d, identifier = %d, data = %S",category,aIdentifier, &aData);
                             User::Leave(KErrArgument);
                             }
                         break;
@@ -3716,18 +3734,18 @@ void CSmsUserData::UpdateInformationElementArrayL(TSmsId aIdentifier,const TDesC
                     case TSmsInformationElementCategories::ECtrlMandatoryIn1stPDUOnly:
                     case TSmsInformationElementCategories::ECtrlSingleInstanceOnly:
                         {
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_4, "CSmsUserData::AddInformationElementL4 category = %d, identifier = %d",category,aIdentifier);
+                        LOGGSMU3("CSmsUserData::AddInformationElementL4 category = %d, identifier = %d",category,aIdentifier);
                         User::Leave(KErrAlreadyExists);
                         break;
                         }
                     case TSmsInformationElementCategories::ECtrlMultipleInstancesAllowed:
                         {
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_5, "CSmsUserData::AddInformationElementL5 category = %d, identifier = %d",category,aIdentifier);
+                        LOGGSMU3("CSmsUserData::AddInformationElementL5 category = %d, identifier = %d",category,aIdentifier);
                         break;
                         }
                     case TSmsInformationElementCategories::ECtrlMandatoryInEveryPDUButWithValueSpecificToPDU:
                         {
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_6, "CSmsUserData::AddInformationElementL6 category = %d, identifier = %d",category,aIdentifier);
+                        LOGGSMU3("CSmsUserData::AddInformationElementL6 category = %d, identifier = %d",category,aIdentifier);
                         User::Leave(KErrAlreadyExists);
                         // currently the email header is updated in:
                         // void CSmsMessage::DecodeBufferL(CArrayPtr<CSmsPDU>& aSmsPDUArray,CSmsBufferBase& aBuffer)
@@ -3735,7 +3753,7 @@ void CSmsUserData::UpdateInformationElementArrayL(TSmsId aIdentifier,const TDesC
                         }
                     default:
                         {
-                        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_UPDATEINFORMATIONELEMENTARRAYL_7, "CSmsUserData::AddInformationElementL8 category = %d, identifier = %d",category,aIdentifier);
+                        LOGGSMU3("CSmsUserData::AddInformationElementL8 category = %d, identifier = %d",category,aIdentifier);
                         User::Leave(KErrNotSupported);
                         break;
                         }
@@ -3754,7 +3772,7 @@ void CSmsUserData::UpdateInformationElementArrayL(TSmsId aIdentifier,const TDesC
 
 void CSmsUserData::AddEmsInformationElementL(CEmsInformationElement* aIe)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_ADDEMSINFORMATIONELEMENTL_1, "CSmsUserData::AddEmsInformationElementL()");
+	LOGGSMU1("CSmsUserData::AddEmsInformationElementL()");
 
 	// Before using an EmsInformationElement polymorphically as an SmsIE,
 	// we need to make sure that the IE has been encoded
@@ -3772,7 +3790,7 @@ void CSmsUserData::AddEmsInformationElementL(CEmsInformationElement* aIe)
  */
 EXPORT_C void CSmsUserData::RemoveInformationElement(TInt aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_REMOVEINFORMATIONELEMENT_1, "CSmsUserData::RemoveInformationElement()");
+	LOGGSMU1("CSmsUserData::RemoveInformationElement()");
 	// Since iInformationElementArray[aIndex] pointer is removed from iInformationElementArray, there is no double free issue.
 	// coverity[double_free]
 	delete iInformationElementArray[aIndex];
@@ -3788,7 +3806,7 @@ EXPORT_C void CSmsUserData::RemoveInformationElement(TInt aIndex)
 
 TInt CSmsUserData::MaxPackedUDUnitsInBodyRemaining() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_MAXPACKEDUDUNITSINBODYREMAINING_1, "CSmsUserData::MaxPackedUDUnitsInBodyRemaining()");
+	LOGGSMU1("CSmsUserData::MaxPackedUDUnitsInBodyRemaining()");
 
 	TInt totalHeaderLengthInUDLUnits=TotalHeaderLengthInUDLUnits();
 	TInt maxPackedUDUnitsInBody=0;
@@ -3814,7 +3832,7 @@ TInt CSmsUserData::MaxPackedUDUnitsInBodyRemaining() const
 
 TInt CSmsUserData::MaxPackedUDUnitsInBodyRemaining(TUint aIELen) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_MAXPACKEDUDUNITSINBODYREMAINING1_1, "CSmsUserData::MaxPackedUDUnitsInBodyRemaining()");
+	LOGGSMU1("CSmsUserData::MaxPackedUDUnitsInBodyRemaining()");
 
 	TInt totalHeaderLengthInUDLUnits=TotalHeaderLengthInUDLUnits(aIELen);
 	TInt maxPackedUDUnitsInBody=0;
@@ -3843,7 +3861,7 @@ TInt CSmsUserData::MaxPackedUDUnitsInBodyRemaining(TUint aIELen) const
  */
 EXPORT_C TInt CSmsUserData::MaxBodyLengthInChars() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_MAXBODYLENGTHINCHARS_1, "CSmsUserData::MaxBodyLengthInChars()");
+	LOGGSMU1("CSmsUserData::MaxBodyLengthInChars()");
 
 	TInt totalheaderlengthinudlunits=TotalHeaderLengthInUDLUnits();
 	TInt maxbodylengthinchars=0;
@@ -3871,7 +3889,7 @@ EXPORT_C TInt CSmsUserData::MaxBodyLengthInChars() const
 				break;
 				}
 			default:
-			    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_MAXBODYLENGTHINCHARS_2, "CSmsUserData::MaxBodyLengthInChars() WARNING! default case has been reached");
+			    LOGGSMU1("CSmsUserData::MaxBodyLengthInChars() WARNING! default case has been reached");
                 break;
  			}
 		}
@@ -3887,7 +3905,7 @@ EXPORT_C TInt CSmsUserData::MaxBodyLengthInChars() const
  */
 EXPORT_C TPtrC8 CSmsUserData::Body() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_BODY_1, "CSmsUserData::Body()");
+	LOGGSMU1("CSmsUserData::Body()");
 
 	return iBody->Des();
 	} // CSmsUserData::Body
@@ -3901,7 +3919,7 @@ EXPORT_C TPtrC8 CSmsUserData::Body() const
  */
 EXPORT_C void CSmsUserData::SetBodyL(const TDesC8& aBody)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_SETBODYL_1, "CSmsUserData::SetBodyL()");
+	LOGGSMU1("CSmsUserData::SetBodyL()");
 
 	//Some tests fail with this line in, despite it being a valid condition!
 	//__ASSERT_DEBUG(aBody.Length() <= MaxBodyLengthInChars(), User::Leave(KErrTooBig));
@@ -3913,7 +3931,7 @@ EXPORT_C void CSmsUserData::SetBodyL(const TDesC8& aBody)
 
 void CSmsUserData::AppendBodyL(const TDesC8& aBody)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_APPENDBODYL_1, "CSmsUserData::AppendBodyL()");
+	LOGGSMU1("CSmsUserData::AppendBodyL()");
 
 	if (iBody)
 		{
@@ -3946,21 +3964,11 @@ void CSmsUserData::AppendBodyL(const TDesC8& aBody)
  */
 EXPORT_C TBool CSmsUserData::IsSupportedL(TChar aChar)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_ISSUPPORTEDL_1, "CSmsUserData::IsSupportedL()");
-
-	TInt  numberOfUnconvertibleCharacters, numberOfDowngradedCharacters, 
-	           numberRequiringAlternativeEncoding, indexOfFirstUnconvertibleCharacter;	
-	TBuf<4>   toEncode;
-    toEncode.SetLength(1);
-    toEncode[0]=(TText)aChar;
+	LOGGSMU1("CSmsUserData::IsSupportedL()");
 
 	CSmsAlphabetConverter* converter=CSmsAlphabetConverter::NewLC(iCharacterSetConverter,iFs,iDataCodingScheme.Alphabet(),IsBinaryData());
-	TBool result=converter->IsSupportedL(toEncode, ESmsEncodingNone, 
-                                         numberOfUnconvertibleCharacters,
-                                         numberOfDowngradedCharacters,
-                                         numberRequiringAlternativeEncoding,
-                                         indexOfFirstUnconvertibleCharacter);	
-	CleanupStack::PopAndDestroy(converter);
+	TBool result=converter->IsSupportedL(aChar);
+	CleanupStack::PopAndDestroy();
 
 	return result;
 	} // CSmsUserData::IsSupportedL
@@ -3983,7 +3991,7 @@ EXPORT_C TBool CSmsUserData::IsSupportedL(TChar aChar)
 EXPORT_C TBool CSmsUserData::IsSupportedL(const TDesC& aDes, TInt& aNumberOfUnconvertibleCharacters,
                                           TInt& aIndexOfFirstUnconvertibleCharacter) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_ISSUPPORTEDL1_1, "[1] CSmsUserData::IsSupportedL()");
+	LOGGSMU1("[1] CSmsUserData::IsSupportedL()");
 
 	CSmsAlphabetConverter* converter=CSmsAlphabetConverter::NewLC(iCharacterSetConverter,iFs,iDataCodingScheme.Alphabet(),IsBinaryData());
 	TBool result=converter->IsSupportedL(aDes, aNumberOfUnconvertibleCharacters,
@@ -4020,7 +4028,7 @@ EXPORT_C TBool CSmsUserData::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
                                           TInt& aNumberRequiringAlternativeEncoding,
                                           TInt& aIndexOfFirstUnconvertibleCharacter) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CSMSUSERDATA_ISSUPPORTEDL2_1, "[2] CSmsUserData::IsSupportedL()");
+	LOGGSMU1("[2] CSmsUserData::IsSupportedL()");
 
 	CSmsAlphabetConverter* converter=CSmsAlphabetConverter::NewLC(iCharacterSetConverter,iFs,iDataCodingScheme.Alphabet(),IsBinaryData());
 	TBool result=converter->IsSupportedL(aDes, aEncoding,
@@ -4036,7 +4044,7 @@ EXPORT_C TBool CSmsUserData::IsSupportedL(const TDesC& aDes, TSmsEncoding aEncod
 
 TUint8* CSmsUserData::EncodeL(TUint8* aPtr) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_ENCODEL_1, "CSmsUserData::EncodeL()");
+	LOGGSMU1("CSmsUserData::EncodeL()");
 
 	__ASSERT_DEBUG(0<=MaxPackedUDUnitsInBodyRemaining(),Panic(KGsmuPanicUserDataBodyTooLong));
 	// Encode the user data length
@@ -4070,7 +4078,7 @@ void CSmsUserData::DecodeL(TGsmuLex8& aPdu)
 
 void CSmsUserData::DecodeL(TGsmuLex8& aPdu, TBool aAcceptTruncation)
 	{	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_DECODEL1_1, "CSmsUserData::DecodeL()");
+	LOGGSMU1("CSmsUserData::DecodeL()");
 
 	// Reset current data
 	iInformationElementArray.ResetAndDestroy();
@@ -4174,7 +4182,7 @@ CSmsUserData::CSmsUserData(CCnvCharacterSetConverter& aCharacterSetConverter,RFs
 
 void CSmsUserData::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_CONSTRUCTL_1, "CSmsUserData::ConstructL()");
+	LOGGSMU1("CSmsUserData::ConstructL()");
 
 	NewBodyL(0);
 	} // CSmsUserData::ConstructL
@@ -4188,7 +4196,7 @@ void CSmsUserData::ConstructL()
 CSmsUserData* CSmsUserData::DuplicateL(TSmsFirstOctet& aFirstOctet,
 									   const TSmsDataCodingScheme& aDataCodingScheme) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_DUPLICATEL_1, "CSmsUserData::DuplicateL()");
+	LOGGSMU1("CSmsUserData::DuplicateL()");
 
 	CSmsUserData*  userdata = CSmsUserData::NewL(iCharacterSetConverter, iFs,
 	                                             aFirstOctet, aDataCodingScheme);
@@ -4222,7 +4230,7 @@ CSmsUserData* CSmsUserData::DuplicateL(TSmsFirstOctet& aFirstOctet,
 
 TInt CSmsUserData::HeaderLength() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_HEADERLENGTH_1, "CSmsUserData::HeaderLength()");
+	LOGGSMU1("CSmsUserData::HeaderLength()");
 
 	TInt numinformationelements=NumInformationElements();
 	TInt headerlength=0;
@@ -4234,7 +4242,7 @@ TInt CSmsUserData::HeaderLength() const
 
 TInt CSmsUserData::TotalHeaderLengthInUDLUnits() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_TOTALHEADERLENGTHINUDLUNITS_1, "CSmsUserData::TotalHeaderLengthInUDLUnits()");
+	LOGGSMU1("CSmsUserData::TotalHeaderLengthInUDLUnits()");
 
 	TInt totalheaderlengthinudlunits=0;
 	if (iInformationElementArray.Count()>0)
@@ -4260,7 +4268,7 @@ TInt CSmsUserData::TotalHeaderLengthInUDLUnits() const
 					break;
 					}
 				default:
-				    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_TOTALHEADERLENGTHINUDLUNITS_2, "CSmsUserData::TotalHeaderLengthInUDLUnits() WARNING default case has been reached");
+				    LOGGSMU1("CSmsUserData::TotalHeaderLengthInUDLUnits() WARNING default case has been reached");
                     break;
 				}
 			}
@@ -4271,7 +4279,7 @@ TInt CSmsUserData::TotalHeaderLengthInUDLUnits() const
 
 TInt CSmsUserData::TotalHeaderLengthInUDLUnits(TInt aIElen) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_TOTALHEADERLENGTHINUDLUNITS1_1, "CSmsUserData::TotalHeaderLengthInUDLUnits()");
+	LOGGSMU1("CSmsUserData::TotalHeaderLengthInUDLUnits()");
 
 		TInt totalheaderlengthinudlunits=0;
 		TInt totalheaderlength=aIElen;
@@ -4310,7 +4318,7 @@ TInt CSmsUserData::TotalHeaderLengthInUDLUnits(TInt aIElen) const
 
 TInt CSmsUserData::BodyLengthInUDLUnits() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_BODYLENGTHINUDLUNITS_1, "CSmsUserData::BodyLengthInUDLUnits()");
+	LOGGSMU1("CSmsUserData::BodyLengthInUDLUnits()");
 
 	return iBody->Des().Length();
 	} // CSmsUserData::BodyLengthInUDLUnits
@@ -4318,7 +4326,7 @@ TInt CSmsUserData::BodyLengthInUDLUnits() const
 
 void CSmsUserData::NewBodyL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_NEWBODYL_1, "CSmsUserData::NewBodyL()");
+	LOGGSMU1("CSmsUserData::NewBodyL()");
 
 
 		HBufC8* body=HBufC8::NewL(aLength);
@@ -4331,7 +4339,7 @@ void CSmsUserData::NewBodyL(TInt aLength)
 
 TBool CSmsUserData::HeaderPresent() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_HEADERPRESENT_1, "CSmsUserData::HeaderPresent()");
+	LOGGSMU1("CSmsUserData::HeaderPresent()");
 
 	return (iFirstOctet&TSmsFirstOctet::ESmsUDHIMask)==TSmsFirstOctet::ESmsUDHIHeaderPresent;
 	} // CSmsUserData::HeaderPresent
@@ -4339,7 +4347,7 @@ TBool CSmsUserData::HeaderPresent() const
 
 void CSmsUserData::SetHeaderPresent(TBool aHeaderPresent)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_SETHEADERPRESENT_1, "CSmsUserData::SetHeaderPresent()");
+	LOGGSMU1("CSmsUserData::SetHeaderPresent()");
 
 	iFirstOctet=aHeaderPresent? (iFirstOctet&(~TSmsFirstOctet::ESmsUDHIMask))|TSmsFirstOctet::ESmsUDHIHeaderPresent: (iFirstOctet&(~TSmsFirstOctet::ESmsUDHIMask))|TSmsFirstOctet::ESmsUDHIHeaderNotPresent;
 	} // CSmsUserData::SetHeaderPresent
@@ -4347,7 +4355,7 @@ void CSmsUserData::SetHeaderPresent(TBool aHeaderPresent)
 
 TBool CSmsUserData::IsBinaryData() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSUSERDATA_ISBINARYDATA_1, "CSmsUserData::IsBinaryData()");
+	LOGGSMU1("CSmsUserData::IsBinaryData()");
 
 	TInt index=0;
 	return (iDataCodingScheme.TextCompressed()) ||
@@ -4369,7 +4377,7 @@ TBool CSmsUserData::IsBinaryData() const
  */
 EXPORT_C void TGsmSmsTypeOfAddress::ConvertToETelMM(NMobilePhone::TMobileTON& aTon,NMobilePhone::TMobileNPI& aNpi) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TGSMSMSTYPEOFADDRESS_CONVERTTOETELMM_1, "TGsmSmsTypeOfAddress::ConvertToETelMM()");
+    LOGGSMU1("TGsmSmsTypeOfAddress::ConvertToETelMM()");
 
     switch (TON())
     {
@@ -4465,7 +4473,7 @@ EXPORT_C void TGsmSmsTypeOfAddress::ConvertToETelMM(NMobilePhone::TMobileTON& aT
  */
 EXPORT_C void TGsmSmsTypeOfAddress::SetFromETelMM(NMobilePhone::TMobileTON aTon,NMobilePhone::TMobileNPI aNpi)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TGSMSMSTYPEOFADDRESS_SETFROMETELMM_1, "TGsmSmsTypeOfAddress::SetFromETelMM()");
+    LOGGSMU1("TGsmSmsTypeOfAddress::SetFromETelMM()");
 
     switch (aTon)
     {
@@ -4563,7 +4571,7 @@ EXPORT_C void TGsmSmsTypeOfAddress::SetFromETelMM(NMobilePhone::TMobileTON aTon,
  */
 EXPORT_C TVoiceMailInfoType CEnhancedVoiceMailBoxInformation::Type() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_TYPE_1, "CEnhancedVoiceMailBoxInformation::Type()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::Type()");
 
 	return iType;
 	} // CEnhancedVoiceMailBoxInformation::Type
@@ -4581,7 +4589,7 @@ EXPORT_C TVoiceMailInfoType CEnhancedVoiceMailBoxInformation::Type() const
  */
 EXPORT_C void CEnhancedVoiceMailBoxInformation::SetProfile(TSmsMessageProfileType aProfile)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETPROFILE_1, "CEnhancedVoiceMailBoxInformation::SetProfile()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetProfile()");
 
 	iProfile = aProfile;
 	} // CEnhancedVoiceMailBoxInformation::SetProfile
@@ -4599,7 +4607,7 @@ EXPORT_C void CEnhancedVoiceMailBoxInformation::SetProfile(TSmsMessageProfileTyp
  */
 EXPORT_C TSmsMessageProfileType CEnhancedVoiceMailBoxInformation::Profile() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_PROFILE_1, "CEnhancedVoiceMailBoxInformation::Profile()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::Profile()");
 
 	return iProfile;
 	} // CEnhancedVoiceMailBoxInformation::Profile
@@ -4618,7 +4626,7 @@ EXPORT_C TSmsMessageProfileType CEnhancedVoiceMailBoxInformation::Profile() cons
  */
 EXPORT_C void CEnhancedVoiceMailBoxInformation::SetStorage(TBool aIsStored)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETSTORAGE_1, "CEnhancedVoiceMailBoxInformation::SetStorage()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetStorage()");
 
 	iStorage = aIsStored;
 	} // CEnhancedVoiceMailBoxInformation::SetStorage
@@ -4637,7 +4645,7 @@ EXPORT_C void CEnhancedVoiceMailBoxInformation::SetStorage(TBool aIsStored)
  */
 EXPORT_C TBool CEnhancedVoiceMailBoxInformation::Store() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_STORE_1, "CEnhancedVoiceMailBoxInformation::Store()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::Store()");
 
 	return iStorage;
 	} // CEnhancedVoiceMailBoxInformation::Store
@@ -4656,7 +4664,7 @@ EXPORT_C TBool CEnhancedVoiceMailBoxInformation::Store() const
  */
 EXPORT_C void CEnhancedVoiceMailBoxInformation::SetAlmostMaximumCapacity(TBool aIsAlmostFull)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETALMOSTMAXIMUMCAPACITY_1, "CEnhancedVoiceMailBoxInformation::SetAlmostMaximumCapacity()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetAlmostMaximumCapacity()");
 
 	iAlmostFull = aIsAlmostFull;
 	} // CEnhancedVoiceMailBoxInformation::SetAlmostMaximumCapacity
@@ -4675,7 +4683,7 @@ EXPORT_C void CEnhancedVoiceMailBoxInformation::SetAlmostMaximumCapacity(TBool a
  */
 EXPORT_C TBool CEnhancedVoiceMailBoxInformation::AlmostMaximumCapacity() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_ALMOSTMAXIMUMCAPACITY_1, "CEnhancedVoiceMailBoxInformation::AlmostMaximumCapacity()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::AlmostMaximumCapacity()");
 
 	return iAlmostFull;
 	} // CEnhancedVoiceMailBoxInformation::AlmostMaximumCapacity
@@ -4694,7 +4702,7 @@ EXPORT_C TBool CEnhancedVoiceMailBoxInformation::AlmostMaximumCapacity() const
  */
 EXPORT_C void CEnhancedVoiceMailBoxInformation::SetMaximumCapacity(TBool aIsFull)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETMAXIMUMCAPACITY_1, "CEnhancedVoiceMailBoxInformation::SetMaximumCapacity()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetMaximumCapacity()");
 
 	iFull = aIsFull;
 	} // CEnhancedVoiceMailBoxInformation::SetMaximumCapacity
@@ -4713,7 +4721,7 @@ EXPORT_C void CEnhancedVoiceMailBoxInformation::SetMaximumCapacity(TBool aIsFull
  */
 EXPORT_C TBool CEnhancedVoiceMailBoxInformation::MaximumCapacity() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_MAXIMUMCAPACITY_1, "CEnhancedVoiceMailBoxInformation::MaximumCapacity()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::MaximumCapacity()");
 
 	return iFull;
 	} // CEnhancedVoiceMailBoxInformation::MaximumCapacity
@@ -4732,7 +4740,7 @@ EXPORT_C TBool CEnhancedVoiceMailBoxInformation::MaximumCapacity() const
  */
 EXPORT_C TBool CEnhancedVoiceMailBoxInformation::ExtensionIndicator() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_EXTENSIONINDICATOR_1, "CEnhancedVoiceMailBoxInformation::ExtensionIndicator()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::ExtensionIndicator()");
 
 	return iExtensionIndicator;
 	} // CEnhancedVoiceMailBoxInformation::ExtensionIndicator
@@ -4740,7 +4748,7 @@ EXPORT_C TBool CEnhancedVoiceMailBoxInformation::ExtensionIndicator() const
 
 void CEnhancedVoiceMailBoxInformation::NewBufferL(TInt aLength)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_NEWBUFFERL_1, "CEnhancedVoiceMailBoxInformation::NewBufferL, length = %d",aLength);
+	LOGGSMU2("CEnhancedVoiceMailBoxInformation::NewBufferL, length = %d",aLength);
 
 	HBufC* buffer=HBufC::NewL(aLength);
 	delete iAccessAddress;
@@ -4762,7 +4770,7 @@ void CEnhancedVoiceMailBoxInformation::NewBufferL(TInt aLength)
  */
 EXPORT_C void  CEnhancedVoiceMailBoxInformation::SetAccessAddressL(const TDesC& aAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETACCESSADDRESSL_1, "CEnhancedVoiceMailBoxInformation::SetAccessAddressL()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetAccessAddressL()");
 
 	TInt length=aAddress.Length();
 	NewBufferL(length);
@@ -4785,7 +4793,7 @@ EXPORT_C void  CEnhancedVoiceMailBoxInformation::SetAccessAddressL(const TDesC& 
  */
 EXPORT_C TPtrC CEnhancedVoiceMailBoxInformation::AccessAddress() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_ACCESSADDRESS_1, "CEnhancedVoiceMailBoxInformation::AccessAddress()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::AccessAddress()");
 
 	TPtrC ptr;
 	if (iAccessAddress)
@@ -4806,7 +4814,7 @@ EXPORT_C TPtrC CEnhancedVoiceMailBoxInformation::AccessAddress() const
  */
 EXPORT_C void  CEnhancedVoiceMailBoxInformation::SetParsedAccessAddressL(const TGsmSmsTelNumber& aParsedAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETPARSEDACCESSADDRESSL_1, "CEnhancedVoiceMailBoxInformation::SetParsedAccessAddressL()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetParsedAccessAddressL()");
 
    	iTypeOfAddress=aParsedAddress.iTypeOfAddress;
 	DoSetParsedAddressL(aParsedAddress.iTelNumber);
@@ -4825,7 +4833,7 @@ EXPORT_C void  CEnhancedVoiceMailBoxInformation::SetParsedAccessAddressL(const T
  */
 EXPORT_C void  CEnhancedVoiceMailBoxInformation::ParsedAccessAddress(TGsmSmsTelNumber& aParsedAddress) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_PARSEDACCESSADDRESS_1, "CEnhancedVoiceMailBoxInformation::ParsedAccessAddress()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::ParsedAccessAddress()");
 
 	aParsedAddress.iTypeOfAddress = iTypeOfAddress;
 
@@ -4861,7 +4869,7 @@ EXPORT_C void  CEnhancedVoiceMailBoxInformation::ParsedAccessAddress(TGsmSmsTelN
 
 void CEnhancedVoiceMailBoxInformation::DoSetParsedAddressL(const TDesC& aAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_DOSETPARSEDADDRESSL_1, "CEnhancedVoiceMailBoxInformation::DoSetParsedAddressL()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::DoSetParsedAddressL()");
 
 	TInt length=aAddress.Length();
 	if ((iTypeOfAddress.TON()==EGsmSmsTONInternationalNumber) &&
@@ -4892,7 +4900,7 @@ void CEnhancedVoiceMailBoxInformation::DoSetParsedAddressL(const TDesC& aAddress
  */
 EXPORT_C void   CEnhancedVoiceMailBoxInformation::SetNumberOfVoiceMessages(TUint8 aNumber)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_SETNUMBEROFVOICEMESSAGES_1, "CEnhancedVoiceMailBoxInformation::SetNumberOfVoiceMessages()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::SetNumberOfVoiceMessages()");
 
 	iNumberOfVoiceMessages=aNumber;
 	} // CEnhancedVoiceMailBoxInformation::SetNumberOfVoiceMessages
@@ -4910,7 +4918,7 @@ EXPORT_C void   CEnhancedVoiceMailBoxInformation::SetNumberOfVoiceMessages(TUint
  */
 EXPORT_C TUint8 CEnhancedVoiceMailBoxInformation::NumberOfVoiceMessages() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILBOXINFORMATION_NUMBEROFVOICEMESSAGES_1, "CEnhancedVoiceMailBoxInformation::NumberOfVoiceMessages()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::NumberOfVoiceMessages()");
 
 	return iNumberOfVoiceMessages;
 	} // CEnhancedVoiceMailBoxInformation::NumberOfVoiceMessages
@@ -4925,7 +4933,7 @@ TUint8* CEnhancedVoiceMailBoxInformation::EncodeL(TUint8* aPtr, CCnvCharacterSet
 	        ((((TUint8) iFull)       & EMask1Bit ) << 6) +
 	         (((TUint8) iExtensionIndicator      ) << 7);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_ENCODEL_1, "CEnhancedVoiceMailBoxInformation::EncodeL 1st byte = %d",*aPtr);
+	LOGGSMU2("CEnhancedVoiceMailBoxInformation::EncodeL 1st byte = %d",*aPtr);
 	aPtr++;
 
 	// Create an address object to encode the mail box access address into the
@@ -4959,7 +4967,7 @@ void CEnhancedVoiceMailBoxInformation::DecodeL(TGsmuLex8& aVoiceMailInfo, CCnvCh
 	iFull               = (TBool)                   ((Byte1 >> 6) & EMask1Bit);
 	iExtensionIndicator = (TBool)                   ((Byte1 >> 7) & EMask1Bit);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_DECODEL_1, "CEnhancedVoiceMailBoxInformation::DecodeL 1st byte = %d", Byte1);
+	LOGGSMU2("CEnhancedVoiceMailBoxInformation::DecodeL 1st byte = %d", Byte1);
 
 	// Create an address object to deccode the mail box access address from the
 	// format required by 23.040 v6.5.0 section 9.1.2.5.
@@ -5004,13 +5012,13 @@ void CEnhancedVoiceMailBoxInformation::DecodeL(TGsmuLex8& aVoiceMailInfo, CCnvCh
 	CleanupStack::PopAndDestroy(decodedAddress);
 
 	iNumberOfVoiceMessages = aVoiceMailInfo.GetL();
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_DECODEL_2, "CEnhancedVoiceMailBoxInformation::DecodeL iNumberOfVoiceMessages = %d", iNumberOfVoiceMessages);
+	LOGGSMU2("CEnhancedVoiceMailBoxInformation::DecodeL iNumberOfVoiceMessages = %d", iNumberOfVoiceMessages);
 	} // CEnhancedVoiceMailBoxInformation::DecodeL
 
 
 CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_CTOR_1, "CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation()");
 
 	// Consider changing this over to a Panic.
 	iType               = EGsmSmsVoiceMailNotification;
@@ -5026,7 +5034,7 @@ CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation()
 
 CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation(TVoiceMailInfoType aTVoiceMailInfoType)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_CTOR1_1, "CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation()");
 
 	iType               = aTVoiceMailInfoType;
 	iOctet1Bit1         = EFalse;
@@ -5051,7 +5059,7 @@ CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation(const CEnhanc
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_CTOR2_1, "CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation");
+    LOGGSMU1("CEnhancedVoiceMailBoxInformation::CEnhancedVoiceMailBoxInformation");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -5068,7 +5076,7 @@ TBool CEnhancedVoiceMailBoxInformation::operator==(const CEnhancedVoiceMailBoxIn
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_OPERATOR_1, "CEnhancedVoiceMailBoxInformation::operator==");
+    LOGGSMU1("CEnhancedVoiceMailBoxInformation::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     return EFalse;
     BULLSEYE_RESTORE
@@ -5086,14 +5094,14 @@ void CEnhancedVoiceMailBoxInformation::operator=(const CEnhancedVoiceMailBoxInfo
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_OPERATOR1_1, "CEnhancedVoiceMailBoxInformation::operator=");
+    LOGGSMU1("CEnhancedVoiceMailBoxInformation::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
 
 void CEnhancedVoiceMailBoxInformation::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_CONSTRUCTL_1, "CEnhancedVoiceMailBoxInformation::ConstructL()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::ConstructL()");
 
 	NewBufferL(0);
 	} // CEnhancedVoiceMailBoxInformation::ConstructL
@@ -5101,14 +5109,14 @@ void CEnhancedVoiceMailBoxInformation::ConstructL()
 
 CEnhancedVoiceMailBoxInformation::~CEnhancedVoiceMailBoxInformation()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_DTOR_1, "CEnhancedVoiceMailBoxInformation::~CEnhancedVoiceMailBoxInformation");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::~CEnhancedVoiceMailBoxInformation");
 	delete iAccessAddress;
 	} // CEnhancedVoiceMailBoxInformation::ConstructL
 
 
 CEnhancedVoiceMailBoxInformation* CEnhancedVoiceMailBoxInformation::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILBOXINFORMATION_NEWL_1, "CEnhancedVoiceMailBoxInformation::NewL()");
+	LOGGSMU1("CEnhancedVoiceMailBoxInformation::NewL()");
 
 	CEnhancedVoiceMailBoxInformation* aCEnhancedVoiceMailBoxInformation=new(ELeave) CEnhancedVoiceMailBoxInformation();
 	CleanupStack::PushL(aCEnhancedVoiceMailBoxInformation);
@@ -5130,7 +5138,7 @@ CEnhancedVoiceMailBoxInformation* CEnhancedVoiceMailBoxInformation::NewL()
  */
 EXPORT_C void CVoiceMailNotification::SetMessageId(TUint16 aMessageId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_SETMESSAGEID_1, "CVoiceMailNotification::SetMessageId()");
+	LOGGSMU1("CVoiceMailNotification::SetMessageId()");
 
 	iMessageId = aMessageId;
 	} // CVoiceMailNotification::SetMessageId
@@ -5148,7 +5156,7 @@ EXPORT_C void CVoiceMailNotification::SetMessageId(TUint16 aMessageId)
  */
 EXPORT_C TUint16 CVoiceMailNotification::MessageId() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_MESSAGEID_1, "CVoiceMailNotification::MessageId()");
+	LOGGSMU1("CVoiceMailNotification::MessageId()");
 
 	return iMessageId;
 	} // CVoiceMailNotification::MessageId
@@ -5166,7 +5174,7 @@ EXPORT_C TUint16 CVoiceMailNotification::MessageId() const
  */
 EXPORT_C void CVoiceMailNotification::SetMessageLength(TUint8 aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_SETMESSAGELENGTH_1, "CVoiceMailNotification::SetMessageLength()");
+	LOGGSMU1("CVoiceMailNotification::SetMessageLength()");
 
 	iMessageLength=aLength;
 	} // CVoiceMailNotification::SetMessageLength
@@ -5184,7 +5192,7 @@ EXPORT_C void CVoiceMailNotification::SetMessageLength(TUint8 aLength)
  */
 EXPORT_C TUint8 CVoiceMailNotification::MessageLength() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_MESSAGELENGTH_1, "CVoiceMailNotification::MessageLength()");
+	LOGGSMU1("CVoiceMailNotification::MessageLength()");
 
 	return iMessageLength;
 	} // CVoiceMailNotification::MessageLength
@@ -5204,7 +5212,7 @@ EXPORT_C TUint8 CVoiceMailNotification::MessageLength() const
  */
 EXPORT_C void CVoiceMailNotification::SetRetentionDays(TUint8 aDays)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_SETRETENTIONDAYS_1, "CVoiceMailNotification::SetRetentionDays()");
+	LOGGSMU1("CVoiceMailNotification::SetRetentionDays()");
 
 	if (aDays > 31)
 	    {
@@ -5229,7 +5237,7 @@ EXPORT_C void CVoiceMailNotification::SetRetentionDays(TUint8 aDays)
  */
 EXPORT_C TUint8 CVoiceMailNotification::RetentionDays() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_RETENTIONDAYS_1, "CVoiceMailNotification::RetentionDays()");
+	LOGGSMU1("CVoiceMailNotification::RetentionDays()");
 
 	return iRetentionDays;
 	} // CVoiceMailNotification::RetentionDays
@@ -5248,7 +5256,7 @@ EXPORT_C TUint8 CVoiceMailNotification::RetentionDays() const
  */
 EXPORT_C void CVoiceMailNotification::SetPriorityIndication(TBool aPriority)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_SETPRIORITYINDICATION_1, "CVoiceMailNotification::SetPriorityIndication()");
+	LOGGSMU1("CVoiceMailNotification::SetPriorityIndication()");
 
 	iPriorityIndication=aPriority;
 	} // CVoiceMailNotification::SetPriorityIndication
@@ -5267,7 +5275,7 @@ EXPORT_C void CVoiceMailNotification::SetPriorityIndication(TBool aPriority)
  */
 EXPORT_C TBool CVoiceMailNotification::PriorityIndication() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_PRIORITYINDICATION_1, "CVoiceMailNotification::PriorityIndication()");
+	LOGGSMU1("CVoiceMailNotification::PriorityIndication()");
 
 	return iPriorityIndication;
 	} // CVoiceMailNotification::PriorityIndication
@@ -5286,7 +5294,7 @@ EXPORT_C TBool CVoiceMailNotification::PriorityIndication() const
  */
 EXPORT_C TBool CVoiceMailNotification::MessageExtensionIndication() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_MESSAGEEXTENSIONINDICATION_1, "CVoiceMailNotification::MessageExtensionIndication()");
+	LOGGSMU1("CVoiceMailNotification::MessageExtensionIndication()");
 
 	return iMessageExtensionIndicator;
 	} // CVoiceMailNotification::MessageExtensionIndication
@@ -5294,7 +5302,7 @@ EXPORT_C TBool CVoiceMailNotification::MessageExtensionIndication() const
 
 void CVoiceMailNotification::NewBufferL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_NEWBUFFERL_1, "CVoiceMailNotification::NewBufferL()");
+	LOGGSMU1("CVoiceMailNotification::NewBufferL()");
 
 	HBufC* buffer=HBufC::NewL(aLength);
 	delete iCallingLineIdentity;
@@ -5315,7 +5323,7 @@ void CVoiceMailNotification::NewBufferL(TInt aLength)
  */
 EXPORT_C void  CVoiceMailNotification::SetCallingLineIdentityL(TDesC& aLineIdentity)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_SETCALLINGLINEIDENTITYL_1, "CVoiceMailNotification::SetCallingLineIdentityL()");
+	LOGGSMU1("CVoiceMailNotification::SetCallingLineIdentityL()");
 
 	TInt length=aLineIdentity.Length();
 	NewBufferL(length);
@@ -5338,7 +5346,7 @@ EXPORT_C void  CVoiceMailNotification::SetCallingLineIdentityL(TDesC& aLineIdent
  */
 EXPORT_C TPtrC CVoiceMailNotification::CallingLineIdentity() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_CALLINGLINEIDENTITY_1, "CVoiceMailNotification::CallingLineIdentity()");
+	LOGGSMU1("CVoiceMailNotification::CallingLineIdentity()");
 
 	TPtrC ptr;
 	if (iCallingLineIdentity)
@@ -5359,7 +5367,7 @@ EXPORT_C TPtrC CVoiceMailNotification::CallingLineIdentity() const
  */
 EXPORT_C void CVoiceMailNotification::SetParsedCallingLineIdentityL(TGsmSmsTelNumber& aParsedAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_SETPARSEDCALLINGLINEIDENTITYL_1, "CVoiceMailNotification::SetParsedCallingLineIdentityL()");
+	LOGGSMU1("CVoiceMailNotification::SetParsedCallingLineIdentityL()");
 
 	iTypeOfAddress=aParsedAddress.iTypeOfAddress;
 	DoSetParsedAddressL(aParsedAddress.iTelNumber);
@@ -5378,7 +5386,7 @@ EXPORT_C void CVoiceMailNotification::SetParsedCallingLineIdentityL(TGsmSmsTelNu
  */
 EXPORT_C void CVoiceMailNotification::ParsedCallingLineIdentity(TGsmSmsTelNumber& aParsedAddress) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_PARSEDCALLINGLINEIDENTITY_1, "CVoiceMailNotification::ParsedCallingLineIdentity()");
+	LOGGSMU1("CVoiceMailNotification::ParsedCallingLineIdentity()");
 
 	aParsedAddress.iTypeOfAddress = iTypeOfAddress;
 
@@ -5414,7 +5422,7 @@ EXPORT_C void CVoiceMailNotification::ParsedCallingLineIdentity(TGsmSmsTelNumber
 
 void CVoiceMailNotification::NewExtensionL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_NEWEXTENSIONL_1, "CVoiceMailNotification::NewExtensionL()");
+	LOGGSMU1("CVoiceMailNotification::NewExtensionL()");
 
 	HBufC* buffer=HBufC::NewL(aLength);
 	delete iExtension;
@@ -5422,6 +5430,27 @@ void CVoiceMailNotification::NewExtensionL(TInt aLength)
 	iExtension->Des().SetLength(aLength);
 	iExtension->Des().FillZ();
 	} // CVoiceMailNotification::NewExtensionL
+
+
+/*void CVoiceMailNotification::SetExtension(TDesC& aExtension)
+	{
+	LOGGSMU1("CVoiceMailNotification::SetExtension()");
+
+	TInt length=aExtension.Length();
+	NewExtensionL(length);
+	iExtension->Des().Copy(aExtension);
+	} // CVoiceMailNotification::SetExtension
+
+TPtrC CVoiceMailNotification::Extension() const
+	{
+	LOGGSMU1("CVoiceMailNotification::Extension()");
+
+	TPtrC ptr;
+	if (iExtension)
+	    ptr.Set(iExtension->Des());
+	return ptr;
+	}*/
+
 
 /**
  *  @internalComponent
@@ -5436,7 +5465,7 @@ void CVoiceMailNotification::NewExtensionL(TInt aLength)
  */
 TUint8 CVoiceMailNotification::SizeL(CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_SIZEL_1, "CVoiceMailNotification::SizeL()");
+	LOGGSMU1("CVoiceMailNotification::SizeL()");
 
 	const TUint8 KTotalSizeOfFixedLengthAttributes = 4;
 	TUint8 size = KTotalSizeOfFixedLengthAttributes;
@@ -5465,7 +5494,7 @@ TUint8* CVoiceMailNotification::EncodeL(TUint8* aPtr, CCnvCharacterSetConverter&
 	// When changes are made to this function that affect the
 	// number of bytes that are encoded, this should be reflected in
 	// CVoiceMailNotification::SizeL()
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_ENCODEL_1, "CVoiceMailNotification::EncodeL");
+	LOGGSMU1("CVoiceMailNotification::EncodeL");
 
 
 	*aPtr =   (TUint8)  (iMessageId                         >> 8);  // Message Id MSB
@@ -5499,7 +5528,7 @@ TUint8* CVoiceMailNotification::EncodeL(TUint8* aPtr, CCnvCharacterSetConverter&
 
 void CVoiceMailNotification::DecodeL(TGsmuLex8& aVoiceMailInfo, CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_DECODEL_1, "CVoiceMailNotification::DecodeL");
+	LOGGSMU1("CVoiceMailNotification::DecodeL");
 
 	iMessageId = (((TUint16) aVoiceMailInfo.GetL()) << 8);
 	iMessageId += ((TUint16) aVoiceMailInfo.GetL());
@@ -5570,7 +5599,7 @@ CVoiceMailNotification::CVoiceMailNotification(const CVoiceMailNotification&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_CTOR_1, "CVoiceMailNotification::CVoiceMailNotification");
+    LOGGSMU1("CVoiceMailNotification::CVoiceMailNotification");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -5587,7 +5616,7 @@ TBool CVoiceMailNotification::operator==(const CVoiceMailNotification&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_OPERATOR_1, "CVoiceMailNotification::operator==");
+    LOGGSMU1("CVoiceMailNotification::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     return EFalse;
     BULLSEYE_RESTORE
@@ -5605,14 +5634,14 @@ void CVoiceMailNotification::operator=(const CVoiceMailNotification&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_OPERATOR1_1, "CVoiceMailNotification::operator=");
+    LOGGSMU1("CVoiceMailNotification::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
 
 CVoiceMailNotification::CVoiceMailNotification()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_CTOR1_1, "CVoiceMailNotification::CVoiceMailNotification()");
+	LOGGSMU1("CVoiceMailNotification::CVoiceMailNotification()");
 
 	iMessageId                 = 0;
 	iMessageLength             = 0;
@@ -5633,7 +5662,7 @@ CVoiceMailNotification::CVoiceMailNotification()
  */
 EXPORT_C CVoiceMailNotification::~CVoiceMailNotification()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_DTOR_1, "CVoiceMailNotification::~CVoiceMailNotification");
+	LOGGSMU1("CVoiceMailNotification::~CVoiceMailNotification");
 	delete iCallingLineIdentity;
 	delete iExtension;
 	} // CVoiceMailNotification::CVoiceMailNotification
@@ -5641,7 +5670,7 @@ EXPORT_C CVoiceMailNotification::~CVoiceMailNotification()
 
 void CVoiceMailNotification::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_CONSTRUCTL_1, "CVoiceMailNotification::ConstructL()");
+	LOGGSMU1("CVoiceMailNotification::ConstructL()");
 
 	NewBufferL(0);
 	NewExtensionL(0);
@@ -5657,7 +5686,7 @@ void CVoiceMailNotification::ConstructL()
  */
 EXPORT_C CVoiceMailNotification* CVoiceMailNotification::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILNOTIFICATION_NEWL_1, "CVoiceMailNotification::NewL()");
+	LOGGSMU1("CVoiceMailNotification::NewL()");
 
 	CVoiceMailNotification* aCVoiceMailNotification=new(ELeave) CVoiceMailNotification();
 	CleanupStack::PushL(aCVoiceMailNotification);
@@ -5669,7 +5698,7 @@ EXPORT_C CVoiceMailNotification* CVoiceMailNotification::NewL()
 
 void CVoiceMailNotification::DoSetParsedAddressL(const TDesC& aAddress)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILNOTIFICATION_DOSETPARSEDADDRESSL_1, "CVoiceMailNotification::DoSetParsedAddressL()");
+	LOGGSMU1("CVoiceMailNotification::DoSetParsedAddressL()");
 
 	TInt length=aAddress.Length();
 	if ((iTypeOfAddress.TON()==EGsmSmsTONInternationalNumber) &&
@@ -5701,10 +5730,30 @@ void CVoiceMailNotification::DoSetParsedAddressL(const TDesC& aAddress)
  */
 EXPORT_C TUint8 CEnhancedVoiceMailNotification::NumberOfVoiceMails()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILNOTIFICATION_NUMBEROFVOICEMAILS_1, "CEnhancedVoiceMailNotification::NumberOfVoiceMails()");
+	LOGGSMU1("CEnhancedVoiceMailNotification::NumberOfVoiceMails()");
 
 	return (TUint8) iNotifications->Count();
 	} // CEnhancedVoiceMailNotification::NumberOfVoiceMails
+
+
+/*void CEnhancedVoiceMailNotification::SetExtension(TDesC& aExtension)
+	{
+	LOGGSMU1("CEnhancedVoiceMailNotification::SetExtension()");
+
+	TInt length=aExtension.Length();
+	NewExtensionL(length);
+	iExtension->Des().Copy(aExtension);
+	} // CEnhancedVoiceMailNotification::SetExtension
+
+TPtrC CEnhancedVoiceMailNotification::Extension() const
+	{
+	LOGGSMU1("CEnhancedVoiceMailNotification::Extension()");
+
+	TPtrC ptr;
+	if (iExtension)
+	    ptr.Set(iExtension->Des());
+	return ptr;
+	}*/
 
 
 /**
@@ -5722,7 +5771,7 @@ EXPORT_C TUint8 CEnhancedVoiceMailNotification::NumberOfVoiceMails()
  */
 EXPORT_C RPointerArray<CVoiceMailNotification>& CEnhancedVoiceMailNotification::GetVoiceMailNotifications()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILNOTIFICATION_GETVOICEMAILNOTIFICATIONS_1, "CEnhancedVoiceMailNotification::GetVoiceMailNotifications()");
+	LOGGSMU1("CEnhancedVoiceMailNotification::GetVoiceMailNotifications()");
 
 	return *iNotifications;
 	} // CEnhancedVoiceMailNotification::GetVoiceMailNotifications
@@ -5730,7 +5779,7 @@ EXPORT_C RPointerArray<CVoiceMailNotification>& CEnhancedVoiceMailNotification::
 
 void CEnhancedVoiceMailNotification::NewExtensionL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_NEWEXTENSIONL_1, "CEnhancedVoiceMailNotification::NewExtensionL()");
+	LOGGSMU1("CEnhancedVoiceMailNotification::NewExtensionL()");
 
 	HBufC* buffer=HBufC::NewL(aLength);
 	delete iExtension;
@@ -5749,7 +5798,7 @@ void CEnhancedVoiceMailNotification::NewExtensionL(TInt aLength)
  */
 EXPORT_C  CEnhancedVoiceMailNotification* CEnhancedVoiceMailNotification::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILNOTIFICATION_NEWL_1, "CEnhancedVoiceMailNotification::NewL()");
+	LOGGSMU1("CEnhancedVoiceMailNotification::NewL()");
 
 	CEnhancedVoiceMailNotification* aCEnhancedVoiceMailNotification=new(ELeave) CEnhancedVoiceMailNotification();
 	CleanupStack::PushL(aCEnhancedVoiceMailNotification);
@@ -5777,7 +5826,7 @@ CEnhancedVoiceMailNotification::CEnhancedVoiceMailNotification(const CEnhancedVo
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_CTOR1_1, "CEnhancedVoiceMailNotification::CEnhancedVoiceMailNotification");
+    LOGGSMU1("CEnhancedVoiceMailNotification::CEnhancedVoiceMailNotification");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -5794,7 +5843,7 @@ TBool CEnhancedVoiceMailNotification::operator==(const CEnhancedVoiceMailNotific
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_OPERATOR_1, "CEnhancedVoiceMailNotification::operator==");
+    LOGGSMU1("CEnhancedVoiceMailNotification::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     return EFalse;
     BULLSEYE_RESTORE
@@ -5812,7 +5861,7 @@ void CEnhancedVoiceMailNotification::operator=(const CEnhancedVoiceMailNotificat
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_OPERATOR1_1, "CEnhancedVoiceMailNotification::operator=");
+    LOGGSMU1("CEnhancedVoiceMailNotification::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -5826,7 +5875,7 @@ void CEnhancedVoiceMailNotification::operator=(const CEnhancedVoiceMailNotificat
  */
 EXPORT_C  CEnhancedVoiceMailNotification::~CEnhancedVoiceMailNotification()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILNOTIFICATION_DTOR_1, "CEnhancedVoiceMailNotification::~CEnhancedVoiceMailNotification");
+	LOGGSMU1("CEnhancedVoiceMailNotification::~CEnhancedVoiceMailNotification");
 	delete iExtension;
 	iNotifications->ResetAndDestroy();
 	iNotifications->Close();
@@ -5836,7 +5885,7 @@ EXPORT_C  CEnhancedVoiceMailNotification::~CEnhancedVoiceMailNotification()
 
 void CEnhancedVoiceMailNotification::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_CONSTRUCTL_1, "CEnhancedVoiceMailNotification::ConstructL()");
+	LOGGSMU1("CEnhancedVoiceMailNotification::ConstructL()");
 
 	NewExtensionL(0);
 	iNotifications = new (ELeave) RPointerArray<CVoiceMailNotification>(KMaxNumberOfNotifications);
@@ -5845,7 +5894,7 @@ void CEnhancedVoiceMailNotification::ConstructL()
 
 TUint8* CEnhancedVoiceMailNotification::EncodeL(TUint8* aCurrentPtr, CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_ENCODEL_1, "CEnhancedVoiceMailNotification::EncodeL");
+	LOGGSMU1("CEnhancedVoiceMailNotification::EncodeL");
 
 	TUint8* startPtr   = aCurrentPtr;
 
@@ -5881,7 +5930,7 @@ TUint8* CEnhancedVoiceMailNotification::EncodeL(TUint8* aCurrentPtr, CCnvCharact
 
 void CEnhancedVoiceMailNotification::DecodeL(TGsmuLex8& aVoiceMailInfo, CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILNOTIFICATION_DECODEL_1, "CEnhancedVoiceMailNotification::DecodeL");
+	LOGGSMU1("CEnhancedVoiceMailNotification::DecodeL");
 
 	CEnhancedVoiceMailBoxInformation::DecodeL(aVoiceMailInfo, aCharacterSetConverter, aFs);
 
@@ -5918,7 +5967,7 @@ void CEnhancedVoiceMailNotification::DecodeL(TGsmuLex8& aVoiceMailInfo, CCnvChar
  */
 EXPORT_C void CVoiceMailDeletion::SetMessageId(TUint16 aMessageId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILDELETION_SETMESSAGEID_1, "CVoiceMailDeletion::SetMessageId()");
+	LOGGSMU1("CVoiceMailDeletion::SetMessageId()");
 
 	iMessageId=aMessageId;
 	} // CVoiceMailDeletion::SetMessageId
@@ -5938,7 +5987,7 @@ EXPORT_C void CVoiceMailDeletion::SetMessageId(TUint16 aMessageId)
  */
 EXPORT_C TUint16 CVoiceMailDeletion::MessageId() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILDELETION_MESSAGEID_1, "CVoiceMailDeletion::MessageId()");
+	LOGGSMU1("CVoiceMailDeletion::MessageId()");
 
 	return iMessageId;
 	} // CVoiceMailDeletion::MessageId
@@ -5957,7 +6006,7 @@ EXPORT_C TUint16 CVoiceMailDeletion::MessageId() const
  */
 EXPORT_C TBool CVoiceMailDeletion::MessageExtensionIndication() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILDELETION_MESSAGEEXTENSIONINDICATION_1, "CVoiceMailDeletion::MessageExtensionIndication()");
+	LOGGSMU1("CVoiceMailDeletion::MessageExtensionIndication()");
 
 	return iExtensionIndicator;
 	} // CVoiceMailDeletion::MessageExtensionIndication
@@ -5965,7 +6014,7 @@ EXPORT_C TBool CVoiceMailDeletion::MessageExtensionIndication() const
 
 TUint8 CVoiceMailDeletion::SizeL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_SIZEL_1, "CVoiceMailDeletion::SizeL()");
+	LOGGSMU1("CVoiceMailDeletion::SizeL()");
 
 	const TUint8 KSizeOfVoiceMailDeletion = 3;
 	return KSizeOfVoiceMailDeletion;
@@ -5977,7 +6026,7 @@ TUint8* CVoiceMailDeletion::EncodeL(TUint8* aPtr) const
 	// When changes are made which affect the
 	// number of bytes encoded, this should be
 	// reflected in VoiceMailDeletion::SizeL()
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_ENCODEL_1, "CVoiceMailDeletion::EncodeL");
+	LOGGSMU1("CVoiceMailDeletion::EncodeL");
 
 	*aPtr =  (TUint8) (iMessageId >> 8);
 	aPtr++;
@@ -5991,7 +6040,7 @@ TUint8* CVoiceMailDeletion::EncodeL(TUint8* aPtr) const
 
 void CVoiceMailDeletion::DecodeL(TGsmuLex8& aVoiceMailInfo)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_DECODEL_1, "CVoiceMailDeletion::DecodeL");
+	LOGGSMU1("CVoiceMailDeletion::DecodeL");
 
 	iMessageId = (((TUint16) aVoiceMailInfo.GetL()) << 8) +
 	              ((TUint16) aVoiceMailInfo.GetL());
@@ -6024,7 +6073,7 @@ CVoiceMailDeletion::CVoiceMailDeletion(const CVoiceMailDeletion&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_CTOR1_1, "CVoiceMailDeletion::CVoiceMailDeletion");
+    LOGGSMU1("CVoiceMailDeletion::CVoiceMailDeletion");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -6041,7 +6090,7 @@ TBool CVoiceMailDeletion::operator==(const CVoiceMailDeletion&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_OPERATOR_1, "CVoiceMailDeletion::operator==");
+    LOGGSMU1("CVoiceMailDeletion::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     return EFalse;
     BULLSEYE_RESTORE
@@ -6059,7 +6108,7 @@ void CVoiceMailDeletion::operator=(const CVoiceMailDeletion&)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_OPERATOR1_1, "CVoiceMailDeletion::operator=");
+    LOGGSMU1("CVoiceMailDeletion::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -6073,7 +6122,7 @@ void CVoiceMailDeletion::operator=(const CVoiceMailDeletion&)
  */
 EXPORT_C CVoiceMailDeletion::~CVoiceMailDeletion()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILDELETION_DTOR_1, "CVoiceMailDeletion::~CVoiceMailDeletion");
+	LOGGSMU1("CVoiceMailDeletion::~CVoiceMailDeletion");
 
 	delete iExtension;
 	} // CVoiceMailDeletion::operator
@@ -6081,7 +6130,7 @@ EXPORT_C CVoiceMailDeletion::~CVoiceMailDeletion()
 
 void CVoiceMailDeletion::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_CONSTRUCTL_1, "CVoiceMailDeletion::ConstructL()");
+	LOGGSMU1("CVoiceMailDeletion::ConstructL()");
 
 	NewBufferL(0);
 	} // CVoiceMailDeletion::ConstructL
@@ -6089,7 +6138,7 @@ void CVoiceMailDeletion::ConstructL()
 
 void CVoiceMailDeletion::NewBufferL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CVOICEMAILDELETION_NEWBUFFERL_1, "CVoiceMailDeletion::NewBufferL()");
+	LOGGSMU1("CVoiceMailDeletion::NewBufferL()");
 
 	HBufC* buffer=HBufC::NewL(aLength);
 	delete iExtension;
@@ -6108,7 +6157,7 @@ void CVoiceMailDeletion::NewBufferL(TInt aLength)
  */
 EXPORT_C CVoiceMailDeletion* CVoiceMailDeletion::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CVOICEMAILDELETION_NEWL_1, "CVoiceMailDeletion::NewL()");
+	LOGGSMU1("CVoiceMailDeletion::NewL()");
 
 	CVoiceMailDeletion* voiceMailDeletion=new(ELeave) CVoiceMailDeletion();
 	CleanupStack::PushL(voiceMailDeletion);
@@ -6118,9 +6167,31 @@ EXPORT_C CVoiceMailDeletion* CVoiceMailDeletion::NewL()
 	} // CVoiceMailDeletion::NewL
 
 
+/*
+void CVoiceMailDeletion::SetExtension(TDesC& aExtension)
+	{
+	LOGGSMU1("CVoiceMailDeletion::SetExtension()");
+
+	TInt length=aExtension.Length();
+	NewBufferL(length);
+	iExtension->Des().Copy(aExtension);
+	} // CVoiceMailDeletion::SetExtension
+
+
+TPtrC CVoiceMailDeletion::Extension() const
+	{
+	LOGGSMU1("CVoiceMailDeletion::Extension()");
+
+	TPtrC ptr;
+	if (iExtension)
+	    ptr.Set(iExtension->Des());
+	return ptr;
+	}*/
+
+
 void CEnhancedVoiceMailDeleteConfirmations::NewExtensionL(TInt aLength)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_NEWEXTENSIONL_1, "CEnhancedVoiceMailDeleteConfirmations::NewExtensionL()");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::NewExtensionL()");
 
 	HBufC* buffer=HBufC::NewL(aLength);
 	delete iExtension;
@@ -6145,7 +6216,7 @@ CEnhancedVoiceMailDeleteConfirmations::CEnhancedVoiceMailDeleteConfirmations() :
  */
 EXPORT_C  CEnhancedVoiceMailDeleteConfirmations::~CEnhancedVoiceMailDeleteConfirmations()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILDELETECONFIRMATIONS_DTOR_1, "CEnhancedVoiceMailDeleteConfirmations::~CEnhancedVoiceMailDeleteConfirmations");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::~CEnhancedVoiceMailDeleteConfirmations");
 
 	delete iExtension;
 	iVoiceMailDeletions->ResetAndDestroy();
@@ -6166,7 +6237,7 @@ CEnhancedVoiceMailDeleteConfirmations::CEnhancedVoiceMailDeleteConfirmations(con
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_CTOR1_1, "CEnhancedVoiceMailDeleteConfirmations::CEnhancedVoiceMailDeleteConfirmations");
+    LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::CEnhancedVoiceMailDeleteConfirmations");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
@@ -6183,7 +6254,7 @@ TBool CEnhancedVoiceMailDeleteConfirmations::operator==(const CEnhancedVoiceMail
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_OPERATOR_1, "CEnhancedVoiceMailDeleteConfirmations::operator==");
+    LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::operator==");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     return EFalse;
     BULLSEYE_RESTORE
@@ -6201,14 +6272,14 @@ void CEnhancedVoiceMailDeleteConfirmations::operator=(const CEnhancedVoiceMailDe
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_OPERATOR1_1, "CEnhancedVoiceMailDeleteConfirmations::operator=");
+    LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::operator=");
     Panic(KGsmuPanicMethodBodyNotImplemented);
     BULLSEYE_RESTORE
     }
 
 void CEnhancedVoiceMailDeleteConfirmations::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_CONSTRUCTL_1, "CEnhancedVoiceMailDeleteConfirmations::ConstructL()");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::ConstructL()");
 
 	NewExtensionL(0);
 
@@ -6225,7 +6296,7 @@ void CEnhancedVoiceMailDeleteConfirmations::ConstructL()
  */
 EXPORT_C  CEnhancedVoiceMailDeleteConfirmations* CEnhancedVoiceMailDeleteConfirmations::NewL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILDELETECONFIRMATIONS_NEWL_1, "CEnhancedVoiceMailDeleteConfirmations::NewL()");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::NewL()");
 
 	CEnhancedVoiceMailDeleteConfirmations* aCEnhancedVoiceMailDeleteConfirmations=new(ELeave) CEnhancedVoiceMailDeleteConfirmations();
 	CleanupStack::PushL(aCEnhancedVoiceMailDeleteConfirmations);
@@ -6248,7 +6319,7 @@ EXPORT_C  CEnhancedVoiceMailDeleteConfirmations* CEnhancedVoiceMailDeleteConfirm
  */
 EXPORT_C TUint8  CEnhancedVoiceMailDeleteConfirmations::NumberOfDeletes()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILDELETECONFIRMATIONS_NUMBEROFDELETES_1, "CEnhancedVoiceMailDeleteConfirmations::NumberOfDeletes()");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::NumberOfDeletes()");
 
 	return iVoiceMailDeletions->Count();
 	} // CEnhancedVoiceMailDeleteConfirmations::NumberOfDeletes
@@ -6270,15 +6341,39 @@ EXPORT_C TUint8  CEnhancedVoiceMailDeleteConfirmations::NumberOfDeletes()
  */
 EXPORT_C RPointerArray<CVoiceMailDeletion>& CEnhancedVoiceMailDeleteConfirmations::GetVoiceMailDeletions()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CENHANCEDVOICEMAILDELETECONFIRMATIONS_GETVOICEMAILDELETIONS_1, "CEnhancedVoiceMailDeleteConfirmations::GetVoiceMailDeletions()");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::GetVoiceMailDeletions()");
 
 	return *iVoiceMailDeletions;
 	} // CEnhancedVoiceMailDeleteConfirmations::GetVoiceMailDeletions
 
 
+/*
+void CEnhancedVoiceMailDeleteConfirmations::SetExtension(TDesC& aExtension)
+	{
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::SetExtension()");
+
+	TInt length=aExtension.Length();
+	NewBufferL(length);
+	iExtension->Des().Copy(aExtension);
+	} // CEnhancedVoiceMailDeleteConfirmations::SetExtension
+
+
+TPtrC CEnhancedVoiceMailDeleteConfirmations::Extension() const
+	{
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::Extension()");
+
+	TPtrC ptr;
+	if (iExtension)
+		{
+		ptr.Set(iExtension->Des());
+		}
+	return ptr;
+	}*/
+
+
 TUint8* CEnhancedVoiceMailDeleteConfirmations::EncodeL(TUint8* aCurrentPtr, CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_ENCODEL_1, "CEnhancedVoiceMailDeleteConfirmations::EncodeL");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::EncodeL");
 
 	TUint8* startPtr   = aCurrentPtr;
 
@@ -6317,7 +6412,7 @@ TUint8* CEnhancedVoiceMailDeleteConfirmations::EncodeL(TUint8* aCurrentPtr, CCnv
 
 void CEnhancedVoiceMailDeleteConfirmations::DecodeL(TGsmuLex8& aVoiceMailInfo, CCnvCharacterSetConverter& aCharacterSetConverter, RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CENHANCEDVOICEMAILDELETECONFIRMATIONS_DECODEL_1, "CEnhancedVoiceMailDeleteConfirmations::DecodeL");
+	LOGGSMU1("CEnhancedVoiceMailDeleteConfirmations::DecodeL");
 
 	CEnhancedVoiceMailBoxInformation::DecodeL(aVoiceMailInfo, aCharacterSetConverter, aFs);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,14 +13,9 @@
 // Description:
 //
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmcustomstubextTraces.h"
-#endif
-
 #include <ctsy/pluginapi/mmmessagemanagercallback.h>
 //#include "Telephony.h"
+#include <ctsy/tflogger.h>
 #include "cmmcustomstubext.h"
 #include <ctsy/pluginapi/cmmdatapackage.h>
 #include "cmmmessagerouter.h"
@@ -66,7 +61,7 @@ TBool CMmCustomStubExt::SupportingIPC(
 //
 void CMmCustomStubExt::InitializeL() 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSTUBEXT_INITIALIZEL_1,  "TSY: CMmCustomStubExt::InitializeL. " );
+TFLOGSTRING( "TSY: CMmCustomStubExt::InitializeL. " );  
     }
 
 // ---------------------------------------------------------------------------
@@ -77,7 +72,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSTUBEXT_INITIAL
 void CMmCustomStubExt::SetMessageRouter( 
     CMmMessageRouter* aMessageRouter )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSTUBEXT_SETMESSAGEROUTER_1,  "TSY: CMmCustomStubExt::SetMessageRouter. " );
+TFLOGSTRING( "TSY: CMmCustomStubExt::SetMessageRouter. " ); 
     iMessageRouter = aMessageRouter;
     }
 

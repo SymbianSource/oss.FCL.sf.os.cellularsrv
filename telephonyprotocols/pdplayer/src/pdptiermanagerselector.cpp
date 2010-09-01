@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
  @internalComponent
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "pdptiermanagerselectorTraces.h"
-#endif
-
 #include "pdptiermanagerselector.h"
 #include "pdptiermanagerfactory.h"
 
@@ -32,7 +26,12 @@
 #include <commsdattypesv1_1_partner.h>
 #include <comms-infras/ss_tiermanagerutils.h>
 #include <es_connpref.h>	//TConnIdList
-#include <es_enum_internal.h>
+#include <es_enum_internal.h>	
+
+#ifdef __CFLOG_ACTIVE
+#define KPdpTierMgrTag KESockTierTag
+_LIT8(KPdpTierMgrSubTag, "pdptiermgr");
+#endif // __CFLOG_ACTIVE
 
 using namespace ESock;
 using namespace CommsDat;
@@ -78,7 +77,7 @@ void CPdpProviderSelector::SelectL(ISelectionNotify& aSelectionNotify)
 	if (iSelectionPrefs.IsEmpty())
 		{
     	//Implicit case on the new setup
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPPROVIDERSELECTOR_SELECTL_1, "CPdpProviderSelector %08x::\tSelectL() Using Default AP:%d",(TUint)this,defaultAccessPoint);
+		__CFLOG_VAR((KPdpTierMgrTag, KPdpTierMgrSubTag, _L8("CPdpProviderSelector %08x::\tSelectL() Using Default AP:%d"),this,defaultAccessPoint));
 		aSelectionNotify.SelectComplete(this,FindOrCreateProviderL(defaultAccessPoint));
 		aSelectionNotify.SelectComplete(this,NULL);
 		return;
@@ -89,7 +88,7 @@ void CPdpProviderSelector::SelectL(ISelectionNotify& aSelectionNotify)
 		{
     	ASSERT(iSelectionPrefs.Scope() & TSelectionPrefs::ESelectFromExisting); //This is always attach
 		const TConnProviderInfo& connProvInfo = static_cast<const TConnProviderInfoPref&>(prefs).Info();
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPPROVIDERSELECTOR_SELECTL_2, "CPdpProviderSelector %08x::\tSelectL() Using TConnProviderInfoPref, AP:%d",(TUint)this,connProvInfo.iInfo[1]);
+		__CFLOG_VAR((KPdpTierMgrTag, KPdpTierMgrSubTag, _L8("CPdpProviderSelector %08x::\tSelectL() Using TConnProviderInfoPref, AP:%d"),this,connProvInfo.iInfo[1]));
 		aSelectionNotify.SelectComplete(this,FindProviderL(connProvInfo.iInfo[1],(TAny*)connProvInfo.iInfo[2]));
 		aSelectionNotify.SelectComplete(this,NULL);
 		return;
@@ -98,7 +97,7 @@ void CPdpProviderSelector::SelectL(ISelectionNotify& aSelectionNotify)
 	if (prefs.ExtensionId() == TConnPref::EConnPrefSnap)
 		{
 		TUint accessPoint = static_cast<const TConnSnapPref&>(prefs).Snap();
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPPROVIDERSELECTOR_SELECTL_3, "CPdpProviderSelector %08x::\tSelectL() Using TConnPrefSnap, AP:%d",(TUint)this,accessPoint);
+		__CFLOG_VAR((KPdpTierMgrTag, KPdpTierMgrSubTag, _L8("CPdpProviderSelector %08x::\tSelectL() Using TConnPrefSnap, AP:%d"),this,accessPoint));
 		aSelectionNotify.SelectComplete(this,FindOrCreateProviderL(accessPoint));
 		aSelectionNotify.SelectComplete(this,NULL);
 		return;
@@ -106,7 +105,7 @@ void CPdpProviderSelector::SelectL(ISelectionNotify& aSelectionNotify)
 
 	if (prefs.ExtensionId() == TConnPref::EConnPrefIdList)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPPROVIDERSELECTOR_SELECTL_4, "CPdpProviderSelector %08x::\tSelectL() Using TConnIdList",(TUint)this);
+		__CFLOG_VAR((KPdpTierMgrTag, KPdpTierMgrSubTag, _L8("CPdpProviderSelector %08x::\tSelectL() Using TConnIdList"),this));
 		const TConnIdList& list = static_cast<const TConnIdList&>(prefs);
 		TInt count = list.Count();
 		for (TInt i = 0; i < count; i++)
@@ -119,7 +118,7 @@ void CPdpProviderSelector::SelectL(ISelectionNotify& aSelectionNotify)
 
 	//In this selector we _must_ have the new preferences, otherwise it means that
 	//a critical, non-recoverable mitsake has occured before when this selector has been picked.
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPPROVIDERSELECTOR_SELECTL_5, "ERROR: CPdpProviderSelector %08x::\tSelectL() Unexpected selection preferences",(TUint)this);
+	__CFLOG_VAR((KPdpTierMgrTag, KPdpTierMgrSubTag, _L8("ERROR: CPdpProviderSelector %08x::\tSelectL() Unexpected selection preferences"),this));
 	User::Panic(KPdpSelectorPanic,EUnExpectedSelectionPreferences);
 	}
 
@@ -127,7 +126,7 @@ void CPdpProviderSelector::SelectL(ISelectionNotify& aSelectionNotify)
 // TPdpSelectorFactory::NewSelectorL - This fn matches a selector
 MProviderSelector* TPdpSelectorFactory::NewSelectorL(const Meta::SMetaData& aSelectionPreferences)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSELECTORFACTORY_NEWSELECTORL_1, "CPdpMetaCprSelectorBase::\tNewL()");
+	__CFLOG_VAR((KPdpTierMgrTag, KPdpTierMgrSubTag, _L8("CPdpMetaCprSelectorBase::\tNewL()")));
 	ASSERT(aSelectionPreferences.IsTypeOf(TSelectionPrefs::TypeId()));
 	CMDBSession* dbs = CMDBSession::NewLC(KCDVersion1_2);
 	CPdpProviderSelector* self = new (ELeave) CPdpProviderSelector(aSelectionPreferences);

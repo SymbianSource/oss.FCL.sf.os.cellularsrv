@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,12 +19,6 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smsumainTraces.h"
-#endif
-
 #include "smsumain.h"
 
 #include "smsstacklog.h"
@@ -36,7 +30,7 @@ GLDEF_C void SmsuPanic(TSmsuPanic aPanic)
     {
     // Ignore in code coverage  - panic method
     BULLSEYE_OFF
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, SMSUPANIC_1, "SMSUPANIC %d", aPanic);
+    LOGSMSU2("SMSUPANIC %d", aPanic);
     _LIT(KSmsuPanic, "SMSU");
     User::Panic(KSmsuPanic,aPanic);
     BULLSEYE_RESTORE

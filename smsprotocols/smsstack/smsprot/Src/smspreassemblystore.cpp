@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,12 +13,6 @@
 // Description:
 //
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspreassemblystoreTraces.h"
-#endif
-
 #include "smsstacklog.h"
 #include "gsmubuf.h"
 #include "smspreassemblystore.h"
@@ -31,7 +25,7 @@
  */
 void CReassemblyStoreUtility::PopulateEntry(TSmsReassemblyEntry& aEntry,const CSmsMessage& aSmsMessage,TInt aNumSmss)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTOREUTILITY_POPULATEENTRY_1, "CReassemblyStoreUtility::PopulateEntry");
+	LOGSMSPROT1("CReassemblyStoreUtility::PopulateEntry");
 	aEntry.SetReference(0);
 	aEntry.SetTotal(1);
 	aEntry.SetCount(1);
@@ -93,7 +87,7 @@ void CReassemblyStoreUtility::PopulateEntry(TSmsReassemblyEntry& aEntry,const CS
  */
 void CReassemblyStoreUtility::PrivatePath(RFs& aFs, TDes& aPath)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTOREUTILITY_PRIVATEPATH_1, "CReassemblyStoreUtility::PrivatePath()");
+	LOGSMSPROT1("CReassemblyStoreUtility::PrivatePath()");
 
 	TDriveUnit driveUnit(KStoreDrive);
 	TDriveName drive=driveUnit.Name();
@@ -130,7 +124,7 @@ This function will be called to allow re-assembly store to initialize/clean-up
 */
 void CReassemblyStore::InitializeL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_INITIALIZEL_1, "CClass0SmsReassemblyStore::InitializeL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::InitializeL()");
 	// Initialize Re-assembly store.
 	OpenStoreL();
 	BeginTransactionLC();
@@ -171,7 +165,8 @@ void CReassemblyStore::InitializeL()
 void CReassemblyStore::PurgeL(const TTimeIntervalMinutes& aTimeIntervalMinutes,TBool aPurgeIncompleteOnly)
 	{
 	//Call purging function
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_PURGEL_1, "CReassemblyStore::PurgeL(): aTimeIntervalMinutes=%d, aPurgeIncompleteOnly=%d",aTimeIntervalMinutes.Int(), aPurgeIncompleteOnly);
+	LOGSMSPROT3("CReassemblyStore::PurgeL(): aTimeIntervalMinutes=%d, aPurgeIncompleteOnly=%d",
+			 aTimeIntervalMinutes.Int(), aPurgeIncompleteOnly);
 
 	// TODO - flag
 	// we could also save the call of the method from the consruction of the smsprot
@@ -179,7 +174,7 @@ void CReassemblyStore::PurgeL(const TTimeIntervalMinutes& aTimeIntervalMinutes,T
 		return;
 
 	TInt count=iEntryArray.Count();
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_PURGEL_2, "CClass0SmsReassemblyStore::PurgeL(): count=%d", count);
+	LOGSMSPROT2("CClass0SmsReassemblyStore::PurgeL(): count=%d", count);
 
 	TTime time;
 	time.UniversalTime();
@@ -214,7 +209,7 @@ void CReassemblyStore::DeleteEnumeratedSIMEntries()
 	{
 	const TInt count = iEntryArray.Count();
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_DELETEENUMERATEDSIMENTRIES_1, "CReassemblyStore::DeleteEnumeratedSIMEntries(): %d messages in RAS", count);
+	LOGSMSPROT2("CReassemblyStore::DeleteEnumeratedSIMEntries(): %d messages in RAS", count);
 
 	TInt index;
 
@@ -239,7 +234,8 @@ It returns the number of complete messages in reassembly store.
 */
 TInt CReassemblyStore::NumberOfCompleteMessages()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_NUMBEROFCOMPLETEMESSAGES_1, "CReassemblyStore::NumberOfCompleteMessages(): iEntryArray.Count()=%d",iEntryArray.Count());
+	LOGSMSPROT2("CReassemblyStore::NumberOfCompleteMessages(): iEntryArray.Count()=%d",
+				iEntryArray.Count());
 
 	//local variable for complete entries
 	TInt count( 0 );
@@ -294,7 +290,8 @@ not yet complete and no segments are stored.
 */
 void CReassemblyStore::AddSegmentToReassemblyStoreL(CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms, TInt& aIndex, TBool& aIsComplete, TBool aIsEnumeration, TInt& aCount, TInt& aTotal)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_ADDSEGMENTTOREASSEMBLYSTOREL_1, "CReassemblyStore::AddSegmentToReassemblyStoreL(): isComplete Message=%d",aSmsMessage.IsComplete());
+	LOGSMSPROT2("CReassemblyStore::AddSegmentToReassemblyStoreL(): isComplete Message=%d",
+				aSmsMessage.IsComplete());
 
 	/*
 	(1) If it is a single segment message create a new message
@@ -327,7 +324,8 @@ void CReassemblyStore::AddSegmentToReassemblyStoreL(CSmsMessage& aSmsMessage,con
 		TInt  segStoreIndex(KErrNotFound);
 
 		MatchPDUToExistingMessage(aSmsMessage, segStoreIndex);
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_ADDSEGMENTTOREASSEMBLYSTOREL_2, "CSmsReassemblyStore::AddSegmentToReassemblyStoreL(): ""segStoreIndex=%d", segStoreIndex);
+		LOGSMSPROT2("CSmsReassemblyStore::AddSegmentToReassemblyStoreL(): "
+					"segStoreIndex=%d", segStoreIndex);
 
 		//
 		// If not yet complete, then we must be part of a multiple PDU message.
@@ -346,7 +344,9 @@ void CReassemblyStore::AddSegmentToReassemblyStoreL(CSmsMessage& aSmsMessage,con
 			UpdateExistingMessageL(aSmsMessage, aGsmSms, aIndex,
 									aIsComplete, isDuplicateMsgRef,
 									isDuplicateSlot);
-			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_ADDSEGMENTTOREASSEMBLYSTOREL_3, "CSmsReassemblyStore::AddSegmentToReassemblyStoreL(): ""aIndex=%d, isComplete=%d, isDuplicateMsgRef=%d, isDuplicateSlot=%d",aIndex, aIsComplete, isDuplicateMsgRef, isDuplicateSlot);
+			LOGSMSPROT5("CSmsReassemblyStore::AddSegmentToReassemblyStoreL(): "
+						"aIndex=%d, isComplete=%d, isDuplicateMsgRef=%d, isDuplicateSlot=%d",
+						aIndex, aIsComplete, isDuplicateMsgRef, isDuplicateSlot);
 
 			if (isDuplicateMsgRef)
 				{
@@ -413,7 +413,7 @@ It deletes the given SMS message from re-assembly store.
 */
 void CReassemblyStore::DeleteMessageL(const CSmsMessage& aSmsMessage, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_DELETEMESSAGEL_1, "CReassemblyStore::DeleteMessageL()");
+	LOGSMSPROT1("CReassemblyStore::DeleteMessageL()");
 	TInt index(0);
 	BeginTransactionLC();
 	if (FindMessageL(aSmsMessage, aPassed, index))
@@ -435,7 +435,7 @@ It updates log server id of the passed message in re-assembly store.
 */
 void CReassemblyStore::UpdateLogServerIdOfMessageL(const CSmsMessage& aSmsMessage, TInt aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_UPDATELOGSERVERIDOFMESSAGEL_1, "CReassemblyStore::UpdateLogServerIdOfMessageL()");
+	LOGSMSPROT1("CReassemblyStore::UpdateLogServerIdOfMessageL()");
     TInt  foundIndex(KErrNotFound);
 	TBool  found(EFalse);
 
@@ -460,7 +460,7 @@ It updates that the given SMS message in re-assembly store is passed to client.
 */
 void CReassemblyStore::SetMessagePassedToClientL(const CSmsMessage& aSmsMessage, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_SETMESSAGEPASSEDTOCLIENTL_1, "CReassemblyStore::SetMessagePassedToClientL()");
+	LOGSMSPROT1("CReassemblyStore::SetMessagePassedToClientL()");
 	TInt index(0);
 
 	BeginTransactionLC();
@@ -490,7 +490,7 @@ It adds a new message segment to the reassembly store and it returns an index to
 */
 void CReassemblyStore::NewMessagePDUL(TInt& aIndex,CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_NEWMESSAGEPDUL_1, "CReassemblyStore::NewMessagePDUL");
+	LOGSMSPROT1("CReassemblyStore::NewMessagePDUL");
 
 	if (aSmsMessage.Time() >= iLastRealTime)
 		{
@@ -545,7 +545,7 @@ void CReassemblyStore::UpdateExistingMessageL(CSmsMessage& aSmsMessage,const TGs
 												TInt aIndex, TBool& aIsComplete,
 												TBool& aDuplicateMsgRef, TBool& aDuplicateSlot)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_1, "CReassemblyStore::UpdateExistingMessageL");
+	LOGSMSPROT1("CReassemblyStore::UpdateExistingMessageL");
 	aIsComplete = EFalse;
 	BeginTransactionLC();
 	UpdateExistingMessageL(aSmsMessage, aGsmSms, aDuplicateMsgRef, aDuplicateSlot);
@@ -574,7 +574,7 @@ It matches the passed message in re-assembly store & returns the index.
 void CReassemblyStore::MatchPDUToExistingMessage(const CSmsMessage& aSmsMessage,
 													TInt& aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_MATCHPDUTOEXISTINGMESSAGE_1, "CReassemblyStore::MatchPDUToExistingMessage()");
+	LOGSMSPROT1("CReassemblyStore::MatchPDUToExistingMessage()");
 
 	aIndex = KErrNotFound;
 
@@ -611,7 +611,7 @@ void CReassemblyStore::MatchPDUToExistingMessage(const CSmsMessage& aSmsMessage,
 			}
 		}
 
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_MATCHPDUTOEXISTINGMESSAGE_2, "CReassemblyStore::MatchPDUToExistingMessage(): reassemblyCount=%d, aIndex=%d", reassemblyCount, aIndex);
+	LOGSMSPROT3("CReassemblyStore::MatchPDUToExistingMessage(): reassemblyCount=%d, aIndex=%d", reassemblyCount, aIndex);
 	} // CReassemblyStore::MatchPDUToExistingMessage
 
 /**
@@ -627,7 +627,7 @@ It retrieves the message from re-assembly store.
 */
 void CReassemblyStore::GetMessageL(TInt aIndex, CSmsMessage& aSmsMessage)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_GETMESSAGEL_1, "CReassemblyStore::GetMessageL()");
+	LOGSMSPROT1("CReassemblyStore::GetMessageL()");
 	const TReassemblyEntry&  entry = iEntryArray[aIndex];
 	RetrieveMessageL(entry, aSmsMessage);
 	}
@@ -647,7 +647,7 @@ TBool CReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 										TBool aPassed,
 										TInt& aIndex)
  	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_FINDMESSAGEL_1, "CReassemblyStore::FindMessageL()");
+	LOGSMSPROT1("CReassemblyStore::FindMessageL()");
 
 	//
 	// Parse the GSM data from the SMS message...
@@ -673,7 +673,7 @@ TBool CReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 			//
 			// Found!
 			//
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_FINDMESSAGEL_2, "CReassemblyStore::FindMessage(): Found! index=%d", index);
+			LOGSMSPROT2("CReassemblyStore::FindMessage(): Found! index=%d", index);
 
 			aIndex = index;
 			
@@ -684,7 +684,7 @@ TBool CReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 	//
 	// Not found...
 	//
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CREASSEMBLYSTORE_FINDMESSAGEL_3, "CReassemblyStore::FindMessage(): Not found!");
+	LOGSMSPROT1("CReassemblyStore::FindMessage(): Not found!");
 
 	return EFalse;
 	} // CReassemblyStore::FindMessageL

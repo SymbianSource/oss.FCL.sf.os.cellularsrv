@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,15 +12,10 @@
 //
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmmockmesshandlerTraces.h"
-#endif
-
 #include "cmmmockmesshandler.h"
 #include "cmmmessagerouter.h"
 #include "cmmcustomstubext.h"
+#include "tflogger.h"
 #include <pcktcs.h>
 #include <ctsy/rmmcustomapi.h>
 
@@ -41,7 +36,7 @@ void CMmMockMessHandler::ConstructL( CMmMessageRouter* aMessageRouter )
     if ( !iTimer )
         {
         iTimer = CPeriodic::NewL( CActive::EPriorityStandard );
- OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_CONSTRUCTL_1, "TSY: CMmMockMessHandler::ConstructL: timer created" );
+ TFLOGSTRING("TSY: CMmMockMessHandler::ConstructL: timer created" );
         }
     }
 
@@ -71,7 +66,7 @@ TInt CMmMockMessHandler::ExtFuncL(
     TInt aIpc, 
     const CMmDataPackage* /*aDataPackage*/)
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_EXTFUNCL_1, "TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
+TFLOGSTRING2("TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
     
     // callback indicators
     TInt ret( KErrNotSupported );
@@ -327,7 +322,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_EXTFU
 //
 void CMmMockMessHandler::GetHomeNetwork()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_GETHOMENETWORK_1, "TSY: CMmMockMessHandler::GetHomeNetwork.");
+TFLOGSTRING("TSY: CMmMockMessHandler::GetHomeNetwork."); 
     
     iMyNetworkInfo.iMode = RMobilePhone::ENetworkModeGsm,
     iMyNetworkInfo.iStatus = RMobilePhone::ENetworkStatusCurrent,
@@ -356,7 +351,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_GETHO
 //
 void CMmMockMessHandler::GetHomeNetworkInfo()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_GETHOMENETWORKINFO_1, "TSY: CMmMockMessHandler::GetHomeNetworkInfo.");
+TFLOGSTRING("TSY: CMmMockMessHandler::GetHomeNetworkInfo.");
     // call for completion 
     TRAP_IGNORE( ExtFuncL( EMobilePhoneGetHomeNetwork, NULL ); );
     }
@@ -369,7 +364,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_GETHO
 //
 TInt CMmMockMessHandler::TimerCallback( TAny* aThis )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMERCALLBACK_1, "TSY: CMmMockMessHandler::TimerCallback.");
+TFLOGSTRING("TSY: CMmMockMessHandler::TimerCallback.");
 
     // cancel the callback timer
     ( ( CMmMockMessHandler* )aThis )->iTimer->Cancel();
@@ -386,7 +381,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMER
     data.PackData( &tmp );
     package = &data; 
     
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMERCALLBACK_2, "TSY: CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetPhoneId  Phone Id : %s", phoneid );
+TFLOGSTRING2("TSY: CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetPhoneId  Phone Id : %d", phoneid );    
     ( ( CMmMockMessHandler* ) aThis )->iMessageRouter->MessageManager()->
         Complete( EMobilePhoneGetPhoneId, package, KErrNone );    
     
@@ -397,7 +392,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TI
     data.PackData( &temp );
     package = &data;
     
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMOCKMESSHANDLER_TIMERCALLBACK_3, "TSY:CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetSubscriberId  Dummy imsi : %s", imsi );
+TFLOGSTRING2("TSY:CMmMockMessHandler::TimerCallback: IPC EMobilePhoneGetSubscriberId  Dummy imsi : %d", imsi );    
     ( ( CMmMockMessHandler* ) aThis )->iMessageRouter->MessageManager()->
         Complete( EMobilePhoneGetSubscriberId, package, KErrNone );
     

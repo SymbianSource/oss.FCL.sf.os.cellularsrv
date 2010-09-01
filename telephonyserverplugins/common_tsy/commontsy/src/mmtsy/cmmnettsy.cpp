@@ -16,12 +16,6 @@
 
 
 //INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmnettsyTraces.h"
-#endif
-
 #include "cmmnettsy.h"
 #include "cmmphonetsy.h"
 #include "cmmtsyreqhandlestore.h"
@@ -31,6 +25,7 @@
 #include "cmmcalllist.h"
 #include "cmmcalltsy.h"
 #include "CMmCommonStaticUtility.h"
+#include "mmtsy_ipcdefs.h"
 #include <ctsy/serviceapi/gsmerror.h>
 
 // ======== MEMBER FUNCTIONS ========
@@ -52,7 +47,7 @@ CMmNetTsy::CMmNetTsy()
 
 void CMmNetTsy::ConstructL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_CONSTRUCTL_1, "TSY: CMmNetTsy::ConstructL");
+TFLOGSTRING("TSY: CMmNetTsy::ConstructL");
 
     //set current NW mode
     iMode = RMobilePhone::ENetworkModeUnknown;
@@ -88,7 +83,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_CONSTRUCTL_1, 
     
 CMmNetTsy::~CMmNetTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DTOR_1, "TSY: CMmNetTsy::~CMmNetTsy");
+TFLOGSTRING("TSY: CMmNetTsy::~CMmNetTsy");
 
     // Delete get detected networks list
     if ( iGetDetectedNetworks )
@@ -112,6 +107,12 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DTOR_1, "TSY: 
     
     // Destroy array        			
     iRegisterationStatusRequests.ResetAndDestroy();
+    
+    // delete buffers for PLMN List 
+	delete iClientIdGetPrefPLMN;
+	delete iGetPrefPLMNList;
+	delete iStorePrefPLMNList;
+	
     }
     
     
@@ -126,7 +127,8 @@ TInt CMmNetTsy::DoExtFuncL(
     const TInt aIpc, // IPC number of request          
     const TDataPackage& aPackage ) // Contains parameters for request
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_1, "TSY: CMmPhoneTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n \t\t\t Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmPhoneTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n \t\t\t Handle:%d", 
+    aIpc, aTsyReqHandle);
 
     TInt ret ( KErrNone );
 
@@ -171,7 +173,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_
                 dataPtr2 ) );
             break;
         case EMobilePhoneGetNetworkName:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_2, "TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneGetNetworkName");
+TFLOGSTRING("TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneGetNetworkName");
             ret = GetNetworkName( 
                 aTsyReqHandle, aPackage.Des1n(), aPackage.Des2n() );
             break;
@@ -182,12 +184,12 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_2, 
             break;
         // Get Cell information
         case EMobilePhoneGetCellInfo:
-        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_3, "TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneGetCellInfo");
+        	TFLOGSTRING("TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneGetCellInfo");
         	ret = GetCellInfoL(aTsyReqHandle, aPackage.Des1n());
         	break;
         // Notify cell information change
         case EMobilePhoneNotifyCellInfoChange:
-        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_4, "TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneNotifyCellInfoChange");
+        	TFLOGSTRING("TSY: CMmNetTsy::DoExtFuncL - EMobilePhoneNotifyCellInfoChange");
         	ret = NotifyCellInfoChangeL(aTsyReqHandle, aPackage.Des1n());
         	break;
         // Notify Current Network Change, no location
@@ -288,7 +290,23 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_2, 
         case EMobilePhoneGetCurrentActiveUSimApplication:
             ret = GetCurrentActiveUSimApplicationL( aTsyReqHandle,
                 reinterpret_cast<RMobilePhone::TAID*>( dataPtr ) );
-            break;                        
+            break;
+		case EMobilePhoneGetPreferredNetworksPhase1:
+			ret = GetPreferredNetworksListPhase1L(aTsyReqHandle, 
+				                                  reinterpret_cast< RMobilePhone::TClientId*>( dataPtr ),
+                                                  reinterpret_cast< TInt* >( dataPtr2 ) );
+			break;
+        case EMobilePhoneGetPreferredNetworksPhase2:
+			ret = GetPreferredNetworksListPhase2
+				    (aTsyReqHandle, reinterpret_cast<RMobilePhone::TClientId*>(aPackage.Ptr1()),
+				     aPackage.Des2n());
+        	break;
+		case EMobilePhoneStorePreferredNetworksList:
+			ret = StorePreferredNetworksListL(aTsyReqHandle, aPackage.Des1n());
+			break;
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
+			ret = NotifyStorePreferredNetworksListChange();
+			break;
         default:
             ret = KErrNotSupported;
             break;
@@ -308,7 +326,7 @@ TInt CMmNetTsy::CancelService(
     const TInt aIpc, // IPC number of request.
     const TTsyReqHandle aTsyReqHandle ) // Request handle of given request.
     {
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_CANCELSERVICE_1, "TSY: CMmNetTsy::CancelService IPC: %d ret: %d", aIpc, aTsyReqHandle);
+	TFLOGSTRING3("TSY: CMmNetTsy::CancelService IPC: %d ret: %d", aIpc, aTsyReqHandle);
     TInt ret ( KErrNotSupported );
     
     //When the clients close their sub-sessions (eg. by calling RLine::Close), 
@@ -434,7 +452,18 @@ TInt CMmNetTsy::CancelService(
                 }
             break;
             }    
-        //Default case
+		case EMobilePhoneGetPreferredNetworksPhase1:
+			ret = GetPreferredNetworksListCancel(aTsyReqHandle);
+			break;
+		case EMobilePhoneStorePreferredNetworksList:
+			// LTSY doesn't have transcation mechanism so that storing request cannot be cancelled.
+			// So this cancellation request is ignored. 
+            ret = KErrNone; 
+			break;
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
+			ret = NotifyStorePreferredNetworksListChangeCancel(aTsyReqHandle);
+			break;
+	        //Default case
         default:
             ret = KErrNone; 
             break;
@@ -1100,7 +1129,7 @@ TInt CMmNetTsy::GetHomeNetwork(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8* aNetworkInfoPckg ) const 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETHOMENETWORK_1, "TSY: CMmNetTsy::GetHomeNetwork" );
+TFLOGSTRING("TSY: CMmNetTsy::GetHomeNetwork" );
 
     TInt ret ( KErrNotSupported );
     
@@ -1175,12 +1204,12 @@ TInt CMmNetTsy::GetCurrentNetwork(
     TDes8* aNetworkInfoPckg,
     RMobilePhone::TMobilePhoneLocationAreaV1* aArea ) const 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTNETWORK_1, "TSY: CMmNetTsy::GetCurrentNetwork");
+TFLOGSTRING("TSY: CMmNetTsy::GetCurrentNetwork");
 
     TInt ret( KErrArgument );
     if ( ERfsStateInfoInactive == iMmPhoneTsy->GetRfStateInfo() )  
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTNETWORK_2, "TSY: CMmNetTsy::GetCurrentNetwork Offline mode ON, request is not allowed! ");
+TFLOGSTRING ("TSY: CMmNetTsy::GetCurrentNetwork Offline mode ON, request is not allowed! ");
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral,
                 KErrGsmOfflineOpNotAllowed );
                 
@@ -1263,10 +1292,10 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTNETW
 //
 TInt CMmNetTsy::GetCellInfoL(const TTsyReqHandle aTsyReqHandle, TDes8* aCellInfoPckg)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCELLINFOL_1, "TSY: CMmNetTsy::GetCellInfoL; Handle : %d", aTsyReqHandle);
+    TFLOGSTRING2("TSY: CMmNetTsy::GetCellInfoL; Handle : %d", aTsyReqHandle);
     if(sizeof(RMobilePhone::TMobilePhoneCellInfoV9) > aCellInfoPckg->MaxLength())
     	{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCELLINFOL_2, "TSY: CMmNetTsy::GetCellInfo Bad size argument");
+        TFLOGSTRING ("TSY: CMmNetTsy::GetCellInfo Bad size argument");
         // Complete the request with appropiate error        
         return KErrArgument;
     	}
@@ -1275,14 +1304,14 @@ TInt CMmNetTsy::GetCellInfoL(const TTsyReqHandle aTsyReqHandle, TDes8* aCellInfo
     RMobilePhone::TMultimodeType& cellInfoTemp = ( *cellInfoTempPckg )();
 	if(cellInfoTemp.ExtensionId()!=KEtelExtMultimodeV9)
 		{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCELLINFOL_3, "TSY: CMmNetTsy::GetCellInfo Bad version argument");
+        TFLOGSTRING ("TSY: CMmNetTsy::GetCellInfo Bad version argument");
         // Complete the request with appropiate error        
         return KErrArgument;
 		}
     TInt ret( KErrNotSupported );
     if ( ERfsStateInfoInactive == iMmPhoneTsy->GetRfStateInfo() )  
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCELLINFOL_4, "TSY: CMmNetTsy::GetCellInfo Offline mode ON, request is not allowed! ");
+        TFLOGSTRING ("TSY: CMmNetTsy::GetCellInfo Offline mode ON, request is not allowed! ");
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral, KErrGsmOfflineOpNotAllowed );
                 
         // Complete the request with appropiate error
@@ -1476,7 +1505,7 @@ void CMmNetTsy::HandleCellInfoUpdate(CMmDataPackage* aDataPackage,
         	}
 
         //Complete the client request
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_HANDLECELLINFOUPDATE_1, "TSY: CMmNetTsy::CompleteCellInfoReq client: %d; Handle: %d", i, req.iReqHandle );
+        TFLOGSTRING3("TSY: CMmNetTsy::CompleteCellInfoReq client: %d; Handle: %d", i, req.iReqHandle );
         iMmPhoneTsy->ReqCompleted( req.iReqHandle, aError );
 		}
     // Destroy array   
@@ -1505,13 +1534,13 @@ TInt CMmNetTsy::GetNetworkName(
     TDes8* aNetworkNamePckg,
     TDes8* aPlmnPckg ) const   
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME_1, "TSY: CMmNetTsy::GetNetworkName");
+TFLOGSTRING("TSY: CMmNetTsy::GetNetworkName");
     TInt ret ( KErrGeneral );
 
     if( sizeof(RMobilePhone::TMobilePhoneNetworkNameV3) > aNetworkNamePckg->MaxLength() ||
         sizeof(RMobilePhone::TMobilePhoneOPlmnV3) > aPlmnPckg->MaxLength() )
 	  	{
-	  	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME_2, "TSY: CMmNetTsy::GetNetworkName bad size argument");
+	  	TFLOGSTRING ("TSY: CMmNetTsy::GetNetworkName bad size argument");
 	  	// Complete the request with appropiate error        
 	  	ret = KErrArgument;
 	  	}
@@ -1536,11 +1565,11 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME
         networkName.iShortName.Copy( networkInfo.iShortName );
         plmn.iCountryCode.Copy( networkInfo.iCountryCode );
         plmn.iNetworkId.Copy( networkInfo.iNetworkId );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME_3, "TSY: CMmNetTsy::GetNetworkName, iLongName: %S", networkName.iLongName);
+TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkName, iLongName: %S", &networkName.iLongName);
 
         if( KErrNone == ret )
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME_4, "TSY: CMmNetTsy::GetNetworkName - completing, ret: %d", ret);
+TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkName - completing, ret: %d", ret);
             iMmPhoneTsy->ReqCompleted( aTsyReqHandle, ret );
             }
         }
@@ -1559,7 +1588,7 @@ TInt CMmNetTsy::GetCurrentNetworkNoLocation(
     const TTsyReqHandle aTsyReqHandle, 
     TDes8* aNetworkInfoPckg ) const 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTNETWORKNOLOCATION_1, "TSY: CMmNetTsy::GetCurrentNetworkNoLocation");
+TFLOGSTRING("TSY: CMmNetTsy::GetCurrentNetworkNoLocation"); 
   
     TInt ret( KErrNotSupported );
     
@@ -1627,7 +1656,7 @@ TInt CMmNetTsy::NotifyCurrentNetworkNoLocationChangeL(
     const TTsyReqHandle aTsyReqHandle,
     TDes8* aNetworkInfoPckg )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCURRENTNETWORKNOLOCATIONCHANGEL_1, "TSY: CMmNetTsy::NotifyCurrentNetworkNoLocationChangeL");
+TFLOGSTRING("TSY: CMmNetTsy::NotifyCurrentNetworkNoLocationChangeL");
      
     // save the handle and the request type
     iMmPhoneTsy->iReqHandleType =
@@ -1652,7 +1681,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCURRENTN
 TInt CMmNetTsy::NotifyCurrentNetworkNoLocationChangeCancel(
     const TTsyReqHandle aTsyReqHandle ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCURRENTNETWORKNOLOCATIONCHANGECANCEL_1, "TSY: CMmNetTsy::NotifyCurrentNetworkNoLocationChangeCancel");
+TFLOGSTRING("TSY: CMmNetTsy::NotifyCurrentNetworkNoLocationChangeCancel");
     
     // find the correct ReqHandle...  
     for ( TInt i = 0; i < iNotifyCurrentNwNoLocationRequests.Count(); i++ )
@@ -1688,7 +1717,7 @@ TInt CMmNetTsy::NotifyCurrentNetworkChangeL(
     TDes8* aNetworkInfoPckg, 
     RMobilePhone::TMobilePhoneLocationAreaV1* aArea ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCURRENTNETWORKCHANGEL_1, "TSY: CMmNetTsy::NotifyCurrentNetworkChangeL");
+TFLOGSTRING("TSY: CMmNetTsy::NotifyCurrentNetworkChangeL");
 
     TInt ret = KErrArgument;
     TInt length = aNetworkInfoPckg->MaxLength();
@@ -1726,7 +1755,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCURRENTN
 TInt CMmNetTsy::NotifyCurrentNetworkChangeCancel(
     const TTsyReqHandle aTsyReqHandle ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCURRENTNETWORKCHANGECANCEL_1, "TSY: CMmNetTsy::NotifyCurrentNetworkChangeCancel");
+TFLOGSTRING("TSY: CMmNetTsy::NotifyCurrentNetworkChangeCancel");
 
     // find the correct ReqHandle...  
     for ( TInt i = 0; i < iNotifyCurrentNwRequests.Count(); i++ )
@@ -1761,14 +1790,14 @@ void CMmNetTsy::CompleteNotifyCurrentNetworkChange(
     CMmDataPackage* aDataPackage, 
     TInt aResult ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_1, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange");
+TFLOGSTRING("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange");
     
     // create a copy of the NW info sended by the LTSY
     RMobilePhone::TMobilePhoneNetworkInfoV8 networkInfo;
     RMobilePhone::TMobilePhoneLocationAreaV1 locationArea;
     
     aDataPackage->UnPackData ( networkInfo, locationArea );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_2, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, new extension ID: %d", networkInfo.ExtensionId() );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, new extension ID: %d", networkInfo.ExtensionId() ); 
    
     // empty additional extension information...
     if ( KETelExtMultimodeV1 == networkInfo.ExtensionId() )
@@ -1810,17 +1839,17 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFY
         TTsyReqHandle reqHandle =
             iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
             CMmPhoneTsy::EMultimodePhoneNotifyCurrentNetworkChange );            
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_3, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, req handler =%u", reqHandle );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, req handler =%u", reqHandle );
 
         if ( CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle )
             {
             TInt requestCount = iNotifyCurrentNwRequests.Count();            
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_4, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, requestCount: %d ", requestCount );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, requestCount: %d ", requestCount ); 
 
             // Complete all notification requests...
             for ( TInt i = 0; i < requestCount; i++ )
                 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_5, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, Loc; array: %d ", i );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, Loc; array: %d ", i );                 
                
                 // copy the infromation to client, 0 = first index
                 switch ( ( *( iNotifyCurrentNwRequests[ 0 ].
@@ -1909,17 +1938,17 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFY
         TTsyReqHandle reqHandle =
           iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
           CMmPhoneTsy::EMultimodePhoneNotifyCurrentNetworkNoLocationChange );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_6, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, req handler NoLoc =%u", reqHandle );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, req handler NoLoc =%u", reqHandle );
 
         if ( CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle )
             {
             TInt requestCount = iNotifyCurrentNwNoLocationRequests.Count();            
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_7, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, requestCount NoLoc: %d ", requestCount );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, requestCount NoLoc: %d ", requestCount );
             
             // Complete all requests...
             for ( TInt indx = 0; indx < requestCount; indx++ )
                 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYCURRENTNETWORKCHANGE_8, "TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, NoLoc; array: %d ", indx );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyCurrentNetworkChange, NoLoc; array: %d ", indx );                 
                 
                 // copy the infromation to client, 0 = first index
                 switch ( ( *( iNotifyCurrentNwNoLocationRequests[ 0 ].
@@ -2007,10 +2036,10 @@ TInt CMmNetTsy::NotifyCellInfoChangeL(
     const TTsyReqHandle aTsyReqHandle,
     TDes8* aCellInfoPckg) 
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCELLINFOCHANGEL_1, "TSY: CMmNetTsy::NotifyCellInfoChangeL; Handel: %d", aTsyReqHandle);
+    TFLOGSTRING2("TSY: CMmNetTsy::NotifyCellInfoChangeL; Handel: %d", aTsyReqHandle);
     if(sizeof(RMobilePhone::TMobilePhoneCellInfoV9) > aCellInfoPckg->MaxLength())
     	{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCELLINFOCHANGEL_2, "TSY: CMmNetTsy::NotifyCellInfoChangeL Bad size argument");
+        TFLOGSTRING ("TSY: CMmNetTsy::NotifyCellInfoChangeL Bad size argument");
         // Complete the request with appropiate error        
         return KErrArgument;
     	}
@@ -2019,7 +2048,7 @@ TInt CMmNetTsy::NotifyCellInfoChangeL(
     RMobilePhone::TMultimodeType& cellInfoTemp = ( *cellInfoTempPckg )();
 	if(cellInfoTemp.ExtensionId()!=KEtelExtMultimodeV9)
 		{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCELLINFOCHANGEL_3, "TSY: CMmNetTsy::GetCellInfo Bad version argument");
+        TFLOGSTRING ("TSY: CMmNetTsy::GetCellInfo Bad version argument");
         // Complete the request with appropiate error        
         return KErrArgument;
 		}
@@ -2052,7 +2081,7 @@ TInt CMmNetTsy::NotifyCellInfoChangeL(
 TInt CMmNetTsy::GetCellInfoCancel(
     const TTsyReqHandle aTsyReqHandle ) 
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCELLINFOCANCEL_1, "TSY: CMmNetTsy::GetCellInfoCancel; Handle: %d", aTsyReqHandle);
+    TFLOGSTRING2("TSY: CMmNetTsy::GetCellInfoCancel; Handle: %d", aTsyReqHandle);
     // find the correct ReqHandle...  
 	const TInt KReqCount = iCellInfoRequests.Count();
     for ( TInt i = 0; i < KReqCount; i++ )
@@ -2085,7 +2114,7 @@ TInt CMmNetTsy::GetCellInfoCancel(
 TInt CMmNetTsy::NotifyCellInfoChangeCancel(
     const TTsyReqHandle aTsyReqHandle ) 
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYCELLINFOCHANGECANCEL_1, "TSY: CMmNetTsy::NotifyCellInfoChangeCancel; Handle: %d", aTsyReqHandle);
+    TFLOGSTRING2("TSY: CMmNetTsy::NotifyCellInfoChangeCancel; Handle: %d", aTsyReqHandle);
 
     // find the correct ReqHandle...  
 	const TInt KReqCount = iNotifyCellInfoRequests.Count();
@@ -2120,7 +2149,7 @@ TInt CMmNetTsy::GetNetworkRegistrationStatusL(
     const TTsyReqHandle aTsyReqHandle, 
     RMobilePhone::TMobilePhoneRegistrationStatus* aStatus ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_1, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL Handle: %d", aTsyReqHandle);
+TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusL Handle: %d", aTsyReqHandle);
     
 	// If the modem is not ready (Common TSY has not received EMmTsyBootNotifyModemStatusReadyIPC
 	// from LTSY), we don't need to ask. Update registration status and complete client immediately. 
@@ -2151,17 +2180,15 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGI
 			//get mode specific information 
 			TInt ret ( iMmPhoneTsy->iMmPhoneExtInterface->
 					GetNetworkRegistrationStatusL() );
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_2, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Sending request to LTSY" );
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_3, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Modem not ready" );
 
             if ( KErrNone != ret )
                 {
-                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_4, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Complete with error %d", ret );
+                TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Complete with error %d", ret );
                 iMmPhoneTsy->ReqCompleted( aTsyReqHandle, ret );
                 }
             else
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_5, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Client to buffer" );
+TFLOGSTRING("TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Client to buffer" );
                 // save request handle in queue
     			TGetNetworkRegisterationRequest* req = 
     				new (ELeave) TGetNetworkRegisterationRequest();
@@ -2194,13 +2221,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGI
 TInt CMmNetTsy::GetNetworkRegistrationStatusCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {     
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSCANCEL_1, "TSY: CMmNetTsy::GetNetworkRegistrationStatusCancel Handle: %d", aTsyReqHandle);
+TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatusCancel Handle: %d", aTsyReqHandle);      
 
     TInt requestCount = iRegisterationStatusRequests.Count(); 
    
     if( 1 == requestCount )
     	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSCANCEL_2, "TSY: CMmNetTsy::GetNetworkRegistrationStatusCancel 1 == requestCount  ");
+TFLOGSTRING("TSY: CMmNetTsy::GetNetworkRegistrationStatusCancel 1 == requestCount  ");     	
         //reset the req handle
 		TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
         	CMmPhoneTsy::EMultimodePhoneGetNetworkRegistrationStatus );    	
@@ -2232,7 +2259,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGI
 void CMmNetTsy::CompleteGetNetworkRegistrationStatus(
     TInt aErrorValue )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETEGETNETWORKREGISTRATIONSTATUS_1, "TSY: CMmNetTsy::CompleteGetNetworkRegistrationStatus");
+TFLOGSTRING("TSY: CMmNetTsy::CompleteGetNetworkRegistrationStatus");       
      // Reset the req handle
     TTsyReqHandle reqHandle =
         iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2250,7 +2277,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETEGETNET
             
             //set value in client side
             *(req->iRetGetNWRegistrationStatus) = iNWRegistrationStatus;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETEGETNETWORKREGISTRATIONSTATUS_2, "TSY: CMmNetTsy::CompleteGetNetworkRegistrationStatus client: %d", i );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteGetNetworkRegistrationStatus client: %d", i );
         
 			//Complete the client request
             iMmPhoneTsy->ReqCompleted( req->iReqHandle, aErrorValue );
@@ -2306,7 +2333,7 @@ void CMmNetTsy::CompleteNotifyNetworkRegistrationStatusChange(
     CMmDataPackage* aDataPackage, //Contains information for client side
     TInt aResult ) // result code 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYNETWORKREGISTRATIONSTATUSCHANGE_1,  "TSY: CMmNetTsy::CompleteNotifyNetworkRegistrationStatusChange" );
+TFLOGSTRING( "TSY: CMmNetTsy::CompleteNotifyNetworkRegistrationStatusChange" );
 
     RMobilePhone::TMobilePhoneRegistrationStatus* regStatus = NULL;
     RMobilePhone::TMobilePhoneNetworkStatus* nwStatus = NULL;
@@ -2321,7 +2348,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFY
 
         // Store NEW registration status
         iNWRegistrationStatus = *regStatus;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETENOTIFYNETWORKREGISTRATIONSTATUSCHANGE_2, "TSY: CMmNetTsy::CompleteNotifyNetworkRegistrationStatusChange, status: %d", iNWRegistrationStatus );
+TFLOGSTRING2("TSY: CMmNetTsy::CompleteNotifyNetworkRegistrationStatusChange, status: %d", iNWRegistrationStatus );
 
         //reset req handle. Returns the deleted req handle
         TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
@@ -2564,7 +2591,7 @@ RMobilePhone::TMobilePhoneNetworkMode CMmNetTsy::GetNetworkMode() const
 RMobilePhone::TMobilePhoneRegistrationStatus 
     CMmNetTsy::GetNetworkRegistrationStatus() const
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKMODE_1, "TSY: CMmNetTsy::GetNetworkRegistrationStatus: %d", iNWRegistrationStatus );
+TFLOGSTRING2("TSY: CMmNetTsy::GetNetworkRegistrationStatus: %d", iNWRegistrationStatus );
     return iNWRegistrationStatus;
     }
 
@@ -2580,7 +2607,7 @@ TInt CMmNetTsy::GetNetworkSecurityLevel(
         aNetworkSecurityLevel ) const //Network security level
         
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKSECURITYLEVEL_1, "TSY: CMmNetTsy::GetNetworkSecurityLevel");
+    TFLOGSTRING("TSY: CMmNetTsy::GetNetworkSecurityLevel");
     iMmPhoneTsy->PhoneExtInterface()->GetNetworkSecurityLevel (
         *aNetworkSecurityLevel );
 
@@ -2598,7 +2625,7 @@ TInt CMmNetTsy::NotifyNetworkSecurityLevelChange(
     RMobilePhone::TMobilePhoneNetworkSecurity*
         aNetworkSecurityLevel ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYNETWORKSECURITYLEVELCHANGE_1, "TSY: CMmNetTsy::NotifyNetworkSecurityLevelChange");
+    TFLOGSTRING("TSY: CMmNetTsy::NotifyNetworkSecurityLevelChange");
     iMmPhoneTsy->iReqHandleType = 
         CMmPhoneTsy::EMultimodePhoneNotifyNetworkSecurityLevelChange;
     iRetNetworkSecurityLevel = aNetworkSecurityLevel;
@@ -2611,7 +2638,7 @@ TInt CMmNetTsy::NotifyNetworkSecurityLevelChange(
 //
 TInt CMmNetTsy::NotifyNetworkSecurityLevelChangeCancel()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_NOTIFYNETWORKSECURITYLEVELCHANGECANCEL_1, "TSY: CMmNetTsy::NotifyNetworkSecurityLevelChangeCancel");
+    TFLOGSTRING("TSY: CMmNetTsy::NotifyNetworkSecurityLevelChangeCancel");
     iRetNetworkSecurityLevel = NULL;
     TTsyReqHandle reqHandle =
         iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2795,7 +2822,7 @@ TBool CMmNetTsy::IsNetworkInfoChanged(
     const RMobilePhone::TMobilePhoneNetworkInfoV8& previousNetInfo, 
     const RMobilePhone::TMobilePhoneNetworkInfoV8& newNetInfo ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_ISNETWORKINFOCHANGED_1, "TSY: CMmNetTsy::IsNetworkInfoChanged" );
+TFLOGSTRING("TSY: CMmNetTsy::IsNetworkInfoChanged" );
 
     TBool ret ( ETrue );
 
@@ -2884,11 +2911,11 @@ void CMmNetTsy::ReadVariantOptions()
                 }    
             //close the file
             file.Close();
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPTIONS_1, "TSY:CMmNetTsy::ReadVariantOptions:File successfully read.");
+TFLOGSTRING("TSY:CMmNetTsy::ReadVariantOptions:File successfully read.");
             }
         else
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPTIONS_2, "TSY:CMmNetTsy::ReadVariantOptions:Could not open file Z:\\private\\101f7989\\operatorVariants.ini, error=%d",err);
+TFLOGSTRING2("TSY:CMmNetTsy::ReadVariantOptions:Could not open file Z:\\private\\101f7989\\operatorVariants.ini, error=%d",err);
             }
 
         // close connection to file server
@@ -2896,9 +2923,9 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPT
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPTIONS_3, "TSY:CMmNetTsy::ReadVariantOptions:Could not connect to file server.");
+TFLOGSTRING("TSY:CMmNetTsy::ReadVariantOptions:Could not connect to file server.");
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPTIONS_4, "TSY:CMmNetTsy::ReadVariantOptions:iCipheringIndicatorForcedOff=%d",iCipheringIndicatorForcedOff);
+TFLOGSTRING2("TSY:CMmNetTsy::ReadVariantOptions:iCipheringIndicatorForcedOff=%d",iCipheringIndicatorForcedOff);
     }
 
 // ---------------------------------------------------------------------------
@@ -2909,7 +2936,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPT
 //
 TBool CMmNetTsy::CipheringIndicatorForcedOff()
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_CIPHERINGINDICATORFORCEDOFF_1, "TSY:CMmNetTsy::CipheringIndicatorForcedOff:iCipheringIndicatorForcedOff=%d",iCipheringIndicatorForcedOff);
+    TFLOGSTRING2("TSY:CMmNetTsy::CipheringIndicatorForcedOff:iCipheringIndicatorForcedOff=%d",iCipheringIndicatorForcedOff);
     return iCipheringIndicatorForcedOff;
     }
 
@@ -2924,7 +2951,7 @@ TInt CMmNetTsy::GetAuthorizationInfoPhase1L(
 	RMobilePhone::TClientId* aClient,
 	TInt* aBufSize )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETAUTHORIZATIONINFOPHASE1L_1, "TSY: CMmNetTsy::AuthorizationInfoPhase1L");
+TFLOGSTRING("TSY: CMmNetTsy::AuthorizationInfoPhase1L");
 
     TTsyReqHandle getAuthorizationInfoPhase1Handle =
         iMmPhoneTsy->iTsyReqHandleStore->GetTsyReqHandle(
@@ -2974,7 +3001,7 @@ void CMmNetTsy::ProcessGetAuthorizationInfoPhase1L(
 	CMmDataPackage* aDataPackage,
 	TInt aError )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_PROCESSGETAUTHORIZATIONINFOPHASE1L_1, "TSY: CMmNetTsy::ProcessGetAuthorizationInfoPhase1L");
+TFLOGSTRING("TSY: CMmNetTsy::ProcessGetAuthorizationInfoPhase1L");
 
     // Fetch the request handle
     TTsyReqHandle reqHandle =
@@ -3017,7 +3044,7 @@ TInt CMmNetTsy::GetAuthorizationInfoPhase2L(
 	RMobilePhone::TClientId* aClient,
 	TDes8* aBuffer )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETAUTHORIZATIONINFOPHASE2L_1, "TSY: CMmNetTsy::GetAuthorizationInfoPhase2L");
+TFLOGSTRING("TSY: CMmNetTsy::GetAuthorizationInfoPhase2L");
 	
 	TInt error = KErrNone;
 	
@@ -3098,7 +3125,7 @@ TInt CMmNetTsy::GetCurrentActiveUSimApplicationL(
     const TTsyReqHandle aTsyReqHandle,
     RMobilePhone::TAID* aAID )
     {  
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTACTIVEUSIMAPPLICATIONL_1, "TSY:CMmNetTsy::GetCurrentActiveUSimApplicationL");
+TFLOGSTRING("TSY:CMmNetTsy::GetCurrentActiveUSimApplicationL");
 	TTsyReqHandle getCurrentActiveUSimApplicationHandle =
 	    iMmPhoneTsy->iTsyReqHandleStore->GetTsyReqHandle(
 	    CMmPhoneTsy::EMultimodePhoneGetCurrentActiveUSimApplication );
@@ -3141,7 +3168,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTACTI
 //
 TInt CMmNetTsy::GetCurrentActiveUSimApplicationCancel()
     { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETCURRENTACTIVEUSIMAPPLICATIONCANCEL_1, "TSY: CMmNetTsy::GetCurrentActiveUSimApplicationCancel");
+TFLOGSTRING("TSY: CMmNetTsy::GetCurrentActiveUSimApplicationCancel");
     //reset the req handle
     TTsyReqHandle reqHandle =
         iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -3166,7 +3193,7 @@ void CMmNetTsy::CompleteGetCurrentActiveUSimApplication(
     CMmDataPackage* aDataPackage,
     TInt aErrorValue )
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_COMPLETEGETCURRENTACTIVEUSIMAPPLICATION_1, "TSY: CMmNetTsy::CompleteGetCurrentActiveUSimApplication");
+	TFLOGSTRING("TSY: CMmNetTsy::CompleteGetCurrentActiveUSimApplication");
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle =
         iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -3186,7 +3213,345 @@ void CMmNetTsy::CompleteGetCurrentActiveUSimApplication(
         iMmPhoneTsy->ReqCompleted( reqHandle, aErrorValue );	        				                          
         }    	        
     }
-    
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::GetPreferredNetworksListPhase1L
+// Returns minimum size of a buffer to retreive the current Preferred Networks List from SIM
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::GetPreferredNetworksListPhase1L(const TTsyReqHandle /*aTsyReqHandle*/, 
+    											 RMobilePhone::TClientId const* aId, TInt* aBufSize)
+	{
+	TFLOGSTRING("TSY: CMmNetTsy::GetPreferredNetworksListPhase1");	
+	TTsyReqHandle getPrefPLMNHandle = iMmPhoneTsy->iTsyReqHandleStore->GetTsyReqHandle
+		                              (CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1);
+	
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != getPrefPLMNHandle)
+		{
+        // The request is already processing because of previous request
+        // Complete request with status value informing the client about 
+        // the situation.
+		TFLOGSTRING("TSY GetPreferredNetworksListPhase1: the request is already processing because previous request.");
+		return KErrServerBusy;
+        }
+	else
+		{
+		TInt ret = iMmPhoneTsy->iMessageManager->HandleRequestL(ECtsyPhoneGetPreferredNetworksReq);
+
+		if(KErrNone == ret)
+			{
+			TFLOGSTRING("TSY: Successfully send IPC EMobilePhoneGetPreferredNetworksPhase1 to LTSY");
+			
+			iMmPhoneTsy->iReqHandleType = CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1;
+			
+			// if iGetPrefPLMNList, iClientIdGetPrefPLMN, and/or iBufSizeGetPrefPLMN are not NULL, phase 1 is called twice without calling phase 2.
+			// In this case, we should ignore the previous phase 1 and delete buffers.
+			delete iGetPrefPLMNList;
+			iGetPrefPLMNList = NULL;
+			iBufSizeGetPrefPLMN = aBufSize;
+			delete iClientIdGetPrefPLMN;
+			iClientIdGetPrefPLMN = NULL;
+			// Copy client id (session and subsession handle). it's used for
+            // matching phase 1 and 2 of a request
+			iClientIdGetPrefPLMN = new ( ELeave ) RMobilePhone::TClientId( *aId ); 
+			
+			}
+		else
+			{
+			TFLOGSTRING2("TSY: GetPreferredNetworksListPhase1L LTSY returns error=%d", ret);			
+			return ret;
+			}
+		}
+	return KErrNone;
+	
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::GetPreferredNetworksListPhase2
+// Copies the current Preferred Networks List in the given buffer
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::GetPreferredNetworksListPhase2(const TTsyReqHandle aTsyReqHandle, 
+    											 RMobilePhone::TClientId const* aId, TDes8* aBuffer)
+	{
+	TFLOGSTRING2("TSY: CMmNetTsy::GetPreferredNetworksListPhase2: aTsyReqHandle=%d", aTsyReqHandle);	
+	TInt ret = KErrNone;
+	
+	if( ( iClientIdGetPrefPLMN->iSessionHandle == aId->iSessionHandle ) &&
+        ( iClientIdGetPrefPLMN->iSubSessionHandle == aId->iSubSessionHandle ) )
+		{
+		TFLOGSTRING3("TSY GetPreferredNetworksListPhase2: Phase 1 and Phase 2 client ID matched, Copy the streamed list to client buffer. session %d, subsession %d.",
+				iClientIdGetPrefPLMN->iSessionHandle, iClientIdGetPrefPLMN->iSubSessionHandle);		
+		if(iGetPrefPLMNList != NULL)
+			{
+			aBuffer->Copy( iGetPrefPLMNList->Ptr( 0 ) );
+			// MmPhoneTsy completes the request only if return an error
+			// so the request without error code has to complete here
+			iMmPhoneTsy->ReqCompleted(aTsyReqHandle, KErrNone);
+			}
+		else
+			{
+			ret = KErrNotReady;
+			}
+		}
+	else
+		{
+		TFLOGSTRING("TSY GetPreferredNetworksListPhase2: Phase 1 and Phase 2 client ID not matched, complete request with KErrCorrupt");			
+		ret = KErrCorrupt;
+		}
+
+	delete iClientIdGetPrefPLMN;
+	iClientIdGetPrefPLMN = NULL;
+
+	delete iGetPrefPLMNList;
+	iGetPrefPLMNList = NULL;
+	
+	iBufSizeGetPrefPLMN = NULL;
+	
+	return ret;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::StorePreferredNetworksListL
+// Stores the Preferred Networks List into the SIM
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::StorePreferredNetworksListL(const TTsyReqHandle /*aTsyReqHandle*/, TDes8* aBuffer)
+	{
+	TFLOGSTRING("TSY: CMmNetTsy::StorePreferredNetworksList");	
+
+	TTsyReqHandle storePrefPLMNHandle = 
+			iMmPhoneTsy->iTsyReqHandleStore->GetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneStorePreferredNetworksList );
+
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != storePrefPLMNHandle)
+        {
+        // The request is already processing because of previous request.
+        // Complete request with status value informing the client about 
+        // the situation.
+		TFLOGSTRING("TSY StorePreferredNetworksListL: the request is already processing because previous request.");
+		return KErrServerBusy;
+        }
+    else
+        {
+    	iMmPhoneTsy->iReqHandleType = CMmPhoneTsy::EMultimodePhoneStorePreferredNetworksList;
+		delete iStorePrefPLMNList;
+		iStorePrefPLMNList = NULL;
+		iStorePrefPLMNList = CMobilePhoneStoredNetworkList::NewL();
+		iStorePrefPLMNList->RestoreL(*aBuffer);
+
+		CMmDataPackage package;
+		package.PackData(iStorePrefPLMNList);
+		TInt ret = iMmPhoneTsy->iMessageManager->HandleRequestL(ECtsyPhoneStorePreferredNetworksListReq, &package);
+		if(KErrNone == ret)
+			{
+			TFLOGSTRING("TSY StorePreferredNetworksListL: Successfully send IPC EMobilePhoneStorePreferredNetworksList to LTSY");
+
+			}
+		else
+			{
+			TFLOGSTRING2("TSY StorePreferredNetworksListL: LTSY returns error=%d", ret);		
+			delete iStorePrefPLMNList;
+			iStorePrefPLMNList = NULL;
+			return ret;
+			}
+    	}
+
+	return KErrNone;
+	}
+
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::GetPreferredNetworksListCancel
+// Cancels the request for Getting Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::GetPreferredNetworksListCancel(const TTsyReqHandle /*aTsyReqHandle*/)
+	{
+	TFLOGSTRING("TSY: CMmPhoneTsy::GetPreferredNetworksListCancel");
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle(CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1); 
+
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle)
+		{
+		iBufSizeGetPrefPLMN = NULL;
+		delete iClientIdGetPrefPLMN;
+		iClientIdGetPrefPLMN = NULL;
+		delete iGetPrefPLMNList;
+		iGetPrefPLMNList = NULL;
+        iMmPhoneTsy->ReqCompleted( reqHandle, KErrCancel );        
+		}
+	//if reqHandle is 0, it means  phase 1 has completed and the list retrieval cannot be cancelled
+	return KErrNone;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::NotifyStorePreferredNetworksListChange
+// Subscribes the notification for storing Preferred networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::NotifyStorePreferredNetworksListChange()
+	{
+	TFLOGSTRING("TSY: CMmPhoneTsy::NotifyStorePreferredNetworksListChange");	
+	iMmPhoneTsy->iReqHandleType = CMmPhoneTsy::EMultimodePhoneNotifyStorePreferredNetworksListChange;
+
+	return KErrNone;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::NotifyStorePreferredNetworksListChangeCancel
+// Cancels the notification request for storing Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TInt CMmNetTsy::NotifyStorePreferredNetworksListChangeCancel(const TTsyReqHandle aTsyReqHandle)
+	{
+	TFLOGSTRING2("TSY: CMmNetTsy::NotifyStorePreferredNetworksListChangeCancel: aTsyReqHandle=%d", aTsyReqHandle);
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle
+		                       (CMmPhoneTsy::EMultimodePhoneNotifyStorePreferredNetworksListChange);	
+
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle)
+		{
+		iMmPhoneTsy->ReqCompleted( aTsyReqHandle, KErrCancel );
+		}
+	return KErrNone;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::CompleteGetPreferredNetworksListPhase1
+// Completes the notification request for storing Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmNetTsy::CompleteGetPreferredNetworksListPhase1(TInt aError, CMmDataPackage* aDataPackage)
+	{
+	TFLOGSTRING2("TSY: CMmNetTsy::CompleteGetPreferredNetworksListPhase1: aError=%d", aError);
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetPreferredNetworksPhase1 );
+
+	TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: EMobilePhoneGetPreferredNetworksPhase1 reqHandle=%d", reqHandle);
+
+	TInt completeError = KErrNone;
+	
+	if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown == reqHandle)
+		{
+		TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: reqHandle is 0, cannot complete Phase1 list retrieval request!!");
+		delete iClientIdGetPrefPLMN;
+		iClientIdGetPrefPLMN = NULL;
+		}
+	else if(KErrNone == aError)
+		{
+		if(iGetPrefPLMNList == NULL)
+			{
+			TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: LTSY successfully retrieved the preferred networks list, unpack it");		
+			CMobilePhoneStoredNetworkList* list;
+			aDataPackage->UnPackData(&list);
+	
+			TRAPD(trapError, iGetPrefPLMNList = list->StoreLC(); CleanupStack::Pop();); // pop the CBufBase * allocated by StoreLC
+			if(KErrNone == trapError)
+				{
+				*iBufSizeGetPrefPLMN = iGetPrefPLMNList->Size();
+				TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: first phase list retrieval is OK!!, client buffer = %d", *iBufSizeGetPrefPLMN);					
+				iMmPhoneTsy->ReqCompleted( reqHandle, KErrNone );
+			
+				}
+			else
+				{
+				TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: failed to stream the list into the buffer, error = %d!!", trapError);
+				completeError = trapError;
+				}
+			}
+		else
+			{
+			TFLOGSTRING("TSY CompleteGetPreferredNetworksListPhase1: iGetPrefPLMNList is not null");
+			completeError = KErrServerBusy;
+			}
+		}
+	else
+		{
+		TFLOGSTRING2("TSY CompleteGetPreferredNetworksListPhase1: LTSY failed to retrieve preferred network list!! error = %d", aError);
+		completeError = aError;
+		}
+	
+	if(completeError != KErrNone)
+		{
+		iMmPhoneTsy->ReqCompleted( reqHandle, aError );
+		delete iClientIdGetPrefPLMN;
+		iClientIdGetPrefPLMN = NULL;
+		}
+	
+	iBufSizeGetPrefPLMN = NULL;
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::CompleteStorePreferredNetworksList
+// Completes an outstanding StorePreferredNetworksListL, which stores Preferred Networks List to LTSY layer
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmNetTsy::CompleteStorePreferredNetworksList(TInt aError)
+	{
+	TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteStorePreferredNetworksList: aError=%d", aError);	
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneStorePreferredNetworksList );
+
+	TFLOGSTRING2("TSY CompleteStorePreferredNetworksList: EMobilePhoneStorePreferredNetworksList reqHandle=%d", reqHandle);
+
+	if(iStorePrefPLMNList != NULL)
+		{
+		delete iStorePrefPLMNList;
+		iStorePrefPLMNList = NULL;
+
+		}
+
+	if(KErrNone == aError)
+		{
+		if(CMmPhoneTsy::EMultimodePhoneReqHandleUnknown == reqHandle)
+			{
+			// we cannot complete the store request but complete the notifier.
+			TFLOGSTRING("TSY CompleteStorePreferredNetworksList: reqHandle is 0, cannot complete store list request!!");
+			}
+		else
+			{
+			TFLOGSTRING("TSY CompleteStorePreferredNetworksList: LTSY successfully stored the preferred networks list");
+			iMmPhoneTsy->ReqCompleted( reqHandle, KErrNone );
+			}
+		CompleteNotifyStorePreferredNetworksListChange();
+		}
+	else
+		{
+		TFLOGSTRING("TSY CompleteStorePreferredNetworksList: LTSY failed to store the preferred networks list");
+		iMmPhoneTsy->ReqCompleted( reqHandle, aError );
+		}
+	}
+
+// ---------------------------------------------------------------------------
+// CMmNetTsy::CompleteNotifyStorePreferredNetworksListChange
+// Completes the notification request for storing Preferred Networks List
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+void CMmNetTsy::CompleteNotifyStorePreferredNetworksListChange()
+	{
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyStorePreferredNetworksListChange");	
+
+	TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle
+		                      ( CMmPhoneTsy::EMultimodePhoneNotifyStorePreferredNetworksListChange );
+    if (CMmPhoneTsy::EMultimodePhoneReqHandleUnknown != reqHandle )
+        {
+    	iMmPhoneTsy->ReqCompleted( reqHandle, KErrNone);
+        }
+	else
+		{
+		TFLOGSTRING("TSY CompleteNotifyStorePreferredNetworksListChange: reqHandle is 0, cannot complete request for IPC EMobilePhoneNotifyStorePreferredNetworksListChange!!");
+
+		}
+	}
+
 //  End of File 
 
 

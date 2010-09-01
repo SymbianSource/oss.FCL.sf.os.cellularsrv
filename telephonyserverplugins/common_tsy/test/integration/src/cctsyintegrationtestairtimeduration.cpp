@@ -103,6 +103,12 @@ TVerdict CCTSYIntegrationTestAirTimeDuration0001::doTestStepL()
 	//
 	// TEST START
 	//
+		
+	// Check RMobilePhone::GetAirTimeDuration returns duration == 0.
+	TTimeIntervalSeconds timeBeforeDial;
+	TTimeIntervalSeconds timeAfterDial;
+	ASSERT_EQUALS(customApi.GetAirTimeDuration(timeBeforeDial), KErrNone, _L("RMmCustomAPI::GetAirTimeDuration returned with an error"))
+	ASSERT_EQUALS(timeBeforeDial.Int(),0,_L("RMmCustomAPI::GetAirTimeDuration did not return zero time duration as expected"))
 
 	// Dial a number that answers. 
 	TPtrC number; 
@@ -114,19 +120,14 @@ TVerdict CCTSYIntegrationTestAirTimeDuration0001::doTestStepL()
 	ASSERT_EQUALS(WaitForRequestWithTimeOut(dialStatus, ETimeMedium), KErrNone, _L("RCall::Dial timed-out"))
 	ASSERT_EQUALS(dialStatus.Int(), KErrNone, _L("RCall::Dial returned with an error"))
 
-	// Note that the air time reported before dialing a call is the last call airtime
-	TTimeIntervalSeconds timeOne;
-	TTimeIntervalSeconds timeTwo;
-	ASSERT_EQUALS(customApi.GetAirTimeDuration(timeOne), KErrNone, _L("RMmCustomAPI::GetAirTimeDuration returned with an error"))
-
 	// Wait for two second and check RMobilePhone::GetAirTimeDuration returns duration > previous duration. Repeat for 20 seconds. 
 	TInt count=1;
 	do
 		{
 		User::After(KOneSecond*2);
-		ASSERT_EQUALS(customApi.GetAirTimeDuration(timeTwo), KErrNone, _L("RMmCustomAPI::GetAirTimeDuration returned with an error"))
-		ASSERT_TRUE(timeTwo.Int()>timeOne.Int(),_L("RMmCustomAPI::GetAirTimeDuration did not return bigger time duration then the previous one"))
-		timeOne=timeTwo;
+		ASSERT_EQUALS(customApi.GetAirTimeDuration(timeAfterDial), KErrNone, _L("RMmCustomAPI::GetAirTimeDuration returned with an error"))
+		ASSERT_TRUE(timeAfterDial.Int()>timeBeforeDial.Int(),_L("RMmCustomAPI::GetAirTimeDuration did not return bigger time duration then the previous one"))
+		timeBeforeDial=timeAfterDial;
 		count++;
 		}while(count!=10);
 	

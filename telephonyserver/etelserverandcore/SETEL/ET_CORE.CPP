@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,18 +13,11 @@
 // Description:
 //
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ET_CORETraces.h"
-#endif
-
 #include "ET_SSTD.H"
 #include "ETBUFFER.H"
 #include <f32file.h>
 #include "etsvr_slots.h"
 #include "et_phone_util.h"
-
 //
 //
 // CFaxBase
@@ -186,7 +179,7 @@ EXPORT_C CCallBase::~CCallBase()
 //	This is for all object inherit fron CSubSessionBase
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CCALLBASE_DTOR_1, "~CCallBase");
+	LOGTEXT("~CCallBase");
 	}
 
 EXPORT_C TInt CCallBase::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHandle)
@@ -333,7 +326,7 @@ EXPORT_C void CCallBase::CloseSubSessionPreProcessing(CTelSession* aSession,cons
 // if is owner then set to EUnOwned
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CCALLBASE_CLOSESUBSESSIONPREPROCESSING_1, "CCallBase::CloseSubSessionPreProcessing() - about to create dummy session");
+	LOGTEXT("CCallBase::CloseSubSessionPreProcessing() - about to create dummy session");
 	CreateDummySession(aSession,aSubSessionHandle);
 	RCall::TOwnershipStatus owner=CheckOwnershipBySession(aSession,aSubSessionHandle);
 	if (owner==RCall::EOwnershipOwnedByThisClient)
@@ -681,7 +674,7 @@ EXPORT_C CLineBase::~CLineBase()
 //	D'Tor
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CLINEBASE_DTOR_1, "~CLineBase");
+	LOGTEXT("~CLineBase");
 	}
 
 EXPORT_C TInt CLineBase::CancelService(const TInt aIpc,const TTsyReqHandle aTsyReqHandle)
@@ -793,7 +786,7 @@ EXPORT_C void CLineBase::CloseSubSessionPreProcessing(CTelSession* aSession,cons
 // 
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CLINEBASE_CLOSESUBSESSIONPREPROCESSING_1, "CLineBase::CloseSubSessionPreProcessing() - about to create dummy session");
+	LOGTEXT("CLineBase::CloseSubSessionPreProcessing() - about to create dummy session");
 	CreateDummySession(aSession,aSubSessionHandle);
 	FlushReqs(aSession,aSubSessionHandle);
 	}
@@ -869,7 +862,7 @@ EXPORT_C CPhoneBase::~CPhoneBase()
 //	This is for all object inherit fron CSubSesissionBase
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CPHONEBASE_DTOR_1, "~CPhoneBase");
+	LOGTEXT("~CPhoneBase");
 	}
 
 //
@@ -1058,7 +1051,7 @@ void CPhoneBase::AddReqToActive(CReqEntry* aReqEntry)
 //	Add reqEntry to the 'active list'
 //
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEBASE_ADDREQTOACTIVE_1, "CPhoneBase::AddReqToActive with TsyHandle of %d", aReqEntry->iTsyReqHandle);
+	LOGTEXT2("CPhoneBase::AddReqToActive with TsyHandle of %d", aReqEntry->iTsyReqHandle);
 	iReqActiveList.AddLast(*aReqEntry);
 	}
 
@@ -1067,7 +1060,7 @@ void CPhoneBase::AddReqToWaiting(CReqEntry* aReqEntry)
 //	Add entry to the 'wait list'
 //
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEBASE_ADDREQTOWAITING_1, "CPhoneBase::AddReqToWaiting with TsyHandle of %d", aReqEntry->iTsyReqHandle);
+	LOGTEXT2("CPhoneBase::AddReqToWaiting with TsyHandle of %d", aReqEntry->iTsyReqHandle);
 	iReqWaitList.AddLast(*aReqEntry);
 	}
 
@@ -1117,7 +1110,7 @@ EXPORT_C void CPhoneBase::CloseSubSessionPreProcessing(CTelSession* aSession,con
 //  Find if any active request if so create a dummy session
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CPHONEBASE_CLOSESUBSESSIONPREPROCESSING_1, "CPhoneBase::CloseSubSessionPreProcessing");
+	LOGTEXT("CPhoneBase::CloseSubSessionPreProcessing");
 	CreateDummySession(aSession,aSubSessionHandle);
 	FlushReqs(aSession,aSubSessionHandle);
 	}
@@ -1277,7 +1270,7 @@ void CPhoneBase::FlowControlInc()
 // Increase iFlowControlCnt
 //
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEBASE_FLOWCONTROLINC_1, "Incrementing Flow Control from %d to %d", iFlowControlCnt, iFlowControlCnt+1);
+	LOGTEXT3("Incrementing Flow Control from %d to %d", iFlowControlCnt, iFlowControlCnt+1);
 	iFlowControlCnt++;
 	}
 
@@ -1287,7 +1280,7 @@ void CPhoneBase::FlowControlDec()
 //
 	{
 	__ASSERT_ALWAYS((iFlowControlCnt>0),Fault(EEtelFaultNegativeFlowcontrolCount));
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPHONEBASE_FLOWCONTROLDEC_1, "Decrementing Flow Control from %d to %d", iFlowControlCnt, iFlowControlCnt-1);
+	LOGTEXT3("Decrementing Flow Control from %d to %d", iFlowControlCnt, iFlowControlCnt-1);
 	iFlowControlCnt--;
 	}
 

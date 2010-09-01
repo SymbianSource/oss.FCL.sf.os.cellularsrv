@@ -50,6 +50,7 @@ SOURCE  BcaIoController.cpp
 SOURCE  Sender.cpp 
 SOURCE  Receiver.cpp 
 SOURCE  IPTagHeader.cpp
+SOURCE  bttlog.cpp
 SOURCE	rawipmcpr.cpp
 SOURCE	rawipmcprfactory.cpp
 SOURCE	RawIpAgentHandler.cpp
@@ -57,7 +58,6 @@ SOURCE	ecom_impl.cpp
 
 
 USERINCLUDE		../inc
-USERINCLUDE		../traces
 
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN
 

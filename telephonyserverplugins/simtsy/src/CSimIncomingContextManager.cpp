@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,18 +13,12 @@
 // Description:
 //
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimIncomingContextManagerTraces.h"
-#endif
-
 #include "CSimIncomingContextManager.h"
 
 #include <testconfigfileparser.h>
 
 #include "SimConstants.h"
+#include "Simlog.h"
 #include "SimTsy.h"
 #include "CSimPhone.h"
 #include "csimtimer.h"
@@ -83,7 +77,7 @@ void CSimIncomingContextManager::ConstructL(CSimPacketService* aSimPacketService
 * @leave Leaves no memory or any data member does not construct for any reason.
 */
 	{	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_CONSTRUCTL_1, "CSimIncomingContextManager: Entered ConstructL()");
+	LOGPACKET1("CSimIncomingContextManager: Entered ConstructL()");
 	
 	iSimPacketService = aSimPacketService;
 		
@@ -132,7 +126,7 @@ void CSimIncomingContextManager::ConstructL(CSimPacketService* aSimPacketService
 
 void CSimIncomingContextManager::LoadIncomingContextsL( TPtrC8 aTag )
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_LOADINCOMINGCONTEXTSL_1, "CSimIncomingContextManager: Entered LoadIncomingContextsL()");
+	LOGPACKET1("CSimIncomingContextManager: Entered LoadIncomingContextsL()");
 		
 	TDelayIncomingContext incomingContext;
 	TInt error=KErrNone;
@@ -145,43 +139,43 @@ void CSimIncomingContextManager::LoadIncomingContextsL( TPtrC8 aTag )
 		if(!item)
 			{
 			error = KErrArgument;	
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_LOADINCOMINGCONTEXTSL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element DELAYINCOMINGCONTEXT::NO PARAMETERS IN TAG returned %d (element no. %d) from tag %s.",error,0,aTag);
+			LOGPARSERR("DelayIncomingContext::No parameters in tag",error,0,&aTag);
 			break;
 			}
 		
 		GetConfigType( (*item), 0, incomingContext.iExtensionId, error );
 		if (error)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_LOADINCOMINGCONTEXTSL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element DELAYINCOMINGCONTEXT::CONFIGTYPE returned %d (element no. %d) from tag %s.",error,0,aTag);
+			LOGPARSERR("DelayIncomingContext::ConfigType",error,0,&aTag);			
 			}
 		GetContextIndex( (*item), 1, incomingContext.iIndex, error );
 		if (error)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_LOADINCOMINGCONTEXTSL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element DELAYINCOMINGCONTEXT::INDEX returned %d (element no. %d) from tag %s.",error,0,aTag);
+			LOGPARSERR("DelayIncomingContext::Index",error,0,&aTag);			
 			}
 		GetDelay( (*item),  2, incomingContext.iDelay, error );
 		if (error)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_LOADINCOMINGCONTEXTSL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element DELAYINCOMINGCONTEXT::DELAY returned %d (element no. %d) from tag %s.",error,0,aTag);
+			LOGPARSERR("DelayIncomingContext::Delay",error,0,&aTag);			
 			}
 			
 		iDelayIncomingContext->AppendL(incomingContext);
 						
 		}		
 	
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_LOADINCOMINGCONTEXTSL_6, "Finished parsing DelayIncomingContext config parameters...%d items found",count);
+	LOGMISC2("Finished parsing DelayIncomingContext config parameters...%d items found",count);
 	}
 
 
 void CSimIncomingContextManager::StartFirstIncomingEvent( )
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_STARTFIRSTINCOMINGEVENT_1, "CSimIncomingContextManager: Entered StartFirstIncomingEvent()" );
+	LOGPACKET1("CSimIncomingContextManager: Entered StartFirstIncomingEvent()" );
 				
 	if(iDelayIncomingContext->Count()!=0)
 		{
 		iCurrentDelayIndex = 0;				
 		const TDelayIncomingContext& delayIncomingContext = iDelayIncomingContext->At(0);
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_STARTFIRSTINCOMINGEVENT_2, "CSimIncomingContextManager: Entered StartFirstIncomingEvent() delay = %d", delayIncomingContext.iDelay);
+		LOGPACKET2("CSimIncomingContextManager: Entered StartFirstIncomingEvent() delay = %d", delayIncomingContext.iDelay);
 		iTimer->Start(delayIncomingContext.iDelay, iSimPacketService, ETimerIdContextActivationRequestedChange);
 		}	
 	}
@@ -191,17 +185,17 @@ void CSimIncomingContextManager::StartFirstIncomingEvent( )
 // And then sets the index	
 void CSimIncomingContextManager::NextIncomingEvent( TDes8* aPckg )
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_NEXTINCOMINGEVENT_1, "CSimIncomingContextManager: Entered NextIncomingEvent()" );
+	LOGPACKET1("CSimIncomingContextManager: Entered NextIncomingEvent()" );
 	
 	if (iDelayIncomingContext->Count()==0)
 		{ // We have no incoming events. This is an error.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_NEXTINCOMINGEVENT_2, "CSimIncomingContextManager: Entered NextIncomingEvent() No events at all!" );
+		LOGPACKET1("CSimIncomingContextManager: Entered NextIncomingEvent() No events at all!" );
 		SimPanic(EGeneral);		
 		return;
 		}
 	if(iCurrentDelayIndex >= iDelayIncomingContext->Count())
 		{ // No more incoming contexts. .
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_NEXTINCOMINGEVENT_3, "CSimIncomingContextManager: Entered NextIncomingEvent() No next event" );
+		LOGPACKET1("CSimIncomingContextManager: Entered NextIncomingEvent() No next event" );
 		return;		
 		}
 	// else we have an incoming context.
@@ -214,18 +208,18 @@ void CSimIncomingContextManager::NextIncomingEvent( TDes8* aPckg )
 		delayIncomingContext->iExtensionId, delayIncomingContext->iIndex );
 	if ( !context )
 		{ // Unable to find a valid pre allocated context that we can use.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_NEXTINCOMINGEVENT_4, "CSimIncomingContextManager: Entered NextIncomingEvent() failed unable to identify a valid context." );
+		LOGPACKET1("CSimIncomingContextManager: Entered NextIncomingEvent() failed unable to identify a valid context." );
 		SimPanic(EGeneral);		
 	  	return ;
 		}
 
 	if ( GetContextInCorrectFormatForEtel(context, aPckg) ) 
 		{ // Okay got data. This will be sent to ETEL to activate the context.
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_NEXTINCOMINGEVENT_5, "CSimIncomingContextManager: Entered NextIncomingEventt() delay = %d", delayIncomingContext->iDelay);
+		LOGPACKET2("CSimIncomingContextManager: Entered NextIncomingEventt() delay = %d", delayIncomingContext->iDelay);
 		}
 	else
 		{ // Error. Unable to format the data.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_NEXTINCOMINGEVENT_6, "CSimIncomingContextManager: Entered NextIncomingEvent() failed unable format data for choosn context" );
+		LOGPACKET1("CSimIncomingContextManager: Entered NextIncomingEvent() failed unable format data for choosn context" );
 		SimPanic(EGeneral);		
 		return;
 		}
@@ -241,18 +235,18 @@ void CSimIncomingContextManager::NextIncomingEvent( TDes8* aPckg )
 	
 void CSimIncomingContextManager::Cancel( )
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_CANCEL_1, "CSimIncomingContextManager::Cancel called");
+	LOGPACKET1("CSimIncomingContextManager::Cancel called");
 	iTimer->Cancel();	
 	}
 	
 	
 void CSimIncomingContextManager::ForcedIncoming(TInt aIndex, TDes8* aPckg )
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_FORCEDINCOMING_1, "CSimIncomingContextManager::ForcedIncoming called");
+	LOGPACKET1("CSimIncomingContextManager::ForcedIncoming called");
 
 	if(iDelayIncomingContext->Count()<=aIndex )
 		{ 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_FORCEDINCOMING_2, "CSimIncomingContextManager::ForcedIncoming invalid context");
+		LOGPACKET1("CSimIncomingContextManager::ForcedIncoming invalid context");
 		return;		
 		}
 	// else we have a valid incoming context.
@@ -268,7 +262,7 @@ void CSimIncomingContextManager::ForcedIncoming(TInt aIndex, TDes8* aPckg )
 
 	if ( !context )
 		{ // Unable to find a valid pre allocated context that we can use.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_FORCEDINCOMING_3, "CSimIncomingContextManager::ForcedIncoming invalid type, index leading to invalid context");
+		LOGPACKET1("CSimIncomingContextManager::ForcedIncoming invalid type, index leading to invalid context");
 		SimPanic(EGeneral);
 	  	return ;
 		}
@@ -278,7 +272,7 @@ void CSimIncomingContextManager::ForcedIncoming(TInt aIndex, TDes8* aPckg )
 		}
 	else
 		{ // Error. Unable to format the data.		
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMINCOMINGCONTEXTMANAGER_FORCEDINCOMING_4, "CSimIncomingContextManager: Entered NextIncomingEvent() failed unable format data for choosn context" );
+		LOGPACKET1("CSimIncomingContextManager: Entered NextIncomingEvent() failed unable format data for choosn context" );
 		SimPanic(EGeneral);		
 		return;
 		}

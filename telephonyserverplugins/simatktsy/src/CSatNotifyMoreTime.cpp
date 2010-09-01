@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyMoreTimeTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyMoreTime.h"  	// Class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifyMoreTime* CSatNotifyMoreTime::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMORETIME_NEWL_1, "CSAT: CSatNotifyMoreTime::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyMoreTime::NewL");
    	CSatNotifyMoreTime* const satNotifyMoreTime = 
         new ( ELeave ) CSatNotifyMoreTime( aNotificationsTsy );
     CleanupStack::PushL( satNotifyMoreTime );
     satNotifyMoreTime->ConstructL();
     CleanupStack::Pop( satNotifyMoreTime );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMORETIME_NEWL_2, "CSAT: CSatNotifyMoreTime::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyMoreTime::NewL, end of method");
     return satNotifyMoreTime;
     }
 
@@ -67,7 +62,7 @@ CSatNotifyMoreTime::~CSatNotifyMoreTime
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMORETIME_DTOR_1, "CSAT: CSatNotifyMoreTime::~CSatNotifyMoreTime");
+    TFLOGSTRING("CSAT: CSatNotifyMoreTime::~CSatNotifyMoreTime");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifyMoreTime::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMORETIME_CONSTRUCTL_1, "CSAT: CSatNotifyMoreTime::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifyMoreTime::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -107,7 +102,7 @@ TInt CSatNotifyMoreTime::CompleteNotifyL
         TInt /*aErrorCode*/              
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMORETIME_COMPLETENOTIFYL_1, "CSAT: CSatNotifyMoreTime::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyMoreTime::CompleteNotifyL");
     TInt ret( KErrNone );
     // Unpack parameters
     TPtrC8* data;
@@ -141,7 +136,7 @@ TInt CSatNotifyMoreTime::CreateTerminalRespL
         TUint8 aGeneralResult			 
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYMORETIME_CREATETERMINALRESPL_1, "CSAT: CSatNotifyMoreTime::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifyMoreTime::CreateTerminalRespL");
     // Create and append response data
     TTlv tlvSpecificData;
 	// General result

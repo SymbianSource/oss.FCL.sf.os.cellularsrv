@@ -1098,26 +1098,18 @@ public:
 	IMPORT_C TPtrC ConvertToNativeL(const TDesC8& aUDElements);
 	IMPORT_C TPtrC ConvertToNativeL(const TDesC8& aUDElements, TSmsEncoding aEncoding);
 
+	TBool IsSupportedL(TChar aChar);
 	TBool IsSupportedL(const TDesC& aDes, TInt& aNumberOfUnconvertibleCharacters,
 			           TInt& aIndexOfFirstUnconvertibleCharacter);
 
+	TBool IsSupportedL(TChar aChar, TSmsEncoding aEncoding, TBool& aIsDowngrade,
+			           TBool& aRequiresAlternativeEncoding);
 	TBool IsSupportedL(const TDesC& aDes, TSmsEncoding aEncoding,
 			           TInt& aNumberOfUnconvertibleCharacters,
 			           TInt& aNumberOfDowngradedCharacters,
 			           TInt& aNumberRequiringAlternativeEncoding,
 			           TInt& aIndexOfFirstUnconvertibleCharacter);
-
-    void ConvertWith7BitEncodingL(const TDesC& aDes, TDes& aRestoredDes,
-                       TInt& aNumberOfUnconvertibleCharacters,
-                       TInt& aNumberOfDowngradedCharacters,
-                       TInt& aIndexOfFirstUnconvertibleCharacter, TBool aIsCountDowngrade);
-
-    void ConvertWithAlternativeEncodingL(const TDesC& aDes, const TDesC& aRestoredStdDes, TSmsEncoding aEncoding,
-                       TInt& aNumberOfUnconvertibleCharacters,
-                       TInt& aNumberOfDowngradedCharacters,
-                       TInt& aNumberRequiringAlternativeEncoding,
-                       TInt& aIndexOfFirstUnconvertibleCharacter);
-    
+	
 // Alternative Encoding methods
 	TSmsEncoding FindBestAlternativeEncodingL(const TDesC& aNativeCharacters,
 											  TSmsEncoding aSuggestedEncoding);

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,18 +20,12 @@
  @internalComponent
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cpdpconfigchangenotifierTraces.h"
-#endif
-
 #include <e32base.h>
 #include <pcktcs.h>
 
 #include "cpdpconfigchangenotifier.h"
 #include "PDPFSM.h"
+#include "spudteldebuglogger.h"
 #include "pdpfsmnmspace.h"
 
 /**
@@ -125,7 +119,8 @@ void CPdpConfigChangeNotifier::DoCancel()
 	{
 	if(IsActive())
 		{ 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_DOCANCEL_1, "CPdpConfigChangeNotifier::DoCancel EPacketContextNotifyConfigChanged");
+		SPUDTELVERBOSE_INFO_LOG(
+			_L("CPdpConfigChangeNotifier::DoCancel EPacketContextNotifyConfigChanged"));
 		iPacketContext.CancelAsyncRequest(EPacketContextNotifyConfigChanged); 
 		}
 	}
@@ -138,14 +133,15 @@ void CPdpConfigChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_1, "FSM set ConfigGPRS");
+		SPUDTELVERBOSE_INFO_LOG(_L("FSM set ConfigGPRS"));
 		iPdpFsmInterface.Set(iId, GetScratchContextAs<TPacketDataConfigBase>());
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_2, "FSM input EConfigGPRSChangeNetwork");
+		SPUDTELVERBOSE_INFO_LOG(_L("FSM input EConfigGPRSChangeNetwork"));
 		iPdpFsmInterface.Input(iId, PdpFsm::EConfigGPRSChangeNetwork);
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_3, "CPdpConfigChangeNotifier::Notify(), error: %d", aStatus.Int());
+		SPUDTEL_ERROR_LOG(_L("CPdpConfigChangeNotifier::Notify(), error: %d"), 
+						aStatus.Int());
 		// Not all TSYs support RPacketContext::NotifyConfigChanged so we handle
 		// KErrNotSupported silently (PDEF118981).
 		ASSERT((aStatus == KErrCancel) || (aStatus == KErrNotSupported));
@@ -190,7 +186,8 @@ void CMbmsPdpConfigChangeNotifier::DoCancel()
 	{
 	if(IsActive())
 		{ 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_DOCANCEL_1, "CMbmsPdpConfigChangeNotifier::DoCancel EPacketContextNotifyConfigChanged");
+		SPUDTELVERBOSE_INFO_LOG(
+			_L("CMbmsPdpConfigChangeNotifier::DoCancel EPacketContextNotifyConfigChanged"));
 		iMbmsPacketContext.CancelAsyncRequest(EPacketContextNotifyConfigChanged); 
 		}
 	}
@@ -203,16 +200,17 @@ void CMbmsPdpConfigChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_1, "FSM set ConfigMbms");
+		SPUDTELVERBOSE_INFO_LOG(_L("FSM set ConfigMbms"));
 		iPdpFsmInterface.Set(iId, iConfigMbms);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_2, "FSM input EConfigMbmsChangeNetwork");
+		SPUDTELVERBOSE_INFO_LOG(_L("FSM input EConfigMbmsChangeNetwork"));
 		iPdpFsmInterface.Input(iId, PdpFsm::EConfigGPRSChangeNetwork,SpudMan::EMbms);
 		//to be discussed...
 		
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_3, "CMbmsPdpConfigChangeNotifier::Notify(), error: %d", aStatus.Int());
+		SPUDTEL_ERROR_LOG(_L("CMbmsPdpConfigChangeNotifier::Notify(), error: %d"), 
+						aStatus.Int());
 		// Not all TSYs support RPacketContext::NotifyConfigChanged so we handle
 		// KErrNotSupported silently (PDEF118981).
 		ASSERT((aStatus == KErrCancel) || (aStatus == KErrNotSupported));

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,14 +20,9 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatTsyReqHandleStoreTraces.h"
-#endif
-
 #include "CSatTsyReqHandleStore.h"  // Class header
 #include "CSatTsy.h"                // Main tsy class header
+#include "TfLogger.h"               // For TFLOGSTRING
 
 // -----------------------------------------------------------------------------
 // CSatTsyReqHandleStore::NewL
@@ -42,7 +37,7 @@ CSatTsyReqHandleStore* CSatTsyReqHandleStore::NewL
         TTsyReqHandle* aFirstElement // Pointer to the first element
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_NEWL_1,  "CSAT: CSatTsyReqHandleStore::NewL" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::NewL" );
     CSatTsyReqHandleStore* tsyReqHandleStore = new ( ELeave ) 
         CSatTsyReqHandleStore();
  
@@ -57,7 +52,7 @@ CSatTsyReqHandleStore* CSatTsyReqHandleStore::NewL
         }
 
     CleanupStack::Pop( tsyReqHandleStore );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_NEWL_2,  "CSAT: CSatTsyReqHandleStore::NewL, end of method" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::NewL, end of method" );
     return tsyReqHandleStore;
     }
 
@@ -72,7 +67,7 @@ CSatTsyReqHandleStore::~CSatTsyReqHandleStore
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_DTOR_1,  "CSAT: CSatTsyReqHandleStore::~CSatTsyReqHandleStore" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::~CSatTsyReqHandleStore" );
     }
 
 // -----------------------------------------------------------------------------
@@ -85,7 +80,7 @@ CSatTsyReqHandleStore::CSatTsyReqHandleStore
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_CTOR_1,  "CSAT: CSatTsyReqHandleStore::CSatTsyReqHandleStore" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::CSatTsyReqHandleStore" );
     }
 
 // -----------------------------------------------------------------------------
@@ -98,7 +93,7 @@ void CSatTsyReqHandleStore::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_CONSTRUCTL_1,  "CSAT: CSatTsyReqHandleStore::ConstructL" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::ConstructL" );
     }
 
 // -----------------------------------------------------------------------------
@@ -111,7 +106,7 @@ TTsyReqHandle CSatTsyReqHandleStore::TsyReqHandle
         const TInt aIndex  // TSY req handle index
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_TSYREQHANDLE_1,  "CSAT: CSatTsyReqHandleStore::TsyReqHandle" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::TsyReqHandle" );
     TTsyReqHandle ret( NULL );
 
     // Check the bounds
@@ -121,7 +116,8 @@ TTsyReqHandle CSatTsyReqHandleStore::TsyReqHandle
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_TSYREQHANDLE_2,  "CSAT: CSatTsyReqHandleStore::TsyReqHandle, Out of bounds" );
+        TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::TsyReqHandle, \
+            Out of bounds" );
         }
     return ret;
     }
@@ -137,15 +133,17 @@ void CSatTsyReqHandleStore::SetTsyReqHandle
         const TTsyReqHandle   aTsyReqHandle   // Request handle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_SETTSYREQHANDLE_1,  "CSAT: CSatTsyReqHandleStore::SetTsyReqHandle" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::SetTsyReqHandle" );
     if ( ( aIndex >= 0 ) && ( aIndex < iNumOfRequests ) )
         {
         *( iReqHandles + aIndex ) = aTsyReqHandle;
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_SETTSYREQHANDLE_2,  "CSAT: CSatTsyReqHandleStore::SetTsyReqHandle, %d saved", aTsyReqHandle );
+        TFLOGSTRING2( "CSAT: CSatTsyReqHandleStore::SetTsyReqHandle, %d saved", 
+            aTsyReqHandle );
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_SETTSYREQHANDLE_3,  "CSAT: CSatTsyReqHandleStore::SetTsyReqHandle, Request handle not saved" );
+        TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::SetTsyReqHandle,\
+            Request handle not saved" );
         }
     }
 
@@ -162,7 +160,7 @@ TTsyReqHandle CSatTsyReqHandleStore::ResetTsyReqHandle
         )
     {
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_RESETTSYREQHANDLE_1,  "CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle" );
+    TFLOGSTRING( "CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle" );
     // Req handle was not used.
     TInt ret = 0;
 
@@ -176,11 +174,13 @@ TTsyReqHandle CSatTsyReqHandleStore::ResetTsyReqHandle
 
             // Reset req handle
             *( iReqHandles + aIndex ) = 0;
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_RESETTSYREQHANDLE_2,  "CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle, index %d removed", aIndex );
+            TFLOGSTRING2( "CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle, index \
+            	%d removed", aIndex );
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_RESETTSYREQHANDLE_3, "CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle, Not in use");
+            TFLOGSTRING("CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle,\
+                Not in use");
             }
         }
     else
@@ -188,7 +188,8 @@ TTsyReqHandle CSatTsyReqHandleStore::ResetTsyReqHandle
         // Do nothing    
         }
             
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATTSYREQHANDLESTORE_RESETTSYREQHANDLE_4, "CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle reqHandle is :%d", ret );
+	TFLOGSTRING2("CSAT: CSatTsyReqHandleStore::ResetTsyReqHandle \
+	    reqHandle is :%d", ret ); 
 		
     return ret;
     }

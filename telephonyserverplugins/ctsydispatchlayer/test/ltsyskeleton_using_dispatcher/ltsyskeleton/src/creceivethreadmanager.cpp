@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,11 +12,6 @@
 //
 // Description:
 //
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "creceivethreadmanagerTraces.h"
-#endif
 
 #include "creceivethreadmanager.h"
 #include <ctsy/ltsy/ltsylogger.h>
@@ -76,7 +71,7 @@ void CReceiveThreadManager::SpawnReceiveThreadL()
  
  TInt CReceiveThreadManager::StartReceiveThreadFn(TAny* aArg)
  	{
- 	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVETHREADMANAGER_SPAWNRECEIVETHREADL_1, "StartReceiveThreadFn, thread id = %d", RThread().Id().Id());
+ 	LOG(_L8("StartReceiveThreadFn, thread id = %d"), RThread().Id().Id());
  	
 	// Create a cleanup stack object
 	CTrapCleanup* cleanup=CTrapCleanup::New();
@@ -88,7 +83,7 @@ void CReceiveThreadManager::SpawnReceiveThreadL()
  	TInt err =  signaller->WaitLoop();
  	
  	delete cleanup;
- 	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVETHREADMANAGER_SPAWNRECEIVETHREADL_2, "StartReceiveThreadFn, thread id = %d, Terminated with err = %d", RThread().Id().Id(), err);
+ 	LOG(_L8("StartReceiveThreadFn, thread id = %d, Terminated with err = %d"), RThread().Id().Id(), err);
  	return err;
  	}
 
@@ -145,13 +140,13 @@ void CReceiveThreadLifeWatcher::LogonL(TThreadId aID)
 	User::LeaveIfError(iThread.Open(aID));
 	iThread.Logon(iStatus);
 	SetActive();
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVETHREADLIFEWATCHER_LOGONL_1, "CReceiveThreadLifeWatcher::LogonL.  Watching thread id = %d", iThread.Id().Id());
+	LOG(_L8("CReceiveThreadLifeWatcher::LogonL.  Watching thread id = %d"), iThread.Id().Id());
 	}
 
 void CReceiveThreadLifeWatcher::RunL()
 	{
 	TSYLOGENTRYEXIT;
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVETHREADLIFEWATCHER_RUNL_1, "CReceiveThreadLifeWatcher::RunL iThread = %d, iStatus=%d, exit reason = %d", iThread.Id().Id(), iStatus.Int(), iThread.ExitReason() );
+	LOG(_L8("CReceiveThreadLifeWatcher::RunL iThread = %d, iStatus=%d, exit reason = %d"), iThread.Id().Id(), iStatus.Int(), iThread.ExitReason() );
 	iReceiveThreadLifeObserver.HandleReceiveThreadLifeWatcherComplete(iStatus.Int());
 	}
 

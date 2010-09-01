@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyPollIntervalTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyPollInterval.h" // Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h" 	// Message manager class for forwarding req.
@@ -49,13 +44,13 @@ CSatNotifyPollInterval* CSatNotifyPollInterval::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_NEWL_1, "CSAT: CSatNotifyPollInterval::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyPollInterval::NewL");
    	CSatNotifyPollInterval* const satNotifyPollInterval = 
         new ( ELeave ) CSatNotifyPollInterval( aNotificationsTsy );
     CleanupStack::PushL( satNotifyPollInterval );
     satNotifyPollInterval->ConstructL();
     CleanupStack::Pop( satNotifyPollInterval );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_NEWL_2, "CSAT: CSatNotifyPollInterval::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyPollInterval::NewL, end of method");
     return satNotifyPollInterval;
     }
 
@@ -69,7 +64,7 @@ CSatNotifyPollInterval::~CSatNotifyPollInterval
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_DTOR_1, "CSAT: CSatNotifyPollInterval::~CSatNotifyPollInterval");
+    TFLOGSTRING("CSAT: CSatNotifyPollInterval::~CSatNotifyPollInterval");
     }
     
 // -----------------------------------------------------------------------------
@@ -95,7 +90,7 @@ void CSatNotifyPollInterval::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_CONSTRUCTL_1, "CSAT: CSatNotifyPollInterval::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifyPollInterval::ConstructL");
     }
     
 // -----------------------------------------------------------------------------
@@ -110,7 +105,7 @@ TInt CSatNotifyPollInterval::CompleteNotifyL
         TInt /*aErrorCode*/  
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_COMPLETENOTIFYL_1, "CSAT: CSatNotifyPollInterval::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyPollInterval::CompleteNotifyL");
     TInt returnValue( KErrNone );
     TPtrC8* data;
     aDataPackage->UnPackData( &data );
@@ -172,7 +167,8 @@ TInt CSatNotifyPollInterval::CompleteNotifyL
                     }
                 default:
                 	{
-                 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_COMPLETENOTIFYL_2, "CSAT: CSatNotifyPollInterval::CompleteNotifyL, Time unit unknown.");
+                 	TFLOGSTRING("CSAT: CSatNotifyPollInterval::\
+                 	    CompleteNotifyL, Time unit unknown.");
 	        		returnValue = KErrNotFound;
                  	// Command data not understood
                  	CreateTerminalRespL( pCmdNumber, 
@@ -226,7 +222,7 @@ TInt CSatNotifyPollInterval::CreateTerminalRespL
         TUint8 aDcs               	
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_CREATETERMINALRESPL_1, "CSAT: CSatNotifyPollInterval::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifyPollInterval::CreateTerminalRespL");   
     TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );     
     tlvSpecificData.AddByte( aGeneralResult );
@@ -247,7 +243,9 @@ TInt CSatNotifyPollInterval::CreateTerminalRespL
                 }
             default:
                 {
-                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYPOLLINTERVAL_CREATETERMINALRESPL_2, "CSAT: CSatNotifyPollInterval::CreateTerminalRespL, Additional Info: %d", aAdditionalInfo);
+                TFLOGSTRING2("CSAT: CSatNotifyPollInterval::\
+                    CreateTerminalRespL, Additional Info: %d", 
+                    aAdditionalInfo);  
                 tlvSpecificData.AddByte( aAdditionalInfo );
                 break;
                 }

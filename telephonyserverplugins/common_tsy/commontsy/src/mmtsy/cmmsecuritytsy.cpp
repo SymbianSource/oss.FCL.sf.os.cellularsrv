@@ -16,12 +16,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmsecuritytsyTraces.h"
-#endif
-
 #include "cmmsecuritytsy.h"
 #include "cmmphonetsy.h"
 #include "cmmtsyreqhandlestore.h"
@@ -36,7 +30,7 @@
 CMmSecurityTsy* CMmSecurityTsy::NewL(    
         CMmPhoneTsy* aPhoneTsy ) // Ptr to PhoneTsy   
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NEWL_1, "TSY: CMmSecurityTsy::NewL");
+TFLOGSTRING("TSY: CMmSecurityTsy::NewL");
     CMmSecurityTsy* const mmSecurityTsy = new ( ELeave ) CMmSecurityTsy();
     CleanupStack::PushL( mmSecurityTsy );
     mmSecurityTsy->iMmPhoneTsy = aPhoneTsy;
@@ -52,7 +46,7 @@ CMmSecurityTsy::CMmSecurityTsy()
 
 void CMmSecurityTsy::ConstructL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_CONSTRUCTL_1, "TSY: CMmSecurityTsy::ConstructL");
+TFLOGSTRING("TSY: CMmSecurityTsy::ConstructL");
     // Is security codes (PIN and phone password) checked in boot
     iSecurityCheckedForBoot = EFalse;
 
@@ -78,7 +72,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_CONSTRUCT
       
 CMmSecurityTsy::~CMmSecurityTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DTOR_1, "TSY: CMmSecurityTsy::~CMmSecurityTsy");
+TFLOGSTRING("TSY: CMmSecurityTsy::~CMmSecurityTsy");
     }  
     
 // ---------------------------------------------------------------------------
@@ -92,7 +86,7 @@ TInt CMmSecurityTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DOEXTFUNCL_1, "TSY: CMmSecurityTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmSecurityTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret ( KErrNone );
 
@@ -294,9 +288,9 @@ TInt CMmSecurityTsy::CompleteNotifySecurityCapsChange(
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-TInt CMmSecurityTsy::GetLockInfoL( const TTsyReqHandle aTsyReqHandle, const TDataPackage& aPackage )
+TInt CMmSecurityTsy::GetLockInfoL( const TTsyReqHandle aTsyReqHandle, const TDataPackage& aPackage ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_GETLOCKINFOL_1, "LTSY: CMmSecurityTsy::GetLockInfoL - Client call");
+TFLOGSTRING("LTSY: CMmSecurityTsy::GetLockInfoL - Client call");
     
     TInt ret ( KErrArgument );
     
@@ -337,7 +331,7 @@ TInt CMmSecurityTsy::NotifyLockInfoChange(
     RMobilePhone::TMobilePhoneLock* aLock, 
     TDes8* aLockInfo ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYLOCKINFOCHANGE_1, "LTSY: CMmSecurityTsy::NotifyLockInfoChange - Lock: %d", aLock);
+TFLOGSTRING2("LTSY: CMmSecurityTsy::NotifyLockInfoChange - Lock: %d", aLock);
     
     TInt ret( KErrNone );
     
@@ -368,7 +362,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYLOC
 TInt CMmSecurityTsy::NotifyLockInfoChangeCancel(
     const TTsyReqHandle aTsyReqHandle ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYLOCKINFOCHANGECANCEL_1, "LTSY: CMmSecurityTsy::NotifyLockInfoChangeCancel");
+TFLOGSTRING("LTSY: CMmSecurityTsy::NotifyLockInfoChangeCancel");
     
     iRetNotifyLockInfoChange = NULL;
     iRetNotifyPhoneLockChange = NULL;
@@ -435,7 +429,7 @@ TInt CMmSecurityTsy::SetLockSettingL(
     const TTsyReqHandle aTsyReqHandle,    
     const TDataPackage& aPackage ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_SETLOCKSETTINGL_1, "LTSY: CMmSecurityTsy::SetLockSettingL - Client call" );
+TFLOGSTRING("LTSY: CMmSecurityTsy::SetLockSettingL - Client call" );
 
     TInt ret( KErrNone );
 
@@ -507,7 +501,8 @@ TInt CMmSecurityTsy::LockSettingL(
         reinterpret_cast<RMobilePhone::TMobilePhoneLockSetting* >
         ( aPackage.Ptr2() );
 
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_LOCKSETTINGL_1, "LTSY: CMmSecurityTsy::LockSetting - Lock:%d, Setting:%d",*lock, *setting );
+TFLOGSTRING3("LTSY: CMmSecurityTsy::LockSetting - Lock:%d, Setting:%d",
+    *lock, *setting );
 
     // Some SIM cards might not support PIN1 disable. Thus
     // return error if client tries to disable it.
@@ -552,7 +547,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_LOCKSE
                     event = RMobilePhone::EUniversalPinRequired;
                     if ( RMobilePhone::ELockReplaced == *setting )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_LOCKSETTINGL_2, "TSY: CMmSecurityTsy::LockSetting RMobilePhone::ELockReplaced");
+TFLOGSTRING("TSY: CMmSecurityTsy::LockSetting RMobilePhone::ELockReplaced");
                         iActiveCodeToUpinState = EActiveCodeToUpinAskUpin;
                         }
                     break;
@@ -613,7 +608,7 @@ void CMmSecurityTsy::CompleteSetLockSetting(
     RMobilePhone::TMobilePhoneLockStatus, 
     RMobilePhone::TMobilePhoneLockSetting ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETESETLOCKSETTING_1, "LTSY: CMmSecurityTsy::CompleteSetLockSetting - Error:%d", aErrorCode);
+TFLOGSTRING2("LTSY: CMmSecurityTsy::CompleteSetLockSetting - Error:%d", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneSetLockSetting );
@@ -676,7 +671,7 @@ TInt CMmSecurityTsy::ChangeSecurityCodeL(
 TInt CMmSecurityTsy::CompleteChangeSecurityCode(
     TInt aErrorCode ) // Error code
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETECHANGESECURITYCODE_1, "TSY: CMmSecurityTsy::CompleteChangeSecurityCode - Error:%d", aErrorCode);
+    TFLOGSTRING2("TSY: CMmSecurityTsy::CompleteChangeSecurityCode - Error:%d", aErrorCode);
 
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
@@ -713,7 +708,7 @@ TInt CMmSecurityTsy::NotifySecurityEventL(
     // Thus this is the only way to get the information in boot.
     if  ( iSecurityCheckedForBoot == EFalse )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYSECURITYEVENTL_1,  "TSY: CMmSecurityTsy::NotifySecurityEvent - Checking PIN state");
+TFLOGSTRING( "TSY: CMmSecurityTsy::NotifySecurityEvent - Checking PIN state");
         // We can't do anything if sending fails. If this happens,
         // then every send to IsaApi should fail.
         (void)iMmPhoneTsy->iMmPhoneExtInterface->GetICCTypeL();
@@ -724,7 +719,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYSEC
     if ( iIsSecurityCodeRequestCachedInBoot  && 
          !iMmPhoneTsy->iBootState.iSecReady  )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYSECURITYEVENTL_2,  "TSY: CMmSecurityTsy::NotifySecurityEventL - Completing security code event");
+TFLOGSTRING( "TSY: CMmSecurityTsy::NotifySecurityEventL - Completing security code event");
 
         CompleteNotifySecurityEventL( RMobilePhone::EPhonePasswordRequired,
             KErrNone );
@@ -767,13 +762,14 @@ void CMmSecurityTsy::CompleteNotifySecurityEventL(
     RMobilePhone::TMobilePhoneSecurityEvent aEvent, 
     TInt aErrorCode ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETENOTIFYSECURITYEVENTL_1, "TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - Event: %d, Error: %d",aEvent, aErrorCode );
+TFLOGSTRING3("TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - Event: %d, Error: %d",
+    aEvent, aErrorCode );
 
 	if ( iLastPinRequested != EPinUnknown && 
 		( RMobilePhone::EPin1Verified == aEvent ) || 
 		( RMobilePhone::EPin2Verified == aEvent ) )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETENOTIFYSECURITYEVENTL_2,  "TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - iLastPinRequested != EPinUnknown");
+TFLOGSTRING( "TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - iLastPinRequested != EPinUnknown");
     	iLastPinRequested = EPinUnknown;
         }
 
@@ -809,7 +805,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEN
                !iIsSecurityCodeRequestCachedInBoot  )
 
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETENOTIFYSECURITYEVENTL_3, "TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - Caching event");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - Caching event");
             iIsSecurityCodeRequestCachedInBoot = ETrue;
             }
 
@@ -966,12 +962,12 @@ TInt CMmSecurityTsy::VerifySecurityCodeL(
 
         if ( RMobilePhone::ESecurityCodePin1 == *type )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL_1, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN VERIFY REQUESTED");
             iLastPinRequested = EPin1Requested;
             }
         if ( RMobilePhone::ESecurityCodePin2 == *type )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL_2, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN2 VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN2 VERIFY REQUESTED");
             iLastPinRequested = EPin2Requested;
             }
         //This is to prevent unnecessary PIN1 request after PUK code 
@@ -980,14 +976,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSEC
                ( RMobilePhone::ESecurityCodePuk2 == *type ) ) &&  
                ( 0 < codes->iUnblockCode.Length() ) )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL_3, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PUK VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PUK VERIFY REQUESTED");
             iPukCodeVerify = ETrue;
             }
         //This is to prevent unnecessary PIN1 request after phone password
         //request (PYRA-5UBCLC)
         if ( RMobilePhone::ESecurityCodePhonePassword == *type )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL_4, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PHONE PASSWORD VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PHONE PASSWORD VERIFY REQUESTED");
             iPhonePasswordVerify = ETrue;
             }
         iMmPhoneTsy->iMmPhoneExtInterface->DeliverCode( *codes );
@@ -1080,7 +1076,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSEC
 void CMmSecurityTsy::CompleteVerifySecurityCodeL(
         TInt aErrorCode ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL_1, "TSY: CMmSecurityTsy::CompleteVerifySecurityCode - Error:%d", aErrorCode);
+TFLOGSTRING2("TSY: CMmSecurityTsy::CompleteVerifySecurityCode - Error:%d", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneVerifySecurityCode );
@@ -1117,7 +1113,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEV
             // IF PIN1 REQUESTED LAST
             if ( iLastPinRequested == EPin1Requested )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL_2, "TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN VERIFICATION NEEDED");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN VERIFICATION NEEDED");
             	CompleteNotifySecurityEventL( RMobilePhone::EPin1Required,
                 KErrNone );
             	iLastPinRequested = EPinUnknown;
@@ -1125,7 +1121,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEV
             // IF PIN2 REQUESTED LAST
             if (iLastPinRequested == EPin2Requested)
             	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL_3, "TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN2");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN2");
             	iLastPinRequested = EPinUnknown;
             	}
             }
@@ -1133,7 +1129,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEV
                   phoneSetLockSettingHandle && EActiveCodeToUpinAskUpin == 
                                                       iActiveCodeToUpinState )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL_4, "TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - iActiveCodeToUpinState = EActiveCodeToUpinAskPin");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - iActiveCodeToUpinState = EActiveCodeToUpinAskPin");
             if ( KErrNone == aErrorCode )
                 {
                 iActiveCodeToUpinState = EActiveCodeToUpinAskPin;
@@ -1266,7 +1262,7 @@ TInt CMmSecurityTsy::AbortSecurityCodeL(
 void CMmSecurityTsy::CompleteAbortSecurityCode(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEABORTSECURITYCODE_1, "TSY: CMmSecurityTsy::CompleteAbortSecurityCode - Error:%d", aErrorCode);
+TFLOGSTRING2("TSY: CMmSecurityTsy::CompleteAbortSecurityCode - Error:%d", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneAbortSecurityCode );
@@ -1299,7 +1295,7 @@ void CMmSecurityTsy::CompleteGetLockInfo(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEGETLOCKINFO_1, "LTSY: CMmSecurityTsy::CompleteGetLockInfo - Error:%d", aErrorCode);
+TFLOGSTRING2("LTSY: CMmSecurityTsy::CompleteGetLockInfo - Error:%d", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetLockInfo );
@@ -1365,7 +1361,7 @@ TInt CMmSecurityTsy::GetSecurityCodeInfoL(
     RMobilePhone::TMobilePhoneSecurityCode* aSecurityCode, 
     TDes8* aSecurityCodeInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_GETSECURITYCODEINFOL_1, "TSY: CMmSecurityTsy::GetSecurityCodeInfoL");
+TFLOGSTRING("TSY: CMmSecurityTsy::GetSecurityCodeInfoL");
 
     TInt ret( KErrNone );
     
@@ -1482,7 +1478,7 @@ void CMmSecurityTsy::CompleteGetSecurityCodeInfo(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEGETSECURITYCODEINFO_1, "TSY: CMmSecurityTsy::CompleteGetSecurityCodeInfo");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteGetSecurityCodeInfo");
 
 	RMobilePhone::TMobilePhoneSecurityCode* securityCode;
 	RMobilePhone::TMobilePhoneSecurityCodeInfoV5* securityCodeInfoV5;
@@ -1528,7 +1524,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEG
 TInt CMmSecurityTsy::GetSecurityCodeInfoCancel( 
     TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_GETSECURITYCODEINFOCANCEL_1, "TSY: CMmSecurityTsy::GetSecurityCodeInfoCancel");
+TFLOGSTRING("TSY: CMmSecurityTsy::GetSecurityCodeInfoCancel");
 
 	RMobilePhone::TMobilePhoneSecurityCode secCode = RMobilePhone::ESecurityCodePin1;
 	TBool reqHandleExist = EFalse;
@@ -1653,7 +1649,7 @@ TInt CMmSecurityTsy::NotifySecurityCodeInfoChange(
     RMobilePhone::TMobilePhoneSecurityCode* aSecurityCode, 
     TDes8* aSecurityCodeInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYSECURITYCODEINFOCHANGE_1, "TSY: CMmSecurityTsy::NotifySecurityCodeInfoChange");
+TFLOGSTRING("TSY: CMmSecurityTsy::NotifySecurityCodeInfoChange");
 
     TInt ret( KErrNone );
 
@@ -1683,7 +1679,7 @@ void CMmSecurityTsy::CompleteNotifySecurityCodeInfoChange(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETENOTIFYSECURITYCODEINFOCHANGE_1, "TSY: CMmSecurityTsy::CompleteNotifySecurityCodeInfoChange");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteNotifySecurityCodeInfoChange");
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( 
@@ -1727,7 +1723,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEN
 TInt CMmSecurityTsy::NotifySecurityCodeInfoChangeCancel( 
     TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_NOTIFYSECURITYCODEINFOCHANGECANCEL_1, "TSY: CMmSecurityTsy::NotifySecurityCodeInfoChangeCancel");
+TFLOGSTRING("TSY: CMmSecurityTsy::NotifySecurityCodeInfoChangeCancel");
 
     iRetNotifySecurityCodeInfo = NULL;
     iRetNotifySecurityCode = NULL;

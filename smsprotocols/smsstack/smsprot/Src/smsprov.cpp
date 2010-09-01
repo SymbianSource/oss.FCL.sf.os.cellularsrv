@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smsprovTraces.h"
-#endif
-
 #include "smsprot.h"
 
 #include <es_ver.h>
@@ -38,8 +32,6 @@
 #include "smsustrm.h"
 #include "smspmain.h"
 #include "smspfacadestor.h"
-
-#include "smsstacklog.h"
 
 // CSmsProvider policies
 //
@@ -69,14 +61,14 @@ static _LIT_SECURITY_POLICY_C1(smsProviderWritePolicy,ECapability_None);
  */
 CSmsProvider* CSmsProvider::NewL(CSmsProtocol& aProtocol)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_NEWL_1, "CSmsProvider::NewL");
+    LOGSMSPROT1("CSmsProvider::NewL");
     
     CSmsProvider* self =new(ELeave) CSmsProvider(aProtocol);
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop(self);
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_NEWL_2, "-> CSmsProvider::NewL - done");
+    LOGSMSPROT1("-> CSmsProvider::NewL - done");
     
     return self;
     }
@@ -99,14 +91,14 @@ CSmsProvider::CSmsProvider(CSmsProtocol& aProtocol)
  */
 void CSmsProvider::ConstructL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_CONSTRUCTL_1, "CSmsProvider::ConstructL");
+    LOGSMSPROT1("CSmsProvider::ConstructL");
     
     iProtocol.AddSmsMessageObserverL(*this);
     SetObserverAddedToProtocol(ETrue);
     iRecvBufSegArray=new(ELeave) CArrayPtrFlat<CBufSeg>(8);
     iSendBufSeg = CBufSeg::NewL(KSmsMaxSegmentLength);
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_CONSTRUCTL_2, "-> CSmsProvider::ConstructL - done");
+    LOGSMSPROT1("-> CSmsProvider::ConstructL - done");
     }
 
 /**
@@ -136,7 +128,7 @@ CSmsProvider::~CSmsProvider()
  */
 void CSmsProvider::Start()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_START_1, "CSmsProvider::Start");
+    LOGSMSPROT1("CSmsProvider::Start");
     }
 
 /**
@@ -146,7 +138,7 @@ void CSmsProvider::Start()
  */
 void CSmsProvider::LocalName(TSockAddr& aAddr) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_LOCALNAME_1, "CSmsProvider::LocalName");
+    LOGSMSPROT1("CSmsProvider::LocalName");
     aAddr = iLocalAddress;
     }
 
@@ -162,7 +154,7 @@ void CSmsProvider::LocalName(TSockAddr& aAddr) const
  */
 TInt CSmsProvider::SetLocalName(TSockAddr& aAddr)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SETLOCALNAME_1, "CSmsProvider::SetLocalName");
+    LOGSMSPROT1("CSmsProvider::SetLocalName");
     
     if( !iSecurityChecker || (iSecurityChecker->CheckPolicy(smsProviderSetLocalNamePolicy,"CSmsProvider SetLocal Name policy check") != KErrNone) )
         {
@@ -190,7 +182,7 @@ void CSmsProvider::RemName(TSockAddr& /*aAddr*/) const
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_REMNAME_1, "CSmsProvider::RemName");
+    LOGSMSPROT1("CSmsProvider::RemName");
     BULLSEYE_RESTORE
     }
 
@@ -205,7 +197,7 @@ TInt CSmsProvider::SetRemName(TSockAddr& /*aAddr*/)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SETREMNAME_1, "CSmsProvider::SetRemName");
+    LOGSMSPROT1("CSmsProvider::SetRemName");
     return KErrNotSupported;
     BULLSEYE_RESTORE
     }
@@ -220,7 +212,7 @@ TInt CSmsProvider::GetOption(TUint /*aLevel*/,TUint /*aName*/,TDes8& /*aOption*/
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_GETOPTION_1, "CSmsProvider::GetOption");
+    LOGSMSPROT1("CSmsProvider::GetOption");
     return 0;
     BULLSEYE_RESTORE
     }
@@ -244,7 +236,8 @@ TInt CSmsProvider::GetOption(TUint /*aLevel*/,TUint /*aName*/,TDes8& /*aOption*/
  */
 void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
     {
-    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_1, "CSmsProvider::Ioctl [aLevel=%u, aName=%u provider=0x%08x]",  aLevel, aName, (TUint)this);
+    LOGSMSPROT3("CSmsProvider::Ioctl [aLevel=%d, aName=%d]", aLevel, aName);
+    LOGSMSPROT2("CSmsProvider::Ioctl [provider=0x%08x]",this);
     
     // Panic in debug mode if this call is invalid in this SAPs current state
     __ASSERT_DEBUG(iLocalAddress.SmsAddrFamily()!=ESmsAddrUnbound,SmspPanic(KSmspPanicWrongSmsAddressFamily));
@@ -382,7 +375,7 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
                     TRAPD(ret,(smsmessage=InternalizeMessageL()));
                     if( ret!=KErrNone )
                         {
-                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_3, "-> CSmsProvider::Ioctl - CSmsProvider::InternalizeMessageL [ret=%d]", ret);
+                        LOGSMSPROT2("-> CSmsProvider::Ioctl - CSmsProvider::InternalizeMessageL [ret=%d]", ret);
                         iSendBufSeg->Reset();
                         iSocket->Error(ret, MSocketNotify::EErrorIoctl);
                         }
@@ -408,11 +401,11 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
                     if( ret==KErrNone )
                         {
                         TRAP(ret,(iProtocol.DeleteSMSFromReaStoreL( *smsmessage )));
-                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_4, "-> CSmsProvider::Ioctl - CSmsProvider::DeleteSMSFromReaStoreL [ret=%d]", ret);
+                        LOGSMSPROT2("-> CSmsProvider::Ioctl - CSmsProvider::DeleteSMSFromReaStoreL [ret=%d]", ret);
                         }
                     else
                         {
-                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_5, "-> CSmsProvider::Ioctl - CSmsProvider::InternalizeMessageL [ret=%d]", ret);
+                        LOGSMSPROT2("-> CSmsProvider::Ioctl - CSmsProvider::InternalizeMessageL [ret=%d]", ret);
                         }
                     delete smsmessage;
                     // Looking for more sms left in the store
@@ -421,13 +414,13 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
                     if( iEnumSocket )
                         {
                         --iNumOfEnumeratedMessages;
-                        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_6, "-> CSmsProvider::Ioctl - [iNumOfEnumeratedMessages=%d]", iNumOfEnumeratedMessages);
+                        LOGSMSPROT2("-> CSmsProvider::Ioctl - [iNumOfEnumeratedMessages=%d]", iNumOfEnumeratedMessages);
                         if( iNumOfEnumeratedMessages <= 0 )
                             {
                             iProtocol.iPhoneEnumerationObserver=NULL;
                             iEnumSocket=EFalse;
                             iProtocol.MessageReadedSuccessfully();
-                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_7, "-> CSmsProvider::Ioctl - [iNumOfEnumeratedMessages=NULL]");
+                            LOGSMSPROT1("-> CSmsProvider::Ioctl - [iNumOfEnumeratedMessages=NULL]");
                             }
                         }
                     // Remove the message from the receive buffer & complete
@@ -456,7 +449,7 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
                             if( iNumOfEnumeratedMessages <= 0 )
                                 {
                                 iProtocol.iPhoneEnumerationObserver=NULL;
-                                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_IOCTL_8, "-> CSmsProvider::Ioctl - fail [iNumOfEnumeratedMessages=NULL]");
+                                LOGSMSPROT1("-> CSmsProvider::Ioctl - fail [iNumOfEnumeratedMessages=NULL]");
                                 iEnumSocket=EFalse;
                                 iProtocol.MessageReadedSuccessfully();
                                 }
@@ -564,7 +557,7 @@ void CSmsProvider::Ioctl(TUint aLevel,TUint aName,TDes8* aOption)
  */
 void CSmsProvider::CancelIoctl(TUint aLevel, TUint aName)
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_CANCELIOCTL_1, "CSmsProvider::CancelIoctl [aLevel=%u, aName=%u]", aLevel, aName);
+    LOGSMSPROT3("CSmsProvider::CancelIoctl [aLevel=%d, aName=%d]", aLevel, aName);
     
     // Panic in debug mode if this call is invalid in this SAPs current state
     __ASSERT_DEBUG(iLocalAddress.SmsAddrFamily()!=ESmsAddrUnbound,SmspPanic(KSmspPanicWrongSmsAddressFamily));
@@ -590,7 +583,7 @@ void CSmsProvider::CancelIoctl(TUint aLevel, TUint aName)
                     iProtocol.CancelEnumeratePhone(*this);
                     iEnumSocket=EFalse;
                     iProtocol.iPhoneEnumerationObserver=NULL;
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_CANCELIOCTL_2, "-> CSmsProvider::CancelIoctl - [iNumOfEnumeratedMessages=NULL]");
+                    LOGSMSPROT1("-> CSmsProvider::CancelIoctl - [iNumOfEnumeratedMessages=NULL]");
                     } break;
                 case KIoctlWriteSmsMessage:
                     {
@@ -637,7 +630,7 @@ TInt CSmsProvider::SetOption(TUint /*aLevel*/,TUint /*aName*/,const TDesC8& /*aO
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SETOPTION_1, "CSmsProvider::SetOption()");
+    LOGSMSPROT1("CSmsProvider::SetOption()");
     return 0;
     BULLSEYE_RESTORE
     }
@@ -661,7 +654,7 @@ TInt CSmsProvider::SetOption(TUint /*aLevel*/,TUint /*aName*/,const TDesC8& /*aO
  */
 TInt CSmsProvider::Write(RMBufChain& aBufChain, TUint /*aOptions*/, TSockAddr* /*aAddr*/)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_WRITE_1, "CSmsProvider::Write");
+    LOGSMSPROT1("CSmsProvider::Write");
     
     if( !iSecurityChecker || (iSecurityChecker->CheckPolicy(smsProviderWritePolicy,"CSmsProvider Write policy check") != KErrNone) )
         {
@@ -670,7 +663,7 @@ TInt CSmsProvider::Write(RMBufChain& aBufChain, TUint /*aOptions*/, TSockAddr* /
     __ASSERT_DEBUG(iLocalAddress.SmsAddrFamily()!=ESmsAddrUnbound,SmspPanic(KSmspPanicWrongSmsAddressFamily));
     
     /// @note: LOGIFH2A2 macro for logging esock write
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_WRITE_2, "-> CSmsProvider::Write [%d bytes]", aBufChain.Length());
+    LOGSMSPROT2("-> CSmsProvider::Write [%d bytes]", aBufChain.Length());
 #ifdef SMSLOGGERIF
 	HBufC8* debugBuf = HBufC8::New(aBufChain.Length());
 	if(debugBuf)
@@ -730,7 +723,7 @@ TInt CSmsProvider::GetData(RMBufChain& aBufChain, TUint /*aLength*/, TUint /*aOp
     {
     __ASSERT_DEBUG((iLocalAddress.SmsAddrFamily()!=ESmsAddrUnbound) && (iLocalAddress.SmsAddrFamily()!=ESmsAddrSendOnly),SmspPanic(KSmspPanicWrongSmsAddressFamily));
 
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_GETDATA_1, "CSmsProvider::GetData [provider=0x%08x]", (TUint)this);
+    LOGSMSPROT2("CSmsProvider::GetData [provider=0x%08x]", this);
     
     // Get the segmented buffer of first message
     CBufSeg* recvbufseg=iRecvBufSegArray->At(0);
@@ -781,7 +774,7 @@ void CSmsProvider::ActiveOpen()
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_ACTIVEOPEN_1, "CSmsProvider::ActiveOpen [does nothing]");
+    LOGSMSPROT1("CSmsProvider::ActiveOpen [does nothing]");
     BULLSEYE_RESTORE
     }
 
@@ -796,7 +789,7 @@ void CSmsProvider::ActiveOpen(const TDesC8& /*aConnectionData*/)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_ACTIVEOPEN1_1, "CSmsProvider::ActiveOpen [does nothing]");
+    LOGSMSPROT1("CSmsProvider::ActiveOpen [does nothing]");
     BULLSEYE_RESTORE
     }
 
@@ -812,7 +805,7 @@ TInt CSmsProvider::PassiveOpen(TUint /*aQueSize*/)
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_PASSIVEOPEN_1, "CSmsProvider::PassiveOpen [not supported]");
+    LOGSMSPROT1("CSmsProvider::PassiveOpen [not supported]");
     return KErrNotSupported;
     BULLSEYE_RESTORE
     }
@@ -829,7 +822,7 @@ TInt CSmsProvider::PassiveOpen(TUint /*aQueSize*/,const TDesC8& /*aConnectionDat
     {
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_PASSIVEOPEN1_1, "CSmsProvider::PassiveOpen [not supported]");
+    LOGSMSPROT1("CSmsProvider::PassiveOpen [not supported]");
     return KErrNotSupported;
     BULLSEYE_RESTORE
     }
@@ -842,7 +835,7 @@ TInt CSmsProvider::PassiveOpen(TUint /*aQueSize*/,const TDesC8& /*aConnectionDat
  */
 void CSmsProvider::Shutdown(TCloseType aOption)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SHUTDOWN_1, "CSmsProvider::Shutdown [aOption=%d]", aOption);
+    LOGSMSPROT2("CSmsProvider::Shutdown [aOption=%d]", aOption);
     
     TInt messagesInBuffer = iRecvBufSegArray->Count();
     for( TInt index = 0; index < messagesInBuffer; ++index )
@@ -853,11 +846,11 @@ void CSmsProvider::Shutdown(TCloseType aOption)
         if( ret == KErrNone )
             {
             TRAP(ret, (iProtocol.iReassemblyStore->SetMessagePassedToClientL(*smsmessage, EFalse)));
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SHUTDOWN_2, "-> CSmsProvider::Shutdown - SetMessagePassedToClientL [ret=%d]", ret);
+            LOGSMSPROT2("-> CSmsProvider::Shutdown - SetMessagePassedToClientL [ret=%d]", ret);
             }
         else
             {
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SHUTDOWN_3, "-> CSmsProvider::Shutdown - CSmsProvider::InternalizeMessageL leave [ret=%d]", ret);
+            LOGSMSPROT2("-> CSmsProvider::Shutdown - CSmsProvider::InternalizeMessageL leave [ret=%d]", ret);
             }
         delete smsmessage;
         }
@@ -886,7 +879,7 @@ void CSmsProvider::Shutdown(TCloseType aOption)
  */
 void CSmsProvider::Shutdown(TCloseType aOption, const TDesC8& /*aDisconnectionData*/)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SHUTDOWN1_1, "CSmsProvider::Shutdown");
+	LOGSMSPROT1("CSmsProvider::Shutdown");
 	Shutdown(aOption);
 	}
 
@@ -901,7 +894,7 @@ void CSmsProvider::AutoBind()
 	{
     // Ignore in code coverage - not intended to be used
     BULLSEYE_OFF    
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_AUTOBIND_1, "CSmsProvider::AutoBind [does nothing]");
+	LOGSMSPROT1("CSmsProvider::AutoBind [does nothing]");
     BULLSEYE_RESTORE
 	}
 
@@ -913,7 +906,7 @@ void CSmsProvider::AutoBind()
  */
 const TSmsAddr& CSmsProvider::GetLocalAddress() const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_GETLOCALADDRESS_1, "CSmsProvider::GetLocalAddress");
+	LOGSMSPROT1("CSmsProvider::GetLocalAddress");
 	return iLocalAddress;
 	}
 
@@ -923,7 +916,7 @@ const TSmsAddr& CSmsProvider::GetLocalAddress() const
  */
 void CSmsProvider::SetLocalAddress(const TSmsAddr& aSmsAddr)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SETLOCALADDRESS_1, "CSmsProvider::SetLocalAddress");
+	LOGSMSPROT1("CSmsProvider::SetLocalAddress");
 	iLocalAddress = aSmsAddr;
 	}
 
@@ -936,7 +929,7 @@ void CSmsProvider::SetLocalAddress(const TSmsAddr& aSmsAddr)
  */
 void CSmsProvider::ModemNotificationCompleted(TInt aStatus)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_MODEMNOTIFICATIONCOMPLETED_1, "CSmsProvider::ModemNotificationCompleted [aStatus=%d]", aStatus);
+	LOGSMSPROT2("CSmsProvider::ModemNotificationCompleted [aStatus=%d]", aStatus);
 
 	if( !IoctlOutstanding() )
 	    {
@@ -953,7 +946,7 @@ void CSmsProvider::ModemNotificationCompleted(TInt aStatus)
  */
 void CSmsProvider::MessageSendCompleted(TInt aStatus)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_MESSAGESENDCOMPLETED_1, "CSmsProvider::MessageSendCompleted [aStatus=%d]", aStatus);
+    LOGSMSPROT2("CSmsProvider::MessageSendCompleted [aStatus=%d]", aStatus);
     
     iSocket->Error(aStatus,MSocketNotify::EErrorIoctl);
     SetIoctlOutstanding(EFalse);
@@ -968,7 +961,7 @@ void CSmsProvider::MessageSendCompleted(TInt aStatus)
  */
 TInt CSmsProvider::MessageReceived(const CSmsMessage& aSmsMessage,TDes& /*aDes*/)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_MESSAGERECEIVED_1, "CSmsProvider::MessageReceived");
+    LOGSMSPROT1("CSmsProvider::MessageReceived");
     
     // Attempt to serial the message to the receive buffer & notify
     // the socket of the new data
@@ -986,7 +979,7 @@ TInt CSmsProvider::MessageReceived(const CSmsMessage& aSmsMessage,TDes& /*aDes*/
  */
 TBool CSmsProvider::ClientConfirmsMessage() const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_CLIENTCONFIRMSMESSAGE_1, "CSmsProvider::ClientConfirmsMessage");
+    LOGSMSPROT1("CSmsProvider::ClientConfirmsMessage");
     
     return ETrue;
     }
@@ -996,7 +989,7 @@ TBool CSmsProvider::ClientConfirmsMessage() const
  */
 TInt CSmsProvider::SmsAddrIsDuplicate(const MSmsMessageObserver* aObserver, const TSmsAddr& aAddr) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SMSADDRISDUPLICATE_1, "CSmsProvider::SmsAddrIsDuplicate");
+    LOGSMSPROT1("CSmsProvider::SmsAddrIsDuplicate");
     
     if( this == aObserver )
         {
@@ -1014,7 +1007,7 @@ TInt CSmsProvider::SmsAddrIsDuplicate(const MSmsMessageObserver* aObserver, cons
  */
 void CSmsProvider::EnumeratePhoneCompleted(TInt aStatus)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_ENUMERATEPHONECOMPLETED_1, "CSmsProvider::EnumeratePhoneCompleted [aStatus=%d]", aStatus);
+    LOGSMSPROT2("CSmsProvider::EnumeratePhoneCompleted [aStatus=%d]", aStatus);
     
     // Attempt to serialize all enumerated messages to the receive buffer
     TInt numnewsegments=0;
@@ -1081,7 +1074,7 @@ void CSmsProvider::EnumeratePhoneCompleted(TInt aStatus)
  */
 void CSmsProvider::MessageWriteCompleted(TInt aStatus, const CSmsMessage* aSmsMessage)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_MESSAGEWRITECOMPLETED_1, "CSmsProvider::MessageWriteCompleted [aStatus=%d]", aStatus);
+	LOGSMSPROT2("CSmsProvider::MessageWriteCompleted [aStatus=%d]", aStatus);
 
 	// If no errors at present populate the buffer
 	if( aStatus == KErrNone )
@@ -1104,7 +1097,7 @@ void CSmsProvider::MessageWriteCompleted(TInt aStatus, const CSmsMessage* aSmsMe
  */
 void CSmsProvider::PopulateBufferWithPDUSlotsL(const CSmsMessage& aSmsMessage)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_POPULATEBUFFERWITHPDUSLOTSL_1, "CSmsProvider::PopulateBufferWithPDUSlotsL");
+    LOGSMSPROT1("CSmsProvider::PopulateBufferWithPDUSlotsL");
     
     // Create buffer for store id and PDU slot indexes based on size of slot array
     
@@ -1122,7 +1115,7 @@ void CSmsProvider::PopulateBufferWithPDUSlotsL(const CSmsMessage& aSmsMessage)
     iSocket->IoctlComplete(&textBufPtr);
     delete buf;
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_POPULATEBUFFERWITHPDUSLOTSL_2, "-> CSmsProvider::PopulateBufferWithPDUSlotsL - done");
+    LOGSMSPROT1("-> CSmsProvider::PopulateBufferWithPDUSlotsL - done");
     }
 
 /**
@@ -1135,7 +1128,7 @@ void CSmsProvider::PopulateBufferWithPDUSlotsL(const CSmsMessage& aSmsMessage)
  */
 void CSmsProvider::MessageDeleteCompleted(TInt aStatus)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_MESSAGEDELETECOMPLETED_1, "CSmsProvider::MessageDeleteCompleted [aStatus=%d]", aStatus);
+    LOGSMSPROT2("CSmsProvider::MessageDeleteCompleted [aStatus=%d]", aStatus);
     iSocket->Error(aStatus,MSocketNotify::EErrorIoctl);
     SetIoctlOutstanding(EFalse);
     }
@@ -1150,7 +1143,7 @@ void CSmsProvider::MessageDeleteCompleted(TInt aStatus)
  */
 void CSmsProvider::ReadSmsParamsCompleted(TInt aStatus, CMobilePhoneSmspList* aSmspList)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_READSMSPARAMSCOMPLETED_1, "CSmsProvider::ReadSmsParamsCompleted [aStatus=%d]", aStatus);
+    LOGSMSPROT2("CSmsProvider::ReadSmsParamsCompleted [aStatus=%d]", aStatus);
     
     TInt numNewSegments=0;
     
@@ -1184,7 +1177,7 @@ void CSmsProvider::ReadSmsParamsCompleted(TInt aStatus, CMobilePhoneSmspList* aS
  */
 void CSmsProvider::WriteSmsParamsCompleted(TInt aStatus)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_WRITESMSPARAMSCOMPLETED_1, "CSmsProvider::WriteSmsParamsCompleted [aStatus=%d]", aStatus);
+    LOGSMSPROT2("CSmsProvider::WriteSmsParamsCompleted [aStatus=%d]", aStatus);
     iSocket->Error(aStatus,MSocketNotify::EErrorIoctl);
     SetIoctlOutstanding(EFalse);
     }
@@ -1199,12 +1192,12 @@ void CSmsProvider::WriteSmsParamsCompleted(TInt aStatus)
  */
 TInt CSmsProvider::ExternalizeEnumeratedMessagesL(TInt& aCount)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_EXTERNALIZEENUMERATEDMESSAGESL_1, "CSmsProvider::ExternalizeEnumeratedMessagesL");
+    LOGSMSPROT1("CSmsProvider::ExternalizeEnumeratedMessagesL");
     
     TInt numnewsegments(0);
     numnewsegments=iProtocol.ExternalizeEnumeratedMessagesL(*this,aCount);
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_EXTERNALIZEENUMERATEDMESSAGESL_2, "-> CSmsProvider::ExternalizeEnumeratedMessagesL - done");
+    LOGSMSPROT1("-> CSmsProvider::ExternalizeEnumeratedMessagesL - done");
     
     return numnewsegments;
     }
@@ -1222,7 +1215,7 @@ TInt CSmsProvider::ExternalizeEnumeratedMessagesL(TInt& aCount)
  */
 TInt CSmsProvider::ExternalizeMessageL(const CSmsMessage& aSmsMessage,TBool aAppend)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_EXTERNALIZEMESSAGEL_1, "CSmsProvider::ExternalizeMessageL()");
+    LOGSMSPROT1("CSmsProvider::ExternalizeMessageL()");
     
     // Create a new segmented buffer for the serialization of this message
     CBufSeg* recvbufseg = CBufSeg::NewL(KSmsMaxSegmentLength);
@@ -1246,7 +1239,7 @@ TInt CSmsProvider::ExternalizeMessageL(const CSmsMessage& aSmsMessage,TBool aApp
     CleanupStack::PopAndDestroy();  //  writestream
     CleanupStack::Pop();            //  recvbufseg
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_EXTERNALIZEMESSAGEL_2, "-> CSmsProvider::ExternalizeMessageL - done");
+    LOGSMSPROT1("-> CSmsProvider::ExternalizeMessageL - done");
     
     return NumSegments(recvbufseg->Size());
     }
@@ -1262,7 +1255,7 @@ TInt CSmsProvider::ExternalizeMessageL(const CSmsMessage& aSmsMessage,TBool aApp
  */
 CSmsMessage* CSmsProvider::InternalizeMessageL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_INTERNALIZEMESSAGEL_1, "CSmsProvider::InternalizeMessageL()");
+    LOGSMSPROT1("CSmsProvider::InternalizeMessageL()");
     
     // Initialize the read stream with the buffer
     RBufReadStream readstream(*iSendBufSeg);
@@ -1281,7 +1274,7 @@ CSmsMessage* CSmsProvider::InternalizeMessageL()
     CleanupStack::PopAndDestroy();  //  readstream
     iSendBufSeg->Reset();
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_INTERNALIZEMESSAGEL_2, "-> CSmsProvider::InternalizeMessageL - done");
+    LOGSMSPROT1("-> CSmsProvider::InternalizeMessageL - done");
     
     return smsmessage;
     }
@@ -1298,7 +1291,7 @@ CSmsMessage* CSmsProvider::InternalizeMessageL()
  */
 TInt CSmsProvider::ExternalizeParametersL(const CMobilePhoneSmspList& aMobilePhoneSmspList)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_EXTERNALIZEPARAMETERSL_1, "CSmsProvider::ExternalizeParametersL");
+    LOGSMSPROT1("CSmsProvider::ExternalizeParametersL");
     
     // Create a new segmented buffer for the serialization of this message
     CBufSeg* recvBufSeg = CBufSeg::NewL(KSmsMaxSegmentLength);
@@ -1316,7 +1309,7 @@ TInt CSmsProvider::ExternalizeParametersL(const CMobilePhoneSmspList& aMobilePho
     iRecvBufSegArray->InsertL(0,recvBufSeg);
     CleanupStack::Pop(recvBufSeg);
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_EXTERNALIZEPARAMETERSL_2, "-> CSmsProvider::ExternalizeParametersL - done");
+    LOGSMSPROT1("-> CSmsProvider::ExternalizeParametersL - done");
     
     return NumSegments(recvBufSeg->Size());
     }
@@ -1332,7 +1325,7 @@ TInt CSmsProvider::ExternalizeParametersL(const CMobilePhoneSmspList& aMobilePho
  */
 CMobilePhoneSmspList* CSmsProvider::InternalizeParametersL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_INTERNALIZEPARAMETERSL_1, "CSmsProvider::InternalizeParametersL");
+    LOGSMSPROT1("CSmsProvider::InternalizeParametersL");
     
     // Initialize the read stream with the buffer
     RBufReadStream readStream(*iSendBufSeg);
@@ -1350,14 +1343,14 @@ CMobilePhoneSmspList* CSmsProvider::InternalizeParametersL()
     CleanupStack::PopAndDestroy();	//readStream
     iSendBufSeg->Reset();
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_INTERNALIZEPARAMETERSL_2, "-> CSmsProvider::InternalizeParametersL - done");
+    LOGSMSPROT1("-> CSmsProvider::InternalizeParametersL - done");
     
     return mobilePhoneSmspList;
     }
 
 CSmsMessage* CSmsProvider::InternalizeMessageL(	CBufSeg* aBufSeg)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_INTERNALIZEMESSAGEL1_1, "CSmsProvider::InternalizeMessageL");
+    LOGSMSPROT1("CSmsProvider::InternalizeMessageL");
     
     RBufReadStream readstream(*aBufSeg);
     readstream.Open(*aBufSeg,0);
@@ -1371,14 +1364,14 @@ CSmsMessage* CSmsProvider::InternalizeMessageL(	CBufSeg* aBufSeg)
     CleanupStack::Pop();  //  smsmessage
     CleanupStack::PopAndDestroy();  //  readsream
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_INTERNALIZEMESSAGEL1_2, "-> CSmsProvider::InternalizeMessageL - done");
+    LOGSMSPROT1("-> CSmsProvider::InternalizeMessageL - done");
     
     return smsmessage;
     }
 
 TInt CSmsProvider::SecurityCheck(MProvdSecurityChecker* aSecurityChecker)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPROVIDER_SECURITYCHECK_1, "CSmsProvider::SecurityCheck");
+    LOGSMSPROT1("CSmsProvider::SecurityCheck");
     iSecurityChecker = aSecurityChecker;
     return KErrNone;
     }

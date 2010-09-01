@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -95,10 +95,9 @@ PRJ_EXPORTS
 #endif
 
 // variant information. c32.exe SID is 101F7989
-../commontsy/inc/operatorVariants.ini	z:/private/101f7989/operatorvariants.ini
-
-// by default load the non-dispatcher LTSY
-../phonetsy/data/ltsydata.ini 			z:/private/101f7989/ltsydata.ini
+../commontsy/inc/operatorVariants.ini	/epoc32/data/z/private/101f7989/operatorvariants.ini
+../commontsy/inc/operatorVariants.ini	/epoc32/release/winscw/udeb/z/private/101f7989/operatorvariants.ini
+../commontsy/inc/operatorVariants.ini	/epoc32/release/winscw/urel/z/private/101f7989/operatorvariants.ini
 
 // ROM
 
@@ -140,7 +139,6 @@ PRJ_MMPFILES
 PRJ_TESTMMPFILES
 // component tests
 #include "../test/component/group/bld.inf"
-
 // integration tests
 #include "../test/integration/group/bld.inf"
 

@@ -19,6 +19,12 @@
  @file
 */
 
+#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
+
+#include "../version1/group/bld.inf"
+
+#else
+
 PRJ_PLATFORMS
 
 DEFAULT
@@ -39,5 +45,7 @@ PRJ_MMPFILES
 RawIPNif.mmp
 
 #ifdef SYMBIAN_ZERO_COPY_NETWORKING
-#include "../rawipnif2/group/bld.inf"
+RawIPNif2.mmp
 #endif
+
+#endif // SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY

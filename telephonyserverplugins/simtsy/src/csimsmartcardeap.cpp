@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,15 +19,9 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "csimsmartcardeapTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "csimsmartcardeap.h"
+#include "Simlog.h"
 #include "etelext.h"
 
 // CSimSmartCardEapManager implementation; related to CSimSmartCardEap //
@@ -74,11 +68,11 @@ Second-phase constructor.
 */
 void CSimSmartCardEapManager::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_CONSTRUCTL_1, "CSimSmartCardEapManager second phase construction created");
+	LOGPHONE1("CSimSmartCardEapManager second phase construction created");
 
 	ParseEapInfoL();
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_CONSTRUCTL_2, "CSimSmartCardEapManager second phase construction completed");
+	LOGPHONE1("CSimSmartCardEapManager second phase construction completed");
 	}
 
 /**
@@ -86,7 +80,7 @@ If this is destroyed then so should all EAP sub-session objects.
 */
 CSimSmartCardEapManager::~CSimSmartCardEapManager()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_DTOR_1, "CSimSmartCardEapManager destructing");
+	LOGPHONE1("CSimSmartCardEapManager destructing");
 
 	for (TInt jj = iSubSessionObjs.Count()-1; jj >= 0; jj--)
 		{
@@ -97,7 +91,7 @@ CSimSmartCardEapManager::~CSimSmartCardEapManager()
 
 	ClearParsedData();
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_DTOR_2, "CSimSmartCardEapManager destructed");
+	LOGPHONE1("CSimSmartCardEapManager destructed");
 	}
 
 void CSimSmartCardEapManager::ClearParsedData()
@@ -142,11 +136,11 @@ Parses the UICC App EAP specific settings from the config.txt.
 */
 void CSimSmartCardEapManager::ParseEapInfoL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_1, "CSimSmartCardEapManager::ParseEapInfoL called");
+	LOGPHONE1("CSimSmartCardEapManager::ParseEapInfoL called");
 
 	CTestConfigItem* item = NULL;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_2, "Starting to Parse Smart Card EAP Info");
+	LOGPHONE1("Starting to Parse Smart Card EAP Info");
 	TInt count = CfgFile()->ItemCount(KScEapProcedures);
 
 	// Used in parsing to keep track of the nested items
@@ -169,7 +163,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 		item = const_cast<CTestConfigItem*>(CfgFile()->Item(KScEapProcedures, index));
 		if(item == NULL)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_3, "WARNING CONFIGURATION FILE PARSING: SC EAP PROC INFO tag not read [%d]", index);
+			LOGPHONE2("WARNING CONFIGURATION FILE PARSING: SC EAP PROC INFO tag not read [%d]", index);
 			continue;
 			}
 
@@ -185,7 +179,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, appId);
 		if(ret != KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element APPID returned %d (element no. %d) from tag %s.", ret,0,KScEapProcedures);
+			LOGPARSERR("appId", ret,0,&KScEapProcedures);
 			continue;
 			}
 		else
@@ -200,7 +194,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, eapType);
 		if(ret != KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element EAPTYPE returned %d (element no. %d) from tag %s.", ret,1,KScEapProcedures);
+			LOGPARSERR("eapType", ret,1,&KScEapProcedures);
 			continue;
 			}
 		else
@@ -213,17 +207,17 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, numChallenges);
 		if(ret != KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element NUMCHALLENGES returned %d (element no. %d) from tag %s.", ret,2,KScEapProcedures);
+			LOGPARSERR("numChallenges", ret,2,&KScEapProcedures);
 			continue;
 			}
 		else if (numChallenges > (countChl - nestedChlTag))
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_7, "ERROR CONFIGURATION FILE PARSING: error SC EAP PROC INFO specifies more challenges than available [%d]", index);
+			LOGPHONE2("ERROR CONFIGURATION FILE PARSING: error SC EAP PROC INFO specifies more challenges than available [%d]", index);
 			continue;
 			}
 		else if (numChallenges < 0)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_8, "ERROR CONFIGURATION FILE PARSING: error SC EAP PROC INFO specifies -ve challenge number [%d]", index);
+			LOGPHONE2("ERROR CONFIGURATION FILE PARSING: error SC EAP PROC INFO specifies -ve challenge number [%d]", index);
 			continue;
 			}
 
@@ -231,11 +225,11 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 		ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 3, dataFrmt);
 		if(ret != KErrNone)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_9, "CONFIGURATION FILE PARSING: SC EAP PROC INFO tag with no data format [%d]", index);
+			LOGPHONE2("CONFIGURATION FILE PARSING: SC EAP PROC INFO tag with no data format [%d]", index);
 			}
 		else if (dataFrmt >= EMaxConfigDataFormat)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_10, "WARNING IN CONFIGURATION FILE PARSING - error wrong data format value SC EAP PROC INFO tag [%d] (ASCII format will be used)", index);
+			LOGPHONE2("WARNING IN CONFIGURATION FILE PARSING - error wrong data format value SC EAP PROC INFO tag [%d] (ASCII format will be used)", index);
 			dataFrmt = EConfigDataFormatAscii;
 			}
 
@@ -251,21 +245,21 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			// parse delay and key
 			if (item == NULL)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_11, "WARNING CONFIGURATION FILE PARSING: could not read EAP Key tag [%d]", nestedKeyTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Key tag [%d]", nestedKeyTag-1);
 				}
 			else
 				{
 				ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, ptr);
 				if (ret != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_12, "WARNING CONFIGURATION FILE PARSING: could not read EAP Key tag's data [%d]", nestedKeyTag-1);
+					LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Key tag's data [%d]", nestedKeyTag-1);
 					}
 				else
 					{
 					TRAPD(kAllocErr, startData = ptr.AllocL());
 					if (kAllocErr != KErrNone)
 						{
-						OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_13, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Key data [%d]", nestedKeyTag-1);
+						LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Key data [%d]", nestedKeyTag-1);
 						}
 					else
 						{
@@ -282,7 +276,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 						TRAP(kAllocErr, procInfo.iEapKey = tempPtr.AllocL());
 						if (kAllocErr != KErrNone)
 							{
-							OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_14, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Key data copy [%d]", nestedKeyTag-1);
+							LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Key data copy [%d]", nestedKeyTag-1);
 							}
 						delete startData;
 						startData = NULL;
@@ -292,7 +286,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_15, "ERROR CONFIGURATION FILE PARSING: NO SC EAP KEY INFO TAG");
+			LOGPHONE1("ERROR CONFIGURATION FILE PARSING: NO SC EAP KEY INFO TAG");
 			}
 
 		// Get EMSK
@@ -303,21 +297,21 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			// parse key
 			if (item == NULL)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_16, "WARNING CONFIGURATION FILE PARSING: could not read EAP Ext Key tag [%d]", nestedExtKeyTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Ext Key tag [%d]", nestedExtKeyTag-1);
 				}
 			else
 				{
 				ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, ptr);
 				if (ret != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_17, "WARNING CONFIGURATION FILE PARSING: could not read EAP Ext Key tag's data [%d]", nestedExtKeyTag-1);
+					LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Ext Key tag's data [%d]", nestedExtKeyTag-1);
 					}
 				else
 					{
 					TRAPD(kAllocErr, startData = ptr.AllocL());
 					if (kAllocErr != KErrNone)
 						{
-						OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_18, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Ext Key data [%d]", nestedExtKeyTag-1);
+						LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Ext Key data [%d]", nestedExtKeyTag-1);
 						}
 					else
 						{
@@ -334,7 +328,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 						TRAP(kAllocErr, procInfo.iEapExtKey = tempPtr.AllocL());
 						if (kAllocErr != KErrNone)
 							{
-							OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_19, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Ext Key data copy [%d]", nestedExtKeyTag-1);
+							LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Ext Key data copy [%d]", nestedExtKeyTag-1);
 							}
 						delete startData;
 						startData = NULL;
@@ -344,7 +338,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_20, "ERROR CONFIGURATION FILE PARSING: NO SC EAP EXT KEY INFO TAG");
+			LOGPHONE1("ERROR CONFIGURATION FILE PARSING: NO SC EAP EXT KEY INFO TAG");
 			}
 
 		// Get Permanent Identity
@@ -355,21 +349,21 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			// parse id
 			if (item == NULL)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_21, "WARNING CONFIGURATION FILE PARSING: could not read EAP id tag [%d]", nestedIdTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP id tag [%d]", nestedIdTag-1);
 				}
 			else
 				{
 				ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, ptr);
 				if (ret != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_22, "WARNING CONFIGURATION FILE PARSING: could not read EAP Id tag's data [%d]", nestedIdTag-1);
+					LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Id tag's data [%d]", nestedIdTag-1);
 					}
 				else
 					{
 					TRAPD(idAllocErr, startData = ptr.AllocL());
 					if (idAllocErr != KErrNone)
 						{
-						OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_23, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Id data [%d]", nestedIdTag-1);
+						LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Id data [%d]", nestedIdTag-1);
 						}
 					else
 						{
@@ -387,7 +381,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 						TRAP(idAllocErr, procInfo.iEapId = tempPtr.AllocL());
 						if (idAllocErr != KErrNone)
 							{
-							OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_24, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Id data copy [%d]", nestedIdTag-1);
+							LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Id data copy [%d]", nestedIdTag-1);
 							}
 						delete startData;
 						startData = NULL;
@@ -397,7 +391,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_25, "WARNING CONFIGURATION FILE PARSING: NO SC EAP ID INFO TAG");
+			LOGPHONE1("WARNING CONFIGURATION FILE PARSING: NO SC EAP ID INFO TAG");
 			}
 
 		// Get Pseudonym Identity
@@ -408,21 +402,21 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			// parse id
 			if (item == NULL)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_26, "WARNING CONFIGURATION FILE PARSING: could not read EAP Pseudonym id tag [%d]", nestedPsIdTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Pseudonym id tag [%d]", nestedPsIdTag-1);
 				}
 			else
 				{
 				ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, ptr);
 				if (ret != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_27, "WARNING CONFIGURATION FILE PARSING: could not read EAP Pseudonym Id tag's data [%d]", nestedPsIdTag-1);
+					LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP Pseudonym Id tag's data [%d]", nestedPsIdTag-1);
 					}
 				else
 					{
 					TRAPD(idAllocErr, startData = ptr.AllocL());
 					if (idAllocErr != KErrNone)
 						{
-						OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_28, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Pseudonym Id data [%d]", nestedPsIdTag-1);
+						LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Pseudonym Id data [%d]", nestedPsIdTag-1);
 						}
 					else
 						{
@@ -440,7 +434,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 						TRAP(idAllocErr, procInfo.iEapPsId = tempPtr.AllocL());
 						if (idAllocErr != KErrNone)
 							{
-							OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_29, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Pseudonym Id data copy [%d]", nestedPsIdTag-1);
+							LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP Pseudonym Id data copy [%d]", nestedPsIdTag-1);
 							}
 						delete startData;
 						startData = NULL;
@@ -450,7 +444,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_30, "WARNING CONFIGURATION FILE PARSING: NO SC EAP PS ID INFO TAG");
+			LOGPHONE1("WARNING CONFIGURATION FILE PARSING: NO SC EAP PS ID INFO TAG");
 			}
 
 		// Get challenges
@@ -463,7 +457,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			{
 			if (nestedChlTag >= countChl)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_31, "WARNING CONFIGURATION FILE PARSING: NO MORE SC EAP Challenge INFO TAG");
+				LOGPHONE1("WARNING CONFIGURATION FILE PARSING: NO MORE SC EAP Challenge INFO TAG");
 				break;
 				}
 
@@ -473,7 +467,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			// parse delay and challenge/response and auth status
 			if (item == NULL)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_32, "WARNING CONFIGURATION FILE PARSING: could not read EAP challenge tag [%d]", nestedChlTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP challenge tag [%d]", nestedChlTag-1);
 				continue;
 				}
 
@@ -481,14 +475,14 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 0, ptr);
 			if (ret != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_33, "WARNING CONFIGURATION FILE PARSING: could not read EAP challenge data [%d]", nestedChlTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP challenge data [%d]", nestedChlTag-1);
 				continue;
 				}
 
 			TRAPD(leaveErr, startData = ptr.AllocL());
 			if (leaveErr != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_34, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP challenge data [%d]", nestedChlTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP challenge data [%d]", nestedChlTag-1);
 				continue;
 				}
 			tempPtr.Set(startData->Des());
@@ -504,7 +498,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			TRAP(leaveErr, newChRespData.iChallenge = tempPtr.AllocL());
 			if (leaveErr != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_35, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP challenge data copy [%d]", nestedKeyTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP challenge data copy [%d]", nestedKeyTag-1);
 				}
 			delete startData;
 			startData = NULL;
@@ -513,14 +507,14 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 1, ptr);
 			if (ret != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_36, "WARNING CONFIGURATION FILE PARSING: could not read EAP response data [%d]", nestedChlTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP response data [%d]", nestedChlTag-1);
 				continue;
 				}
 
 			TRAP(leaveErr, startData = ptr.AllocL());
 			if (leaveErr != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_37, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP response data [%d]", nestedChlTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP response data [%d]", nestedChlTag-1);
 				continue;
 				}
 			tempPtr.Set(startData->Des());
@@ -535,7 +529,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			TRAP(leaveErr, newChRespData.iResp = tempPtr.AllocL());
 			if (leaveErr != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_38, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP response data copy [%d]", nestedKeyTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP response data copy [%d]", nestedKeyTag-1);
 				}
 			delete startData;
 			startData = NULL;
@@ -545,7 +539,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			ret = CTestConfig::GetElement(item->Value(), KStdDelimiter, 2, stat);
 			if (ret != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_39, "WARNING CONFIGURATION FILE PARSING: could not read EAP auth status [%d]", nestedChlTag-1);
+				LOGPHONE2("WARNING CONFIGURATION FILE PARSING: could not read EAP auth status [%d]", nestedChlTag-1);
 				continue;
 				}
 
@@ -554,14 +548,14 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			leaveErr = procInfo.iChResp.Append(newChRespData);
 			if (leaveErr != KErrNone)
 				{
-				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_40, "WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP challenge/resp data [%d] [err=%d]", nestedChlTag-1, leaveErr);
+				LOGPHONE3("WARNING CONFIGURATION FILE PARSING: could not allocate mem for EAP challenge/resp data [%d] [err=%d]", nestedChlTag-1, leaveErr);
 				}
 			} // end while
 
 		TInt errAppend = iEapProcData.Append(procInfo);
 		if (errAppend != KErrNone)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_41, "ERROR CONFIGURATION FILE PARSING: Could not store parsed EAP procedure data [err=%d]", errAppend);
+			LOGPHONE2("ERROR CONFIGURATION FILE PARSING: Could not store parsed EAP procedure data [err=%d]", errAppend);
 			}
 		else
 			{
@@ -569,7 +563,7 @@ void CSimSmartCardEapManager::ParseEapInfoL()
 			}
 		} // end for; parsing EAP procedures from config.txt
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_PARSEEAPINFOL_42, "CSimSmartCardEapManager::ParseEapInfoL completed");
+	LOGPHONE1("CSimSmartCardEapManager::ParseEapInfoL completed");
 	}
 
 /**
@@ -599,7 +593,7 @@ void CSimSmartCardEapManager::AID_EapType_ExistsInConfigL(const RMobilePhone::TA
 
 CTelObject* CSimSmartCardEapManager::CreateScEapSubSessionL(RMobilePhone::TAID& aAID, RMobileSmartCardEap::TEapType& aEapType)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_CREATESCEAPSUBSESSIONL_1, "CSimSmartCardEapManager::CreateScEapSubSessionL called");
+	LOGPHONE1("CSimSmartCardEapManager::CreateScEapSubSessionL called");
 	// If no config exists for this eapAID,eapType pair, then this will leave
 	AID_EapType_ExistsInConfigL(aAID, aEapType);
 
@@ -612,7 +606,7 @@ CTelObject* CSimSmartCardEapManager::CreateScEapSubSessionL(RMobilePhone::TAID& 
 
 	if (err != KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAPMANAGER_CREATESCEAPSUBSESSIONL_2, "ERROR could not create CSimSmartCardEap object [err=%d]", err);
+		LOGPHONE2("ERROR could not create CSimSmartCardEap object [err=%d]", err);
 		User::Leave(err);
 		}
 
@@ -721,13 +715,13 @@ CSimSmartCardEap::CSimSmartCardEap(CSimPhone *aPhone, RMobilePhone::TAID& aAID, 
 
 void CSimSmartCardEap::ConstructL(CSimSmartCardEapManager* aEapMan)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_CONSTRUCTL_1, "CSimSmartCardEap: starting second phase construction");
+	LOGPHONE1("CSimSmartCardEap: starting second phase construction");
 
 	iSemaphr.CreateGlobal(KNullDesC, EOwnerThread);
 	aEapMan->RegisterSubSessionL(this);
 	iEapMan = aEapMan;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_CONSTRUCTL_2, "CSimSmartCardEap created");
+	LOGPHONE1("CSimSmartCardEap created");
 	}
 
 CSimSmartCardEap::~CSimSmartCardEap()
@@ -747,7 +741,7 @@ CSimSmartCardEap::~CSimSmartCardEap()
 		}
 
 	TInt err = iEapMan->DeRegisterSubSession(this);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_DTOR_1, "CSimSmartCardEap destroyed, deregistering returned %d", err);
+	LOGPHONE2("CSimSmartCardEap destroyed, deregistering returned %d", err);
 
 	iEapMan = NULL;
 	}
@@ -953,7 +947,7 @@ RHandleBase* CSimSmartCardEap::GlobalKernelObjectHandle()
 
 TInt CSimSmartCardEap::SimInitialiseEapMethod(const TTsyReqHandle aTsyReqHandle, TThreadId* aThreadId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMINITIALISEEAPMETHOD_1, "CSimSmartCardEap::SimInitialiseEapMethod called");
+	LOGPHONE1("CSimSmartCardEap::SimInitialiseEapMethod called");
 	// This can only be called through RMobileSmartCardEap for one instance
 
 	if (iSSInitialised)
@@ -968,7 +962,7 @@ TInt CSimSmartCardEap::SimInitialiseEapMethod(const TTsyReqHandle aTsyReqHandle,
 		TRAPD(err, iCliTerminationListener = CThreadTerminationListener::NewL(this, *aThreadId));
 		if (err != KErrNone)
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMINITIALISEEAPMETHOD_2, "ERROR could not create a client termination listener [err=%d] (not initialised)", err);
+			LOGPHONE2("ERROR could not create a client termination listener [err=%d] (not initialised)", err);
 			ReqCompleted(aTsyReqHandle, err);
 			}
 		else
@@ -976,7 +970,7 @@ TInt CSimSmartCardEap::SimInitialiseEapMethod(const TTsyReqHandle aTsyReqHandle,
 			iProcedureData = iEapMan->ProcData(iAID, iEapType);
 			if (iProcedureData == NULL)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMINITIALISEEAPMETHOD_3, "ERROR could not find sub-session's procedure");
+				LOGPHONE1("ERROR could not find sub-session's procedure");
 				ReqCompleted(aTsyReqHandle, KErrNotFound);
 				return KErrNone;
 				}
@@ -994,7 +988,7 @@ TInt CSimSmartCardEap::SimInitialiseEapMethod(const TTsyReqHandle aTsyReqHandle,
 
 TInt CSimSmartCardEap::SimInitialiseEapMethodCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMINITIALISEEAPMETHODCANCEL_1, "CSimSmartCardEap::SimInitialiseEapMethodCancel called");
+	LOGPHONE1("CSimSmartCardEap::SimInitialiseEapMethodCancel called");
 	iProcedureData = NULL;
 	iSSInitialised = EFalse;
 	iAccessStatus = RMobileSmartCardEap::EEapMethodAvailable;
@@ -1005,7 +999,7 @@ TInt CSimSmartCardEap::SimInitialiseEapMethodCancel(const TTsyReqHandle aTsyReqH
 
 TInt CSimSmartCardEap::SimGetUserIdentity(const TTsyReqHandle aTsyReqHandle, RMobileSmartCardEap::TEapUserIdType* aEapIdType, TDes8* aUserId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETUSERIDENTITY_1, "CSimSmartCardEap::SimGetUserIdentity called");
+	LOGPHONE1("CSimSmartCardEap::SimGetUserIdentity called");
 
 	RMobileSmartCardEap::TEapUserIdentityV6Pckg *userIdPckg = reinterpret_cast<RMobileSmartCardEap::TEapUserIdentityV6Pckg*>(aUserId);
 	RMobileSmartCardEap::TEapUserIdentityV6 &userId = (*userIdPckg)();
@@ -1023,7 +1017,7 @@ TInt CSimSmartCardEap::SimGetUserIdentity(const TTsyReqHandle aTsyReqHandle, RMo
 		if (iProcedureData->iEapId == NULL)
 			{
 			ReqCompleted(aTsyReqHandle, KErrNotFound);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETUSERIDENTITY_2, "ERROR EAP sub-session does not contain EPermanentIdentity");
+			LOGPHONE1("ERROR EAP sub-session does not contain EPermanentIdentity");
 			return KErrNone;
 			}
 
@@ -1034,7 +1028,7 @@ TInt CSimSmartCardEap::SimGetUserIdentity(const TTsyReqHandle aTsyReqHandle, RMo
 		if (iProcedureData->iEapPsId == NULL)
 			{
 			ReqCompleted(aTsyReqHandle, KErrNotFound);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETUSERIDENTITY_3, "ERROR EAP sub-session does not contain EPseudonymIdentity");
+			LOGPHONE1("ERROR EAP sub-session does not contain EPseudonymIdentity");
 			return KErrNone;
 			}
 
@@ -1043,7 +1037,7 @@ TInt CSimSmartCardEap::SimGetUserIdentity(const TTsyReqHandle aTsyReqHandle, RMo
 	else
 		{
 		ReqCompleted(aTsyReqHandle, KErrArgument);
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETUSERIDENTITY_4, "ERROR invalid EAP id type requested [tag=%d]", *aEapIdType);
+		LOGPHONE2("ERROR invalid EAP id type requested [tag=%d]", *aEapIdType);
 		return KErrNone;
 		}
 
@@ -1053,14 +1047,14 @@ TInt CSimSmartCardEap::SimGetUserIdentity(const TTsyReqHandle aTsyReqHandle, RMo
 
 TInt CSimSmartCardEap::SimGetUserIdentityCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETUSERIDENTITYCANCEL_1, "CSimSmartCardEap::SimGetUserIdentityCancel called");
+	LOGPHONE1("CSimSmartCardEap::SimGetUserIdentityCancel called");
 	ReqCompleted(aTsyReqHandle, KErrCancel);
 	return KErrNone;
 	}
 	
 TInt CSimSmartCardEap::SimGetAuthenticationStatus(const TTsyReqHandle aTsyReqHandle, RMobileSmartCardEap::TEapAuthStatus* aAuthStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETAUTHENTICATIONSTATUS_1, "CSimSmartCardEap::SimGetAuthenticationStatus called");
+	LOGPHONE1("CSimSmartCardEap::SimGetAuthenticationStatus called");
 
 	(*aAuthStatus) = iAuthStatus;
 
@@ -1070,14 +1064,14 @@ TInt CSimSmartCardEap::SimGetAuthenticationStatus(const TTsyReqHandle aTsyReqHan
 	
 TInt CSimSmartCardEap::SimGetAuthenticationStatusCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETAUTHENTICATIONSTATUSCANCEL_1, "CSimSmartCardEap::SimGetAuthenticationStatusCancel called");
+	LOGPHONE1("CSimSmartCardEap::SimGetAuthenticationStatusCancel called");
 	ReqCompleted(aTsyReqHandle, KErrCancel);
 	return KErrNone;
 	}
 
 TInt CSimSmartCardEap::SimGetEapKey(const TTsyReqHandle aTsyReqHandle, RMobileSmartCardEap::TEapKeyTag* aEapKeyTag, TDes8* aKey)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETEAPKEY_1, "CSimSmartCardEap::SimGetEapKey called");
+	LOGPHONE1("CSimSmartCardEap::SimGetEapKey called");
 
 	RMobileSmartCardEap::TEapKeyV6Pckg *keyPckg = reinterpret_cast<RMobileSmartCardEap::TEapKeyV6Pckg*>(aKey);
 	RMobileSmartCardEap::TEapKeyV6 &key = (*keyPckg)();
@@ -1095,7 +1089,7 @@ TInt CSimSmartCardEap::SimGetEapKey(const TTsyReqHandle aTsyReqHandle, RMobileSm
 		if (iProcedureData->iEapKey == NULL)
 			{
 			ReqCompleted(aTsyReqHandle, KErrNotFound);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETEAPKEY_2, "ERROR EAP sub-session does not contain EEapKeyMSK");
+			LOGPHONE1("ERROR EAP sub-session does not contain EEapKeyMSK");
 			return KErrNone;
 			}
 
@@ -1106,7 +1100,7 @@ TInt CSimSmartCardEap::SimGetEapKey(const TTsyReqHandle aTsyReqHandle, RMobileSm
 		if (iProcedureData->iEapExtKey == NULL)
 			{
 			ReqCompleted(aTsyReqHandle, KErrNotFound);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETEAPKEY_3, "ERROR EAP sub-session does not contain EEapKeyEMSK");
+			LOGPHONE1("ERROR EAP sub-session does not contain EEapKeyEMSK");
 			return KErrNone;
 			}
 
@@ -1115,7 +1109,7 @@ TInt CSimSmartCardEap::SimGetEapKey(const TTsyReqHandle aTsyReqHandle, RMobileSm
 	else
 		{
 		ReqCompleted(aTsyReqHandle, KErrArgument);
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETEAPKEY_4, "ERROR invalid EAP key tag requested [tag=%d]", *aEapKeyTag);
+		LOGPHONE2("ERROR invalid EAP key tag requested [tag=%d]", *aEapKeyTag);
 		return KErrNone;
 		}
 
@@ -1125,14 +1119,14 @@ TInt CSimSmartCardEap::SimGetEapKey(const TTsyReqHandle aTsyReqHandle, RMobileSm
 
 TInt CSimSmartCardEap::SimGetEapKeyCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETEAPKEYCANCEL_1, "CSimSmartCardEap::SimGetEapKeyCancel called");
+	LOGPHONE1("CSimSmartCardEap::SimGetEapKeyCancel called");
 	ReqCompleted(aTsyReqHandle, KErrCancel);
 	return KErrNone;
 	}
 
 TInt CSimSmartCardEap::SimSetAuthenticateDataForPhase1(const TTsyReqHandle aTsyReqHandle, TDes8* aEapAuthData, TInt* aPhase1Size)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMSETAUTHENTICATEDATAFORPHASE1_1, "CSimSmartCardEap::SimSetAuthenticateDataForPhase1 called");
+	LOGPHONE1("CSimSmartCardEap::SimSetAuthenticateDataForPhase1 called");
 
 	if (iCurrentChallenge >= iProcedureData->iChResp.Count())
 		{
@@ -1144,7 +1138,7 @@ TInt CSimSmartCardEap::SimSetAuthenticateDataForPhase1(const TTsyReqHandle aTsyR
 	TRAPD(err, authReq = RMobileSmartCardEap::CEapAuthenticateRequestDataV6::NewL());
 	if (err != KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMSETAUTHENTICATEDATAFORPHASE1_2, "ERR Could not allocate memory for challenge request object [err=%d]", err);
+		LOGPHONE2("ERR Could not allocate memory for challenge request object [err=%d]", err);
 		ReqCompleted(aTsyReqHandle, err);
 		return KErrNone;
 		}
@@ -1152,7 +1146,7 @@ TInt CSimSmartCardEap::SimSetAuthenticateDataForPhase1(const TTsyReqHandle aTsyR
 	TRAP(err, authReq->InternalizeL(*aEapAuthData));
 	if (err != KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMSETAUTHENTICATEDATAFORPHASE1_3, "ERR Could not allocate memory for challenge request [err=%d]", err);
+		LOGPHONE2("ERR Could not allocate memory for challenge request [err=%d]", err);
 		ReqCompleted(aTsyReqHandle, err);
 		return KErrNone;
 		}
@@ -1164,7 +1158,7 @@ TInt CSimSmartCardEap::SimSetAuthenticateDataForPhase1(const TTsyReqHandle aTsyR
 
 	if (reqPacket != tempPtr)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMSETAUTHENTICATEDATAFORPHASE1_4, "ERR challenge request does not match config [currentChallenge=%d]", iCurrentChallenge);
+		LOGPHONE2("ERR challenge request does not match config [currentChallenge=%d]", iCurrentChallenge);
 		ReqCompleted(aTsyReqHandle, KErrCorrupt);
 		return KErrNone;
 		}
@@ -1177,7 +1171,7 @@ TInt CSimSmartCardEap::SimSetAuthenticateDataForPhase1(const TTsyReqHandle aTsyR
 
 TInt CSimSmartCardEap::SimGetAuthenticateDataForPhase2(const TTsyReqHandle aTsyReqHandle, TDes8* /*aEapAuthData*/, TDes8* aPhase2Resp)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETAUTHENTICATEDATAFORPHASE2_1, "CSimSmartCardEap::SimSetAuthenticateDataForPhase2 called");
+	LOGPHONE1("CSimSmartCardEap::SimSetAuthenticateDataForPhase2 called");
 
 	if (iCurrentChallenge >= iProcedureData->iChResp.Count())
 		{
@@ -1198,14 +1192,14 @@ TInt CSimSmartCardEap::SimGetAuthenticateDataForPhase2(const TTsyReqHandle aTsyR
 
 TInt CSimSmartCardEap::SimSmartCardEapAuthenticationCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMSMARTCARDEAPAUTHENTICATIONCANCEL_1, "CSimSmartCardEap::SimSmartCardEapAuthenticationCancel called");
+	LOGPHONE1("CSimSmartCardEap::SimSmartCardEapAuthenticationCancel called");
 	ReqCompleted(aTsyReqHandle, KErrCancel);
 	return KErrNone;
 	}
 
 TInt CSimSmartCardEap::SimReleaseEapMethod(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMRELEASEEAPMETHOD_1, "CSimSmartCardEap::SimReleaseEapMethod called");
+	LOGPHONE1("CSimSmartCardEap::SimReleaseEapMethod called");
 	iSSInitialised = EFalse;
 	iAccessStatus = RMobileSmartCardEap::EEapMethodAvailable;
 	ReqCompleted(aTsyReqHandle, KErrNone);
@@ -1221,7 +1215,7 @@ TInt CSimSmartCardEap::SimReleaseEapMethod(const TTsyReqHandle aTsyReqHandle)
 
 TInt CSimSmartCardEap::SimGetEapMethodAccessStatus(const TTsyReqHandle aTsyReqHandle, RMobileSmartCardEap::TEapMethodAccessStatus* aEapState)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMGETEAPMETHODACCESSSTATUS_1, "CSimSmartCardEap::SimGetEapMethodAccessStatus called");
+	LOGPHONE1("CSimSmartCardEap::SimGetEapMethodAccessStatus called");
 	*aEapState = iAccessStatus;
 	ReqCompleted(aTsyReqHandle, KErrNone);
 	return KErrNone;
@@ -1229,7 +1223,7 @@ TInt CSimSmartCardEap::SimGetEapMethodAccessStatus(const TTsyReqHandle aTsyReqHa
 
 TInt CSimSmartCardEap::SimNotifyEapMethodAccessStatusChange(const TTsyReqHandle aTsyReqHandle, RMobileSmartCardEap::TEapMethodAccessStatus* aEapState)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMNOTIFYEAPMETHODACCESSSTATUSCHANGE_1, "CSimSmartCardEap::SimNotifyEapMethodAccessStatusChange called");
+	LOGPHONE1("CSimSmartCardEap::SimNotifyEapMethodAccessStatusChange called");
 	__ASSERT_ALWAYS(!iEapAccessNotifyData.iNotifyPending, PanicClient(EEtelPanicRequestAsyncTwice));
 
 	iEapAccessNotifyData.iNotifyPending = ETrue;
@@ -1241,7 +1235,7 @@ TInt CSimSmartCardEap::SimNotifyEapMethodAccessStatusChange(const TTsyReqHandle 
 
 TInt CSimSmartCardEap::SimNotifyEapMethodAccessStatusChangeCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMNOTIFYEAPMETHODACCESSSTATUSCHANGECANCEL_1, "CSimSmartCardEap::SimNotifyEapMethodAccessStatusChangeCancel called");
+	LOGPHONE1("CSimSmartCardEap::SimNotifyEapMethodAccessStatusChangeCancel called");
 	if(iEapAccessNotifyData.iNotifyPending)
 		{
 		iEapAccessNotifyData.iNotifyPending = EFalse;
@@ -1255,7 +1249,7 @@ TInt CSimSmartCardEap::SimNotifyEapMethodAccessStatusChangeCancel(const TTsyReqH
 
 void CSimSmartCardEap::SimCompleteNotifyEapMethodAccessStatusChange()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMARTCARDEAP_SIMCOMPLETENOTIFYEAPMETHODACCESSSTATUSCHANGE_1, "CSimSmartCardEap::SimCompleteNotifyEapMethodAccessStatusChange called");
+	LOGPHONE1("CSimSmartCardEap::SimCompleteNotifyEapMethodAccessStatusChange called");
 
 	if(iEapAccessNotifyData.iNotifyPending)
 		{

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,7 +22,9 @@
 #include "ND_DLIN.H"
 #include "ND_ETEL.H"
 #include "ND_STD.H"
+#include "SLOGGER.H"
 #include "Nd_dlinStates.h"
+#include <comms-infras/eventlogger.h>
 #include "ND_DBACC.H"
 
 // Dial In state machine

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,26 +19,21 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "BcaControllerTraces.h"
-#endif
-
 #include <e32uid.h>
 #include <nifmbuf.h>
 
 #include "Constants.h"
 #include "BcaController.h"
 
-CBcaController::CBcaController(CRawIP2Flow& aRawIPFlow)
+CBcaController::CBcaController(CRawIP2Flow& aRawIPFlow,CBttLogger* aTheLogger)
 /**
  * Constructor. Performs standard active object initialisation.
  *
  * @param aRawIPFlow Reference to the RawIp2Flow
- *
+ * @param aTheLogger The logging object
  */
 	: CActive(EPriorityStandard), 	  
+	  iTheLogger(aTheLogger),	 
 	  iMBca(NULL),	  
 	  iState(EIdling),
 	  iRawIPFlow(aRawIPFlow),
@@ -50,16 +45,17 @@ CBcaController::CBcaController(CRawIP2Flow& aRawIPFlow)
 	CActiveScheduler::Add(this);
 	}
 	 
-CBcaController* CBcaController::NewL(CRawIP2Flow& aRawIPFlow)
+CBcaController* CBcaController::NewL(CRawIP2Flow& aRawIPFlow,CBttLogger* aTheLogger)
 /**
  * Two-phase constructor. Creates a new CBcaController object, performs 
  * second-phase construction, then returns it.
  *
  * @param aRawIPFlow Reference to the RawIp2Flow
+ * @param aTheLogger The logging object
  * @return A newly constructed CBcaController object
  */
 	{
-	CBcaController* self = new (ELeave) CBcaController(aRawIPFlow);
+	CBcaController* self = new (ELeave) CBcaController(aRawIPFlow,aTheLogger);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -71,7 +67,7 @@ void CBcaController::ConstructL()
  * Second-phase constructor. Creates all the state objects it owns.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_CONSTRUCTL_1, "CBcaController::ConstructL");
+	_LOG_L1C1(_L8("CBcaController::ConstructL"));
 	
 	}
   
@@ -96,7 +92,7 @@ void CBcaController::RunL()
  *  
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_1, "CBcaControl::RunL() called");
+	_LOG_L1C1(_L8("CBcaControl::RunL() called"));
 	switch (iState)
 		{
 		//in this state, Ioctl is called to set IAP ID, check the result of
@@ -108,11 +104,11 @@ void CBcaController::RunL()
 				{
 				if(iStatus == KErrNotSupported)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_2, "This BCA does not support IAPID set");
+					_LOG_L1C1(_L8("This BCA does not support IAPID set"));
 					}
 				else
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_3, "This BCA supports IAPID set");
+					_LOG_L2C1(_L8("This BCA supports IAPID set"));
 					}
 				
 				TPtrC bcaStack = iBCAProvisionConfig->GetBCAStack();
@@ -132,7 +128,7 @@ void CBcaController::RunL()
 				}
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_4, "ERROR in BCA IAPID set = %d", iStatus.Int());
+				_LOG_L1C2(_L8("ERROR in BCA IAPID set = %d"), iStatus.Int());
 				Stop(iStatus.Int());
 				}
 			
@@ -146,18 +142,18 @@ void CBcaController::RunL()
 				{
 				if(iStatus == KErrNotSupported)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_5, "This BCA does not support BCA stacking");
+					_LOG_L1C1(_L8("This BCA does not support BCA stacking"));
 					}
 				else
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_6, "This BCA supports BCA stacking");
+					_LOG_L2C1(_L8("This BCA supports BCA stacking"));
 					}
 				iBcaParams = new(ELeave) MBca2::TBcaParams(const_cast<CBCAProvision*>(iBCAProvisionConfig)->GetCommsPond(), iBCAProvisionConfig->GetPortName());
 			
 				TInt aErr = iMBca->Open(*iUpperControl,*iUpperDataReceiver,*iBcaParams);
 				if ( aErr != KErrNone)
 					{					
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_7, "ERROR in BCA Open = %d", aErr);
+					_LOG_L2C2(_L8("ERROR in BCA Open = %d"), aErr);
 					Stop(iStatus.Int());
 					iState = EIdling;
 					}
@@ -168,7 +164,7 @@ void CBcaController::RunL()
 				}
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_8, "ERROR in BCA stack set = %d", iStatus.Int());
+				_LOG_L2C2(_L8("ERROR in BCA stack set = %d"), iStatus.Int());
 				Stop(iStatus.Int());
 				}
 			break;
@@ -176,9 +172,8 @@ void CBcaController::RunL()
 		// Wrong state.
 		default:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_9, "ERROR CBcaControl::RunL(): Unknown state");
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_RUNL_10, "PANIC: %S %d", KNifName, KBcaUnkownState);
-			User::Panic(KNifName, KBcaUnkownState);
+			_LOG_L1C1(_L8("ERROR CBcaControl::RunL(): Unknown state"));
+			_BTT_PANIC(KNifName, KBcaUnkownState);
 			break;
 			}
 		}
@@ -190,8 +185,8 @@ void CBcaController::DoCancel()
  *	cancel active request. 
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_DOCANCEL_1, "CBcaControl::DoCancel called.");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_DOCANCEL_2, "iState value is %d", iState);
+	_LOG_L1C1(_L8("CBcaControl::DoCancel called."));
+	_LOG_L2C2(_L8("iState value is %d"), iState);
 	switch (iState)
 		{
 		case EIdling:
@@ -203,9 +198,8 @@ void CBcaController::DoCancel()
 			iState = EIdling;
 			break;
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_DOCANCEL_3, "ERROR CBcaControl::DoCancel(): Unknown state");
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_DOCANCEL_4, "PANIC: %S %d", KNifName, KBcaUnkownState);
-			User::Panic(KNifName, KBcaUnkownState);
+			_LOG_L2C1(_L8("ERROR CBcaControl::DoCancel(): Unknown state"));
+			_BTT_PANIC(KNifName, KBcaUnkownState);
 			break;
 		}
 	}
@@ -221,7 +215,7 @@ void CBcaController::StartLoadL(const CBCAProvision* aBCAProvisionConfig,MUpperC
  * @return none 
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_STARTLOADL_1, "CBcaControl::StartLoad");
+	_LOG_L1C1(_L8("CBcaControl::StartLoad"));
 
 	iBCAProvisionConfig = aBCAProvisionConfig;
 	iUpperControl = aControl;
@@ -232,7 +226,7 @@ void CBcaController::StartLoadL(const CBCAProvision* aBCAProvisionConfig,MUpperC
 	TNewBca2FactoryL newBca2FactoryProcL = (TNewBca2FactoryL)iBcaDll.iObj.Lookup(1);
 	if (NULL == newBca2FactoryProcL)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_STARTLOADL_2, "Library entry point found error %d", KErrBadLibraryEntryPoint);
+		_LOG_L1C2(_L8("Library entry point found error %d"), KErrBadLibraryEntryPoint);
 		User::Leave(KErrBadLibraryEntryPoint);	
 		}
 	
@@ -240,7 +234,7 @@ void CBcaController::StartLoadL(const CBCAProvision* aBCAProvisionConfig,MUpperC
 
 	if(!bcaFactory)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_STARTLOADL_3, "BcaFactory creation error %d", KErrCompletion);
+		_LOG_L1C2(_L8("BcaFactory creation error %d"), KErrCompletion);
 		User::Leave(KErrCompletion);	
 		}
 	CleanupReleasePushL(*bcaFactory);
@@ -261,7 +255,7 @@ void CBcaController::Stop(TInt aError)
  *  requests on the active objects owned by this module and shutdown.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_STOP_1, "CBcaController::Stop is called.");
+	_LOG_L1C1(_L8("CBcaController::Stop is called."));
 
 	if(iMBca)
 		{
@@ -269,7 +263,7 @@ void CBcaController::Stop(TInt aError)
 		}
 	else 
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_STOP_2, "CBcaController::Stop Bca is not initialized. Bring the link layer down");
+		_LOG_L1C1(_L8("CBcaController::Stop Bca is not initialized. Bring the link layer down"));
 		iRawIPFlow.LinkLayerDown(aError);
 		}
   	}
@@ -280,7 +274,7 @@ void CBcaController::Stop(TInt aError)
 * @param aPanic panic code */
 void Panic(TRawIP2NifPanic aPanic)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROLLER_PANIC_1, "Panic code for RawIpNif = %d", aPanic);
+	_LOG_L2C2(_L8("Panic code for RawIpNif = %d"), aPanic);
 	User::Panic(KNifName,aPanic);
 
 	}

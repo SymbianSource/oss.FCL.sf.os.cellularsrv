@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySetUpCallTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySetUpCall.h"    // Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifySetUpCall* CSatNotifySetUpCall::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_NEWL_1, "CSAT: CSatNotifySetupCall::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySetupCall::NewL"); 
     CSatNotifySetUpCall* const satNotifySetUpCall = 
         new ( ELeave ) CSatNotifySetUpCall( aNotificationsTsy );
     CleanupStack::PushL( satNotifySetUpCall );
     satNotifySetUpCall->ConstructL();
     CleanupStack::Pop( satNotifySetUpCall );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_NEWL_2, "CSAT: CSatNotifySetupCall::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySetupCall::NewL, end of method"); 
     return satNotifySetUpCall;
     }
 
@@ -67,7 +62,7 @@ CSatNotifySetUpCall::~CSatNotifySetUpCall
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_DTOR_1, "CSAT: CSatNotifySetupCall::~CSatNotifySetUpCall");
+    TFLOGSTRING("CSAT: CSatNotifySetupCall::~CSatNotifySetUpCall"); 
     }
         
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifySetUpCall::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_CONSTRUCTL_1, "CSAT: CSatNotifySetupCall::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifySetupCall::ConstructL"); 
     iCallConnectedEvent.Zero();
     }
     
@@ -108,14 +103,15 @@ TInt CSatNotifySetUpCall::Notify
         const TDataPackage& aPackage   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_NOTIFY_1, "CSAT: CSatNotifySetupCall::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySetupCall::Notify"); 
     // Save data pointer to client side for completion
     iSetUpCallV1Pckg = reinterpret_cast<RSat::TSetUpCallV1Pckg*>( 
         aPackage.Des1n() );
     // Save the request handle
     iNotificationsTsy->iSatTsy->SaveReqHandle( aTsyReqHandle, 
 		CSatTsy::ESatNotifySetUpCallPCmdReqType );   
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_NOTIFY_2, "CSAT: CSatNotifySetUpCall::Notify\t Handle:%d",aTsyReqHandle);
+    TFLOGSTRING2("CSAT: CSatNotifySetUpCall::Notify\t Handle:%d",
+           aTsyReqHandle);
     // Check if requested notification is already pending
     iNotificationsTsy->NotifySatReadyForNotification( KSetUpCall );   
 
@@ -135,7 +131,7 @@ TInt CSatNotifySetUpCall::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_CANCELNOTIFICATION_1, "CSAT: CSatNotifySetUpCall::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySetUpCall::CancelNotification");   
     // Reset the request handle 
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
         CSatTsy::ESatNotifySetUpCallPCmdReqType );
@@ -159,7 +155,7 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_1, "CSAT: CSatNotifySetupCall::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL");
     TInt returnValue( KErrNone );
     TInt ret( KErrNone );
     iCCResult = 0;
@@ -185,7 +181,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
     
     TUint8 pCmdNumber( commandDetails.GetShortInfo( ETLV_CommandNumber ) );
                 
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_2, "CSAT: CSatNotifySetUpCall::CompleteNotifyL\t Handle:%d",reqHandle);
+    TFLOGSTRING2("CSAT: CSatNotifySetUpCall::CompleteNotifyL\t Handle:%d",
+           reqHandle);
     // In case the request was ongoing, continue..
     if ( CSatTsy::ESatReqHandleUnknown  != reqHandle )
         {
@@ -198,7 +195,9 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
             // Transaction ID
             setUpCallV1.SetPCmdNumber( pCmdNumber );
             
-            OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_3, "CSAT: CSatNotifySetupCall::CompleteNotifyL CommandQualifier %d", iNotificationsTsy->iTerminalRespData.iCommandDetails[ KCommandQualifier ]);
+            TFLOGSTRING2("CSAT: CSatNotifySetupCall::CompleteNotifyL \
+            	CommandQualifier %d", iNotificationsTsy->iTerminalRespData.
+            	iCommandDetails[ KCommandQualifier ]);
 
             switch ( iNotificationsTsy->iTerminalRespData.
             		iCommandDetails[ KCommandQualifier ] )
@@ -242,7 +241,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                     }
                 default:
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_4, "CSAT: CSatNotifySetupCall::CompleteNotifyL,Call type not set");
+                    TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL,\
+                        Call type not set");
                     // Call type not set
                     setUpCallV1.iType = RSat::ESetUpCallTypeNotSet;
                     break;
@@ -275,7 +275,9 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                      // Get alpha id string
                     sourceString.Set( alphaIdentifier.GetData( 
                         ETLV_AlphaIdentifier ) );
-                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_5, "CSAT: CSatNotifySetupCall::CompleteNotifyL User confirmation phase: sourceString %s", sourceString );
+                    TFLOGSTRING2("CSAT: CSatNotifySetupCall::CompleteNotifyL User \
+                        confirmation phase: sourceString %s", 
+                        &sourceString );               
                     // Convert and set the alpha id
                     TSatUtility::SetAlphaId( sourceString ,
                         setUpCallV1.iAlphaIdConfirmationPhase.iAlphaId ); 
@@ -285,7 +287,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                 // is zero
                 else
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_6, "CSAT: CSatNotifySetupCall::CompleteNotifyL User confirmation phase: Alpha Id missing");
+                    TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL \
+                        User confirmation phase: Alpha Id missing");
                     setUpCallV1.iAlphaIdConfirmationPhase.iStatus = 
                         RSat::EAlphaIdNull;
                     }
@@ -293,7 +296,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
             // No alpha id for user confirmation phase
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_7, "CSAT: CSatNotifySetupCall::CompleteNotifyL, User confirmation phase: Alpha ID not present");
+                TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL,\
+                    User confirmation phase: Alpha ID not present");
                 setUpCallV1.iAlphaIdConfirmationPhase.iStatus = 
                     RSat::EAlphaIdNotPresent;
                 }  
@@ -313,7 +317,9 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                      // Get alpha id string
                     sourceString.Set( alphaIdentifier.GetData( 
                         ETLV_AlphaIdentifier ) );
-                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_8, "CSAT: CSatNotifySetupCall::CompleteNotifyL Call Set Up phase: sourceString %s",sourceString );
+                    TFLOGSTRING2("CSAT: CSatNotifySetupCall::CompleteNotifyL \
+                        Call Set Up phase: sourceString %s",
+                        &sourceString );
                     // Convert and set the alpha id
                     TSatUtility::SetAlphaId( sourceString,
                         setUpCallV1.iAlphaIdCallSetUpPhase.iAlphaId ); 
@@ -322,7 +328,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                 // Alpha id found for set up call phase,  but length is zero
                 else
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_9, "CSAT: CSatNotifySetupCall::CompleteNotifyL Call Set Up phase: Alpha Id is NULL");
+                    TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL \
+                        Call Set Up phase: Alpha Id is NULL"); 
                     setUpCallV1.iAlphaIdCallSetUpPhase.iStatus = 
                         RSat::EAlphaIdNull;
                     }
@@ -331,7 +338,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
             // No alpha id set up call phase
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_10, "CSAT: CSatNotifySetupCall::CompleteNotifyL, Alpha ID not present");
+                TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL,\
+                    Alpha ID not present");
                 setUpCallV1.iAlphaIdCallSetUpPhase.iStatus = 
                     RSat::EAlphaIdNotPresent;
                 }  
@@ -401,7 +409,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                     // Set actual number
                     setUpCallV1.iAddress.iTelNumber.Copy( tempNumber );
 
-                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_11, "CSAT: CSatNotifySetUpCall::CompleteNotifyL, TelNumber: %S", setUpCallV1.iAddress.iTelNumber );
+                    TFLOGSTRING2("CSAT: CSatNotifySetUpCall::CompleteNotifyL, \
+                    	TelNumber: %S", &setUpCallV1.iAddress.iTelNumber );
                     	
                     iNotificationsTsy->iSatTsy->StoreProactiveAddress( 
                         &tempNumber );
@@ -409,7 +418,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                 }
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_12, "CSAT: CSatNotifySetupCall::CompleteNotifyL, Request not ongoing");
+                TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL,\
+                    Request not ongoing");
                 additionalInfo.Zero();
                 additionalInfo.Append( KNoCause );
                 // Request not on, returning response immediately
@@ -431,7 +441,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                 setUpCallV1.iCapabilityConfigParams.Append( capabilityConfig.
                     GetData( ETLV_CapabilityConfigurationParameters ) );
 
-                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_13, "CSAT: CSatNotifySetUpCall::CompleteNotifyL, CapabilityParams: %s", setUpCallV1.iCapabilityConfigParams );
+                TFLOGSTRING2("CSAT: CSatNotifySetUpCall::CompleteNotifyL, \
+                   CapabilityParams: %s", &setUpCallV1.iCapabilityConfigParams );
                 }
 
             // Called Party SubAddress
@@ -468,7 +479,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                         setUpCallV1.iSubAddress );
                     }
                 
-                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_14, "CSAT: CSatNotifySetUpCall, SubAddress: %S", setUpCallV1.iSubAddress );
+                TFLOGSTRING2("CSAT: CSatNotifySetUpCall, SubAddress: %S", 
+                    &setUpCallV1.iSubAddress );
                 }
 
             // Duration ( optional, maximum duration for the redial mechanism )
@@ -499,7 +511,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                         }
                     default:
                         {
-                        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_15, "CSAT: CSatNotifySetupCall::CompleteNotifyL, time unit not set");
+                        TFLOGSTRING("CSAT: CSatNotifySetupCall::\
+                            CompleteNotifyL, time unit not set");
                         setUpCallV1.iDuration.iTimeUnit = 
                             RSat::ETimeUnitNotSet;
                         break;
@@ -510,7 +523,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
                 setUpCallV1.iDuration.iNumOfUnits = 
                     callDuration.GetShortInfo( ETLV_TimeInterval );
 
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_16, "CSAT: CSatNotifySetUpCall::CompleteNotifyL Max Duration for the Redial Mechanism" );
+                TFLOGSTRING("CSAT: CSatNotifySetUpCall::CompleteNotifyL Max \
+                	Duration for the Redial Mechanism" );
 
                 // Check that Time interval value is not invalid
                 if ( NULL == setUpCallV1.iDuration.iNumOfUnits )
@@ -535,7 +549,8 @@ TInt CSatNotifySetUpCall::CompleteNotifyL
         }        
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_COMPLETENOTIFYL_17, "CSAT: CSatNotifySetupCall::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifySetupCall::CompleteNotifyL,\
+            Request not ongoing");
         additionalInfo.Zero();
         additionalInfo.Append( KNoCause );
         // Request not on, returning response immediately
@@ -556,7 +571,7 @@ TInt CSatNotifySetUpCall::TerminalResponseL
         TDes8* aRsp
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_TERMINALRESPONSEL_1, "CSAT:CSatNotifySetUpCall::TerminalResponseL");
+    TFLOGSTRING("CSAT:CSatNotifySetUpCall::TerminalResponseL");
 
     TInt    ret( KErrNone );
     TBuf<1> additionalInfo;
@@ -582,7 +597,8 @@ TInt CSatNotifySetUpCall::TerminalResponseL
         && ( RSat::KErrorRequiredValuesMissing != rspV2.iGeneralResult ) 
         && ( RSat::KInteractionWithCCPermanentError != rspV2.iGeneralResult) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_TERMINALRESPONSEL_2, "CSAT:CSatNotifySetUpCall::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT:CSatNotifySetUpCall::TerminalResponseL,\
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -601,7 +617,8 @@ TInt CSatNotifySetUpCall::TerminalResponseL
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_TERMINALRESPONSEL_3, "CSAT:CSatNotifySetUpCall::TerminalResponseL, Invalid Additional Info");
+            TFLOGSTRING("CSAT:CSatNotifySetUpCall::TerminalResponseL,\
+                Invalid Additional Info");
             ret = KErrCorrupt;
             }
         }
@@ -650,7 +667,7 @@ TInt CSatNotifySetUpCall::CreateTerminalRespL
         TDesC16& aAdditionalInfo            
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_CREATETERMINALRESPL_1, "CSAT: CSatNotifySetUpCall::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpCall::CreateTerminalRespL");    
     // Create and append response data
     TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );
@@ -668,7 +685,8 @@ TInt CSatNotifySetUpCall::CreateTerminalRespL
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_CREATETERMINALRESPL_2,  "CSAT: CSatNotifySetUpCall::CreateTerminalRespL aAdditionalInfo.Length() == 0" );
+            TFLOGSTRING( "CSAT: CSatNotifySetUpCall::CreateTerminalRespL \
+                aAdditionalInfo.Length() == 0" ); 
             }
         }
     
@@ -696,7 +714,7 @@ void CSatNotifySetUpCall::StoreCallConnectedEvent
         const TDesC8& aEnvelope
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPCALL_STORECALLCONNECTEDEVENT_1, "CSAT: CSatNotifySetUpCall::StoreCallConnectedEvent");
+    TFLOGSTRING("CSAT: CSatNotifySetUpCall::StoreCallConnectedEvent");
     // Store it to the buffer
     iCallConnectedEvent = aEnvelope;
     } 

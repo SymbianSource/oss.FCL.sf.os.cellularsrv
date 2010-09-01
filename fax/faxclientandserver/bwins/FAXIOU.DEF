@@ -1,0 +1,19 @@
+EXPORTS ?DecodeScanLine1D@CFaxT4@@QAEHAAVTDes8@@ABVTDesC8@@@Z @1 NONAME
+EXPORTS ?DecodeScanLine2D@CFaxT4@@QAEHAAVTDes8@@ABVTDesC8@@@Z @2 NONAME
+EXPORTS ?DecodeScanLine@CFaxT4@@QAEHAAVTDes8@@ABVTDesC8@@@Z @3 NONAME
+EXPORTS ?EncodeScanLine1D@CFaxT4@@QAEXABVTDesC8@@AAVTDes8@@@Z @4 NONAME
+EXPORTS ?EncodeScanLine2D@CFaxT4@@QAEXABVTDesC8@@AAVTDes8@@@Z @5 NONAME
+EXPORTS ?EncodeScanLine@CFaxT4@@QAEXABVTDesC8@@AAVTDes8@@@Z @6 NONAME
+EXPORTS ?NewL@CFaxHeaderLines@@SAPAV1@XZ @7 NONAME
+EXPORTS ?NewL@CFaxT4@@SAPAV1@XZ @8 NONAME
+EXPORTS ?NewLC@CFaxHeaderLines@@SAPAV1@XZ @9 NONAME
+EXPORTS ?NewLC@CFaxT4@@SAPAV1@XZ @10 NONAME
+EXPORTS ?PageInitialize@CFaxT4@@QAEXW4TFaxResolution@@W4TFaxCompression@@H@Z @11 NONAME
+EXPORTS ?ReadFaxHeaderInfoL@CFaxHeaderLines@@QAEXAAVTFaxHeaderInfo@@@Z @12 NONAME
+EXPORTS ?ReadRawFontLineL@CFaxHeaderLines@@QAEXHAAV?$TBuf8@$0NI@@@@Z @13 NONAME
+EXPORTS ?ReadRawHeaderLineL@CFaxHeaderLines@@QAEXHAAV?$TBuf8@$0NI@@@@Z @14 NONAME
+EXPORTS ?WriteFaxHeaderInfoL@CFaxHeaderLines@@QAEXAAVTFaxHeaderInfo@@@Z @15 NONAME
+EXPORTS ?WriteRawFontLineL@CFaxHeaderLines@@QAEXHAAV?$TBuf8@$0NI@@@@Z @16 NONAME
+EXPORTS ?WriteRawHeaderLineL@CFaxHeaderLines@@QAEXHAAV?$TBuf8@$0NI@@@@Z @17 NONAME
+?NewLC@CFaxHeaderLines@@SAPAV1@PAVRFile@@@Z @ 18 NONAME ; class CFaxHeaderLines * CFaxHeaderLines::NewLC(class RFile *)
+?GeneratePathForHeaderFileL@CFaxHeaderLines@@SAXAAVTDes16@@@Z @ 19 NONAME ; void CFaxHeaderLines::GeneratePathForHeaderFileL(class TDes16 &)

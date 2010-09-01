@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,12 +19,6 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspstorTraces.h"
-#endif
-
 #include <e32svr.h>
 #include <es_ini.h>
 #include "smspstor.h"
@@ -32,6 +26,7 @@
 #include "smsuaddr.H"
 #include "Gsmumsg.h"
 #include "gsmubuf.h"
+#include <logwrap.h>
 #include <logwraplimits.h>
 #include "Gsmuelem.h"
 #include "gsmuieoperations.h"
@@ -39,7 +34,7 @@
 
 LOCAL_C TPtrC TrimLeadingZeros(const TDesC& aString)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TRIMLEADINGZEROS_1, "CSARStore::ExternalizeEntryArrayL()");
+	LOGSMSPROT1("CSARStore::ExternalizeEntryArrayL()");
 
 	const TInt len = aString.Length();
 
@@ -64,7 +59,7 @@ LOCAL_C TPtrC TrimLeadingZeros(const TDesC& aString)
  */
 CSmsReassemblyStore* CSmsReassemblyStore::NewL(RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_NEWL_1, "CSmsReassemblyStore::NewL()");
+	LOGSMSPROT1("CSmsReassemblyStore::NewL()");
 
 	CSmsReassemblyStore*  self = new (ELeave) CSmsReassemblyStore(aFs);
 	CleanupStack::PushL(self);
@@ -80,7 +75,7 @@ CSmsReassemblyStore* CSmsReassemblyStore::NewL(RFs& aFs)
  */
 void CSmsReassemblyStore::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_CONSTRUCTL_1, "CSmsReassemblyStore::ConstructL()");
+	LOGSMSPROT1("CSmsReassemblyStore::ConstructL()");
 
 	//
 	// Generate the full path to the reassembly store.
@@ -104,7 +99,7 @@ CSmsReassemblyStore::~CSmsReassemblyStore()
 
 void CSmsReassemblyStore::UpdateLogServerIdL(TInt aIndex, TLogId aLogServerId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_UPDATELOGSERVERIDL_1, "CSmsReassemblyStore::UpdateLogServerIdL()");
+	LOGSMSPROT1("CSmsReassemblyStore::UpdateLogServerIdL()");
 
 	TSmsReassemblyEntry entry(reinterpret_cast<const TSmsReassemblyEntry&>(Entries()[aIndex]));
 
@@ -132,7 +127,7 @@ TBool CSmsReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 										TBool aPassed,
 										TInt& aIndex)
  	{
- 	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_FINDMESSAGEL_1, "CSmsReassemblyStore::FindMessageL()");
+ 	LOGSMSPROT1("CSmsReassemblyStore::FindMessageL()");
 
 	//
 	// Parse the GSM data from the SMS message...
@@ -158,7 +153,7 @@ TBool CSmsReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 			//
 			// Found!
 			//
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_FINDMESSAGEL_2, "CSmsReassemblyStore::FindMessage(): Found! index=%d", index);
+			LOGSMSPROT2("CSmsReassemblyStore::FindMessage(): Found! index=%d", index);
 
 			aIndex = index;
 
@@ -169,7 +164,7 @@ TBool CSmsReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 	//
 	// Not found...
 	//
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_FINDMESSAGEL_3, "CSmsReassemblyStore::FindMessage(): Not found!");
+	LOGSMSPROT1("CSmsReassemblyStore::FindMessage(): Not found!");
 
  	return EFalse;
  	} // CSmsReassemblyStore::FindMessageL
@@ -187,7 +182,7 @@ TBool CSmsReassemblyStore::FindMessageL(const CSmsMessage& aSmsMessage,
 void CSmsReassemblyStore::MatchPDUToExistingMessage(const CSmsMessage& aSmsMessage,
 													TInt& aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_MATCHPDUTOEXISTINGMESSAGE_1, "CSmsReassemblyStore::MatchPDUToExistingMessage()");
+	LOGSMSPROT1("CSmsReassemblyStore::MatchPDUToExistingMessage()");
 
 	__ASSERT_ALWAYS(!aSmsMessage.IsDecoded(), SmspPanic(KSmspPanicMessageConcatenated));
 
@@ -227,7 +222,7 @@ void CSmsReassemblyStore::MatchPDUToExistingMessage(const CSmsMessage& aSmsMessa
 			}
 		}
 
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_MATCHPDUTOEXISTINGMESSAGE_2, "CSmsReassemblyStore::MatchPDUToExistingMessage(): reassemblyCount=%d, aIndex=%d", reassemblyCount, aIndex);
+	LOGSMSPROT3("CSmsReassemblyStore::MatchPDUToExistingMessage(): reassemblyCount=%d, aIndex=%d", reassemblyCount, aIndex);
 	} // CSmsReassemblyStore::MatchPDUToExistingMessage
 
 
@@ -237,7 +232,7 @@ void CSmsReassemblyStore::UpdateExistingMessageL(const CSmsMessage& aSmsMessage,
 												 TBool& aDuplicateMsgRef,
 												 TBool& aDuplicateSlot)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_1, "CSmsReassemblyStore::UpdateExistingMessageL()");
+	LOGSMSPROT1("CSmsReassemblyStore::UpdateExistingMessageL()");
 
 	aComplete        = EFalse;
 	aDuplicateMsgRef = EFalse;
@@ -281,7 +276,7 @@ void CSmsReassemblyStore::UpdateExistingMessageL(const CSmsMessage& aSmsMessage,
 
 			if (slot.iIndex == newSlot.iIndex  && slot.iStore == newSlot.iStore)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_2, "CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate enumerated PDU.");
+				LOGSMSPROT1("CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate enumerated PDU.");
 
 				// It is a duplicate that was already stored on the SIM...
 				aDuplicateSlot = ETrue;
@@ -296,7 +291,7 @@ void CSmsReassemblyStore::UpdateExistingMessageL(const CSmsMessage& aSmsMessage,
 		{
 		if (indexArray->At(index) == concatPDUIndex)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_3, "CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate concatenated PDU.");
+			LOGSMSPROT1("CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate concatenated PDU.");
 
 			// The PDU is already stored in the reassembly store.
 			aDuplicateMsgRef = ETrue;
@@ -365,7 +360,7 @@ void CSmsReassemblyStore::UpdateExistingMessageL(const CSmsMessage& aSmsMessage,
 
 void CSmsReassemblyStore::NewMessagePDUL(TInt& aIndex,CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_NEWMESSAGEPDUL_1, "CSmsReassemblyStore::NewMessagePDUL");
+	LOGSMSPROT1("CSmsReassemblyStore::NewMessagePDUL");
 
 	CArrayFix<TInt>* indexarray=new(ELeave) CArrayFixFlat<TInt>(8);
 	CleanupStack::PushL(indexarray);
@@ -382,7 +377,7 @@ void CSmsReassemblyStore::NewMessagePDUL(TInt& aIndex,CSmsMessage& aSmsMessage,c
 
 void CSmsReassemblyStore::GetMessageL(TInt aIndex,CSmsMessage& aSmsMessage)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_GETMESSAGEL_1, "CSmsReassemblyStore::GetMessageL [aIndex=%d]", aIndex);
+	LOGSMSPROT2("CSmsReassemblyStore::GetMessageL [aIndex=%d]", aIndex);
 
 	CArrayFix<TInt>* indexarray=new(ELeave) CArrayFixFlat<TInt>(8);
 	CleanupStack::PushL(indexarray);
@@ -403,7 +398,7 @@ void CSmsReassemblyStore::GetMessageL(TInt aIndex,CSmsMessage& aSmsMessage)
  */
 void CSmsReassemblyStore::InternalizeEntryL(const TStreamId& aStreamId,CSmsMessage& aSmsMessage,CArrayFix<TInt>& aIndexArray,CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_INTERNALIZEENTRYL_1, "CSmsReassemblyStore::InternalizeEntryL Start [sid=%d]", aStreamId.Value());
+	LOGSMSPROT2("CSmsReassemblyStore::InternalizeEntryL Start [sid=%d]", aStreamId.Value());
 	RStoreReadStream readstream;
 	readstream.OpenLC(FileStore(),aStreamId);
 	readstream >> aSmsMessage;
@@ -428,7 +423,7 @@ void CSmsReassemblyStore::InternalizeEntryL(const TStreamId& aStreamId,CSmsMessa
 		aSmsArray.AppendL(sms);
 		}
 	CleanupStack::PopAndDestroy();
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_INTERNALIZEENTRYL_2, "CSmsReassemblyStore::InternalizeEntryL End [count=%d]", count);
+	LOGSMSPROT2("CSmsReassemblyStore::InternalizeEntryL End [count=%d]", count);
 	} // CSARStore::OpenFileLC
 
 
@@ -439,7 +434,7 @@ void CSmsReassemblyStore::InternalizeEntryL(const TStreamId& aStreamId,CSmsMessa
  */
 void CSmsReassemblyStore::ExternalizeEntryL(TStreamId& aStreamId,const CSmsMessage& aSmsMessage,const CArrayFix<TInt>& aIndexArray,const CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_EXTERNALIZEENTRYL_1, "CSmsReassemblyStore::ExternalizeEntryL Start [sid=%d]", aStreamId.Value());
+	LOGSMSPROT2("CSmsReassemblyStore::ExternalizeEntryL Start [sid=%d]", aStreamId.Value());
 
 	RStoreWriteStream writestream;
 	if (aStreamId==KNullStreamId)
@@ -464,13 +459,13 @@ void CSmsReassemblyStore::ExternalizeEntryL(TStreamId& aStreamId,const CSmsMessa
 	writestream.CommitL();
 	CleanupStack::PopAndDestroy();
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_EXTERNALIZEENTRYL_2, "CSmsReassemblyStore::ExternalizeEntryL End [count=%d]", count);
+	LOGSMSPROT2("CSmsReassemblyStore::ExternalizeEntryL End [count=%d]", count);
 	} // CSARStore::OpenFileLC
 
 
 void CSmsReassemblyStore::PopulateEntry(TSmsReassemblyEntry& aEntry,const CSmsMessage& aSmsMessage,TInt aNumSmss)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_POPULATEENTRY_1, "CSmsReassemblyStore::PopulateEntry");
+	LOGSMSPROT1("CSmsReassemblyStore::PopulateEntry");
 	aEntry.SetReference(0);
 	aEntry.SetTotal(1);
 	aEntry.SetCount(1);
@@ -528,7 +523,7 @@ void CSmsReassemblyStore::PopulateEntry(TSmsReassemblyEntry& aEntry,const CSmsMe
 
 void CSmsReassemblyStore::CreateEntryL(CSmsMessage& aSmsMessage,const CArrayFix<TInt>& aIndexArray,const CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_CREATEENTRYL_1, "CSmsReassemblyStore::CreateEntryL");
+	LOGSMSPROT1("CSmsReassemblyStore::CreateEntryL");
  	TStreamId streamid=KNullStreamId;
  	if (aSmsMessage.Time() >= iLastRealTime)
  		{
@@ -556,7 +551,7 @@ void CSmsReassemblyStore::CreateEntryL(CSmsMessage& aSmsMessage,const CArrayFix<
 
 TBool CSmsReassemblyStore::PassedToClient( TInt aIndex ) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_PASSEDTOCLIENT_1, "CSmsReassemblyStore::PassedToClient()");
+	LOGSMSPROT1("CSmsReassemblyStore::PassedToClient()");
 
 	const TSmsReassemblyEntry& entry = reinterpret_cast<const TSmsReassemblyEntry&>(Entries()[ aIndex ]);
 	return entry.PassedToClient();
@@ -565,7 +560,7 @@ TBool CSmsReassemblyStore::PassedToClient( TInt aIndex ) const
 
 void CSmsReassemblyStore::SetPassedToClientL(TInt aIndex, TBool aPassed)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_SETPASSEDTOCLIENTL_1, "CSmsReassemblyStore::SetPassedToClientL()");
+	LOGSMSPROT1("CSmsReassemblyStore::SetPassedToClientL()");
 
 	TSmsReassemblyEntry entry(reinterpret_cast<const TSmsReassemblyEntry&>(Entries()[aIndex]));
 
@@ -584,7 +579,7 @@ void CSmsReassemblyStore::SetPassedToClientL(TInt aIndex, TBool aPassed)
  */
 void CSmsReassemblyStore::OpenStoreL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREASSEMBLYSTORE_OPENSTOREL_1, "CSmsReassemblyStore::OpenStoreL()");
+	LOGSMSPROT1("CSmsReassemblyStore::OpenStoreL()");
 
 	this->OpenL(iFullPathBuf,KReassemblyStoreUid);
 	} // CSmsReassemblyStore::OpenStoreL
@@ -604,7 +599,7 @@ CSmsReassemblyStore::CSmsReassemblyStore(RFs& aFs)
 
 CSmsSegmentationStore* CSmsSegmentationStore::NewL(RFs& aFs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEWL_1, "CSmsSegmentationStore::NewL()");
+	LOGSMSPROT1("CSmsSegmentationStore::NewL()");
 
 	CSmsSegmentationStore* segmentationStore = new(ELeave) CSmsSegmentationStore(aFs);
 	CleanupStack::PushL( segmentationStore );
@@ -616,7 +611,7 @@ CSmsSegmentationStore* CSmsSegmentationStore::NewL(RFs& aFs)
 
 void CSmsSegmentationStore::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_CONSTRUCTL_1, "CSmsSegmentationStore::ConstructL()");
+	LOGSMSPROT1("CSmsSegmentationStore::ConstructL()");
 
 	//generate fullpath of segmentation store.
 	PrivatePath(iFullPathBuf);
@@ -657,7 +652,7 @@ CSmsSegmentationStore::~CSmsSegmentationStore()
 
 TInt CSmsSegmentationStore::Next8BitReferenceL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEXT8BITREFERENCEL_1, "CSmsSegmentationStore::Next8BitReferenceL");
+	LOGSMSPROT1("CSmsSegmentationStore::Next8BitReferenceL");
 
 	TInt reference8bit=0;
 	TInt reference16bit=0;
@@ -674,7 +669,7 @@ TInt CSmsSegmentationStore::Next8BitReferenceL()
 			{
 			// We have to leave on any error; otherwise a duplicate reference number will be generated
 			// The transaction will revert
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEXT8BITREFERENCEL_2, "WARNING! CSmsSegmentationStore::InternalizeConcatenationReferencesL left with %d", ret);
+			LOGSMSPROT2("WARNING! CSmsSegmentationStore::InternalizeConcatenationReferencesL left with %d", ret);
 			User::Leave(ret);  //  stream not corrupted
 			}
 		reference8bit=(reference8bit+1)%0x100;
@@ -684,7 +679,7 @@ TInt CSmsSegmentationStore::Next8BitReferenceL()
 		{
 		// We have to leave on any error; otherwise a duplicate reference number will be generated
 		// The transaction will revert
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEXT8BITREFERENCEL_3, "WARNING! CSmsSegmentationStore::ExternalizeConcatenationReferencesL left with %d", ret);
+		LOGSMSPROT2("WARNING! CSmsSegmentationStore::ExternalizeConcatenationReferencesL left with %d", ret);
 		User::Leave(ret);  //  stream not corrupted
 		}
 	SetExtraStreamIdL(streamid);
@@ -695,7 +690,7 @@ TInt CSmsSegmentationStore::Next8BitReferenceL()
 
 TInt CSmsSegmentationStore::Next16BitReferenceL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEXT16BITREFERENCEL_1, "CSmsSegmentationStore::Next16BitReferenceL");
+	LOGSMSPROT1("CSmsSegmentationStore::Next16BitReferenceL");
 	TInt reference8bit=0;
 	TInt reference16bit=0x100;
 	TStreamId streamid=ExtraStreamId();
@@ -710,7 +705,7 @@ TInt CSmsSegmentationStore::Next16BitReferenceL()
 			{
 			// We have to leave on any error; otherwise a duplicate reference number will be generated
 			// The transaction will revert
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEXT16BITREFERENCEL_2, "WARNING! CSmsSegmentationStore::InternalizeConcatenationReferencesL left with %d", ret);
+			LOGSMSPROT2("WARNING! CSmsSegmentationStore::InternalizeConcatenationReferencesL left with %d", ret);
 			User::Leave(ret);  //  stream not corrupted
 			}
 		reference16bit=((reference16bit+1)%0xFF00)+0x100;
@@ -720,7 +715,7 @@ TInt CSmsSegmentationStore::Next16BitReferenceL()
 		{
 		// We have to leave on any error; otherwise a duplicate reference number will be generated
 		// The transaction will revert
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_NEXT16BITREFERENCEL_3, "WARNING! CSmsSegmentationStore::ExternalizeConcatenationReferencesL left with %d", ret);
+		LOGSMSPROT2("WARNING! CSmsSegmentationStore::ExternalizeConcatenationReferencesL left with %d", ret);
 		User::Leave(ret);  //  stream not corrupted
 		}
 	SetExtraStreamIdL(streamid);
@@ -740,7 +735,7 @@ TInt CSmsSegmentationStore::Next16BitReferenceL()
  */
 void CSmsSegmentationStore::AddSubmitL(const TSmsAddr& aSmsAddr,CSmsMessage& aSubmit)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSUBMITL_1, "CSmsSegmentationStore::AddSubmitL");
+	LOGSMSPROT1("CSmsSegmentationStore::AddSubmitL");
 
 	__ASSERT_ALWAYS(aSubmit.Type()==CSmsPDU::ESmsSubmit,SmspPanic(KSmspPanicNotSubmit));
 
@@ -771,7 +766,7 @@ void CSmsSegmentationStore::AddSubmitL(const TSmsAddr& aSmsAddr,CSmsMessage& aSu
 
 TBool CSmsSegmentationStore::AddCommandL(const TSmsAddr& aSmsAddr,const CSmsMessage& aCommand, CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray& aRefStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDCOMMANDL_1, "CSmsSegmentationStore::AddCommandL");
+	LOGSMSPROT1("CSmsSegmentationStore::AddCommandL");
 	__ASSERT_ALWAYS(aCommand.Type()==CSmsPDU::ESmsCommand,SmspPanic(KSmspPanicNotCommand));
 	const TInt count=Entries().Count();
 	const TLogId logid=(TLogId) aCommand.LogServerId();
@@ -847,7 +842,7 @@ TBool CSmsSegmentationStore::AddCommandL(const TSmsAddr& aSmsAddr,const CSmsMess
 TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt aReference)
 	{
 	const TInt count=Entries().Count();
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDREFERENCEL_1, "CSmsSegmentationStore::AddReferenceL [count=%d, ref=%d]", count, aReference);
+	LOGSMSPROT3("CSmsSegmentationStore::AddReferenceL [count=%d, ref=%d]", count, aReference);
 	TInt i=0;
 	TInt logserverid=aSmsMessage.LogServerId();
 	if (logserverid!=KLogNullId)
@@ -875,7 +870,7 @@ TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt a
             }
 	if(i>=count)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDREFERENCEL_2, "WARNING! KSmspPanicEntryWithLogServerIdNotFound [i=%d, count=%d]", i, count);
+		LOGSMSPROT3("WARNING! KSmspPanicEntryWithLogServerIdNotFound [i=%d, count=%d]", i, count);
 		return EFalse;
 		}
 
@@ -927,7 +922,7 @@ TBool CSmsSegmentationStore::AddReferenceL(const CSmsMessage& aSmsMessage,TInt a
 TBool CSmsSegmentationStore::AddReferenceStatusPairL(const CSmsMessage& aSmsMessage,TInt aReference, TUint aSegmentSequenceNumber)
  	{
 	const TInt count=Entries().Count();
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDREFERENCESTATUSPAIRL_1, "CSmsSegmentationStore::AddReferenceStatusPairL [count=%d, ref=%d]", count, aReference);
+	LOGSMSPROT3("CSmsSegmentationStore::AddReferenceStatusPairL [count=%d, ref=%d]", count, aReference);
 	TInt i=0;
 	TInt logserverid=aSmsMessage.LogServerId();
 	if (logserverid!=KLogNullId)
@@ -955,7 +950,7 @@ TBool CSmsSegmentationStore::AddReferenceStatusPairL(const CSmsMessage& aSmsMess
 		}
 	if(i>=count)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDREFERENCESTATUSPAIRL_2, "WARNING! KSmspPanicEntryWithLogServerIdNotFound [i=%d, count=%d]", i, count);
+		LOGSMSPROT3("WARNING! KSmspPanicEntryWithLogServerIdNotFound [i=%d, count=%d]", i, count);
 		return EFalse;
 		}
 
@@ -1033,7 +1028,7 @@ TBool CSmsSegmentationStore::AddReferenceStatusPairL(const CSmsMessage& aSmsMess
 
 TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,const CSmsMessage& aStatusReport)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_1, "CSmsSegmentationStore::AddStatusReportL");
+	LOGSMSPROT1("CSmsSegmentationStore::AddStatusReportL");
 
 	__ASSERT_DEBUG(aStatusReport.Type()==CSmsPDU::ESmsStatusReport,SmspPanic(KSmspPanicNotStatusReport));
 
@@ -1045,7 +1040,7 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 	TBool found=EFalse;
 	aComplete=EFalse;
 
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_2, "CSmsSegmentationStore::AddStatusReportL [ref=%d status=%d IsPerm=%d]", reference, status, isPerm);
+	LOGSMSPROT4("CSmsSegmentationStore::AddStatusReportL [ref=%d status=%d IsPerm=%d]", reference, status, isPerm);
 
 	if(!isPerm)
 		{
@@ -1088,11 +1083,11 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 		
 		if (sameTelNumbers)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_3, "CSmsSegmentationStore::AddStatusReportL telNumber from submit report matches that from SMS message");
+			LOGSMSPROT1("CSmsSegmentationStore::AddStatusReportL telNumber from submit report matches that from SMS message");
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_4, "CSmsSegmentationStore::AddStatusReportL telNumber from submit report does NOT match that from SMS message");
+			LOGSMSPROT1("CSmsSegmentationStore::AddStatusReportL telNumber from submit report does NOT match that from SMS message");
 			}
 
 		if (sameTelNumbers &&
@@ -1119,21 +1114,21 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 						}
 					else
 						{
-						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_5, "CSmsSegmentationStore::AddStatusReportL WARNING: Status already perm [status=%d refStatusPos=%d count=%d]", refStatusArray[refStatusPos].Status(), refStatusPos, refStatusArrayCount);
+						LOGSMSPROT4("CSmsSegmentationStore::AddStatusReportL WARNING: Status already perm [status=%d refStatusPos=%d count=%d]", refStatusArray[refStatusPos].Status(), refStatusPos, refStatusArrayCount);
 						refStatusPos++;
 						}
 					}
 
 				if (found)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_6, "CSmsSegmentationStore::AddStatusReportL Found [refStatusPos=%d]", refStatusPos);
+					LOGSMSPROT2("CSmsSegmentationStore::AddStatusReportL Found [refStatusPos=%d]", refStatusPos);
 					refStatusArray[refStatusPos].SetStatus(status);
 					TStreamId streamid=entry.DataStreamId();
 					ExternalizeEntryL(streamid,smsaddr,*smsmessage, refStatusArray);
 					PopulateEntry(entry,*smsmessage, refStatusArray);
 					ChangeEntryL(aIndex,entry);
 					aComplete=StatusArrayComplete(refStatusArray, entry);
-				    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_7, "CSmsSegmentationStore::AddStatusReportL StatusArrayComplete %d", aComplete);
+				    LOGSMSPROT2("CSmsSegmentationStore::AddStatusReportL StatusArrayComplete %d", aComplete);
 					}
 				}
 			}
@@ -1193,7 +1188,7 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 				PopulateEntry(entry,/*smsaddr,*/*smsmessage, refStatusArray2);
 				ChangeEntryL(aIndex,entry);
 				aComplete=StatusArrayComplete(refStatusArray2, entry);
-			    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_8, "CSmsSegmentationStore::StatusArrayComplete [aStatus=%d, ret=%d]", status, aComplete);
+			    LOGSMSPROT3("CSmsSegmentationStore::StatusArrayComplete [aStatus=%d, ret=%d]", status, aComplete);
 				break;
 				}
 			}
@@ -1204,14 +1199,14 @@ TBool CSmsSegmentationStore::AddStatusReportL(TInt& aIndex,TBool& aComplete,cons
 	CommitTransactionL();
 	CleanupStack::PopAndDestroy(2); // smsmessage, refStatusArray
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_ADDSTATUSREPORTL_9, "CSmsSegmentationStore::AddStatusReportL Exit [found=%d]", found);
+	LOGSMSPROT2("CSmsSegmentationStore::AddStatusReportL Exit [found=%d]", found);
 	return found;
 	} // CSmsSegmentationStore::AddStatusReportL
 
 
 void CSmsSegmentationStore::GetMessageL(TInt aIndex,TSmsAddr& aSmsAddr,CSmsMessage& aSmsMessage, RSmsSegmentationStoreRefStatusArray& aRefStatusArray)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_GETMESSAGEL_1, "CSmsSegmentationStore::GetMessageL [aIndex=%d]", aIndex);
+	LOGSMSPROT2("CSmsSegmentationStore::GetMessageL [aIndex=%d]", aIndex);
 
 	InternalizeEntryL(Entries()[aIndex].DataStreamId(),aSmsAddr,aSmsMessage, aRefStatusArray);
 	} // CSmsSegmentationStore::GetMessageL
@@ -1225,13 +1220,13 @@ void CSmsSegmentationStore::GetMessageL(TInt aIndex,TSmsAddr& aSmsAddr,CSmsMessa
  */
 void CSmsSegmentationStore::InternalizeConcatenationReferencesL(const TStreamId& aStreamId,TInt& aReference8bit,TInt& aReference16bit)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_INTERNALIZECONCATENATIONREFERENCESL_1, "CSmsSegmentationStore::InternalizeConcatenationReferencesL Start");
+	LOGSMSPROT1("CSmsSegmentationStore::InternalizeConcatenationReferencesL Start");
 	RStoreReadStream readstream;
 	readstream.OpenLC(FileStore(),aStreamId);
 	aReference8bit=readstream.ReadInt32L();
 	aReference16bit=readstream.ReadInt32L();
 	CleanupStack::PopAndDestroy();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_INTERNALIZECONCATENATIONREFERENCESL_2, "CSmsSegmentationStore::InternalizeConcatenationReferencesL End");
+	LOGSMSPROT1("CSmsSegmentationStore::InternalizeConcatenationReferencesL End");
 	} // CSmsSegmentationStore::InternalizeConcatenationReferencesL
 
 
@@ -1243,7 +1238,7 @@ void CSmsSegmentationStore::InternalizeConcatenationReferencesL(const TStreamId&
  */
 void CSmsSegmentationStore::ExternalizeConcatenationReferencesL(TStreamId& aStreamId,TInt aReference8bit,TInt aReference16bit)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_EXTERNALIZECONCATENATIONREFERENCESL_1, "CSmsSegmentationStore::ExternalizeConcatenationReferencesL Start");
+	LOGSMSPROT1("CSmsSegmentationStore::ExternalizeConcatenationReferencesL Start");
 	RStoreWriteStream writestream;
 	if (aStreamId==KNullStreamId)
 		aStreamId=writestream.CreateLC(FileStore());
@@ -1253,7 +1248,7 @@ void CSmsSegmentationStore::ExternalizeConcatenationReferencesL(TStreamId& aStre
 	writestream.WriteInt32L(aReference16bit);
 	writestream.CommitL();
 	CleanupStack::PopAndDestroy();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_EXTERNALIZECONCATENATIONREFERENCESL_2, "CSmsSegmentationStore::ExternalizeConcatenationReferencesL End");
+	LOGSMSPROT1("CSmsSegmentationStore::ExternalizeConcatenationReferencesL End");
 	} // CSmsSegmentationStore::ExternalizeConcatenationReferencesL
 
 
@@ -1265,7 +1260,7 @@ void CSmsSegmentationStore::ExternalizeConcatenationReferencesL(TStreamId& aStre
  */
 void CSmsSegmentationStore::InternalizeEntryL(const TStreamId& aStreamId,TSmsAddr& aSmsAddr,CSmsMessage& aSmsMessage, RSmsSegmentationStoreRefStatusArray& aRefStatusArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_INTERNALIZEENTRYL_1, "CSmsSegmentationStore::InternalizeEntryL Start");
+	LOGSMSPROT1("CSmsSegmentationStore::InternalizeEntryL Start");
 
 	aRefStatusArray.Reset();
 
@@ -1276,7 +1271,7 @@ void CSmsSegmentationStore::InternalizeEntryL(const TStreamId& aStreamId,TSmsAdd
 	readstream >> aRefStatusArray;
 	CleanupStack::PopAndDestroy(&readstream);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_INTERNALIZEENTRYL_2, "CSmsSegmentationStore::InternalizeEntryL End [count=%d]", aRefStatusArray.Count());
+	LOGSMSPROT2("CSmsSegmentationStore::InternalizeEntryL End [count=%d]", aRefStatusArray.Count());
 	} // CSmsSegmentationStore::InternalizeEntryL
 
 
@@ -1285,7 +1280,7 @@ void CSmsSegmentationStore::InternalizeEntryL(const TStreamId& aStreamId,TSmsAdd
  */
 void CSmsSegmentationStore::ExternalizeEntryL(TStreamId& aStreamId,const TSmsAddr& aSmsAddr,const CSmsMessage& aSmsMessage, const RSmsSegmentationStoreRefStatusArray& aRefStatusArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_EXTERNALIZEENTRYL_1, "CSmsSegmentationStore::ExternalizeEntryL Start");
+	LOGSMSPROT1("CSmsSegmentationStore::ExternalizeEntryL Start");
 
 	RStoreWriteStream writestream;
 
@@ -1300,7 +1295,7 @@ void CSmsSegmentationStore::ExternalizeEntryL(TStreamId& aStreamId,const TSmsAdd
 	writestream.CommitL();
 	CleanupStack::PopAndDestroy(&writestream);
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_EXTERNALIZEENTRYL_2, "CSmsSegmentationStore::ExternalizeEntryL End [count=%d]", aRefStatusArray.Count());
+	LOGSMSPROT2("CSmsSegmentationStore::ExternalizeEntryL End [count=%d]", aRefStatusArray.Count());
 	} // CSmsSegmentationStore::ExternalizeEntryL
 
 
@@ -1318,7 +1313,7 @@ void CSmsSegmentationStore::PopulateEntry(TSmsSegmentationEntry& aEntry,
 					  const CSmsMessage& aSmsMessage,
 					  const RSmsSegmentationStoreRefStatusArray& aRefStatusArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_POPULATEENTRY_1, "CSmsSegmentationStore::PopulateEntry");
+	LOGSMSPROT1("CSmsSegmentationStore::PopulateEntry");
 	TBool statusreportrequest=EFalse;
 	if (aSmsMessage.Type()==CSmsPDU::ESmsSubmit)
 		{
@@ -1426,7 +1421,7 @@ TBool CSmsSegmentationStore::StatusArrayComplete(const RSmsSegmentationStoreRefS
 	for (TInt i=0; i<count; i++)
 		{
 		const TBool ret = IsPermanentStatus(aRefStatusArray[i].Status());
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_STATUSARRAYCOMPLETE_1, "CSmsSegmentationStore::IsPermanentStatus [Status: %d, RetVal: %d, count=%d]", aRefStatusArray[i].Status(), ret, count);
+		LOGSMSPROT4("CSmsSegmentationStore::IsPermanentStatus [Status: %d, RetVal: %d, count=%d]", aRefStatusArray[i].Status(), ret, count);
 		if (ret)
 			permanent++;
 		}
@@ -1440,14 +1435,14 @@ TBool CSmsSegmentationStore::StatusArrayComplete(const RSmsSegmentationStoreRefS
 CSmsSegmentationStore::CSmsSegmentationStore(RFs& aFs)
     :CSARStore(aFs)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_CTOR_1, "CSmsSegmentationStore::CSmsSegmentationStore()");
+    LOGSMSPROT1("CSmsSegmentationStore::CSmsSegmentationStore()");
 
     } // CSmsSegmentationStore::CSmsSegmentationStore
 
 
 TInt CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::Compare(const TSmsSegmentationStoreRefStatus& aLeft, const TSmsSegmentationStoreRefStatus& aRight)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_TSMSSEGMENTATIONSTOREREFSTATUS_COMPARE_1, "CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::Compare()");
+	LOGSMSPROT1("CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::Compare()");
 
 	return aLeft.iReference - aRight.iReference;
 	} // CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::Compare
@@ -1455,7 +1450,7 @@ TInt CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::Compare(const TSmsSe
 
 void CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::InternalizeL(RReadStream& aStream)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_TSMSSEGMENTATIONSTOREREFSTATUS_INTERNALIZEL_1, "CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::InternalizeL()");
+	LOGSMSPROT1("CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::InternalizeL()");
 
 	iReference = aStream.ReadInt32L();
 	iStatus = aStream.ReadInt32L();
@@ -1464,7 +1459,7 @@ void CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::InternalizeL(RReadSt
 
 void CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::ExternalizeL(RWriteStream& aStream) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_TSMSSEGMENTATIONSTOREREFSTATUS_EXTERNALIZEL_1, "CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::ExternalizeL()");
+	LOGSMSPROT1("CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::ExternalizeL()");
 
 	aStream.WriteInt32L(iReference);
 	aStream.WriteInt32L(iStatus);
@@ -1473,7 +1468,7 @@ void CSmsSegmentationStore::TSmsSegmentationStoreRefStatus::ExternalizeL(RWriteS
 
 void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InsertL(const TSmsSegmentationStoreRefStatus& aRefStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_RSMSSEGMENTATIONSTOREREFSTATUSARRAY_INSERTL_1, "CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InsertL()");
+	LOGSMSPROT1("CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InsertL()");
 
 	TLinearOrder<TSmsSegmentationStoreRefStatus> order(TSmsSegmentationStoreRefStatus::Compare);
 	User::LeaveIfError(InsertInOrderAllowRepeats(aRefStatus, order));
@@ -1482,7 +1477,7 @@ void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InsertL(const T
 
 TInt CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::Find(const TSmsSegmentationStoreRefStatus& aRefStatus) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_RSMSSEGMENTATIONSTOREREFSTATUSARRAY_FIND_1, "CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::Find()");
+	LOGSMSPROT1("CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::Find()");
 
 	TLinearOrder<TSmsSegmentationStoreRefStatus> order(TSmsSegmentationStoreRefStatus::Compare);
 	TInt index = FindInOrder(aRefStatus, order);
@@ -1502,7 +1497,7 @@ TInt CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::Find(const TSms
 
 void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::CopyL(const RSmsSegmentationStoreRefStatusArray& aOther)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_RSMSSEGMENTATIONSTOREREFSTATUSARRAY_COPYL_1, "CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::CopyL()");
+	LOGSMSPROT1("CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::CopyL()");
 
 	Reset();
 
@@ -1516,7 +1511,7 @@ void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::CopyL(const RSm
 
 void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ResetAllStatus(TInt aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_RSMSSEGMENTATIONSTOREREFSTATUSARRAY_RESETALLSTATUS_1, "CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ResetAllStatus()");
+	LOGSMSPROT1("CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ResetAllStatus()");
 
 	TInt count = Count();
 	while (count--)
@@ -1528,7 +1523,7 @@ void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ResetAllStatus(
 
 void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InternalizeL(RReadStream& aStream)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_RSMSSEGMENTATIONSTOREREFSTATUSARRAY_INTERNALIZEL_1, "CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InternalizeL()");
+	LOGSMSPROT1("CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InternalizeL()");
 
 	TInt count = aStream.ReadInt32L();
 	while (count--)
@@ -1542,7 +1537,7 @@ void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::InternalizeL(RR
 
 void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ExternalizeL(RWriteStream& aStream) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_RSMSSEGMENTATIONSTOREREFSTATUSARRAYEXTERNALIZEL_1, "CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ExternalizeL()");
+	LOGSMSPROT1("CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ExternalizeL()");
 
 	const TInt count = Count();
 	aStream.WriteInt32L(count);
@@ -1556,7 +1551,7 @@ void CSmsSegmentationStore::RSmsSegmentationStoreRefStatusArray::ExternalizeL(RW
 
 TBool CSmsSegmentationStore::HasEntryWithLogIdL(TLogId aLogID,TInt& aRefNo,TInt& aSent)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_HASENTRYWITHLOGIDL_1, "CSmsSegmentationStore::HasEntryWithLogIdL()");
+	LOGSMSPROT1("CSmsSegmentationStore::HasEntryWithLogIdL()");
 
 	TInt count=Entries().Count();
 	TBool found=EFalse;
@@ -1581,7 +1576,7 @@ TBool CSmsSegmentationStore::HasEntryWithLogIdL(TLogId aLogID,TInt& aRefNo,TInt&
 				else
 					{
 					DeleteEntryL(i);
-					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_HASENTRYWITHLOGIDL_2, "CSmsSegmentationStore::HasEntryWithLogIdL [Entry: %d LogId %d - deleted]", i, (TInt)aLogID );
+					LOGSMSPROT3("CSmsSegmentationStore::HasEntryWithLogIdL [Entry: %d LogId %d - deleted]", i, aLogID );
 					}
 				break;
 				}
@@ -1597,7 +1592,7 @@ TBool CSmsSegmentationStore::HasEntryWithLogIdL(TLogId aLogID,TInt& aRefNo,TInt&
  */
 void CSmsSegmentationStore::OpenStoreL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSSEGMENTATIONSTORE_OPENSTOREL_1, "CSmsSegmentationStore::OpenStoreL()");
+	LOGSMSPROT1("CSmsSegmentationStore::OpenStoreL()");
 
 	this->OpenL(iFullPathBuf,KSegmentationStoreUid);
 	} // CSmsSegmentationStore::OpenStoreL

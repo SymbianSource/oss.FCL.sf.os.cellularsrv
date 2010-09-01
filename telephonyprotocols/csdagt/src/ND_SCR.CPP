@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,9 @@
  @file Nd_scr.cpp 
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "ND_SCRTraces.h"
-#endif
-
 #include "ND_SCR.H"
 #include "ND_STD.H"
+#include "SLOGGER.H"
 #include "SSCREXEC.H"
 #include "ND_DBACC.H"
 
@@ -324,7 +319,8 @@ Call OpenPct() from dialog processor.
 @return error code for OpenPct() request.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSCRIPT_OPENPCT_1, "NetDial:\tOpening PCT");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tOpening PCT");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 
 	const TInt ret = iDlgPrc->OpenPct();
 	if (ret == KErrNone)
@@ -338,7 +334,8 @@ Destroy PCT notification.
 Call DestroyPctNotification() from dialog processor.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSCRIPT_DESTROYPCTNOTIFICATION_1, "NetDial:\tRequesting Destroy PCT Notification");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tRequesting Destroy PCT Notification");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	
 	iDlgPrc->DestroyPctNotification(*this);
 	}	
@@ -351,7 +348,8 @@ Write incoming data into PCT.
 @return error code for WritePct() request.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSCRIPT_WRITEPCT_1, "NetDial:\tWriting To PCT");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tWriting To PCT");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	
 	return iDlgPrc->WritePct(aBuffer);
 	}	
@@ -363,7 +361,8 @@ Read data from PCT.
 @param aBuffer a reference for read data.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSCRIPT_READPCT_1, "NetDial:\tReading From PCT");
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tReading From PCT");)
+	__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	
 	iDlgPrc->ReadPct(*this,aBuffer);
 	}
@@ -376,7 +375,8 @@ If PCT is open, call ClosePct() from dialog processor
 	{
 	if (iPctOpen)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSCRIPT_CLOSEPCT_1, "NetDial:\tClosing PCT");
+		__FLOG_STMT(_LIT8(logString,"NetDial:\tClosing PCT");)
+		__FLOG_STATIC(KNetDialLogFolder(),KNetDialLogFile(),logString());
 	
 		iDlgPrc->ClosePct();
 		iPctOpen = EFalse;
@@ -413,7 +413,8 @@ Call ReadPctComplete() from script executor with aError to complete the ReadPct(
 @param aError a error code for completition.
 */
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CNETDIALSCRIPT_MDPOREADPCTCOMPLETE_1,"NetDial:\tRead PCT Complete with Error %d",aError);
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tRead PCT Complete with Error %d");)
+	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()),aError);
 	iScriptExecutor->ReadPctComplete(aError);
 	}
 void CNetDialScript::MDPODestroyPctComplete(TInt aError)
@@ -424,7 +425,8 @@ Call DestroyPctNotificationReceived() from script executor with aError to comple
 @param aError a error code for completition.
 */
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CNETDIALSCRIPT_MDPODESTROYPCTCOMPLETE_1, "NetDial:\tDestroy PCT Notification Complete with Error %d",aError);
+	__FLOG_STMT(_LIT8(logString,"NetDial:\tDestroy PCT Notification Complete with Error %d");)
+	__FLOG_STATIC1(KNetDialLogFolder(),KNetDialLogFile(),TRefByValue<const TDesC8>(logString()),aError);
 
 	iScriptExecutor->DestroyPctNotificationReceived(aError);
 	}

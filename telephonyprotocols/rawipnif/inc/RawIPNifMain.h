@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,16 +30,18 @@
 #include "ProtocolIfBase.h"
 #include "BcaIoController.h"
 #include "MControllerObserver.h"
+#include "bttlog.h"
 #ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <comms-infras/nifprvar_internal.h>
 #endif
 
+class CBttLogger;
 class CPacketLogger;
 
 class CRawIPNifMain : public CNifIfLink, public MControllerObserver
 	{
 public:
- 	CRawIPNifMain(CNifIfFactory& aFactory, MNifIfNotify* aNotify);
+ 	CRawIPNifMain(CNifIfFactory& aFactory, MNifIfNotify* aNotify, CBttLogger* aTheLogger);
 	~CRawIPNifMain();
 	void ConstructL(const TDesC& aName);
 	// Used to be :Pure virtuals inherited from MContextSmObserver
@@ -93,8 +95,12 @@ public:	// Send data to CBcaIoController
 
 public:	// Context status retrieval.
 	inline RPacketContext::TContextStatus GetContextStatus();
-
+	
 private:// Unowned
+	/** networking packet logger for debugging packets */
+	__PACKETLOG_DECLARATION_MEMBER;
+	CBttLogger* iTheLogger;
+
 	// Upstack bound protocol reference
 	CProtocolBase* iProtocol;
 

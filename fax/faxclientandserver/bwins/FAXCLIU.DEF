@@ -1,0 +1,20 @@
+EXPORTS
+	??4TFaxSettings@@QAEAAV0@ABV0@@Z @ 1 NONAME ; public: class TFaxSettings & __thiscall TFaxSettings::operator=(class TFaxSettings const &)
+	?AddSourceL@CFaxTransfer@@QAEXABV?$TBuf@$0BAA@@@HHW4TFaxPreferredCompression@@@Z @ 2 NONAME ; public: void __thiscall CFaxTransfer::AddSourceL(class TBuf<256> const &,int,int,enum TFaxPreferredCompression)
+	?AddSourceL@CFaxTransfer@@QAEXABV?$TBuf@$0BAA@@@HW4TFaxPreferredCompression@@@Z @ 3 NONAME ; public: void __thiscall CFaxTransfer::AddSourceL(class TBuf<256> const &,int,enum TFaxPreferredCompression)
+	?AddSourceL@CFaxTransfer@@QAEXABV?$TBuf@$0BAA@@@W4TFaxPreferredCompression@@@Z @ 4 NONAME ; public: void __thiscall CFaxTransfer::AddSourceL(class TBuf<256> const &,enum TFaxPreferredCompression)
+	?AddSourceL@CFaxTransferSource@@QAEXABV?$TBuf@$0BAA@@@HHW4TFaxPreferredCompression@@@Z @ 5 NONAME ; public: void __thiscall CFaxTransferSource::AddSourceL(class TBuf<256> const &,int,int,enum TFaxPreferredCompression)
+	?AddSourceL@CFaxTransferSource@@QAEXABV?$TBuf@$0BAA@@@HW4TFaxPreferredCompression@@@Z @ 6 NONAME ; public: void __thiscall CFaxTransferSource::AddSourceL(class TBuf<256> const &,int,enum TFaxPreferredCompression)
+	?AddSourceL@CFaxTransferSource@@QAEXABV?$TBuf@$0BAA@@@W4TFaxPreferredCompression@@@Z @ 7 NONAME ; public: void __thiscall CFaxTransferSource::AddSourceL(class TBuf<256> const &,enum TFaxPreferredCompression)
+	?Cancel@CFaxTransfer@@QAEXXZ @ 8 NONAME ; public: void __thiscall CFaxTransfer::Cancel(void)
+	?ExternalizeL@TFaxSettings@@QBEXAAVRWriteStream@@@Z @ 9 NONAME ; public: void __thiscall TFaxSettings::ExternalizeL(class RWriteStream &)const 
+	?InternalizeL@TFaxSettings@@QAEXAAVRReadStream@@@Z @ 10 NONAME ; public: void __thiscall TFaxSettings::InternalizeL(class RReadStream &)
+	?NewL@CFaxTransfer@@SAPAV1@ABVTFaxSettings@@@Z @ 11 NONAME ; public: static class CFaxTransfer * __cdecl CFaxTransfer::NewL(class TFaxSettings const &)
+	?NewLC@CFaxTransfer@@SAPAV1@ABVTFaxSettings@@@Z @ 12 NONAME ; public: static class CFaxTransfer * __cdecl CFaxTransfer::NewLC(class TFaxSettings const &)
+	?Progress@CFaxTransfer@@QAEHXZ @ 13 NONAME ; public: int __thiscall CFaxTransfer::Progress(void)
+	?RemoveAllSources@CFaxTransfer@@QAEXXZ @ 14 NONAME ; public: void __thiscall CFaxTransfer::RemoveAllSources(void)
+	?RemoveAllSources@CFaxTransferSource@@QAEXXZ @ 15 NONAME ; public: void __thiscall CFaxTransferSource::RemoveAllSources(void)
+	?SetPhoneNumberL@CFaxTransfer@@QAEXAAVTDesC8@@@Z @ 16 NONAME ; public: void __thiscall CFaxTransfer::SetPhoneNumberL(class TDesC8 &)
+	?Start@CFaxTransfer@@QAEHAAVTRequestStatus@@@Z @ 17 NONAME ; public: int __thiscall CFaxTransfer::Start(class TRequestStatus &)
+	?Stop@CFaxTransfer@@QAEXXZ @ 18 NONAME ; public: void __thiscall CFaxTransfer::Stop(void)
+

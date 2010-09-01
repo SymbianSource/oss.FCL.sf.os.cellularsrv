@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,19 +15,13 @@
 // 
 //
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "gsmumsgadditionattributesTraces.h"
-#endif
-
 #include "gsmumsgadditionalattributes.h"
 #include "smsstacklog.h"
 
 
 CSmsMessageAdditionalAttributes* CSmsMessageAdditionalAttributes::NewL()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_NEWL_1, "CSmsMessageAdditionalAttributes::NewL()");
+	LOGGSMU1("CSmsMessageAdditionalAttributes::NewL()");
 
 	CSmsMessageAdditionalAttributes* additionalAttributes=new(ELeave) CSmsMessageAdditionalAttributes();
 	CleanupStack::PushL(additionalAttributes);
@@ -45,7 +39,7 @@ CSmsMessageAdditionalAttributes::CSmsMessageAdditionalAttributes()
 
 CSmsMessageAdditionalAttributes::~CSmsMessageAdditionalAttributes()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_DTOR_1, "CSmsMessageAdditionalAttributes::~CSmsMessageAdditionalAttributes()");
+	LOGGSMU1("CSmsMessageAdditionalAttributes::~CSmsMessageAdditionalAttributes()");
 
 	iSmsPDUArray.ResetAndDestroy();
 
@@ -72,7 +66,7 @@ CSmsMessageAdditionalAttributes::~CSmsMessageAdditionalAttributes()
 
 void CSmsMessageAdditionalAttributes::ConstructL()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_CONSTRUCTL_1, "CSmsMessageAdditionalAttributes::ConstructL()");
+	LOGGSMU1("CSmsMessageAdditionalAttributes::ConstructL()");
 
     iStatusReportScheme = new (ELeave) CSmsMessageAdditionalAttributes::CDefaultScheme();
     
@@ -85,7 +79,7 @@ void CSmsMessageAdditionalAttributes::ConstructL()
 
 void CSmsMessageAdditionalAttributes::AddControlInformationElementL(CSmsInformationElement* aIE)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_ADDCONTROLINFORMATIONELEMENTL_1, "CSmsMessageAdditionalAttributes::AddControlInformationElementL()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::AddControlInformationElementL()");
 
     TSmsInformationElementCategories::TInformationElementCategory category;
     if (aIE != NULL)
@@ -96,13 +90,13 @@ void CSmsMessageAdditionalAttributes::AddControlInformationElementL(CSmsInformat
         	}
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_ADDCONTROLINFORMATIONELEMENTL_2, "CSmsMessageAdditionalAttributes::AddControlInformationElementL, aIE->Identifier() is invalid");
+            LOGGSMU1("CSmsMessageAdditionalAttributes::AddControlInformationElementL, aIE->Identifier() is invalid");
             User::Leave(KErrArgument);
             }
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_ADDCONTROLINFORMATIONELEMENTL_3, "CSmsMessageAdditionalAttributes::AddControlInformationElementL, aIE == NULL");
+        LOGGSMU1("CSmsMessageAdditionalAttributes::AddControlInformationElementL, aIE == NULL");
         User::Leave(KErrArgument);
         }
     } // CSmsMessageAdditionalAttributes::AddControlInformationElementL
@@ -110,7 +104,7 @@ void CSmsMessageAdditionalAttributes::AddControlInformationElementL(CSmsInformat
 
 TBool CSmsMessageAdditionalAttributes::Find1stInstanceOfControlInformationElement(TInformationElementId aId, TUint& aIndex) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_FIND1STINSTANCEOFCONTROLINFORMATIONELEMENT_1, "CSmsMessageAdditionalAttributes::Find1stInstanceOfControlInformationElement()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::Find1stInstanceOfControlInformationElement()");
     
     TBool rc = EFalse;
     TSmsInformationElementCategories::TInformationElementCategory category;
@@ -134,7 +128,7 @@ TBool CSmsMessageAdditionalAttributes::Find1stInstanceOfControlInformationElemen
 
 TBool CSmsMessageAdditionalAttributes::FindNextInstanceOfControlInformationElement(TInformationElementId aId, TUint aStartIndex, TUint& aIndex) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_FINDNEXTINSTANCEOFCONTROLINFORMATIONELEMENT_1, "CSmsMessageAdditionalAttributes::FindNextInstanceOfControlInformationElement()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::FindNextInstanceOfControlInformationElement()");
     
     TBool rc = EFalse;
     TSmsInformationElementCategories::TInformationElementCategory category;
@@ -159,7 +153,7 @@ TBool CSmsMessageAdditionalAttributes::FindNextInstanceOfControlInformationEleme
 
 CSmsInformationElement& CSmsMessageAdditionalAttributes::GetControlInformationElementL(TInformationElementId aId, TUint aIndex) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL_1, "CSmsMessageAdditionalAttributes::GetControlInformationElementL()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::GetControlInformationElementL()");
     
 
     TSmsInformationElementCategories::TInformationElementCategory category;
@@ -171,21 +165,21 @@ CSmsInformationElement& CSmsMessageAdditionalAttributes::GetControlInformationEl
 
     if (aIndex >= iCollectionOfPointersToIEArrays[category]->Count())
         {
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL_2, "CSmsMessageAdditionalAttributes::GetControlInformationElementL  aId = %d , aIndex = %d", aId, aIndex);
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL_3, "CSmsMessageAdditionalAttributes::GetControlInformationElementL  Count = %d", iCollectionOfPointersToIEArrays[category]->Count());
+        LOGGSMU3("CSmsMessageAdditionalAttributes::GetControlInformationElementL  aId = %d , aIndex = %d", aId, aIndex);
+        LOGGSMU2("CSmsMessageAdditionalAttributes::GetControlInformationElementL  Count = %d", iCollectionOfPointersToIEArrays[category]->Count());
         User::Leave(KErrArgument);
         }
 
     if (iCollectionOfPointersToIEArrays[category]->operator[](aIndex) == NULL)
         {
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL_4, "CSmsMessageAdditionalAttributes::GetControlInformationElementL  aId = %d , aIndex = %d", aId, aIndex);
+        LOGGSMU3("CSmsMessageAdditionalAttributes::GetControlInformationElementL  aId = %d , aIndex = %d", aId, aIndex);
         User::Leave(KErrArgument);
         }
 
     if (iCollectionOfPointersToIEArrays[category]->operator[](aIndex)->Identifier()!=aId)
         {
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL_5, "CSmsMessageAdditionalAttributes::GetControlInformationElementL aId = %d, aIndex = %d", aId, aIndex);
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL_6, "CSmsMessageAdditionalAttributes::GetControlInformationElementL  id = %d", iCollectionOfPointersToIEArrays[category]->operator[](aIndex)->Identifier());
+        LOGGSMU3("CSmsMessageAdditionalAttributes::GetControlInformationElementL aId = %d, aIndex = %d", aId, aIndex);
+        LOGGSMU2("CSmsMessageAdditionalAttributes::GetControlInformationElementL  id = %d", iCollectionOfPointersToIEArrays[category]->operator[](aIndex)->Identifier());
         User::Leave(KErrArgument);
         }
 
@@ -196,7 +190,7 @@ CSmsInformationElement& CSmsMessageAdditionalAttributes::GetControlInformationEl
 
 TBool CSmsMessageAdditionalAttributes::RemoveControlInformationElement(TInformationElementId aId, TUint aIndex, CSmsInformationElementPtr& aIE)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_REMOVECONTROLINFORMATIONELEMENT_1, "CSmsMessageAdditionalAttributes::RemoveControlInformationElement()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::RemoveControlInformationElement()");
     
     TBool rc = EFalse;
     TSmsInformationElementCategories::TInformationElementCategory category;
@@ -218,7 +212,7 @@ TBool CSmsMessageAdditionalAttributes::RemoveControlInformationElement(TInformat
 
 void CSmsMessageAdditionalAttributes::AddControlInformationElementL(TCategory aCategory, CSmsInformationElementPtr aIE)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_ADDCONTROLINFORMATIONELEMENTL1_1, "CSmsMessageAdditionalAttributes::AddControlInformationElementL()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::AddControlInformationElementL()");
     
     if ((aIE != NULL) &&
         (aCategory < TSmsInformationElementCategories::ENumberOfCategories))
@@ -234,7 +228,7 @@ void CSmsMessageAdditionalAttributes::AddControlInformationElementL(TCategory aC
 
 TBool CSmsMessageAdditionalAttributes::RemoveNextControlInformationElement(TCategory aCategory, CSmsInformationElementPtr& aIEPtr)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_REMOVENEXTCONTROLINFORMATIONELEMENT_1, "CSmsMessageAdditionalAttributes::RemoveNextControlInformationElement()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::RemoveNextControlInformationElement()");
 
     TBool rc = EFalse;
     if (aCategory < TSmsInformationElementCategories::ENumberOfCategories)
@@ -253,18 +247,19 @@ TBool CSmsMessageAdditionalAttributes::RemoveNextControlInformationElement(TCate
 
 CSmsInformationElement& CSmsMessageAdditionalAttributes::GetControlInformationElementL(TCategory aCategory, TUint aIndex) const
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL1_1, "CSmsMessageAdditionalAttributes::GetControlInformationElementL(): aCategory=%d, aIndex=%d",aCategory, aIndex);
+    LOGGSMU3("CSmsMessageAdditionalAttributes::GetControlInformationElementL(): aCategory=%d, aIndex=%d",
+    		 aCategory, aIndex);
 
     if ((aCategory >= TSmsInformationElementCategories::ENumberOfCategories) ||
         (aIndex    >= iCollectionOfPointersToIEArrays[aCategory]->Count()))
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL1_2, "CSmsMessageAdditionalAttributes::GetControlInformationElementL: KErrArgument");
+        LOGGSMU1("CSmsMessageAdditionalAttributes::GetControlInformationElementL: KErrArgument");
         User::Leave(KErrArgument);
         }
 
     if  ((iCollectionOfPointersToIEArrays[aCategory])->operator[](aIndex) == NULL)
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETCONTROLINFORMATIONELEMENTL1_3, "CSmsMessageAdditionalAttributes::GetControlInformationElementL: KErrCorrupt");
+        LOGGSMU1("CSmsMessageAdditionalAttributes::GetControlInformationElementL: KErrCorrupt");
         User::Leave(KErrCorrupt);
         }
 
@@ -274,7 +269,7 @@ CSmsInformationElement& CSmsMessageAdditionalAttributes::GetControlInformationEl
 
 void CSmsMessageAdditionalAttributes::DeleteControlInformationElement(TCategory aCategory, TUint8 aIndex)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_DELETECONTROLINFORMATIONELEMENT_1, "CSmsMessageAdditionalAttributes::DeleteControlInformationElement()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::DeleteControlInformationElement()");
     
     if (aCategory < TSmsInformationElementCategories::ENumberOfCategories)
         {
@@ -293,7 +288,7 @@ void CSmsMessageAdditionalAttributes::DeleteControlInformationElement(TCategory 
 
 TUint CSmsMessageAdditionalAttributes::NumberOfControlInformationElements(TCategory aCategory) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_NUMBEROFCONTROLINFORMATIONELEMENTS_1, "CSmsMessageAdditionalAttributes::NumberOfControlInformationElements1()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::NumberOfControlInformationElements1()");
 
     TUint count = 0;
 
@@ -308,7 +303,7 @@ TUint CSmsMessageAdditionalAttributes::NumberOfControlInformationElements(TCateg
 
 void CSmsMessageAdditionalAttributes::ExternalizeL(RWriteStream& aStream, TInt aVersion) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_EXTERNALIZEL_1, "CSmsMessageAdditionalAttributes::ExternalizeL()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::ExternalizeL()");
 
 	if(aVersion == CSmsMessage::ESmsIncompleteClass0MessageV)
 		{
@@ -372,7 +367,7 @@ void CSmsMessageAdditionalAttributes::ExternalizeL(RWriteStream& aStream, TInt a
 
 void CSmsMessageAdditionalAttributes::InternalizeL(RReadStream& aStream, TInt aVersion)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_INTERNALIZEL_1, "CSmsMessageAdditionalAttributes::InternalizeL()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::InternalizeL()");
 
 	if(aVersion == CSmsMessage::ESmsIncompleteClass0MessageV)
 		{
@@ -452,7 +447,7 @@ void CSmsMessageAdditionalAttributes::InternalizeL(RReadStream& aStream, TInt aV
 
 void CSmsMessageAdditionalAttributes::ResetAttributesL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_RESETATTRIBUTESL_1, "CSmsMessageAdditionalAttributes::ResetAttributesL()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::ResetAttributesL()");
     
     for (TInt category = 0; category < TSmsInformationElementCategories::ENumberOfCategories; category++)
         {
@@ -473,7 +468,7 @@ void CSmsMessageAdditionalAttributes::ResetAttributesL()
 
 CSmsIEOperation& CSmsMessageAdditionalAttributes::GetIEOperationL(TInformationElementId aId) const
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETIEOPERATIONL_1, "CSmsMessageAdditionalAttributes::GetIEOperation()");
+    LOGGSMU1("CSmsMessageAdditionalAttributes::GetIEOperation()");
 
     CSmsIEOperation* operation = NULL;
 
@@ -512,7 +507,7 @@ CSmsIEOperation& CSmsMessageAdditionalAttributes::GetIEOperationL(TInformationEl
  */
 CSmsNonIEOperation& CSmsMessageAdditionalAttributes::GetNonIEOperationL(TSmsNonIEIdentifier aId) const
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_GETNONIEOPERATIONL_1, "CSmsMessageAdditionalAttributes::GetNonIEOperationL");
+	LOGGSMU1("CSmsMessageAdditionalAttributes::GetNonIEOperationL");
     
     CSmsNonIEOperation* operation = NULL;
     
@@ -535,14 +530,14 @@ CSmsNonIEOperation& CSmsMessageAdditionalAttributes::GetNonIEOperationL(TSmsNonI
 
 void CSmsMessageAdditionalAttributes::SetIEOperationL(CSmsIEOperation* aOperation)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_SETIEOPERATIONL_1, "CSmsMessageAdditionalAttributes::SetIEOperationL()");
+	LOGGSMU1("CSmsMessageAdditionalAttributes::SetIEOperationL()");
 
     if (aOperation == NULL)
         {
         User::Leave(KErrArgument);
         }
 
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_SETIEOPERATIONL_2, "CSmsMessageAdditionalAttributes::AddIEOperation, operation=%d", aOperation->Id());
+    LOGGSMU2("CSmsMessageAdditionalAttributes::AddIEOperation, operation=%d", aOperation->Id());
 
     switch(aOperation->Id())
         {
@@ -581,7 +576,7 @@ void CSmsMessageAdditionalAttributes::SetNonIEOperationL(CSmsNonIEOperation* aOp
         User::Leave(KErrArgument);        
         }
     
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSMESSAGEADDITIONALATTRIBUTES_SETNONIEOPERATIONL_1, "CSmsMessageAdditionalAttributes::SetNonIEOperationL, operation = %d", aOperation->Id());
+    LOGGSMU2("CSmsMessageAdditionalAttributes::SetNonIEOperationL, operation = %d", aOperation->Id());
     
     if (aOperation->Id() == ESmsTPSRRParameter)
         {

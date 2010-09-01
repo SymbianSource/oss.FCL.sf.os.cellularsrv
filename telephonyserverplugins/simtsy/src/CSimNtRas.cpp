@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,14 +19,8 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimNtRasTraces.h"
-#endif
-
 #include "CSimNtras.h"
+#include "Simlog.h"
 
 _LIT8(KNtRasWriteText,"CLIENT");			// < Solicitation text, send to start the NTRas server
 _LIT8(KNtRasReceiveText,"SERVER");			// < NTRas server response, indicating the PPP session can commence.
@@ -93,7 +87,7 @@ TInt CSimNtRas::Connect(const TDesC& aCsyName, const TDesC& aPort,
  * @return TInt		Standard error value.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNTRAS_CONNECT_1, "Starting to attempt a NT RAS Connection");
+	LOGDATA1("Starting to attempt a NT RAS Connection");
 	iReadBuf.Zero();
 	iInputBuf.Zero();
 
@@ -137,7 +131,7 @@ void CSimNtRas::AttemptConnect()
  * Transmit "CLIENT" and attempt a connection
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNTRAS_ATTEMPTCONNECT_1, "NTRAS Writing CLIENT...");
+	LOGDATA1("NTRAS Writing CLIENT...");
 	iAttemptCnt++;
 	// Send the soliciting message, and await the NT Ras server's response.
 	CommWrite(KNtRasWriteText);
@@ -175,7 +169,7 @@ void CSimNtRas::CommReadComplete(TInt aStatus)
  * @param aStatus	Standard error value, indicating the result of the read request.
  */
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNTRAS_COMMREADCOMPLETE_1, "NTRAS Rx Completion: %s",iInputBuf);
+	LOGDATA2("NTRAS Rx Completion: %S",&iInputBuf);
 	if(aStatus!=KErrNone)
 		{
 		iTimer->Cancel();
@@ -196,7 +190,7 @@ void CSimNtRas::CommReadComplete(TInt aStatus)
 		{
 		iTimer->Cancel();
 		iCallback->NTRasCallBack(KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNTRAS_COMMREADCOMPLETE_2, "NTRAS Received SERVER!");
+		LOGDATA1("NTRAS Received SERVER!");
 		return;
 		}
 
@@ -209,7 +203,7 @@ void CSimNtRas::CommWriteComplete(TInt aStatus)
  * has occurred.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNTRAS_COMMWRITECOMPLETE_1, "NTRAS Write Completion");
+	LOGDATA1("NTRAS Write Completion");
 	if(aStatus!=KErrNone)
 		{
 		iTimer->Cancel();
@@ -222,7 +216,7 @@ void CSimNtRas::TimerCallBack(TInt /*aId*/)
  * Timer expired callback.  Give up the attempted connection with a time-out error.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNTRAS_TIMERCALLBACK_1, "NTRAS Timeout Occurred");
+	LOGDATA1("NTRAS Timeout Occurred");
 	CommWriteCancel();
 	if(iAttemptCnt<KTxMaxRetries)
 		AttemptConnect();

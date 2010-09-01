@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,6 +30,7 @@
 
 using namespace BasebandChannelAdaptation2;
 
+class CBttLogger;
 
 void Panic(TRawIP2NifPanic aPanic);
 typedef MBca2Factory* (*TNewBca2FactoryL)();
@@ -40,10 +41,10 @@ typedef MBca2Factory* (*TNewBca2FactoryL)();
 class CBcaController : public CActive
 	{
 public:
-	CBcaController(CRawIP2Flow& aRawIPFlow);	
+	CBcaController(CRawIP2Flow& aRawIPFlow, CBttLogger* aTheLogger);	
 	~CBcaController();
 
-	static CBcaController* NewL(CRawIP2Flow& aRawIPFlow);
+	static CBcaController* NewL(CRawIP2Flow& aRawIPFlow,CBttLogger* aTheLogger);
 	void ConstructL();
 public:
 	void StartLoadL(const CBCAProvision* aBCAProvisionConfig,MUpperControl* aControl, 
@@ -59,7 +60,8 @@ protected:
 	// Inherited from CActive.
 	virtual void RunL();
 	virtual void DoCancel();	
-
+private: 
+	CBttLogger* iTheLogger; // Unowned data.
 private:
 		enum TBcaState
 		{

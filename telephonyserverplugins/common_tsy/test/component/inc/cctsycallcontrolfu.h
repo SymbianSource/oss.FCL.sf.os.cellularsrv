@@ -115,12 +115,6 @@ public:
 	void TestTerminateAllCalls0002L();
 	void TestTerminateAllCalls0004L();
 	void TestTerminateAllCalls0005L();
-    void TestTerminateActiveCalls0001L();
-    void TestTerminateActiveCalls0001bL();
-    void TestTerminateActiveCalls0001cL();
-    void TestTerminateActiveCalls0002L();
-    void TestTerminateActiveCalls0004L();
-    void TestTerminateActiveCalls0005L();
 	void TestSetIncomingCallType0001L();
 	void TestAnswerIncomingCallISV0001L();
 	void TestAnswerIncomingCallISV0002L();

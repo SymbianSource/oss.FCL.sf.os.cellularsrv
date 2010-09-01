@@ -76,9 +76,6 @@ void CCTSYIntegrationTestSmsMessagingBase::GetSmsServiceCentreAddressL(TPtrC &aS
 	case EOperatorVodafone:
 		network = &KNetworkVodafone;
 		break;
-	case EOperatorNTN:
-		network = &KNetworkNTN;
-		break;
 	case EOperatorOrange:
 		network = &KNetworkOrange;
 		break;

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySendSmTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifySendSm.h"       // Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifySendSm* CSatNotifySendSm::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_NEWL_1, "CSAT: CSatNotifySendSm::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::NewL");
    	CSatNotifySendSm* const satNotifySendSm = 
         new ( ELeave ) CSatNotifySendSm( aNotificationsTsy );
     CleanupStack::PushL( satNotifySendSm );
     satNotifySendSm->ConstructL();
     CleanupStack::Pop( satNotifySendSm );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_NEWL_2, "CSAT: CSatNotifySendSm::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::NewL, end of method");
     return satNotifySendSm;
     }
 
@@ -67,7 +62,7 @@ CSatNotifySendSm::~CSatNotifySendSm
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_DTOR_1, "CSAT: CSatNotifySendSm::~CSatNotifySendSm");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::~CSatNotifySendSm");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifySendSm::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CONSTRUCTL_1, "CSAT: CSatNotifySendSm::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::ConstructL, does nothing");
     }
     
 // -----------------------------------------------------------------------------
@@ -107,7 +102,7 @@ TInt CSatNotifySendSm::Notify
         const TDataPackage& aPackage
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_NOTIFY_1, "CSAT: CSatNotifySendSm::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::Notify");
     // Save data pointer to client side for completion
     iSendSmV1Pckg = reinterpret_cast<RSat::TSendSmV1Pckg*>( 
         aPackage.Des1n() );
@@ -129,7 +124,7 @@ TInt CSatNotifySendSm::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CANCELNOTIFICATION_1, "CSAT: CSatNotifySendSm::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::CancelNotification");   
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifySendSmPCmdReqType );
@@ -152,7 +147,7 @@ TInt CSatNotifySendSm::CompleteNotifyL
         TInt aErrorCode                 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_COMPLETENOTIFYL_1, "CSAT: CSatNotifySendSm::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifySendSm::CompleteNotifyL");
     TInt ret( KErrNone );
 	TBuf<1> additionalInfo;
 	// Unpack parameters
@@ -200,7 +195,8 @@ TInt CSatNotifySendSm::CompleteNotifyL
 				
 				if ( KErrCorrupt == ret )
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_COMPLETENOTIFYL_2, "CSAT: CSatNotifySendSm::CompleteNotifyL, Invalid data");
+					TFLOGSTRING("CSAT: CSatNotifySendSm::CompleteNotifyL,\
+					    Invalid data");
 					additionalInfo.Zero();
                     additionalInfo.Append( KNoCause );
 					CreateTerminalRespL( pCmdNumber, 
@@ -225,7 +221,8 @@ TInt CSatNotifySendSm::CompleteNotifyL
 						ret = PackSms( smsTpdu, sendSmV1.iSmsTpdu );
 						if ( KErrNone != ret )
 							{
-							OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_COMPLETENOTIFYL_3, "CSAT: CSatNotifySendSm::CompleteNotifyL, Invalid TPDU");
+							TFLOGSTRING("CSAT: CSatNotifySendSm::\
+							    CompleteNotifyL, Invalid TPDU");
 							// TPDU is invalid or packing cannot be requested 
 							// if tpdu is something else than SMS-SUBMIT
 							additionalInfo.Zero();
@@ -241,7 +238,8 @@ TInt CSatNotifySendSm::CompleteNotifyL
 						}
 					else
 						{
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_COMPLETENOTIFYL_4, "CSAT: CSatNotifySendSm::CompleteNotifyL, Packing not required");
+						TFLOGSTRING("CSAT: CSatNotifySendSm::CompleteNotifyL,\
+						    Packing not required");
 						}
 					}
 				else
@@ -251,7 +249,8 @@ TInt CSatNotifySendSm::CompleteNotifyL
 				}
 			else
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_COMPLETENOTIFYL_5, "CSAT: CSatNotifySendSm::CompleteNotifyL, Missing TPDU");
+				TFLOGSTRING("CSAT: CSatNotifySendSm::CompleteNotifyL,\
+				    Missing TPDU");
 				// TPdu is missing, returning response immediately
 				additionalInfo.Zero();
                 additionalInfo.Append( KNoCause );
@@ -278,7 +277,8 @@ TInt CSatNotifySendSm::CompleteNotifyL
         } // End of if ( CSatTsy::ESatReqHandleUnknown != reqHandle )
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_COMPLETENOTIFYL_6, "CSAT: CSatNotifySendSm::CompleteNotifyL, Request not ongoing");
+		TFLOGSTRING("CSAT: CSatNotifySendSm::CompleteNotifyL,\
+		    Request not ongoing");
 		// Request not on, returning response immediately
 		additionalInfo.Zero();
         additionalInfo.Append( KNoCause );       
@@ -298,7 +298,7 @@ TInt CSatNotifySendSm::TerminalResponseL
         TDes8* aRsp 
         )
     {  
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_TERMINALRESPONSEL_1,  "CSAT::CSatNotifySendSm::TerminalResponseL" );
+    TFLOGSTRING( "CSAT::CSatNotifySendSm::TerminalResponseL" );
     
     TInt ret( KErrNone );
     TBuf<1> additionalInfo;
@@ -307,7 +307,8 @@ TInt CSatNotifySendSm::TerminalResponseL
     RSat::TSendSmRspV1& rspV1 = ( *aRspPckg ) ();
     // Get Proactive command number
     TUint8 pCmdNumber( rspV1.PCmdNumber() );
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_TERMINALRESPONSEL_2,  "CSAT::CSatNotifySendSm::TerminalResponseL: GeneralResult: %d", static_cast<TUint8>( rspV1.iGeneralResult ) );
+    TFLOGSTRING2( "CSAT::CSatNotifySendSm::TerminalResponseL: GeneralResult: \
+        %d", static_cast<TUint8>( rspV1.iGeneralResult ) );
 
     // Check that general result value is valid
     if ( ( RSat::KSuccess != rspV1.iGeneralResult ) && 
@@ -318,7 +319,8 @@ TInt CSatNotifySendSm::TerminalResponseL
          ( RSat::KModifiedByCallControl != rspV1.iGeneralResult ) && 
          ( RSat::KSuccessRequestedIconNotDisplayed != rspV1.iGeneralResult ) )        
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_TERMINALRESPONSEL_3,  "CSAT::CSatNotifySendSm::TerminalResponseL, Invalid General result" );
+        TFLOGSTRING( "CSAT::CSatNotifySendSm::TerminalResponseL,\
+            Invalid General result" );
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -332,7 +334,8 @@ TInt CSatNotifySendSm::TerminalResponseL
         // Check the length of additional info
         if ( 0 == rspV1.iAdditionalInfo.Length() )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_TERMINALRESPONSEL_4,  "CSAT::CSatNotifySendSm::TerminalResponseL, Invalid Additional Info" );
+            TFLOGSTRING( "CSAT::CSatNotifySendSm::TerminalResponseL,\
+                Invalid Additional Info" );
             // No info
             ret = KErrCorrupt;
             }
@@ -368,7 +371,7 @@ TInt CSatNotifySendSm::CreateTerminalRespL
         TDesC16& aAdditionalInfo		
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CREATETERMINALRESPL_1,  "CSAT::CSatNotifySendSm::CreateTerminalRespL" );
+    TFLOGSTRING( "CSAT::CSatNotifySendSm::CreateTerminalRespL" );
     // Create and append response data
     TTlv tlvSpecificData;
     // Create General Result TLV here
@@ -383,7 +386,8 @@ TInt CSatNotifySendSm::CreateTerminalRespL
         {
 		if( aAdditionalInfo.Length() > 0 )
 	        {
-	        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CREATETERMINALRESPL_2,  "CSAT::CSatNotifySendSm::CreateTerminalRespL, Unsuccessful result" );
+	        TFLOGSTRING( "CSAT::CSatNotifySendSm::CreateTerminalRespL,\
+	            Unsuccessful result" );
 	        // If there is ME, Network or SMS error, append additional info
 	        tlvSpecificData.AddByte( static_cast<TUint8>( aAdditionalInfo[0] ) );
 	        }
@@ -415,7 +419,7 @@ void CSatNotifySendSm::SetAlphaIdAndAddressData
 		RSat::TSendSmV1& aSendSmV1
 		)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_1,  "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData" );
+	TFLOGSTRING( "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData" );
 	TInt returnValue;
 	TPtrC8 sourceString; // Used in unicode conversions
 	// Alpha id string (optional)
@@ -443,13 +447,15 @@ void CSatNotifySendSm::SetAlphaIdAndAddressData
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_2,  "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData, Alpha ID is NULL" );
+			TFLOGSTRING( "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData,\
+			    Alpha ID is NULL" );
 			aSendSmV1.iAlphaId.iStatus = RSat::EAlphaIdNull;
 			}
 		}
 	else 
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_3,  "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData, Alpha ID not present" );
+		TFLOGSTRING( "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData,\
+		    Alpha ID not present" );
 		aSendSmV1.iAlphaId.iStatus = RSat::EAlphaIdNotPresent;
 		}
 	// The address data object holds the RP_Destination_Address of the Service 
@@ -485,11 +491,13 @@ void CSatNotifySendSm::SetAlphaIdAndAddressData
 				// Converting back to ASCII format
 				TSatUtility::BCDToAscii( sourceString, tempScaNumber );
 				aSendSmV1.iAddress.iTelNumber.Copy( tempScaNumber );
-				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_4, "CSAT: SendSm, SCA number: %S", aSendSmV1.iAddress.iTelNumber );
+				TFLOGSTRING2("CSAT: SendSm, SCA number: %S", 
+					&aSendSmV1.iAddress.iTelNumber );
 				}
        		else
       			{
-      			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_5,  "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData Address TLV found, TON/NPI present, but number epmpty" );
+      			TFLOGSTRING( "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData\
+      			    Address TLV found, TON/NPI present, but number epmpty" );
         		// Address TLV found, TON/NPI present, but number epmpty.
        			aSendSmV1.iAddress.iTypeOfNumber = RSat::EUnknownNumber;
         		aSendSmV1.iAddress.iNumberPlan = RSat::EUnknownNumberingPlan;
@@ -497,7 +505,8 @@ void CSatNotifySendSm::SetAlphaIdAndAddressData
 		    }
 		else
 		    {
-		    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_6,  "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData Address TLV found, but the Value part doesn't exist");
+		    TFLOGSTRING( "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData\
+		        Address TLV found, but the Value part doesn't exist");
 		    // Address TLV found, but the Value part doesn't exist
 		    aSendSmV1.iAddress.iTypeOfNumber = RSat::EUnknownNumber;
 		    aSendSmV1.iAddress.iNumberPlan = RSat::EUnknownNumberingPlan;
@@ -505,7 +514,8 @@ void CSatNotifySendSm::SetAlphaIdAndAddressData
 		}
 	else
 	    {
-	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_SETALPHAIDANDADDRESSDATA_7,  "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData Address TLV not found");
+	    TFLOGSTRING( "CSAT::CSatNotifySendSm::SetAlphaIdAndAddressData\
+	        Address TLV not found");
 	    // Address TLV not found
 	    aSendSmV1.iAddress.iTypeOfNumber = RSat::ETypeOfNumberNotSet;
 	    aSendSmV1.iAddress.iNumberPlan = RSat::ENumberingPlanNotSet;  
@@ -522,7 +532,7 @@ TInt CSatNotifySendSm::CheckTpdu
 	    TPtrC8 aTpdu    
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CHECKTPDU_1,  "CSAT::CSatNotifySendSm::CheckTpdu");
+    TFLOGSTRING( "CSAT::CSatNotifySendSm::CheckTpdu");
     TInt ret( KErrNone );
 
     if ( KSATSmsMTISubmitOrSubmitReport == ( aTpdu[0] & KMask3 ) ) 
@@ -535,7 +545,8 @@ TInt CSatNotifySendSm::CheckTpdu
         
         if ( !dcs && KSmsMaxSize < tpUdl )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CHECKTPDU_2,  "CSAT::CSatNotifySendSm::CheckTpdu, False DCS Length");
+            TFLOGSTRING( "CSAT::CSatNotifySendSm::CheckTpdu,\
+                False DCS Length");
             // DCS is 7-bit and message is over 160 bytes, set ret to corrupt
             ret = KErrCorrupt;
             }
@@ -543,13 +554,15 @@ TInt CSatNotifySendSm::CheckTpdu
         	iTerminalRespData.iCommandDetails[KCommandQualifier] ) )
             && ( KSmsMaxSizeWithoutPacking < tpUdl && dcs ) )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CHECKTPDU_3,  "CSAT::CSatNotifySendSm::CheckTpdu, TP-UD Too long without packing");
+            TFLOGSTRING( "CSAT::CSatNotifySendSm::CheckTpdu,\
+                TP-UD Too long without packing");
             // TP-UD is too long without packing
             ret = KErrCorrupt;
             }
         else if ( ( KSmsMaxSize < tpUdl ) && dcs )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CHECKTPDU_4,  "CSAT::CSatNotifySendSm::CheckTpdu, TP-UD is too long even with packing");
+            TFLOGSTRING( "CSAT::CSatNotifySendSm::CheckTpdu,\
+                TP-UD is too long even with packing");
             // TP-UD is too long even with packing
             ret = KErrCorrupt;
             }
@@ -563,7 +576,8 @@ TInt CSatNotifySendSm::CheckTpdu
         // SMS-COMMAND
         if ( KSMSCommandMaxSize < GetTpUdl( aTpdu ) )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_CHECKTPDU_5,  "CSAT::CSatNotifySendSm::CheckTpdu, False SMS Command length");
+            TFLOGSTRING( "CSAT::CSatNotifySendSm::CheckTpdu,\
+                False SMS Command length");
             ret = KErrCorrupt;
             }
 		else
@@ -586,7 +600,7 @@ TUint8 CSatNotifySendSm::GetTpUdl
 	    TPtrC8 aTpdu  
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_GETTPUDL_1,  "CSAT::CSatNotifySendSm::GetTpUdl");
+    TFLOGSTRING( "CSAT::CSatNotifySendSm::GetTpUdl");
     TUint8 ret( 0 );
     if ( KSATSmsMTISubmitOrSubmitReport == ( aTpdu[0] & KMask3 ) )
         {
@@ -661,7 +675,7 @@ TUint8 CSatNotifySendSm::GetTpDcs
 	    TPtrC8 aTpdu 
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_GETTPDCS_1,  "CSAT::CSatNotifySendSm::GetTpDcs");
+    TFLOGSTRING( "CSAT::CSatNotifySendSm::GetTpDcs");
     TUint8 retValue( NULL );
     if ( KSATSmsMTISubmitOrSubmitReport == ( aTpdu[0] & KMask3 ) )
         {
@@ -697,7 +711,7 @@ TInt CSatNotifySendSm::PackSms
 	    TTpdu& aSendSm  
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_PACKSMS_1,  "CSAT::CSatNotifySendSm::PackSms");
+    TFLOGSTRING( "CSAT::CSatNotifySendSm::PackSms");
     // See 3GPP TS 23.040 and TS 23.038: 
     // Packing of Basic elements of the SMS SUBMIT type
     TInt ret( KErrNone );
@@ -783,7 +797,7 @@ TInt CSatNotifySendSm::PackSms
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_PACKSMS_2,  "CSAT::CSatNotifySendSm::PackSms, No headers");
+            TFLOGSTRING( "CSAT::CSatNotifySendSm::PackSms, No headers");
             // No headers, lets pack all the characters in SMS message
             TBool endOfTPDU( EFalse );
             TUint8 move( 0 );
@@ -829,7 +843,7 @@ TInt CSatNotifySendSm::PackSms
                     }
                 else
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSENDSM_PACKSMS_3,  "CSAT::CSatNotifySendSm::PackSms, Corrupted");
+                    TFLOGSTRING( "CSAT::CSatNotifySendSm::PackSms, Corrupted");
                     ret = KErrCorrupt;
                     break;
                     }    

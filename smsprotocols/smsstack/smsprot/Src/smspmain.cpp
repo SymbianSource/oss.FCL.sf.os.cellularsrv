@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspmainTraces.h"
-#endif
 
 #include <e32std.h>
 #include "Gsmuelem.h"
@@ -68,7 +62,7 @@ GLREF_C TInt ErrorToRPError(TInt aError)
 			rpError = KErrGsmSMSUnspecifiedProtocolError;
 			break;
 		}
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, ERRORTORPERROR_1, "ErrorToRPError (%d->%d)", aError, rpError);
+	LOGSMSPROT3("ErrorToRPError (%d->%d)", aError, rpError);
 
 	return rpError;
 	} // ErrorToRPError
@@ -104,7 +98,7 @@ GLREF_C TInt ErrorToTPError(TInt aError)
                 } break;
             }
         }
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, ERRORTOTPERROR_1, "ErrorToTPError (%d->%d)", aError, tpError);
+    LOGSMSPROT3("ErrorToTPError (%d->%d)", aError, tpError);
     return tpError;
 	}
 
@@ -121,7 +115,7 @@ GLDEF_C void SmspPanic(TSmspPanic aPanic)
     {
     // Ignore in code coverage  - panic method
     BULLSEYE_OFF
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, SMSPPANIC_1, "SMSPPANIC %d", aPanic);
+    LOGSMSPROT2("SMSPPANIC %d", aPanic);
     _LIT(KSmsprotPanic, "SMSP");
     User::Panic(KSmsprotPanic,aPanic);
     BULLSEYE_RESTORE

@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
 /**
  @file
 */
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smsustrmTraces.h"
-#endif
 
 #include "smsustrm.h"
 #include "smsumain.h"
@@ -54,7 +48,7 @@ TInt RSmsSocketBuf::UnderflowL(TInt)
 //Panics if ERead==0
 //
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, RSMSSOCKETBUF_UNDERFLOWL_1, "RSmsSocketBuf::UnderflowL()");
+	LOGSMSU1("RSmsSocketBuf::UnderflowL()");
 
 	__ASSERT_ALWAYS(Avail(ERead)==0,SmsuPanic(KSsmuPanicStreamReadUnavailable));
 	SocketWriteL();
@@ -81,7 +75,7 @@ TInt RSmsSocketBuf::UnderflowL(TInt)
 void RSmsSocketBuf::OverflowL()
 //Panics if EWrite == 0
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, RSMSSOCKETBUF_OVERFLOWL_1, "RSmsSocketBuf::OverflowL()");
+	LOGSMSU1("RSmsSocketBuf::OverflowL()");
 
 	__ASSERT_ALWAYS(Avail(EWrite)==0,SmsuPanic(KSsmuPanicStreamWriteUnavailable));
 	SetBuf(ERead,iBuffer,iBuffer);
@@ -96,7 +90,7 @@ void RSmsSocketBuf::OverflowL()
  */
 void RSmsSocketBuf::DoSynchL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, RSMSSOCKETBUF_DOSYNCHL_1, "RSmsSocketBuf::DoSynchL()");
+	LOGSMSU1("RSmsSocketBuf::DoSynchL()");
 
 	SocketWriteL();
 	SetBuf(ERead|EWrite,iBuffer,iBuffer);
@@ -108,7 +102,7 @@ void RSmsSocketBuf::DoSynchL()
  */
 void RSmsSocketBuf::SocketWriteL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, RSMSSOCKETBUF_SOCKETWRITEL_1, "RSmsSocketBuf::SocketWriteL()");
+	LOGSMSU1("RSmsSocketBuf::SocketWriteL()");
 
 	TInt length=Lag(EWrite);
 	if (length==0)
@@ -131,7 +125,7 @@ EXPORT_C RSmsSocketReadStream::RSmsSocketReadStream(RSocket& aSocket)
 	:RReadStream(&iBuf),
 	iBuf(aSocket)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, RSMSSOCKETREADSTREAM_CTOR_1, "RSmsSocketReadStream::RSmsSocketReadStream()");
+	LOGSMSU1("RSmsSocketReadStream::RSmsSocketReadStream()");
 
 	} // RSmsSocketReadStream::RSmsSocketReadStream
 
@@ -146,7 +140,7 @@ EXPORT_C RSmsSocketWriteStream::RSmsSocketWriteStream(RSocket& aSocket)
 	:RWriteStream(&iBuf),
 	iBuf(aSocket)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, RSMSSOCKETWRITESTREAM_CTOR_1, "RSmsSocketWriteStream::RSmsSocketWriteStream()");
+	LOGSMSU1("RSmsSocketWriteStream::RSmsSocketWriteStream()");
 
 	} // RSmsSocketWriteStream::RSmsSocketWriteStream
 

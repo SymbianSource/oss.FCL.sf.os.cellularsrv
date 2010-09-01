@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -12,11 +12,6 @@
 //
 // Description:
 //
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cctsydispatchercallbackTraces.h"
-#endif
 
 #include <etelsat.h>
 #include <in_sock.h>
@@ -4183,8 +4178,7 @@ EXPORT_C void CCtsyDispatcherCallback::CallbackSupplementaryServicesReceiveUssdM
 	//initial invetigation shows a "ExitInfo 2,23,USER"  
 	
 	TSYLOGENTRYEXIT;
-	
-	OstTraceDefExt5(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCTSYDISPATCHERCALLBACK_CALLBACKSUPPLEMENTARYSERVICESRECEIVEUSSDMESSAGEIND_1,"aError=%d, aDcs=%d, aType=%d, aFormat=%d aMessage=%s", aError, aDcs, aType, aFormat,aMessage);
+	LOG(_L8("aError=%d, aDcs=%d, aType=%d, aFormat=%d"),aError, aDcs, aType, aFormat)
 		
 	// Forward completion to correct dispatcher object to handle
 	__ASSERT_DEBUG(iDispatcherHolder, CtsyDispatcherPanic(EInvalidNullPtr));

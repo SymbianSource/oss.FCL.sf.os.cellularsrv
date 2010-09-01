@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,12 +21,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "csatnotificationstsyTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatDataPackage.h"        // Parameter packing 
 #include "CSatTsy.h"                // Sat Tsy class
@@ -64,6 +58,7 @@
 #include "CSatNotifyReceiveData.h"  // Receive data notification  notify class
 #include "CSatNotifyMoreTime.h"		// More time notification  notify class
 #include "CSatTsyReqHandleStore.h"  // Request handle class
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "CBerTlv.h"                // Ber Tlv
 #include "TTlv.h"					// TTlv class
 #include "msattsy_ipcdefs.h"		// Sat Tsy specific request types
@@ -81,7 +76,7 @@ CSatNotificationsTsy* CSatNotificationsTsy::NewL
 		CSatTsyReqHandleStore* aSatReqHandleStore
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NEWL_1, "CSAT: CSatNotificationsTsy::NewL");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::NewL");
     CSatNotificationsTsy* const satNotificationsTsy = 
         new ( ELeave ) CSatNotificationsTsy( aSatTsy, aSatReqHandleStore );
 
@@ -89,7 +84,7 @@ CSatNotificationsTsy* CSatNotificationsTsy::NewL
     satNotificationsTsy->ConstructL();
     CleanupStack::Pop();
     
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NEWL_2, "CSAT: CSatNotificationsTsy::NewL, end of method");
+	TFLOGSTRING("CSAT: CSatNotificationsTsy::NewL, end of method");
     return satNotificationsTsy;
     }
 
@@ -103,7 +98,7 @@ CSatNotificationsTsy::~CSatNotificationsTsy
         void   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_DTOR_1, "CSAT: CSatNotificationsTsy::~CSatNotificationsTsy");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::~CSatNotificationsTsy");
     
     delete iSatTimer;
 
@@ -141,7 +136,8 @@ CSatNotificationsTsy::~CSatNotificationsTsy
     // Unregister.
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatNotificationsTsyObjType, NULL );
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_DTOR_2, "CSAT: CSatNotificationsTsy::~CSatNotificationsTsy, end of method");
+	TFLOGSTRING("CSAT: CSatNotificationsTsy::~CSatNotificationsTsy, \
+		end of method");
     }
     
 // -----------------------------------------------------------------------------
@@ -169,7 +165,7 @@ void CSatNotificationsTsy::ConstructL
         void
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_CONSTRUCTL_1, "CSAT: CSatNotificationsTsy::ConstructL\n" );
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::ConstructL\n" );
 
     // Register
     iSatTsy->MessageManager()->RegisterTsyObject(
@@ -328,7 +324,7 @@ void CSatNotificationsTsy::ConstructL
     // Checks if MO-SMS control should be activated
     //unnecassary IPC request as this is already called in CSatNotifyMoSmControlRequest::ConstructL 
     //iSatTsy->MessageManager()->HandleRequestL( ESatTsyQueryMoSmsControlActivated );
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_CONSTRUCTL_2, "CSAT: CSatNotificationsTsy::ConstructL, end of method" );
+	TFLOGSTRING("CSAT: CSatNotificationsTsy::ConstructL, end of method" );
     }
 
 // -----------------------------------------------------------------------------
@@ -343,7 +339,8 @@ TInt CSatNotificationsTsy::DoExtFuncL
         const TDataPackage& aPackage      
         )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_DOEXTFUNCL_1, "CSAT: CSatNotificationsTsy::DoExtFuncL\t IPC:%d,\t Handle:%d",aIpc, aTsyReqHandle);
+    TFLOGSTRING3("CSAT: CSatNotificationsTsy::DoExtFuncL\t IPC:%d,\t Handle:%d",
+               aIpc, aTsyReqHandle);
 
     TInt ret ( KErrNone );
 
@@ -505,7 +502,8 @@ TInt CSatNotificationsTsy::DoExtFuncL
         	} 
         default:
         	{
-        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_DOEXTFUNCL_2, "CSAT: CSatNotificationsTsy::DoExtFuncL, IPC not supported");
+        	TFLOGSTRING("CSAT: CSatNotificationsTsy::DoExtFuncL, \
+        		IPC not supported");
             ret = KErrNotSupported;
             break;
         	}
@@ -524,7 +522,8 @@ TInt CSatNotificationsTsy::CancelService
         const TTsyReqHandle aTsyReqHandle  
         )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_CANCELSERVICE_1, "CSAT: CSatNotificationsTsy::CancelService.\n\t\t\t Handle:%d\n\t\t\t", aTsyReqHandle );
+    TFLOGSTRING2("CSAT: CSatNotificationsTsy::CancelService.\
+    	\n\t\t\t Handle:%d\n\t\t\t", aTsyReqHandle );
 
     TInt ret ( KErrNotSupported );
     
@@ -692,7 +691,7 @@ void CSatNotificationsTsy::SetPollingResultL
         TInt aErrorCode
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPOLLINGRESULTL_1, "CSAT: CSatNotificationsTsy::SetPollingResultL");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::SetPollingResultL");
     TUint8 pCmdNumber;
     TUint8 interval;
     TBuf<RSat::KAdditionalInfoMaxSize> additionalInfo;
@@ -703,7 +702,8 @@ void CSatNotificationsTsy::SetPollingResultL
         {
         if ( iPollingOff )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPOLLINGRESULTL_2, "CSAT: CSatNotificationsTsy::SetPollingResultL, Polling Off");
+            TFLOGSTRING("CSAT: CSatNotificationsTsy::SetPollingResultL, \
+                Polling Off");
             additionalInfo.Zero();
             additionalInfo.Append( RSat::KNoAdditionalInfo );
             iNotifyPollingOff->CreateTerminalRespL( pCmdNumber,
@@ -718,7 +718,9 @@ void CSatNotificationsTsy::SetPollingResultL
     // NAA status not OK
 	else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPOLLINGRESULTL_3, "CSAT: CSatNotificationsTsy::SetPollingResultL, NAA Status Not OK, means that value in request is out of range and default value is used.");
+        TFLOGSTRING("CSAT: CSatNotificationsTsy::SetPollingResultL, \
+        	NAA Status Not OK, means that value in request is out of range\
+        	and default value is used.");
         if ( iPollingOff )
             {
             iPollingOff = EFalse;
@@ -733,7 +735,8 @@ void CSatNotificationsTsy::SetPollingResultL
             // renew the request with legacy maximum.. 
             if ( iLongPollIntervalReq )
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPOLLINGRESULTL_4, "CSAT: CSatNotificationsTsy::SetPollingResultL, Request set to legacy maximum (25 seconds)");
+                TFLOGSTRING("CSAT: CSatNotificationsTsy::SetPollingResultL, \
+        	        Request set to legacy maximum (25 seconds)");
                 SetPollingIntervalL( KMaxLegacyPollInterval );
                 iLongPollIntervalReq = EFalse;
                 }
@@ -761,7 +764,8 @@ void CSatNotificationsTsy::SetPollingIntervalL
         TUint8 aValue
         )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPOLLINGINTERVALL_1, "CSAT: CSatNotificationsTsy::SetPollingIntervalL, Value: %d",aValue);
+    TFLOGSTRING2("CSAT: CSatNotificationsTsy::SetPollingIntervalL, Value: %d",
+        aValue);
     
     if ( KMaxLegacyPollInterval < aValue )
         {
@@ -788,7 +792,7 @@ TInt CSatNotificationsTsy::TimerExpirationL
         TUint32 aTimerValue 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_TIMEREXPIRATIONL_1, "CSAT: CSatNotificationsTsy::TimerExpirationL");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::TimerExpirationL");
     TUint8 time[3] = {0, 0, 0}; 
     TInt num[3];
     num[0] = aTimerValue / 3600;         // Hours
@@ -840,7 +844,7 @@ CSatTimer* CSatNotificationsTsy::GetSatTimer
         // None 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_GETSATTIMER_1, "CSAT: CSatNotificationsTsy::GetSatTimer");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::GetSatTimer");
     // Pointer to SAT timer
     return iSatTimer; 
     }
@@ -855,7 +859,7 @@ CSatNotifySetUpCall* CSatNotificationsTsy::SatNotifySetUpCall
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SATNOTIFYSETUPCALL_1, "CSAT: CSatNotificationsTsy::SatNotifySetUpCall");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::SatNotifySetUpCall");
     // Pointer to NotifySetupCall
     return iNotifySetUpCall;
     }
@@ -871,7 +875,8 @@ void CSatNotificationsTsy::SetProactiveCommandOnGoingStatus
 		TInt /*aResult*/             
         )
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPROACTIVECOMMANDONGOINGSTATUS_1, "CSAT: CSatNotificationsTsy::SetProactiveCommandOnGoingStatus");
+	TFLOGSTRING("CSAT: CSatNotificationsTsy::\
+		SetProactiveCommandOnGoingStatus");
     TBool ProactiveCommandOngoingStatus;
     aDataPackage->UnPackData( ProactiveCommandOngoingStatus );
     iSatTimer->SetProactiveCommandOnGoingStatus( 
@@ -890,7 +895,7 @@ TInt CSatNotificationsTsy::CompletePCmdL
         TInt aResult
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_COMPLETEPCMDL_1, "CSAT: CSatNotificationsTsy::CompletePCmdL");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::CompletePCmdL");
 
     TPtrC8* data;
     aDataPackage->UnPackData( &data );
@@ -1041,7 +1046,8 @@ TInt CSatNotificationsTsy::CompletePCmdL
 			}
         default:
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_COMPLETEPCMDL_2, "CSAT: CSatNotificationsTsy::CompletePCmdL, Proactive command not supported" );
+            TFLOGSTRING("CSAT: CSatNotificationsTsy::CompletePCmdL, \
+            	Proactive command not supported" );
         	// If proactive command is not supported, terminal response
             // with "Command is beyond ME's capabilities" information 
             // will be send. 
@@ -1076,7 +1082,7 @@ TBool CSatNotificationsTsy::IsMoSmControlActivated
 		void
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_ISMOSMCONTROLACTIVATED_1, "CSAT: CSatNotificationsTsy::IsMoSmControlActivated");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::IsMoSmControlActivated");
     return iNotifyMoSmControlRequest->ActivationStatus();
     }
      
@@ -1090,7 +1096,8 @@ void CSatNotificationsTsy::SetPollingOffStatus
 		TBool aPollingOff 
 		)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_SETPOLLINGOFFSTATUS_1, "CSAT: CSatNotificationsTsy::SetPollingOffStatus status: %d", aPollingOff);
+	TFLOGSTRING2("CSAT: CSatNotificationsTsy::SetPollingOffStatus \
+		status: %d", aPollingOff);
 	iPollingOff = aPollingOff;		
 	}
 
@@ -1104,7 +1111,7 @@ TBool CSatNotificationsTsy::PollingOffStatus
 		// None
 		)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_POLLINGOFFSTATUS_1, "CSAT: CSatNotificationsTsy::PollingOffStatus");
+	TFLOGSTRING("CSAT: CSatNotificationsTsy::PollingOffStatus");
 	return iPollingOff;		
 	}
 
@@ -1118,7 +1125,7 @@ void CSatNotificationsTsy::AddLocationInformationToTlv
         TTlv& aTlv 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_ADDLOCATIONINFORMATIONTOTLV_1, "CSAT: CSatNotificationsTsy::AddLocationInformationToTlv");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::AddLocationInformationToTlv");
     
     // Get the current location data from CSatNotifyLocalInfo
     const TLocalInformation& locInfo = iNotifyLocalInfo->LocalInformation();
@@ -1146,7 +1153,7 @@ void CSatNotificationsTsy::NotifyClientForAlphaId
 	    RSat::TControlResult aResult 
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NOTIFYCLIENTFORALPHAID_1, "CSAT: CSatNotificationsTsy::NotifyClientForAlphaId");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::NotifyClientForAlphaId");
     iNotifyCallControlRequest->CompleteAlphaId( aAlphaId, aResult, KErrNone );
     }
     
@@ -1160,7 +1167,7 @@ CSatTsyReqHandleStore* CSatNotificationsTsy::RequestHandleStore
 	    void
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_REQUESTHANDLESTORE_1, "CSAT: CSatNotificationsTsy::RequestHandleStore");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::RequestHandleStore");
     return iSatReqHandleStore;
     }
     	       
@@ -1175,7 +1182,7 @@ TInt CSatNotificationsTsy::NotifySatReadyForNotification
 	    TUint8 aPCmdMsgType 
 	    )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NOTIFYSATREADYFORNOTIFICATION_1, "CSAT: CSatNotificationsTsy::NotifySatReadyForNotification");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::NotifySatReadyForNotification");
     TInt ret( KErrNone );
     // Pack parameter for DOS call
 	CSatDataPackage dataPackage;
@@ -1187,7 +1194,8 @@ TInt CSatNotificationsTsy::NotifySatReadyForNotification
 	if ( trapError )
 		{
 		ret = trapError;
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NOTIFYSATREADYFORNOTIFICATION_2, "CSAT: CSatNotificationsTsy::NotifySatReadyForNotification Trap error: %d", trapError);
+		TFLOGSTRING2("CSAT: CSatNotificationsTsy::NotifySatReadyForNotification\
+			Trap error: %d", trapError);
 		}
 		
 	return ret;
@@ -1205,7 +1213,8 @@ TInt CSatNotificationsTsy::TerminalResponseL
             TTsyReqHandle   aTsyReqHandle   
             ) 
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_TERMINALRESPONSEL_1, "CSAT: CSatNotificationsTsy::TerminalResponseL.\n\t\t\t Handle:%d\n\t\t\t", aTsyReqHandle );
+    TFLOGSTRING2("CSAT: CSatNotificationsTsy::TerminalResponseL.\
+        \n\t\t\t Handle:%d\n\t\t\t", aTsyReqHandle );
 
     TInt ret( KErrNone );
 
@@ -1325,7 +1334,8 @@ TInt CSatNotificationsTsy::TerminalResponseL
         	}	         			                            
         default:
         	{
-        	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_TERMINALRESPONSEL_2, "CSAT: CSatNotificationsTsy::TerminalResponseL. Proactive command unknown" );
+        	TFLOGSTRING("CSAT: CSatNotificationsTsy::TerminalResponseL.\
+        		Proactive command unknown" );
             ret =  KErrGeneral;
             break;
         	}
@@ -1348,7 +1358,8 @@ void CSatNotificationsTsy::CompleteTerminalResponse
         TInt aErrorCode     // Error code
         )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_COMPLETETERMINALRESPONSE_1, "CSAT: CSatNotificationsTsy::CompleteTerminalResponse - Error:%d", aErrorCode);
+    TFLOGSTRING2("CSAT: CSatNotificationsTsy::CompleteTerminalResponse - \
+    	Error:%d", aErrorCode);
 
     TTsyReqHandle reqHandle = iSatTsy->GetSatReqHandleStore()->
         ResetTsyReqHandle( CSatTsy::ESatTerminalRspReqType );
@@ -1372,7 +1383,7 @@ TBool CSatNotificationsTsy::CommandPerformedSuccessfully
         TUint8 aGeneralResult 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_COMMANDPERFORMEDSUCCESSFULLY_1, "CSAT: CSatNotificationsTsy::CommandPerformedSuccessfully");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::CommandPerformedSuccessfully");
     TBool ret( EFalse );
 	switch ( aGeneralResult )
 	    { 
@@ -1391,7 +1402,8 @@ TBool CSatNotificationsTsy::CommandPerformedSuccessfully
         	}
 	    default:
 	    	{	
-	    	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_COMMANDPERFORMEDSUCCESSFULLY_2, "CSAT: CSatNotificationsTsy::CommandPerformedSuccessfully, EFalse");
+	    	TFLOGSTRING("CSAT: CSatNotificationsTsy:: \
+	    		CommandPerformedSuccessfully, EFalse");
 		    ret = EFalse;
 		    break;
 	    	}
@@ -1409,7 +1421,7 @@ TInt CSatNotificationsTsy::NotifyCbDownload
         TTsyReqHandle   aTsyReqHandle 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NOTIFYCBDOWNLOAD_1, "CSAT: CSatNotificationsTsy::NotifyCbDownload");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::NotifyCbDownload");
     TInt ret( KErrNone );
     iSatTsy->ReqCompleted( aTsyReqHandle, ret );   
     return ret; 
@@ -1425,7 +1437,7 @@ TInt CSatNotificationsTsy::NotifySmsPpDownload
         TTsyReqHandle   aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFICATIONSTSY_NOTIFYSMSPPDOWNLOAD_1, "CSAT: CSatNotificationsTsy::NotifySmsPpDownload");
+    TFLOGSTRING("CSAT: CSatNotificationsTsy::NotifySmsPpDownload");
     TInt ret( KErrNone );
     iSatTsy->ReqCompleted( aTsyReqHandle, ret );   
     return ret; 

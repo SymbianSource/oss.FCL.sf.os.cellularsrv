@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyGetInkeyTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyGetInkey.h"     // Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifyGetInkey* CSatNotifyGetInkey::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_NEWL_1, "CSAT: CSatNotifyGetInkey::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::NewL");
    	CSatNotifyGetInkey* const satNotifyGetInkey = 
         new ( ELeave ) CSatNotifyGetInkey( aNotificationsTsy );
     CleanupStack::PushL( satNotifyGetInkey );
     satNotifyGetInkey->ConstructL();
     CleanupStack::Pop( satNotifyGetInkey );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_NEWL_2, "CSAT: CSatNotifyGetInkey::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::NewL, end of method");
     return satNotifyGetInkey;
     }
 
@@ -67,7 +62,7 @@ CSatNotifyGetInkey::~CSatNotifyGetInkey
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_DTOR_1, "CSAT: CSatNotifyGetInkey::~CSatNotifyGetInkey");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::~CSatNotifyGetInkey");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifyGetInkey::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_CONSTRUCTL_1, "CSAT: CSatNotifyGetInkey::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::ConstructL");
     }
     
 // -----------------------------------------------------------------------------
@@ -107,7 +102,7 @@ TInt CSatNotifyGetInkey::Notify
         const TDataPackage& aPackage   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_NOTIFY_1, "CSAT: CSatNotifyGetInkey::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::Notify");
     // Save data pointer to client side for completion
     iGetInkeyV2Pckg = reinterpret_cast<RSat::TGetInkeyV2Pckg*>( 
         aPackage.Des1n() );    
@@ -132,7 +127,7 @@ TInt CSatNotifyGetInkey::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_CANCELNOTIFICATION_1, "CSAT: CSatNotifyGetInkey::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::CancelNotification");
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyGetInkeyPCmdReqType );
@@ -154,7 +149,7 @@ TInt CSatNotifyGetInkey::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_COMPLETENOTIFYL_1, "CSAT: CSatNotifyGetInkey::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyGetInkey::CompleteNotifyL");
     TInt ret( KErrNone );
     TInt returnValue( KErrNone );
 
@@ -235,7 +230,8 @@ TInt CSatNotifyGetInkey::CompleteNotifyL
                 }
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_COMPLETENOTIFYL_2, "CSAT: CSatNotifyGetInkey::CompleteNotifyL, No Help available");
+                TFLOGSTRING("CSAT: CSatNotifyGetInkey::CompleteNotifyL,\
+                    No Help available");
                 // No help
                 getInkeyV2.iHelp = RSat::ENoHelpAvailable;
                 }
@@ -263,7 +259,8 @@ TInt CSatNotifyGetInkey::CompleteNotifyL
                 }
             else
                 {
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_COMPLETENOTIFYL_3, "CSAT: CSatNotifyGetInkey::CompleteNotifyL, Required values missing");
+                TFLOGSTRING("CSAT: CSatNotifyGetInkey::CompleteNotifyL,\
+                    Required values missing");
                 additionalInfo.Zero();
                 additionalInfo.Append( KNoCause );
                 CreateTerminalRespL( pCmdNumber, 
@@ -286,7 +283,8 @@ TInt CSatNotifyGetInkey::CompleteNotifyL
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_COMPLETENOTIFYL_4, "CSAT: CSatNotifyGetInkey::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifyGetInkey::CompleteNotifyL,\
+            Request not ongoing");
 		additionalInfo.Zero();
         additionalInfo.Append( KNoCause );
         CreateTerminalRespL( pCmdNumber, RSat::KMeUnableToProcessCmd, 
@@ -306,7 +304,7 @@ TInt CSatNotifyGetInkey::TerminalResponseL
         TDes8* aRsp
         )
     {   
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_TERMINALRESPONSEL_1, "CSAT: CSatNotifyGetInkey::TerminalResponseL");
+	TFLOGSTRING("CSAT: CSatNotifyGetInkey::TerminalResponseL");
     
 	TInt ret( KErrNone );
 
@@ -321,7 +319,8 @@ TInt CSatNotifyGetInkey::TerminalResponseL
          ( RSat::KTextString != rspV2.iInfoType ) && 
          ( RSat::KNoAdditionalInfo != rspV2.iInfoType ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_TERMINALRESPONSEL_2, "CSAT: CSatNotifyGetInkey::TerminalResponseL, Invalid Infotype");
+        TFLOGSTRING("CSAT: CSatNotifyGetInkey::TerminalResponseL,\
+            Invalid Infotype");
         ret = KErrCorrupt;
         }
 
@@ -331,7 +330,8 @@ TInt CSatNotifyGetInkey::TerminalResponseL
          ( RSat::ECharUcs2Alphabet  != rspV2.iRspFormat ) && 
          ( RSat::EYesNo != rspV2.iRspFormat ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_TERMINALRESPONSEL_3, "CSAT: CSatNotifyGetInkey::TerminalResponseL, Invalid Response Format");
+        TFLOGSTRING("CSAT: CSatNotifyGetInkey::TerminalResponseL,\
+            Invalid Response Format");
         ret = KErrCorrupt;
         }
     
@@ -346,7 +346,8 @@ TInt CSatNotifyGetInkey::TerminalResponseL
          ( RSat::KErrorRequiredValuesMissing != rspV2.iGeneralResult ) &&
          ( RSat::KSuccessRequestedIconNotDisplayed != rspV2.iGeneralResult ))
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_TERMINALRESPONSEL_4, "CSAT: CSatNotifyGetInkey::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT: CSatNotifyGetInkey::TerminalResponseL,\
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -355,7 +356,8 @@ TInt CSatNotifyGetInkey::TerminalResponseL
     if ( ( RSat::KMeProblem == rspV2.iInfoType ) &&  
          ( NULL == rspV2.iAdditionalInfo.Length() ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_TERMINALRESPONSEL_5, "CSAT: CSatNotifyGetInkey::TerminalResponseL, Invalid Additional Info, ME Problem");
+        TFLOGSTRING("CSAT: CSatNotifyGetInkey::TerminalResponseL,\
+            Invalid Additional Info, ME Problem");
         // Invalid additional info field
         ret = KErrCorrupt;
         }
@@ -363,7 +365,8 @@ TInt CSatNotifyGetInkey::TerminalResponseL
     if ( ( RSat::KTextString == rspV2.iInfoType ) && 
          ( NULL == rspV2.iAdditionalInfo.Length() ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_TERMINALRESPONSEL_6, "CSAT: CSatNotifyGetInkey::TerminalResponseL, Invalid Additional Info");
+        TFLOGSTRING("CSAT: CSatNotifyGetInkey::TerminalResponseL,\
+            Invalid Additional Info");
         ret = KErrCorrupt;
         }
 	
@@ -392,7 +395,7 @@ TInt CSatNotifyGetInkey::CreateTerminalRespL
         TUint8  aDcs          
 		)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_CREATETERMINALRESPL_1, "CSAT: CSatNotifyGetInkey::CreateTerminalRespL");
+	TFLOGSTRING("CSAT: CSatNotifyGetInkey::CreateTerminalRespL");
 
 	TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );  
@@ -433,7 +436,8 @@ TInt CSatNotifyGetInkey::CreateTerminalRespL
             {
             TSatUtility::Copy16to8LE( aAdditionalInfo, character);
             tlvSpecificData.AddData( character );
-            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYGETINKEY_CREATETERMINALRESPL_2, "CSAT:CSatNotifyGetInkey::CreateTerminalRespL, %s character", character );
+            TFLOGSTRING2("CSAT:CSatNotifyGetInkey::CreateTerminalRespL, %s \
+            	character", &character );
             }
         else
             {

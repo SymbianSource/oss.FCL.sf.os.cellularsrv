@@ -19,12 +19,6 @@
  @file BcaIoController.cpp
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "BcaIoControllerTraces.h"
-#endif
-
 #include <e32uid.h>
 #include <nifmbuf.h>
 #include <e32svr.h>
@@ -44,13 +38,16 @@ extern const TInt KMaxTxIPPacketSize = KMaxIPPacket + KIPTagHeaderLength;
 extern const TInt KMaxRxIPPacketSize = KMaxIPPacket + KIPTagHeaderLength;
 #endif
 
-CBcaIoController::CBcaIoController(MControllerObserver& aObserver)
+CBcaIoController::CBcaIoController(MControllerObserver& aObserver,
+	CBttLogger* aTheLogger)
 /**
  * Constructor. 
  *
  * @param aObserver Reference to the observer of this state machine
+ * @param aTheLogger The logging object
  */
-    : iSendState(EIdle),
+    : iTheLogger(aTheLogger),
+      iSendState(EIdle),
       iFlowBlocked(EFalse),
       iNumPacketsInSendQueue(0),
       iObserver(aObserver),
@@ -61,28 +58,29 @@ CBcaIoController::CBcaIoController(MControllerObserver& aObserver)
     {
     }
 
-CBcaIoController* CBcaIoController::NewL(MControllerObserver& aObserver)
+CBcaIoController* CBcaIoController::NewL(MControllerObserver& aObserver, CBttLogger* aTheLogger)
 /**
  * Two-phase constructor. Creates a new CBcaIoController object, performs 
  * second-phase construction, then returns it.
  *
  * @param aObserver The observer, to which events will be reported
+ * @param aTheLogger The logging object
  * @return A newly constructed CBcaIoController object
  */
-	{
-	CBcaIoController* self = new (ELeave) CBcaIoController(aObserver);
-	CleanupStack::PushL(self);
-	self->ConstructL();
-	CleanupStack::Pop(self);
-	return self;
-	}
+    {
+    CBcaIoController* self = new (ELeave) CBcaIoController(aObserver, aTheLogger);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+    }
 
 void CBcaIoController::ConstructL()
 /**
  * Second-phase constructor. Creates all the state objects it owns.
  */
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_CONSTRUCTL_1, "CBcaIoController::ConstructL");
+    _LOG_L1C1(_L8("CBcaIoController::ConstructL"));
 
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
     iIPTagHeader = new (ELeave) CIPTagHeader(iTheLogger);
@@ -108,11 +106,10 @@ void CBcaIoController::ConstructL()
     
     // end note
     
-    iSender = CSender::NewL(*this, iMaxTxPacketSize);
-    iReceiver = CReceiver::NewL(*this, iMaxRxPacketSize);
-    iLoader = new (ELeave) CBcaControl(*this);
+    iSender = CSender::NewL(*this, iTheLogger, iMaxTxPacketSize);
+    iReceiver = CReceiver::NewL(*this, iTheLogger, iMaxRxPacketSize);
+    iLoader = new (ELeave) CBcaControl(*this, iTheLogger);
     }
-	
 
 
 CBcaIoController::~CBcaIoController()
@@ -148,7 +145,7 @@ void CBcaIoController::StartL()
  *  Used to kick off the initialisation for this module
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_STARTL_1, "CBcaIoController::StartL is called.");
+	_LOG_L1C1(_L8("CBcaIoController::StartL is called."));
 
     iLoader->StartLoadL();
 	}
@@ -160,7 +157,7 @@ void CBcaIoController::Stop(TInt aError)
  * @param aError the passed in error code as to why Stop has been called
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_STOP_1, "CBcaIoController::Stop is called.");
+	_LOG_L1C1(_L8("CBcaIoController::Stop is called."));
 
 	//Stop all the active objects
 	iReceiver->Cancel();
@@ -185,12 +182,12 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
  *  @param aPdu a data packet
  */
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_1, "<<CBcaIoController::Send");
+    _LOG_L1C1(_L8(">>CBcaIoController::Send"));
 
     // Check if flow is shutting down
     if (iSendState == EShuttingDown)
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_2, "    ERROR: Nif is shutting down");
+        _LOG_L2C1(_L8("    ERROR: Nif is shutting down"));
         
         // when the flow is destroyed the memory for this packet will be 
         // cleaned up - just tell the layers above to stop sending.
@@ -203,8 +200,8 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
     // add it to our queue
     if ((aPdu.Length() - aPdu.First()->Length()) > iMaxTxPacketSize)
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_3, "Packet is too large - discarding");
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_4, "<<CSender::Send -> Error");
+        _LOG_L2C1(_L8("Packet is too large - discarding"));
+        _LOG_L1C1(_L8("<<CSender::Send -> Error"));
 
         // in debug panic - this should not happen, MTU on the uplink should
         // be strictly enforced
@@ -215,7 +212,7 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
         // may be counter intuitive, however the only options here are either 
         // send accepted or blocked (MLowerDataSender).
         
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_5, "<<CBcaIoController::Send - return ContinueSending");
+        _LOG_L2C1(_L8("<<CBcaIoController::Send - return ContinueSending"));
         return ESock::MLowerDataSender::ESendAccepted;
         }
     
@@ -225,7 +222,7 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
         // Transmit is off for this flow - we must have received a block
         // message from our control.  append this message to the queue
         // and tell the layer above it to kindly stop sending.
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_6, "    Sender blocked, appending packet to queue");
+        _LOG_L1C1(_L8("    Sender blocked, appending packet to queue"));
         
         AppendToSendQueue(aPdu);
         
@@ -235,12 +232,12 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
         
         if (IsSendQueueFull())
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_7, "<<CBcaIoController::Send - return StopSending");
+            _LOG_L2C1(_L8("<<CBcaIoController::Send - return StopSending"));
             return ESock::MLowerDataSender::ESendBlocked;
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_8, "<<CBcaIoController::Send - return ContinueSending");
+            _LOG_L2C1(_L8("<<CBcaIoController::Send - return ContinueSending"));
             return ESock::MLowerDataSender::ESendAccepted;       
             }
         }
@@ -252,12 +249,12 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
         // If this happens, it means that TCP/IP has sent us an IP packet
         // while we're still sending the previous one. 
         {    
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_9, "    Sender busy, appending packet to queue");
+        _LOG_L1C1(_L8("    Sender busy, appending packet to queue"));
         AppendToSendQueue(aPdu);
         
         if (IsSendQueueFull())
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_10, "<<CBcaIoController::Send - return StopSending");
+            _LOG_L2C1(_L8("<<CBcaIoController::Send - return StopSending"));
             return ESock::MLowerDataSender::ESendBlocked;
             }
         }
@@ -268,7 +265,7 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
         // packets that might have been queued onto the send queue.
     
         // Update module state
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_11, "     set State to ESending");
+        _LOG_L2C1(_L8("     set State to ESending"));
         iSendState = ESending;
          
         iSender->Send(aPdu);
@@ -278,7 +275,7 @@ ESock::MLowerDataSender::TSendResult CBcaIoController::Send(RMBufChain& aPdu)
     // otherwise, block this flow until we have room for the next
     // packet
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SEND_12, "<<CBcaIoController::Send - return ContinueSending");
+    _LOG_L2C1(_L8("<<CBcaIoController::Send - return ContinueSending"));
 
     return ESock::MLowerDataSender::ESendAccepted;
     }
@@ -289,12 +286,12 @@ void CBcaIoController::SendComplete()
  *  to process more packets.
  */
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SENDCOMPLETE_1, ">>CBcaIoController::SendComplete");
+    _LOG_L1C1(_L8(">>CBcaIoController::SendComplete"));
 
     // if we've been blocked while in the middle of a 
     // send - don't continue sending, this will happen
     // when the flow is resumed.
-	
+
     iSendState = EIdle;
 
     // are we available to transmit?
@@ -324,11 +321,11 @@ void CBcaIoController::SendComplete()
             iSendState = ESending;
             
             RMBufChain tmpPdu;
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SENDCOMPLETE_2, "    Packet removed from queue to send");
+            _LOG_L1C1(_L8("    Packet removed from queue to send"));
             RemoveFromSendQueue(tmpPdu);
             
             // Update module state
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SENDCOMPLETE_3, "     set State to ESending");
+            _LOG_L2C1(_L8("     set State to ESending"));
           
             iSender->Send(tmpPdu);
             
@@ -343,7 +340,7 @@ void CBcaIoController::SendComplete()
             }
         }
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SENDCOMPLETE_4, "<<CBcaIoController::SendComplete");
+    _LOG_L1C1(_L8("<<CBcaIoController::SendComplete"));
     }
 
 
@@ -352,7 +349,7 @@ void CBcaIoController::ResumeSending()
  *  Flow is being unblocked this will resume sending.
  */
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_RESUMESENDING_1, ">>CBcaIoController::ResumeSending");
+    _LOG_L1C1(_L8(">>CBcaIoController::ResumeSending"));
 
     // allows for normal SendComplete behaviour if there is
     // a packet outstanding with BCA
@@ -381,11 +378,11 @@ void CBcaIoController::ResumeSending()
         if ((resumeSending) || (!IsSendQueueEmpty()))
             {
             RMBufChain tmpPdu;
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_RESUMESENDING_2, "    Packet removed from queue to send");
+            _LOG_L1C1(_L8("    Packet removed from queue to send"));
             RemoveFromSendQueue(tmpPdu);
             
             // Update module state
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_RESUMESENDING_3, "     set State to ESending");
+            _LOG_L2C1(_L8("     set State to ESending"));
             iSendState = ESending;
           
             iSender->Send(tmpPdu);
@@ -401,7 +398,7 @@ void CBcaIoController::ResumeSending()
             }
         }
     
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_RESUMESENDING_4, "<<CBcaIoController::ResumeSending");
+    _LOG_L1C1(_L8("<<CBcaIoController::ResumeSending"));
     }
 
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
@@ -410,7 +407,7 @@ void CBcaIoController::SetType(TUint16 aType)
 /**
  *  Used to specify the type of the IP header.
  */
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SETTYPE_1, "CBcaController::SetType");
+    _LOG_L1C1(_L8("CBcaController::SetType"));
     
     iIPTagHeader->SetType(aType);   
     }
@@ -420,7 +417,7 @@ void CBcaIoController::AddHeader(TDes8& aDes)
  *  Used to add the IP header to the packet before sending to the BCA.
  */
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_ADDHEADER_1, "CBcaController::AddHeader");
+    _LOG_L1C1(_L8("CBcaController::AddHeader"));
 
     iIPTagHeader->AddHeader(aDes);
     }
@@ -432,21 +429,23 @@ TUint16 CBcaIoController::RemoveHeader(RMBufChain& aPdu)
  * @return The IP header that has been removed from the packet
  */
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_REMOVEHEADER_1, "CBcaController::RemoveHeader");
+    _LOG_L1C1(_L8("CBcaController::RemoveHeader"));
 
     return (iIPTagHeader->RemoveHeader(aPdu));
     }   
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
 
 
-CBcaControl::CBcaControl(CBcaIoController& aObserver)
+CBcaControl::CBcaControl(CBcaIoController& aObserver, CBttLogger* aTheLogger)
 /**
  * Constructor. Performs standard active object initialisation.
  *
  * @param aObserver Reference to the observer of this state machine
+ * @param aTheLogger The logging object
  */
 	: CActive(EPriorityStandard), 
 	  iObserver(aObserver), 
+	  iTheLogger(aTheLogger),
 	  iMBca(NULL),
 	  iState(EIdling),
 	  iError(KErrNone)
@@ -480,7 +479,7 @@ void CBcaControl::RunL()
  *  
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_1, "CBcaControl::RunL() called");
+	_LOG_L1C1(_L8("CBcaControl::RunL() called"));
 	switch (iState)
 		{
 		//in this state, Ioctl is called to set IAP ID, check the result of
@@ -492,11 +491,11 @@ void CBcaControl::RunL()
 				{
 				if(iStatus == KErrNotSupported)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_2, "This BCA does not support IAPID set");
+					_LOG_L1C1(_L8("This BCA does not support IAPID set"));
 					}
 				else
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_3, "This BCA supports IAPID set");
+					_LOG_L2C1(_L8("This BCA supports IAPID set"));
 					}
 				
 				TPtrC bcaStack = iObserver.BcaStack();
@@ -516,7 +515,7 @@ void CBcaControl::RunL()
 				}
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_4, "ERROR in BCA IAPID set = %d", iStatus.Int());
+				_LOG_L1C2(_L8("ERROR in BCA IAPID set = %d"), iStatus.Int());
 				iObserver.Stop(iStatus.Int());
 				}
 			
@@ -531,11 +530,11 @@ void CBcaControl::RunL()
 				{
 				if(iStatus == KErrNotSupported)
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_5, "This BCA does not support BCA stacking");
+					_LOG_L1C1(_L8("This BCA does not support BCA stacking"));
 					}
 				else
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_6, "This BCA supports BCA stacking");
+					_LOG_L2C1(_L8("This BCA supports BCA stacking"));
 					}
 				iMBca->Open(iStatus, iObserver.Port());
 				iState = EBcaStackSet;
@@ -543,7 +542,7 @@ void CBcaControl::RunL()
 				}
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_7, "ERROR in BCA stack set = %d", iStatus.Int());
+				_LOG_L2C2(_L8("ERROR in BCA stack set = %d"), iStatus.Int());
 				iObserver.Stop(iStatus.Int());
 				}
 			break;
@@ -555,7 +554,7 @@ void CBcaControl::RunL()
 			{
 			if(iStatus != KErrNone && iStatus !=  KErrAlreadyExists)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_8, "ERROR in BCA Open = %d", iStatus.Int());
+				_LOG_L2C2(_L8("ERROR in BCA Open = %d"), iStatus.Int());
 				iObserver.Stop(iStatus.Int());
 				}
 			else
@@ -563,11 +562,11 @@ void CBcaControl::RunL()
                 iState = EBcaOpened;
                 //Activate the receiver Active Object
 				iObserver.Receiver().StartListening();
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_9, "CBcaIoController Is Initialised");
+				_LOG_L1C1(_L8("CBcaIoController Is Initialised"));
 				TRAPD(err, iObserver.GetObserver().InitialiseL(MRawIPObserverBase::EBcaController,KErrNone));
 				if(err != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_10, "ERROR in BCA Open Initialise observer = %d", err);
+					_LOG_L2C2(_L8("ERROR in BCA Open Initialise observer = %d"), err);
 					iObserver.Stop(err);
 					}
 				}
@@ -585,9 +584,8 @@ void CBcaControl::RunL()
 		// Wrong state.
 		default:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_11, "ERROR CBcaControl::RunL(): Unknown state");
-	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_12, "PANIC: %S %d", KNifName, KBcaUnkownState);
-	        User::Panic(KNifName, KBcaUnkownState);
+			_LOG_L1C1(_L8("ERROR CBcaControl::RunL(): Unknown state"));
+			_BTT_PANIC(KNifName, KBcaUnkownState);
 			break;
 			}
 		}
@@ -599,8 +597,8 @@ void CBcaControl::DoCancel()
  *	cancel active request. 
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_1, "CBcaControl::DoCancel called.");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_2, "iState value is %d", iState);
+	_LOG_L1C1(_L8("CBcaControl::DoCancel called."));
+	_LOG_L2C2(_L8("iState value is %d"), iState);
 	switch (iState)
 		{
 		case EIdling:
@@ -616,9 +614,8 @@ void CBcaControl::DoCancel()
             iState = EIdling;		    
             break;    
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_3, "ERROR CBcaControl::DoCancel(): Unknown state");
-	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_4, "PANIC: %S %d", KNifName, KBcaUnkownState);
-	        User::Panic(KNifName, KBcaUnkownState);
+			_LOG_L2C1(_L8("ERROR CBcaControl::DoCancel(): Unknown state"));
+			_BTT_PANIC(KNifName, KBcaUnkownState);
 			break;
 		}
 	}
@@ -628,7 +625,7 @@ void CBcaControl::StartLoadL()
  *  This method loads the C32BCA library and uses Ioctl to set the Bca iIapId. 
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_STARTLOADL_1, "CBcaControl::StartLoad");
+	_LOG_L1C1(_L8("CBcaControl::StartLoad"));
 	
 	//iMBca should not be initialized at this point
 	__ASSERT_DEBUG(!iMBca,Panic(KBcaAlreadyExists));
@@ -650,7 +647,7 @@ void CBcaControl::StartLoadL()
 	TNewBcaFactoryL newBcaFactoryProcL = (TNewBcaFactoryL)iBcaDll.iObj.Lookup(1);
 	if (NULL == newBcaFactoryProcL)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_STARTLOADL_2, "Library entry point found error %d", KErrBadLibraryEntryPoint);
+		_LOG_L1C2(_L8("Library entry point found error %d"), KErrBadLibraryEntryPoint);
 		User::Leave(KErrBadLibraryEntryPoint);	
 		}
 	
@@ -658,7 +655,7 @@ void CBcaControl::StartLoadL()
 
 	if(!bcaFactory)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_STARTLOADL_3, "BcaFactory creation error %d", KErrCompletion);
+		_LOG_L1C2(_L8("BcaFactory creation error %d"), KErrCompletion);
 		User::Leave(KErrCompletion);	
 		}
 	CleanupReleasePushL(*bcaFactory);
@@ -691,7 +688,7 @@ void CBcaControl::ShutdownBca(TInt aError)
         {
         if(aError == KErrConnectionTerminated )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_SHUTDOWNBCA_1, "This is an emergency shutdown, it kills the NIF immediately.");
+            _LOG_L1C1(_L8("This is an emergency shutdown, it kills the NIF immediately."));
             // It is a emergency shutdown, it kills the NIF immediately.
             iMBca->Close();
             iState = EIdling;
@@ -699,7 +696,7 @@ void CBcaControl::ShutdownBca(TInt aError)
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_SHUTDOWNBCA_2, "This is a graceful termination which takes a while.");
+            _LOG_L1C1(_L8("This is a graceful termination which takes a while."));
             //It is a graceful termination which takes a while.
             iError = aError;
             iState = EClosing;
@@ -709,7 +706,7 @@ void CBcaControl::ShutdownBca(TInt aError)
         }
     else //nothing to shutdown, just notify linklayer down.
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_SHUTDOWNBCA_3, "Bca is not initialized or opened, bring the linklayer down");
+        _LOG_L1C1(_L8("Bca is not initialized or opened, bring the linklayer down"));
         iState = EIdling;
         iObserver.GetObserver().ShutDown(MControllerObserver::EBcaController, aError);
         }

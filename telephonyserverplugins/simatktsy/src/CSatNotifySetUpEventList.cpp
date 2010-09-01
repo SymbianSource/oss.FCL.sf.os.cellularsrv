@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySetUpEventListTraces.h"
-#endif
-
 #include <satcs.h>                   // Etel SAT IPC definitions
 #include "CSatTsy.h"                 // Tsy class header
 #include "CSatNotifySetUpEventList.h"// Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                 // Ber Tlv data handling
 #include "TTlv.h"					 // TTlv class 
 #include "CSatDataPackage.h"         // Parameter packing 
+#include "TfLogger.h"                // For TFLOGSTRING
 #include "TSatUtility.h"             // Utilities
 #include "CSatTsyReqHandleStore.h"   // Request handle class
 #include "cmmmessagemanagerbase.h"   // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifySetUpEventList* CSatNotifySetUpEventList::NewL
 		CSatNotificationsTsy* aNotificationsTsy
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_NEWL_1, "CSAT: CSatNotifySetUpEventList::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::NewL");
    	CSatNotifySetUpEventList* const satNotifySetUpEventList = 
         new ( ELeave ) CSatNotifySetUpEventList( aNotificationsTsy );
     CleanupStack::PushL( satNotifySetUpEventList );
     satNotifySetUpEventList->ConstructL();
     CleanupStack::Pop( satNotifySetUpEventList );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_NEWL_2, "CSAT: CSatNotifySetUpEventList::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::NewL, end of method");
     return satNotifySetUpEventList;	
     }
     
@@ -67,7 +62,7 @@ CSatNotifySetUpEventList::~CSatNotifySetUpEventList
 		// None
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_DTOR_1, "CSAT: CSatNotifySetUpEventList::~CSatNotifySetUpEventList");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::~CSatNotifySetUpEventList");
     }    
 // -----------------------------------------------------------------------------
 // CSatNotifySetUpEventList::CSatNotifySetUpEventList
@@ -92,7 +87,7 @@ void CSatNotifySetUpEventList::ConstructL
 		// None
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_CONSTRUCTL_1, "CSAT: CSatNotifySetUpEventList::ConstructL, does nothing");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::ConstructL, does nothing");
     }
 
 // -----------------------------------------------------------------------------
@@ -106,7 +101,7 @@ TInt CSatNotifySetUpEventList::Notify
         const TDataPackage& aPackage   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_NOTIFY_1, "CSAT: CSatNotifySetUpEventList::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::Notify");  
     // Save data pointer to client side for completion
     iSetUpEventListV1Pckg = reinterpret_cast<RSat::TSetUpEventListV1Pckg*>( 
         aPackage.Des1n() );
@@ -134,7 +129,7 @@ TInt CSatNotifySetUpEventList::CancelNotification
         const TTsyReqHandle aTsyReqHandle 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_CANCELNOTIFICATION_1, "CSAT: CSatNotifySetUpEventList::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::CancelNotification");
     
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->ResetTsyReqHandle( 
@@ -160,7 +155,7 @@ TInt CSatNotifySetUpEventList::CompleteNotifyL
         TInt aErrorCode  
         ) 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_COMPLETENOTIFYL_1, "CSAT: CSatNotifySetUpEventList::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::CompleteNotifyL");    
     TInt ret( KErrNone );
     TUint8 generalResult( RSat::KSuccess );
 
@@ -209,7 +204,8 @@ TInt CSatNotifySetUpEventList::CompleteNotifyL
                 TUint16 eventListLength = eventListTlv.GetLength();
                 if ( !eventListLength )
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_COMPLETENOTIFYL_2, "CSAT: CSatNotifySetUpEventList::CompleteNotifyL, Event list empty");
+                    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::\
+                        CompleteNotifyL, Event list empty"); 
                     setUpEventListV1.iType = RSat::ERemoveExistingEventList;
                     // Remove events from TSY:s list, No events = 0
                     iNotificationsTsy->iSatTsy->SetUpEventList( 0 );
@@ -333,14 +329,16 @@ TInt CSatNotifySetUpEventList::CompleteNotifyL
                 }// if( KErrNone == ret )
             else
             	{
-            	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_COMPLETENOTIFYL_3, "CSAT: CSatNotifySetUpEventList::CompleteNotifyL, Event list missing");
+            	TFLOGSTRING("CSAT: CSatNotifySetUpEventList::CompleteNotifyL,\
+            	    Event list missing"); 
            		// Event list is missing
             	generalResult = RSat::KErrorRequiredValuesMissing;
             	}    
             }// if ( KErrNone == aErrorCode )        	    
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_COMPLETENOTIFYL_4, "CSAT: CSatNotifySetUpEventList::CompleteNotifyL, Error occurred in LSAT");
+            TFLOGSTRING("CSAT: CSatNotifySetUpEventList::CompleteNotifyL,\
+                Error occurred in LSAT");
             // Error code received from LicenceeSimAtkTsy
             return ret;
             }
@@ -348,7 +346,8 @@ TInt CSatNotifySetUpEventList::CompleteNotifyL
         } // if ( CSatTsy::ESatReqHandleUnknown != reqHandle )    
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_COMPLETENOTIFYL_5, "CSAT: CSatNotifySetUpEventList::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifySetUpEventList::CompleteNotifyL,\
+            Request not ongoing"); 
         generalResult = RSat::KMeUnableToProcessCmd;
         }
 
@@ -380,7 +379,7 @@ TInt CSatNotifySetUpEventList::TerminalResponseL
         TDes8* aRsp
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_TERMINALRESPONSEL_1, "CSAT:CSatNotifySetUpEventList::TerminalResponseL");
+    TFLOGSTRING("CSAT:CSatNotifySetUpEventList::TerminalResponseL");
 
     TInt ret( KErrNone );
     TBuf<1> additionalInfo;
@@ -403,7 +402,8 @@ TInt CSatNotifySetUpEventList::TerminalResponseL
 		&& ( RSat::KCmdNumberNotKnown != rspV1.iGeneralResult )
         && ( RSat::KErrorRequiredValuesMissing != rspV1.iGeneralResult ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_TERMINALRESPONSEL_2, "CSAT:CSatNotifySetUpEventList::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT:CSatNotifySetUpEventList::TerminalResponseL,\
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -411,7 +411,8 @@ TInt CSatNotifySetUpEventList::TerminalResponseL
 	if ((RSat::KMeUnableToProcessCmd == rspV1.iGeneralResult) && (RSat::KMeProblem != rspV1.iInfoType))
 	{
 	// it's obligatory to provide additional info and KMeProblem flag for KMeUnableToProcessCmd error code
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_TERMINALRESPONSEL_3, "CSAT:CSatNotifySetUpEventList::TerminalResponseL, KMeProblem flag is not specified");
+    TFLOGSTRING("CSAT:CSatNotifySetUpEventList::TerminalResponseL,\
+                KMeProblem flag is not specified");        
     ret = KErrCorrupt;   
 	}
     
@@ -425,7 +426,8 @@ TInt CSatNotifySetUpEventList::TerminalResponseL
             }
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_TERMINALRESPONSEL_4, "CSAT:CSatNotifySetUpEventList::TerminalResponseL, Invalid Additional Info");
+            TFLOGSTRING("CSAT:CSatNotifySetUpEventList::TerminalResponseL,\
+                Invalid Additional Info");
             // Invalid additional info field
             ret = KErrCorrupt;
             }
@@ -460,7 +462,7 @@ TInt CSatNotifySetUpEventList::CreateTerminalRespL
         TDesC16& aAdditionalInfo       
 		)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPEVENTLIST_CREATETERMINALRESPL_1, "CSAT: CSatNotifySetUpEventList::CreateTerminalRespL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpEventList::CreateTerminalRespL");    
     // Create and append response data
     TTlv tlvSpecificData;
     // Create General Result TLV here

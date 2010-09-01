@@ -35,6 +35,7 @@
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\scripts\te_ctsycomponent_messagewaiting_individual.script"-"c:\TestData\Scripts\te_ctsycomponent_messagewaiting_individual.script"
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\scripts\te_ctsycomponent_enstore_individual.script"-"c:\TestData\Scripts\te_ctsycomponent_enstore_individual.script"
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\scripts\te_ctsycomponent_mbmscontext_individual.script"-"c:\TestData\Scripts\te_ctsycomponent_mbmscontext_individual.script"
+"\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\group\commsdbg.ini"-"c:\logs\commsdbg.ini"
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\cenrep_ini\102029A2.txt"-"c:\private\10202be9\102029A2.txt"
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\cenrep_ini\10282DFE.txt"-"c:\private\10202be9\10282DFE.txt"
 "\sf\os\cellularsrv\telephonyserverplugins\common_tsy\test\component\cenrep_ini\10282826.txt"-"c:\private\10202be9\10282826.txt"

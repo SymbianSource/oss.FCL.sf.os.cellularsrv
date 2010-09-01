@@ -206,28 +206,18 @@ TBool TCmpRPacketContextTContextConfigGPRS::IsEqual(TLogError aLogError)
 		{
 		if(aLogError == ELogError)
 			{
-			TBuf<255> apn, username, password;
-			apn.Copy(iValue.iAccessPointName);
-			username.Copy(iValue.iProtocolConfigOption.iAuthInfo.iUsername);
-			password.Copy(iValue.iProtocolConfigOption.iAuthInfo.iPassword);
 			_LIT(KAssertRPacketContextErrorEqualsTextA,"FAILURE");
 			_LIT(KAssertRPacketContextErrorEqualsTextB," Got apn=%S,username=%S,password=%S");
 			_LIT(KAssertRPacketContextErrorEqualsTextC," Expected apn=%S,username=%S,password=%S");
 			ERR_PRINTF1(KAssertRPacketContextErrorEqualsTextA);
 			ERR_PRINTF4(KAssertRPacketContextErrorEqualsTextB, 
-				&apn,
-				&username,
-				&password);
-			apn.SetLength(0);
-			username.SetLength(0);
-			password.SetLength(0);
-			apn.Copy(iExpected.iAccessPointName);
-			username.Copy(iExpected.iProtocolConfigOption.iAuthInfo.iUsername);
-			password.Copy(iExpected.iProtocolConfigOption.iAuthInfo.iPassword);
+				&iValue.iAccessPointName,
+				&iValue.iProtocolConfigOption.iAuthInfo.iUsername,
+				&iValue.iProtocolConfigOption.iAuthInfo.iPassword);
 			ERR_PRINTF4(KAssertRPacketContextErrorEqualsTextC,
-				&apn,
-				&username,
-				&password);	
+				&iExpected.iAccessPointName,
+				&iExpected.iProtocolConfigOption.iAuthInfo.iUsername,
+				&iExpected.iProtocolConfigOption.iAuthInfo.iPassword);	
 			}
 		return EFalse;
 		}
@@ -256,30 +246,18 @@ TBool TCmpRPacketContextTContextConfigR99_R4::IsEqual(TLogError aLogError)
 		{
 		if(aLogError == ELogError)
 			{
-			TBuf<255> apn, username, password;
-			apn.Copy(iValue.iAccessPointName);
-			username.Copy(iValue.iProtocolConfigOption.iAuthInfo.iUsername);
-			password.Copy(iValue.iProtocolConfigOption.iAuthInfo.iPassword);
-
 			_LIT(KAssertRPacketContextErrorEqualsTextA,"FAILURE");
 			_LIT(KAssertRPacketContextErrorEqualsTextB," Got apn=%S,username=%S,password=%S");
 			_LIT(KAssertRPacketContextErrorEqualsTextC," Expected apn=%S,username=%S,password=%S");
 			ERR_PRINTF1(KAssertRPacketContextErrorEqualsTextA);
 			ERR_PRINTF4(KAssertRPacketContextErrorEqualsTextB, 
-				&apn,
-				&username,
-				&password);
-			apn.SetLength(0);
-			username.SetLength(0);
-			password.SetLength(0);
-			apn.Copy(iExpected.iAccessPointName);
-			username.Copy(iExpected.iProtocolConfigOption.iAuthInfo.iUsername);
-			password.Copy(iExpected.iProtocolConfigOption.iAuthInfo.iPassword);
+				&iValue.iAccessPointName,
+				&iValue.iProtocolConfigOption.iAuthInfo.iUsername,
+				&iValue.iProtocolConfigOption.iAuthInfo.iPassword);
 			ERR_PRINTF4(KAssertRPacketContextErrorEqualsTextC,
-				&apn,
-				&username,
-				&password);	
-
+				&iExpected.iAccessPointName,
+				&iExpected.iProtocolConfigOption.iAuthInfo.iUsername,
+				&iExpected.iProtocolConfigOption.iAuthInfo.iPassword);	
 			}
 		return EFalse;
 		}
@@ -308,28 +286,18 @@ TBool TCmpRPacketContextTContextConfig_R5::IsEqual(TLogError aLogError)
 		{
 		if(aLogError == ELogError)
 			{
-			TBuf<255> apn, username, password;
-			apn.Copy(iValue.iAccessPointName);
-			username.Copy(iValue.iProtocolConfigOption.iAuthInfo.iUsername);
-			password.Copy(iValue.iProtocolConfigOption.iAuthInfo.iPassword);
 			_LIT(KAssertRPacketContextErrorEqualsTextA,"FAILURE");
 			_LIT(KAssertRPacketContextErrorEqualsTextB," Got apn=%S,username=%S,password=%S");
 			_LIT(KAssertRPacketContextErrorEqualsTextC," Expected apn=%S,username=%S,password=%S");
 			ERR_PRINTF1(KAssertRPacketContextErrorEqualsTextA);
 			ERR_PRINTF4(KAssertRPacketContextErrorEqualsTextB, 
-				&apn,
-				&username,
-				&password);
-			apn.SetLength(0);
-			username.SetLength(0);
-			password.SetLength(0);
-			apn.Copy(iExpected.iAccessPointName);
-			username.Copy(iExpected.iProtocolConfigOption.iAuthInfo.iUsername);
-			password.Copy(iExpected.iProtocolConfigOption.iAuthInfo.iPassword);
+				&iValue.iAccessPointName,
+				&iValue.iProtocolConfigOption.iAuthInfo.iUsername,
+				&iValue.iProtocolConfigOption.iAuthInfo.iPassword);
 			ERR_PRINTF4(KAssertRPacketContextErrorEqualsTextC,
-				&apn,
-				&username,
-				&password);	
+				&iExpected.iAccessPointName,
+				&iExpected.iProtocolConfigOption.iAuthInfo.iUsername,
+				&iExpected.iProtocolConfigOption.iAuthInfo.iPassword);	
 			}
 		return EFalse;
 		}

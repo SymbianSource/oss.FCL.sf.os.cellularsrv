@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyLaunchBrowserTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include "CSatTsy.h"                // Tsy class header
 #include "CSatNotifyLaunchBrowser.h"// Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"                // Ber Tlv data handling
 #include "TTlv.h"					// TTlv class
 #include "CSatDataPackage.h"        // Parameter packing 
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "TSatUtility.h"            // Utilities
 #include "CSatTsyReqHandleStore.h"  // Request handle class
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifyLaunchBrowser* CSatNotifyLaunchBrowser::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_NEWL_1, "CSAT: CSatNotifyLaunchBrowser::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::NewL");
    	CSatNotifyLaunchBrowser* const satNotifyLaunchBrowser = 
         new ( ELeave ) CSatNotifyLaunchBrowser( aNotificationsTsy );
     CleanupStack::PushL( satNotifyLaunchBrowser );
     satNotifyLaunchBrowser->ConstructL();
     CleanupStack::Pop( satNotifyLaunchBrowser );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_NEWL_2, "CSAT: CSatNotifyLaunchBrowser::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::NewL, end of method");
     return satNotifyLaunchBrowser;
     }
 
@@ -67,7 +62,7 @@ CSatNotifyLaunchBrowser::~CSatNotifyLaunchBrowser
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_DTOR_1, "CSAT: CSatNotifyLaunchBrowser::~CSatNotifyLaunchBrowser");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::~CSatNotifyLaunchBrowser");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +88,7 @@ void CSatNotifyLaunchBrowser::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_CONSTRUCTL_1, "CSAT: CSatNotifyLaunchBrowser::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ConstructL");
     iSsStatus = CSatNotificationsTsy::ENotBusy;
     }
     
@@ -109,7 +104,7 @@ TInt CSatNotifyLaunchBrowser::Notify
         const TDataPackage& aPackage   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_NOTIFY_1, "CSAT: CSatNotifyLaunchBrowser::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::Notify");
     // Save data pointer to client side for completion
     iLaunchBrowserV2Pckg = reinterpret_cast<RSat::TLaunchBrowserV2Pckg*>( 
         aPackage.Des1n() );
@@ -133,7 +128,7 @@ TInt CSatNotifyLaunchBrowser::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_CANCELNOTIFICATION_1, "CSAT: CSatNotifyLaunchBrowser::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::CancelNotification");
     
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -160,7 +155,7 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
         TInt aErrorCode
         )
     {  
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_1, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL");
+	TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL");
 	TInt ret( KErrNone );
 	TInt returnValue( KErrNone );		
     // Unpack parameters
@@ -188,7 +183,8 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
 		// Check if busy 
     	if ( CSatNotificationsTsy::ENotBusy != iSsStatus )
     		{
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_2, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, iSsStatus is busy");
+    		TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, \
+    			iSsStatus is busy");
 
         	if( CSatNotificationsTsy::EUssdBusy == iSsStatus)
     			{
@@ -205,7 +201,8 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
     		}
     	else
     		{	    
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_3, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL No SS Transaction ongoing");
+			TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL \
+				No SS Transaction ongoing");
 			// Complete right away if error has occured, otherwise continue..
 	        if ( KErrNone == aErrorCode )
 	            {			
@@ -239,7 +236,8 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
             		case KLaunchBrowserCmdQualifierNotUsed:
             		case KLaunchBrowserCmdQualifierReserved:
             			{
-            			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_4, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, Command Type not understood");
+            			TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::\
+            			    CompleteNotifyL, Command Type not understood");
             			CreateTerminalRespL( pCmdNumber, 
             			    RSat::KCmdTypeNotUnderstood, KNoCause );
                         ret = KErrCorrupt;
@@ -300,7 +298,8 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
 					
 					if ( KErrNotFound != returnValue )
 						{
-						OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_5, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, Alpha ID present");
+						TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::\
+					        CompleteNotifyL, Alpha ID present");
 						TUint8 alphaIdLength( alphaIdentifier.GetLength() );
 						if ( alphaIdLength )
 							{
@@ -319,7 +318,8 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
 							}
 						else
 							{
-							OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_6, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, Alpha ID is NULL");
+							TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::\
+							    CompleteNotifyL, Alpha ID is NULL");
 							launchBrowserV2.iAlphaId.iStatus = 
 							    RSat::EAlphaIdNull;
 							}
@@ -341,7 +341,8 @@ TInt CSatNotifyLaunchBrowser::CompleteNotifyL
         }// End of if ( reqHandle != CSatTsy::ESatReqHandleUnknown ) 
 	else 
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_COMPLETENOTIFYL_7, "CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::CompleteNotifyL, \
+            Request not ongoing");  
         // Request not on, returning response immediately
 		CreateTerminalRespL( pCmdNumber, RSat::KMeUnableToProcessCmd, 
 			KNoCause );
@@ -362,7 +363,7 @@ TInt CSatNotifyLaunchBrowser::TerminalResponseL
         TDes8* aRsp
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_TERMINALRESPONSEL_1, "CSAT: CSatNotifyLaunchBrowser::TerminalResponseL");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::TerminalResponseL");
 	TInt   ret( KErrNone );
     TUint8 additionalInfo( KNoCause );
     RSat::TLaunchBrowserRspV2Pckg* aRspPckg = 
@@ -387,7 +388,8 @@ TInt CSatNotifyLaunchBrowser::TerminalResponseL
          ( RSat::KNetworkUnableToProcessCmd != rspV2.iGeneralResult ) &&
          ( RSat::KCmdNumberNotKnown != rspV2.iGeneralResult ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_TERMINALRESPONSEL_2, "CSAT: CSatNotifyLaunchBrowser::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::TerminalResponseL, \
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -400,7 +402,8 @@ TInt CSatNotifyLaunchBrowser::TerminalResponseL
          ( RSat::KMeUnableToReadProvisioningData != rspV2.iInfoType ) && 
          ( RSat::KNoSpecificBrowserError != rspV2.iInfoType ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_TERMINALRESPONSEL_3, "CSAT: CSatNotifyLaunchBrowser::TerminalResponseL, Invalid Info Type");
+        TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::TerminalResponseL, \
+            Invalid Info Type");
         ret = KErrCorrupt;
         }
 
@@ -414,7 +417,8 @@ TInt CSatNotifyLaunchBrowser::TerminalResponseL
 			}
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_TERMINALRESPONSEL_4, "CSAT: CSatNotifyLaunchBrowser::TerminalResponseL, Invalid Additional Info");
+            TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::TerminalResponseL, \
+                Invalid Additional Info");
             // Invalid additional info field
             ret = KErrCorrupt;
             }
@@ -438,7 +442,8 @@ void CSatNotifyLaunchBrowser::SetSsStatus
 	{
 	// Unpack parameters
 	aDataPackage->UnPackData( iSsStatus );
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_SETSSSTATUS_1, "CSAT: CSatNotifyLaunchBrowser::SetSatTsySsStatus, status: %d", iSsStatus );
+	TFLOGSTRING2("CSAT: CSatNotifyLaunchBrowser::SetSatTsySsStatus, status: %d", 
+		iSsStatus );
 	}
     
 // -----------------------------------------------------------------------------
@@ -453,7 +458,7 @@ TInt CSatNotifyLaunchBrowser::ParseBrowserIdL
         RSat::TLaunchBrowserV2& aLaunchBrowserV2
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEBROWSERIDL_1, "CSAT: CSatNotifyLaunchBrowser::ParseBrowserId");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseBrowserId");
     TInt ret( KErrNone );
     CTlv browserId; // optional
 	TInt returnValue = aBerTlv.TlvByTagValue( &browserId, 
@@ -476,7 +481,8 @@ TInt CSatNotifyLaunchBrowser::ParseBrowserIdL
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEBROWSERIDL_2, "CSAT: CSatNotifyLaunchBrowser::ParseBrowserId, Browser ID not set");
+		TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseBrowserId, \
+            Browser ID not set");
 		aLaunchBrowserV2.iBrowserId = RSat::EBrowserIdNotSet;
 		}
 	return ret;
@@ -494,7 +500,7 @@ TInt CSatNotifyLaunchBrowser::ParseUrlL
         RSat::TLaunchBrowserV2& aLaunchBrowserV2
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEURLL_1, "CSAT: CSatNotifyLaunchBrowser::ParseUrl");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseUrl");
     TInt ret( KErrNone );
     CTlv url; // mandatory
 	TInt returnValue = aBerTlv.TlvByTagValue( &url, KTlvUrlTag );
@@ -503,7 +509,8 @@ TInt CSatNotifyLaunchBrowser::ParseUrlL
 		{
 		if ( RSat::KUrlMaxSize < url.GetLength() )
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEURLL_2, "CSAT: CSatNotifyLaunchBrowser::ParseUrl, False URL length");
+			TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseUrl, \
+			    False URL length");				
 			CreateTerminalRespL( aPCmdNumber, RSat::KMeUnableToProcessCmd, 
 			    KNoCause );
 			ret = KErrCorrupt;
@@ -515,7 +522,8 @@ TInt CSatNotifyLaunchBrowser::ParseUrlL
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEURLL_3, "CSAT: CSatNotifyLaunchBrowser::ParseUrl, Required values missing");
+		TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseUrl, \
+            Required values missing");								
 		CreateTerminalRespL( aPCmdNumber, RSat::KErrorRequiredValuesMissing, 
 	        KNoCause );
 		ret = KErrCorrupt;
@@ -535,7 +543,7 @@ TInt CSatNotifyLaunchBrowser::ParseProvisioningFileListL
         RSat::TLaunchBrowserV2& aLaunchBrowserV2
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEPROVISIONINGFILELISTL_1, "CSAT: CSatNotifyLaunchBrowser::ParseProvisioningFileList");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseProvisioningFileList");
     TInt ret( KErrNone );
     
     CTlv provisioningFileList; // optional
@@ -591,7 +599,8 @@ TInt CSatNotifyLaunchBrowser::ParseProvisioningFileListL
 			if ( ( RSat::KFileRefMaxSize < stringLength ) || 
 			     ( 4 > stringLength ) )
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEPROVISIONINGFILELISTL_2, "CSAT: CSatNotifyLaunchBrowser::ParseProvisioningFileList, False string length");
+				TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::\
+				    ParseProvisioningFileList, False string length");				
 			    CreateTerminalRespL( aPCmdNumber, RSat::KLaunchBrowserError, 
 				    RSat::KMeUnableToReadProvisioningData );
 				ret = KErrCorrupt;
@@ -609,7 +618,8 @@ TInt CSatNotifyLaunchBrowser::ParseProvisioningFileListL
 			 // Adding the new fileref
 			if ( KErrNoMemory == aLaunchBrowserV2.AddFileRef( newFileRef ) )
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEPROVISIONINGFILELISTL_3, "CSAT: CSatNotifyLaunchBrowser::ParseProvisioningFileList, Menu items corrupted");
+				TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::\
+				    ParseProvisioningFileList, Menu items corrupted");
 				// Too many or long menuitems				
 			    CreateTerminalRespL( aPCmdNumber, RSat::KLaunchBrowserError, 
 				    RSat::KMeUnableToReadProvisioningData );
@@ -635,7 +645,7 @@ TInt CSatNotifyLaunchBrowser::ParseBearerListL
         RSat::TLaunchBrowserV2& aLaunchBrowserV2
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEBEARERLISTL_1, "CSAT: CSatNotifyLaunchBrowser::ParseBearerList");
+    TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseBearerList");
     TInt ret( KErrNone );
     // Bearers (optional)
 	CTlv bearerList;
@@ -660,7 +670,8 @@ TInt CSatNotifyLaunchBrowser::ParseBearerListL
 				
 			if ( 0x00 == aLaunchBrowserV2.iBearerList.Length() )
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEBEARERLISTL_2, "CSAT: CSatNotifyLaunchBrowser::ParseBearerList, Bearer unvailable");
+				TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseBearerList,\
+				    Bearer unvailable");
 				CreateTerminalRespL( aPCmdNumber, RSat::KLaunchBrowserError, 
 				    RSat::KBearerUnvailable );
 				ret = KErrCorrupt;
@@ -668,7 +679,8 @@ TInt CSatNotifyLaunchBrowser::ParseBearerListL
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_PARSEBEARERLISTL_3, "CSAT: CSatNotifyLaunchBrowser::ParseBearerList, Bearer List length exceeded");
+			TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::ParseBearerList,\
+			    Bearer List length exceeded");
 			CreateTerminalRespL( aPCmdNumber, RSat::KCmdDataNotUnderstood, 
 			    RSat::KCmdDataNotUnderstood );
 			ret = KErrCorrupt;
@@ -690,7 +702,7 @@ TInt CSatNotifyLaunchBrowser::CreateTerminalRespL
         TUint8 aAdditionalInfo		
 		)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYLAUNCHBROWSER_CREATETERMINALRESPL_1, "CSAT: CSatNotifyLaunchBrowser::CreateTerminalRespL");
+	TFLOGSTRING("CSAT: CSatNotifyLaunchBrowser::CreateTerminalRespL");
     TTlv tlvSpecificData;
     tlvSpecificData.AddTag( KTlvResultTag );
     // Create General Result TLV here

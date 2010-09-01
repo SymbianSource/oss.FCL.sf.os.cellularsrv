@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,15 +16,10 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmmbmscontexttsyTraces.h"
-#endif
-
 #include "cmmmbmscontexttsy.h"
 #include "cmmmbmscontextlist.h"
 #include "CMmPacketTsy.h"
+#include <ctsy/tflogger.h>
 #include "mbmstypes.h"
 #include "MmTsy_timeoutdefs.h"
 #include "MmTsy_numberOfSlots.h"
@@ -40,7 +35,7 @@ CMmMBMSContextTsy* CMmMBMSContextTsy::NewL(
         const TDes& aName,  
         const TUint8 aProxyId  ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NEWL_1,  "TSY: CMmMBMSContextTsy::NewL" );
+TFLOGSTRING( "TSY: CMmMBMSContextTsy::NewL" );
 
     CMmMBMSContextTsy* packetContext = new ( ELeave ) CMmMBMSContextTsy();
     CleanupClosePushL( *packetContext );    
@@ -79,7 +74,7 @@ void CMmMBMSContextTsy::ConstructL(CMmPacketServiceTsy* const aMmPacketService,
     
 CMmMBMSContextTsy::~CMmMBMSContextTsy()
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DTOR_1,  "TSY: CMmMBMSContextTsy::~CMmMBMSContextTsy Context name: %S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::~CMmMBMSContextTsy Context name: %S", &iContextName );
 	
 	if( iMmPacketService )
 		{			
@@ -120,7 +115,7 @@ TInt CMmMBMSContextTsy::ExtFunc(
         TInt aIpc, 
         const TDataPackage& aPackage )  
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_EXTFUNC_1,  "TSY: CMmMBMSContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, iContextName );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, &iContextName );
 
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
@@ -166,7 +161,8 @@ TInt CMmMBMSContextTsy::DoExtFuncL(
         TInt aIpc,      
         const TDataPackage& aPackage )   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOEXTFUNCL_1,  "TSY: CMmMBMSContextTsy::DoExtFuncL. IPC: %d Handle:%d",aIpc, aTsyReqHandle );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::DoExtFuncL. IPC: %d Handle:%d",
+                aIpc, aTsyReqHandle );
 
     TInt ret( KErrNotSupported );
 
@@ -259,7 +255,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOE
 CTelObject::TReqMode CMmMBMSContextTsy::ReqModeL( 
         TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQMODEL_1,  "TSY: CMmMBMSContextTsy::ReqModeL. IPC: %d", aIpc );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::ReqModeL. IPC: %d", aIpc );
 
     CTelObject::TReqMode reqMode( 0 );
     TBool doLeave( EFalse );
@@ -371,7 +367,7 @@ TInt CMmMBMSContextTsy::NumberOfSlotsL(
             break;
 
         }  
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NUMBEROFSLOTSL_1,  "TSY: CMmMBMSContextTsy::NumberOfSlotsL. IPC: %d Number of slots: %d", aIpc, numberOfSlots );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::NumberOfSlotsL. IPC: %d Number of slots: %d", aIpc, numberOfSlots );
 
     return numberOfSlots;
 
@@ -393,7 +389,7 @@ TInt CMmMBMSContextTsy::CancelService(
         TInt aIpc,                            
         TTsyReqHandle aTsyReqHandle )         
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_CANCELSERVICE_1,  "TSY: CMmMBMSContextTsy::CancelService. IPC: %d Handle:%d", aIpc, aTsyReqHandle );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::CancelService. IPC: %d Handle:%d", aIpc, aTsyReqHandle );
 
     TInt ret( KErrNone );
 	//TTsyReqHandle reqHandle( NULL );
@@ -466,7 +462,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_CAN
 TInt CMmMBMSContextTsy::RegisterNotification( 
         TInt aIpc )              
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REGISTERNOTIFICATION_1,  "TSY: CMmMBMSContextTsy::RegisterNotification. IPC: %d", aIpc );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::RegisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -499,7 +495,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REGIST
 TInt CMmMBMSContextTsy::DeregisterNotification(
         TInt aIpc )                          
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmMBMSContextTsy::DeregisterNotification. IPC: %d", aIpc );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::DeregisterNotification. IPC: %d", aIpc );
 
     TInt ret( KErrNone );
 
@@ -526,7 +522,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEREGI
 //
 TInt CMmMBMSContextTsy::InitialiseContextL( RPacketContext::TDataChannelV2* aDataChannel )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_INITIALISECONTEXTL_1,  "TSY: CMmMBMSContextTsy::InitialiseContextL. %S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::InitialiseContextL. %S", &iContextName );
 
     TInt ret( KErrArgument ); 
    
@@ -565,7 +561,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_INI
 
 void CMmMBMSContextTsy::CompleteInitialiseContext(TInt aResult, RPacketContext::TDataChannelV2* aDataChannel )     
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmMBMSContextTsy::CompleteInitialiseContext. Error: %d", aResult );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteInitialiseContext. Error: %d", aResult );
 
     iIsActivateAllowed = ETrue;
     if (KErrNone == aResult )
@@ -605,7 +601,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLE
 //
 TInt CMmMBMSContextTsy::ActivateL()
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_ACTIVATEL_1,  "TSY: CMmMBMSContextTsy::ActivateL. Context name:%S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::ActivateL. Context name:%S", &iContextName );
 	
     TInt ret( KErrNotReady );
 
@@ -651,7 +647,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_ACT
 //
 void CMmMBMSContextTsy::CompleteActivate(TInt aResult)
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEACTIVATE_1,  "TSY: CMmMBMSContextTsy::CompleteActivate. Error: %d", aResult );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteActivate. Error: %d", aResult ); 
    
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -667,7 +663,8 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLE
         }        
     else
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEACTIVATE_2,  "TSY: CMmMBMSContextTsy::CompleteActivate. ErrorCause: %d",aResult );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteActivate. ErrorCause: %d",
+             aResult );
         // Re-activation is allowed because activation has not succeeded
         iIsActivateAllowed = ETrue;
         }
@@ -690,7 +687,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLE
 //
 TInt CMmMBMSContextTsy::DeactivateL()
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEACTIVATEL_1,  "TSY: CMmMBMSContextTsy::DeactivateL. Context name:%S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::DeactivateL. Context name:%S", &iContextName );
 
     TInt ret( KErrArgument );
 
@@ -723,7 +720,7 @@ void CMmMBMSContextTsy::CompleteDeactivate(
         CMmDataPackage* aDataPackage,
         TInt aResult )    
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEDEACTIVATE_1,  "TSY: CMmMBMSContextTsy::CompleteDeactivate. Error: %d", aResult );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteDeactivate. Error: %d", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeMbmsContextDeactivate );
@@ -785,7 +782,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLE
 //
 TInt CMmMBMSContextTsy::DeleteL()
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DELETEL_1,  "TSY: CMmMBMSContextTsy::DeleteL. Context name:%S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::DeleteL. Context name:%S", &iContextName );
 
     TInt ret( KErrNotReady );
     if( RPacketContext::EStatusUnknown != ContextStatus() )
@@ -817,7 +814,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEL
 void CMmMBMSContextTsy::CompleteDelete( 
         TInt aResult )        
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEDELETE_1,  "TSY: CMmMBMSContextTsy::CompleteDelete. Error: %d", aResult );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteDelete. Error: %d", aResult );
 
     if( KErrNone == aResult )
         {
@@ -851,7 +848,7 @@ TInt CMmMBMSContextTsy::GetConfig(
         TTsyReqHandle aTsyReqHandle,    
         TPacketDataConfigBase* aConfig )  
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETCONFIG_1,  "TSY: CMmMBMSContextTsy::GetConfig. Context name:%S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::GetConfig. Context name:%S", &iContextName );
     TInt ret( KErrNone );
     
     // Check that the mode given in aConfig is KConfigMBMS
@@ -883,7 +880,7 @@ TInt CMmMBMSContextTsy::GetLastErrorCause(
         TTsyReqHandle aTsyReqHandle,  
         TInt* aError )    
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETLASTERRORCAUSE_1,  "TSY: CMmMBMSContextTsy::GetLastErrorCause. Context name:%S Last error cause: %d", iContextName, iLastErrorCause );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::GetLastErrorCause. Context name:%S Last error cause: %d", &iContextName, iLastErrorCause );
 
     *aError = iLastErrorCause;
     CMmMBMSContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
@@ -903,7 +900,8 @@ void CMmMBMSContextTsy::SetLastErrorCause(
     
      iLastErrorCause =  aErrorCause;           
     
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SETLASTERRORCAUSE_1,  "TSY: CMmMBMSContextTsy::SetLastErrorCause.  aErrorCause: %d iLastErrorCause:%d", aErrorCause, iLastErrorCause );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::SetLastErrorCause.  aErrorCause: %d iLastErrorCause:%d", 
+             aErrorCause, iLastErrorCause );
 
     }
 
@@ -917,7 +915,7 @@ TInt CMmMBMSContextTsy::GetStatus(
         TTsyReqHandle aTsyReqHandle,   
         RPacketContext::TContextStatus* aContextStatus )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETSTATUS_1,  "TSY: CMmMBMSContextTsy::GetStatus. Context name: %S Context Status:%d", iContextName, iContextStatus );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::GetStatus. Context name: %S Context Status:%d", &iContextName, iContextStatus );
     *aContextStatus = iContextStatus;
     CMmMBMSContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
 
@@ -933,7 +931,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GET
 TInt CMmMBMSContextTsy::NotifyConfigChanged(
         TPacketDataConfigBase* aConfig )  
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NOTIFYCONFIGCHANGED_1,  "TSY: CMmMBMSContextTsy::NotifyConfigChanged." );
+TFLOGSTRING( "TSY: CMmMBMSContextTsy::NotifyConfigChanged." );
 
     // Check that used mode is MBMS
     if (  TPacketDataConfigBase::KConfigMBMS != aConfig->ExtensionId() ) 
@@ -958,7 +956,8 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NOTIFY
 void CMmMBMSContextTsy::CompleteNotifyConfigChanged(const CMmDataPackage* aDataPackage,
         TInt aResult)
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETENOTIFYCONFIGCHANGED_1,  "TSY: CMmMBMSContextTsy::CompleteNotifyConfigChanged.  Context name:%S",iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteNotifyConfigChanged.  Context name:%S",
+                &iContextName );
 	if(aDataPackage != NULL)
 		{
 		if ( KErrNone == aResult )
@@ -1016,7 +1015,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COM
 TInt CMmMBMSContextTsy::NotifyStatusChange(
         RPacketContext::TContextStatus* aContextStatus )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NOTIFYSTATUSCHANGE_1,  "TSY: CMmMBMSContextTsy::NotifyStatusChange. Context name:%S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::NotifyStatusChange. Context name:%S", &iContextName );
     iRetNotifyStatus = aContextStatus;
     iReqHandleType = EMultimodeMbmsContextNotifyStatusChange;
 
@@ -1035,7 +1034,8 @@ void CMmMBMSContextTsy::CompleteNotifyStatusChange(
     if ( aContextStatus != iContextStatus )
         {
         iContextStatus = aContextStatus;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETENOTIFYSTATUSCHANGE_1,  "TSY: CMmMBMSContextTsy::CompleteNotifyStatusChange. Context name: %S  Context status:%d",iContextName, iContextStatus );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::CompleteNotifyStatusChange. Context name: %S  Context status:%d",
+                    &iContextName, iContextStatus );   
                     
         if ( RPacketContext::EStatusActive == iContextStatus ||
              RPacketContext::EStatusInactive == iContextStatus ||
@@ -1114,7 +1114,7 @@ void CMmMBMSContextTsy::CompleteNotifyStatusChange(
 TInt CMmMBMSContextTsy::SetConfigL(
         TPacketDataConfigBase* aConfig ) 
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SETCONFIGL_1,  "TSY: CMmMBMSContextTsy::SetConfigL. Context name:%S", iContextName );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::SetConfigL. Context name:%S", &iContextName );
 
     TInt ret( KErrArgument );
            
@@ -1139,7 +1139,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SET
             CMmDataPackage data;
             data.PackData( &( *aConfig ), &iContextName );
 
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SETCONFIGL_2, "TSY: CMmMBMSContextTsy::SetConfigL. Context: %S", iContextName);
+TFLOGSTRING2("TSY: CMmMBMSContextTsy::SetConfigL. Context: %S", &iContextName);
 
             ret = iMmPacketService->MessageManager()->HandleRequestL(
                 EPacketContextSetConfig, &data ); 
@@ -1175,7 +1175,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SET
 void CMmMBMSContextTsy::CompleteSetConfig( 
         TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETESETCONFIG_1,  "TSY: CMmMBMSContextTsy::CompleteSetConfig. Error: %d", aError );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::CompleteSetConfig. Error: %d", aError );
     
     if( (KErrNone == aError) && (iConfig) && (iTempConfig) )
 	    {
@@ -1220,7 +1220,7 @@ void CMmMBMSContextTsy::ReqCompleted(
         TTsyReqHandle aTsyReqHandle, 
         TInt aError )   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQCOMPLETED_1,  "TSY: CMmMBMSContextTsy::ReqCompleted. Handle:%d Error:%d",  aTsyReqHandle, aError );
+TFLOGSTRING3( "TSY: CMmMBMSContextTsy::ReqCompleted. Handle:%d Error:%d",  aTsyReqHandle, aError );
 
     // Set last error cause
     if ( KErrNone != aError )
@@ -1300,7 +1300,7 @@ void CMmMBMSContextTsy::Complete(
         const TInt aReqHandleType,    
         const TInt aError )        
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETE_1,  "TSY: CMmMBMSContextTsy::Complete. Req type %d", aReqHandleType );
+TFLOGSTRING2( "TSY: CMmMBMSContextTsy::Complete. Req type %d", aReqHandleType );
     
     
     // All possible TSY req handle types are listed in the
@@ -1384,7 +1384,7 @@ TInt CMmMBMSContextTsy::UpdateMbmsSessionList(
     TMbmsAction* aAction,
     TMbmsSessionId* aSession ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_UPDATEMBMSSESSIONLIST_1, "TSY: CMmMBMSContextTsy::UpdateMbmsSessionList. Context: %S, action: %d", iContextName, *aAction);
+TFLOGSTRING3("TSY: CMmMBMSContextTsy::UpdateMbmsSessionList. Context: %S, action: %d", &iContextName, aAction);    
     TInt ret( KErrNone );
     
     if( iConfig->iMbmsSessionFlag )
@@ -1432,7 +1432,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_UPD
 void CMmMBMSContextTsy::CompleteUpdateMbmsSessionList( 
         const TInt aResult )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEUPDATEMBMSSESSIONLIST_1, "TSY: CMmMBMSContextTsy::CompleteUpdateMbmsSessionList. Context: %S, result: %d", iContextName, aResult);
+TFLOGSTRING3("TSY: CMmMBMSContextTsy::CompleteUpdateMbmsSessionList. Context: %S, result: %d", &iContextName, aResult);    
     
     TInt ret( aResult );
    
@@ -1526,7 +1526,7 @@ TInt CMmMBMSContextTsy::GetMbmsActiveServicesPhase1L(
 	        TInt* aBufSize )
     {
     TInt ret( KErrNone );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETMBMSACTIVESERVICESPHASE1L_1, "TSY: CMmMBMSContextTsy::GetMbmsActiveServicesPhase1L");
+TFLOGSTRING("TSY: CMmMBMSContextTsy::GetMbmsActiveServicesPhase1L");
   
   	if (iServicesArray->iSessionIdList.Count() > 0)
   		{
@@ -1560,7 +1560,7 @@ TInt CMmMBMSContextTsy::GetMbmsActiveServicesPhase2L(
         	RMobilePhone::TClientId* aClient,
 	        TDes8* aBuffer )   
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETMBMSACTIVESERVICESPHASE2L_1, "TSY: CMmMBMSContextTsy::GetMbmsActiveServicesPhase2L");
+TFLOGSTRING("TSY: CMmMBMSContextTsy::GetMbmsActiveServicesPhase2L");
 	
 	TInt error = KErrNone;
 	

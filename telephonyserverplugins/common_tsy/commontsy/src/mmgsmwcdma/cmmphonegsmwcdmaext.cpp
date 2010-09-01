@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 //  INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmphonegsmwcdmaextTraces.h"
-#endif
-
 #include <etelmm.h>
 #include "cmmphonegsmwcdmaext.h"
 #include "cmmphonetsy.h"
@@ -159,7 +153,7 @@ void CMmPhoneGsmWcdmaExt::ConstructL()
 //
 TInt CMmPhoneGsmWcdmaExt::InitSimL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_INITSIML_1, "TSY: CMmPhoneGsmWcdmaExt::InitSimL");
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::InitSimL");
 
     TInt ret( KErrGeneral ); 
 
@@ -184,7 +178,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_INIT
 TInt CMmPhoneGsmWcdmaExt::GetNetworkCaps( 
         TUint32* aCaps )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETNETWORKCAPS_1, "TSY: CMmPhoneGsmWcdmaExt::GetNetworkCaps");
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetNetworkCaps");
 
     *aCaps = RMobilePhone::KCapsGetRegistrationStatus 
        | RMobilePhone::KCapsNotifyRegistrationStatus
@@ -212,7 +206,7 @@ TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkV1(
         RMobilePhone::TMobilePhoneNetworkInfoV1* aNetInfo,
         RMobilePhone::TMobilePhoneLocationAreaV1* aArea ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKV1_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkV1");
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkV1");
 
     if ( NULL != aNetInfo )
         {
@@ -248,7 +242,7 @@ TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkV2(
         RMobilePhone::TMobilePhoneNetworkInfoV2* aNetInfo,
         RMobilePhone::TMobilePhoneLocationAreaV1* aArea ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKV2_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkV2");
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkV2");
 
     if ( NULL != aNetInfo )
         {       
@@ -286,7 +280,7 @@ TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkV5(
         RMobilePhone::TMobilePhoneNetworkInfoV5* aNetInfo,
         RMobilePhone::TMobilePhoneLocationAreaV1* aArea ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKV5_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkV5" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkV5" );
 
     if ( NULL != aNetInfo )
         {        
@@ -329,7 +323,7 @@ TInt CMmPhoneGsmWcdmaExt::GetCurrentNetwork(
         RMobilePhone::TMobilePhoneNetworkInfoV8* aNetInfo,
         RMobilePhone::TMobilePhoneLocationAreaV1* aArea ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORK_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetwork" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetwork" );
 
     if ( NULL != aNetInfo )
         {        
@@ -374,7 +368,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETC
 TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV1( 
         RMobilePhone::TMobilePhoneNetworkInfoV1* aNetInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKNOLOCATIONV1_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV1" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV1" );
 
     if ( NULL != aNetInfo )
         {      
@@ -404,7 +398,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETC
 TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV2( 
         RMobilePhone::TMobilePhoneNetworkInfoV2* aNetInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKNOLOCATIONV2_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV2" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV2" );
 
     if ( NULL != aNetInfo )
         {       
@@ -436,7 +430,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETC
 TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV5( 
         RMobilePhone::TMobilePhoneNetworkInfoV5* aNetInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKNOLOCATIONV5_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV5" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocationV5" );
     
     if ( NULL != aNetInfo )
         {       
@@ -473,7 +467,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETC
 TInt CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocation( 
         RMobilePhone::TMobilePhoneNetworkInfoV8* aNetInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCURRENTNETWORKNOLOCATION_1, "TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocation" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCurrentNetworkNoLocation" );
     
     if ( NULL != aNetInfo )
         {       
@@ -515,7 +509,7 @@ TInt CMmPhoneGsmWcdmaExt::SetCurrentNetwork(
         const RMobilePhone::TMobilePhoneLocationAreaV1& aArea  ) 
         
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_SETCURRENTNETWORK_1, "TSY: CMmPhoneGsmWcdmaExt::SetCurrentNetwork" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::SetCurrentNetwork" );
 
     *iCurrentNwInfo = aNetInfo;
     *iCurrentLocationArea = aArea;
@@ -532,7 +526,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_SETC
 TInt CMmPhoneGsmWcdmaExt::GetNITZInfo( 
         RMobilePhone::TMobilePhoneNITZ* aNwtTimeInfo ) 
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETNITZINFO_1, "TSY: CMmPhoneGsmWcdmaExt::GetNITZInfo" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetNITZInfo" );
 
     TInt ret( KErrNotFound );
     
@@ -574,7 +568,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETN
 void CMmPhoneGsmWcdmaExt::ReceivedNITZInfo( 
         RMobilePhone::TMobilePhoneNITZ& aNITZInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_RECEIVEDNITZINFO_1, "TSY: CMmPhoneGsmWcdmaExt::ReceivedNITZInfo" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::ReceivedNITZInfo" );
 
     // This information is not necessarily available if network time 
     // indication is received only once in bootup, before registration to NW.
@@ -607,7 +601,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_RECE
 //
 TInt CMmPhoneGsmWcdmaExt::GetCellInfoL() 
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETCELLINFOL_1, "TSY: CMmPhoneGsmWcdmaExt::GetCellInfoL" );
+    TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetCellInfoL" );
     TInt ret = iMessageManager->HandleRequestL( ECtsyPhoneCellInfoReq );
     return ret;
     }
@@ -620,7 +614,7 @@ TInt CMmPhoneGsmWcdmaExt::GetCellInfoL()
 //
 TInt CMmPhoneGsmWcdmaExt::NotifyCellInfoChangeL()
 	{
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_NOTIFYCELLINFOCHANGEL_1, "TSY: CMmPhoneGsmWcdmaExt::NotifyCellInfoChangeL" );
+    TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::NotifyCellInfoChangeL" );
     TInt ret = iMessageManager->HandleRequestL( ECtsyPhoneCellInfoIndReq );
     return ret;	
 	}
@@ -636,7 +630,7 @@ void CMmPhoneGsmWcdmaExt::CompleteNotifyNetworkRegistrationStatusChange(
         RMobilePhone::TMobilePhoneRegistrationStatus aRegistrationStatus )
             // New registration status from network
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_COMPLETENOTIFYNETWORKREGISTRATIONSTATUSCHANGE_1, "TSY: CMmPhoneGsmWcdmaExt::CompleteNotifyNetworkRegistrationStatusChange" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::CompleteNotifyNetworkRegistrationStatusChange" );
 
     // If registration status not registered, then reset network information
     switch( aRegistrationStatus )
@@ -672,7 +666,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_COMP
 TInt CMmPhoneGsmWcdmaExt::GetHomeNetworkV1(
         RMobilePhone::TMobilePhoneNetworkInfoV1* aHomeNetInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETHOMENETWORKV1_1, "TSY: CMmPhoneGsmWcdmaExt::GetHomeNetworkV1" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetHomeNetworkV1" );
 
     TInt ret( KErrNone );
 
@@ -710,7 +704,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETH
 TInt CMmPhoneGsmWcdmaExt::GetHomeNetworkV2(
         RMobilePhone::TMobilePhoneNetworkInfoV2* aHomeNetInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETHOMENETWORKV2_1, "TSY: CMmPhoneGsmWcdmaExt::GetHomeNetworkV2" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetHomeNetworkV2" );
 
     TInt ret( KErrNone );
 
@@ -751,7 +745,7 @@ TInt CMmPhoneGsmWcdmaExt::GetHomeNetworkV5(
         RMobilePhone::TMobilePhoneNetworkInfoV5* aHomeNetInfo )
         // pointer to HomeNetInfo
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETHOMENETWORKV5_1, "TSY: CMmPhoneGsmWcdmaExt::GetHomeNetworkV5" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetHomeNetworkV5" );
 
     TInt ret( KErrNone );
 
@@ -797,7 +791,7 @@ TInt CMmPhoneGsmWcdmaExt::GetHomeNetwork(
         RMobilePhone::TMobilePhoneNetworkInfoV8* aHomeNetInfo )
         // pointer to HomeNetInfo
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_GETHOMENETWORK_1, "TSY: CMmPhoneGsmWcdmaExt::GetHomeNetwork" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::GetHomeNetwork" );
 
     TInt ret( KErrNone );
 
@@ -1240,7 +1234,7 @@ TInt CMmPhoneGsmWcdmaExt::DeliverCode(
     {
     iSecCode.Copy( aCodes.iCode );
 
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_DELIVERCODE_1,  "TSY: CMmPhoneGsmWcdmaExt::DeliverCode iSecCode: %S", iSecCode );
+TFLOGSTRING2( "TSY: CMmPhoneGsmWcdmaExt::DeliverCode iSecCode: %S", &iSecCode );
 
     return KErrNone;
     }
@@ -1360,7 +1354,7 @@ TInt CMmPhoneGsmWcdmaExt::SimActivePinState()
 TInt CMmPhoneGsmWcdmaExt::SetLockSettingL( 
         CMmDataPackage* aPackage )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_SETLOCKSETTINGL_1, "LTSY: CMmPhoneGsmWcdmaExt::SetLockSettingL" );
+TFLOGSTRING("LTSY: CMmPhoneGsmWcdmaExt::SetLockSettingL" );
 
     TLockAndSetting lockAndSetting;
     aPackage->UnPackData( &lockAndSetting.iLock, &lockAndSetting.iSetting );
@@ -1516,7 +1510,7 @@ TInt CMmPhoneGsmWcdmaExt::GetNetworkRegistrationStatusL()
 void CMmPhoneGsmWcdmaExt::CompleteGetHomeNetwork( 
         CMmDataPackage* aDataPackage ) 
     {    
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEGSMWCDMAEXT_COMPLETEGETHOMENETWORK_1, "TSY: CMmPhoneGsmWcdmaExt::CompleteGetHomeNetwork" );
+TFLOGSTRING("TSY: CMmPhoneGsmWcdmaExt::CompleteGetHomeNetwork" );
 
     RMobilePhone::TMobilePhoneNetworkInfoV8* 	homeInfo = NULL;
     aDataPackage->UnPackData ( &homeInfo );

@@ -481,3 +481,72 @@ void CATAnswerData::Complete(TInt aError,TEventSource aSource)
 	CATDataCallConnectCommands::Complete(aError,aSource);
 	}
 
+//
+//	CATAnswerFax
+//
+
+CATAnswerFax* CATAnswerFax::NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals)
+	{
+	CATAnswerFax* answer=new(ELeave) CATAnswerFax(aIo, aTelObject, aInit,aPhoneGlobals);
+	CleanupStack::PushL(answer);
+	answer->ConstructL();
+	CleanupStack::Pop();
+	return answer;
+	}
+
+CATAnswerFax::CATAnswerFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals)
+											: CATFaxCallConnectCommands(aIo,aTelObject,aInit,aPhoneGlobals)
+	{}
+
+CATAnswerFax::~CATAnswerFax()
+	{}
+
+void CATAnswerFax::Start(TTsyReqHandle aTsyReqHandle, TAny* /*aParams*/)
+	{
+	LOGTEXT(_L8("Starting Answer fax call"));
+//	CATFaxCallConnectCommands::Start(aTsyReqHandle,aParams);	
+
+	//-- the change made by Dmitry Lyokhin. PIA-586KGE defect fix
+	//-- CATFaxCallConnectCommands::Start(); starts answering a fax call from sending 
+	//-- init strings to the modem that occassionally causes a collision with incoming "+CRING".
+	//-- now state machine starts with EATCallInitCompleted state that does nothing.
+
+	iReqHandle=aTsyReqHandle;
+	__ASSERT_ALWAYS(iIo->AddExpectString(this,KNotifyMeIfErrorString) != NULL, Panic(EGeneral));
+	
+	iPreConnectState=CATCallConnectCommands::EATCallInitCompleted; 
+
+	LOGTEXT2(_L8("-CATAnswerFax::Start, iPreConnectState=%d"), iPreConnectState);
+
+	EventSignal(EReadCompletion);	// EReadCompletion is a dummy enum here
+	}
+
+void CATAnswerFax::Stop(TTsyReqHandle aTsyReqHandle)
+//
+//	If still doing pre-answer command, cancel that, otherwise tell the fax server to cancel
+//
+	{
+	LOGTEXT(_L8("Cancelling Answer Fax Call Command"));
+	CATFaxCallConnectCommands::Stop(aTsyReqHandle);
+	}
+
+void CATAnswerFax::EventSignal(TEventSource aSource)
+	{
+	if((aSource==ETimeOutCompletion)
+		&&(iPreConnectState!=EATWaitForATCheckOK))
+		{
+		LOGTEXT(_L8("Timeout Error during Answer"));
+		Complete(KErrTimedOut,aSource);
+		return;
+		}
+	if (iPreConnectState!=CATCallConnectCommands::EATInitCompleted
+		&& iPreConnectState!=CATCallConnectCommands::ENotInProgress)
+		{
+		CATCallConnectCommands::PreConnectEventSignal(aSource);
+		}
+	}
+
+void CATAnswerFax::CompleteSuccessfully()
+	{
+	REINTERPRET_CAST(CCallMobileFax*,iTelObject)->FaxAnswer(iReqHandle);	
+	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,13 +19,8 @@
  @file PSDAGTBase.cpp
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "PSDAGTBaseTraces.h"
-#endif
-
 #include "PSDAGTBase.h"
+#include "debuglogger.h"
 #include "psdagt.h"
 
 /**
@@ -125,16 +120,20 @@ Creates PSD agent extension.
 @exception Panics if connection direction is unknown.
 */
 	{
+	__FLOG_STMT(_LIT8(logString1,"GPRS:\tCreating a new PSD state machine - %s");)
+	
 	if (aDirection==ECommDbConnectionDirectionOutgoing)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDAGENT_CREATEAGENTSML_1,"GPRS:\tCreating a new PSD state machine - Outbound");
+		__FLOG_STMT(const TText8 direction[] = "Outbound";)
+		__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&direction);
 		return CPsdOutSM::NewL(aObserver,aDlgPrc,aDb);
 		}
 	else 
 		{
 #ifndef INCOMING_NOT_SUPORTED
 		__ASSERT_ALWAYS(aDirection==ECommDbConnectionDirectionIncoming, PanicAgx(EPsdBadDirection));
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPSDAGENT_CREATEAGENTSML_2,"GPRS:\tCreating a new PSD state machine - Inbound");
+		__FLOG_STMT(const TText8 direction[] = "Inbound";)
+		__FLOG_STATIC1(KPsdAgxLogFolder(),KPsdAgxLogFile(),TRefByValue<const TDesC8>(logString1()),&direction);
 		return CPsdInSM::NewL(aObserver,aDlgPrc,aDb);
 #else
 		User::Leave(KErrNotSupported);

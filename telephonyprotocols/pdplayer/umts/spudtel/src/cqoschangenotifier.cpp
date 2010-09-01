@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,14 +20,8 @@
  @internalComponent
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cqoschangenotifierTraces.h"
-#endif
-
 #include "cqoschangenotifier.h"
+#include "spudteldebuglogger.h"
 #include <pcktcs.h>
 
 
@@ -46,24 +40,24 @@ CQoSChangeNotifier::CQoSChangeNotifier(TContextId aId,
   iProfilePckg(iProfileBuffer)
   
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_CTOR_1, "CQoSChangeNotifier::CQoSChangeNotifier()");
+	SPUDTEL_FNLOG("CQoSChangeNotifier::CQoSChangeNotifier()");
 	}
 	
 CQoSChangeNotifier::~CQoSChangeNotifier()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_DTOR_1, "CQoSChangeNotifier::~CQoSChangeNotifier()");
+	SPUDTEL_FNLOG("CQoSChangeNotifier::~CQoSChangeNotifier()");
 	Cancel();
 	}
 	
 /** starts notification */
 void CQoSChangeNotifier::Start()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_START_1, "CQoSChangeNotifier::Start()");
+	SPUDTEL_FNLOG("CQoSChangeNotifier::Start()");
 	if (!IsActive())
 		{ 
 		iPacketQoS.NotifyProfileChanged(iStatus, iProfilePckg); 
 		SetActive();
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_START_2, "CQoSChangeNotifier::Start(), iPacketQoS.NotifyProfileChanged()");
+		SPUDTEL_FNLOG("CQoSChangeNotifier::Start(), iPacketQoS.NotifyProfileChanged()");
 		}
 	}
 	
@@ -72,7 +66,8 @@ void CQoSChangeNotifier::DoCancel()
 	{
 	if (IsActive())
 		{ 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_DOCANCEL_1, "CQoSChangeNotifier::DoCancel EPacketQoSNotifyProfileChanged");
+		SPUDTELVERBOSE_INFO_LOG(
+			_L("CQoSChangeNotifier::DoCancel EPacketQoSNotifyProfileChanged"));
 		iPacketQoS.CancelAsyncRequest(EPacketQoSNotifyProfileChanged);
 		}
 	}
@@ -85,7 +80,7 @@ void CQoSChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_1, "FSM set QoSProfile");
+		SPUDTELVERBOSE_INFO_LOG(_L("FSM set QoSProfile"));
 
 #ifdef SYMBIAN_NETWORKING_UMTSR5
         iPdpFsmInterface.Set(iId, iProfileBuffer.NegotiatedQoSR5());
@@ -97,12 +92,12 @@ void CQoSChangeNotifier::Notify(const TRequestStatus& aStatus)
 #endif
 // SYMBIAN_NETWORKING_UMTSR5
 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_2, "FSM input EQoSProfileChangeNetwork");
+		SPUDTELVERBOSE_INFO_LOG(_L("FSM input EQoSProfileChangeNetwork"));
 		iPdpFsmInterface.Input(iId, PdpFsm::EQoSProfileChangeNetwork);
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_3, "CQoSChangeNotifier::Notify(), error: %d", aStatus.Int());
+		SPUDTEL_ERROR_LOG(_L("CQoSChangeNotifier::Notify(), error: %d"), aStatus.Int());
 		ASSERT(aStatus == KErrCancel); 
 		}
 	}

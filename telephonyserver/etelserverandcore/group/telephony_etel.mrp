@@ -11,7 +11,6 @@ source \sf\os\cellularsrv\telephonyserver\etelserverandcore\group
 source \sf\os\cellularsrv\telephonyserver\etelserverandcore\INC
 source \sf\os\cellularsrv\telephonyserver\etelserverandcore\SETEL
 source \sf\os\cellularsrv\telephonyserver\etelserverandcore\TETEL
-source \sf\os\cellularsrv\telephonyserver\etelserverandcore\traces
 
 binary	\sf\os\cellularsrv\telephonyserver\etelserverandcore\group	all
 exports	\sf\os\cellularsrv\telephonyserver\etelserverandcore\group

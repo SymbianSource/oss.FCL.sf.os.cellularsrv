@@ -138,4 +138,26 @@ private:
 	};
 
 
+class CCallMobileFax;
+class CATDialFax : public CATFaxCallConnectCommands
+/**
+@internalComponent
+*/
+	{
+public:
+	static CATDialFax* NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
+	~CATDialFax();
+
+private:
+	CATDialFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
+
+	// CATCommands inherited stuff
+	virtual void Start(TTsyReqHandle aTsyReqHandle, TAny* aParams);
+	virtual void Stop(TTsyReqHandle aTsyReqHandle);
+	virtual void EventSignal(TEventSource aSource);
+	virtual void CompleteSuccessfully();
+private:
+	TDesC* iTelnum;
+	};
+
 #endif

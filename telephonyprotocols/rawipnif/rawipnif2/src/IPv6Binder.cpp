@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
  @file
 */
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "IPv6BinderTraces.h"
-#endif
-
 #include <etelpckt.h>
 #include <in_iface.h>
 #include "RawIP2Flow.h"
@@ -39,12 +33,15 @@
 #include <networking/umtsnifcontrolif.h>
 #endif
 
+#define LOG_IP_ADDRESS(desc,addr) _LOG_L2C5(_L8("    " desc " = %d:%d:%d:%d from context"), \
+			addr.u.iAddr32[3], addr.u.iAddr32[2], addr.u.iAddr32[1], addr.u.iAddr32[0]);
 
-CIPv6Binder::CIPv6Binder(CRawIP2Flow& aFlow)
+CIPv6Binder::CIPv6Binder(CRawIP2Flow& aFlow, CBttLogger* aTheLogger)
 /**
  * Constructor
  */ 
-	: CBinderBase(aFlow),
+	: CBinderBase(aFlow,aTheLogger),
+	  iTheLogger(aTheLogger),
 	  iSpeedMetric(KDefaultSpeedMetric)
 	{
 	}
@@ -80,7 +77,8 @@ TInt CIPv6Binder::Control(TUint aLevel, TUint aName, TDes8& /*aOption*/)
  * @return Standard error codes
  */
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_CONTROL_1, "CIPv6Binder::Control [aLevel=%u, aName=%u]",aLevel, aName);
+	_LOG_L1C3(_L8("CIPv6Binder::Control [aLevel=%d, aName=%d]"),
+		aLevel, aName);
 
 	if (aLevel == KSOLInterface)
 		{
@@ -191,7 +189,7 @@ TInt CIPv6Binder::DeleteContext(TDes8& aContextParameters)
  * @return KErrArgument if an incorrect structure is passed, otherwise KErrNone
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_DELETECONTEXT_1, "CIPv6Binder::DeleteContext");
+	_LOG_L1C1(_L8("CIPv6Binder::DeleteContext"));
 
 	if (aContextParameters.Length() != sizeof(TContextParameters))
 		{
@@ -225,7 +223,7 @@ TInt CIPv6Binder::DeleteContext(TDes8& aContextParameters)
  */
  void CIPv6Binder::UpdateContextConfigL(const TPacketDataConfigBase& aConfig)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_1, "CIPv6Binder::UpdateContextConfig");
+	_LOG_L1C1(_L8("CIPv6Binder::UpdateContextConfig"));
 
 	// Get our IP address from the GPRS context config.
 	TInetAddr address;
@@ -251,11 +249,12 @@ TInt CIPv6Binder::DeleteContext(TDes8& aContextParameters)
 	if (ret == KErrNone)
 		{
 		iSettings.iLocalAddr = address.Ip6Address();
-		OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_2, "Got local IP address = %u:%u:%u:%u from context", iSettings.iLocalAddr.u.iAddr32[3], iSettings.iLocalAddr.u.iAddr32[2], iSettings.iLocalAddr.u.iAddr32[1], iSettings.iLocalAddr.u.iAddr32[0]);
+		LOG_IP_ADDRESS("Got local IP address", iSettings.iLocalAddr);
 		}
 	else
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_3, "Couldn't get IP address from GPRS config (err: %d)",ret);
+		_LOG_L2C2(_L8("Couldn't get IP address from GPRS config (err: %d)"),
+			ret);
 
 		// Don't leave on this error: we may still be OK if we read some
 		// settings from CommDB.
@@ -277,11 +276,12 @@ TInt CIPv6Binder::DeleteContext(TDes8& aContextParameters)
 		if (ret == KErrNone)
 			{
 			iSettings.iPrimaryDns = address.Ip6Address();
-			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_4, "Got primary DNS = %u:%u:%u:%u from context", iSettings.iPrimaryDns.u.iAddr32[3], iSettings.iPrimaryDns.u.iAddr32[2], iSettings.iPrimaryDns.u.iAddr32[1], iSettings.iPrimaryDns.u.iAddr32[0]);
+			LOG_IP_ADDRESS("Got primary DNS", iSettings.iPrimaryDns);
 			}
 		else
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_5, "Couldn't get primary DNS address from GPRS config (err: %d)",ret);
+			_LOG_L2C2(_L8("Couldn't get primary DNS address from GPRS config (err: %d)"),
+				ret);
 
 			// Don't leave on this error: we may still be OK if we read some
 			// settings from CommDB.
@@ -293,11 +293,12 @@ TInt CIPv6Binder::DeleteContext(TDes8& aContextParameters)
 		if (ret == KErrNone)
 			{
 			iSettings.iSecondaryDns = address.Ip6Address();
-			OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_6, "Got secondary DNS = %u:%u:%u:%u from context", iSettings.iSecondaryDns.u.iAddr32[3], iSettings.iSecondaryDns.u.iAddr32[2], iSettings.iSecondaryDns.u.iAddr32[1], iSettings.iSecondaryDns.u.iAddr32[0]);
+			LOG_IP_ADDRESS("Got secondary DNS", iSettings.iPrimaryDns);
 			}
 		else
 			{
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_7, "Couldn't get secondary DNS address from GPRS config (err: %d)",ret);
+			_LOG_L2C2(_L8("Couldn't get secondary DNS address from GPRS config (err: %d)"),
+				ret);
 
 			// Don't leave on this error: we may still be OK if we read some
 			// settings from CommDB.
@@ -305,8 +306,8 @@ TInt CIPv6Binder::DeleteContext(TDes8& aContextParameters)
 		}
 	else
 		{
-        OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_8, "Using CommDB DNS address - Primary  = %u:%u:%u:%u", iSettings.iPrimaryDns.u.iAddr32[3], iSettings.iPrimaryDns.u.iAddr32[2], iSettings.iPrimaryDns.u.iAddr32[1], iSettings.iPrimaryDns.u.iAddr32[0]);
-        OstTraceDefExt4(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONTEXTCONFIGL_9, "                         - Secondary = %u:%u:%u:%u", iSettings.iSecondaryDns.u.iAddr32[3], iSettings.iSecondaryDns.u.iAddr32[2], iSettings.iSecondaryDns.u.iAddr32[1], iSettings.iSecondaryDns.u.iAddr32[0]);
+		LOG_IP_ADDRESS("Using CommDB DNS address - Primary ", iSettings.iPrimaryDns);
+		LOG_IP_ADDRESS("                         - Secondary ", iSettings.iSecondaryDns);
 		}
 	}
 
@@ -317,7 +318,7 @@ void CIPv6Binder::UpdateConnectionSpeed(TUint aConnectionSpeed)
  * @param aConnectionSpeed Our connection speed
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONNECTIONSPEED_1, "CIPv6Binder::UpdateConnectionSpeed");
+	_LOG_L1C1(_L8("CIPv6Binder::UpdateConnectionSpeed"));
 
 	iSpeedMetric = aConnectionSpeed;
 	}
@@ -335,7 +336,7 @@ ESock::MLowerDataSender::TSendResult CIPv6Binder::Send(RCommsBufChain& aPdu)
  * @return Standard error codes
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_SEND1_1, "CIPv6Binder::Send");
+	_LOG_L1C1(_L8("CIPv6Binder::Send"));
 
 #ifdef __BTT_LOGGING__
 		LogPacket(static_cast<RMBufChain&>(aPdu));
@@ -361,7 +362,7 @@ TInt CIPv6Binder::Notification(TAgentToNifEventType /*aEvent*/,
  * @param aInfo Not used 
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_NOTIFICATION_1, "CIPv6Binder::Notification");
+	_LOG_L1C1(_L8("CIPv6Binder::Notification"));
 
 	return KErrNone;
 	}
@@ -373,7 +374,7 @@ void CIPv6Binder::StartSending()
  * @param aProtocol A pointer to a protocol
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_STARTSENDING_1, "CIPv6Binder::StartSending()");
+	_LOG_L1C1(_L8("CIPv6Binder::StartSending()"));
 	CBinderBase::StartSending();
 	}
 
@@ -384,7 +385,8 @@ TBool CIPv6Binder::WantsProtocol(TUint16 aProtocolCode)
  * @param aProtocolCode The protocol type
  */
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_WANTSPROTOCOL_1, "CIPv6Binder::WantsProtocol [aProtocolCode=%X]",aProtocolCode);
+	_LOG_L1C2(_L8("CIPv6Binder::WantsProtocol [aProtocolCode=%X]"),
+		aProtocolCode);
 
 #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
 	return ((aProtocolCode & 0x00FF) == KIp6FrameType);
@@ -407,7 +409,7 @@ void CIPv6Binder::Process(RCommsBufChain& aPdu)
  * @param aPdu The incoming packet
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_PROCESS1_1, "CIPv6Binder::Process");
+	_LOG_L1C1(_L8("CIPv6Binder::Process"));
 
 #ifdef __BTT_LOGGING__
 	LogPacket(static_cast<RMBufChain&>(aPdu));
@@ -425,12 +427,12 @@ void CIPv6Binder::Process(RCommsBufChain& aPdu)
 	// been bound yet.
 	if (iUpperReceiver && WantsProtocol(protocolCode))
 		{		
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_PROCESS1_2, "CIPv6Binder: Packet Sent to TCP/IP Protocol!!!");
+		_LOG_L1C1(_L8("CIPv6Binder: Packet Sent to TCP/IP Protocol!!!"));
 		iUpperReceiver->Process(static_cast<RMBufChain&>(aPdu));
 		}
 	else 
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_PROCESS1_3, "WARNING: dumping incoming packet, no protocol bound");
+		_LOG_L2C1(_L8("WARNING: dumping incoming packet, no protocol bound"));
 		aPdu.Free();
 		}
 
@@ -509,18 +511,19 @@ void CIPv6Binder::LogPacket(const RMBufChain& aPacket)
 * @param aPacket The packet 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_1, "CIPv6Binder::LogPacket");
+	_LOG_L1C1(_L8("CIPv6Binder::LogPacket"));
 
 	TInt mBufLength = aPacket.Length() - aPacket.First()->Length();
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_2, "Analysis of %d byte packet:", mBufLength);
+	_LOG_L3C2(_L8("Analysis of %d byte packet:"), mBufLength);
 
 	//Note: All the constants used on this method are a pragmatic guess of the
 	//IP header fields. The only porpose of this method is logging.
 
 	if (mBufLength < 40)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_3, " -doesn't appear to be a valid IPv6 packet (length=%d)", mBufLength);
+		_LOG_L3C2(_L8(" -doesn't appear to be a valid IPv6 packet (length=%d)")
+			, mBufLength);
 		return;
 		}
 
@@ -529,14 +532,18 @@ void CIPv6Binder::LogPacket(const RMBufChain& aPacket)
 
 	if ((payloadPtr[0] & 0xF0) != 0x60)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_4, " - doesn't appear to be an IPv6 packet (version=0x%X)",(payloadPtr[0] & 0xF0) >> 4);
+		_LOG_L3C2(_L8(" - doesn't appear to be an IPv6 packet (version=0x%X)"),
+			(payloadPtr[0] & 0xF0) >> 4);
 		return;
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_5, " - traffic class: 0x%X", ((payloadPtr[0] & 0xF) << 4) | ((payloadPtr[1] & 0xF0) >> 4));
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_6, " - flow label: 0x%X", ((payloadPtr[1] & 0x0F) << 16) | (payloadPtr[2] << 8) | payloadPtr[3]);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_7, " - payload length: 0x%X", (payloadPtr[4] << 16) | payloadPtr[5]);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_8, " - next header: 0x%08X", payloadPtr[6]);
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_LOGPACKET_9, " - hop limit: 0x%08X", payloadPtr[7]);
+	_LOG_L3C2(_L8(" - traffic class: 0x%X"), 
+					((payloadPtr[0] & 0xF) << 4) | ((payloadPtr[1] & 0xF0) >> 4));
+	_LOG_L3C2(_L8(" - flow label: 0x%X"), 
+					((payloadPtr[1] & 0x0F) << 16) | (payloadPtr[2] << 8) | payloadPtr[3]);
+	_LOG_L3C2(_L8(" - payload length: 0x%X"), 
+					(payloadPtr[4] << 16) | payloadPtr[5]);
+	_LOG_L3C2(_L8(" - next header: 0x%08X"), payloadPtr[6]);
+	_LOG_L3C2(_L8(" - hop limit: 0x%08X"), payloadPtr[7]);
 	}
 #endif // __BTT_LOGGING__

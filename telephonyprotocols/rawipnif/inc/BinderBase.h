@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -30,6 +30,7 @@
 #include <comms-infras/es_protbinder.h>
 
 class CRawIPFlow;
+class CBttLogger;
 class CRawIpProvision;
 class CRawIPFlow;
 
@@ -37,7 +38,7 @@ class CBinderBase : public CBase, public ESock::MLowerDataSender, public ESock::
 	{
 public:
 	friend class CRawIPFlow;
-	CBinderBase(CRawIPFlow& aFlow);
+	CBinderBase(CRawIPFlow& aFlow, CBttLogger* aTheLogger);
 	virtual ~CBinderBase();
 
 public:
@@ -70,6 +71,7 @@ protected:
 	ESock::MUpperControl* iUpperControl;
 	ESock::MUpperDataReceiver* iUpperReceiver;
 
+	CBttLogger* iTheLogger;
 	};
 
 

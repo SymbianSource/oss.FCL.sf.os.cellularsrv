@@ -35,7 +35,6 @@ CTestSuite* CCTsyFixedDiallingFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0001bL);
     ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0001cL);
-    ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0001dL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0004L);	
 	ADD_TEST_STEP_ISO_CPP(CCTsyFixedDiallingFU, TestDialNoFdnCheck0005L);
@@ -540,13 +539,12 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001cL()
 
     TRequestStatus requestStatus;    
     _LIT(KSomeNumber, "123456789");   
-    _LIT(KAlphaID, "Alpha ID");
 
     RMobilePhone::TMobileService mobileService = RMobilePhone::EVoiceService;    
     TInt expecteCallId = 0;
 
-    RMobileCall::TMobileCallParamsV7 callParams; 
-    RMobileCall::TMobileCallParamsV7Pckg    pckgCallParams(callParams);
+    RMobileCall::TMobileCallParamsV1 callParams; 
+    RMobileCall::TMobileCallParamsV1Pckg    pckgCallParams(callParams);
     RMobileCall::TMobileCallInfoV8 callInfo;   
     callParams.iSpeakerControl  = RCall::EMonitorSpeakerControlOnUntilCarrier;
     callParams.iSpeakerVolume   = RCall::EMonitorSpeakerVolumeLow;
@@ -557,17 +555,7 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001cL()
     callParams.iCug.iCugIndex = 0xFFFF;
     callParams.iCug.iSuppressPrefCug = EFalse;
     callParams.iCug.iSuppressOA = EFalse;
-    
     callParams.iAutoRedial = EFalse;
-    callParams.iBearerMode = RMobileCall::EMulticallNewBearer;
-    callParams.iCallParamOrigin = RMobileCall::EOriginatorSIM;   
-    callParams.iBCRepeatIndicator = RMobileCall::EBCAlternateMode;      
-    callParams.iIconId.iQualifier = RMobileCall::ENoIconId;   
-    callParams.iAlphaId = KAlphaID;
-
-    
-    
-    
     callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
     callInfo.iService   = mobileService;
     callInfo.iStatus    = RMobileCall::EStatusUnknown;
@@ -584,7 +572,7 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001cL()
     callInfo.iDialledParty.iTypeOfNumber = 
             RMobilePhone::EUnknownNumber;   
 
-    TMockLtsyCallData2< RMobileCall::TMobileCallParamsV7, RMobileCall::TMobileCallInfoV8 >
+    TMockLtsyCallData2< RMobileCall::TMobileCallParamsV1, RMobileCall::TMobileCallInfoV8 >
     mockCallData(expecteCallId, mobileService, callParams, callInfo);
     mockCallData.SerialiseL(expectData);
     
@@ -611,155 +599,11 @@ void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001cL()
     callParamsX.iWaitForDialTone = RCall::EDialToneWait;
     TPckg<RCall::TCallParams> pckgCallParamsX(callParamsX);
         
-    
-    TPckg<RMobileCall::TMobileCallParamsV7> mmParamsPckgV7(callParams);
-    call.DialNoFdnCheck(requestStatus, mmParamsPckgV7, KSomeNumber);   
+    call.DialNoFdnCheck(requestStatus, pckgCallParamsX, KSomeNumber);   
         
     User::WaitForRequest(requestStatus);          
     ASSERT_EQUALS(KErrNone, requestStatus.Int());
     AssertMockLtsyStatusL();   
-    
-    RMobileCall::TMobileCallInfoV7 info;
-    RMobileCall::TMobileCallInfoV7Pckg  infoPckg(info);
-        
-    TInt ret = call.GetMobileCallInfo(infoPckg);
-    ASSERT_EQUALS(KErrNone, ret);
-    
-    ASSERT_TRUE(info.iAlphaId.Compare(KAlphaID)==KErrNone);
-    
-    CleanupStack::PopAndDestroy(5,this);
-    
-    }
-
-/**
-@SYMTestCaseID BA-CTSY-FXD-CDNFC-0001d
-@SYMComponent  telephony_ctsy
-@SYMTestCaseDesc Test support in CTSY for RMobileCall::DialNoFdnCheck for voice calls with extended parameters (RMobileCall::TCallParamsV7)
-@SYMTestPriority High
-@SYMTestActions Invokes RMobileCall::DialNoFdnCheck for voice calls
-@SYMTestExpectedResults Pass
-@SYMTestType CT
-*/
-void CCTsyFixedDiallingFU::TestDialNoFdnCheck0001dL()
-    {
-    
-    OpenEtelServerL(EUseExtendedError);
-    CleanupStack::PushL(TCleanupItem(Cleanup,this));
-    OpenPhoneL();
-
-    RBuf8 expectData;
-    CleanupClosePushL(expectData);
-
-    RBuf8 completeData;
-    CleanupClosePushL(completeData);
-
-    TInt errorCode = KErrNone;    
-
-    //-- For Voice1 -------------------------
-
-    TBuf<256> lineName(KMmTsyVoice1LineName);    
-    // Open new line
-    RLine line;
-    errorCode = line.Open(iPhone, lineName);
-    ASSERT_EQUALS(KErrNone, errorCode);
-    CleanupClosePushL(line);      
-    // open call
-    _LIT(KDoubleColon, "::");    
-    TBuf<256> name;
-    name = KMmTsyPhoneName;
-    name.Append(KDoubleColon);
-    name.Append(lineName);
-    name.Append(KDoubleColon);
-
-    RMobileCall call;
-    errorCode = call.OpenNewCall(line, name);
-    ASSERT_EQUALS(KErrNone, errorCode);
-    CleanupClosePushL(call);   
-
-    TRequestStatus requestStatus;    
-    _LIT(KSomeNumber, "123456789");   
-    // Alpha ID to pass through TMobileCallParamsV7
-    _LIT(KAlphaID, "Alpha ID");
-
-    RMobilePhone::TMobileService mobileService = RMobilePhone::EVoiceService;    
-    TInt expecteCallId = 0;
-
-    RMobileCall::TMobileCallParamsV7 callParams; 
-    RMobileCall::TMobileCallParamsV7Pckg    pckgCallParams(callParams); 
-    callParams.iSpeakerControl  = RCall::EMonitorSpeakerControlOnUntilCarrier;
-    callParams.iSpeakerVolume   = RCall::EMonitorSpeakerVolumeLow;
-    callParams.iInterval        = 100;
-    callParams.iWaitForDialTone = RCall::EDialToneWait;
-    callParams.iIdRestrict = RMobileCall::EIdRestrictDefault;
-    callParams.iCug.iExplicitInvoke = EFalse;
-    callParams.iCug.iCugIndex = 0xFFFF;
-    callParams.iCug.iSuppressPrefCug = EFalse;
-    callParams.iCug.iSuppressOA = EFalse;
-    
-    callParams.iAutoRedial = EFalse;
-    callParams.iBearerMode = RMobileCall::EMulticallNewBearer;
-    callParams.iCallParamOrigin = RMobileCall::EOriginatorSIM;   
-    callParams.iBCRepeatIndicator = RMobileCall::EBCAlternateMode;      
-    callParams.iIconId.iQualifier = RMobileCall::ENoIconId;   
-    callParams.iIconId.iIdentifier = 123;   
-    callParams.iAlphaId = KAlphaID;
-
-    // Create the basic TMobileCallInfoV3 object to pass back
-    RMobileCall::TMobileCallInfoV8 callInfo;   
-    callInfo.iValid = RMobileCall::KCallDialledParty | RMobileCall::KCallAlternating;    
-    callInfo.iService   = mobileService;
-    callInfo.iStatus    = RMobileCall::EStatusUnknown;
-    callInfo.iCallId    =-1;
-    callInfo.iExitCode  =0; 
-    callInfo.iEmergency =0;
-    callInfo.iForwarded =0; 
-    callInfo.iPrivacy               = RMobilePhone::EPrivacyUnspecified;
-    callInfo.iAlternatingCall       = RMobilePhone::EAlternatingModeUnspecified;    
-    //callInfo.iDuration.iIntervel  = 0;            // this is protected value
-    callInfo.iDialledParty.iTelNumber.Copy( KSomeNumber );
-    callInfo.iDialledParty.iNumberPlan = 
-            RMobilePhone::EUnknownNumberingPlan;
-    callInfo.iDialledParty.iTypeOfNumber = 
-            RMobilePhone::EUnknownNumber;   
-
-    TMockLtsyCallData2< RMobileCall::TMobileCallParamsV7, RMobileCall::TMobileCallInfoV8 >
-    mockCallData(expecteCallId, mobileService, callParams, callInfo);
-    mockCallData.SerialiseL(expectData);
-    
-    iMockLTSY.ExpectL(EMobileCallDialNoFdnCheck, expectData);
-
-    TInt callId = 1;
-    
-    completeData.Close();
-    TMockLtsyCallData1<RMobileCall::TMobileCallInfoV1> callInfoData(callId, mobileService, callInfo);
-    callInfoData.SerialiseL(completeData);
-    //Complete Mobile Call Info in order to set the call ID 
-    iMockLTSY.CompleteL(EMobileCallGetMobileCallInfo, KErrNone, completeData);
-    
-    TMockLtsyCallData0 mockDataComplete(callId, mobileService);
-    completeData.Close();
-    mockDataComplete.SerialiseL(completeData);
-    // Complete the Dial
-    iMockLTSY.CompleteL(EMobileCallDialNoFdnCheck, KErrNone, completeData);
-    
-    TPckg<RMobileCall::TMobileCallParamsV7> mmParamsPckgV7(callParams);
-    call.DialNoFdnCheck(requestStatus, mmParamsPckgV7, KSomeNumber);   
-        
-    User::WaitForRequest(requestStatus);          
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    AssertMockLtsyStatusL();   
-    
-    RMobileCall::TMobileCallInfoV7 info;
-    RMobileCall::TMobileCallInfoV7Pckg  infoPckg(info);
-        
-    TInt ret = call.GetMobileCallInfo(infoPckg);
-    ASSERT_EQUALS(KErrNone, ret);
-    
-    // The check to make sure that the AlphaID persisted in CTSY and returned properly.
-    ASSERT_TRUE(info.iAlphaId.Compare(KAlphaID)==KErrNone);
-    // The check to make sure that the IconID persisted in CTSY and returned properly.
-    ASSERT_TRUE(info.iIconId.iIdentifier == 123);
-    ASSERT_EQUALS(info.iIconId.iQualifier, RMobileCall::ENoIconId);
     
     CleanupStack::PopAndDestroy(5,this);
     

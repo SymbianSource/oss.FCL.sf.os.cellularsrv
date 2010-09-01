@@ -23,19 +23,18 @@
 #define SENDER_H
 
 #include "BcaIoController.h"
+#include "bttlog.h"
 #include "Constants.h"
 
+class CBttLogger;
 
 class CSender : public CActive
 	{
 public:
-	CSender(CBcaIoController& aObserver,  TInt aMaxPacketSise);
-	static CSender* NewL(CBcaIoController& aObserver,  TInt aMaxPacketSise);
-	void ConstructL();
-	~CSender();	
-
-	
-	
+    CSender(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
+    static CSender* NewL(CBcaIoController& aObserver, CBttLogger* aTheLogger, TInt aMaxPacketSise);
+    void ConstructL();
+    ~CSender();	
 
     // Inherited from CActive.
     virtual void RunL();
@@ -46,6 +45,7 @@ public:
 
 private: // Unowned data.
     CBcaIoController& iObserver;
+    CBttLogger* iTheLogger;	
     TInt iMaxPacketSize;
     RBuf8 iSendBuffer;
 	};

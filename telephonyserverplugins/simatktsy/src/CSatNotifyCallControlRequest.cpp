@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,18 +20,13 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifyCallControlRequestTraces.h"
-#endif
-
 #include <satcs.h>							// Etel SAT IPC definitions
 #include "CSatTsy.h"						// Tsy class header
 #include "CSatNotifyCallControlRequest.h"   // Tsy class header
 #include "CSatNotificationsTsy.h"			// Class header
 #include "CBerTlv.h"						// Ber Tlv data handling
 #include "CSatDataPackage.h"				// Parameter packing 
+#include "TfLogger.h"						// For TFLOGSTRING
 #include "TSatUtility.h"					// Utilities
 #include "CSatTsyReqHandleStore.h"			// Request handle class
 #include "cmmmessagemanagerbase.h"			// Message manager class for forwarding req.
@@ -46,13 +41,13 @@ CSatNotifyCallControlRequest* CSatNotifyCallControlRequest::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_NEWL_1, "CSAT: CSatNotifyCallControlRequest::NewL");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::NewL");
    	CSatNotifyCallControlRequest* const satNotifyCallControlRequest = 
         new ( ELeave ) CSatNotifyCallControlRequest( aNotificationsTsy );
     CleanupStack::PushL( satNotifyCallControlRequest );
     satNotifyCallControlRequest->ConstructL();
     CleanupStack::Pop( satNotifyCallControlRequest );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_NEWL_2, "CSAT: CSatNotifyCallControlRequest::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::NewL, end of method");
     return satNotifyCallControlRequest;
     }
 
@@ -66,7 +61,8 @@ CSatNotifyCallControlRequest::~CSatNotifyCallControlRequest
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_DTOR_1, "CSAT: CSatNotifyCallControlRequest::~CSatNotifyCallControlRequest");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::\
+        ~CSatNotifyCallControlRequest");
     }
     
 // -----------------------------------------------------------------------------
@@ -92,7 +88,7 @@ void CSatNotifyCallControlRequest::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_CONSTRUCTL_1, "CSAT: CSatNotifyCallControlRequest::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::ConstructL");
     }
 
 // -----------------------------------------------------------------------------
@@ -107,7 +103,7 @@ TInt CSatNotifyCallControlRequest::Notify
         const TDataPackage& aPackage 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_NOTIFY_1, "CSAT: CSatNotifyCallControlRequest::Notify");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::Notify");
 
     // Save data pointer to client side for completion
     iCallControlV2Pckg = reinterpret_cast<RSat::TCallControlV2Pckg*>( 
@@ -130,7 +126,7 @@ TInt CSatNotifyCallControlRequest::CancelNotification
         const TTsyReqHandle aTsyReqHandle // Tsy request handle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_CANCELNOTIFICATION_1, "CSAT: CSatNotifyCallControlRequest::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::CancelNotification");   
     // Reset the request handle
     iNotificationsTsy->iSatReqHandleStore->
         ResetTsyReqHandle( CSatTsy::ESatNotifyCallControlRequestPCmdReqType );
@@ -151,7 +147,7 @@ TInt CSatNotifyCallControlRequest::CompleteNotifyL
         TInt aErrorCode 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_COMPLETENOTIFYL_1, "CSAT: CSatNotifyCallControlRequest::CompleteNotifyL");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::CompleteNotifyL");   
     RSat::TAlphaIdBuf alphaId;
     RSat::TControlResult result;
 	// Unpack data
@@ -173,7 +169,7 @@ void CSatNotifyCallControlRequest::CompleteAlphaId
         TInt aErrorCode                
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_COMPLETEALPHAID_1, "CSAT: CSatNotifyCallControlRequest::CompleteAlphaId");
+    TFLOGSTRING("CSAT: CSatNotifyCallControlRequest::CompleteAlphaId");	
 
 	// Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -196,13 +192,15 @@ void CSatNotifyCallControlRequest::CompleteAlphaId
             callControlV2.SetCcGeneralResult( aResult );          
             callControlV2.SetAlphaId( validity, alphaIdTemp );  
             }
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_COMPLETEALPHAID_2,  "CSAT: CSatNotifyCallControlRequest::CompleteAlphaId completing" );
+        TFLOGSTRING( "CSAT: CSatNotifyCallControlRequest::CompleteAlphaId\
+            completing" );
         // Complete notification
         iNotificationsTsy->iSatTsy->ReqCompleted( reqHandle, aErrorCode );
         }
     else
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYCALLCONTROLREQUEST_COMPLETEALPHAID_3,  "CSAT: CSatNotifyCallControlRequest::CompleteAlphaId Request not ongoing" );
+        TFLOGSTRING( "CSAT: CSatNotifyCallControlRequest::CompleteAlphaId\
+            Request not ongoing" );
         }
     }
 

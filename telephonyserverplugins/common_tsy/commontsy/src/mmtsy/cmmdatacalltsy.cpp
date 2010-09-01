@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmdatacalltsyTraces.h"
-#endif
-
 #include "cmmdatacalltsy.h"
 #include "cmmdatalinetsy.h"
 #include "cmmphonetsy.h"
@@ -49,7 +43,7 @@ CMmDataCallTsy* CMmDataCallTsy::NewL(
     TDes& aName, 
     CMmMessageManagerBase* aMessageManager )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_NEWL_1, "TSY: CMmDataCallTsy::NewL. Call name: %S", aName);
+TFLOGSTRING2("TSY: CMmDataCallTsy::NewL. Call name: %S", &aName);
 
     CMmDataCallTsy* mmCall = NULL;
 
@@ -73,7 +67,8 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_NEWL_1
 
 CMmDataCallTsy::~CMmDataCallTsy()
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DTOR_1, "TSY: CMmDataCallTsy::~CMmDataCallTsy - Call deleted iCallId: %d iCallName: %S",iCallId, iCallName);
+TFLOGSTRING3("TSY: CMmDataCallTsy::~CMmDataCallTsy - Call deleted iCallId: %d iCallName: %S",
+    iCallId, &iCallName);
 
     // If Dial fails, Symbian CSD agent will close the call immediately.
     // This means that TSY has not yet received call status indications, 
@@ -150,7 +145,8 @@ TInt CMmDataCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTFUNCL_1, "TSY: CMmDataCallTsy::DoExtFuncL - IPC: %d Handle: %d",aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmDataCallTsy::DoExtFuncL - IPC: %d Handle: %d",
+    aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -289,7 +285,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTF
 CTelObject::TReqMode CMmDataCallTsy::ReqModeL(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQMODEL_1, "TSY: CMmDataCallTsy::ReqModeL - IPC: %d", aIpc);
+TFLOGSTRING2("TSY: CMmDataCallTsy::ReqModeL - IPC: %d", aIpc);
 
     CTelObject::TReqMode ret( 0 ); // default return value
     
@@ -535,7 +531,8 @@ TInt CMmDataCallTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CANCELSERVICE_1, "TSY: CMmDataCallTsy::CancelService - IPC: %d, Req handle: %d",aIpc, aTsyReqHandle);
+    TFLOGSTRING3("TSY: CMmDataCallTsy::CancelService - IPC: %d, Req handle: %d",
+        aIpc, aTsyReqHandle); 
 
     TInt ret( KErrNone );
 
@@ -640,8 +637,10 @@ void CMmDataCallTsy::CompleteNotifyStatusChange(
 
         callDataPackage->UnPackData( callStatus );
 
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \aResult: %d", aResult );
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \Call status: %d, Call name: %S", callStatus, iCallName);
+        TFLOGSTRING2("TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \
+            aResult: %d", aResult );
+        TFLOGSTRING3("TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \
+            Call status: %d, Call name: %S", callStatus, &iCallName);
 
         switch( callStatus )
             {
@@ -761,12 +760,12 @@ void CMmDataCallTsy::CompleteNotifyStatusChange(
 
                     if ( 0 < dialCancelHandle )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_3, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDial");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDial");                        
                         HangUp( dialCancelHandle );
                         } 
                     else if ( 0 < dialCancelHandleNoFdn )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_4, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDialNoFdnCheck");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDialNoFdnCheck");
                         HangUp( dialCancelHandleNoFdn );
                         } 
                     else
@@ -803,7 +802,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEN
                 // Check if the call is for Call Back functionality.
                 // E.g. client has dialled server, which calls back to 
                 // save user the data call charging.
-                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_5, "TSY: CMmDataCallTsy::Check for waiting call");
+                TFLOGSTRING("TSY: CMmDataCallTsy::Check for waiting call");
                 if ( this == iMmPhone->WaitingCallForData() )
                     {
                     // Client has already tried to answer the incoming 
@@ -838,7 +837,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEN
                         // it with CALL_CAUSE_NOT_ALLOWED    
                         if( RCall::EStatusAnswering == call->Status() )
                             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_6, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange Answering not allowed!");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteNotifyStatusChange Answering not allowed!");                                
                             TInt errorValue = 
                                 CMmCommonStaticUtility::EpocErrorCode( 
                                    KErrAccessDenied, KErrMMEtelCallForbidden );
@@ -1044,13 +1043,14 @@ TInt CMmDataCallTsy::Dial(
     const TDesC8* aCallParams,
     TDesC* aTelNumber )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_1, "TSY: CMmDataCallTsy::Dial - Req handle: %u, Call name: %S",aTsyReqHandle, iCallName);
+TFLOGSTRING3("TSY: CMmDataCallTsy::Dial - Req handle: %d, Call name: %S",
+    aTsyReqHandle, &iCallName);
 
 	if( aCallParams->Length()!= 0)
 		{
 		if(sizeof(RCall::TCallParams) > aCallParams->Length())
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_2, "TSY: CMmDataCallTsy::Dial bad size argument");
+			TFLOGSTRING ("TSY: CMmDataCallTsy::Dial bad size argument");
 			// Complete the request with appropiate error        
 			return KErrArgument;
 			}
@@ -1070,7 +1070,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_1
 	
 	if(!dialFlag )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "TSY: CMmDataCallTsy::Dial ONGOING" );
+TFLOGSTRING("TSY: CMmDataCallTsy::Dial ONGOING" );		
 		SetDialFlag( ETrue );
 		TTsyReqHandle dialHandle = 
 			iTsyReqHandleStore->GetTsyReqHandle( EMultimodeCallDial );
@@ -1083,7 +1083,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "
 	
 		if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() )  
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_4, "TSY: Offline mode ON, Dial request is not allowed" );
+			TFLOGSTRING("TSY: Offline mode ON, Dial request is not allowed" );
 			TInt ret = CMmCommonStaticUtility::EpocErrorCode(
 				KErrGeneral, KErrGsmOfflineOpNotAllowed );
 	
@@ -1098,7 +1098,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "
 			// is still in use.
 			// Complete request with status value informing the client
 			// about the situation.
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_5, "TSY: CMmDataCallTsy::Dial - KErrNotReady");
+			TFLOGSTRING("TSY: CMmDataCallTsy::Dial - KErrNotReady");
 			ReqCompleted( aTsyReqHandle, KErrNotReady );
 			}
 		else if ( 0 < dialHandle )
@@ -1106,7 +1106,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "
 			// The request is already in processing because of previous request
 			// Complete request with status value informing the client about 
 			// the situation.
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_6, "TSY: CMmDataCallTsy::Dial - KErrServerBusy");
+			TFLOGSTRING("TSY: CMmDataCallTsy::Dial - KErrServerBusy");
 			ReqCompleted( aTsyReqHandle, KErrServerBusy );
 			}
 		else
@@ -1170,7 +1170,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "
 	
 				if ( KErrNone == ret )
 					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_7, "TSY: CMmDataCallTsy::Dial - DialDataCall");
+					TFLOGSTRING("TSY: CMmDataCallTsy::Dial - DialDataCall");
 					TRAP( trapError,
 						ret = iMmCallExtInterface->DialDataCallL(
 							iCallMode, aCallParams, aTelNumber );
@@ -1231,8 +1231,9 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "
 void CMmDataCallTsy::CompleteDial(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIAL_1, "TSY: CMmDataCallTsy::CompleteDial - Result: %d", aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIAL_2, "TSY: CMmDataCallTsy::CompleteDial - Call Id: %d, Call name: %S",iCallId, iCallName);
+TFLOGSTRING2("TSY: CMmDataCallTsy::CompleteDial - Result: %d", aResult ); 
+TFLOGSTRING3("TSY: CMmDataCallTsy::CompleteDial - Call Id: %d, Call name: %S",
+    iCallId, &iCallName);
     
     // Set dial flag to false
     SetDialFlag( EFalse );
@@ -1285,7 +1286,8 @@ TInt CMmDataCallTsy::AnswerIncomingCall(
     const TTsyReqHandle aTsyReqHandle,
     const TDesC8* )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWERINCOMINGCALL_1, "TSY: CMmDataCallTsy::AnswerIncomingCall. \n\t\t\t Handle: %d",aTsyReqHandle);
+TFLOGSTRING2("TSY: CMmDataCallTsy::AnswerIncomingCall. \n\t\t\t Handle: %d",
+    aTsyReqHandle); 
 
     TTsyReqHandle answerCallHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EMultimodeCallAnswer );
@@ -1398,7 +1400,8 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWERINC
 TInt CMmDataCallTsy::AnswerIncomingCallCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWERINCOMINGCALLCANCEL_1, "TSY: CMmDataCallTsy::AnswerIncomingCallCancel. Req handle: %u, Call name: %S",aTsyReqHandle, iCallName);
+TFLOGSTRING3("TSY: CMmDataCallTsy::AnswerIncomingCallCancel. Req handle: %d, Call name: %S",
+    aTsyReqHandle, &iCallName);
 
     TInt ret( KErrNone );
 
@@ -1416,7 +1419,8 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWER
             }
         else 
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWERINCOMINGCALLCANCEL_2, "TSY: CMmDataCallTsy::AnswerIncomingCallCancel -- iCallStatus = %d", iCallStatus);
+TFLOGSTRING2("TSY: CMmDataCallTsy::AnswerIncomingCallCancel -- iCallStatus = %d", 
+    iCallStatus);       
             if ( RCall::EStatusUnknown == iCallStatus )
                 {               
                 // Cancel automatic answering
@@ -1460,8 +1464,10 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWERINC
 void CMmDataCallTsy::CompleteAnswerIncomingCall(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEANSWERINCOMINGCALL_1, "TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Result: %d",aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEANSWERINCOMINGCALL_2, "TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Call Id: %d, Call name: %S",iCallId, iCallName);
+TFLOGSTRING2("TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Result: %d",
+    aResult ); 
+TFLOGSTRING3("TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Call Id: %d, Call name: %S",
+    iCallId, &iCallName);
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle =
@@ -1523,7 +1529,8 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLE
 TInt CMmDataCallTsy::HangUp(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_1, "TSY: CMmDataCallTsy::HangUp - Req. handle: %u, Call name: %S",aTsyReqHandle, iCallName);
+TFLOGSTRING3("TSY: CMmDataCallTsy::HangUp - Req. handle: %d, Call name: %S",
+    aTsyReqHandle, &iCallName);
 
     TInt hangUpCause( KErrNone );
     TInt ret( KErrNone );
@@ -1540,7 +1547,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP
         //The request is already in processing because of previous request
         //Complete request with status value informing the client about 
         //the situation.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_2, "TSY: CMmDataCallTsy::HangUp - KErrServerBusy");
+TFLOGSTRING("TSY: CMmDataCallTsy::HangUp - KErrServerBusy");
         ReqCompleted( aTsyReqHandle, KErrServerBusy );
         }
     else if ( RCall::EStatusIdle == iCallStatus &&
@@ -1548,7 +1555,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_2,
         {
         //Call object is already in idle state. Complete HangUp request with
         //error.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_3, "TSY: CMmDataCallTsy::HangUp - KErrNotReady");
+TFLOGSTRING("TSY: CMmDataCallTsy::HangUp - KErrNotReady");        
         ReqCompleted( aTsyReqHandle, KErrNotReady );
         }
     else
@@ -1584,7 +1591,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_3,
         //ownership.
         if ( RCall::EStatusRinging == iCallStatus )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_4, "TSY: CMmDataCallTsy::HangUp - Reject incoming call");
+            TFLOGSTRING("TSY: CMmDataCallTsy::HangUp - Reject incoming call");
             }
         //Phone Application is the first client that is started, it 
         //will always be the priority client and thus able to hangup calls
@@ -1661,8 +1668,10 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_3,
 void CMmDataCallTsy::CompleteHangUp(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_1, "TSY: CMmDataCallTsy::CompleteHangUp.\n  \t\t\t Result: %d",aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_2, "TSY: CMmDataCallTsy::CompleteHangUp - Call Id: %d, Call name: %S", iCallId, iCallName);
+TFLOGSTRING2("TSY: CMmDataCallTsy::CompleteHangUp.\n  \t\t\t Result: %d",
+    aResult ); 
+TFLOGSTRING3("TSY: CMmDataCallTsy::CompleteHangUp - Call Id: %d, Call name: %S", 
+    iCallId, &iCallName);
 
     TInt ret( KErrNone );
 
@@ -1729,21 +1738,21 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLE
     // Complete for DialCancel or AnswerIncomingCallCancel, success
     else if ( KErrNone == aResult ) 
         { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_3, "TSY: CMmDataCallTsy::CompleteHangUp - EMultimodeCallDial");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp - EMultimodeCallDial");           
         // Find out if this is cancelling of Dial
         TTsyReqHandle cancelHandle =
             iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeCallDial ); 
 
         if ( NULL == cancelHandle ) 
             { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_4, "TSY: CMmDataCallTsy::CompleteHangUp - EMultimodeCallDialNoFdnCheck");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp - EMultimodeCallDialNoFdnCheck");                
 	        // Find out if this is cancelling of DialNoFdnCheck
 	        cancelHandle = iTsyReqHandleStore->
             ResetTsyReqHandle( EMultimodeCallDialNoFdnCheck );
         
             if ( NULL == cancelHandle )
                 { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_5, "TSY: CMmDataCallTsy::CompleteHangUp - EMultimodeCallAnswer");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp - EMultimodeCallAnswer");                
                 // Find out if this is cancelling of AnswerIncomingCall
                 cancelHandle = iTsyReqHandleStore->ResetTsyReqHandle(
                     EMultimodeCallAnswer );
@@ -1752,7 +1761,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEH
         
         if ( 0 < cancelHandle ) 
             { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_6, "TSY: CMmDataCallTsy::CompleteHangUp with KErrCancel");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp with KErrCancel");
              
             // Complete with error value KErrCancel
             ReqCompleted( cancelHandle, KErrCancel );
@@ -1785,7 +1794,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEH
 
         if ( NULL == cancelHandle ) 
             { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_7, "TSY: CMmDataCallTsy::CompleteHangUp - cancelling of EMultimodeCallDialNoFdnCheck");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp - cancelling of EMultimodeCallDialNoFdnCheck");     
             // Find out if this is cancelling of DialNoFdnCheck
             TTsyReqHandle cancelHandle =
                 iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -1793,7 +1802,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEH
             
             if ( NULL == cancelHandle )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_8, "TSY: CMmDataCallTsy::CompleteHangUp - cancelling of AnswerIncomingCall");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp - cancelling of AnswerIncomingCall");                     
                 // Find out if this is cancelling of AnswerIncomingCall
                 cancelHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
                     EMultimodeCallAnswer );
@@ -1804,7 +1813,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEH
         // Cancel to Dial or AnswerIncomingCall
         if ( 0 < cancelHandle ) 
             { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_9, "TSY: CMmDataCallTsy::CompleteHangUp - with KErrNone");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteHangUp - with KErrNone");             
             // Complete with success (KErrNone)
             ReqCompleted( cancelHandle, KErrNone ); 
 
@@ -2236,11 +2245,11 @@ void CMmDataCallTsy::CallComingForWaitingCall()
     {
     //Incoming call detected, which is directed to this call object
     //which should be waiting for incoming call
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CALLCOMINGFORWAITINGCALL_1, "TSY: CMmDataCallTsy::CallComingForWaitingCall");
+    TFLOGSTRING("TSY: CMmDataCallTsy::CallComingForWaitingCall");
 
     TInt ret( KErrNone );
 
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CALLCOMINGFORWAITINGCALL_2, "TSY: CMmDataCallTsy::AnswerIncomingCall - Data call");
+    TFLOGSTRING("TSY: CMmDataCallTsy::AnswerIncomingCall - Data call");
     //Answer incoming call
     TRAPD( trapError,
         ret = iMmCallExtInterface->AnswerIncomingDataCallL( iCallId );
@@ -2286,7 +2295,8 @@ TInt CMmDataCallTsy::LoanDataPort(
     const TTsyReqHandle aTsyReqHandle,
     RCall::TCommPort* aCommPort )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_LOANDATAPORT_1, "TSY: CMmDataCallTsy::LoanDataPort - Client taking control: %S",iCallName );
+TFLOGSTRING2("TSY: CMmDataCallTsy::LoanDataPort - Client taking control: %S",
+    &iCallName );
 
     TInt ret( KErrNone );
 
@@ -2396,7 +2406,8 @@ TInt CMmDataCallTsy::LoanDataPortCancel(
 TInt CMmDataCallTsy::RecoverDataPort(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_RECOVERDATAPORT_1, "TSY: CMmDataCallTsy::RecoverDataPort - Client returning control: %S",iCallName );
+TFLOGSTRING2("TSY: CMmDataCallTsy::RecoverDataPort - Client returning control: %S",
+    &iCallName );
 
     TInt ret( KErrNone );
 
@@ -2455,7 +2466,8 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_RECOVE
 //
 TInt CMmDataCallTsy::RecoverDataPortAndRelinquishOwnership()
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_RECOVERDATAPORTANDRELINQUISHOWNERSHIP_1, "TSY: CMmDataCallTsy::RecoverDataPortAndRelinquishOwnership - \Client returning control: %S", iCallName );
+TFLOGSTRING2("TSY: CMmDataCallTsy::RecoverDataPortAndRelinquishOwnership - \
+    Client returning control: %S", &iCallName );
 
     TInt ret( KErrNone );
 
@@ -2532,7 +2544,7 @@ TInt CMmDataCallTsy::Connect(
     const TTsyReqHandle aTsyReqHandle,
     const TDesC8* aCallParams )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CONNECT_1, "TSY: CMmDataCallTsy::Connect");
+TFLOGSTRING("TSY: CMmDataCallTsy::Connect");      
     if ( CheckOwnership( aTsyReqHandle ) == CCallBase::EOwnedUnowned )
         {
         SetOwnership( aTsyReqHandle );
@@ -2566,7 +2578,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CONNECT_1
     	}
     if(sizeof(RMobileCall::TMobileCallParamsV1) > aCallParams->Length())
        	{
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CONNECT_2, "TSY: CMmDataCallTsy::Connect bad size argument");
+        TFLOGSTRING ("TSY: CMmDataCallTsy::Connect bad size argument");
         // Complete the request with appropiate error        
         return KErrArgument;
     	}
@@ -2791,7 +2803,8 @@ TInt CMmDataCallTsy::SetDynamicHscsdParams(
     TInt ret( KErrNone );
     // HSCSD parameters can be set only if this call has been opened
     // from the phone's data line.
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_SETDYNAMICHSCSDPARAMS_1, "TSY: CMmDataCallTsy::SetDynamicHscsdParams.\n  \t\t\t Air Intrf: %d\n  \t\t\t RX slots: %d", *aAiur, *aRxTimeslots);
+TFLOGSTRING3("TSY: CMmDataCallTsy::SetDynamicHscsdParams.\n  \t\t\t Air Intrf: %d\n  \t\t\t RX slots: %d", 
+    *aAiur, *aRxTimeslots);
 
     iReqHandleType = EMultimodeCallSetDynamicHscsdParams;
 
@@ -2831,7 +2844,7 @@ TInt CMmDataCallTsy::SetDynamicHscsdParamsCancel(
 void CMmDataCallTsy::CompleteSetDynamicHscsdParams(
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETESETDYNAMICHSCSDPARAMS_1, "TSY: CMmDataCallTsy::CompleteSetDynamicHscsdParams");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteSetDynamicHscsdParams");    
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeCallSetDynamicHscsdParams );
@@ -2852,7 +2865,7 @@ TInt CMmDataCallTsy::GetCurrentHscsdInfo(
     const TTsyReqHandle aTsyReqHandle,
     TDes8* aHSCSDInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_GETCURRENTHSCSDINFO_1, "TSY: CMmDataCallTsy::GetCurrentHscsdInfo");
+TFLOGSTRING("TSY: CMmDataCallTsy::GetCurrentHscsdInfo");        
     TInt ret( KErrNone );
     // HSCSD info can be read only if this call has been opened from the 
     // phone's data line and call is connected.
@@ -2938,7 +2951,7 @@ TInt CMmDataCallTsy::NotifyHscsdInfoChangeCancel(
 //
 void CMmDataCallTsy::CompleteNotifyHscsdInfoChange()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYHSCSDINFOCHANGE_1, "TSY: CMmDataCallTsy::CompleteNotifyHscsdInfoChange");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteNotifyHscsdInfoChange");       
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeCallNotifyHscsdInfoChange );
@@ -2978,7 +2991,8 @@ TInt CMmDataCallTsy::DialNoFdnCheck(
     const TDesC8* aCallParams,
     TDesC* aTelNumber )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_1, "TSY: CMmDataCallTsy::DialNoFdnCheck - Req handle: %u, Call name: %S",aTsyReqHandle, iCallName);
+TFLOGSTRING3("TSY: CMmDataCallTsy::DialNoFdnCheck - Req handle: %d, Call name: %S",
+    aTsyReqHandle, &iCallName);
 
 	CMmCallList* callList = iMmPhone->CallList();
 	TBool dialFlag( EFalse );
@@ -2995,7 +3009,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNO
 	
 	if( !dialFlag )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_2, "TSY: CMmDataCallTsy::DialNoFdnCheck ONGOING" );
+TFLOGSTRING("TSY: CMmDataCallTsy::DialNoFdnCheck ONGOING" );		
     		
     	SetDialFlag( ETrue );
     		
@@ -3010,11 +3024,11 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDN
     
         if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() )  
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_3, "TSY: CMmDataCallTsy - DialNoFdnCheck - Offline mode ON, Dial request is not allowed" );
+TFLOGSTRING("TSY: CMmDataCallTsy - DialNoFdnCheck - Offline mode ON, Dial request is not allowed" );
             TInt ret = CMmCommonStaticUtility::EpocErrorCode(
                 KErrGeneral, KErrGsmOfflineOpNotAllowed );
             SetDialFlag( EFalse );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_4, "TSY: CMmDataCallTsy::DialNoFdnCheck - RF inactive -> dial-flag false" );
+TFLOGSTRING("TSY: CMmDataCallTsy::DialNoFdnCheck - RF inactive -> dial-flag false" );        
             // Complete the request with appropiate error
             ReqCompleted ( aTsyReqHandle, ret ); 
             }
@@ -3026,7 +3040,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDN
             // is still in use.
             // Complete request with status value informing the client
             // about the situation.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_5, "TSY: CMmDataCallTsy::DialNoFdnCheck - KErrNotReady");
+TFLOGSTRING("TSY: CMmDataCallTsy::DialNoFdnCheck - KErrNotReady");
             ReqCompleted( aTsyReqHandle, KErrNotReady );
             }
         else if ( 0 < dialHandle )
@@ -3034,7 +3048,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDN
             // Request is already in processing because of previous request
             // Complete request with status value informing the client about 
             // the situation.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_6, "TSY: CMmDataCallTsy::DialNoFdnCheck - KErrServerBusy");
+TFLOGSTRING("TSY: CMmDataCallTsy::DialNoFdnCheck - KErrServerBusy");
             ReqCompleted( aTsyReqHandle, KErrServerBusy );
             }
         else
@@ -3090,7 +3104,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDN
                     {
                     SetDialTypeId( KMultimodeCallTypeIDNoFdnCheck );
                     
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDNCHECK_7, "TSY: CMmDataCallTsy::DialNoFdnCheck - DialDataCall");
+TFLOGSTRING("TSY: CMmDataCallTsy::DialNoFdnCheck - DialDataCall");
                     TRAP( trapError,
                         ret = iMmCallExtInterface->DialDataCallL(
                             iCallMode, aCallParams, aTelNumber );
@@ -3154,8 +3168,9 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDN
 void CMmDataCallTsy::CompleteDialNoFdn(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_1, "TSY: CMmDataCallTsy::CompleteDialNoFdn - Result: %d", aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_2, "TSY: CMmDataCallTsy::CompleteDialNoFdn - Call Id: %d, Call name: %S",iCallId, iCallName);
+TFLOGSTRING2("TSY: CMmDataCallTsy::CompleteDialNoFdn - Result: %d", aResult ); 
+TFLOGSTRING3("TSY: CMmDataCallTsy::CompleteDialNoFdn - Call Id: %d, Call name: %S",
+    iCallId, &iCallName);
     
     // Set dial flag to false
     SetDialFlag( EFalse );
@@ -3179,10 +3194,10 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLE
             //complete caps change notification
             CompleteNotifyCapsChange();
             }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_3, "TSY: CMmDataCallTsy::CompleteDialNoFdn before ReqComplete %d", aResult );
+TFLOGSTRING2("TSY: CMmDataCallTsy::CompleteDialNoFdn before ReqComplete %d", aResult );
         ReqCompleted( reqHandle, aResult );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_4, "TSY: CMmDataCallTsy::CompleteDialNoFdn - set dialtype to none ");
+TFLOGSTRING("TSY: CMmDataCallTsy::CompleteDialNoFdn - set dialtype to none ");
 	    //Set dial type to none 
 	    SetDialTypeId( KMultimodeCallTypeDialNone );
         }
@@ -3217,7 +3232,7 @@ void CMmDataCallTsy::ReqCompleted(
     //Overloads CTelObject::ReqCompleted for logging purposes. It 
     //prints the aTsyReqHandle and aError variable in the log file and then 
     //calls CTelObject::ReqCompleted.
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQCOMPLETED_1, "TSY: CMmDataCallTsy::Request Completed. Handle:%d Error:%d", aTsyReqHandle, aError);
+TFLOGSTRING3("TSY: CMmDataCallTsy::Request Completed. Handle:%d Error:%d", aTsyReqHandle, aError); 
 
     CTelObject::ReqCompleted(aTsyReqHandle,aError);
     }

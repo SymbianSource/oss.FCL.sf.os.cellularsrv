@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -15,10 +15,7 @@
 //
 
 #include "imsextn.h"
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "imsextnTraces.h"
-#endif
+#include "qosextn_log.h"
 
 //#ifdef SYMBIAN_NETWORKING_UMTS5
 
@@ -135,13 +132,13 @@ EXPORT_C void CImsPolicy::SetImsParameter(const TImsParameter& aIms)
 	{
 	iIms = aIms;
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_1, "<------------------------------------------------\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_2, "CImsPolicy::SetImsParameter");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_3, "\n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_4, "IMS VALUE SUPPLIED BY CLIENT IS \n");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_5, "\n");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_6, "[IMS Signalling Indicator value is  :   = %d]\n",aIms.GetIMSSigallingIndicator());
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CIMSPOLICY_SETIMSPARAMETER_7, "------------------------------------------------>\n");
+	LOG(Log::Printf(_L("<------------------------------------------------\n")));
+	LOG(Log::Printf(_L("CImsPolicy::SetImsParameter")));
+	LOG(Log::Printf(_L("\n")));
+	LOG(Log::Printf(_L("IMS VALUE SUPPLIED BY CLIENT IS \n")));
+	LOG(Log::Printf(_L("\n")));
+	LOG(Log::Printf(_L("[IMS Signalling Indicator value is  :	 = %d]\n"),aIms.GetIMSSigallingIndicator()));
+	LOG(Log::Printf(_L("------------------------------------------------>\n")));
 	
 	}
 

@@ -1,5 +1,5 @@
 
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,17 +21,11 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimLineTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "CSimLine.h"
 #include "CSimPhone.h"
 #include "CSimCall.h"
+#include "Simlog.h"
 #include "CSimPubSub.h"
 
 void CSimLine::CloseLine(TAny* aObj)
@@ -61,7 +55,7 @@ void CSimLine::ConstructL(const TName& aName)
 * @param aName name of the Line to be created.
 */
 	{
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CONSTRUCTL_1, ">>CSimLine::ConstructL [aLineName=%S]", aName);
+	LOGLINE2(">>CSimLine::ConstructL [aLineName=%S]", &aName);
 	iLineName = aName;
 	iSimPubSubIC = CSimPubSub::NewL(this,iICProperty);
 	iSimPubSubIC->Start();
@@ -72,7 +66,7 @@ void CSimLine::ConstructL(const TName& aName)
 	iNotifyIncomingCallPause=this->CfgFile()->ItemValue(KNotifyIncomingCallPauseDuration,KDefaultNotifyIncomingCallPauseDuration);
 	
 	iTimer = CSimTimer::NewL(iPhone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CONSTRUCTL_2, "<<CSimLine::ConstructL");
+		LOGLINE1("<<CSimLine::ConstructL");
 }
 
 CSimLine::~CSimLine()
@@ -156,11 +150,11 @@ TInt CSimLine::NumberOfSlotsL(const TInt aIpc)
 	switch (aIpc)
 		{
 	case EMobileLineNotifyMobileLineStatusChange:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NUMBEROFSLOTSL_1, "CLineMobile: Registered with the default number of slots");
+		LOGLINE1("CLineMobile: Registered with the default number of slots");
 		return KDefaultNumberOfSlots;
 
 	default:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NUMBEROFSLOTSL_2, "CSimLine::NumberOfSlotsL: No match for IPC, defering to base function");
+		LOGLINE1("CSimLine::NumberOfSlotsL: No match for IPC, defering to base function");
 		break;
 		}
 	return CLineBase::NumberOfSlotsL(aIpc);
@@ -204,11 +198,11 @@ TInt CSimLine::NotifyIncomingCall(const TTsyReqHandle aTsyReqHandle, TName* aNam
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYINCOMINGCALL_1, ">>CSimLine::NotifyIncomingCall");
+	LOGLINE1(">>CSimLine::NotifyIncomingCall");
 	iNotifyIncomingCall.iNotifyPending=ETrue;
 	iNotifyIncomingCall.iNotifyHandle=aTsyReqHandle;
 	iNotifyIncomingCall.iNotifyData=(TAny*)aName;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYINCOMINGCALL_2, "<<CSimLine::NotifyIncomingCall");
+	LOGLINE1("<<CSimLine::NotifyIncomingCall");
 	return KErrNone;
 	}
 
@@ -221,14 +215,14 @@ TInt CSimLine::NotifyIncomingCallCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYINCOMINGCALLCANCEL_1, ">>CSimLine::NotifyIncomingCallCancel");
+	LOGLINE1(">>CSimLine::NotifyIncomingCallCancel");
 	if(iNotifyIncomingCall.iNotifyPending)
 		{
 		iTimer->Cancel();
 		iNotifyIncomingCall.iNotifyPending=EFalse;
 		ReqCompleted(iNotifyIncomingCall.iNotifyHandle, KErrCancel);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYINCOMINGCALLCANCEL_2, "<<CSimLine::NotifyIncomingCallCancel");
+	LOGLINE1("<<CSimLine::NotifyIncomingCallCancel");
 	return KErrNone;
 	}
 
@@ -242,11 +236,11 @@ TInt CSimLine::NotifyHookChange(const TTsyReqHandle aTsyReqHandle, RCall::THookS
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYHOOKCHANGE_1, ">>CSimLine::NotifyHookChange");
+	LOGLINE1(">>CSimLine::NotifyHookChange");
 	iNotifyHookChange.iNotifyPending=ETrue;
 	iNotifyHookChange.iNotifyHandle=aTsyReqHandle;
 	iNotifyHookChange.iNotifyData=(TAny*)aHookStatus;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYHOOKCHANGE_2, "<<CSimLine::NotifyHookChange");
+	LOGLINE1("<<CSimLine::NotifyHookChange");
 	return KErrNone;
 	}
 
@@ -259,13 +253,13 @@ TInt CSimLine::NotifyHookChangeCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYHOOKCHANGECANCEL_1, ">>CSimLine::NotifyHookChangeCancel");
+	LOGLINE1(">>CSimLine::NotifyHookChangeCancel");
 	if(iNotifyHookChange.iNotifyPending)
 		{
 		iNotifyHookChange.iNotifyPending=EFalse;
 		ReqCompleted(iNotifyHookChange.iNotifyHandle,KErrCancel);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYHOOKCHANGECANCEL_2, "<<CSimLine::NotifyHookChangeCancel");
+	LOGLINE1("<<CSimLine::NotifyHookChangeCancel");
 	return KErrNone;
 	}
 
@@ -280,11 +274,11 @@ TInt CSimLine::NotifyMobileLineStatusChange(const TTsyReqHandle aTsyReqHandle, R
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYMOBILELINESTATUSCHANGE_1, ">>CSimLine::NotifyMobileLineStatusChange");
+	LOGLINE1(">>CSimLine::NotifyMobileLineStatusChange");
 	iNotifyMobileStatusChange.iNotifyPending=ETrue;
 	iNotifyMobileStatusChange.iNotifyHandle=aTsyReqHandle;
 	iNotifyMobileStatusChange.iNotifyData=aStatus;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYMOBILELINESTATUSCHANGE_2, "<<CSimLine::NotifyMobileLineStatusChange");
+	LOGLINE1("<<CSimLine::NotifyMobileLineStatusChange");
 	return KErrNone;
 	}
 
@@ -297,13 +291,13 @@ TInt CSimLine::NotifyMobileLineStatusChangeCancel(const TTsyReqHandle /*aTsyReqH
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYMOBILELINESTATUSCHANGECANCEL_1, ">>CSimLine::NotifyMobileLineStatusChangeCancel");
+	LOGLINE1(">>CSimLine::NotifyMobileLineStatusChangeCancel");
 	if(iNotifyMobileStatusChange.iNotifyPending)
 		{
 		iNotifyMobileStatusChange.iNotifyPending=EFalse;
 		ReqCompleted(iNotifyMobileStatusChange.iNotifyHandle,KErrCancel);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYMOBILELINESTATUSCHANGECANCEL_2, "<<CSimLine::NotifyMobileLineStatusChangeCancel");
+	LOGLINE1("<<CSimLine::NotifyMobileLineStatusChangeCancel");
 	return KErrNone;
 	}
 
@@ -317,11 +311,11 @@ TInt CSimLine::NotifyStatusChange(const TTsyReqHandle aTsyReqHandle, RCall::TSta
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYSTATUSCHANGE_1, ">>CSimLine::NotifyStatusChange");
+	LOGLINE1(">>CSimLine::NotifyStatusChange");
 	iNotifyStatusChange.iNotifyPending=ETrue;
 	iNotifyStatusChange.iNotifyHandle=aTsyReqHandle;
 	iNotifyStatusChange.iNotifyData=aStatus;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYSTATUSCHANGE_2, "<<CSimLine::NotifyStatusChange");
+	LOGLINE1("<<CSimLine::NotifyStatusChange");
 	return KErrNone;
 	}
 
@@ -334,13 +328,13 @@ TInt CSimLine::NotifyStatusChangeCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYSTATUSCHANGECANCEL_1, ">>CSimLine::NotifyStatusChangeCancel");
+	LOGLINE1(">>CSimLine::NotifyStatusChangeCancel");
 	if(iNotifyStatusChange.iNotifyPending)
 		{
 		iNotifyStatusChange.iNotifyPending=EFalse;
 		ReqCompleted(iNotifyStatusChange.iNotifyHandle,KErrCancel);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYSTATUSCHANGECANCEL_2, "<<CSimLine::NotifyStatusChangeCancel");
+	LOGLINE1("<<CSimLine::NotifyStatusChangeCancel");
 	return KErrNone;
 	}
 
@@ -354,11 +348,11 @@ TInt CSimLine::NotifyCallAdded(const TTsyReqHandle aTsyReqHandle,TName* aName)
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYCALLADDED_1, ">>CSimLine::NotifyCallAdded");
+	LOGLINE1(">>CSimLine::NotifyCallAdded");
 	iNotifyCallAdded.iNotifyPending=ETrue;
 	iNotifyCallAdded.iNotifyHandle=aTsyReqHandle;
 	iNotifyCallAdded.iNotifyData=(TAny*)aName;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYCALLADDED_2, "<<CSimLine::NotifyCallAdded");
+	LOGLINE1("<<CSimLine::NotifyCallAdded");
 	return KErrNone;
 	}
 
@@ -371,13 +365,13 @@ TInt CSimLine::NotifyCallAddedCancel(const TTsyReqHandle /*aTsyReqHandle*/)
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYCALLADDEDCANCEL_1, ">>CSimLine::NotifyCallAddedCancel");
+	LOGLINE1(">>CSimLine::NotifyCallAddedCancel");
 	if(iNotifyCallAdded.iNotifyPending)
 		{
 		iNotifyCallAdded.iNotifyPending=EFalse;
 		ReqCompleted(iNotifyCallAdded.iNotifyHandle,KErrCancel);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_NOTIFYCALLADDEDCANCEL_2, "<<CSimLine::NotifyCallAddedCancel");
+	LOGLINE1("<<CSimLine::NotifyCallAddedCancel");
 	return KErrNone;
 	}
 
@@ -387,7 +381,7 @@ void CSimLine::HandleNewCallAddedNotification(const TDesC& aNewName)
 * Process a potential "New Call Added Notification" completion.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_HANDLENEWCALLADDEDNOTIFICATION_1, ">>CSimLine::HandleNewCallAddedNotification");
+	LOGLINE1(">>CSimLine::HandleNewCallAddedNotification");
 	iNameOfLastCallAdded.Copy(aNewName);
 	if(iNotifyCallAdded.iNotifyPending)
 		{
@@ -395,7 +389,7 @@ void CSimLine::HandleNewCallAddedNotification(const TDesC& aNewName)
 		((TName*)iNotifyCallAdded.iNotifyData)->Copy(aNewName);
 		ReqCompleted(iNotifyCallAdded.iNotifyHandle,KErrNone);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_HANDLENEWCALLADDEDNOTIFICATION_2, "<<CSimLine::HandleNewCallAddedNotification");
+	LOGLINE1("<<CSimLine::HandleNewCallAddedNotification");
 	}
 
 TInt CSimLine::GetCaps(const TTsyReqHandle aTsyReqHandle, RLine::TCaps* aCaps)
@@ -455,7 +449,7 @@ TInt CSimLine::GetInfo(const TTsyReqHandle aTsyReqHandle, RMobileLine::TLineInfo
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETINFO_1, ">>CSimLine::GetInfo");
+	LOGLINE1(">>CSimLine::GetInfo");
 	aLineInfo->iHookStatus=iHookState;
 	aLineInfo->iStatus=(RCall::TStatus)iState;
 	aLineInfo->iNameOfLastCallAdded.Copy(iNameOfLastCallAdded);
@@ -465,7 +459,7 @@ TInt CSimLine::GetInfo(const TTsyReqHandle aTsyReqHandle, RMobileLine::TLineInfo
 		aLineInfo->iNameOfCallForAnswering.Zero();
 
 	ReqCompleted(aTsyReqHandle,KErrNone);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETINFO_2, "<<CSimLine::GetInfo");
+	LOGLINE1("<<CSimLine::GetInfo");
 	return KErrNone;
 	}
 
@@ -510,10 +504,10 @@ TInt CSimLine::GetStatus(const TTsyReqHandle aTsyReqHandle,RCall::TStatus* aLine
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETSTATUS_1, ">>CSimLine::GetStatus");
+	LOGLINE1(">>CSimLine::GetStatus");
 	*aLineStatus=GetCoreLineStatus();
 	ReqCompleted(aTsyReqHandle,KErrNone);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETSTATUS_2, "<<CSimLine::GetStatus");
+	LOGLINE1("<<CSimLine::GetStatus");
 	return KErrNone;
 	}
 
@@ -527,10 +521,10 @@ TInt CSimLine::GetMobileLineStatus(const TTsyReqHandle aTsyReqHandle,RMobileCall
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETMOBILELINESTATUS_1, ">>CSimLine::GetMobileLineStatus");
+	LOGLINE1(">>CSimLine::GetMobileLineStatus");
 	*aLineStatus=iState;
 	ReqCompleted(aTsyReqHandle,KErrNone);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETMOBILELINESTATUS_2, "<<CSimLine::GetMobileLineStatus");
+	LOGLINE1("<<CSimLine::GetMobileLineStatus");
 	return KErrNone;
 	}
 
@@ -544,10 +538,10 @@ TInt CSimLine::GetHookStatus(const TTsyReqHandle aTsyReqHandle,RCall::THookStatu
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETHOOKSTATUS_1, ">>CSimLine::GetHookStatus");
+	LOGLINE1(">>CSimLine::GetHookStatus");
 	*aHookStatus=iHookState;
 	ReqCompleted(aTsyReqHandle,KErrNone);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_GETHOOKSTATUS_2, "<<CSimLine::GetHookStatus");
+	LOGLINE1("<<CSimLine::GetHookStatus");
 	return KErrNone;
 	}
 
@@ -558,7 +552,7 @@ const CTestConfigSection* CSimLine::CfgFile()
 * @return CTestConfig a pointer to the configuration file data section
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CFGFILE_1, ">>CSimLine::CfgFile");
+	LOGLINE1(">>CSimLine::CfgFile");
 	return iPhone->CfgFile();
 	}
 
@@ -579,7 +573,7 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 	TInt count=iCalls->Count();
 	for(i=0;i<count;i++)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_1, ">>CSimLine::ChangeState0 0x%08x %d",(TUint)iCalls->At(i),iCalls->At(i)->iState);
+		LOGLINE3(">>CSimLine::ChangeState0 0x%08x %d",iCalls->At(i),iCalls->At(i)->iState);
 		}
 	
 	TInt ret=KErrGeneral;
@@ -599,7 +593,7 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 	if(ret!=KErrNone && !(aSwap && iState==RMobileCall::EStatusConnected && aNewState==RMobileCall::EStatusConnected))
 		return ret;
  
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_2, ">>CSimLine::ChangeState 0x%08x",aOriginatingCall);
+	LOGLINE2(">>CSimLine::ChangeState 0x%08x",aOriginatingCall);
 	if(aNewState==RMobileCall::EStatusIdle)
 		{
 		if(iState==RMobileCall::EStatusIdle)
@@ -610,7 +604,7 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 			TInt count=iCalls->Count();
 			for(i=0;i<count;i++)
 				{
-				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_3, ">>CSimLine::ChangeState1 0x%08x %d",(TUint)iCalls->At(i),iCalls->At(i)->iState);
+				LOGLINE3(">>CSimLine::ChangeState1 0x%08x %d",iCalls->At(i),iCalls->At(i)->iState);
 	
 				if(aOriginatingCall!=iCalls->At(i) && iCalls->At(i)->iState != RMobileCall::EStatusIdle)
 					{
@@ -633,7 +627,7 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 		TInt count=iCalls->Count();
 		for(i=0;i<count;i++)
 			{
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_4, ">>CSimLine::ChangeState1 0x%08x %d",(TUint)iCalls->At(i),iCalls->At(i)->iState);
+			LOGLINE3(">>CSimLine::ChangeState1 0x%08x %d",iCalls->At(i),iCalls->At(i)->iState);
 			if(iCalls->At(i) != aOriginatingCall && iCalls->At(i)->iState == RMobileCall::EStatusHold)
 				{
 				if(aSwap)
@@ -653,7 +647,7 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 		TInt count=iCalls->Count();
 		for(i=0;i<count;i++)
 			{
-			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_5, ">>CSimLine::ChangeState1 0x%08x %d",(TUint)iCalls->At(i),iCalls->At(i)->iState);
+			LOGLINE3(">>CSimLine::ChangeState1 0x%08x %d",iCalls->At(i),iCalls->At(i)->iState);
 			if(iCalls->At(i) != aOriginatingCall)
 				{
 				if(iCalls->At(i)->iState == RMobileCall::EStatusConnected)
@@ -675,7 +669,7 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 		}
 
 	// Actually change the state.
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_6, ">>CSimLine::ChangeState [oldState=%d]  [newState=%d]", iState, aNewState);
+	LOGLINE3(">>CSimLine::ChangeState [oldState=%d]  [newState=%d]", iState, aNewState);
 	
 	if(iState != aNewState)
 		{
@@ -730,10 +724,10 @@ TInt CSimLine::ChangeStateL(RMobileCall::TMobileCallStatus aNewState,TBool aSwap
 
 	for(i=0;i<iCalls->Count();i++)
 		{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_7, ">>CSimLine::ChangeState5 0x%08x %d",(TUint)iCalls->At(i),iCalls->At(i)->iState);
+	LOGLINE3(">>CSimLine::ChangeState5 0x%08x %d",iCalls->At(i),iCalls->At(i)->iState);
 		}
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_CHANGESTATEL_8, "<<CSimLine::ChangeState");
+	LOGLINE1("<<CSimLine::ChangeState");
 	return KErrNone;
 	}
 
@@ -744,12 +738,12 @@ Handles the P&S notifications for the Line class
 @param aProperty The property key representing the notification. 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_SIMPSEVENT_1, ">>CSimLine::SimPSEvent");
+	LOGLINE1(">>CSimLine::SimPSEvent");
 	if(aProperty==iICProperty) // check for this here still, start the timer for amount specified in config file.
 		ProcessIncomingCallEvent();
 	if(aProperty==iRHProperty)
 		ProcessRemoteHangupEvent();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_SIMPSEVENT_2, "<<CSimLine::SimPSEvent");
+	LOGLINE1("<<CSimLine::SimPSEvent");
 	}
 
 TInt CSimLine::SetAutoAnswerCallObject(CSimCall* aCallObject)
@@ -762,7 +756,7 @@ TInt CSimLine::SetAutoAnswerCallObject(CSimCall* aCallObject)
 * @return KErrNone if successful
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_SETAUTOANSWERCALLOBJECT_1, ">>CSimLine::SetAnswerCallObject");
+	LOGLINE1(">>CSimLine::SetAnswerCallObject");
 	if(iAnswerIncomingCallReqPending)			// Is there a request already outstanding?
 		return KErrEtelAnswerAlreadyOutstanding;
 
@@ -776,7 +770,7 @@ TInt CSimLine::SetAutoAnswerCallObject(CSimCall* aCallObject)
 		iAnswerNextIncomingCall=aCallObject;		// Set the "answer next call" object
 		iAnswerNextIncomingCall->Open();
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_SETAUTOANSWERCALLOBJECT_2, "<<CSimLine::SetAnswerCallObject");
+	LOGLINE1("<<CSimLine::SetAnswerCallObject");
 	return KErrNone;
 	}
 
@@ -788,7 +782,7 @@ void CSimLine::ResetAutoAnswerCallObject(CSimCall* aCallObject)
 * @param aCallObject pointer to the call object
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_RESETAUTOANSWERCALLOBJECT_1, ">>CSimLine::ResetAnswerCallObject");
+	LOGLINE1(">>CSimLine::ResetAnswerCallObject");
 	__ASSERT_ALWAYS(iAnswerNextIncomingCall==aCallObject,SimPanic(EIllegalAnswerNextIncomingCallInconsistancy));
 	iAnswerNextIncomingCall->Close();
 	iAnswerNextIncomingCall=iSpareCall;
@@ -800,7 +794,7 @@ void CSimLine::ProcessIncomingCallEvent()
 * Process an incoming call event.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSINCOMINGCALLEVENT_1, ">>CSimLine::ProcessIncomingCallEvent ");
+	LOGLINE1(">>CSimLine::ProcessIncomingCallEvent ");
 
 	if (iSpareCall == iAnswerNextIncomingCall)
 		{
@@ -817,7 +811,7 @@ void CSimLine::ProcessIncomingCallEvent()
 	iTimer->Start(iNotifyIncomingCallPause, this);
 	
 	__ASSERT_ALWAYS(iAnswerNextIncomingCall->ActionEvent(CSimCall::ECallEventIncomingCall,KErrNone) == KErrNone, SimPanic(EGeneral));
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSINCOMINGCALLEVENT_2, "<<CSimLine::ProcessIncomingCallEvent");
+	LOGLINE1("<<CSimLine::ProcessIncomingCallEvent");
 	}
 
 TInt CSimLine::SetRemoteHangupCallObject(CSimCall* aCallObject)
@@ -830,7 +824,7 @@ TInt CSimLine::SetRemoteHangupCallObject(CSimCall* aCallObject)
 * @return KErrNone if successful
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_SETREMOTEHANGUPCALLOBJECT_1, ">>CSimLine::SetRemoteHangupCallObject");
+	LOGLINE1(">>CSimLine::SetRemoteHangupCallObject");
 	if(iRemoteHangupCallReqPending)			// Is there a request already outstanding?
 		return KErrEtelInitialisationFailure;
 
@@ -839,7 +833,7 @@ TInt CSimLine::SetRemoteHangupCallObject(CSimCall* aCallObject)
 		{
 		iRemoteHangupCall=aCallObject;		// Set the "remote hang up" object
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_SETREMOTEHANGUPCALLOBJECT_2, "<<CSimLine::SetRemoteHangupCallObject");
+	LOGLINE1("<<CSimLine::SetRemoteHangupCallObject");
 	return KErrNone;
 	}
 
@@ -851,7 +845,7 @@ void CSimLine::ResetRemoteHangupCallObject(CSimCall* aCallObject)
 * @param aCallObject pointer to the call object
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_RESETREMOTEHANGUPCALLOBJECT_1, ">>CSimLine::ResetRemoteHangupCallObject");
+	LOGLINE1(">>CSimLine::ResetRemoteHangupCallObject");
 	__ASSERT_ALWAYS(iRemoteHangupCall==aCallObject,SimPanic(EIllegalAnswerRemoteHangupCallInconsistency));
 	iRemoteHangupCallReqPending=EFalse;
 	}
@@ -861,7 +855,7 @@ void CSimLine::ProcessRemoteHangupEvent()
 * Process a remote hangup event.
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSREMOTEHANGUPEVENT_1, ">>CSimLine::ProcessRemoteHangupEvent");
+	LOGLINE1(">>CSimLine::ProcessRemoteHangupEvent");
 
 	if (iRemoteHangupCall == NULL)
 		{
@@ -871,15 +865,15 @@ void CSimLine::ProcessRemoteHangupEvent()
 			err = iRemoteHangupCall->ActionEvent(CSimCall::ECallEventRemoteHangup,KErrNone);
 			if(err != KErrNone)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSREMOTEHANGUPEVENT_2, "ERROR: CSimLine::ProcessRemoteHangupEvent returned: %d", err);
+				LOGLINE2("ERROR: CSimLine::ProcessRemoteHangupEvent returned: %d", err);
 				}
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSREMOTEHANGUPEVENT_3, "No outstanding call to hang up remotely");
+			LOGLINE1("No outstanding call to hang up remotely");
 			}
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSREMOTEHANGUPEVENT_4, "<<CSimLine::ProcessRemoteHangupEvent");
+	LOGLINE1("<<CSimLine::ProcessRemoteHangupEvent");
 	}
 
 void CSimLine::CallDestructor(CSimCall* aCall)
@@ -921,13 +915,13 @@ Send notification of an incoming call.
 */
 void CSimLine::ProcessNotifyIncomingCallEvent()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSNOTIFYINCOMINGCALLEVENT_1, ">>CSimLine::ProcessNotifyIncomingCallEvent");
+	LOGLINE1(">>CSimLine::ProcessNotifyIncomingCallEvent");	
 	if(iNotifyIncomingCall.iNotifyPending)
 		{
 		iNotifyIncomingCall.iNotifyPending=EFalse;
 		((TName*)iNotifyIncomingCall.iNotifyData)->Copy(iAnswerNextIncomingCall->iName);
 		ReqCompleted(iNotifyIncomingCall.iNotifyHandle,KErrNone);
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMLINE_PROCESSNOTIFYINCOMINGCALLEVENT_2, "<<CSimLine::ProcessNotifyIncomingCallEvent");
+	LOGLINE1("<<CSimLine::ProcessNotifyIncomingCallEvent");	
 	}
 

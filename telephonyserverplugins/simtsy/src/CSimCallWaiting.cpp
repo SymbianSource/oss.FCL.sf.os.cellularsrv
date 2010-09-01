@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,16 +20,11 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimCallWaitingTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "CSimCallWaiting.h"
 #include "CSimPhone.h"
+#include "Simlog.h"
+
 const TInt KMobServiceIndxStart = 1;
 const TInt KMobServiceIndxEnd   = 5;
 
@@ -63,11 +58,11 @@ void CSimCallWaiting::ConstructL()
   	Retrieves all the Call waiting related tags from the config file
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_CONSTRUCTL_1, "Starting to parse Call waiting config parameters...");
+	LOGCALL1("Starting to parse Call waiting config parameters...");
 
 	iGetCWStatus = new(ELeave) CArrayPtrFlat<CListReadAllAttempt>(1);
 	FindAndCreateCWListL();
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_CONSTRUCTL_2, "...Finished parsing Call waiting config parameters...");
+	LOGCALL1("...Finished parsing Call waiting config parameters...");
 	}
 	
 void CSimCallWaiting::FindAndCreateCWListL()
@@ -76,7 +71,7 @@ void CSimCallWaiting::FindAndCreateCWListL()
   	Retrieves all the Call waiting tags that define the 
   	original status of Call waiting from the config file
 */
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_FINDANDCREATECWLISTL_1, "CSimPhone::FindAndCreateCWListL");
+	LOGCALL1("CSimPhone::FindAndCreateCWListL");
 	RMobilePhone::TMobilePhoneCWInfoEntryV1 entry;
 
 	iCWList = CMobilePhoneCWList::NewL();
@@ -84,7 +79,7 @@ void CSimCallWaiting::FindAndCreateCWListL()
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_FINDANDCREATECWLISTL_2, "Starting to Load and Parse CWList Config parameters");
+	LOGCALL1("Starting to Load and Parse CWList Config parameters");
 	TInt i;
 	for(i=0;i<count;i++)
 		{
@@ -97,14 +92,14 @@ void CSimCallWaiting::FindAndCreateCWListL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,serviceGroup);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_FINDANDCREATECWLISTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element SERVICEGROUP returned %d (element no. %d) from tag %s.",ret,0,KCWList);
+			LOGPARSERR("serviceGroup",ret,0,&KCWList);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,status);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_FINDANDCREATECWLISTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element STATUS returned %d (element no. %d) from tag %s.",ret,1,KCWList);
+			LOGPARSERR("status",ret,1,&KCWList);
 			continue;
 			}
 		
@@ -186,7 +181,7 @@ TInt CSimCallWaiting::NotifyCallWaitingStatusChange(const TTsyReqHandle aReqHand
 	iCWNotification.iCWChangeInfoNotificationPending=ETrue;
 	iCWNotification.iCWChangeInfoReqHandle=aReqHandle;
 	iCWNotification.iCWInfo=aCW;
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_NOTIFYCALLWAITINGSTATUSCHANGE_1, "Finished CSimCallWaiting::NotifyCallWaitingStatusChange");
+	LOGCALL1("Finished CSimCallWaiting::NotifyCallWaitingStatusChange");
 	return KErrNone;
 	}
 
@@ -287,7 +282,7 @@ TInt CSimCallWaiting::GetCallWaitingStatusPhase1(const TTsyReqHandle aTsyReqHand
 	@param aReqData information about the request
 	@param aBufSize Size of the buffer the client has to allocate for the 2nd pahase
   	*/
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_GETCALLWAITINGSTATUSPHASE1_1, "CSimCallWaiting::GetCalWaitingStatusPhase1");
+	LOGCALL1("CSimCallWaiting::GetCalWaitingStatusPhase1");
 	
 	TInt ret=KErrNone;
 	TInt leaveCode=KErrNone;
@@ -295,7 +290,7 @@ TInt CSimCallWaiting::GetCallWaitingStatusPhase1(const TTsyReqHandle aTsyReqHand
 	if (leaveCode != KErrNone)
 			iPhone->ReqCompleted(aTsyReqHandle,leaveCode);
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_GETCALLWAITINGSTATUSPHASE1_2, "CSimCallWaiting::GetCalWaitingStatusPhase1");
+	LOGCALL1("CSimCallWaiting::GetCalWaitingStatusPhase1");
 	return ret;
 	}
 	
@@ -310,7 +305,7 @@ TInt CSimCallWaiting::ProcessGetCallWaitingStatusPhase1L(const TTsyReqHandle aTs
 	@param aReqData information about the request
 	@param aBufSize Size of the buffer the client has to allocate for the 2nd pahase
 	*/
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_PROCESSGETCALLWAITINGSTATUSPHASE1L_1, "CSimCallWaiting::ProcessGetCallWaitingStatusPhase1L");
+	LOGCALL1("CSimCallWaiting::ProcessGetCallWaitingStatusPhase1L");
 
 	CMobilePhoneCWList* list=CMobilePhoneCWList::NewL();
 	CleanupStack::PushL(list);
@@ -361,7 +356,7 @@ TInt CSimCallWaiting::ProcessGetCallWaitingStatusPhase1L(const TTsyReqHandle aTs
 	// Complete first phase of list retrieval
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_PROCESSGETCALLWAITINGSTATUSPHASE1L_2, "CSimCallWaiting::ProcessGetCallWaitingStatusPhase1L");
+	LOGCALL1("CSimCallWaiting::ProcessGetCallWaitingStatusPhase1L");
 	return KErrNone;
 	}
 
@@ -374,7 +369,7 @@ TInt CSimCallWaiting::GetCallWaitingStatusPhase2(const TTsyReqHandle aTsyReqHand
 	@param aClient Ponter to the client
 	@param aBuf Buffer containiong the call waiting status list
 	*/
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_GETCALLWAITINGSTATUSPHASE2_1, "CSimCallWaiting::GetCallWaitingStatusPhase2");
+	LOGCALL1("CSimCallWaiting::GetCallWaitingStatusPhase2");
 	CListReadAllAttempt* read=NULL;
 	// Find the get detected network attempt from this client
 	for (TInt i=0; i<iGetCWStatus->Count(); ++i)
@@ -393,7 +388,7 @@ TInt CSimCallWaiting::GetCallWaitingStatusPhase2(const TTsyReqHandle aTsyReqHand
 			}
 		}
 	// Should handle error case of not finding the matching client from read all phase 1
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_GETCALLWAITINGSTATUSPHASE2_2, "CSimCallWaiting::GetCallWaitingStatusPhase2");
+	LOGCALL1("CSimCallWaiting::GetCallWaitingStatusPhase2");
 	return KErrNotFound;
 	}
 
@@ -403,7 +398,7 @@ TInt CSimCallWaiting::GetCallWaitingStatusCancel(const TTsyReqHandle aTsyReqHand
 	Cancels a Request to retrieve the call waiting status list
 	@param aReqHandle Handle to the request
 	*/
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_GETCALLWAITINGSTATUSCANCEL_1, "CSimCallWaiting::GetCallWaitingStatusCancel");
+	LOGCALL1("CSimCallWaiting::GetCallWaitingStatusCancel");
 	iPhone->ReqCompleted(aTsyReqHandle,KErrNone);
 	// Remove the read all attempt from iGetCBStatus
 	CListReadAllAttempt* read=NULL;
@@ -418,7 +413,7 @@ TInt CSimCallWaiting::GetCallWaitingStatusCancel(const TTsyReqHandle aTsyReqHand
 			}
 		}
 	iPhone->ReqCompleted(aTsyReqHandle,KErrCancel);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMCALLWAITING_GETCALLWAITINGSTATUSCANCEL_2, "CSimCallWaiting::GetCallWaitingStatusCancel");
+	LOGCALL1("CSimCallWaiting::GetCallWaitingStatusCancel");
 	return KErrNone;
 	}
 	

@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,17 +19,11 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimDtmfTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "CSimDtmf.h"
 #include "CSimPhone.h"
 #include "CSimVoiceCall.h"
+#include "Simlog.h"
 
 const TInt KPauseDuration=2;		//< The duration of a "pause" DTMF character.
 const TInt KDtmfToneDuration=3;		//< The duration of a standard DTMF character (tone or "pause").
@@ -296,7 +290,7 @@ TInt CSimDtmf::ActionEvent(TEvent aEvent,const TChar& aTone)
 	case EEventTimer:
 		__ASSERT_ALWAYS(iState==ETxTone,SimPanic(EIllegalDtmfEvent));
 		__ASSERT_ALWAYS(iDtmfString,SimPanic(EIllegalDtmfEvent));
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDTMF_ACTIONEVENT1_1, "Completed sending DTMF Tone");
+		LOGMISC1("Completed sending DTMF Tone");
 		iDtmfStringIndex++;
 		if(iDtmfStringIndex<iDtmfData->Length())
 			ret = ProcessTone((*iDtmfData)[iDtmfStringIndex],ETrue);
@@ -312,7 +306,7 @@ TInt CSimDtmf::ActionEvent(TEvent aEvent,const TChar& aTone)
 			return KErrInUse;
 		if(iState!=ETxTone)			// If there's been no StartDtmfTone, then return an error.
 			return KErrUnknown;
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDTMF_ACTIONEVENT1_2, "Stopping DTMF Tone");
+		LOGMISC1("Stopping DTMF Tone");
 		iState=EIdle;
 		return KErrNone;
 
@@ -320,7 +314,7 @@ TInt CSimDtmf::ActionEvent(TEvent aEvent,const TChar& aTone)
 		if(iState!=EStopped)
 			return KErrUnknown;
 		__ASSERT_ALWAYS(iDtmfString,SimPanic(EIllegalDtmfEvent));
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDTMF_ACTIONEVENT1_3, "Continuing Transmitting a DTMF string after a wait");
+		LOGMISC1("Continuing Transmitting a DTMF string after a wait");
 		iDtmfStringIndex++;
 		if(iDtmfStringIndex<iDtmfData->Length())
 			ret = ProcessTone((*iDtmfData)[iDtmfStringIndex],ETrue);
@@ -370,14 +364,14 @@ TInt CSimDtmf::ProcessTone(const TChar& aTone, TBool aStartTimer)
 
 	if(aTone==wait)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDTMF_PROCESSTONE_1, "Starting to perform a DTMF wait; character w");
+		LOGMISC1("Starting to perform a DTMF wait; character w");
 		iState=EStopped;
 		CheckNotification();
 		return KErrNone;
 		}
 	else if(aTone.IsDigit()||(aTone>='A')&&(aTone<='D'))
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDTMF_PROCESSTONE_2, "Starting to send DTMF Tone %u", TUint(aTone));
+		LOGMISC2("Starting to send DTMF Tone %c", TUint(aTone));
 		iState=ETxTone;
 		if(aStartTimer)
 			{
@@ -391,7 +385,7 @@ TInt CSimDtmf::ProcessTone(const TChar& aTone, TBool aStartTimer)
 			{
 			return KErrArgument;  // can't tx a single "pause" character
 			}
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMDTMF_PROCESSTONE_3, "Starting to perform a DTMF pause; character p");
+		LOGMISC1("Starting to perform a DTMF pause; character p");
 		iState=ETxTone;
 		iTimer->Start(KPauseDuration,this);
 		return KErrNone;

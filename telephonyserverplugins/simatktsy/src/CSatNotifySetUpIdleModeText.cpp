@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,12 +20,6 @@
 
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSatNotifySetUpIdleModeTextTraces.h"
-#endif
-
 #include <satcs.h>						// Etel SAT IPC definitions
 #include "CSatTsy.h"					// Tsy class header
 #include "CSatNotifySetUpIdleModeText.h"// Tsy class header
@@ -33,6 +27,7 @@
 #include "CBerTlv.h"					// Ber Tlv data handling
 #include "TTlv.h"						// TTlv class
 #include "CSatDataPackage.h"			// Parameter packing 
+#include "TfLogger.h"					// For TFLOGSTRING
 #include "TSatUtility.h"				// Utilities
 #include "CSatTsyReqHandleStore.h"		// Request handle class
 #include "cmmmessagemanagerbase.h"		// Message manager class for forwarding req.
@@ -47,13 +42,13 @@ CSatNotifySetUpIdleModeText* CSatNotifySetUpIdleModeText::NewL
         CSatNotificationsTsy* aNotificationsTsy 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_NEWL_1, "CSAT: CSatNotifySetUpIdleModeText::NewL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::NewL");
    	CSatNotifySetUpIdleModeText* const satNotifySetUpIdleModeText = 
         new ( ELeave ) CSatNotifySetUpIdleModeText( aNotificationsTsy );
     CleanupStack::PushL( satNotifySetUpIdleModeText );
     satNotifySetUpIdleModeText->ConstructL();
     CleanupStack::Pop( satNotifySetUpIdleModeText );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_NEWL_2, "CSAT: CSatNotifySetUpIdleModeText::NewL, end of method");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::NewL, end of method");
     return satNotifySetUpIdleModeText;
     }
 
@@ -67,7 +62,8 @@ CSatNotifySetUpIdleModeText::~CSatNotifySetUpIdleModeText
 		// None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_DTOR_1, "CSAT: CSatNotifySetUpIdleModeText::~CSatNotifySetUpIdleModeText");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::\
+        ~CSatNotifySetUpIdleModeText");
     }
     
 // -----------------------------------------------------------------------------
@@ -93,7 +89,7 @@ void CSatNotifySetUpIdleModeText::ConstructL
         // None
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_CONSTRUCTL_1, "CSAT: CSatNotifySetUpIdleModeText::ConstructL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::ConstructL");
     }
 
 // -----------------------------------------------------------------------------
@@ -108,7 +104,7 @@ TInt CSatNotifySetUpIdleModeText::Notify
         const TDataPackage& aPackage    
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_NOTIFY_1, "CSAT: CSatNotifySetUpIdleModeText::Notify");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::Notify");
     // Save data pointer to client side for completion
     iSetUpIdleModeTextV1Pckg = reinterpret_cast<RSat::
     	TSetUpIdleModeTextV1Pckg*>( aPackage.Des1n() );
@@ -133,7 +129,7 @@ TInt CSatNotifySetUpIdleModeText::CancelNotification
         const TTsyReqHandle aTsyReqHandle
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_CANCELNOTIFICATION_1, "CSAT: CSatNotifySetUpIdleModeText::CancelNotification");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::CancelNotification");
     
     // Reset the request handle
     TTsyReqHandle reqHandle = iNotificationsTsy->iSatReqHandleStore->
@@ -158,7 +154,7 @@ TInt CSatNotifySetUpIdleModeText::CompleteNotifyL
         TInt aErrorCode                  
         )
     {   
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_COMPLETENOTIFYL_1, "CSAT: CSatNotifySetUpIdleModeText::CompleteNotifyL");
+	TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::CompleteNotifyL");
     TInt ret( KErrNone );
 	TInt returnValue( KErrNone );
 	TBuf<1> additionalInfo;	
@@ -228,7 +224,8 @@ TInt CSatNotifySetUpIdleModeText::CompleteNotifyL
 				( ( RSat::ERemoveExistingIdleModeText == setUpIdleModeTextV1.iType) && 
 				  ( RSat::ENotSelfExplanatory==setUpIdleModeTextV1.iIconId.iQualifier)) )
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_COMPLETENOTIFYL_2, "CSAT: CSatNotifySetUpIdleModeText::CompleteNotifyL, Invalid Data");
+				TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::\
+								    CompleteNotifyL, Invalid Data");
 				additionalInfo.Zero();
                 additionalInfo.Append( KNoCause );
 				CreateTerminalRespL( pCmdNumber, RSat::KCmdDataNotUnderstood, 
@@ -247,7 +244,8 @@ TInt CSatNotifySetUpIdleModeText::CompleteNotifyL
         } // End of if ( reqHandle != CSatTsy::ESatReqHandleUnknown )
     else 
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_COMPLETENOTIFYL_3, "CSAT: CSatNotifySetUpIdleModeText::CompleteNotifyL, Request not ongoing");
+        TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::CompleteNotifyL,\
+            Request not ongoing");
         // Request not on, returning response immediately
 		additionalInfo.Zero();
         additionalInfo.Append( KNoCause );
@@ -270,7 +268,7 @@ TInt CSatNotifySetUpIdleModeText::TerminalResponseL
         TDes8* aRsp 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_TERMINALRESPONSEL_1, "CSAT: CSatNotifySetUpIdleModeText::TerminalResponseL");
+    TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::TerminalResponseL");
 
 	TInt   ret( KErrNone );
     TBuf<1> additionalInfo;
@@ -291,7 +289,8 @@ TInt CSatNotifySetUpIdleModeText::TerminalResponseL
          ( RSat::KCmdDataNotUnderstood != rspV1.iGeneralResult ) &&
          ( RSat::KSuccessRequestedIconNotDisplayed != rspV1.iGeneralResult ) )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_TERMINALRESPONSEL_2, "CSAT: CSatNotifySetUpIdleModeText::TerminalResponseL, Invalid General Result");
+        TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::TerminalResponseL,\
+            Invalid General Result");
         // Invalid general result
         ret = KErrCorrupt;
         }
@@ -306,7 +305,8 @@ TInt CSatNotifySetUpIdleModeText::TerminalResponseL
 			}
         else
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_TERMINALRESPONSEL_3, "CSAT: CSatNotifySetUpIdleModeText::TerminalResponseL, Invalid Additional Info");
+            TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::TerminalResponseL,\
+                Invalid Additional Info");
             // Invalid additional info field
             ret = KErrCorrupt;
             }
@@ -331,7 +331,7 @@ TInt CSatNotifySetUpIdleModeText::CreateTerminalRespL
         TDesC16& aAdditionalInfo			
 		)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATNOTIFYSETUPIDLEMODETEXT_CREATETERMINALRESPL_1, "CSAT: CSatNotifySetUpIdleModeText::CreateTerminalRespL");
+	TFLOGSTRING("CSAT: CSatNotifySetUpIdleModeText::CreateTerminalRespL");
 	TTlv tlvSpecificData;
     // Create General Result TLV here
     tlvSpecificData.AddTag( KTlvResultTag );

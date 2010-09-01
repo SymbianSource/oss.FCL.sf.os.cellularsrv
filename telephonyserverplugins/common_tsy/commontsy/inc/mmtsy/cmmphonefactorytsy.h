@@ -1,19 +1,19 @@
 /*
- * Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
- * All rights reserved.
- * This component and the accompanying materials are made available
- * under the terms of "Eclipse Public License v1.0"
- * which accompanies this distribution, and is available
- * at the URL "http://www.eclipse.org/legal/epl-v10.html".
- *
- * Initial Contributors:
- * Nokia Corporation - initial contribution.
- *
- * Contributors:
- *
- * Description:
- *
- */
+* Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:
+*
+*/
 
 
 
@@ -56,7 +56,7 @@ NONSHARABLE_CLASS( CMmPhoneFactoryTsy ) : public CPhoneFactoryBase
         void ConstructL();
 
         /**
-         * Returns a new Phone instance
+         * Returns Phone instance
          */
         CPhoneBase* NewPhoneL( const TDesC& aName );
 
@@ -103,21 +103,12 @@ NONSHARABLE_CLASS( CMmPhoneFactoryTsy ) : public CPhoneFactoryBase
         TBool IsSupported( const TInt aFunctionalUnit );    
 #ifdef USING_CTSY_DISPATCHER     
     protected:
-        
-        TBool UsingCtsyDispatcher();
+    	
+    	TBool UsingCtsyDispatcher();
+    	MLtsyFactoryBase* LoadLibraryL();
 #endif // #endif USING_CTSY_DISPATCHER
-        MLtsyFactoryBase* LoadLibraryL();
-        
-    private:
-        void InitCtsyL(MLtsyFactoryBase* aLtsyFactory);
-        TPtrC ReadDllNameFromConfigL(const TDesC& aConfigData);
-        TUint ReadDllUidFromConfigL(const TDesC& aConfigData);
-        static void ReadConfigFileL(RBuf* aConfigData);
-        static TPtrC GetValueForKeyL(const TDesC& aKeysValues, const TDesC& aKey);
-
     private:    // Data
     
-        MLtsyFactoryBase* iLtsyFactory;
         /**
          * Pointer to PhoneTSY
          * Not owned.
@@ -129,8 +120,17 @@ NONSHARABLE_CLASS( CMmPhoneFactoryTsy ) : public CPhoneFactoryBase
          * Not owned.
          */
         MMessageRouter* iMessageRouter;
-
+                
+        /**
+         * Pointer to LTSY factory, used to retrieve LTSY and SIM ATK TSY
+         * Not owned.
+         */
+        MLtsyFactoryBase* iLtsyFactory;
+#ifdef USING_CTSY_DISPATCHER        
         RLibrary iLoadedLib; //can either be LicenseeTsy or CtsyDispatcher dlls
+#endif // #ifdef USING_CTSY_DISPATCHER
     };
 
 #endif // CMMPHONEFACTORYTSY_H
+
+// End of File

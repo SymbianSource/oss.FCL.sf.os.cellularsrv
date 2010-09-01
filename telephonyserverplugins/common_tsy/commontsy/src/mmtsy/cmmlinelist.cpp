@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 //INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmlinelistTraces.h"
-#endif
-
 #include "cmmlinelist.h"
 #include "cmmphonetsy.h"
 #include "cmmlinetsy.h"
@@ -87,7 +81,7 @@ void CMmLineList::ConstructL()
         iIsLineInUse[ i ] = EFalse;                
         }    
        
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_CONSTRUCTL_1, "TSY: CMmLineList::ConstructL:iObjectContainer->Count()=%d", iObjectContainer->Count());
+TFLOGSTRING2("TSY: CMmLineList::ConstructL:iObjectContainer->Count()=%d", iObjectContainer->Count());        
        
     }
 
@@ -109,10 +103,10 @@ CMmLineTsy* CMmLineList::GetMmLineByMode(
     {    
     CMmLineTsy* mmLine = NULL;
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_GETMMLINEBYMODE_1, "TSY: CMmLineList::GetMmLineByMode");
+TFLOGSTRING("TSY: CMmLineList::GetMmLineByMode");       
     if ( iObjectContainer  && iInitialised)
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_GETMMLINEBYMODE_2, "TSY: CMmLineList::GetMmLineByMode::iObjectContainer->Count()=%d", iObjectContainer->Count());
+TFLOGSTRING2("TSY: CMmLineList::GetMmLineByMode::iObjectContainer->Count()=%d", iObjectContainer->Count());        
        
         for ( TInt i = 0; i < iObjectContainer->Count(); i++ )
             {
@@ -143,14 +137,14 @@ CMmLineTsy* CMmLineList::GetMmLineByIndex(
     TInt aIndex )
     {
     CMmLineTsy* mmLine = NULL;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_GETMMLINEBYINDEX_1, "TSY: CMmLineList::GetMmLineByIndex");
+TFLOGSTRING("TSY: CMmLineList::GetMmLineByIndex");        
 	//This is for checking that return objects is right
    	CTelObject* tempObject = 
                     reinterpret_cast< CTelObject* >( this );
                     
     if ( iObjectContainer && iInitialised )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_GETMMLINEBYINDEX_2, "TSY: CMmLineList::GetMmLineByIndex:iObjectContainer->Count()=%d", iObjectContainer->Count());
+TFLOGSTRING2("TSY: CMmLineList::GetMmLineByIndex:iObjectContainer->Count()=%d", iObjectContainer->Count());        
 
         if ( aIndex >= 0 && aIndex < iObjectContainer->Count() )
             {
@@ -180,10 +174,10 @@ TInt CMmLineList::AddLineObject (
     {
     TInt ret ( KErrGeneral );
     
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_ADDLINEOBJECT_1, "TSY: CMmLineList::AddLineObject");
+TFLOGSTRING("TSY: CMmLineList::AddLineObject");            
     if ( iObjectContainer )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_ADDLINEOBJECT_2, "TSY: CMmLineList::AddLineObject:iObjectContainer->Count()=%d", iObjectContainer->Count());
+TFLOGSTRING2("TSY: CMmLineList::AddLineObject:iObjectContainer->Count()=%d", iObjectContainer->Count());            
 
         
         TInt trapError( KErrNone );    
@@ -301,10 +295,10 @@ CBase* CMmLineList::GetObjectByIndex (
     {
     CBase* mmObject = NULL;
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_GETOBJECTBYINDEX_1, "TSY: CMmLineList::GetObjectByIndex. aIndex=%d", aIndex );
+TFLOGSTRING2("TSY: CMmLineList::GetObjectByIndex. aIndex=%d", aIndex ); 
     if ( iObjectContainer )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINELIST_GETOBJECTBYINDEX_2, "TSY: CMmLineList::GetObjectByIndex. iObjectContainer->Count()=%d", iObjectContainer->Count());
+TFLOGSTRING2("TSY: CMmLineList::GetObjectByIndex. iObjectContainer->Count()=%d", iObjectContainer->Count()); 
 
         if ( iIsLineInUse[ aIndex ] )
             {

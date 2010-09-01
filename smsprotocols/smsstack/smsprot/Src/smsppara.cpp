@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -13,12 +13,6 @@
 // Description:
 //
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspparaTraces.h"
-#endif
 
 #include "smsppara.h"
 #include "smsuset.h"
@@ -56,7 +50,7 @@ CSmsParamsBase::CSmsParamsBase(MSmsComm& aSmsComm,const TSmsSettings& aSmsSettin
  */
 void CSmsParamsBase::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPARAMSBASE_CONSTRUCTL_1, "CSmsParamsBase::ConstructL()");
+	LOGSMSPROT1("CSmsParamsBase::ConstructL()");
 
 	ConstructTimeoutL();
 	} // CSmsParamsBase::ConstructL
@@ -74,7 +68,7 @@ void CSmsParamsBase::ConstructL()
  */
 CSmsReadParams* CSmsReadParams::NewL(MSmsComm& aSmsComm,const TSmsSettings& aSmsSettings,RMobileSmsMessaging& aSmsMessaging)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_NEWL_1, "CSmsReadParams::NewL()");
+	LOGSMSPROT1("CSmsReadParams::NewL()");
 
 	CSmsReadParams* smsReadParams=new(ELeave) CSmsReadParams(aSmsComm,aSmsSettings,aSmsMessaging);
 	CleanupStack::PushL(smsReadParams);
@@ -121,7 +115,7 @@ CSmsReadParams::~CSmsReadParams()
  */
 void CSmsReadParams::Start(MSmsMessageObserver& aObserver)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_START_1, "CSmsReadParams::Start()");
+	LOGSMSPROT1("CSmsReadParams::Start()");
 
 	__ASSERT_DEBUG(iSmsMessageObserver == NULL  &&  iReport == NULL,
 				   SmspPanic(KSmspPanicUnexpectedState));
@@ -161,7 +155,7 @@ void CSmsReadParams::Start(MSmsMessageObserver& aObserver)
  */
 void CSmsReadParams::Start(TRequestStatus& aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_START1_1, "CSmsReadParams::Start()");
+	LOGSMSPROT1("CSmsReadParams::Start()");
 
 	__ASSERT_DEBUG(iSmsMessageObserver == NULL  &&  iReport == NULL,
 				   SmspPanic(KSmspPanicUnexpectedState));
@@ -187,7 +181,7 @@ void CSmsReadParams::Start(TRequestStatus& aStatus)
  */
 void CSmsReadParams::DoRunL()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_DORUNL_1, "CSmsReadParams::RunL [iStatus=%d]", iStatus.Int() );
+	LOGSMSPROT2("CSmsReadParams::RunL [iStatus=%d]", iStatus.Int() );
 
 	//
 	// If the start retrieve was successful, then continue retrieving the list.
@@ -218,7 +212,7 @@ void CSmsReadParams::DoRunL()
  */
 void CSmsReadParams::DoCancel()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_DOCANCEL_1, "CSmsReadParams::DoCancel()");
+	LOGSMSPROT1("CSmsReadParams::DoCancel()");
 
 	TimedSetActiveCancel();
 
@@ -264,7 +258,7 @@ CSmsReadParams::CSmsReadParams(MSmsComm& aSmsComm,const TSmsSettings& aSmsSettin
  */
 void CSmsReadParams::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_CONSTRUCTL_1, "CSmsReadParams::ConstructL()");
+	LOGSMSPROT1("CSmsReadParams::ConstructL()");
 
 	CSmsParamsBase::ConstructL();
 
@@ -283,7 +277,7 @@ void CSmsReadParams::ConstructL()
  */
 void CSmsReadParams::CheckListValidityL(CMobilePhoneSmspList& aMobilePhoneSmspList)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_CHECKLISTVALIDITYL_1, "CSmsReadParams::CheckListValidityL()");
+	LOGSMSPROT1("CSmsReadParams::CheckListValidityL()");
 
 	//
 	// MaxNumberEntries method returns the maximum number of entries that can
@@ -314,7 +308,7 @@ void CSmsReadParams::CheckListValidityL(CMobilePhoneSmspList& aMobilePhoneSmspLi
  */
 void CSmsReadParams::StoreParameters(CMobilePhoneSmspList* aMobilePhoneSmspList)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_STOREPARAMETERS_1, "CSmsReadParams::StoreParameters()");
+	LOGSMSPROT1("CSmsReadParams::StoreParameters()");
 
 	__ASSERT_DEBUG(iMobilePhoneSmspList != NULL && aMobilePhoneSmspList != NULL && iMobilePhoneSmspList->MaxNumberEntries() == aMobilePhoneSmspList->MaxNumberEntries(),SmspPanic(KSmspPanicCorruptedSmspList));
 
@@ -334,7 +328,7 @@ void CSmsReadParams::StoreParameters(CMobilePhoneSmspList* aMobilePhoneSmspList)
  */
 void CSmsReadParams::Complete(TInt aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSREADPARAMS_COMPLETE_1, "CSmsReadParams::Complete()");
+	LOGSMSPROT1("CSmsReadParams::Complete()");
 
 	//
 	// Call the base function to perform the actual complete...
@@ -363,7 +357,7 @@ void CSmsReadParams::Complete(TInt aStatus)
  */
 CSmsWriteParams* CSmsWriteParams::NewL(MSmsComm& aSmsComm,const TSmsSettings& aSmsSettings,RMobileSmsMessaging& aSmsMessaging,CSmsReadParams& aSmsReadParams)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSWRITEPARAMS_NEWL_1, "CSmsWriteParams::NewL()");
+	LOGSMSPROT1("CSmsWriteParams::NewL()");
 
 	CSmsWriteParams* smsWriteParams=new(ELeave) CSmsWriteParams(aSmsComm,aSmsSettings,aSmsMessaging,aSmsReadParams);
 	CleanupStack::PushL(smsWriteParams);
@@ -402,7 +396,7 @@ CSmsWriteParams::~CSmsWriteParams()
  */
 void CSmsWriteParams::Start(MSmsMessageObserver& aObserver,CMobilePhoneSmspList* aMobilePhoneSmspList)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSWRITEPARAMS_START_1, "CSmsWriteParams::Start()");
+	LOGSMSPROT1("CSmsWriteParams::Start()");
 
 	__ASSERT_DEBUG(iState==ESmsParamsIdle,SmspPanic(KSmspPanicUnexpectedState));
 	
@@ -441,7 +435,7 @@ void CSmsWriteParams::Start(MSmsMessageObserver& aObserver,CMobilePhoneSmspList*
  */
 void CSmsWriteParams::DoRunL()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSWRITEPARAMS_DORUNL_1, "CSmsWriteParams::DoRunL [iStatus=%d]", iStatus.Int() );
+	LOGSMSPROT2("CSmsWriteParams::DoRunL [iStatus=%d]", iStatus.Int() );
 
 	switch (iState)
 		{
@@ -503,7 +497,7 @@ void CSmsWriteParams::DoRunL()
  */
 void CSmsWriteParams::DoCancel()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSWRITEPARAMS_DOCANCEL_1, "CSmsWriteParams::DoCancel()");
+	LOGSMSPROT1("CSmsWriteParams::DoCancel()");
 
 	TimedSetActiveCancel();
 
@@ -568,7 +562,7 @@ CSmsWriteParams::CSmsWriteParams(MSmsComm& aSmsComm,const TSmsSettings& aSmsSett
  */
 void CSmsWriteParams::ConstructL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSWRITEPARAMS_CONSTRUCTL_1, "CSmsWriteParams::ConstructL()");
+	LOGSMSPROT1("CSmsWriteParams::ConstructL()");
 
 	CSmsParamsBase::ConstructL();
 	} // CSmsWriteParams::ConstructL
@@ -586,7 +580,7 @@ void CSmsWriteParams::ConstructL()
  */
 void CSmsWriteParams::Complete(TInt aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSWRITEPARAMS_COMPLETE_1, "CSmsWriteParams::Complete()");
+	LOGSMSPROT1("CSmsWriteParams::Complete()");
 
 	//
 	// Call the base function to perform the actual complete...

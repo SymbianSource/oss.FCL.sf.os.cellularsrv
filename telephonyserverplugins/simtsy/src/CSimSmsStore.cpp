@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,18 +19,12 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimSmsStoreTraces.h"
-#endif
-
 #include <mmlist.h>
 #include <mmretrieve.h>
 #include <testconfigfileparser.h>
 #include "CSimSmsStore.h"
 #include "csimsmsmess.h"
+#include "Simlog.h"
 #include "CSimTsyMode.h"
 
 const TInt KSmsStoreGranularity=2;
@@ -132,7 +126,7 @@ void CSimSmsStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots)
 	iSmsMaxNumSlots=aMaxNumSlots;
 	iSmsStoreName.Copy(aName);
 	iSmsReadAll=new(ELeave) CArrayPtrFlat<CListReadAllAttempt>(KSmsStoreGranularity);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_CONSTRUCTL_1, "Starting to parse SMS Store config parameters...");
+	LOGSMS1("Starting to parse SMS Store config parameters...");
 	iSmsIndividualPause=CfgFileSection()->ItemValue(KSmsStoreIndividualReqPause,KDefaultSmsStoreIndividualReqPause);
 	iSmsBatchPause=CfgFileSection()->ItemValue(KSmsStoreBatchReqPause,KDefaultSmsStoreBatchReqPause);
 	
@@ -144,7 +138,7 @@ void CSimSmsStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots)
 		TInt ret0=CTestConfig::GetElement(item0->Value(),KStdDelimiter,0,value0);
 		if(ret0!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element VALUE0 returned %d (element no. %d) from tag %s.",ret0,0,KSmsPhoneStoreCaps);
+			LOGPARSERR("value0",ret0,0,&KSmsPhoneStoreCaps);
 			iSmsStoreCaps=KDefaultSmsPhoneStoreCaps+KDefaultSmsOnlySmsCaps;
 			}
 		else
@@ -161,7 +155,7 @@ void CSimSmsStore::ConstructL(const TDesC8& aName, TInt aMaxNumSlots)
 		iSmsStoreCaps=KDefaultSmsPhoneStoreCaps+KDefaultSmsOnlySmsCaps;
 
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_CONSTRUCTL_3, "...Finished parsing SMS Store config parameters");
+	LOGSMS1("...Finished parsing SMS Store config parameters");
 	iTimer=CSimTimer::NewL(iSmsMessaging->iPhone);
 	iIncomingTimer=CSimTimer::NewL(iSmsMessaging->iPhone);
 	}
@@ -176,7 +170,7 @@ void CSimSmsStore::PopulateStoreFromConfigFile()
  * "SmsStoreEntry = <store name>, <slot number>, <entry status>, <pdu>"
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_1, "Starting reading SMS Store entries...");
+	LOGSMS1("Starting reading SMS Store entries...");
 	TInt count=CfgFileSection()->ItemCount(KSmsStoreEntry);
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
@@ -191,7 +185,7 @@ void CSimSmsStore::PopulateStoreFromConfigFile()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,storeName);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_2, "WARNING - CONFIGURATION FILE PARSING - Reading element STORENAME returned %d (element no. %d) from tag %s.",ret,0,KSmsStoreEntry);
+			LOGPARSERR("storeName",ret,0,&KSmsStoreEntry);
 			continue;
 			}
 		if(storeName.MatchF(iSmsStoreName)!=0)
@@ -202,21 +196,21 @@ void CSimSmsStore::PopulateStoreFromConfigFile()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,index);
 		if((ret!=KErrNone)||(index>=iSmsMaxNumSlots))
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_3, "WARNING - CONFIGURATION FILE PARSING - Reading element INDEX returned %d (element no. %d) from tag %s.",ret,1,KSmsStoreEntry);
+			LOGPARSERR("index",ret,1,&KSmsStoreEntry);
 			continue;
 			}
 	
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,stat);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_4, "WARNING - CONFIGURATION FILE PARSING - Reading element STAT returned %d (element no. %d) from tag %s",ret,2,KSmsStoreEntry);
+			LOGPARSERR("stat",ret,2,&KSmsStoreEntry);
 			continue;
 			}
 
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,pdu);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_5, "WARNING - CONFIGURATION FILE PARSING - Reading element PDU returned %d (element no. %d) from tag %s.",ret,3,KSmsStoreEntry);
+			LOGPARSERR("pdu",ret,3,&KSmsStoreEntry);
 			continue;
 			}
 
@@ -224,7 +218,7 @@ void CSimSmsStore::PopulateStoreFromConfigFile()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,sca);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_6, "WARNING - CONFIGURATION FILE PARSING - Reading element SCA returned %d (element no. %d) from tag %s.",ret,4,KSmsStoreEntry);
+			LOGPARSERR("sca",ret,4,&KSmsStoreEntry);
 			continue;
 			}
 		iGsmSmsStoreEntries[index].iIndex=index;
@@ -233,7 +227,7 @@ void CSimSmsStore::PopulateStoreFromConfigFile()
 		RecordSca(sca, index);
 		}
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_POPULATESTOREFROMCONFIGFILE_7, "...Finished reading SMS Store entries");
+	LOGSMS1("...Finished reading SMS Store entries");
 	}
 
 
@@ -274,7 +268,7 @@ CSimSmsStore::~CSimSmsStore()
 	delete iIncomingTimer;
 	}
 
-#ifdef OST_TRACE_COMPILER_IN_USE
+#ifdef _DEBUG
 void CSimSmsStore::LogRequest(TBool aEntering, TInt aIpc, TInt aError)
 #else
 void CSimSmsStore::LogRequest(TBool aEntering, TInt aIpc, TInt /*aError*/)
@@ -330,11 +324,11 @@ void CSimSmsStore::LogRequest(TBool aEntering, TInt aIpc, TInt /*aError*/)
 
 	if (aEntering!=EFalse)
 		{
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_LOGREQUEST_1, ">>%d,CSimSmsStore::%s",aIpc, ipcBuf );
+		LOGSMS3(">>%d,CSimSmsStore::%S",aIpc, &ipcBuf );
 		}
 	else
-		{	
-		OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_LOGREQUEST_2, "<<%d,CSimSmsStore::%s with error %d",aIpc, ipcBuf, aError);	
+		{
+		LOGSMS4("<<%d,CSimSmsStore::%S with error %d",aIpc, &ipcBuf, aError);
 		}
 	}
 
@@ -1183,7 +1177,7 @@ const CTestConfigSection* CSimSmsStore::CfgFileSection()
 * @return CTestConfigSection a pointer to the configuration file data section
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSMSSTORE_CFGFILESECTION_1, ">>CSimSmsStore::CfgFileSection");
+	LOGSMS1(">>CSimSmsStore::CfgFileSection");
 	return iSmsMessaging->CfgFileSection();
 	}
 

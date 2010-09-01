@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmlinetsyTraces.h"
-#endif
-
 #include "cmmlinetsy.h"
 #include "cmmphonetsy.h"
 #include "cmmcalltsy.h"
@@ -29,6 +23,7 @@
 #include "cmmcalllist.h"
 #include "cmmtsyreqhandlestore.h"
 #include "MmTsy_numberOfSlots.h"
+#include <ctsy/tflogger.h>
 #include <ctsy/pluginapi/cmmdatapackage.h>
 #include <et_struct.h>
 
@@ -41,7 +36,7 @@ CMmLineTsy::CMmLineTsy()
 
 void CMmLineTsy::ConstructL()
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_CONSTRUCTL_1, "TSY: CMmLineTsy::ConstructL");
+    TFLOGSTRING("TSY: CMmLineTsy::ConstructL");
     //Initialise miscellaneous internal attributes
     InitInternalAttributesL();
 
@@ -61,7 +56,7 @@ void CMmLineTsy::ConstructL()
 
 CMmLineTsy::~CMmLineTsy()
     {
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_DTOR_1, "TSY: CMmLineTsy::~CMmLineTsy. Line name: %S", iLineName);
+    TFLOGSTRING2("TSY: CMmLineTsy::~CMmLineTsy. Line name: %S", &iLineName);
 
     //delete req handle store
     delete iTsyReqHandleStore;
@@ -101,7 +96,7 @@ CMmLineTsy::~CMmLineTsy()
 CTelObject* CMmLineTsy::OpenNewObjectByNameL(
     const TDesC& aName )
     {
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_OPENNEWOBJECTBYNAMEL_1, "TSY: CMmLineTsy::OpenNewObjectByNameL %S", aName);
+    TFLOGSTRING2("TSY: CMmLineTsy::OpenNewObjectByNameL %S", &aName);
 
     TName mmCallName( aName );
     CMmCallTsy* mmCall = iMmPhone->CallList()->GetMmCallByName( &mmCallName );
@@ -170,7 +165,7 @@ CMmCallTsy* CMmLineTsy::CallObjectForIncomingCall()
 CTelObject::TReqMode CMmLineTsy::ReqModeL(
     const TInt aIpc )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQMODEL_1, "TSY: CMmLineTsy::ReqModeL IPC:%d",aIpc);
+    TFLOGSTRING2("TSY: CMmLineTsy::ReqModeL IPC:%d",aIpc);
     
     CTelObject::TReqMode ret( 0 );    // default return value
     
@@ -316,7 +311,8 @@ TInt CMmLineTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_DOEXTFUNCL_1, "TSY: CMmLineTsy::DoExtFuncL IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+    TFLOGSTRING3("TSY: CMmLineTsy::DoExtFuncL IPC:%d Handle:%d", aIpc, \
+        aTsyReqHandle);
 
     TInt ret ( KErrNone );
 
@@ -780,7 +776,8 @@ TInt CMmLineTsy::NotifyCallAdded(
     const TTsyReqHandle aTsyReqHandle,
     TName* aName )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_NOTIFYCALLADDED_1, "TSY: CMmLineTsy::NotifyCallAdded requested by client, \lineMode:%d", iLineMode);
+    TFLOGSTRING2("TSY: CMmLineTsy::NotifyCallAdded requested by client, \
+        lineMode:%d", iLineMode);
     // On return, contains the name of the new call.
     iRetCallAdded = aName;    
     iTsyReqHandleStore->SetTsyReqHandle( EMultimodeLineNotifyCallAdded,
@@ -799,7 +796,7 @@ TInt CMmLineTsy::NotifyCallAdded(
 TInt CMmLineTsy::NotifyCallAddedCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_NOTIFYCALLADDEDCANCEL_1, "TSY: CMmLineTsy::NotifyCallAddedCancel requested by client");
+    TFLOGSTRING("TSY: CMmLineTsy::NotifyCallAddedCancel requested by client");
     iRetCallAdded = NULL;
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeLineNotifyCallAdded );
     ReqCompleted( aTsyReqHandle, KErrCancel );
@@ -816,7 +813,8 @@ TInt CMmLineTsy::NotifyCallAddedCancel(
 //
 void CMmLineTsy::CompleteNotifyCallAdded(const TDesC& aName )    
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_COMPLETENOTIFYCALLADDED_1, "TSY: CMmLineTsy::CompleteNotifyCallAdded entered, \CALL ADDED, Call name: %S, Call mode: %d", aName, iLineMode );
+    TFLOGSTRING3("TSY: CMmLineTsy::CompleteNotifyCallAdded entered, \
+    CALL ADDED, Call name: %S, Call mode: %d", &aName, iLineMode );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -826,7 +824,7 @@ void CMmLineTsy::CompleteNotifyCallAdded(const TDesC& aName )
 
     if ( EMultimodeLineReqHandleUnknown != reqHandle )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_COMPLETENOTIFYCALLADDED_2, "TSY: CMmLineTsy::CompleteNotifyCallAdded, Completed!");
+        TFLOGSTRING("TSY: CMmLineTsy::CompleteNotifyCallAdded, Completed!");
         *iRetCallAdded = aName;
         ReqCompleted( reqHandle, KErrNone );
         }
@@ -901,7 +899,8 @@ TInt CMmLineTsy::GetCallInfo(
     const TTsyReqHandle aTsyReqHandle,
     TCallInfoIndex* aCallInfoIndex )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_GETCALLINFO_1, "TSY: CMmLineTsy::GetCallInfo - Line name: %S, Index: %d",iLineName, aCallInfoIndex->iIndex );
+    TFLOGSTRING3("TSY: CMmLineTsy::GetCallInfo - Line name: %S, Index: %d",
+        &iLineName, aCallInfoIndex->iIndex );
 
     TInt ret( KErrNotFound );
 
@@ -917,7 +916,8 @@ TInt CMmLineTsy::GetCallInfo(
         aCallInfoIndex->iInfo.iStatus        = mmCall->Status();
         aCallInfoIndex->iInfo.iCallCapsFlags = mmCall->CallCaps();
 
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_GETCALLINFO_2, "TSY: CMmLineTsy::GetCallInfo - Call name: %S, Status: %d",aCallInfoIndex->iInfo.iCallName, aCallInfoIndex->iInfo.iStatus );
+        TFLOGSTRING3("TSY: CMmLineTsy::GetCallInfo - Call name: %S, Status: %d",
+            &aCallInfoIndex->iInfo.iCallName, aCallInfoIndex->iInfo.iStatus );
 
         ret = KErrNone;
         }
@@ -1201,7 +1201,9 @@ void CMmLineTsy::CompleteNotifyAddBypassingCall(
          mobileCallInfo->iStatus == RMobileCall::EStatusConnecting ||
          mobileCallInfo->iStatus == RMobileCall::EStatusConnected )
         {
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_COMPLETENOTIFYADDBYPASSINGCALL_1, "TSY: CMmLineTsy::CompleteNotifyAddBypassingCall, \CALL INITIATED - NOT REQUESTED BY ETEL's CLIENT, Call ID: %d",callId );
+        TFLOGSTRING2("TSY: CMmLineTsy::CompleteNotifyAddBypassingCall, \
+            CALL INITIATED - NOT REQUESTED BY ETEL's CLIENT, Call ID: %d",
+            callId );
 
         //create new call object
         CMmCallTsy* mmGhostCall = CreateGhostCallObject(
@@ -1229,7 +1231,9 @@ void CMmLineTsy::CompleteNotifyAddBypassingCall(
         }
     else
         {
-        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_COMPLETENOTIFYADDBYPASSINGCALL_2, "TSY: CMmLineTsy::CompleteNotifyAddBypassingCall, \CALL NOT INITIATED - Call ID:%d, Call status:%d", callId, mobileCallInfo->iStatus);
+        TFLOGSTRING3("TSY: CMmLineTsy::CompleteNotifyAddBypassingCall, \
+            CALL NOT INITIATED - Call ID:%d, Call status:%d", 
+            callId, mobileCallInfo->iStatus);
         }
     }
 
@@ -1246,7 +1250,8 @@ void CMmLineTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQCOMPLETED_1, "TSY: CMmLineTsy::ReqCompleted Handle:%d Error:%d", aTsyReqHandle, aError);
+    TFLOGSTRING3("TSY: CMmLineTsy::ReqCompleted Handle:%d Error:%d", 
+        aTsyReqHandle, aError);
 
     CTelObject::ReqCompleted(aTsyReqHandle,aError);        
     }

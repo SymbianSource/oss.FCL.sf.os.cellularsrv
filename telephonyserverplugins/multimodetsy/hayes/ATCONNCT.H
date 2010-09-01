@@ -57,5 +57,20 @@ private:
 	TBuf8<KCommsDbSvrMaxFieldLength> iNoDialToneString;
 	};
 
+class CATConnectFax : public CATFaxCallConnectCommands
+/**
+@internalComponent
+*/
+	{
+public:
+	static CATConnectFax* NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
+	~CATConnectFax();
+	virtual void Start(TTsyReqHandle aTsyReqHandle, TAny* aParams);
+	virtual void Stop(TTsyReqHandle aTsyReqHandle);
+protected:
+	CATConnectFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals);
+	virtual void EventSignal(TEventSource aSource);
+	virtual void CompleteSuccessfully();
+	};
 
 #endif

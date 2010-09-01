@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,18 +20,12 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimNetworkStatusTraces.h"
-#endif
-
 #include <e32property.h>
 #include <testconfigfileparser.h>
 #include <sacls.h>
 #include "CSimNetworkStatus.h"
 #include "CSimPhone.h"
+#include "Simlog.h"
 #include "CSimPubSubChange.h"
 #include "CSimTsyMode.h"
 #include "etelmmerr.h"
@@ -113,7 +107,7 @@ void CSimNetworkStatus::ConstructL()
  * A number of these tags may be included to create a Cell Information Profile.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_1, "Starting to parse Network Status config parameters...");
+	LOGNETWORK1("Starting to parse Network Status config parameters...");
 	iRegStatTimer=CSimTimer::NewL(iPhone);
 	iNitzTimer=CSimTimer::NewL(iPhone);
 	iRadioModeTimer=CSimTimer::NewL(iPhone);
@@ -144,37 +138,37 @@ void CSimNetworkStatus::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,countryCode);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element COUNTRYCODE returned %d (element no. %d) from tag %s.",ret,0,KNetworkInfo);
+			LOGPARSERR("countryCode",ret,0,&KNetworkInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,networkIdentify);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element NETWORKIDENTIFY returned %d (element no. %d) from tag %S.",ret,1,KNetworkInfo);
+			LOGPARSERR("networkIdentify",ret,1,&KNetworkInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,displayTag);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element DISPLAYTAG returned %d (element no. %d) from tag %s.",ret,2,KNetworkInfo);
+			LOGPARSERR("displayTag",ret,2,&KNetworkInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,shortName);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element SHORTNAME returned %d (element no. %d) from tag %s.",ret,3,KNetworkInfo);
+			LOGPARSERR("shortName",ret,3,&KNetworkInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,longName);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element LONGNAME returned %d (element no. %d) from tag %s.",ret,4,KNetworkInfo);
+			LOGPARSERR("longName",ret,4,&KNetworkInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,status);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element STATUS returned %d (element no. %d) from tag %s.",ret,5,KNetworkInfo);
+			LOGPARSERR("status",ret,5,&KNetworkInfo);
 			continue;
 			}
 		RMobilePhone::TMobilePhoneNetworkInfoV2 networkInfo;
@@ -239,13 +233,13 @@ void CSimNetworkStatus::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KRegStatus);
+			LOGPARSERR("duration",ret,0,&KRegStatus);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,regStat);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element REGSTAT returned %d (element no. %d) from tag %s.",ret,1,KRegStatus);
+			LOGPARSERR("regStat",ret,1,&KRegStatus);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,networkIndex);
@@ -272,13 +266,13 @@ void CSimNetworkStatus::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KRadioMode);
+				LOGPARSERR("duration",ret,0,&KRadioMode);
 				continue;
 				}
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,radioStatus);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element RADIOSTATUS returned %d (element no. %d) from tag %s.",ret,1,KRadioMode);
+				LOGPARSERR("radioStatus",ret,1,&KRadioMode);
 				continue;
 				}
 			
@@ -302,61 +296,61 @@ void CSimNetworkStatus::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KNitzInfo);
+			LOGPARSERR("duration",ret,0,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,year);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element YEAR returned %d (element no. %d) from tag %s.",ret,1,KNitzInfo);
+			LOGPARSERR("year",ret,1,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,month);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element MONTH returned %d (element no. %d) from tag %s.",ret,2,KNitzInfo);
+			LOGPARSERR("month",ret,2,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,day);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element DAY returned %d (element no. %d) from tag %s.",ret,3,KNitzInfo);
+			LOGPARSERR("day",ret,3,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,hour);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_16, "WARNING - CONFIGURATION FILE PARSING - Reading element HOUR returned %d (element no. %d) from tag %s.",ret,4,KNitzInfo);
+			LOGPARSERR("hour",ret,4,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,5,min);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_17, "WARNING - CONFIGURATION FILE PARSING - Reading element MIN returned %d (element no. %d) from tag %s.",ret,5,KNitzInfo);
+			LOGPARSERR("min",ret,5,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,6,sec);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_18, "WARNING - CONFIGURATION FILE PARSING - Reading element SEC returned %d (element no. %d) from tag %s.",ret,6,KNitzInfo);
+			LOGPARSERR("sec",ret,6,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,7,microsec);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_19, "WARNING - CONFIGURATION FILE PARSING - Reading element MICROSEC returned %d (element no. %d) from tag %s.",ret,7,KNitzInfo);
+			LOGPARSERR("microsec",ret,7,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,8,tz);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_20, "WARNING - CONFIGURATION FILE PARSING - Reading element TZ returned %d (element no. %d) from tag %s.",ret,8,KNitzInfo);
+			LOGPARSERR("tz",ret,8,&KNitzInfo);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,9,dst);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_21, "WARNING - CONFIGURATION FILE PARSING - Reading element DST returned %d (element no. %d) from tag %s.",ret,9,KNitzInfo);
+			LOGPARSERR("dst",ret,9,&KNitzInfo);
 			continue;
 			}
 
@@ -386,31 +380,31 @@ void CSimNetworkStatus::ConstructL()
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_22, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KCellInfo);
+				LOGPARSERR("duration",ret,0,&KCellInfo);
 				continue;
 				}
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,mode);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_23, "WARNING - CONFIGURATION FILE PARSING - Reading element MODE returned %d (element no. %d) from tag %s.",ret,1,KCellInfo);
+				LOGPARSERR("mode",ret,1,&KCellInfo);
 				continue;
 				}
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,cellId);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_24, "WARNING - CONFIGURATION FILE PARSING - Reading element CELLID returned %d (element no. %d) from tag %s.",ret,2,KCellInfo);
+				LOGPARSERR("cellId",ret,2,&KCellInfo);
 				continue;
 				}
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,timingAdvance);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_25, "WARNING - CONFIGURATION FILE PARSING - Reading element TIMINGADVANCE returned %d (element no. %d) from tag %s.",ret,3,KCellInfo);
+				LOGPARSERR("timingAdvance",ret,3,&KCellInfo);
 				continue;
 				}
 			ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,4,cellInfoStatus);
 			if(ret!=KErrNone)
 				{
-				OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_26, "WARNING - CONFIGURATION FILE PARSING - Reading element CELLINFOSTATUS returned %d (element no. %d) from tag %s.",ret,3,KCellInfo);
+				LOGPARSERR("cellInfoStatus",ret,3,&KCellInfo);
 				continue;
 				}
 			
@@ -457,7 +451,7 @@ void CSimNetworkStatus::ConstructL()
 				locationArea.iCellId= cellId;
 				iLocationArea->AppendL(locationArea);
 				}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_27, "...Finished parsing Network Status config parameters...");
+	LOGNETWORK1("...Finished parsing Network Status config parameters...");
 
 // If present load the first registration status settings and start the registration
 // status timer.
@@ -466,7 +460,7 @@ void CSimNetworkStatus::ConstructL()
 		iRegStatIndex=0;
 		iCurrentRegStatus=iRegStatusInfo->At(0).iRegStatus;
 		iCurrentNetworkIndex=iRegStatusInfo->At(0).iNetworkInfoIndex;
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_28, "Starting ETimerIdNtwkStatRegStat for duration:%d", iRegStatusInfo->At(0).iDuration);
+		LOGNETWORK2("Starting ETimerIdNtwkStatRegStat for duration:%d", iRegStatusInfo->At(0).iDuration);
 		iRegStatTimer->Start(iRegStatusInfo->At(0).iDuration,this,ETimerIdNtwkStatRegStat);
 		}
 
@@ -493,14 +487,14 @@ void CSimNetworkStatus::ConstructL()
 		if(iRadioMode.iRadioOn==EFalse)
 			{
 			RProperty::Set(KUidSystemCategory, KUidPhonePwrValue, ESAPhoneOff);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_29, "Radio Mode = OFF (from config)");
+			LOGNETWORK1("Radio Mode = OFF (from config)");
 			}
 		else
 			{
 			RProperty::Set(KUidSystemCategory, KUidPhonePwrValue, ESAPhoneOn);			
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_30, "Radio Mode = ON (from config)");
+				LOGNETWORK1("Radio Mode = ON (from config)");
 			}
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_31, "Radio Mode duration = %d (from config)", iRadioModeInfo->At(0).iDuration);
+		LOGNETWORK2("Radio Mode duration = %d (from config)", iRadioModeInfo->At(0).iDuration);
 
  		iRadioModeTimer->Start(iRadioModeInfo->At(0).iDuration,this,ETimerIdNtwkStatRadioMode);
 		}
@@ -508,7 +502,7 @@ void CSimNetworkStatus::ConstructL()
 		{
 		//default to on
 		RProperty::Set(KUidSystemCategory, KUidPhonePwrValue, ESAPhoneOn);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_32, "Radio Mode = ON (no config)");
+		LOGNETWORK1("Radio Mode = ON (no config)");
 		}
 
 //If present read in Service Provider settings
@@ -520,17 +514,17 @@ void CSimNetworkStatus::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,displayreq);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_33, "WARNING - CONFIGURATION FILE PARSING - Reading element DISPLAYREQ returned %d (element no. %d) from tag %s.",ret,0,KServiceProviderName);
+			LOGPARSERR("displayreq",ret,0,&KServiceProviderName);
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,spname);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_34, "WARNING - CONFIGURATION FILE PARSING - Reading element SPNAME returned %d (element no. %d) from tag %s.",ret,1,KServiceProviderName);
+			LOGPARSERR("spname",ret,1,&KServiceProviderName);
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,plmnfield);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_CONSTRUCTL_35, "WARNING - CONFIGURATION FILE PARSING - Reading element PLMNFIELD returned %d (element no. %d) from tag %s.",ret,2,KServiceProviderName);
+			LOGPARSERR("plmnfield",ret,2,&KServiceProviderName);
 			}
 		iServiceProvider.iDisplayReq = static_cast<RMobilePhone::TDisplayRequirements>(displayreq);
 		
@@ -583,7 +577,7 @@ void CSimNetworkStatus::FindRoamStatSettings()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,getTimer);
 		if(ret!=KErrNone)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_FINDROAMSTATSETTINGS_1, "WARNING: CSimNetworkStatus::FindRoamStatSettings found ERROR with Config");
+			LOGNETWORK1("WARNING: CSimNetworkStatus::FindRoamStatSettings found ERROR with Config");
 			}
 		iRoamStatGetTimeout = getTimer;
 		}
@@ -1443,7 +1437,7 @@ void CSimNetworkStatus::TimerCallBack(TInt aId)
 		TimerCallBackCellInfo();
 		break;
 	default:
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACK_1, "CSimNetworkStatus::TimerCallBack(%d), OOR [%d]",aId, ETimerIdNtwkStatRegStat);
+		LOGNETWORK3("CSimNetworkStatus::TimerCallBack(%d), OOR [%d]",aId, ETimerIdNtwkStatRegStat);
 		SimPanic(EIllegalCallBackId);
 		break;
 		}
@@ -1493,7 +1487,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			}
 		if(iCurrNetChangeV1NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_1, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV1");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV1");
 			iCurrNetChangeV1NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV1* changeNetInfoV1 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV1*>(iCurrNetChangeV1NotificationNetInfo);
 
@@ -1503,7 +1497,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			
 		if(iCurrNetChangeV2NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_2, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV2");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV2");
 			iCurrNetChangeV2NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV2* changeNetInfoV2 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV2*>(iCurrNetChangeV2NotificationNetInfo);
 			PopulateNetworkInfoV1(iCurrentNetworkIndex,*changeNetInfoV2);
@@ -1514,7 +1508,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 		
 		if(iCurrNetChangeV5NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_3, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV5");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV5");
 			iCurrNetChangeV5NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV5* changeNetInfoV5 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV5*>(iCurrNetChangeV5NotificationNetInfo);
 			PopulateNetworkInfoV1(iCurrentNetworkIndex,*changeNetInfoV5);
@@ -1527,7 +1521,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			
 		if(iCurrNetChangeV8NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_4, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV8");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV8");
 			iCurrNetChangeV8NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV8* changeNetInfoV8 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV8*>(iCurrNetChangeV8NotificationNetInfo);
 			PopulateNetworkInfoV1(iCurrentNetworkIndex,*changeNetInfoV8);
@@ -1541,7 +1535,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 					
 		if(iCurrNetChangeEtelIsvNotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_5, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TEtel3rdPartyMobileNetworkInfoV1");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TEtel3rdPartyMobileNetworkInfoV1");
 			iCurrNetChangeEtelIsvNotificationPending = EFalse;
 			RMobilePhone::TEtel3rdPartyMobileNetworkInfoV1* changeNetInfoEtelIsv = reinterpret_cast<RMobilePhone::TEtel3rdPartyMobileNetworkInfoV1*>(iCurrNetChangeEtelIsvNotificationNetInfo);
 
@@ -1550,7 +1544,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			}
 		if(iCurrNetChangeNoLocV1NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_6, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV1 (No Location)");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV1 (No Location)");
 			iCurrNetChangeNoLocV1NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV1* changeNetInfoV1 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV1*>(iCurrNetChangeNoLocV1NotificationNetInfo);
 
@@ -1560,7 +1554,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			
 		if(iCurrNetChangeNoLocV2NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_7, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV2 (No Location)");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV2 (No Location)");
 			iCurrNetChangeNoLocV2NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV2* changeNetInfoV2 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV2*>(iCurrNetChangeNoLocV2NotificationNetInfo);
 
@@ -1572,7 +1566,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			
 		if(iCurrNetChangeNoLocV5NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_8, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV5 (No Location)");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV5 (No Location)");
 			iCurrNetChangeNoLocV5NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV5* changeNetInfoV5 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV5*>(iCurrNetChangeNoLocV5NotificationNetInfo);
 
@@ -1586,7 +1580,7 @@ void CSimNetworkStatus::TimerCallBackRegStat()
 			
 		if(iCurrNetChangeNoLocV8NotificationPending)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKREGSTAT_9, "CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV8 (No Location)");
+			LOGNETWORK1("CSimNetworkStatus::TimerCallBackRegStat() - completing NotifyCurrentNetworkChange TMobilePhoneNetworkInfoV8 (No Location)");
 			iCurrNetChangeNoLocV8NotificationPending = EFalse;
 			RMobilePhone::TMobilePhoneNetworkInfoV8* changeNetInfoV8 = reinterpret_cast<RMobilePhone::TMobilePhoneNetworkInfoV8*>(iCurrNetChangeNoLocV8NotificationNetInfo);
 
@@ -1635,11 +1629,11 @@ void CSimNetworkStatus::TimerCallBackRadioModeL()
  * completes.  
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKRADIOMODEL_1, "CSimNetworkStatus::TimerCallBackRadioModeL");
+	LOGNETWORK1("CSimNetworkStatus::TimerCallBackRadioModeL");
 	iRadioModeIndex++;
 	if(iRadioModeInfo->Count()<=iRadioModeIndex)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKRADIOMODEL_2, "CSimNetworkStatus::TimerCallBackRadioModeL returning, no more config");
+		LOGNETWORK1("CSimNetworkStatus::TimerCallBackRadioModeL returning, no more config");
 		return;
 		}
 
@@ -1647,15 +1641,15 @@ void CSimNetworkStatus::TimerCallBackRadioModeL()
 	if(iRadioMode.iRadioOn==EFalse)
 		{
 		RProperty::Set(KUidSystemCategory, KUidPhonePwrValue, ESAPhoneOff);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKRADIOMODEL_3, "Radio Mode = OFF (config duration passed)");
+		LOGNETWORK1("Radio Mode = OFF (config duration passed)");
 		}
 	else
 		{
 		RProperty::Set(KUidSystemCategory, KUidPhonePwrValue, ESAPhoneOn);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKRADIOMODEL_4, "Radio Mode = ON (config duration passed)");
+		LOGNETWORK1("Radio Mode = ON (config duration passed)");
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMNETWORKSTATUS_TIMERCALLBACKRADIOMODEL_5, "Next radio Mode duration = %d (from config)", iRadioModeInfo->At(iRadioModeIndex).iDuration);
+	LOGNETWORK2("Next radio Mode duration = %d (from config)", iRadioModeInfo->At(iRadioModeIndex).iDuration);
 	iRadioModeTimer->Start(iRadioModeInfo->At(iRadioModeIndex).iDuration,this,ETimerIdNtwkStatRadioMode);
 	}
 

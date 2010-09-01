@@ -2381,6 +2381,44 @@ EXPORT_C void TConstructor<CMobilePhoneSmspList>::
    	aData = CMobilePhoneSmspList::NewL();
 	}
 
+EXPORT_C void TConstructor<CMobilePhoneStoredNetworkList>::
+		ConstructL(CMobilePhoneStoredNetworkList*& aData)
+	{
+   	aData = CMobilePhoneStoredNetworkList::NewL();
+	}
+
+EXPORT_C void TSerializer<CMobilePhoneStoredNetworkList>::
+		SerialiseL(const CMobilePhoneStoredNetworkList& aData, RBuf8& aBuffer)
+	{
+        return TSerializer<CMobilePhoneListBase>::SerialiseL(aData, aBuffer);      	
+	}
+
+EXPORT_C void TSerializer<CMobilePhoneStoredNetworkList>::
+		DeserialiseL(const TDesC8& aPackedData, CMobilePhoneStoredNetworkList& aData)
+	{
+    TSerializer<CMobilePhoneListBase>::DeserialiseL(aPackedData, aData);    
+	}
+
+EXPORT_C TBool TComparator<CMobilePhoneStoredNetworkList>::
+    IsEqual(const CMobilePhoneStoredNetworkList& aData1, 
+            const CMobilePhoneStoredNetworkList& aData2)
+    {
+    return TComparator< CMobilePhoneEditableList
+            <RMobilePhone::TMobilePreferredNetworkEntryV3>* >::
+            IsEqual(&aData1, &aData2);
+    }
+
+EXPORT_C TBool TComparator<RMobilePhone::TMobilePreferredNetworkEntryV3>::
+    IsEqual(const RMobilePhone::TMobilePreferredNetworkEntryV3& aData1, 
+            const RMobilePhone::TMobilePreferredNetworkEntryV3& aData2)
+    {
+
+    return  (aData1.iAccess == aData2.iAccess) &&
+            (aData1.iUserDefined == aData2.iUserDefined) &&
+            (aData1.iCountryCode.Compare(aData2.iCountryCode) == 0) &&
+            (aData1.iNetworkId.Compare(aData2.iNetworkId) == 0) &&
+            (TComparator<RMobilePhone::TMultimodeType>::IsEqual(aData1, aData2));
+    }
 //***************************************************
 
 EXPORT_C TBool TComparator<CMobilePhoneListBase>::

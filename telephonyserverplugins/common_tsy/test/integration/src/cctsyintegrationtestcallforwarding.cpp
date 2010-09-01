@@ -210,7 +210,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0001::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingAllConditionalCases for EAllServices"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingAllConditionalCases, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingAllConditionalCases for EAllServices failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for EAllServices"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for EAllServices failed"));
@@ -398,7 +398,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0002::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for ETelephony"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for ETelephony failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for EVoiceService failed"));
@@ -430,7 +430,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0002::doTestStepL()
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for EFaxService failed"));
 			}
-		else if(operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+		else if(operatorName==EOperatorOrange || operatorName==EOperatorO2)
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSTeleserviceNotProvisioned), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for EFaxService failed"));			
 			}
@@ -440,7 +440,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0002::doTestStepL()
 	
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for EShortMessageService"));
 		
-		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2)
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSIncompatibility), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for EShortMessageService failed"));
 			}
@@ -561,7 +561,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0003::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EAllServices"));
 		CHECK_TRUE_L(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EAllServices failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EAllServices and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -688,7 +688,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0004::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EAllServices"));
 		CHECK_TRUE_L(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EAllServices failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EAllServices and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -731,7 +731,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0004::doTestStepL()
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EAuxVoiceService failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSTeleserviceNotProvisioned), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EAuxVoiceService failed"));
 		}
@@ -749,7 +749,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0004::doTestStepL()
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSIllegalOperation), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EPacketDataService failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EPacketDataService failed"));
 		}
@@ -762,7 +762,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0004::doTestStepL()
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EFaxService failed"));
 		}
-	else if(operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSTeleserviceNotProvisioned), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EFaxService failed"));
 		}
@@ -779,7 +779,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0004::doTestStepL()
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EShortMessageService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2)
 		{
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionErase ECallForwardingUnconditional for EShortMessageService failed")); 
 		}
@@ -911,7 +911,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0005::doTestStepL()
 		{		
 		CHECK_TRUE_L(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EAllServices failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		CHECK_TRUE_L(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSErrorStatus), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingUnconditional for EAllServices failed"));
 		}
@@ -1081,7 +1081,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0006::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ETelephony"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ETelephony failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSErrorStatus), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EVoiceService failed"));
@@ -1106,7 +1106,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0006::doTestStepL()
 		
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EFaxService"));
 		
-		if(operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+		if(operatorName==EOperatorOrange || operatorName==EOperatorO2)
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSTeleserviceNotProvisioned ), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EFaxService failed"));
 			}
@@ -1119,7 +1119,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0006::doTestStepL()
 		
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EShortMessageService"));
 		
-		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2)
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSIncompatibility), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EShortMessageService failed"));
 			}
@@ -1239,7 +1239,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0007::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EAllServices"));
 		CHECK_TRUE_L(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EAllServices failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionActivate and aInfo.iServiceGroup=RMobilePhone::EAllServices, aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -1371,7 +1371,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0008::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EAllServices"));
 		CHECK_TRUE_L(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EAllServices failed"));
 		}
-	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorTMobile || operatorName==EOperatorOrange || operatorName==EOperatorO2)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionActivate and aInfo.iServiceGroup=RMobilePhone::EAllServices, aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -1440,7 +1440,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0008::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionDeactivate ECallForwardingUnconditional for ETelephony"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionDeactivate ECallForwardingUnconditional for ETelephony failed"));
 		}	
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionDeactivate ECallForwardingUnconditional for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionDeactivate ECallForwardingUnconditional for EVoiceService failed"));
@@ -1465,7 +1465,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0008::doTestStepL()
 		
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionDeactivate ECallForwardingUnconditional for EFaxService"));
 
-		if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorNTN)
+		if(operatorName==EOperatorO2 || operatorName==EOperatorOrange)
 			{	
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSTeleserviceNotProvisioned), _L("SetCallForwardingStatusUtil with EServiceActionDeactivate ECallForwardingUnconditional for EFaxService failed"));
 			}
@@ -1478,7 +1478,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0008::doTestStepL()
 		
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionDeactivate ECallForwardingUnconditional for EShortMessageService"));
 
-		if(operatorName==EOperatorO2 || operatorName==EOperatorTMobile || operatorName==EOperatorNTN) 
+		if(operatorName==EOperatorO2 || operatorName==EOperatorTMobile) 
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionDeactivate ECallForwardingUnconditional for EShortMessageService failed"));
 			}
@@ -1626,7 +1626,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0009::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ETelephony"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ETelephony failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// ===  Register call forwarding unconditional for all services ===
 		
@@ -1901,7 +1901,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0010::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingBusy for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingBusy), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingBusy for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -1997,7 +1997,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0010::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for ECircuitDataService"));
@@ -2065,7 +2065,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0010::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingNoReply for ECircuitDataService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingNoReply), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingNoReply for ECircuitDataService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingNoReply for ECircuitDataService"));
@@ -2134,7 +2134,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0010::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingNotReachable for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingNotReachable), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingNotReachable for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		
@@ -2315,7 +2315,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0011::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -2551,7 +2551,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0012::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingBusy for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingBusy), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingBusy for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingBusy and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
@@ -2677,7 +2677,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0012::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingNotReachable for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingNotReachable), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingNotReachable for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingNotReachable for EVoiceService"));
@@ -2787,7 +2787,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0012::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingNoReply for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingNoReply), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingNoReply for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingNoReply for EVoiceService"));
@@ -2995,7 +2995,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0013::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with ECallForwardingUnconditional for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=RMobilePhone::ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -3030,7 +3030,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0013::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EVoiceService"));	
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with ECallForwardingUnconditional for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=RMobilePhone::ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=different valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
@@ -3159,13 +3159,13 @@ TVerdict CCTSYIntegrationTestCallForwarding0014::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingBusy for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingBusy), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingBusy for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{	
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=RMobilePhone::ECallForwardingNoReply and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=10 
 		// Check RMobilePhone::NotifyCallForwardingStatusChange completes with aCondition=ECallForwardingBusy
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingBusy for EVoiceService"));
-		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2)
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingBusy, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingBusy for EVoiceService failed"));			
 			}
@@ -3194,13 +3194,13 @@ TVerdict CCTSYIntegrationTestCallForwarding0014::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingBusy for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingBusy), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingBusy for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=RMobilePhone::ECallForwardingNoReply and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=different valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=20 
 		// Check RMobilePhone::NotifyCallForwardingStatusChange completes with aCondition=ECallForwardingBusy
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingBusy for EVoiceService"));
-		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2 || operatorName==EOperatorNTN)
+		if(operatorName==EOperatorTMobile || operatorName==EOperatorO2)
 			{
 			ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingBusy, KErrGsmSSUnexpectedDataValue), _L("SetCallForwardingStatusUtil with EServiceActionRegister ECallForwardingBusy for EVoiceService failed"));
 			}
@@ -3334,7 +3334,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0015::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for EVoiceService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for EVoiceService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		newSetting.iAction=RMobilePhone::EServiceActionRegister;
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EVoiceService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
@@ -3373,7 +3373,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0015::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService"));	
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::ECircuitDataService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for ECircuitDataService"));	
@@ -3401,7 +3401,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0015::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::ECircuitDataService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for ECircuitDataService"));
@@ -3429,7 +3429,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0015::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ECircuitDataService failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::EPacketDataService and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1 	
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for ECircuitDataService"));
@@ -3458,7 +3458,7 @@ TVerdict CCTSYIntegrationTestCallForwarding0015::doTestStepL()
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionActivate ECallForwardingUnconditional for ETelephony"));
 		ASSERT_TRUE(SetCallForwardingStatusUtilL(mobilePhone, newSetting, RMobilePhone::ECallForwardingUnconditional), _L("SetCallForwardingStatusUtil with EServiceActionActivate ECallForwardingUnconditional for ETelephony failed"));
 		}
-	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile || operatorName==EOperatorNTN)
+	else if(operatorName==EOperatorO2 || operatorName==EOperatorOrange || operatorName==EOperatorTMobile)
 		{
 		// Register call forwarding using RMobilePhone::SetCallForwardingStatus with aCondition=ECallForwardingUnconditional and aInfo.iAction=RMobilePhone::EServiceActionRegister and aInfo.iServiceGroup=RMobilePhone::ETelephony and aInfo.iNumber.iNumberPlan=EIsdnNumberPlan, aInfo.iNumber.iTelNumber=valid number, aInfo.iNumber.iTypeOfNumber=ENationalNumber, aInfo.iTimeout=-1
 		DEBUG_PRINTF1(_L("Setting call forward EServiceActionRegister ECallForwardingUnconditional for ETelephony"));

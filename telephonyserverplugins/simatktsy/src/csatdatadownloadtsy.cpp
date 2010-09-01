@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,12 +19,6 @@
 
 
 
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "csatdatadownloadtsyTraces.h"
-#endif
-
 #include <satcs.h>                  // Etel SAT IPC definitions
 #include <etelmm.h> 				// Etel MM Definitions
 #include "CSatDataPackage.h"        // Parameter packing 
@@ -32,6 +26,7 @@
 #include "CSatTsy.h"                // Sat Tsy class
 #include "TSatUtility.h"            // Utilities
 #include "cmmmessagemanagerbase.h"  // Message manager class for forwarding req.
+#include "TfLogger.h"               // For TFLOGSTRING
 #include "CBerTlv.h"                // Ber Tlv
 #include "TTlv.h"					// TTlv class
 #include "MSatTsy_IPCDefs.h"        // Sat Tsy internal request types
@@ -46,14 +41,14 @@ CSatDataDownloadTsy* CSatDataDownloadTsy::NewL
         CSatTsy* aSatTsy  
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_NEWL_1,  "CSAT: CSatDataDownloadTsy::NewL" );
+    TFLOGSTRING( "CSAT: CSatDataDownloadTsy::NewL" );
     CSatDataDownloadTsy* const satDataDownloadTsy = 
         new ( ELeave ) CSatDataDownloadTsy();
     CleanupStack::PushL( satDataDownloadTsy );
     satDataDownloadTsy->iSatTsy = aSatTsy;
     satDataDownloadTsy->ConstructL();
     CleanupStack::Pop( satDataDownloadTsy );
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_NEWL_2,  "CSAT: CSatDataDownloadTsy::NewL, end of method" );
+    TFLOGSTRING( "CSAT: CSatDataDownloadTsy::NewL, end of method" );
     return satDataDownloadTsy; 
     }
 
@@ -67,7 +62,7 @@ CSatDataDownloadTsy::~CSatDataDownloadTsy
         void   
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_DTOR_1,  "CSAT: CSatDataDownloadTsy::~CSatDataDownloadTsy" );
+    TFLOGSTRING( "CSAT: CSatDataDownloadTsy::~CSatDataDownloadTsy" );
     // Unregister
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatDataDownloadTsyObjType, NULL );
@@ -96,7 +91,7 @@ void CSatDataDownloadTsy::ConstructL
         void
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CONSTRUCTL_1,  "CSAT: CSatDataDownloadTsy::ConstructL" );
+    TFLOGSTRING( "CSAT: CSatDataDownloadTsy::ConstructL" );
     // Register
     iSatTsy->MessageManager()->RegisterTsyObject(
 		CMmMessageManagerBase::ESatDataDownloadTsyObjType, this );
@@ -115,7 +110,7 @@ void CSatDataDownloadTsy::CompleteCellBroadcastDdlL
          const CSatDataPackage* aDataPackage
          )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_COMPLETECELLBROADCASTDDLL_1,  "CSAT:CSatDataDownloadTsy::CompleteCellBroadcastDdlL" );
+    TFLOGSTRING( "CSAT:CSatDataDownloadTsy::CompleteCellBroadcastDdlL" );
 
     TBuf8<KCbsMsgMaxLength> aPdu;
     aDataPackage->UnPackData( aPdu );     
@@ -157,7 +152,7 @@ void CSatDataDownloadTsy::CompleteSmsPpDdlL
         const CSatDataPackage* aDataPackage
         )
     {  
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_COMPLETESMSPPDDLL_1,  "CSAT:CSatDataDownloadTsy::CompleteSmsPpDdlL" );
+    TFLOGSTRING( "CSAT:CSatDataDownloadTsy::CompleteSmsPpDdlL" );
     TBuf8<KAddrMaxLength> smsScAddress;
     TBuf8<RMobileSmsMessaging::KGsmTpduSize> smsTpdu;
     
@@ -177,7 +172,8 @@ void CSatDataDownloadTsy::CompleteSmsPpDdlL
              KSmsTpduProtcolIdUSimDdl == iSmsTpdu.iProtocolId && 
             ( !( iSmsTpdu.iDcs & 0x01 ) ) && ( iSmsTpdu.iDcs & 0x02 ) )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_COMPLETESMSPPDDLL_2,  "CSAT:CSatDataDownloadTsy::CompleteSmsPpDdlL, SMS PP DDL is not supported, Store SMS to EFsms" );
+            TFLOGSTRING( "CSAT:CSatDataDownloadTsy::CompleteSmsPpDdlL,\
+                SMS PP DDL is not supported, Store SMS to EFsms" ); 
             CreateEntryForSavingSmsL( smsScAddress, smsTpdu );
             }
         }
@@ -195,7 +191,8 @@ void CSatDataDownloadTsy::CreateEntryForSavingSmsL
         const TDesC8& aSmsTpdu
         )
     {  
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATEENTRYFORSAVINGSMSL_1,  "CSAT:CSatDataDownloadTsy::CreateEntryForSavingSms SC Addr. length: %d", aSmsScAddress.Length() );
+    TFLOGSTRING2( "CSAT:CSatDataDownloadTsy::CreateEntryForSavingSms\
+        SC Addr. length: %d", aSmsScAddress.Length() );
     TInt offset = 0;
     
     // Check that the SC address length contains the length in
@@ -231,7 +228,8 @@ void CSatDataDownloadTsy::CreateEntryForSavingSmsL
         // Copy the Service Centre address and TPDU data
         smsEntry.iServiceCentre.iTelNumber.Copy( scAddress16 );
                 
-        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATEENTRYFORSAVINGSMSL_2, "CSAT:CSatDataDownloadTsy::CreateEntryForSavingSms, iTelNumber: %S", smsEntry.iServiceCentre.iTelNumber );
+        TFLOGSTRING2("CSAT:CSatDataDownloadTsy::CreateEntryForSavingSms,\
+            iTelNumber: %S", &smsEntry.iServiceCentre.iTelNumber );
             
         smsEntry.iMsgData.Copy( aSmsTpdu ); 
         
@@ -262,7 +260,7 @@ void CSatDataDownloadTsy::CreateSmsDeliverReportL
         TInt aResult
         )  
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATESMSDELIVERREPORTL_1, "CSAT: CSatDataDownloadTsy::CreateSmsDeliverReportL");
+    TFLOGSTRING("CSAT: CSatDataDownloadTsy::CreateSmsDeliverReportL");
     TBuf8<KTpduMaxSize> reportData;
        
     // Get User Data length
@@ -271,7 +269,8 @@ void CSatDataDownloadTsy::CreateSmsDeliverReportL
     // Check that SMS TPDU data exists by checking the last mandatory item
     if ( KSmsTpduByteUnknownOrReserved != iSmsTpdu.iDcs )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATESMSDELIVERREPORTL_2, "CSAT: CSatDataDownloadTsy::CreateSmsDeliverReportL, SMS TPDU OK");
+        TFLOGSTRING("CSAT: CSatDataDownloadTsy::CreateSmsDeliverReportL,\
+            SMS TPDU OK");
         reportData.Zero();
         reportData.Append( iSmsTpdu.iParameters );   // 1st byte -> parameters
         reportData.Append( KAllOptParamsPresent );   // TP-Parameter-Indicator
@@ -290,7 +289,8 @@ void CSatDataDownloadTsy::CreateSmsDeliverReportL
         // Cause must be inserted after the parameters
         if ( KErrNone != aResult )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATESMSDELIVERREPORTL_3, "CSAT: CSatDataDownloadTsy::CreateSmsDeliverReportL, Add TP Failure Cause: KDataDownloadError");
+            TFLOGSTRING("CSAT: CSatDataDownloadTsy::CreateSmsDeliverReportL,\
+                Add TP Failure Cause: KDataDownloadError");
             TBuf8<1> failureCause;
             failureCause.Zero();
             failureCause.Append( KDataDownloadError );
@@ -319,11 +319,12 @@ void CSatDataDownloadTsy::CreateSmsPpDdlEnvelopeL
         const TDesC8& aSmsTpdu
         )
     {  
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATESMSPPDDLENVELOPEL_1,  "CSAT:CSatDataDownloadTsy::CreateSmsPpDdlEnvelopeL" );
+    TFLOGSTRING( "CSAT:CSatDataDownloadTsy::CreateSmsPpDdlEnvelopeL" );
     // Check that the data exists
     if ( aSmsScAddress.Length() && aSmsTpdu.Length() )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_CREATESMSPPDDLENVELOPEL_2,  "CSAT:CSatDataDownloadTsy::CreateSmsPpDdlEnvelopeL, Data Ok" );
+        TFLOGSTRING( "CSAT:CSatDataDownloadTsy::CreateSmsPpDdlEnvelopeL,\
+            Data Ok" );
         TTlv envelope;
  
         envelope.Begin( KBerTlvSmsPpDownloadTag );
@@ -356,7 +357,7 @@ void CSatDataDownloadTsy::CompleteReadCbmidsL
         void 
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_COMPLETEREADCBMIDSL_1,  "CSAT: CSatDataDownloadTsy::CompleteReadCbmids" );
+    TFLOGSTRING( "CSAT: CSatDataDownloadTsy::CompleteReadCbmids" );
     // Convert constants and append to simFilePath
     TBuf8<KMaxFilePath> simFilePath;
     // Append data
@@ -389,7 +390,8 @@ void CSatDataDownloadTsy::SetSmsPpDdlStatus
         )
     {
     aDataPackage->UnPackData( iIsSmsPpDdlSupported );   
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_SETSMSPPDDLSTATUS_1, "CSAT: CSatNotifyMoSmControlRequest::SetActivationStatus, %d",iIsSmsPpDdlSupported );
+    TFLOGSTRING2("CSAT: CSatNotifyMoSmControlRequest::SetActivationStatus, %d",
+    	iIsSmsPpDdlSupported );     
     }  
     
 // -----------------------------------------------------------------------------
@@ -402,7 +404,7 @@ TInt CSatDataDownloadTsy::ParseSmsTpdu
         const TDesC8& aSmsTpdu
         )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_PARSESMSTPDU_1, "CSAT: CSatDataDownloadTsy::ParseSmsTpdu");
+    TFLOGSTRING("CSAT: CSatDataDownloadTsy::ParseSmsTpdu");
     TInt ret( KErrCorrupt );
     
     // Initialize values
@@ -437,7 +439,8 @@ TInt CSatDataDownloadTsy::ParseSmsTpdu
         // Just to be on the safe side, check that the offset is not too big
         if ( aSmsTpdu.Length() > ( offset + 1 + KSmsTpduSctsLength ) )
             {
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_PARSESMSTPDU_2,  "CSAT:CSatDataDownloadTsy::ParseSmsTpdu, SmsTpdu length Ok" );
+            TFLOGSTRING( "CSAT:CSatDataDownloadTsy::ParseSmsTpdu,\
+                SmsTpdu length Ok" );
             // Set protocol id and data coding shceme
             iSmsTpdu.iProtocolId = aSmsTpdu[offset];
             iSmsTpdu.iDcs = aSmsTpdu[++offset] ;
@@ -450,7 +453,8 @@ TInt CSatDataDownloadTsy::ParseSmsTpdu
             if ( tpduUserDataLength )
                 {
                 iSmsTpdu.iUserData.Copy( aSmsTpdu.Mid( ++offset ) );
-                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSATDATADOWNLOADTSY_PARSESMSTPDU_3,  "CSAT:CSatDataDownloadTsy::ParseSmsTpdu, iUserData length: %d", iSmsTpdu.iUserData.Length() );
+                TFLOGSTRING2( "CSAT:CSatDataDownloadTsy::ParseSmsTpdu,\
+                    iUserData length: %d", iSmsTpdu.iUserData.Length() );
                 }
 
             ret = KErrNone;

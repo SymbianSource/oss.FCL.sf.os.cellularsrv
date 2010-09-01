@@ -487,3 +487,53 @@ void CATHangUpData::Complete(TInt aError,TEventSource aSource)
 		}	
 	iState=EATNotInProgress;
 	}
+
+//
+//	CATHangUpFax
+//
+
+CATHangUpFax* CATHangUpFax::NewL(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals)
+	{
+	CATHangUpFax* hangup=new(ELeave) CATHangUpFax(aIo, aTelObject, aInit,aPhoneGlobals);
+	CleanupStack::PushL(hangup);
+	hangup->ConstructL();
+	CleanupStack::Pop();
+	return hangup;
+	}
+
+CATHangUpFax::CATHangUpFax(CATIO* aIo, CTelObject* aTelObject,CATInit* aInit,CPhoneGlobals* aPhoneGlobals)
+											: CATCallAlterCommands(aIo,aTelObject,aInit,aPhoneGlobals)
+	{}
+
+CATHangUpFax::~CATHangUpFax()
+	{}
+
+void CATHangUpFax::Start(TTsyReqHandle aTsyReqHandle, TAny* /*aParams*/)
+//
+//	When a fax call is terminated, modem is set to not initialised so that if a data call
+//  follows it will initialise the modem again.
+//
+	{
+	LOGTEXT(_L8("Starting HangUp fax call"));
+	iReqHandle=aTsyReqHandle;
+	iPhoneGlobals->iNotificationStore->CheckNotification(REINTERPRET_CAST(CCallBase*,iTelObject),EBegunHangingUp);
+	CCallMobileFax* faxCall = REINTERPRET_CAST(CCallMobileFax*,iTelObject);
+//	iPhoneGlobals->iPhoneStatus.iInitStatus = EPhoneNotInitialised;
+	faxCall->FaxHangUp(aTsyReqHandle);
+	}
+
+void CATHangUpFax::Stop(TTsyReqHandle aTsyReqHandle)
+//
+//	Too late to stop hang up process here. Only hope is if escape sequence or init sequence
+//	had to be performed first
+//
+	{
+	__ASSERT_ALWAYS(aTsyReqHandle == iReqHandle,Panic(EIllegalTsyReqHandle));
+	LOGTEXT(_L8("Too late to cancel Hang Up Command"));
+	}
+
+void CATHangUpFax::EventSignal(TEventSource /*aSource*/)
+	{}
+
+void CATHangUpFax::Complete(TInt /*aError*/,TEventSource /*aSource*/)
+	{}

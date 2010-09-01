@@ -101,7 +101,6 @@ public:
 		   void TestMobileAPNControlListServiceStatus(RMobilePhone& aPhone, TRequestStatus &aReqStatus);
 		   void TestMobileAirTime(RMobilePhone& aPhone, TRequestStatus &aReqStatus);
 		   void TestTerminateAllCalls(RMobilePhone& aPhone, TRequestStatus &aReqStatus);
-		   void TestTerminateActiveCalls(RMobilePhone& aPhone, TRequestStatus &aReqStatus);
 		   void TestMobileAutoRedial(RMobilePhone& aPhone, TRequestStatus &aReqStatus);
 		   void TestMobilePersonalisation(RMobilePhone& aPhone, TRequestStatus &aReqStatus);
 		   void TestSmartCardHandling(RMobilePhone& aPhone, TRequestStatus &aReqStatus);

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmsmstsyTraces.h"
-#endif
-
 #include "cmmsmstsy.h"
 #include "cmmphonetsy.h"
 #include "cmmsmsstoragetsy.h"
@@ -43,12 +37,12 @@
 CMmSmsTsy::CMmSmsTsy():
     iReqHandleType(EMultimodeSmsReqHandleUnknown)
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_CTOR_1, "TSY: CMmSmsTsy::CMmSmsTsy: constructor");
+TFLOGSTRING("TSY: CMmSmsTsy::CMmSmsTsy: constructor");
     }
 
 void CMmSmsTsy::ConstructL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_CONSTRUCTL_1, "TSY: CMmSmsTsy::ConstructL");
+TFLOGSTRING("TSY: CMmSmsTsy::ConstructL");
 #ifdef REQHANDLE_TIMER   
     //create req handle store
     iTsyReqHandleStore = CMmTsyReqHandleStore::NewL( this, iMmPhone, 
@@ -88,7 +82,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_CONSTRUCTL_1, 
         {
         iIsOffline = EFalse;
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_CONSTRUCTL_2, "TSY: CMmSmsTsy::ConstructL: iIsOffline has been initialised to %d", iIsOffline);
+TFLOGSTRING2("TSY: CMmSmsTsy::ConstructL: iIsOffline has been initialised to %d", iIsOffline);
 
     // there's no pending ResumeSmsReception request at startup
     iResumeSmsReceptionPending = EFalse;
@@ -114,7 +108,7 @@ CMmSmsTsy* CMmSmsTsy::NewL(
 
 CMmSmsTsy::~CMmSmsTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_DTOR_1, "TSY: CMmSmsTsy::~CMmSmsTsy");
+TFLOGSTRING("TSY: CMmSmsTsy::~CMmSmsTsy");
     if ( iMmPhone )
         {
         // deregister tsy object from message manager
@@ -255,7 +249,7 @@ TInt CMmSmsTsy::ExtFunc(
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() &&
         !IsRequestPossibleInOffline( aIpc ) )  
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
+TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
         TInt error = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral, 
                 KErrGsmOfflineOpNotAllowed );
 
@@ -306,7 +300,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_1, "TS
 
                 if ( KErrNone != leaveCode )
                     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_2, "CMmSmsTsy: Leave trapped!, IPC=%d, error value:%d", aIpc, leaveCode );
+TFLOGSTRING3("CMmSmsTsy: Leave trapped!, IPC=%d, error value:%d", aIpc, leaveCode );
                     ReqCompleted( aTsyReqHandle, leaveCode );
                     }
 
@@ -774,7 +768,7 @@ TInt CMmSmsTsy::ReceiveMessageL(
     TDes8* aMsgData, 
     TDes8* aMsgAttributes )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_RECEIVEMESSAGEL_1, "TSY: CMmSmsTsy::ReceiveMessageL\n");
+TFLOGSTRING("TSY: CMmSmsTsy::ReceiveMessageL\n");
 	
 	if(sizeof(RMobileSmsMessaging::TMobileSmsReceiveAttributesV1) > aMsgAttributes->Size())
 		{
@@ -859,18 +853,18 @@ void CMmSmsTsy::CompleteActivateSmsRouting(
     if ( ( KErrNone == aError ) && 
         ( KSmsRoutingActivated == aSmsRoutingStatus ) )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEACTIVATESMSROUTING_1, "TSY: CMmSmsTsy::CompleteActivateSmsRouting SMS routing activated");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteActivateSmsRouting SMS routing activated");
         iServerRoutingActivity = ERoutingActivated;
         }
 	else if ( ( KErrNone == aError ) && 
 	    ( KSmsRoutingDeactivated == aSmsRoutingStatus ) )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEACTIVATESMSROUTING_2, "TSY: CMmSmsTsy::CompleteActivateSmsRouting SMS routing not activated");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteActivateSmsRouting SMS routing not activated");
         iServerRoutingActivity = ERoutingNotActivated;
 		}     
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEACTIVATESMSROUTING_3, "TSY: CMmSmsTsy::CompleteActivateSmsRouting SMS routing activation failed");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteActivateSmsRouting SMS routing activation failed");
         iServerRoutingActivity = ERoutingNotActivated;
 
         TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -900,7 +894,7 @@ void CMmSmsTsy::CompleteReceiveMessage(
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeSmsReceiveMessage );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIVEMESSAGE_1, "TSY: CMmSmsTsy::CompleteReceiveMessage. iClientStorageFull: %d", iClientStorageFull );
+TFLOGSTRING2("TSY: CMmSmsTsy::CompleteReceiveMessage. iClientStorageFull: %d", iClientStorageFull );
 
     // SMS successfully received
     if ( KErrNone == aError )
@@ -915,7 +909,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIV
          // notification
 		 if ( smsClass2 && ( 0 != smsMsg->iLocation ) && iMmSmsStorageTsy ) 
     		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIVEMESSAGE_2, "TSY: CMmSmsTsy::CompleteReceiveMessage. CompleteNotifyStoreEvent happens");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteReceiveMessage. CompleteNotifyStoreEvent happens");
 			iMmSmsStorageTsy->CMmSmsStorageTsy::CompleteNotifyStoreEvent(
 			smsMsg->iLocation, RMobilePhoneStore::KStoreEntryAdded	);
     		}
@@ -992,7 +986,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIV
                 iTsyReqHandleStore->ResetTsyReqHandle( 
                     EMultimodeSmsReceiveMessage );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIVEMESSAGE_3, "TSY: CMmSmsTsy::CompleteReceiveMessage. Deliver SMS to the SMS stack");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteReceiveMessage. Deliver SMS to the SMS stack");
                 ReqCompleted( reqHandle, ret ); 
                 
                 // increase the count of expected acknowledgements
@@ -1061,7 +1055,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIV
 					{
 					ret = trapError;
 					}
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIVEMESSAGE_4, "TSY: CMmSmsTsy::CompleteReceiveMessage.KErrGsmSMSUnspecifiedProtocolError ");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteReceiveMessage.KErrGsmSMSUnspecifiedProtocolError ");
                 }
             else // SMS Memory is full
                 {
@@ -1097,7 +1091,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIV
 				{
 				ret = trapError;
 				}
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETERECEIVEMESSAGE_5, "TSY: CMmSmsTsy::CompleteReceiveMessage.KErrGsmSMSMemoryCapacityExceeded ");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteReceiveMessage.KErrGsmSMSMemoryCapacityExceeded ");
             }
         else if ( !reqHandle )
             {
@@ -1204,7 +1198,7 @@ void CMmSmsTsy::DeliverClass2ToSmsStack()
             {
             if ( EFalse == iSmsMsgArray->At( i )->iDeleteAfterClientAck )
                 {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_DELIVERCLASS2TOSMSSTACK_1, "TSY: CMmSmsTsy::DeliverClass2ToSmsStack. Deliver SMS to the SMS stack. Array count: %d", iSmsMsgArray->Count());
+TFLOGSTRING2("TSY: CMmSmsTsy::DeliverClass2ToSmsStack. Deliver SMS to the SMS stack. Array count: %d", iSmsMsgArray->Count());
 				// TSY can now delete the message if SMS stack ack message
                 // successfully
                 iSmsMsgArray->At( i )->iDeleteAfterClientAck = ETrue;
@@ -1241,7 +1235,7 @@ TInt CMmSmsTsy::AckSmsStoredL(
     const TDesC8* aMsgData, 
     TBool const * aMemoryFull )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ACKSMSSTOREDL_1, "TSY: CMmSmsTsy::AckSmsStored. aMemoryFull: %d",*aMemoryFull);
+TFLOGSTRING2("TSY: CMmSmsTsy::AckSmsStored. aMemoryFull: %d",*aMemoryFull);
     TTsyReqHandle getAckStoredMessageHandle = 
        iTsyReqHandleStore->GetTsyReqHandle( EMultimodeSmsAckStored );
 
@@ -1253,7 +1247,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ACKSMSSTOREDL_
     else
     if ( iExpectAckOrNack <= 0 )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ACKSMSSTOREDL_2, "TSY: CMmSmsTsy::AckSmsStoredL. -> ReceiveMessage not requested - error returned ");
+TFLOGSTRING("TSY: CMmSmsTsy::AckSmsStoredL. -> ReceiveMessage not requested - error returned ");        
         ReqCompleted( aTsyReqHandle, KErrNotReady );
         return KErrNone; 
         }
@@ -1271,7 +1265,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ACKSMSSTOREDL_
                  KErrNone == aMsgData->CompareF( 
                  iSmsMsgArray->At( i )->iSmsMsg ) )
                 {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ACKSMSSTOREDL_3, "TSY: CMmSmsTsy::AckSmsStored. Delete SMS: %d, Array count: %d",i,iSmsMsgArray->Count());
+TFLOGSTRING3("TSY: CMmSmsTsy::AckSmsStored. Delete SMS: %d, Array count: %d",i,iSmsMsgArray->Count());
                 delete iSmsMsgArray->At( i ); // Delete object from memory
                 iSmsMsgArray->Delete( i );    // Delete pointer from array
                 iSmsMsgArray->Compress(); 
@@ -1366,7 +1360,7 @@ TInt CMmSmsTsy::NackSmsStoredL(
     const TDesC8* aMsgData, 
     TInt* aRpCause )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_NACKSMSSTOREDL_1, "TSY: CMmSmsTsy::NackSmsStored. aRpCause: %d",*aRpCause);
+TFLOGSTRING2("TSY: CMmSmsTsy::NackSmsStored. aRpCause: %d",*aRpCause);
     TTsyReqHandle nackHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EMultimodeSmsNackStored );
 
@@ -1380,7 +1374,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_NACKSMSSTOREDL
     else
     if ( iExpectAckOrNack <= 0 )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_NACKSMSSTOREDL_2, "TSY: CMmSmsTsy::AckSmsStoredL. -> ReceiveMessage not requested - error returned ");
+TFLOGSTRING("TSY: CMmSmsTsy::AckSmsStoredL. -> ReceiveMessage not requested - error returned ");        
         ReqCompleted( aTsyReqHandle, KErrNotReady );
         return KErrNone; 
         }
@@ -1511,7 +1505,7 @@ void CMmSmsTsy::CompleteNackSmsStored(
 TInt CMmSmsTsy::ResumeSmsReceptionL( 
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_RESUMESMSRECEPTIONL_1, "TSY: CMmSmsTsy::ResumeSmsReceptionL");
+TFLOGSTRING("TSY: CMmSmsTsy::ResumeSmsReceptionL");
     TTsyReqHandle resumeHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EMultimodeSmsResumeReception );
 
@@ -1587,7 +1581,7 @@ void CMmSmsTsy::CompleteResumeSmsReception(
 void CMmSmsTsy::SetOffline( 
     TBool aIsOffline )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_SETOFFLINE_1, "TSY: CMmSmsTsy::SetOffline has been called with %d", aIsOffline);
+TFLOGSTRING2("TSY: CMmSmsTsy::SetOffline has been called with %d", aIsOffline);
 
     if ( !aIsOffline && iIsOffline )
         {
@@ -1632,7 +1626,7 @@ TInt CMmSmsTsy::SetMoSmsBearer(
     const TTsyReqHandle aTsyReqHandle, 
     RMobileSmsMessaging::TMobileSmsBearer* aBearer )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_SETMOSMSBEARER_1, "TSY: CMmSmsTsy::SetMoSmsBearer called");
+TFLOGSTRING("TSY: CMmSmsTsy::SetMoSmsBearer called");
     
     TTsyReqHandle setMoSmsBearerHandle = 
         iTsyReqHandleStore->GetTsyReqHandle( EMultimodeSmsSetMoSmsBearer );
@@ -1822,7 +1816,7 @@ TInt CMmSmsTsy::SendMessageL(
 
         // save send request
         iSmsSendReq = smsSendReq;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_SENDMESSAGEL_1, "TSY: CMmSmsTsy::SendMessageL: Send request saved");
+TFLOGSTRING("TSY: CMmSmsTsy::SendMessageL: Send request saved");
 
         // send request to DOS
         // packed parameter: TSendSmsDataAndAttributes
@@ -1874,7 +1868,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_SENDMESSAGEL_1
 // --------------------------------------------------------------------------- 
 TBool CMmSmsTsy::IsRPError(TInt aError)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ISRPERROR_1, "CMmSmsTsy::IsRPError(): %d", aError);
+    TFLOGSTRING2("CMmSmsTsy::IsRPError(): %d", aError);
     
     TBool  isRPError = EFalse;
     switch (aError)
@@ -1959,7 +1953,7 @@ void CMmSmsTsy::CompleteSendMessage(
         // DOS returned error to send request. Message might be tried to be 
 		// resent (see method ResendSms).
         // Timeout mechanism cannot access this part of code, ever.
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETESENDMESSAGE_1, "TSY: CMmSmsTsy::CompleteSendMessage. Resend counter: %d", iSmsSendReq->GetSendCounter());
+TFLOGSTRING2("TSY: CMmSmsTsy::CompleteSendMessage. Resend counter: %d", iSmsSendReq->GetSendCounter());
         }
     else
         {
@@ -2096,7 +2090,7 @@ void CMmSmsTsy::DoSendSatMessageL(
 void CMmSmsTsy::CompleteSendSatMessage( 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETESENDSATMESSAGE_1, "TSY: CMmSmsTsy::CompleteSendSatMessage. Complete SAT SMS send Error: %d", aError);
+TFLOGSTRING2("TSY: CMmSmsTsy::CompleteSendSatMessage. Complete SAT SMS send Error: %d", aError);
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeSmsSendSatMessage );
     
     if ( iTsySatMessaging )
@@ -2250,7 +2244,7 @@ TInt CMmSmsTsy::ReadSmspListPhase1L(
     RMobilePhone::TClientId const* aId, 
     TInt* aBufSize )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_READSMSPLISTPHASE1L_1, "TSY: CMmSmsTsy::ReadSmspListPhase1L");
+TFLOGSTRING("TSY: CMmSmsTsy::ReadSmspListPhase1L");
 
     TTsyReqHandle readSmspHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeSmsReadSmspListPhase1 );
@@ -2465,7 +2459,7 @@ void CMmSmsTsy::CompleteReadAllSmspPhase1(
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeSmsReadSmspListPhase1 );
     
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_1, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1 Complete read first phase error: %d",aError);
+TFLOGSTRING2("TSY: CMmSmsTsy::CompleteReadAllSmspPhase1 Complete read first phase error: %d",aError);
     if ( KErrNone == aError )
         {
         aDataPackage->UnPackData( &smsParams );
@@ -2485,13 +2479,13 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADAL
             if ( KErrNone == trapError )
                 {
                 *iRetSMSPSize = iSMSPList->Size();
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_2, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1: Phase 1 OK.");
+TFLOGSTRING("TSY: CMmSmsTsy::CompleteReadAllSmspPhase1: Phase 1 OK.");
                 // Complete first phase of read all SMSP sets
                 ReqCompleted( reqHandle, KErrNone );
                 }
             else
                 {   
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_3, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1: Could not create SMSP list, trapError=%d",trapError);
+TFLOGSTRING2("TSY: CMmSmsTsy::CompleteReadAllSmspPhase1: Could not create SMSP list, trapError=%d",trapError);
                 // Complete with error
                 ReqCompleted( reqHandle, trapError );
                 }
@@ -3090,7 +3084,7 @@ void CMmSmsTsy::ResendSms()
                 sendData.iIpc )                
                 {
                 iSmsNoFdnCheckFlag = ESmsNoFdnCheckUsed;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_RESENDSMS_1, "TSY: CMmSmsTsy::ResendSms. EMobileSmsMessagingSendMessageNoFdnCheck: %d", sendData.iIpc);
+TFLOGSTRING2("TSY: CMmSmsTsy::ResendSms. EMobileSmsMessagingSendMessageNoFdnCheck: %d", sendData.iIpc);                
                 CompleteSendMessageNoFdnCheck( KErrGeneral, NULL );
                 }
             }
@@ -3147,7 +3141,7 @@ TBool CMmSmsTsy::IsRequestPossibleInOffline( TInt aIpc ) const
 TInt CMmSmsTsy::SendMessageNoFdnCheckCancel( 
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_SENDMESSAGENOFDNCHECKCANCEL_1, "TSY: CMmSmsTsy::SendMessageNoFdnCheckCancel" );
+TFLOGSTRING("TSY: CMmSmsTsy::SendMessageNoFdnCheckCancel" ); 
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeSmsSendMessageNoFdnCheck );
@@ -3188,7 +3182,7 @@ void CMmSmsTsy::CompleteSendMessageNoFdnCheck(
         // DOS returned error to send request. Message might be tried to be 
 		// resent (see method ResendSms).
         // Timeout mechanism cannot access this part of code, ever.
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETESENDMESSAGENOFDNCHECK_1, "TSY: CMmSmsTsy::CompleteSendMessageNoFdnCheck. Resend counter: %d", iSmsSendReq->GetSendCounter());
+TFLOGSTRING2("TSY: CMmSmsTsy::CompleteSendMessageNoFdnCheck. Resend counter: %d", iSmsSendReq->GetSendCounter());
         }
     else
         {

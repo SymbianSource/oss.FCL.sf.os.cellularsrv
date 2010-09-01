@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,16 +20,10 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimSignalStrengthTraces.h"
-#endif
-
 #include <testconfigfileparser.h>
 #include "CSimSignalStrength.h"
 #include "CSimPhone.h"
+#include "Simlog.h"
 #include "simtsyglobalproperties.h"
 
 const TInt KSignalStrengthGranularity=5;		// < Granularity for signal strength list array
@@ -73,7 +67,7 @@ void CSimSignalStrength::ConstructL()
 	iTimer=CSimTimer::NewL(iPhone);
 	iSignalStrengthInfo=new(ELeave) CArrayFixFlat<TSignalStrengthInfo>(KSignalStrengthGranularity);
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_CONSTRUCTL_1, "Starting to parse Signal Strength config parameters...");
+	LOGSS1("Starting to parse Signal Strength config parameters...");
 	
 	const CTestConfigItem* item=NULL;
 	TInt ret=KErrNone;
@@ -110,19 +104,19 @@ void CSimSignalStrength::ConstructL()
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,0,duration);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element DURATION returned %d (element no. %d) from tag %s.",ret,0,KSSLevel);
+			LOGPARSERR("duration",ret,0,&KSSLevel);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,1,ss);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element SS returned %d (element no. %d) from tag %s.",ret,1,KSSLevel);
+			LOGPARSERR("ss",ret,1,&KSSLevel);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,2,ssb);
 		if(ret!=KErrNone)
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element SSB returned %d (element no. %d) from tag %s.",ret,2,KSSLevel);
+			LOGPARSERR("ssb",ret,2,&KSSLevel);
 			continue;
 			}
 		ret=CTestConfig::GetElement(item->Value(),KStdDelimiter,3,err);
@@ -132,7 +126,7 @@ void CSimSignalStrength::ConstructL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_CONSTRUCTL_5, "Reading element SSB returned %d (element no. %d) from tag %s expected 0 or -1" ,ret,3,KSSLevel);
+			LOGPARSERRANGE("ssb",ret,3,&KSSLevel,"0 or -1");
 			}
 
 		TSignalStrengthInfo ssInfo;
@@ -143,7 +137,7 @@ void CSimSignalStrength::ConstructL()
 		iSignalStrengthInfo->AppendL(ssInfo);
 		}
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_CONSTRUCTL_6, "...Finished parsing Signal Strength config parameters...");
+	LOGSS1("...Finished parsing Signal Strength config parameters...");
 
 	if(iSignalStrengthInfo->Count()!=0)
 		{
@@ -222,7 +216,7 @@ TInt CSimSignalStrength::GetSignalStrength(TTsyReqHandle aReqHandle,TDes8* aPckg
  * @return TInt			Standard error value.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_GETSIGNALSTRENGTH_1, ">>CSimSignalStrength::GetSignalStrength");
+	LOGSS1(">>CSimSignalStrength::GetSignalStrength");
 	TPckg<TInt32>* ssPckg=(TPckg<TInt32>*)aPckg1;
 	TInt32& ss=(*ssPckg)();
 	TPckg<TInt8>* ssbPckg=(TPckg<TInt8>*)aPckg2;
@@ -236,7 +230,7 @@ TInt CSimSignalStrength::GetSignalStrength(TTsyReqHandle aReqHandle,TDes8* aPckg
 
 	ss=iCurrentLevel;
 	ssb=iCurrentBar;
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_GETSIGNALSTRENGTH_2, "<<CSimSignalStrength::GetSignalStrength with level=%d dB and bar=%d",(TInt)iCurrentLevel,(TInt)iCurrentBar);
+	LOGSS3("<<CSimSignalStrength::GetSignalStrength with level=%d dB and bar=%d",iCurrentLevel,iCurrentBar);
 	iPhone->ReqCompleted(aReqHandle,iCurrentError);
 	return KErrNone;
 	}
@@ -254,7 +248,7 @@ TInt CSimSignalStrength::NotifySignalStrengthChange(TTsyReqHandle aReqHandle,TDe
  * @return TInt			Standard error value.
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_NOTIFYSIGNALSTRENGTHCHANGE_1, ">>CSimSignalStrength::NotifySignalStrengthChange");
+	LOGSS1(">>CSimSignalStrength::NotifySignalStrengthChange");
 	TPckg<TInt32>* ssPckg=(TPckg<TInt32>*)aPckg1;
 	TInt32& ss=(*ssPckg)();
 	TPckg<TInt8>* ssbPckg=(TPckg<TInt8>*)aPckg2;
@@ -281,12 +275,12 @@ void CSimSignalStrength::NotifySignalStrengthChangeCancel()
 	{
 	if(iSSChangeNotificationPending)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_NOTIFYSIGNALSTRENGTHCHANGECANCEL_1, "CSimSignalStrength::NotifySignalStrengthChange has been cancelled");
+		LOGSS1("CSimSignalStrength::NotifySignalStrengthChange has been cancelled");
 		iSSChangeNotificationPending=EFalse;
 		iPhone->ReqCompleted(iSSChangeNotificationReqHandle,KErrCancel);
 		}
 	else 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_NOTIFYSIGNALSTRENGTHCHANGECANCEL_2, "CSimSignalStrength::NotifySignalStrengthChange was not outstanding and hasn't been cancelled");
+		LOGSS1("CSimSignalStrength::NotifySignalStrengthChange was not outstanding and hasn't been cancelled");
 	}
 
 void CSimSignalStrength::TimerCallBack(TInt /*aId*/)
@@ -314,7 +308,7 @@ void CSimSignalStrength::TimerCallBack(TInt /*aId*/)
 		iSSChangeNotificationPending=EFalse;
 		*iSSChangeNotificationSSLevel=iCurrentLevel;
 		*iSSChangeNotificationSSBarLevel=iCurrentBar;
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_TIMERCALLBACK_1, "<<CSimSignalStrength::NotifySignalStrengthChange with level=%d dB and bar=%d",(TInt)iCurrentLevel,(TInt)iCurrentBar);
+		LOGSS3("<<CSimSignalStrength::NotifySignalStrengthChange with level=%d dB and bar=%d",iCurrentLevel,iCurrentBar);
 		iPhone->ReqCompleted(iSSChangeNotificationReqHandle,iCurrentError);
 		}
 	iTimer->Start(iSignalStrengthInfo->At(iSSIndex).iDuration,this);
@@ -337,7 +331,7 @@ const CTestConfigSection* CSimSignalStrength::CfgFile()
  */
 void CSimSignalStrength::PubSubCallback(TInt aNewVal)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_PUBSUBCALLBACK_1, "CSimSignalStrength::SignalStrengthChangeCallBack newVal=%d", aNewVal);
+	LOGSS2("CSimSignalStrength::SignalStrengthChangeCallBack newVal=%d", aNewVal);
 	if (iCurrentBar == aNewVal)
 		{
 		return;
@@ -348,7 +342,7 @@ void CSimSignalStrength::PubSubCallback(TInt aNewVal)
 		iSSChangeNotificationPending=EFalse;
 		*iSSChangeNotificationSSLevel=iCurrentLevel;
 		*iSSChangeNotificationSSBarLevel=iCurrentBar;
-		OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMSIGNALSTRENGTH_PUBSUBCALLBACK_2, "<<CSimSignalStrength::NotifySignalStrengthChange with level=%d dB and bar=%d",(TInt)iCurrentLevel,(TInt)iCurrentBar);
+		LOGSS3("<<CSimSignalStrength::NotifySignalStrengthChange with level=%d dB and bar=%d",iCurrentLevel,iCurrentBar);
 		iPhone->ReqCompleted(iSSChangeNotificationReqHandle,iCurrentError);
 		}
 	}

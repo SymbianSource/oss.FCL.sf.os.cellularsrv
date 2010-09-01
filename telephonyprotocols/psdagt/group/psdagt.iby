@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -23,6 +23,7 @@ REM GPRS AGT - Packet data networking
 #include <etel.iby>
 #include <etelpckt.iby>
 #include <commdb.iby>
+#include <flogger.iby>
 #include <nifman.iby>
 
 file=ABI_DIR\DEBUG_DIR\psd.agt		System\Libs\psd.agt

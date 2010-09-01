@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,6 @@
 
 
 // INCLUDE FILES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmvoicecalltsyTraces.h"
-#endif
-
 #include "cmmvoicecalltsy.h"
 
 #include <featmgr/featurecontrol.h>
@@ -57,7 +51,7 @@ CMmVoiceCallTsy* CMmVoiceCallTsy::NewL(
     CMmMessageManagerBase* aMessageManager,
     MTelephonyAudioControl* aTelephonyAudioControl )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_NEWL_1, "TSY: CMmVoiceCallTsy::NewL. Call name: %S", aName);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::NewL. Call name: %S", &aName);
 
     CMmVoiceCallTsy* mmCall = NULL;
 
@@ -84,7 +78,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_NEWL_
 
 CMmVoiceCallTsy::~CMmVoiceCallTsy()
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DTOR_1, "TSY: CMmVoiceCallTsy::~CMmVoiceCallTsy. Call deleted iCallId:%d iCallName:%S", iCallId, iCallName);
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::~CMmVoiceCallTsy. Call deleted iCallId:%d iCallName:%S", iCallId, &iCallName);
     }
 
 
@@ -124,7 +118,7 @@ TInt CMmVoiceCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXTFUNCL_1, "TSY: CMmVoiceCallTsy::DoExtFuncL. IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::DoExtFuncL. IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -272,7 +266,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXT
 CTelObject::TReqMode CMmVoiceCallTsy::ReqModeL(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_REQMODEL_1, "TSY: CMmVoiceCallTsy::ReqModeL. IPC:%d",aIpc);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::ReqModeL. IPC:%d",aIpc); 
 
     CTelObject::TReqMode ret( 0 ); // default return value
     
@@ -516,7 +510,7 @@ TInt CMmVoiceCallTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_CANCELSERVICE_1, "TSY: CMmVoiceCallTsy::CancelService. IPC: %d, Req handle: %d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::CancelService. IPC: %d, Req handle: %d", aIpc, aTsyReqHandle); 
 
     TInt ret( KErrNone );
 
@@ -637,8 +631,8 @@ void CMmVoiceCallTsy::CompleteNotifyStatusChange(
         callDataPackage->GetCallIdAndMode( callId, callMode ); 
         callDataPackage->UnPackData( callStatus );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. aResult:%d", aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call status:%d Call name:%S", callStatus, iCallName);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. aResult:%d", aResult ); 
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call status:%d Call name:%S", callStatus, &iCallName); 
 
         TTsyReqHandle holdHandle = 
             iTsyReqHandleStore->GetTsyReqHandle( EMultimodeMobileCallHold );
@@ -670,7 +664,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPL
                         if( call->IsEmergencyCall() )
                             {
                             numberOfEmergencyCalls++;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_3, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. numberOfEmergencyCalls:%d", numberOfEmergencyCalls );
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. numberOfEmergencyCalls:%d", numberOfEmergencyCalls );                             
                             }
                         }
 
@@ -712,11 +706,11 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                         {
                         iTelephonyAudioControl->CallStateChange(
                         iCallName, RMobileCall::EStatusDisconnecting );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_4, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call routing state changed to EStatusDisconnecting: Call name:%S", iCallName );
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call routing state changed to EStatusDisconnecting: Call name:%S", &iCallName );   
                         }
                     iTelephonyAudioControl->TeardownTelephonyAudio(
                     iCallName, aResult );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_5, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call routing teared down: Call name:%S", iCallName);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call routing teared down: Call name:%S", &iCallName);   
                     iTelephonyAudioControlSetup = EFalse;
                     }
 
@@ -743,7 +737,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPL
                         CompleteHangUp( aResult );
                         CompleteAnswerIncomingCall( aResult );
                         }
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_6, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - CompleteDial's called");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - CompleteDial's called");                          
                     CompleteDial( aResult );
                     CompleteDialNoFdn( aResult );
                     CompleteDialEmergencyCall( aResult );
@@ -753,7 +747,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                 // hanging.
                 else
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_7, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - Try to complete Dial and HangUp");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - Try to complete Dial and HangUp");                      
                     iLastExitCode = KErrGeneral;
                     TInt errorValue = CMmCommonStaticUtility::EpocErrorCode( 
                         KErrNotReady, KErrNotFound );
@@ -799,7 +793,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                 if ( KETelExt3rdPartyV1 != GetExtensionId() )
                     {
                     //non 3rd party client
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_8, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - StopTimeOuts");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - StopTimeOuts");                    	                    
                     iTsyReqHandleStore->StopTimeout( EMultimodeCallDial );
                     iTsyReqHandleStore->StopTimeout(
                     EMultimodeMobileCallDialEmergencyCall );
@@ -809,7 +803,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                 else
                     {
                     //3rd party client
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_9, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - StopTimeOut EMultimodeCallDialISV");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - StopTimeOut EMultimodeCallDialISV");                    	                    
                     iTsyReqHandleStore->StopTimeout( EMultimodeCallDialISV );
                     }
 #endif // REQHANDLE_TIMER
@@ -840,28 +834,28 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
 
                     if ( 0 < dialCancelHandle ) 
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_10, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDial");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDial");                        
                         HangUp( dialCancelHandle );
                         }
                     else if ( 0 < dialCancelHandleISV )
                         {
                         //3rd party client
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_11, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDialISV");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDialISV");
                         HangUp( dialCancelHandleISV );
                         }
                     else if ( 0 < dialEmergCancelHandle )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_12, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeMobileCallDialEmergencyCall");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeMobileCallDialEmergencyCall");                        
                         HangUp( dialEmergCancelHandle );
                         }
 					else if ( 0 < dialCancelHandleNoFdn )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_13, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDialNoFdn");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - HangUp - EMultimodeCallDialNoFdn");
                         HangUp( dialCancelHandleNoFdn );
                         }  
                     else
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_14, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - iDialCancelFlag = CMmCallTsy::EDialCancelNotCalled");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - iDialCancelFlag = CMmCallTsy::EDialCancelNotCalled");                        
                         iDialCancelFlag = CMmCallTsy::EDialCancelNotCalled;
                         }
                     }
@@ -896,7 +890,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                         // it with CALL_CAUSE_NOT_ALLOWED    
                         if( RCall::EStatusAnswering == call->Status() )
                             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_15, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange Answering not allowed!");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange Answering not allowed!");                    
                             TInt errorValue = 
                                 CMmCommonStaticUtility::EpocErrorCode( 
                                    KErrAccessDenied, KErrMMEtelCallForbidden );
@@ -906,7 +900,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                     }
                 
                 //check previous status. If status is answering
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_16, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - EStatusConnected");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. - EStatusConnected");
                 if ( RCall::EStatusAnswering == iCallStatus )
                     {  
                 	// don't start timers if error occurred
@@ -944,13 +938,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                         || ( iTsyReqHandleStore->GetTsyReqHandle( 
                             EMultimodeCallDialISV ) ) )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_17, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange.EStatusConnected - Before CompleteDial");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange.EStatusConnected - Before CompleteDial");                        
                         CompleteDial( aResult ); 
                         }
                      if( iTsyReqHandleStore->GetTsyReqHandle( 
                             EMultimodeCallDialNoFdnCheck ) )
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_18, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange.EStatusConnected - Before CompleteDialNoFdn");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange.EStatusConnected - Before CompleteDialNoFdn");                        
                         CompleteDialNoFdn( aResult );                                                 
 
                         }
@@ -1010,13 +1004,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                     {
                     if(  KMultimodeCallTypeIDNoFdnCheck == GetDialTypeId() )
                    	    {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_19, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnecting - Before CompleteDialNoFdn");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnecting - Before CompleteDialNoFdn");                   	    
                    	    //CompleteDialNoFdn in case remote user is busy
                         CompleteDialNoFdn( aResult );
                    	    }
                     else
                         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_20, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnecting - Before CompleteDial");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnecting - Before CompleteDial");                        
                         //CompleteDial in case remote user is busy
                         CompleteDial( aResult );
                         }                   	    
@@ -1050,13 +1044,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE
                 
                 if(  KMultimodeCallTypeIDNoFdnCheck == GetDialTypeId() )
                    	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_21, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnectingWithInband - Before CompleteDialNoFdn");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnectingWithInband - Before CompleteDialNoFdn");                   	                       	
                    	//CompleteDialNoFdn in case remote user is busy
                     CompleteDialNoFdn( aResult );
                    	}
                 else
                     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_22, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnectingWithInband - Before  CompleteDial");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. RMobileCall::EStatusDisconnectingWithInband - Before  CompleteDial");                   	                        
                     //CompleteDial in case remote user is busy
                     CompleteDial( aResult );        
                     }
@@ -1210,7 +1204,7 @@ TInt CMmVoiceCallTsy::Dial(
     const TDesC8* aCallParams,
     TDesC* aTelNumber )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_1, "TSY: CMmVoiceCallTsy::Dial. Req handle: %u, Call name: %S", aTsyReqHandle, iCallName);
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::Dial. Req handle: %d, Call name: %S", aTsyReqHandle, &iCallName);
 
     TBool isDialISV = iIsDialISV;
     iIsDialISV = EFalse;
@@ -1219,7 +1213,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_
 		{
 		if ( sizeof( RMobileCall::TCallParams ) > aCallParams->Length() )
 			{
-	      	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_2, "TSY: CMmVoiceCallTsy::Dial bad size argument");
+	      	TFLOGSTRING ("TSY: CMmVoiceCallTsy::Dial bad size argument");
 	      	// Complete the request with appropiate error        
 	      	return KErrArgument;
 	      	}
@@ -1297,7 +1291,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_
         
         if ( KETelExt3rdPartyV1 == extensionId && !isDialISV )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_3, "TSY: CMmVoiceCallTsy::Dial - KErrArgument");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - KErrArgument");
             //Complete the request with appropiate error
             ReqCompleted ( aTsyReqHandle, KErrArgument );
             SetDialFlag( EFalse ); 
@@ -1305,7 +1299,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_3, 
 
         else if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() )  
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_4, "TSY: Offline mode ON, Dial request is not allowed" );
+TFLOGSTRING("TSY: Offline mode ON, Dial request is not allowed" );
             ret = CMmCommonStaticUtility::EpocErrorCode(
                 KErrGeneral, KErrGsmOfflineOpNotAllowed );
 
@@ -1321,7 +1315,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_4, 
             //is still in use.
             //Complete request with status value informing the client about 
             //the situation.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_5, "TSY: CMmVoiceCallTsy::Dial - KErrNotReady");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - KErrNotReady");
             ReqCompleted( aTsyReqHandle, KErrNotReady );
             SetDialFlag( EFalse );
             }
@@ -1332,7 +1326,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_5, 
             //The request is already processing because of previous request
             //Complete request with status value informing the client about 
             //the situation.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_6, "TSY: CMmVoiceCallTsy::Dial - KErrServerBusy");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - KErrServerBusy");
             ReqCompleted( aTsyReqHandle, KErrServerBusy );
             SetDialFlag( EFalse );
             }
@@ -1341,7 +1335,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_6, 
             && ( KETelExt3rdPartyV1 != activeCall->GetExtensionId() ) )
             {
             //a 3rd party client call cannot put on Hold a "normal" call
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_7, "TSY: CMmVoiceCallTsy::Dial - KErrServerBusy");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - KErrServerBusy");
             ReqCompleted( aTsyReqHandle, KErrServerBusy );
             SetDialFlag( EFalse );
             }
@@ -1351,11 +1345,11 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_7, 
         else if ( extensionId == KETelExt3rdPartyV1 && 
                                         !i3rdPartyEmergencyNumberCheckDone )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_8, "TSY: CMmVoiceCallTsy::Dial - For 3rd party client number check must be done every time ");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - For 3rd party client number check must be done every time ");
             
             TInt ret( KErrGeneral );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_9, "TSY: CMmVoiceCallTsy::Dial - 3rd party client number check iNumberCheckMode.iCheckMode = RMmCustomAPI::EEmerNumberCheckNormal ");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - 3rd party client number check iNumberCheckMode.iCheckMode = RMmCustomAPI::EEmerNumberCheckNormal ");
             iNumberCheckMode.iCheckMode = RMmCustomAPI::EEmerNumberCheckNormal;
             iNumberCheckMode.iNumber.Copy( *aTelNumber );
                     
@@ -1369,7 +1363,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_9, 
             
             if ( NULL == mmCustom )
             	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_10, "TSY: CMmVoiceCallTsy::Dial - CustomTSY is not yet created!");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Dial - CustomTSY is not yet created!");        	
             	ReqCompleted( aTsyReqHandle, KErrNotReady );
             	SetDialFlag( EFalse );
             	}
@@ -1408,7 +1402,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_10,
         
         else
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_11, "TSY: CMmVoiceCallTsy::Dial - UUS services: %u", iUUSRequest.iServiceReq );
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::Dial - UUS services: %u", iUUSRequest.iServiceReq );
 
             // UUS1 will be embedded within the call set-up message
             if ( iUUSRequest.iServiceReq & RMobileCall::KUUS1Implicit )
@@ -1434,7 +1428,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_11,
                 // complete the dial with error value 
                 if ( KErrNone != ret )
                     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_12, "TSY: CMmVoiceCallTsy::Dial - UUS ERROR:%d", ret );
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::Dial - UUS ERROR:%d", ret );
                     // Complete the request with appropiate error
                     ReqCompleted ( aTsyReqHandle, KErrGsmCCResourceNotAvailable );
                     ClearCallStatus(); 
@@ -1515,7 +1509,7 @@ TInt CMmVoiceCallTsy::AnswerIncomingCall(
     const TTsyReqHandle aTsyReqHandle,
     const TDesC8* aCallParams )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_ANSWERINCOMINGCALL_1, "TSY: CMmVoiceCallTsy::AnswerIncomingCall. \n\t\t\t Handle:%d", aTsyReqHandle);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::AnswerIncomingCall. \n\t\t\t Handle:%d", aTsyReqHandle); 
 
     TInt trapError( KErrNone );
     
@@ -1668,7 +1662,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_ANSWERIN
 TInt CMmVoiceCallTsy::HangUp(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_HANGUP_1, "TSY: CMmVoiceCallTsy::HangUp. Req handle: %u, Call name: %S", aTsyReqHandle, iCallName);
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::HangUp. Req handle: %d, Call name: %S", aTsyReqHandle, &iCallName);
 
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
@@ -1790,8 +1784,8 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_HANGU
 void CMmVoiceCallTsy::CompleteHangUp(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEHANGUP_1, "TSY: CMmVoiceCallTsy::CompleteHangUp.\n  \t\t\t Result:%d", aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEHANGUP_2, "TSY: CMmVoiceCallTsy::CompleteHangUp. Call Id:%d Call name:%S", iCallId, iCallName);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CompleteHangUp.\n  \t\t\t Result:%d", aResult ); 
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::CompleteHangUp. Call Id:%d Call name:%S", iCallId, &iCallName);
 
     TInt ret( KErrNone );
 
@@ -2155,7 +2149,7 @@ TInt CMmVoiceCallTsy::DialEmergencyCall(
     const TTsyReqHandle aTsyReqHandle, 
     const TDataPackage& aNumber )
     {
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALEMERGENCYCALL_1, "TSY: CMmVoiceCallTsy::DialEmergencyCall number %S", *(aNumber.Des1u()));
+    TFLOGSTRING2("TSY: CMmVoiceCallTsy::DialEmergencyCall number %S", aNumber.Des1u());
         
     if(aNumber.Des1u()->MaxLength() > RMobileENStore::KEmergencyNumberSize)
         {
@@ -2211,8 +2205,8 @@ TInt CMmVoiceCallTsy::DialEmergencyCall(
 void CMmVoiceCallTsy::CompleteDialEmergencyCall(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEDIALEMERGENCYCALL_1, "TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Result:%d", aResult );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEDIALEMERGENCYCALL_2, "TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Call Id:%d Call name:%S", iCallId, iCallName);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Result:%d", aResult ); 
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Call Id:%d Call name:%S", iCallId, &iCallName);
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->
@@ -2260,7 +2254,7 @@ TInt CMmVoiceCallTsy::DialEmergencyCallCancel(
 TInt CMmVoiceCallTsy::FillMobileCallInfo(
     TDes8* aInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_1, "TSY: CMmVoiceCallTsy::FillMobileCallInfo");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::FillMobileCallInfo");
 
     TInt ret = KErrArgument;
     TInt extensionId = 0;
@@ -2274,7 +2268,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
             
         // get extensionid from the recieved data
         extensionId = callInfo.ExtensionId();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_2, "TSY: CMmVoiceCallTsy::FillMobileCallInfo - extensionid=%d",callInfo.ExtensionId());
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::FillMobileCallInfo - extensionid=%d",callInfo.ExtensionId());      
         }
     
     //TMobileCallInfoV1
@@ -2283,7 +2277,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
     	 KEtelExtMultimodeV7 == extensionId ||
     	 KEtelExtMultimodeV8 == extensionId )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_3, "TSY: CMmVoiceCallTsy::FillMobileCallInfo - V1");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::FillMobileCallInfo - V1");  
         // Set ret to KErrNone. We can fill this parameter class.
         ret = KErrNone;                
             
@@ -2303,7 +2297,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
        	 KEtelExtMultimodeV7 == extensionId ||
        	 KEtelExtMultimodeV8 == extensionId )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_4, "TSY: CMmVoiceCallTsy::FillMobileCallInfo - V3");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::FillMobileCallInfo - V3");                
             
         RMobileCall::TMobileCallInfoV3Pckg* paramsPckgV3 =
             reinterpret_cast<RMobileCall::TMobileCallInfoV3Pckg*>( aInfo );
@@ -2317,7 +2311,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
     if ( KEtelExtMultimodeV7 == extensionId ||
     	 KEtelExtMultimodeV8 == extensionId	)
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_5, "TSY: CMmVoiceCallTsy::FillMobileCallInfo - V7");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::FillMobileCallInfo - V7");
             
         RMobileCall::TMobileCallInfoV7Pckg* paramsPckgV7 =
             reinterpret_cast<RMobileCall::TMobileCallInfoV7Pckg*>( aInfo );
@@ -2330,7 +2324,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
     // TMobileCallInfoV8
     if ( KEtelExtMultimodeV8 == extensionId )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_6, "TSY: CMmVoiceCallTsy::FillMobileCallInfo - V8");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::FillMobileCallInfo - V8");
                 
         RMobileCall::TMobileCallInfoV8Pckg* paramsPckgV8 =
             reinterpret_cast<RMobileCall::TMobileCallInfoV8Pckg*>( aInfo );
@@ -2340,7 +2334,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
         iMmCallExtInterface->FillMobileCallInfoV8( &info );
         }
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_7, "TSY: CMmVoiceCallTsy::FillMobileCallInfo end. ret=%d",ret);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::FillMobileCallInfo end. ret=%d",ret);
       
     return ret;
     }
@@ -2458,7 +2452,7 @@ void CMmVoiceCallTsy::CompleteSwap(
 
     if ( EMultimodeCallReqHandleUnknown != reqHandle )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETESWAP_1, "TSY: Swap complete, Call ID: %d", iCallId );
+TFLOGSTRING2("TSY: Swap complete, Call ID: %d", iCallId );
         ReqCompleted( reqHandle, aResult );
         }
         (reinterpret_cast<CMmVoiceLineTsy*>( iMmLine ))->
@@ -2734,19 +2728,19 @@ TInt CMmVoiceCallTsy::RecoverDataPortAndRelinquishOwnership()
 //
 void CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck( TBool aIsEmergencyNbr )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE3RDPARTYCALLNBRCHECK_1, "TSY: CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck " );
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck " );
 
     if( i3rdPartyEmergencyNumberCheckDone )
         {
         if( aIsEmergencyNbr )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE3RDPARTYCALLNBRCHECK_2, "TSY: CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck - Emergency number" );
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck - Emergency number" );
             CompleteDial( KErrNotSupported );
             i3rdPartyEmergencyNumberCheckDone = EFalse;
             }
         else
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETE3RDPARTYCALLNBRCHECK_3, "TSY: CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck - NOT Emergency nbr - DIAL" );
+TFLOGSTRING("TSY: CMmVoiceCallTsy::Complete3rdPartyCallNbrCheck - NOT Emergency nbr - DIAL" );            
             i3rdPartyEmergencyNumberCheckDone = ETrue;
             iIsDialISV = ETrue;
             
@@ -2783,7 +2777,7 @@ TInt CMmVoiceCallTsy::DialNoFdnCheck(
     const TDesC8* aCallParams,
     TDesC* aTelNumber )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_1, "TSY: CMmVoiceCallTsy::DialNoFdnCheck. Req handle: %u, Call name: %S", (TUint)aTsyReqHandle, iCallName );
+TFLOGSTRING3("TSY: CMmVoiceCallTsy::DialNoFdnCheck. Req handle: %d, Call name: %S", aTsyReqHandle, &iCallName );            	
 	TInt ret( KErrGeneral );
     	
 	// Check that there is no dial on going for another call
@@ -2838,7 +2832,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALN
 	    
 	  	if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() )  
 	        {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_2, "TSY: Offline mode ON, DialNoFdnCheck request is not allowed" );
+TFLOGSTRING("TSY: Offline mode ON, DialNoFdnCheck request is not allowed" );
 	        ret = CMmCommonStaticUtility::EpocErrorCode(
 	            KErrGeneral, KErrGsmOfflineOpNotAllowed );
 
@@ -2853,7 +2847,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFD
 	        //is still in use.
 	        //Complete request with status value informing the client about 
 	        //the situation.
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_3, "TSY: CMmVoiceCallTsy::DialNoFdnCheck - KErrNotReady");
+TFLOGSTRING("TSY: CMmVoiceCallTsy::DialNoFdnCheck - KErrNotReady");
 	        ReqCompleted( aTsyReqHandle, KErrNotReady );
 	        SetDialFlag(EFalse);
 	        }
@@ -2872,7 +2866,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFD
 	                iCallMode, paramsPckgV1, aTelNumber, 
 	                KMultimodeCallTypeIDNoFdnCheck ));
 	                
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_4, "TSY: CMmVoiceCallTsy::DialNoFdnCheck ret = %d", ret);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::DialNoFdnCheck ret = %d", ret);          
 			if(err != KErrNone)
 				{
 				ret = err;
@@ -2900,7 +2894,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFD
 	            }
 			else
             	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_5, "TSY: CMmVoiceCallTsy::DialNoFdnCheck Before ReqCompleted ret = %d", ret);
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::DialNoFdnCheck Before ReqCompleted ret = %d", ret);               	
             	ReqCompleted( aTsyReqHandle, ret );
             	ClearCallStatus();
             	SetDialFlag(EFalse);
@@ -3010,7 +3004,7 @@ void CMmVoiceCallTsy::UpdateCallRoutingControl(
             {
             iTelephonyAudioControl->CallStateChange( aCallName, 
                                                      aMobileCallStatus );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_UPDATECALLROUTINGCONTROL_1, "TSY: CMmVoiceCallTsy::UpdateCallRoutingControl. Call routing state changed to EStatusDialling: Call name:%S", iCallName );
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::UpdateCallRoutingControl. Call routing state changed to EStatusDialling: Call name:%S", &iCallName );   
             }
         else
             {
@@ -3019,7 +3013,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_UPDAT
                                     MTelephonyAudioControl::ECallTypeVoice,
                                     iEmergencyCall,  
                                     iCallDirection );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_UPDATECALLROUTINGCONTROL_2, "TSY: CMmVoiceCallTsy::CMmVoiceCallTsy::UpdateCallRoutingControl. Call routing setup: Call name:%S", iCallName );
+TFLOGSTRING2("TSY: CMmVoiceCallTsy::CMmVoiceCallTsy::UpdateCallRoutingControl. Call routing setup: Call name:%S", &iCallName );
             iTelephonyAudioControlSetup = ETrue; 
             }
         }

@@ -1,4 +1,4 @@
-// Copyright (c) 2001-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2001-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -22,14 +22,8 @@
  @file
 */
 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "CSimPacketServiceTraces.h"
-#endif
-
 #include "CSimPacketService.h"
+#include "Simlog.h"
 #include <pcktcs.h>
 #include "CSimPhone.h"
 #include "utils.h"
@@ -114,7 +108,7 @@ void CSimPacketService::ConstructL()
 * @panic Panics with SIMTSY EInvalidParameterFormatInConfigFile if an additional param data item is in an invalid format
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_1, "CSimPacketService: Entered ConstructL()");
+	LOGPACKET1("CSimPacketService: Entered ConstructL()");
 	
 	iTimer = CSimTimer::NewL(iPhone);
 	iPcktRegTimer = CSimTimer::NewL(iPhone);
@@ -122,7 +116,7 @@ void CSimPacketService::ConstructL()
 	iReleaseModeTimer = CSimTimer::NewL(iPhone);
 	iDynamicCapsTimer = CSimTimer::NewL(iPhone);
 	iMbmsPcktTimer = CSimTimer::NewL(iPhone);
-	User::LeaveIfError(iMutex.CreateGlobal(KNullDesC, EOwnerProcess));
+	iMutex.CreateGlobal(KNullDesC, EOwnerProcess);
 	
 	iNtwkRegStatusInfo = new(ELeave) CArrayFixFlat<TNtwkRegStatus>(KGranularity);
 	iPcktRegStatusInfo=new(ELeave) CArrayFixFlat<TPacketRegStatus>(KGranularity);
@@ -386,14 +380,14 @@ void CSimPacketService::ConstructL()
 						{
 						// AdditionalParamDataFormat not been specified,
 						// default to plain ASCII
-						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_2, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",ret,2,KDefaultGPRSAdditionalParamItem);
+						LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",ret,2,&KDefaultGPRSAdditionalParamItem);
 						format = EConfigDataFormatAscii;
 						}
 					else
 						{
 						if (AsciiToNum(additionalParamDataFormat, format) != KErrNone)
 							{
-							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_3, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,KDefaultGPRSAdditionalParamItem);
+							LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&KDefaultGPRSAdditionalParamItem);
 							format = EConfigDataFormatAscii;
 							}
 
@@ -402,7 +396,7 @@ void CSimPacketService::ConstructL()
 						// default to ASCII if not.
 						if (format >= EMaxConfigDataFormat)
 							{
-							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_4, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,KDefaultGPRSAdditionalParamItem);
+							LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&KDefaultGPRSAdditionalParamItem);
 							format = EConfigDataFormatAscii;
 							}
 						}
@@ -423,7 +417,7 @@ void CSimPacketService::ConstructL()
 
 							if (ParseMixedBinaryAsciiDataL(additionalParamDataBuffer) != KErrNone)
 								{
-								OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_5, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMCONTENT returned %d (element no. %d) from tag %s.",KErrArgument,1,KDefaultGPRSAdditionalParamItem);
+								LOGPARSERR("AdditionalParamItem::additionalParamContent",KErrArgument,1,&KDefaultGPRSAdditionalParamItem);
 								SimPanic(EInvalidParameterFormatInConfigFile);
 								}
 
@@ -451,7 +445,7 @@ void CSimPacketService::ConstructL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_6, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::NUMADDITIONALPARAMS returned %d (element no. %d) from tag %s.",ret,14,KDefaultContextparamGPRS);
+			LOGPARSERR("ProtocolConfigOption::numAdditionalParams",ret,14,&KDefaultContextparamGPRS);	
 			} 
 		} 
 
@@ -558,14 +552,14 @@ void CSimPacketService::ConstructL()
 						{
 						// AdditionalParamDataFormat not been specified,
 						// default to plain ASCII
-						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_7, "WARNING - CONFIGURATION FILE PARSING - Reading element NO ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",ret,2,KDefaultAdditionalParamItemRel99);
+						LOGPARSERR("No AdditionalParamItem::additionalParamDataFormat",ret,2,&KDefaultAdditionalParamItemRel99);
 						format = EConfigDataFormatAscii;
 						}
 					else
 						{
 						if (AsciiToNum(additionalParamDataFormat, format) != KErrNone)
 							{
-							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_8, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,KDefaultAdditionalParamItemRel99);
+							LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&KDefaultAdditionalParamItemRel99);
 							format = EConfigDataFormatAscii;
 							}
 
@@ -574,7 +568,7 @@ void CSimPacketService::ConstructL()
 						// default to ASCII if not.
 						if (format >= EMaxConfigDataFormat)
 							{
-							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_9, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,KDefaultAdditionalParamItemRel99);
+							LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&KDefaultAdditionalParamItemRel99);
 							format = EConfigDataFormatAscii;
 							}
 						}
@@ -594,7 +588,7 @@ void CSimPacketService::ConstructL()
 
 							if (ParseMixedBinaryAsciiDataL(additionalParamDataBuffer) != KErrNone)
 								{
-								OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_10, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMCONTENT returned %d (element no. %d) from tag %s.",KErrArgument,1,KDefaultAdditionalParamItemRel99);
+								LOGPARSERR("AdditionalParamItem::additionalParamContent",KErrArgument,1,&KDefaultAdditionalParamItemRel99);
 								SimPanic(EInvalidParameterFormatInConfigFile);
 								}
 
@@ -621,7 +615,7 @@ void CSimPacketService::ConstructL()
 			}
 		else
 			{
-			OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_11, "WARNING - CONFIGURATION FILE PARSING - Reading element PROTOCOLCONFIGOPTION::NUMADDITIONALPARAMS returned %d (element no. %d) from tag %s.",ret,12,KDefaultContextparamRel99);
+			LOGPARSERR("ProtocolConfigOption::numAdditionalParams",ret,12,&KDefaultContextparamRel99);	
 			} 		
 
 		}
@@ -781,14 +775,14 @@ void CSimPacketService::ConstructL()
 						{
 						// AdditionalParamDataFormat not been specified,
 						// default to plain ASCII
-						OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_12, "WARNING - CONFIGURATION FILE PARSING - Reading element NO ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",ret,2,KDefaultAdditionalParamItem);
+						LOGPARSERR("No AdditionalParamItem::additionalParamDataFormat",ret,2,&KDefaultAdditionalParamItem);
 						format = EConfigDataFormatAscii;
 						}
 					else
 						{
 						if (AsciiToNum(additionalParamDataFormat, format) != KErrNone)
 							{
-							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_13, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,KDefaultAdditionalParamItem);
+							LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&KDefaultAdditionalParamItem);
 							format = EConfigDataFormatAscii;
 							}
 
@@ -797,7 +791,7 @@ void CSimPacketService::ConstructL()
 						// default to ASCII if not.
 						if (format >= EMaxConfigDataFormat)
 							{
-							OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_14, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMDATAFORMAT returned %d (element no. %d) from tag %s.",KErrArgument,2,KDefaultAdditionalParamItem);
+							LOGPARSERR("AdditionalParamItem::additionalParamDataFormat",KErrArgument,2,&KDefaultAdditionalParamItem);
 							format = EConfigDataFormatAscii;
 							}
 						}
@@ -817,7 +811,7 @@ void CSimPacketService::ConstructL()
 
 								if (ParseMixedBinaryAsciiDataL(additionalParamDataBuffer) != KErrNone)
 									{
-									OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CONSTRUCTL_15, "WARNING - CONFIGURATION FILE PARSING - Reading element ADDITIONALPARAMITEM::ADDITIONALPARAMCONTENT returned %d (element no. %d) from tag %s.",KErrArgument,1,KDefaultAdditionalParamItem);
+									LOGPARSERR("AdditionalParamItem::additionalParamContent",KErrArgument,1,&KDefaultAdditionalParamItem);
 									SimPanic(EInvalidParameterFormatInConfigFile);
 									}
 
@@ -1008,7 +1002,7 @@ CSimPacketService::~CSimPacketService()
 *
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_DTOR_1, "CSimPacketService: Entered destructor");
+	LOGPACKET1("CSimPacketService: Entered destructor");
 		
 	delete iIncomingContextManager;
 	
@@ -1444,11 +1438,11 @@ TInt CSimPacketService::RegisterNotification(const TInt aIpc)
 		case EPacketNotifyAttachModeChange:
 		case EPacketNotifyMbmsNetworkServiceStatusChange:
 		case EPacketNotifyMbmsServiceAvailabilityChange:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_REGISTERNOTIFICATION_1, "CSimPacketService: RegisterNotification");
+			LOGPACKET1("CSimPacketService: RegisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_REGISTERNOTIFICATION_2, "CSimPacketService: Register error, unknown IPC");
+			LOGPACKET1("CSimPacketService: Register error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -1478,11 +1472,11 @@ TInt CSimPacketService::DeregisterNotification(const TInt aIpc)
 		case EPacketNotifyAttachModeChange:
 		case EPacketNotifyMbmsNetworkServiceStatusChange:
 		case EPacketNotifyMbmsServiceAvailabilityChange:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_DEREGISTERNOTIFICATION_1, "CSimPacketService: DeregisterNotification");
+			LOGPACKET1("CSimPacketService: DeregisterNotification");
 			return KErrNone;
 		default:
 			// Unknown or invalid IPC
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_DEREGISTERNOTIFICATION_2, "CSimPacketService: Deregister error, unknown IPC");
+			LOGPACKET1("CSimPacketService: Deregister error, unknown IPC");
 			return KErrNotSupported;
 		}
 	}
@@ -1503,7 +1497,7 @@ TInt CSimPacketService::NumberOfSlotsL(const TInt aIpc)
 		case EPacketNotifyStatusChange:
 		case EPacketNotifyDynamicCapsChange:
 		case EPacketNotifyMbmsNetworkServiceStatusChange:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NUMBEROFSLOTSL_1, "CSimPacketService: Registered with 10 slots");
+			LOGPACKET1("CSimPacketService: Registered with 10 slots");
 			numberOfSlots=10;
 			break;
 		case EPacketNotifyContextAdded:
@@ -1513,12 +1507,12 @@ TInt CSimPacketService::NumberOfSlotsL(const TInt aIpc)
 		case EPacketNotifyReleaseModeChange:
 		case EPacketNotifyAttachModeChange:
 		case EPacketNotifyMbmsServiceAvailabilityChange:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NUMBEROFSLOTSL_2, "CSimPacketService: Registered with 2 slots");
+			LOGPACKET1("CSimPacketService: Registered with 2 slots");
 			numberOfSlots=2;
 			break;
 		default:
 			// Unknown or invalid IPC
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NUMBEROFSLOTSL_3, "CSimPacketService: Number of Slots error, unknown IPC");
+			LOGPACKET1("CSimPacketService: Number of Slots error, unknown IPC");
 			User::Leave(KErrNotSupported);
 			break;
 		}  
@@ -1685,7 +1679,7 @@ TInt CSimPacketService::CancelService(const TInt aIpc,const TTsyReqHandle aTsyRe
 * @return err KErrNone if request completes ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CANCELSERVICE_1, "CSimPacketService: - CancelService called");
+	LOGPACKET1("CSimPacketService: - CancelService called");
 	switch (aIpc)
 		{
 		case EPacketNotifyContextAdded:
@@ -1778,7 +1772,7 @@ TInt CSimPacketService::NotifyContextAddedCancel(const TTsyReqHandle aTsyReqHand
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYCONTEXTADDEDCANCEL_1, "CSimPacketService::NotifyContextAddedCancel called");
+	LOGPACKET1("CSimPacketService::NotifyContextAddedCancel called");
 	if(iNotifyContextAdded.iNotifyPending)
 		{
 		iNotifyContextAdded.iNotifyPending=EFalse;
@@ -1797,7 +1791,7 @@ TInt CSimPacketService::Attach(const TTsyReqHandle aTsyReqHandle)
 * @return TInt KErrnone if request completes ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ATTACH_1, "CSimPacketService::Attach called");
+	LOGPACKET1("CSimPacketService::Attach called");
 	iAttachRequestHandle=aTsyReqHandle;
 	return ActionEvent(EPacketEventAttach);
 	}
@@ -1811,7 +1805,7 @@ TInt CSimPacketService::AttachCancel(const TTsyReqHandle aTsyReqHandle)
 * @return TInt KErrnone if request completes ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ATTACHCANCEL_1, "CSimPacketService::AttachCancel called");
+	LOGPACKET1("CSimPacketService::AttachCancel called");
 	if((iState == RPacketService::EStatusUnattached) && (iCurrentEvent==EPacketEventAttach))
 		{
 		iTimer->Cancel();
@@ -1879,7 +1873,7 @@ TInt CSimPacketService::Detach(const TTsyReqHandle aTsyReqHandle)
 * @return TInt KErrnone if request completes ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_DETACH_1, "CSimPacketService::Detach called");
+	LOGPACKET1("CSimPacketService::Detach called");
 	iDetachRequestHandle=aTsyReqHandle;
 	return ActionEvent(EPacketEventDetach);
 	}
@@ -1894,7 +1888,7 @@ TInt CSimPacketService::DetachCancel(const TTsyReqHandle aTsyReqHandle)
 * @return TInt KErrnone if request completes ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_DETACHCANCEL_1, "CSimPacketService::DetachCancel called");
+	LOGPACKET1("CSimPacketService::DetachCancel called");
 	if((iState == RPacketService::EStatusAttached) && (iCurrentEvent==EPacketEventDetach))
 			{
 			iTimer->Cancel();
@@ -1913,7 +1907,7 @@ TInt CSimPacketService::GetStatus(const TTsyReqHandle aTsyReqHandle, RPacketServ
 * @return TInt err KErrNone if ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETSTATUS_1, "CSimPacketService::GetStatus called");
+	LOGPACKET1("CSimPacketService::GetStatus called");
 	*aStatus = iState;
 	ReqCompleted(aTsyReqHandle,KErrNone);
 	return KErrNone;
@@ -1948,7 +1942,7 @@ TInt CSimPacketService::NotifyStatusChangeCancel(const TTsyReqHandle aTsyReqHand
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYSTATUSCHANGECANCEL_1, "CSimPacketService::NotifyStatusChangeCancel called");
+	LOGPACKET1("CSimPacketService::NotifyStatusChangeCancel called");
 	if(iNotifyStatusChange.iNotifyPending)
 		{
 		iNotifyStatusChange.iNotifyPending=EFalse;
@@ -1973,7 +1967,7 @@ TInt CSimPacketService::NotifyContextActivationRequested(const TTsyReqHandle aTs
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYCONTEXTACTIVATIONREQUESTED_1, "CSimPacketService::NotifyContextActivationRequested called");
+	LOGPACKET1("CSimPacketService::NotifyContextActivationRequested called");
 	
 	iConfigData.iTsyReqHandle = aTsyReqHandle;
 	iConfigData.iData = aContextParameters;
@@ -2000,7 +1994,7 @@ TInt CSimPacketService::NotifyContextActivationRequestedCancel(const TTsyReqHand
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYCONTEXTACTIVATIONREQUESTEDCANCEL_1, "CSimPacketService::NotifyContextActivationRequestedCancel called");
+	LOGPACKET1("CSimPacketService::NotifyContextActivationRequestedCancel called");
 
 	iIncomingContextManager->Cancel();	
 	iIncomingContextManager->SetUseTimerOff();	
@@ -2047,7 +2041,7 @@ TInt CSimPacketService::EnumerateContexts(const TTsyReqHandle aTsyReqHandle, TIn
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ENUMERATECONTEXTS_1, "CSimPacketService::EnumerateContexts called");
+	LOGPACKET1("CSimPacketService::EnumerateContexts called");
 	// this should enumerate all primary and secondary contexts
 	*aCount = iPrimaryContextNameInc + iSecondaryContextNameInc;
 	*aMaxAllowed = KMaxContextPoolSize;
@@ -2064,7 +2058,7 @@ TInt CSimPacketService::EnumerateContextsCancel(const TTsyReqHandle /*aTsyReqHan
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ENUMERATECONTEXTSCANCEL_1, "CSimPacketService::Enumerate Context Cancel called");
+	LOGPACKET1("CSimPacketService::Enumerate Context Cancel called");
 	return KErrNone;
 	}
 
@@ -2078,7 +2072,7 @@ TInt CSimPacketService::GetContextInfo(const TTsyReqHandle aTsyReqHandle, TInt* 
 * @return KErrNone if context is found in the list of contexts 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETCONTEXTINFO_1, "CSimPacketService::GetContextInfo called");
+	LOGPACKET1("CSimPacketService::GetContextInfo called");
 	CSimPacketContext*  packetContext;
 
 	if((*aIndex >= iContextCount) || (*aIndex < 0))
@@ -2131,7 +2125,7 @@ TInt CSimPacketService::GetNtwkRegStatus(const TTsyReqHandle aTsyReqHandle, RPac
 * @return KErrNone 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETNTWKREGSTATUS_1, "CSimPacketService::GetNtwkRegStatus called");
+	LOGPACKET1("CSimPacketService::GetNtwkRegStatus called");
 	*aRegistrationStatus = (RPacketService::TRegistrationStatus)iCurrentRegStatus;
 	ReqCompleted(aTsyReqHandle,KErrNone);
 	return KErrNone;
@@ -2171,7 +2165,7 @@ TInt CSimPacketService::NotifyChangeOfNtwkRegStatusCancel(const TTsyReqHandle aT
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYCHANGEOFNTWKREGSTATUSCANCEL_1, "CSimPacketService::NotifyChangeOfNtwkRegStatusCancel called");
+	LOGPACKET1("CSimPacketService::NotifyChangeOfNtwkRegStatusCancel called");
 	if(iNotifyChangeOfNtwk.iNotifyPending)
 		{
 		iNotifyChangeOfNtwk.iNotifyPending=EFalse;
@@ -2277,7 +2271,7 @@ TInt CSimPacketService::GetStaticCaps(const TTsyReqHandle aTsyReqHandle, TUint* 
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETSTATICCAPS_1, "CSimPacketService::GetStaticCaps called");
+	LOGPACKET1("CSimPacketService::GetStaticCaps called");
 	*aCaps = KPacketServiceCaps;
 	*aPdpType = RPacketContext::EPdpTypePPP;
 	ReqCompleted(aTsyReqHandle,KErrNone);
@@ -2293,7 +2287,7 @@ TInt CSimPacketService::GetStaticCaps(const TTsyReqHandle aTsyReqHandle, TUint* 
 */
 TInt CSimPacketService::GetDynamicCaps(const TTsyReqHandle aTsyReqHandle, RPacketService::TDynamicCapsFlags* aCaps)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETDYNAMICCAPS_1, "CSimPacketService::GetDynamicCaps called");
+	LOGPACKET1("CSimPacketService::GetDynamicCaps called");
 	
 	if (iDynamicCapsArray->Count() == 0)
 		{
@@ -2314,7 +2308,7 @@ TInt CSimPacketService::GetDynamicCaps(const TTsyReqHandle aTsyReqHandle, RPacke
 */
 TInt CSimPacketService::NotifyDynamicCapsChange(const TTsyReqHandle aTsyReqHandle, RPacketService::TDynamicCapsFlags* aCaps)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYDYNAMICCAPSCHANGE_1, "CSimPacketService::NotifyDynamicCapsChange called");
+	LOGPACKET1("CSimPacketService::NotifyDynamicCapsChange called");
 	__ASSERT_ALWAYS(!iNotifyDynamicCapsChange.iNotifyPending,SimPanic(ENotificationAlreadyPending));
  
 	if (iDynamicCapsArray->Count() == 0)
@@ -2337,7 +2331,7 @@ TInt CSimPacketService::NotifyDynamicCapsChange(const TTsyReqHandle aTsyReqHandl
 */
 TInt CSimPacketService::NotifyDynamicCapsChangeCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYDYNAMICCAPSCHANGECANCEL_1, "CSimPacketService::NotifyDynamicCapsChangeCancel called");
+	LOGPACKET1("CSimPacketService::NotifyDynamicCapsChangeCancel called");
 	if( (iNotifyDynamicCapsChange.iNotifyPending) && (aTsyReqHandle == iNotifyDynamicCapsChange.iNotifyHandle))
 		{
 		iNotifyDynamicCapsChange.iNotifyPending=EFalse;
@@ -2376,7 +2370,7 @@ TInt CSimPacketService::SetAttachMode(const TTsyReqHandle aTsyReqHandle, RPacket
 * @return KErrNone 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_SETATTACHMODE_1, "CSimPacketService::SetAttachMode called");
+	LOGPACKET1("CSimPacketService::SetAttachMode called");
 	if(*aMode != RPacketService::EAttachWhenNeeded)
 		{
 		ReqCompleted(aTsyReqHandle, KErrNotSupported);
@@ -2405,7 +2399,7 @@ TInt CSimPacketService::GetAttachMode(const TTsyReqHandle aTsyReqHandle, RPacket
 * @return KErrNone 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETATTACHMODE_1, "CSimPacketService::GetAttachMode called");
+	LOGPACKET1("CSimPacketService::GetAttachMode called");
 	*aMode = iAttachMode;
 	ReqCompleted(aTsyReqHandle,KErrNone);
 	return KErrNone;
@@ -2420,7 +2414,7 @@ TInt CSimPacketService::NotifyAttachModeChange(const TTsyReqHandle aTsyReqHandle
 * @return KErrNone 
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYATTACHMODECHANGE_1, "CSimPacketService::NotifyAttachModeChange called");
+	LOGPACKET1("CSimPacketService::NotifyAttachModeChange called");
 	
 	__ASSERT_ALWAYS(!iNotifyChangeOfAttachMode.iNotifyPending,SimPanic(ENotificationAlreadyPending));
 	
@@ -2440,7 +2434,7 @@ TInt CSimPacketService::SetDefaultContextParams(const TTsyReqHandle aTsyReqHandl
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_SETDEFAULTCONTEXTPARAMS_1, "CSimPacketService::SetDefaultContextParams called");
+	LOGPACKET1("CSimPacketService::SetDefaultContextParams called");
 	
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aPckg;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
@@ -2622,7 +2616,7 @@ TInt CSimPacketService::GetGPRSDefaultContextParams(const TTsyReqHandle aTsyReqH
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETGPRSDEFAULTCONTEXTPARAMS_1, "CSimPacketService::GetDefaultContextParams called");
+	LOGPACKET1("CSimPacketService::GetDefaultContextParams called");
 
 	TPckg<RPacketContext::TContextConfigGPRS>* contextConfigGPRSPckg = (TPckg<RPacketContext::TContextConfigGPRS>*)aPckg;
 	RPacketContext::TContextConfigGPRS& contextConfigV1 = (*contextConfigGPRSPckg)();
@@ -2655,7 +2649,7 @@ TInt CSimPacketService::GetDefaultContextParams(const TTsyReqHandle aTsyReqHandl
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETDEFAULTCONTEXTPARAMS_1, "CSimPacketService::GetDefaultContextParams called");
+	LOGPACKET1("CSimPacketService::GetDefaultContextParams called");
 	TPckg<TPacketDataConfigBase>* configBase = (TPckg<TPacketDataConfigBase>*)aPckg;
 	TPacketDataConfigBase& configBaseV1 = (*configBase)();
 
@@ -2752,7 +2746,7 @@ void CSimPacketService::TimerCallBack(TInt aId)
 * @param aId an id identifying which timer callback is being called
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_TIMERCALLBACK_1, ">>CSimPacketService::TimerCallBack");
+	LOGPACKET1(">>CSimPacketService::TimerCallBack");
 
 	if(aId == ETimerIdPcktServPacket)
 		{
@@ -2825,7 +2819,7 @@ void CSimPacketService::TimerCallBack(TInt aId)
 		TInt ret = ActionEvent(EPacketEventTimeOut);
 		__ASSERT_ALWAYS(ret==KErrNone,SimPanic(ETimeOutEventActionFailed));	// Note: this is very crude error handling and should be replaced by something rather more elegant.
 		}
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_TIMERCALLBACK_2, "<<CSimPacketService::TimerCallBack");
+	LOGPACKET1("<<CSimPacketService::TimerCallBack");
 	}
 
 void CSimPacketService::TimerCallBackDeactivate()
@@ -2924,7 +2918,7 @@ void CSimPacketService::SimPSEvent(const CSimPubSub::TPubSubProperty aProperty, 
 		}
 	else
 		{  // Error. Some sort of stange request. Hopefully impossible.
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_SIMPSEVENT_1, "CSimPacketService::SimPSEvent property mismatch.");
+		LOGPACKET1("CSimPacketService::SimPSEvent property mismatch.");
 		SimPanic(EFailedToSetProperty);
 		}
 	
@@ -3020,7 +3014,7 @@ TInt CSimPacketService::ChangeState(RPacketService::TStatus aNewState)
 * @return Error indication if change of state is successful or not
 */
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CHANGESTATE_1, ">>CSimPacketService::ChangeState [newState=%d]", aNewState);
+	LOGPACKET2(">>CSimPacketService::ChangeState [newState=%d]", aNewState);
 	if(iState == aNewState)
 		return KErrNone;
 
@@ -3074,7 +3068,7 @@ TInt CSimPacketService::ChangeState(RPacketService::TStatus aNewState)
 		ReqCompleted(iNotifyStatusChange.iNotifyHandle,KErrNone);
 		}
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_CHANGESTATE_2, "<<CSimPacketService::ChangeState");
+	LOGPACKET1("<<CSimPacketService::ChangeState");
 	return KErrNone;
 	}
 
@@ -3094,7 +3088,7 @@ TInt CSimPacketService::ActionEvent(TPacketEvent aEvent)
 	switch(aEvent)
 		{
 	case EPacketEventAttach:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ACTIONEVENT_1, ">>CSimPacketService::ActionEvent = [EPacketEventAttach]");
+		LOGPACKET1(">>CSimPacketService::ActionEvent = [EPacketEventAttach]");
 		if(iState==RPacketService::EStatusUnattached)
 			{
 			iCurrentEvent=EPacketEventAttach;
@@ -3105,7 +3099,7 @@ TInt CSimPacketService::ActionEvent(TPacketEvent aEvent)
 		break;
 
 	case EPacketEventDetach:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ACTIONEVENT_2, ">>CSimPacketService::ActionEvent = [EPacketEventDetach]");
+		LOGPACKET1(">>CSimPacketService::ActionEvent = [EPacketEventDetach]");
 		if(iState !=RPacketService::EStatusUnattached)
 			{
 			iCurrentEvent=EPacketEventDetach;
@@ -3212,7 +3206,7 @@ TInt CSimPacketService::PrepareOpenSecondary(const TTsyReqHandle aTsyReqHandle, 
 TInt CSimPacketService::GetCurrentReleaseMode(const TTsyReqHandle aTsyReqHandle,RPacketService::TPacketReleaseMode* aReleaseMode)
 // return current release mode
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETCURRENTRELEASEMODE_1, "CSimPacketService::GetCurrentReleaseMode called");
+	LOGPACKET1("CSimPacketService::GetCurrentReleaseMode called");
 	*aReleaseMode = (RPacketService::TPacketReleaseMode)iCurrentPacketReleaseMode;
 	ReqCompleted(aTsyReqHandle, KErrNone);
 	return KErrNone;
@@ -3354,7 +3348,7 @@ TInt CSimPacketService::GetCurrentReleaseModeCancel(const TTsyReqHandle /*aTsyRe
 */
 TInt CSimPacketService::NotifyReleaseModeChangeCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYRELEASEMODECHANGECANCEL_1, "CSimPacketService::NotifyChangeOfNtwkRegStatusCancel called");
+	LOGPACKET1("CSimPacketService::NotifyChangeOfNtwkRegStatusCancel called");
 	if(iNotifyChangeOfReleaseMode.iNotifyPending)
 		{
 		iNotifyChangeOfReleaseMode.iNotifyPending=EFalse;
@@ -3400,7 +3394,7 @@ TInt CSimPacketService::GetContextNameInNifCancel(const TTsyReqHandle /*aTsyReqH
 */
 TInt CSimPacketService::NotifyAttachModeChangeCancel(const TTsyReqHandle aTsyReqHandle)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYATTACHMODECHANGECANCEL_1, "CSimPacketService::NotifyAttachModeChangeCancel called");
+	LOGPACKET1("CSimPacketService::NotifyAttachModeChangeCancel called");
 	if(iNotifyChangeOfAttachMode.iNotifyPending)
 		{
 		iNotifyChangeOfAttachMode.iNotifyPending=EFalse;
@@ -3418,7 +3412,7 @@ TInt CSimPacketService::GetMbmsNetworkServiceStatus(const TTsyReqHandle aTsyReqH
 * @return TInt err KErrNone if ok
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETMBMSNETWORKSERVICESTATUS_1, "CSimPacketService::GetMbmsNetworkServiceStatus called");
+	LOGPACKET1("CSimPacketService::GetMbmsNetworkServiceStatus called");
 	*aStatus = (iMbmsBroadcastParamsArray->At(iCurrentMbmsParamsIndex).iMbmsNetworkStatus);
 	if(aAttemptAttach)
 		{
@@ -3466,7 +3460,7 @@ TInt CSimPacketService::NotifyMbmsNetworkServiceStatusChange(const TTsyReqHandle
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYMBMSNETWORKSERVICESTATUSCHANGE_1, "CSimPacketService::NotifyMbmsNetworkServiceStatusChange called");
+	LOGPACKET1("CSimPacketService::NotifyMbmsNetworkServiceStatusChange called");
  	__ASSERT_ALWAYS(!iNotifyMbmsNetworkStatusChange.iNotifyPending,SimPanic(ENotificationAlreadyPending));
 
  	iNotifyMbmsNetworkStatusChange.iNotifyPending = ETrue;
@@ -3484,7 +3478,7 @@ TInt CSimPacketService::NotifyMbmsNetworkServiceStatusChangeCancel(const TTsyReq
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYMBMSNETWORKSERVICESTATUSCHANGECANCEL_1, "CSimPacketService::NotifyMbmsNetworkServiceStatusChangeCancel called");
+	LOGPACKET1("CSimPacketService::NotifyMbmsNetworkServiceStatusChangeCancel called");
 	if(iNotifyMbmsNetworkStatusChange.iNotifyPending)
 		{
 		iNotifyMbmsNetworkStatusChange.iNotifyPending=EFalse;
@@ -3504,7 +3498,7 @@ TInt CSimPacketService::NotifyMbmsServiceAvailabilityChange(const TTsyReqHandle 
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYMBMSSERVICEAVAILABILITYCHANGE_1, "CSimPacketService::NotifyMbmsServiceAvailabilityChange called");
+	LOGPACKET1("CSimPacketService::NotifyMbmsServiceAvailabilityChange called");
  	__ASSERT_ALWAYS(!iNotifyMbmsNetworkStatusChange.iNotifyPending,SimPanic(ENotificationAlreadyPending));
 
  	iNotifyMbmsServAvailChange.iNotifyPending = ETrue;
@@ -3522,7 +3516,7 @@ TInt CSimPacketService::NotifyMbmsServiceAvailabilityChangeCancel(const TTsyReqH
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_NOTIFYMBMSSERVICEAVAILABILITYCHANGECANCEL_1, "CSimPacketService::NotifyMbmsServiceAvailabilityChangeCancel called");
+	LOGPACKET1("CSimPacketService::NotifyMbmsServiceAvailabilityChangeCancel called");
 	if(iNotifyMbmsServAvailChange.iNotifyPending)
 		{
 		iNotifyMbmsServAvailChange.iNotifyPending=EFalse;
@@ -3543,7 +3537,7 @@ TInt CSimPacketService::UpdateMbmsMonitorServiceListL(const TTsyReqHandle aTsyRe
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_UPDATEMBMSMONITORSERVICELISTL_1, "CSimPacketService::UpdateMbmsMonitorServiceListL called");
+	LOGPACKET1("CSimPacketService::UpdateMbmsMonitorServiceListL called");
 	CPcktMbmsMonitoredServiceList* monServList = CPcktMbmsMonitoredServiceList::NewL();
 	CleanupStack::PushL(monServList); 
 
@@ -3558,7 +3552,7 @@ TInt CSimPacketService::UpdateMbmsMonitorServiceListL(const TTsyReqHandle aTsyRe
 	switch(*aAction)
 		{
 		case SIMTSY_PACKET_MBMS_ADD_ENTRIES:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_UPDATEMBMSMONITORSERVICELISTL_2, "CSimPacketService::UpdateMbmsMonitorServiceListL Action: ADD ");
+			LOGPACKET1("CSimPacketService::UpdateMbmsMonitorServiceListL Action: ADD ");
 			monServList->RestoreL(*aBuffer);
 			countAdd = monServList->Enumerate();
 			if(countAdd != SIMTSY_PACKET_MBMS_ADD_ENTRIES_COUNT)
@@ -3612,7 +3606,7 @@ TInt CSimPacketService::UpdateMbmsMonitorServiceListL(const TTsyReqHandle aTsyRe
 			break;
 
 		case SIMTSY_PACKET_MBMS_REM_ENTRIES:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_UPDATEMBMSMONITORSERVICELISTL_3, "CSimPacketService::UpdateMbmsMonitorServiceListL Action: REMOVE ");
+			LOGPACKET1("CSimPacketService::UpdateMbmsMonitorServiceListL Action: REMOVE ");
 			monServList->RestoreL(*aBuffer);
 			countRem = monServList->Enumerate();
 			if(countRem != SIMTSY_PACKET_MBMS_REM_ENTRIES_COUNT)
@@ -3678,14 +3672,14 @@ TInt CSimPacketService::UpdateMbmsMonitorServiceListL(const TTsyReqHandle aTsyRe
 		case SIMTSY_PACKET_MBMS_REM_ALL_ENTRIES:
 			iMbmsMonitorListCount = 0;
 			iMbmsMonitorListParamsArray->Delete(0,iMbmsMonitorListParamsArray->Count());
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_UPDATEMBMSMONITORSERVICELISTL_4, "CSimPacketService::UpdateMbmsMonitorServiceListL Action: REMOVE_ALL ");
+			LOGPACKET1("CSimPacketService::UpdateMbmsMonitorServiceListL Action: REMOVE_ALL ");
 			iUpdateMbmsServiceError = KErrNone;
 			iUpdateMbmsServiceReqHandle = aTsyReqHandle;
 			CleanupStack::PopAndDestroy(); // monServList
 			break;
 			
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_UPDATEMBMSMONITORSERVICELISTL_5, "CSimPacketService::UpdateMbmsMonitorServiceListL Action: Default ");
+			LOGPACKET1("CSimPacketService::UpdateMbmsMonitorServiceListL Action: Default ");
 			ReqCompleted(aTsyReqHandle,KErrNotFound);
 			CleanupStack::PopAndDestroy(); // monServList
 			break;
@@ -3701,7 +3695,7 @@ TInt CSimPacketService::UpdateMbmsMonitorServiceListCancel(const TTsyReqHandle a
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_UPDATEMBMSMONITORSERVICELISTCANCEL_1, "CSimPacketService::UpdateMbmsMonitorServiceListCancel Called ");
+	LOGPACKET1("CSimPacketService::UpdateMbmsMonitorServiceListCancel Called ");
 	ReqCompleted(aTsyReqHandle,KErrCancel);
 	return KErrNone;
 	}
@@ -3719,7 +3713,7 @@ TInt CSimPacketService::GetMbmsMonitoredServicesListPhase1(const TTsyReqHandle a
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETMBMSMONITOREDSERVICESLISTPHASE1_1, "CSimPacketService::GetMbmsMonitoredServicesListPhase1 called");
+	LOGPACKET1("CSimPacketService::GetMbmsMonitoredServicesListPhase1 called");
 	TInt ret=KErrNone;
 	TInt leaveCode=KErrNone;
 	TRAP(leaveCode, ret=ProcessGetMbmsMonitoredServicesListPhase1L(aTsyReqHandle, aClient, aBufSize););
@@ -3743,7 +3737,7 @@ TInt CSimPacketService::ProcessGetMbmsMonitoredServicesListPhase1L(const TTsyReq
 */
 	{
 	
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_PROCESSGETMBMSMONITOREDSERVICESLISTPHASE1L_1, "CSimPacketService::ProcessGetMbmsMonitoredServicesListPhase1L called");
+	LOGPACKET1("CSimPacketService::ProcessGetMbmsMonitoredServicesListPhase1L called");
 	CPcktMbmsMonitoredServiceList* list=CPcktMbmsMonitoredServiceList::NewL();
 	CleanupStack::PushL(list);
 
@@ -3758,7 +3752,7 @@ TInt CSimPacketService::ProcessGetMbmsMonitoredServicesListPhase1L(const TTsyReq
 			entry.iTmgi.SetMNC(iMbmsMonitorListParamsArray->At(i).iMNC);
 			entry.iTmgi.SetServiceId(iMbmsMonitorListParamsArray->At(i).iServiceId);
 			// Add the entry into the list, at the next empty location
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_PROCESSGETMBMSMONITOREDSERVICESLISTPHASE1L_2, "Adding the Entry no. %d to the List",i+1);
+			LOGPACKET2("Adding the Entry no. %d to the List",i+1);
 			list->AddEntryL(entry);
 		}
 	
@@ -3793,7 +3787,7 @@ TInt CSimPacketService::GetMbmsMonitoredServicesListPhase2(const TTsyReqHandle a
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETMBMSMONITOREDSERVICESLISTPHASE2_1, "CSimPacketService::GetMbmsMonitoredServicesListPhase2 called");
+	LOGPACKET1("CSimPacketService::GetMbmsMonitoredServicesListPhase2 called");
 	CPcktListReadAllAttempt* read=NULL;
 	// Find the get MBMS Monitor Service List from this client
 	for (TInt i=0; i<iMbmsServicesList->Count(); ++i)
@@ -3824,7 +3818,7 @@ TInt CSimPacketService::GetMbmsMonitoredServicesListCancel(const TTsyReqHandle a
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_GETMBMSMONITOREDSERVICESLISTCANCEL_1, "CSimPacketService::GetMbmsMonitoredServicesListCancel called");
+	LOGPACKET1("CSimPacketService::GetMbmsMonitoredServicesListCancel called");
 	// Remove the read all attempt from iGetMbmsMonitoredServices
 
 	CPcktListReadAllAttempt* read=NULL;
@@ -3852,7 +3846,7 @@ TInt CSimPacketService::EnumerateMbmsMonitorServiceList(const TTsyReqHandle aTsy
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ENUMERATEMBMSMONITORSERVICELIST_1, "CSimPacketService::EnumerateMbmsMonitorServiceList called");
+	LOGPACKET1("CSimPacketService::EnumerateMbmsMonitorServiceList called");
 	*aCount = iMbmsMonitorListCount;
 	*aMaxAllowed = KMaxMbmsMonitorContexts;
 	iEnumerateMonitorListReqHandle = aTsyReqHandle;
@@ -3889,7 +3883,7 @@ TInt CSimPacketService::EnumerateMbmsActiveServiceList(const TTsyReqHandle aTsyR
 * @return KErrNone
 */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSIMPACKETSERVICE_ENUMERATEMBMSACTIVESERVICELIST_1, "CSimPacketService::EnumerateMbmsActiveServiceList called");
+	LOGPACKET1("CSimPacketService::EnumerateMbmsActiveServiceList called");
 	*aCount = iMbmsNifWrappers.Count(); // The NifWrapper contains the list of mbmsContexts that are activated.
 	*aMaxAllowed = KMaxMbmsActiveContexts;
 	iEnumerateActiveListReqHandle = aTsyReqHandle;

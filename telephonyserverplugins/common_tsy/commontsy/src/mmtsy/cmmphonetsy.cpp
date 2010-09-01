@@ -14,11 +14,6 @@
 //
 
 
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmphonetsyTraces.h"
-#endif
-
 
 //INCLUDES
 #include <etelmm.h>
@@ -95,7 +90,7 @@ EXPORT_C CMmPhoneTsy* CMmPhoneTsy::NewL (
     CMmPhoneFactoryTsy* aMmPhoneFactoryTsy,
     MLtsyFactoryBase* aFactory )
     {
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CMMPHONETSY_NEWL_1, "TSY: CMmPhoneTsy::NewL - Phone model Id: %S", KPhoneModelId);
+TFLOGSTRING2("TSY: CMmPhoneTsy::NewL - Phone model Id: %S", &KPhoneModelId);
     CleanupStack::PushL( aMessageManager );
     CMmPhoneTsy* mmPhoneTsy = new (ELeave) CMmPhoneTsy();
 
@@ -135,9 +130,9 @@ CMmPhoneTsy::CMmPhoneTsy():
 
 void CMmPhoneTsy::ConstructL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CONSTRUCTL_1, "TSY: CMmPhoneTsy::ConstructL");
+TFLOGSTRING("TSY: CMmPhoneTsy::ConstructL");
 	iCentRep = CRepository::NewL( KCRUidCtsyMEAlsLine );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CONSTRUCTL_2, "TSY: CMmPhoneTsy::ConstructL Central Repository opened successfully");
+TFLOGSTRING("TSY: CMmPhoneTsy::ConstructL Central Repository opened successfully");
 	
 	//iPublic Central Repositories
     iMWISCentRep = CRepository::NewL( KCRUidCtsyMessageWaitingIndicator );
@@ -187,7 +182,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CONSTRUCTL_2
 	// initialize HWRM & its observers
 	if(IsHWRMSupported())
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CONSTRUCTL_3, "TSY: HWRM Battery API is in use.");
+		TFLOGSTRING("TSY: HWRM Battery API is in use.");
 		iPowerManager = CHWRMPower::NewL();
 		iBattery = CBatteryInfoObserver::NewL( *iPowerManager, *this ); 
 		iChargingStatus = CChargingStatusObserver::NewL( *this );
@@ -354,7 +349,7 @@ void CMmPhoneTsy::InitInternalAttributes()
     
 CMmPhoneTsy::~CMmPhoneTsy()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DTOR_1, "TSY: CMmPhoneTsy::~CMmPhoneTsy");
+TFLOGSTRING("TSY: CMmPhoneTsy::~CMmPhoneTsy");
 
 	if(IsHWRMSupported())
 		{
@@ -564,7 +559,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DTOR_1, "TSY
         delete iSystemStatePluginHandler;
         }
     iSystemStatePluginHandler = NULL;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DTOR_2, "TSY: CMmPhoneTsy::~CMmPhoneTsy DONE");
+TFLOGSTRING("TSY: CMmPhoneTsy::~CMmPhoneTsy DONE");
    }
 
 // ---------------------------------------------------------------------------
@@ -588,7 +583,7 @@ void CMmPhoneTsy::Init()
 //
 void CMmPhoneTsy::CompleteNotifyModemStatusReady()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYMODEMSTATUSREADY_1, "TSY: CMmPhoneTsy::CompleteNotifyModemStatusReady");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyModemStatusReady");
 
     TRAP_IGNORE(
     //update the network registration status
@@ -617,7 +612,7 @@ void CMmPhoneTsy::CompleteNotifySimStatusReadyL()
     {
     if ( !iBootState.iSIMReady )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYSIMSTATUSREADYL_1, "TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - SIM is ready, start initialisations");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - SIM is ready, start initialisations");
 
         iBootState.iSIMReady = ETrue;
         iBootState.iADNReady = ETrue;
@@ -662,14 +657,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTI
         // VIAG homezone parameters. 
         if ( iMmCustomTsy )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYSIMSTATUSREADYL_2, "TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - CustomTSY ready");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - CustomTSY ready");
             // Get pointer to SIM Custom TSY
             CMmSIMTsy* simCustomTsy =
                 ( ( CMmSIMTsy* ) iMmCustomTsy->GetSIMTsyPtr() );
             
             if ( simCustomTsy )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYSIMSTATUSREADYL_3, "TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - CheckViagHomeZoneParamsL()");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - CheckViagHomeZoneParamsL()");
                 simCustomTsy->CheckViagHomezoneParamsL();
                 iViagHomeZoneParamsChecked = ETrue;
                 }
@@ -678,7 +673,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTI
         else
         	{
         	iViagHomeZoneParamsChecked = EFalse;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYSIMSTATUSREADYL_4, "TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - CustomTSY NOT ready");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifySimStatusReadyL - CustomTSY NOT ready");        		
         	}
         } 
     }
@@ -722,7 +717,7 @@ void CMmPhoneTsy::StartPBCachingL()
 TInt CMmPhoneTsy::NotifyIndicatorChange(
     TUint32* aIndicatorState )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYINDICATORCHANGE_1, "TSY: CMmPhoneTsy::NotifyIndicatorChange");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyIndicatorChange");
 
     // Update indicator state, we don't keep track of it
     // unless notify is on. So we need to update starting
@@ -741,17 +736,17 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYINDICA
 //
 void CMmPhoneTsy::CompleteNotifyIndicatorChange()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYINDICATORCHANGE_1, "TSY: CMmPhoneTsy::CompleteNotifyIndicatorChange");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyIndicatorChange");
 
     // first check if this notify is actually requested..
     if (NULL != iRetIndicatorState)
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYINDICATORCHANGE_2, "TSY: CMmPhoneTsy::CompleteNotifyIndicatorChange -- notify is on");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyIndicatorChange -- notify is on");
         TUint32 newIndicatorState = GetIndicatorState();
         if (newIndicatorState != iIndicatorState)
             {
             iIndicatorState = newIndicatorState;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYINDICATORCHANGE_3, "TSY: CMmPhoneTsy::CompleteNotifyIndicatorChange -- changed to 0x%08x", iIndicatorState);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteNotifyIndicatorChange -- changed to 0x%x", iIndicatorState);
 
             //reset req handle. Returns the deleted req handle
             TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -777,7 +772,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTI
 TInt CMmPhoneTsy::NotifyIndicatorChangeCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYINDICATORCHANGECANCEL_1, "TSY: CMmPhoneTsy::NotifyIndicatorChangeCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyIndicatorChangeCancel");
 
     iRetIndicatorState = NULL;
     iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -1068,7 +1063,8 @@ CTelObject* CMmPhoneTsy::OpenNewObjectByNameL(
     if ( KErrNone != trapError || KErrNone != addLineSucceeded
         || KErrNone != addPBSucceeded )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_OPENNEWOBJECTBYNAMEL_1, "TSY: CMmPhoneTsy::OpenNewObjectByNameL - Failed: %d",trapError);
+TFLOGSTRING2("TSY: CMmPhoneTsy::OpenNewObjectByNameL - Failed: %d",
+    trapError);
 
         if ( mmLine )
             {
@@ -1125,7 +1121,7 @@ TInt CMmPhoneTsy::ExtFunc(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_EXTFUNC_1, "TSY: CMmPhoneTsy::ExtFunc, IPC:%d, Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmPhoneTsy::ExtFunc, IPC:%d, Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
@@ -1143,7 +1139,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_EXTFUNC_1
     if ( ERfsStateInfoInactive == iStateInfo &&
         !IsRequestPossibleInOffline( aIpc ) )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_EXTFUNC_2, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
+TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral,
                 KErrGsmOfflineOpNotAllowed );
 
@@ -1195,7 +1191,7 @@ TInt CMmPhoneTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DOEXTFUNCL_1, "TSY: CMmPhoneTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmPhoneTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret = KErrNone;
 
@@ -1235,7 +1231,11 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DOEXTFUNC
         case EMobilePhoneAuthorizationInfoPhase2:
         case EMobilePhoneGetCellInfo:
         case EMobilePhoneNotifyCellInfoChange:
-        case EMobilePhoneGetCurrentActiveUSimApplication:                
+        case EMobilePhoneGetCurrentActiveUSimApplication:
+        case EMobilePhoneGetPreferredNetworksPhase1:
+        case EMobilePhoneGetPreferredNetworksPhase2:
+        case EMobilePhoneStorePreferredNetworksList:
+        case EMobilePhoneNotifyStorePreferredNetworksListChange:
             //direct this request to the net specific DoExtFuncL
             ret = iMmNetTsy->DoExtFuncL ( aTsyReqHandle, aIpc, aPackage );
             break;
@@ -1343,10 +1343,6 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DOEXTFUNC
         case EMobilePhoneTerminateAllCalls:
             ret = TerminateAllCallsL( aTsyReqHandle );
             break;			
-        // Active calls termination
-        case EMobilePhoneTerminateActiveCalls:
-            ret = TerminateActiveCallsL( aTsyReqHandle );
-            break;          
       // DTMF
 		// forward request to the DTMF-specific Tsy
         case EMobilePhoneGetDTMFCaps:
@@ -1618,7 +1614,6 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
         //indicates that same method has been called and has not been 
         //completed, the method should return KErrServerBusy.
         case EMobilePhoneTerminateAllCalls:
-        case EMobilePhoneTerminateActiveCalls:
         case EMobilePhoneGetFdnStatus:
         case EMobilePhoneGetCustomerServiceProfile:
         case EMobilePhoneGetDetectedNetworksV2Phase1:
@@ -1641,6 +1636,9 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
         case EMobilePhoneDeleteAPNName:
         case EMobilePhoneAppendAPNName:
         case EMobilePhoneGetSecurityCodeInfo:
+		case EMobilePhoneGetPreferredNetworksPhase1:
+		case EMobilePhoneGetPreferredNetworksPhase2:		
+		case EMobilePhoneStorePreferredNetworksList:
 
         //SS related methods.
         case EMobilePhoneGetCallForwardingStatusPhase1:
@@ -1764,6 +1762,7 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
         case EMobilePhoneNotifySendNetworkServiceRequest:
         case EMobilePhoneNotifyAllSendNetworkServiceRequest: 
         case EMobilePhoneNotifyCellInfoChange:
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
             ret=KReqModeMultipleCompletionEnabled | KReqModeRePostImmediately;
             break;
         // Cancel Requests
@@ -1778,7 +1777,7 @@ CTelObject::TReqMode CMmPhoneTsy::ReqModeL(
             break;
 
         }
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_REQMODEL_1, "TSY: CMmPhoneTsy::ReqModeL - IPC:%d, Mode:%d", aIpc, ret);
+	TFLOGSTRING3("TSY: CMmPhoneTsy::ReqModeL - IPC:%d, Mode:%d", aIpc, ret);
 
     return ret;
     }
@@ -1914,6 +1913,9 @@ TInt CMmPhoneTsy::NumberOfSlotsL(
         case EMobilePhoneNotifyCellInfoChange:
         	numberOfSlots = KMmPhoneCellInfoChangeSlots;
         	break;
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
+			numberOfSlots = KMmPhoneStorePreferredNetworksListChangeSlots;
+            break;
         default:
             // Unknown or invalid Phone IPC
             User::Leave( KErrNotSupported );
@@ -1933,7 +1935,7 @@ TInt CMmPhoneTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CANCELSERVICE_1, "TSY: CMmPhoneTsy::CancelService - IPC:%d, Handle:%d", aIpc, aTsyReqHandle);
+TFLOGSTRING3("TSY: CMmPhoneTsy::CancelService - IPC:%d, Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret ( KErrNotSupported );
 
@@ -1972,6 +1974,9 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CANCELSER
         case EMobilePhoneGetCellInfo:
         case EMobilePhoneNotifyCellInfoChange:
         case EMobilePhoneGetCurrentActiveUSimApplication:        
+        case EMobilePhoneGetPreferredNetworksPhase1:
+        case EMobilePhoneStorePreferredNetworksList:
+        case EMobilePhoneNotifyStorePreferredNetworksListChange:
         	ret = iMmNetTsy->CancelService( aIpc, aTsyReqHandle );
             break;
 		// forward SS cancellations
@@ -2024,7 +2029,6 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CANCELSER
         case EMobilePhoneNotifyDefaultPrivacyChange:
         case EMobilePhoneSetDefaultPrivacy:
         case EMobilePhoneTerminateAllCalls:
-        case EMobilePhoneTerminateActiveCalls:
         case EMobilePhoneSetNetworkSelectionSetting:        
             ret = KErrNone;
             break;
@@ -2445,7 +2449,7 @@ TInt CMmPhoneTsy::GetLineInfo(
 //
 TInt CMmPhoneTsy::TerminateAllCallsL(const TTsyReqHandle aTsyReqHandle)
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TERMINATEALLCALLSL_1, "TSY: CMmPhoneTsy::TerminateAllCalls");
+TFLOGSTRING("TSY: CMmPhoneTsy::TerminateAllCalls");
 
 	// Check if some other client has already requested this
 	TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(EMultimodePhoneTerminateAllCalls);
@@ -2495,7 +2499,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TERMINATEALL
 		}
 	else
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TERMINATEALLCALLSL_2, "TSY: CMmPhoneTsy::TerminateAllCalls - Already requested");
+TFLOGSTRING("TSY: CMmPhoneTsy::TerminateAllCalls - Already requested");
 		ReqCompleted( aTsyReqHandle, KErrServerBusy );
 		}
 	return KErrNone;
@@ -2512,63 +2516,6 @@ void CMmPhoneTsy::CompleteTerminateAllCallsReq(TInt aErrorCode)
          ReqCompleted( reqHandle, aErrorCode );
 	     }	 
 	}
-
-
-// ---------------------------------------------------------------------------
-// CMmPhoneTsy::TerminateActiveCallsL
-// Terminates all active calls simultaneously.
-// ---------------------------------------------------------------------------
-//
-TInt CMmPhoneTsy::TerminateActiveCallsL(const TTsyReqHandle aTsyReqHandle)
-    {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TERMINATEACTIVECALLSL_1, "TSY: CMmPhoneTsy::TerminateActiveCalls");
-
-    // Check if some other client has already requested this
-    TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(EMultimodePhoneTerminateActiveCalls);
-    
-    if (EMultimodePhoneReqHandleUnknown >= reqHandle )
-        {
-        // The request is not already in processing because of a previous request
-
-        TInt err = iMessageManager->HandleRequestL(ECtsyPhoneTerminateActiveCallsReq);
-        if ( err == KErrNone )
-            {
-#ifdef REQHANDLE_TIMER
-            SetTypeOfResponse( EMultimodePhoneTerminateActiveCalls, aTsyReqHandle );
-#else
-            iTsyReqHandleStore->SetTsyReqHandle( 
-                    iReqHandleType, aTsyReqHandle );
-#endif //REQHANDLE_TIMER
-            }
-        else
-            {
-            // request failed, complete with error value
-            ReqCompleted( aTsyReqHandle, err );
-            } 
-        }
-    else
-        {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TERMINATEACTIVECALLSL_2, "TSY: CMmPhoneTsy::TerminatActiveCalls - Already requested"); 
-        ReqCompleted( aTsyReqHandle, KErrServerBusy );
-        }
-    return KErrNone;
-    }
-// ---------------------------------------------------------------------------
-// CMmPhoneTsy::CompleteTerminateActiveCallsReq
-// Description: Complete TerminateActiveCallsRequest
-// ---------------------------------------------------------------------------
-//
-void CMmPhoneTsy::CompleteTerminateActiveCallsReq(TInt aErrorCode)
-    {
-    // Reset req handle. Returns the deleted req handle
-     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
-         EMultimodePhoneTerminateActiveCalls );
-    
-     if ( EMultimodePhoneReqHandleUnknown != reqHandle )
-         {
-         ReqCompleted( reqHandle, aErrorCode );
-         }   
-    }
 
 // ---------------------------------------------------------------------------
 // CMmPhoneTsy::RegisterNotification
@@ -2625,6 +2572,7 @@ TInt CMmPhoneTsy::RegisterNotification (
         case EMobilePhoneNotifySendNetworkServiceRequest:
         case EMobilePhoneNotifyAllSendNetworkServiceRequest:
         case EMobilePhoneNotifyCellInfoChange:
+        case EMobilePhoneNotifyStorePreferredNetworksListChange:
             ret = KErrNone;
             break;
         default:
@@ -2690,6 +2638,7 @@ TInt CMmPhoneTsy::DeregisterNotification(
         case EMobilePhoneNotifySendNetworkServiceRequest:
         case EMobilePhoneNotifyAllSendNetworkServiceRequest:
         case EMobilePhoneNotifyCellInfoChange:
+		case EMobilePhoneNotifyStorePreferredNetworksListChange:
             ret = KErrNone;
             break;
         default:
@@ -2782,7 +2731,7 @@ TInt CMmPhoneTsy::GetPhoneStoreInfoL(
     const RMobilePhone::TMobileName* aStoreName )
     {
     TInt ret( KErrArgument );
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETPHONESTOREINFOL_1, "TSY: CMmPhoneTsy::GetPhoneStoreInfoL" );
+TFLOGSTRING("TSY: CMmPhoneTsy::GetPhoneStoreInfoL" );
     
     if(sizeof(RMobilePhoneStore::TMobilePhoneStoreInfoV1) <= aInfo->MaxLength())
       	{
@@ -2795,7 +2744,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETPHONESTOR
              
         if ( KETelExtMultimodeV1 != storeInfo.ExtensionId() )
     		{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETPHONESTOREINFOL_2, "TSY: Phonebook not supported. Only KETelExtMultimodeV1 types supported for RMobilePhone::GetPhoneStoreInfo" );
+			TFLOGSTRING("TSY: Phonebook not supported. Only KETelExtMultimodeV1 types supported for RMobilePhone::GetPhoneStoreInfo" );
     		ret = KErrNotSupported;
     		}
     	else
@@ -2810,7 +2759,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETPHONESTOR
     	         0x0 == aStoreName->Compare( KETelMeSmsStore )              
     	       )
     	        {
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETPHONESTOREINFOL_3, "TSY: Phonebook name is not supported. " );
+				TFLOGSTRING("TSY: Phonebook name is not supported. " );
     	        ret = KErrNotSupported;
     	        }
     	    else
@@ -2899,7 +2848,7 @@ TInt CMmPhoneTsy::GetCustomerServiceProfileL(
     const TTsyReqHandle aTsyReqHandle,
     TDes8* aCspFile )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERSERVICEPROFILEL_1, "TSY: CMmPhoneTsy::GetCustomerServiceProfileL" );
+TFLOGSTRING("TSY: CMmPhoneTsy::GetCustomerServiceProfileL" );
     
     TInt ret = KErrArgument;
     
@@ -2916,7 +2865,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERS
 
         if ( 0 < reqHandle )
             {
- OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERSERVICEPROFILEL_2, "TSY: CMmPhoneTsy::GetCustomerServiceProfileL one req already ongoing" );
+ TFLOGSTRING("TSY: CMmPhoneTsy::GetCustomerServiceProfileL one req already ongoing" );  
             ret = KErrNone;
             //The request is already in processing because of previous request
             //Complete request with status value informing the client about
@@ -2962,7 +2911,7 @@ void CMmPhoneTsy::CompleteGetCustomerServiceProfile(
     TInt aErrorCode )
     {
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETCUSTOMERSERVICEPROFILE_1, "TSY: CMmPhoneTsy::CompleteGetCustomerServiceProfile" );
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetCustomerServiceProfile" );
     
     // Check if the get was called internally during boot
     if( iCspFileQueryInBoot )
@@ -2995,7 +2944,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETC
             //set value in client side
             *(req->iRetCspFile) = aCspFile;
 			//reset the return pointer
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETCUSTOMERSERVICEPROFILE_2, "TSY: CMmPhoneTsy::CompleteGetCustomerServiceProfile queue handling" );
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetCustomerServiceProfile queue handling" ); 
             ReqCompleted( req->iReqHandle, aErrorCode );
 			}
         // Complete the client request
@@ -3013,14 +2962,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETC
 //
 TInt CMmPhoneTsy::GetCustomerServiceProfileCancel( const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERSERVICEPROFILECANCEL_1, "TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel aTsyReqHandle: %d", aTsyReqHandle);
+TFLOGSTRING2("TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel aTsyReqHandle: %d", aTsyReqHandle);   
 
     TInt customerServiceProfileRequestsCount = iCustomerServiceProfileRequests.Count();
 
     //reset the req handle if only one req remains
     if( 1 == customerServiceProfileRequestsCount )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERSERVICEPROFILECANCEL_2, "TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel - one req");
+        TFLOGSTRING("TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel - one req");       
         TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
                 EMultimodePhoneGetCustomerServiceProfile );       
         }
@@ -3028,7 +2977,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERS
     // go through array if one or more requests remain and find the correct request handle to cancel
     for ( TInt i=0; i < customerServiceProfileRequestsCount ; i++ )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCUSTOMERSERVICEPROFILECANCEL_3, "TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel - queued requests");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel - queued requests");
 
         TCustomerServiceProfileIdRequest* req =
         iCustomerServiceProfileRequests[ i ];
@@ -3075,7 +3024,7 @@ TInt CMmPhoneTsy::GetBatteryInfoL(
     const TTsyReqHandle aTsyReqHandle,
     RMobilePhone::TMobilePhoneBatteryInfoV1* aInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETBATTERYINFOL_1, "TSY: CMmPhoneTsy::GetBatteryInfoL");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetBatteryInfoL");
 
     // Battery info is requested when phone is booted up and updated when
     // EM server sends indications.
@@ -3095,7 +3044,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETBATTERYIN
 TInt CMmPhoneTsy::NotifyBatteryInfoChange(
     RMobilePhone::TMobilePhoneBatteryInfoV1* aInfo )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYBATTERYINFOCHANGE_1, "TSY: CMmPhoneTsy::NotifyBatteryInfoChange");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyBatteryInfoChange");
 
     iRetBatteryInfo = aInfo;
     iReqHandleType = EMultimodePhoneNotifyBatteryInfoChange;
@@ -3113,7 +3062,7 @@ void CMmPhoneTsy::CompleteNotifyBatteryInfoChange(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYBATTERYINFOCHANGE_1, "TSY: CMmPhoneTsy::CompleteNotifyBatteryInfoChange");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyBatteryInfoChange");
 
     if ( KErrNone == aErrorCode )
         {
@@ -3123,7 +3072,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTI
         iBatteryInfo = *batteryInfo;
         }
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYBATTERYINFOCHANGE_2, "TSY: CMmPhoneTsy::CompleteNotifyBatteryInfoChange, battery status: %d", (TInt)iBatteryInfo.iStatus);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteNotifyBatteryInfoChange, battery status: %d", (TInt)iBatteryInfo.iStatus);
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -3150,7 +3099,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTI
 TInt CMmPhoneTsy::NotifyBatteryInfoChangeCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYBATTERYINFOCHANGECANCEL_1, "TSY: CMmPhoneTsy::NotifyBatteryInfoChangeCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyBatteryInfoChangeCancel");
 
     iRetBatteryInfo = NULL;
     iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -3235,12 +3184,12 @@ TInt CMmPhoneTsy::GetServiceProviderNameL(
     
     if ( iBootState.iSIMReady )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMEL_1, "TSY: CMmPhoneTsy::GetServiceProviderNameL -Sim ready");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceProviderNameL -Sim ready");
 
         if ( sizeof( RMobilePhone::TMobilePhoneServiceProviderNameV2 ) >
              aName->MaxLength() )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMEL_2, "TSY: CMmPhoneTsy::GetServiceProviderNameL -Invalid parameter!");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceProviderNameL -Invalid parameter!");        
             ret = KErrArgument;
             }
 		else
@@ -3258,7 +3207,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPR
         if ( KErrNone == ret )
             {
             // save reqhandle to queue
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMEL_3, "TSY: CMmPhoneTsy::GetServiceProviderNameL - Client to queue");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceProviderNameL - Client to queue");
             RMobilePhone::TMobilePhoneServiceProviderNameV2Pckg* nameV2Pckg =
                 REINTERPRET_CAST( 
                     RMobilePhone::TMobilePhoneServiceProviderNameV2Pckg*, 
@@ -3279,7 +3228,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPR
          }
      else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMEL_4, "TSY: CMmPhoneTsy::GetServiceProviderNameL - Sim not ready");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceProviderNameL - Sim not ready");
         ret = KErrNotReady;
         }
 
@@ -3297,7 +3246,7 @@ void CMmPhoneTsy::CompleteGetServiceProviderName(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICEPROVIDERNAME_1, "TSY: CMmPhoneTsy::CompleteGetServiceProviderName Error %d", aErrorCode );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceProviderName Error %d", aErrorCode );
    
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -3312,24 +3261,24 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
             {
             aDataPackage->UnPackData( &name );
 
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICEPROVIDERNAME_2, "TSY: CMmPhoneTsy::CompleteGetServiceProviderName name: %S", name->iSPName );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceProviderName name: %S", &name->iSPName );
 		    for ( TInt i=0; i < requestCount ; i++ )
 		        {
 		        TServiceProviderNameRequest* req = 
 		            iServiceProviderNameRequests[ i ];
 		        *(req->iServiceProviderName) = *name;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICEPROVIDERNAME_3, "TSY: CMmPhoneTsy::CompleteGetServiceProviderName client %d", i );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceProviderName client %d", i );
 		        ReqCompleted( req->iReqHandle, aErrorCode );
 		        }
             }
         else
         	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICEPROVIDERNAME_4, "TSY: CMmPhoneTsy::CompleteGetServiceProviderName Error %d", aErrorCode );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceProviderName Error %d", aErrorCode );
         	for ( TInt i=0; i < requestCount ; i++ )
 		        {
 		        TServiceProviderNameRequest* req = 
 		            iServiceProviderNameRequests[ i ];
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICEPROVIDERNAME_5, "TSY: CMmPhoneTsy::CompleteGetServiceProviderName Error queue: %d", i );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceProviderName Error queue: %d", i );
 		        ReqCompleted( req->iReqHandle, aErrorCode );
 		        }	
         	}
@@ -3348,14 +3297,14 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 //
 TInt CMmPhoneTsy::GetServiceProviderNameCancel( const TTsyReqHandle aTsyReqHandle )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMECANCEL_1, "TSY: CMmPhoneTsy::GetServiceProviderNameCancel aTsyReqHandle: %d", aTsyReqHandle);
+    TFLOGSTRING2("TSY: CMmPhoneTsy::GetServiceProviderNameCancel aTsyReqHandle: %d", aTsyReqHandle);   
 
     TInt requestCount = iServiceProviderNameRequests.Count();
     
     //reset the req handle if only one req remains
     if( 1 == requestCount )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMECANCEL_2, "TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel - one req");
+        TFLOGSTRING("TSY: CMmPhoneTsy::GetCustomerServiceProfileCancel - one req");       
         TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
                 EMultimodePhoneGetServiceProviderName );       
         }
@@ -3363,7 +3312,7 @@ TInt CMmPhoneTsy::GetServiceProviderNameCancel( const TTsyReqHandle aTsyReqHandl
     // qo throw array if several requests and find correct reqhandle to cancel
     for ( TInt i = 0; i < requestCount; i++ )
         {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICEPROVIDERNAMECANCEL_3, "TSY: CMmPhoneTsy::GetServiceProviderNameCancel - queued requests");
+        TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceProviderNameCancel - queued requests");
 
         TServiceProviderNameRequest* req =
         iServiceProviderNameRequests[i];
@@ -3512,8 +3461,10 @@ void CMmPhoneTsy::DoGetPhoneIdL(const TTsyReqHandle aTsyReqHandle,
       }
    else
       {
-      OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DOGETPHONEIDL_1, "TSY: CMmPhoneTsy::GetPhoneIdL - iManufacturer: %S, iModel: %S", iPhoneIdentity.iManufacturer, iPhoneIdentity.iModel );
-      OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DOGETPHONEIDL_2, "TSY: CMmPhoneTsy::GetPhoneIdL - iRevision: %S, iSerialNumber: %S", iPhoneIdentity.iRevision, iPhoneIdentity.iSerialNumber);
+      TFLOGSTRING3("TSY: CMmPhoneTsy::GetPhoneIdL - iManufacturer: %S, iModel: %S", &iPhoneIdentity.iManufacturer, 
+             		                                                                      &iPhoneIdentity.iModel );             
+      TFLOGSTRING3("TSY: CMmPhoneTsy::GetPhoneIdL - iRevision: %S, iSerialNumber: %S", &iPhoneIdentity.iRevision, 
+             		                                                                         &iPhoneIdentity.iSerialNumber);
      	  
 	  *aId = iPhoneIdentity;
 	  ReqCompleted( aTsyReqHandle, KErrNone );	   
@@ -3535,7 +3486,7 @@ void CMmPhoneTsy::CompleteGetPhoneId(
         // Copy serial number
         iPhoneIdentity.iSerialNumber.Copy(aSerialData.Left( aSerialData.Length() ) );
         
-        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETPHONEID_1, "TSY: CMmPhoneTsy::CompletePhoneSerialNumber - iSerialNumber: %S", iPhoneIdentity.iSerialNumber );
+        TFLOGSTRING2("TSY: CMmPhoneTsy::CompletePhoneSerialNumber - iSerialNumber: %S", &iPhoneIdentity.iSerialNumber );
         }
 
     //reset req handle. Returns the deleted req handle
@@ -3561,7 +3512,7 @@ void CMmPhoneTsy::CompleteGetPhoneId(
 //
 TInt CMmPhoneTsy::MobilePhoneGetPhoneIdCancel(const TTsyReqHandle aTsyReqHandle )
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MOBILEPHONEGETPHONEIDCANCEL_1, "TSY: CMmPhoneTsy::MobilePhoneGetPhoneIdCancel");
+    TFLOGSTRING("TSY: CMmPhoneTsy::MobilePhoneGetPhoneIdCancel");    
     
     TInt reqCount = iGetPhoneIdRequests.Count();
     
@@ -3635,7 +3586,7 @@ TInt CMmPhoneTsy::GetSubscriberIdL(
 			}
 		else
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSUBSCRIBERIDL_1, "TSY: CMmPhoneTsy::GetSubscriberIdL - queued requests add req to queue");
+			TFLOGSTRING("TSY: CMmPhoneTsy::GetSubscriberIdL - queued requests add req to queue");
 			TSubscriberIdRequest* req = new (ELeave) TSubscriberIdRequest();
 			req->iReqHandle = aTsyReqHandle;
 			req->iRetSubscrId = aId;
@@ -3665,7 +3616,7 @@ TInt CMmPhoneTsy::GetIndicatorCaps(
     {
     TInt ret( KErrGeneral );
 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATORCAPS_1, "TSY: CMmPhoneTsy::GetIndicatorCaps" );
+TFLOGSTRING("TSY: CMmPhoneTsy::GetIndicatorCaps" );
     if(	 NULL != aActCaps && NULL != aIndCaps )
     	{
     	*aActCaps = RMobilePhone::KCapsGetIndicator | 
@@ -3691,7 +3642,7 @@ TInt CMmPhoneTsy::GetIndicators(
     const TTsyReqHandle aTsyReqHandle,
     TUint32* aIndicators )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATORS_1,  "TSY: CMmPhoneTsy::GetIndicators" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::GetIndicators" );
     TInt ret( KErrGeneral );
 
     if( aIndicators )
@@ -3716,7 +3667,7 @@ TUint32 CMmPhoneTsy::GetIndicatorState()
 	TUint32 indicators( 0 );
 
 	//Charger connected?
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATORSTATE_1,  "TSY: CMmPhoneTsy::GetIndicatorState charger: %d", (TInt)iBatteryInfo.iStatus );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::GetIndicatorState charger: %d", (TInt)iBatteryInfo.iStatus );
 	if( RMobilePhone::EBatteryConnectedButExternallyPowered == 
         iBatteryInfo.iStatus )
 		{
@@ -3733,7 +3684,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATOR
 			{
 			indicators |= RMobilePhone::KIndNetworkAvailable;
 			}
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATORSTATE_2,  "TSY: CMmPhoneTsy::GetIndicatorState network: %d", (TInt)networkRegStatus );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::GetIndicatorState network: %d", (TInt)networkRegStatus );
 		}
 
 	//Call in progress?
@@ -3745,12 +3696,12 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATOR
 		CMmCallTsy* mmCall = CallList()->GetMmCallByIndex( i );
 		if ( RMobileCall::EStatusConnected == mmCall->MobileCallStatus() )
 			{
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATORSTATE_3,  "TSY: CMmPhoneTsy::GetIndicatorState call id: %d, status: %d", mmCall->CallId(), (TInt)mmCall->MobileCallStatus() );
+TFLOGSTRING3( "TSY: CMmPhoneTsy::GetIndicatorState call id: %d, status: %d", mmCall->CallId(), (TInt)mmCall->MobileCallStatus() );
 			indicators |= RMobilePhone::KIndCallInProgress;
 			break;
 			}
 		}
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETINDICATORSTATE_4,  "TSY: CMmPhoneTsy::GetIndicatorState - ok, Indicators: %d", indicators );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::GetIndicatorState - ok, Indicators: %d", indicators );
 
     return indicators;
 	}
@@ -3765,7 +3716,7 @@ void CMmPhoneTsy::CompleteGetSubscriberIdL(
     TBuf8<RMobilePhone::KIMSISize> aImsiData,
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_1, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL, aError=%d", aError );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL, aError=%d", aError );
 
     // Set the flag to EFalse
     iTSYSubscriberIdReq = EFalse;
@@ -3775,19 +3726,19 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
   
     // Retrieve previous IMSI value from the Central Repository
 	iCFISPrivateCentRep->Get( KCtsyIMSI, subscriberIdTmp );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_2, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Get old IMSI from CenRep: %S", subscriberIdTmp );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Get old IMSI from CenRep: %S", &subscriberIdTmp );
 	
     if ( ( KErrNone == aError ) && ( 0 < aImsiData.Length() ) )
         {
         // Copy new IMSI value to the member variable
         iSubscriberId.Copy( aImsiData.Left( aImsiData.Length() ) );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_3, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Copy new IMSI: %S", iSubscriberId );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Copy new IMSI: %S", &iSubscriberId );
         }
     
     // check the boot state security, is the security ready (PIN query)
     if ( iBootState.iSecReady )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_4, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Security ready");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Security ready");
   
         // Check has the IMSI changed and is there previous info: or an error
         if ( KErrNotFound == subscriberIdTmp.Match( iSubscriberId ) && 
@@ -3804,7 +3755,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
             iCFISPrivateCentRep->Reset();
             // Reset MWIS support
             iMmSupplServTsy->SetIccSupportForMWIS( ETrue );   
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_5, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Central Repositories have been reseted!");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Central Repositories have been reseted!");     
             
             // intialize the previous SIM related data
             if ( iMmCustomTsy )
@@ -3816,7 +3767,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
             // get new infromation from lower levels, if sim is ready
             if ( iBootState.iSIMReady )
                 {                       
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_6, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - SIM ready, retrive intial ICC SIM data.");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - SIM ready, retrive intial ICC SIM data."); 
 
                 // update ALS line information 
                 iMessageManager->HandleRequestL( EMobilePhoneGetALSLine );
@@ -3839,7 +3790,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
         {    
     	// Write new IMSI value to the central repository
     	iCFISPrivateCentRep->Set( KCtsyIMSI, iSubscriberId );
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSUBSCRIBERIDL_7, "TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Write new IMSI to the CenRep: %S", iSubscriberId );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetSubscriberIdL - Write new IMSI to the CenRep: %S", &iSubscriberId );
         }
         
     //reset req handle. Returns the deleted req handle
@@ -3900,7 +3851,7 @@ TInt CMmPhoneTsy::GetALSLineL(
     const TTsyReqHandle aTsyReqHandle,
     RMobilePhone::TMobilePhoneALSLine* aALSLine )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETALSLINEL_1, "TSY: CMmPhoneTsy::GetALSLineL");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetALSLineL");
 	
     TInt ret ( KErrNone );
 	TBool alsSupportedBySim;
@@ -4016,7 +3967,7 @@ void CMmPhoneTsy::CompleteGetAlsLine(
     RMobilePhone::TMobilePhoneALSLine aAlsStatus,
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETALSLINE_1, "TSY: CMmPhoneTsy::CompleteGetAlsLine - ALS line" );
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetAlsLine - ALS line" );
 
     //check if value has been updated
     if ( aAlsStatus != iAlsLine )
@@ -4056,7 +4007,7 @@ TInt CMmPhoneTsy::SetALSLineL(
     const TTsyReqHandle aTsyReqHandle,
     RMobilePhone::TMobilePhoneALSLine* aALSLine )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETALSLINEL_1, "TSY: CMmPhoneTsy::SetALSLineL");
+TFLOGSTRING("TSY: CMmPhoneTsy::SetALSLineL");
     TInt ret ( KErrNone );
 	TBool alsSupportedBySim ( EFalse );
 	
@@ -4129,7 +4080,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETALSLINEL_
 void CMmPhoneTsy::CompleteSetAlsLine(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETESETALSLINE_1, "TSY: CMmPhoneTsy::CompleteSetAlsLine - ALS line: %d", iTempAlsLine );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteSetAlsLine - ALS line: %d", iTempAlsLine );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -4218,7 +4169,7 @@ TInt CMmPhoneTsy::GetFdnStatusL(
     const TTsyReqHandle aTsyReqHandle,
     RMobilePhone::TMobilePhoneFdnStatus* aFdnStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETFDNSTATUSL_1,  "TSY: CMmPhoneTsy::GetFdnStatusL" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::GetFdnStatusL" );
 
     TInt ret ( KErrServerBusy );
 
@@ -4262,7 +4213,7 @@ void CMmPhoneTsy::CompleteGetFdnStatus(
         CMmDataPackage* aDataPackage,
         TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETFDNSTATUS_1, "TSY: CMmPhoneTsy::CompleteGetFdnStatus - Error: %d", aErrorCode );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetFdnStatus - Error: %d", aErrorCode );
 
 
     //reset req handle. Returns the deleted req handle
@@ -4295,7 +4246,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETF
 TInt CMmPhoneTsy::GetFdnStatusCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETFDNSTATUSCANCEL_1,  "TSY: CMmPhoneTsy::GetFdnStatusCancel" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::GetFdnStatusCancel" );
     iRetGetFdnStatus = NULL;
     
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneGetFdnStatus );
@@ -4345,7 +4296,8 @@ TInt CMmPhoneTsy::SetFdnSettingL(
 void CMmPhoneTsy::CompleteSetFdnSettingL(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETESETFDNSETTINGL_1, "TSY: CMmPhoneTsy::CompleteSetFdnSettingL - Error: %d",aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteSetFdnSettingL - Error: %d",
+    aErrorCode);
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -4602,14 +4554,14 @@ TInt CMmPhoneTsy::GetIccAccessCaps(
     if ( CMmPhoneGsmWcdmaExt::EICCTypeSim2GGsm ==  currentIccType)
         {
         *aCaps = RMobilePhone::KCapsSimAccessSupported;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETICCACCESSCAPS_1, "TSY: CMmPhoneTsy::GetIccAccessCaps: aCaps = KCapsSimAccessSupported.");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetIccAccessCaps: aCaps = KCapsSimAccessSupported.");
         }
     // 3G USIM
     else if ( CMmPhoneGsmWcdmaExt::EICCTypeSim3G == currentIccType )
         {
         *aCaps = RMobilePhone::KCapsUSimAccessSupported +
             RMobilePhone::KCapsSimAccessSupported;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETICCACCESSCAPS_2, "TSY: CMmPhoneTsy::GetIccAccessCaps: aCaps = KCapsUSimAccessSupported + KCapsSimAccessSupported.");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetIccAccessCaps: aCaps = KCapsUSimAccessSupported + KCapsSimAccessSupported.");
         }
     ReqCompleted( aTsyReqHandle, ret );
 
@@ -4673,11 +4625,11 @@ void CMmPhoneTsy::CompleteNotifyIccAccessCapsChange()
             {
             case CMmPhoneGsmWcdmaExt::EICCTypeSim2GGsm:     // 2G SIM
                 *iICCCaps = RMobilePhone::KCapsSimAccessSupported;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYICCACCESSCAPSCHANGE_1, "TSY: CMmPhoneTsy::CompleteNotifyIccAccessCapsChange: KCapsSimAccessSupported.");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyIccAccessCapsChange: KCapsSimAccessSupported.");
                 break;
             case CMmPhoneGsmWcdmaExt::EICCTypeSim3G:   // 3G USIM
                 *iICCCaps = RMobilePhone::KCapsUSimAccessSupported;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYICCACCESSCAPSCHANGE_2, "TSY: CMmPhoneTsy::CompleteNotifyIccAccessCapsChange: KCapsUSimAccessSupported.");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyIccAccessCapsChange: KCapsUSimAccessSupported.");
                 break;
 
             default:
@@ -4722,7 +4674,7 @@ TInt CMmPhoneTsy::GetServiceTableCheckParametersL(
         ret = GetServiceTableL( aTsyReqHandle, aTable, serviceTableV1 );
         }
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLECHECKPARAMETERSL_1, "TSY: CMmPhoneTsy::GetServiceTableCheckParametersL - ret:%d",ret);
+TFLOGSTRING2("TSY: CMmPhoneTsy::GetServiceTableCheckParametersL - ret:%d",ret);
     return ret;
     }        
 
@@ -4737,7 +4689,7 @@ TInt CMmPhoneTsy::GetServiceTableL(
     RMobilePhone::TMobilePhoneServiceTable* aTable,
     RMobilePhone::TMobilePhoneServiceTableV1* aTableData )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLEL_1, "TSY: CMmPhoneTsy::GetServiceTableL - Handle:%d", aTsyReqHandle);
+TFLOGSTRING2("TSY: CMmPhoneTsy::GetServiceTableL - Handle:%d", aTsyReqHandle);
     TInt ret( KErrServerBusy );
 
     TTsyReqHandle serviceTableHandle =
@@ -4792,7 +4744,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETA
             // if SIM is not ready, store request and complete it when SIM is ready
             if ( !iBootState.iSIMReady )
 		        {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLEL_2, "TSY: CMmPhoneTsy::GetServiceTableL - request when SIM not ready - store req" );
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceTableL - request when SIM not ready - store req" );
 		    	TServiceTableRequests* req = new (ELeave) TServiceTableRequests();
 		    	req->iReqHandle = aTsyReqHandle;
 		    	req->iTable = aTable;
@@ -4804,7 +4756,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETA
             if( RMobilePhone::ESIMServiceTable == 
                     *aTable && iServiceTableDataCache )
             	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLEL_3, "TSY: CMmPhoneTsy::GetServiceTableL ESIMServiceTable returned from cache");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceTableL ESIMServiceTable returned from cache");
             	*aTableData = *iServiceTableDataCache;
             	ReqCompleted( aTsyReqHandle, ret );
             	return KErrNone;
@@ -4812,7 +4764,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETA
            	else if ( RMobilePhone::EUSIMServiceTable== 
                           *aTable && iServiceTableUSIMDataCache )
            		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLEL_4, "TSY: CMmPhoneTsy::GetServiceTableL EUSIMServiceTable returned from cache");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceTableL EUSIMServiceTable returned from cache");
            		*aTableData = *iServiceTableUSIMDataCache;
             	ReqCompleted( aTsyReqHandle, ret );
             	return KErrNone;
@@ -4821,7 +4773,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETA
             	{
             	if( !iSimRefreshRegisterOk && !( iServiceTableReq->iCaching ) )
             		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLEL_5, "TSY: CMmPhoneTsy::GetServiceTableL sim refresh registration failed - possible old data - cache and complete ");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceTableL sim refresh registration failed - possible old data - cache and complete ");
             		//Store reguest parameters for completion
             		iServiceTableReq->iReqHandle = aTsyReqHandle;
             		iServiceTableReq->iTable = aTable;
@@ -4896,7 +4848,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETA
 //
 void CMmPhoneTsy::CacheServiceTablesL()
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHESERVICETABLESL_1, "TSY: CMmPhoneTsy::CacheServiceTables.");
+TFLOGSTRING("TSY: CMmPhoneTsy::CacheServiceTables.");
 
 	// Start caching if it is not already ongoing
 	if ( (((iSimCacheQueue && ( KCacheServiceTable & iSimCacheQueue )) )
@@ -4925,11 +4877,11 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHESERVICE
 //
 void CMmPhoneTsy::CompleteCacheServiceTablesL( const TInt aError )
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_1, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL Error = %d", aError);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL Error = %d", aError);
 	if ( ( iSimCacheQueue && ( KCacheServiceTable & iSimCacheQueue ) ) 
             && IsRefreshOngoing() )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_2, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL");
 		CompleteCacheSimL( KCacheServiceTable, aError );
 		}
 		
@@ -4937,42 +4889,42 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACH
 		
 	// check pending requests and proceed if any
     TInt serviceTableRequestsCount = iServiceTableRequests.Count();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_3, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - serviceTableRequestsCount: %d", serviceTableRequestsCount );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - serviceTableRequestsCount: %d", serviceTableRequestsCount );
 
 	 if ( serviceTableRequestsCount )
 	 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_4, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Completing pending ServiceTableRequests");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Completing pending ServiceTableRequests");
 		// check request type for every pending request and complete
 		for ( TInt i = 0; i < serviceTableRequestsCount; i++ )
 			{
 			TServiceTableRequests* req = iServiceTableRequests[ i ];
 			if ( RMobilePhone::ESIMServiceTable == *req->iTable )
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_5, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - pending ESIMServiceTableRequest");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - pending ESIMServiceTableRequest");
 				*(req->iTableData) = *iServiceTableDataCache;
 				}
 			else if ( RMobilePhone::EUSIMServiceTable == *req->iTable )
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_6, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - pending ESIMServiceTableRequest");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - pending ESIMServiceTableRequest");
 				*(req->iTableData) = *iServiceTableUSIMDataCache;
 				}
 			else 
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_7, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - pending BadRequest - KErrGeneral");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - pending BadRequest - KErrGeneral");
 				ret = KErrGeneral;	
 				}
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_8, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - ReqCompleted for pending req withHandle:%d", req->iReqHandle);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - ReqCompleted for pending req withHandle:%d", req->iReqHandle);
 			ReqCompleted(req->iReqHandle, ret);
 			}
 		// Reset req handle
 		iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneGetServiceTable );
 		iServiceTableRequests.ResetAndDestroy();
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_9, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Reset and ResetAndDestroy!");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Reset and ResetAndDestroy!");	
 		}
 		
 	if ( ENoRequest != iPendingServiceTableReq )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_10, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL completing client request");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL completing client request");
 		// Complete client request if pending
 		
 		// Reset req handle. Returns the deleted req handle
@@ -5008,7 +4960,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACH
 	     	
 	     	if ( iCalledOnGet && ( iServiceTableReq->iCaching ) )
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_11, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Called when reading service tables - ");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Called when reading service tables - ");
 				iCalledOnGet = EFalse;
 				iSimCacheQueue = 0;
 				iRefreshOngoing = EFalse;
@@ -5027,7 +4979,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACH
 	        	iPendingServiceTableReq = ENoRequest;
 	        	
 	        	// Complete request if error occured
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESERVICETABLESL_12, "TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Completing req if error occurred");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteCacheServiceTablesL - Completing req if error occurred");
 	        	ReqCompleted( reqHandle, ret );
 				}
 	        }	
@@ -5045,36 +4997,36 @@ void CMmPhoneTsy::CompleteGetServiceTableL(
     RMobilePhone::TMobilePhoneServiceTableV1 aTableData,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_1, "TSY: CMmPhoneTsy::CompleteGetServiceTableL Error = %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceTableL Error = %d", aErrorCode);
     // Check if timeout has happend, complete to all pending ServiceTable
     // requests and clear queue
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_2, "TSY: CMmPhoneTsy::CompleteGetServiceTableL");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL");
 	if ( KErrTimedOut == aErrorCode )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_3, "TSY: CMmPhoneTsy::CompleteGetServiceTableL - Timeout happened");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL - Timeout happened");
 		// Reset req handle. Returns the deleted req handle
 	    TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
             EMultimodePhoneGetServiceTable );
 
 	    if ( EMultimodePhoneReqHandleUnknown != reqHandle )
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_4, "TSY: CMmPhoneTsy::CompleteGetServiceTableL - in EMultimodePhoneReqHandleUnknown != reqHandle" );
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL - in EMultimodePhoneReqHandleUnknown != reqHandle" );
 	    	{
 			// count pending requests and proceed if any
 			TInt serviceTableRequestsCount = iServiceTableRequests.Count();
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_5, "TSY: CMmPhoneTsy::CompleteGetServiceTableL - serviceTableRequestsCount: %d", serviceTableRequestsCount );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceTableL - serviceTableRequestsCount: %d", serviceTableRequestsCount );
 	 		if ( serviceTableRequestsCount )
 	 			{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_6, "TSY: CMmPhoneTsy::CompleteGetServiceTableL - Completing pending ServiceTableRequests");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL - Completing pending ServiceTableRequests");
 				// complete pending requests
 				for ( TInt i = 0; i < serviceTableRequestsCount; i++ )
 					{
 					TServiceTableRequests* req = iServiceTableRequests[ i ];
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_7, "TSY: CMmPhoneTsy::CompleteGetServiceTableL - ReqCompleted for pending req withHandle:%d", req->iReqHandle);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetServiceTableL - ReqCompleted for pending req withHandle:%d", req->iReqHandle);
 					ReqCompleted(req->iReqHandle, aErrorCode);
 					}
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_8, "TSY: CMmPhoneTsy::CompleteGetServiceTableL - in iServiceTableRequests.ResetAndDestroy()" );
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL - in iServiceTableRequests.ResetAndDestroy()" );
 				iServiceTableRequests.ResetAndDestroy();	
 				}
 	        }
@@ -5082,7 +5034,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 
     if ( ESIMRequest == iPendingServiceTableCacheReq )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_9, "TSY: CMmPhoneTsy::CompleteGetServiceTableL got Service Table");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL got Service Table");
 		
 		delete iServiceTableDataCache;
 		iServiceTableDataCache = NULL;
@@ -5100,7 +5052,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
             iMmPhoneExtInterface->CurrentICCType() ) &&
             ENoRequest != iPendingServiceTableCacheReq )
 			{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_10, "TSY: CMmPhoneTsy::CompleteGetServiceTableL requesting USIM Service Table");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL requesting USIM Service Table");
 
 			RMobilePhone::TMobilePhoneServiceTable serviceTable = 
 				RMobilePhone::EUSIMServiceTable;
@@ -5125,7 +5077,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 		}
 	else if ( EUSIMRequest == iPendingServiceTableCacheReq )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_11, "TSY: CMmPhoneTsy::CompleteGetServiceTableL got USIM Service Table");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL got USIM Service Table");
 
 		delete iServiceTableUSIMDataCache;
 		iServiceTableUSIMDataCache = NULL;
@@ -5149,7 +5101,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 	if ( ENoRequest != iPendingServiceTableReq &&
         ENoRequest == iPendingServiceTableCacheReq )
 		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_12, "TSY: CMmPhoneTsy::CompleteGetServiceTableL completing client request");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL completing client request");
 		// Complete client request if pending
 		
 		// Reset req handle. Returns the deleted req handle
@@ -5165,7 +5117,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 		
 	    		if( KErrNone == aErrorCode )
 	    			{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_13, "TSY: CMmPhoneTsy::CompleteGetServiceTableL copy SIM ST data to client");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL copy SIM ST data to client");
 	    			iServiceTableDataCache = new (ELeave) 
 					    RMobilePhone::TMobilePhoneServiceTableV1();
 	    			*iServiceTableDataCache	= aTableData;
@@ -5179,7 +5131,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 				
 	        	if( KErrNone == aErrorCode )
 	        		{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETSERVICETABLEL_14, "TSY: CMmPhoneTsy::CompleteGetServiceTableL copy USIM ST data to client");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetServiceTableL copy USIM ST data to client");
 	        		iServiceTableUSIMDataCache = new (ELeave) 
 					    RMobilePhone::TMobilePhoneServiceTableV1();
 	        		*iServiceTableUSIMDataCache = aTableData;	
@@ -5204,7 +5156,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETS
 TInt CMmPhoneTsy::GetServiceTableCancel (
 	const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETABLECANCEL_1, "TSY: CMmPhoneTsy::GetServiceTableCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetServiceTableCancel");
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodePhoneGetServiceTable );
     ReqCompleted( aTsyReqHandle, KErrCancel );
 
@@ -5220,7 +5172,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSERVICETA
 //
 TInt CMmPhoneTsy::SimRefreshRegisterL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SIMREFRESHREGISTERL_1,  "TSY: CMmPhoneTsy::SimRefreshRegisterL" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::SimRefreshRegisterL" );
 
     TInt ret( KErrNone );
 
@@ -5239,7 +5191,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SIMREFRESHRE
     if ( KErrNone != ret )
         {
         // the sending has failed
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SIMREFRESHREGISTERL_2,  "TSY: CMmPhoneTsy::SimRefreshRegisterL, Registration for Refresh failed" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::SimRefreshRegisterL, Registration for Refresh failed" );
         }
 
     return ret;
@@ -5254,7 +5206,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SIMREFRESHRE
 void CMmPhoneTsy::CompleteSimRefreshRegister(
      TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETESIMREFRESHREGISTER_1, "TSY: CMmPhoneTsy::CompleteSimRefreshRegisterL Error = %d", aErrorCode );
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteSimRefreshRegisterL Error = %d", aErrorCode );
 
 	if( KErrNone == aErrorCode )
 		{
@@ -5270,7 +5222,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETESIMR
 //
 TBool CMmPhoneTsy::GetSimRefreshRegister()
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSIMREFRESHREGISTER_1,  "TSY: CMmPhoneTsy::GetSimRefreshRegister iSimRefreshRegisterOk = %d", iSimRefreshRegisterOk );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::GetSimRefreshRegister iSimRefreshRegisterOk = %d", iSimRefreshRegisterOk );
 
 	return iSimRefreshRegisterOk;		
     }
@@ -5285,7 +5237,7 @@ void CMmPhoneTsy::CompleteUpdateLifeTimer(
     {
 	if( KErrNone != aErrorCode)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEUPDATELIFETIMER_1, "TSY: CMmPhoneTsy::CompleteUpdateLifeTimer Error = %d", aErrorCode );
+		TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteUpdateLifeTimer Error = %d", aErrorCode );
 		}
     }    
 
@@ -5344,7 +5296,7 @@ TBool CMmPhoneTsy::IsRefreshOngoing()
 void CMmPhoneTsy::CompleteSimRefreshNowL(
     TUint16 aFilesToRefresh )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETESIMREFRESHNOWL_1, "TSY: CMmPhoneTsy::CompleteSimRefreshNowL filemask: %d", aFilesToRefresh);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteSimRefreshNowL filemask: %d", aFilesToRefresh);
 
     // Set flag to indicate that refresh has started
     iRefreshOngoing = ETrue;
@@ -5394,13 +5346,13 @@ TBool CMmPhoneTsy::CacheNextL()
         //FDN requested? (FDN has the first priority)
         if( KCacheFdn & iSimCacheQueue )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_1,  "TSY: CMmPhoneTsy::CacheNextL - FDN" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - FDN" );
             pbRequested = KETelIccFdnPhoneBook;
             resetFlag = KCacheFdn;
             }
         else if( KCacheALSline & iSimCacheQueue )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_2,  "TSY: CMmPhoneTsy::CacheNextL - ALS" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - ALS" );
 			ResetMEAlsInfo();
 			pbRequested = KNullDesC;
 			cacheStarted = ETrue;
@@ -5408,7 +5360,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_2
         //ADN requested?
         else if( KCacheAdn & iSimCacheQueue )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_3,  "TSY: CMmPhoneTsy::CacheNextL - ADN" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - ADN" );
             //NOTE: Here should be added the checking of FDN active state
             pbRequested = KETelIccAdnPhoneBook;
             resetFlag = KCacheAdn;
@@ -5417,7 +5369,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_3
         //checked and the queue can be reset)
         else
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_4,  "TSY: CMmPhoneTsy::CacheNextL - Unknown" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - Unknown" );
             pbRequested = KNullDesC;
             resetFlag = iSimCacheQueue;
             }
@@ -5426,7 +5378,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_4
         if( (pbRequested!=KNullDesC) && (iPBList) )
             {
             TInt numberOfPBooks = iPBList->GetNumberOfObjects();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_5,  "TSY: CMmPhoneTsy::CacheNextL - Num Of PBs: %d", numberOfPBooks );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::CacheNextL - Num Of PBs: %d", numberOfPBooks );
 
             //Browse through the phonebook names for the one required
             for( TInt i=0; i < numberOfPBooks; i++ )
@@ -5447,23 +5399,24 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_5
                     	TRAP_IGNORE( MessageManager()->HandleRequestL( 
                             EMmTsyPhoneBookStoreCacheCancelIPC, &package ); );
 
-
+#if ( TF_LOGGING_METHOD > 0 )
                     	if ( pbRequested == KETelIccFdnPhoneBook ) 
                     	    {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_6,  "TSY: CMmPhoneTsy::CacheNextL - CancelCache for : KETelIccFdnPhoneBook" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - CancelCache for : KETelIccFdnPhoneBook" ); 
                             }
                     	else 
                     	    {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_7,  "TSY: CMmPhoneTsy::CacheNextL - CancelCache for : KETelIccAdnPhoneBook" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - CancelCache for : KETelIccAdnPhoneBook" ); 
                             }
+#endif // TF_LOGGING_METHOD
                     	}                   
                     // perform the various stages of phonebook 
                     // cache re-initialisation
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_8,  "TSY: CMmPhoneTsy::CacheNextL - Resetting cache.");
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - Resetting cache.");
                     pbStore->ResetCacheReady();
                     pbStore->ResetInitialisationStatus();
                     pbStore->ResetCache();
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_9,  "TSY: CMmPhoneTsy::CacheNextL -> Cache entries" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL -> Cache entries" );
                     pbStore->CacheEntriesL();
 
                     cacheStarted = ETrue;
@@ -5477,14 +5430,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_9
         //so the file is removed from the cache queue
         if( !cacheStarted )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_10,  "TSY: CMmPhoneTsy::CacheNextL - No PB Could be found, or Unknown request" );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CacheNextL - No PB Could be found, or Unknown request" );
             CompleteCacheSimL( resetFlag, ETrue ); //complete with error
             }
         }
     //more files in the queue?
     result = ( iSimCacheQueue )? ETrue : EFalse;
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_CACHENEXTL_11,  "TSY: CMmPhoneTsy::CacheNextL: (Success/Fail = 1/0) %d",(TInt)result );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::CacheNextL: (Success/Fail = 1/0) %d",(TInt)result );
     return result;
     }
 
@@ -5500,7 +5453,7 @@ void CMmPhoneTsy::CompleteCacheSimL(
     TUint8	aFileType,
     TBool	aReadError)
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESIML_1,  "TSY: CMmPhoneTsy::CompleteCacheSimL, FileType: 0x%x", aFileType );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::CompleteCacheSimL, FileType: 0x%x", aFileType );
 
     TBool filesInCacheQueue(EFalse); //By default: "no more files in cache"
 
@@ -5536,7 +5489,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACH
         }
      else
      	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACHESIML_2,  "TSY: CMmPhoneTsy::CompleteCacheSimL, caching still in progress." );
+TFLOGSTRING( "TSY: CMmPhoneTsy::CompleteCacheSimL, caching still in progress." );
      	}
     }
 
@@ -5549,7 +5502,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETECACH
 void CMmPhoneTsy::NotifySimRefreshCompletionL(
     TBool aReadError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYSIMREFRESHCOMPLETIONL_1,  "TSY: CMmPhoneTsy::NotifySimRefreshCompletionL error = %d",aReadError );
+TFLOGSTRING2( "TSY: CMmPhoneTsy::NotifySimRefreshCompletionL error = %d",aReadError );
 
     // Refresh is finished, update flag
     iRefreshOngoing = EFalse;
@@ -5575,7 +5528,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYSIMREF
 TInt CMmPhoneTsy::ImsAuthenticationL( 
     TDes8* aAuthenticationData )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_IMSAUTHENTICATIONL_1, "TSY: CMmPhoneTsy::ImsAuthenticationL");
+TFLOGSTRING("TSY: CMmPhoneTsy::ImsAuthenticationL");
 
 	TInt ret = KErrServerBusy;
     
@@ -5628,7 +5581,7 @@ void CMmPhoneTsy::CompleteImsAuthentication(
     CMmDataPackage* aDataPackage, 
     TInt aResult )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEIMSAUTHENTICATION_1, "TSY: CMmPhoneTsy::CompleteImsAuthentication");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteImsAuthentication");
 
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5695,7 +5648,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEIMSA
 //
 TInt CMmPhoneTsy::ImsAuthenticationCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_IMSAUTHENTICATIONCANCEL_1, "TSY: CMmPhoneTsy::ImsAuthenticationCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::ImsAuthenticationCancel");
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneIMSAuthenticate );
@@ -5721,7 +5674,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_IMSAUTHENTIC
 TInt CMmPhoneTsy::GetMailboxNumbersL(
     TDes8* aMailBox )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMAILBOXNUMBERSL_1, "TSY: CMmPhoneTsy::GetMailboxNumbersL");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersL");
     TInt ret = KErrServerBusy;
     
     // Check if request handle already exists
@@ -5758,7 +5711,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMAILBOXNU
                         found = ETrue;
                         if( !pbStore->IsPBInitDone() )
                             {
-                            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMAILBOXNUMBERSL_2, "TSY: CMmPhoneTsy::GetMailboxNumbersL VoiceMailBox initilizing was not complete... Waiting for completion");
+                            TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersL VoiceMailBox initilizing was not complete... Waiting for completion");
                             iReqHandleType = EMultimodePhoneGetMailboxNumbers;
                             return KErrNone;
                             }
@@ -5766,7 +5719,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMAILBOXNU
                     }
                 if(!found)
                     {
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMAILBOXNUMBERSL_3, "TSY: CMmPhoneTsy::GetMailboxNumbersL VoiceMailBox should be created...");
+                    TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersL VoiceMailBox should be created...");
                     iMmPhoneBookStoreTsy = 
                         CMmPhoneBookStoreTsy::NewL( this, KETelIccVoiceMailBox );
                     
@@ -5806,7 +5759,7 @@ void CMmPhoneTsy::CompleteGetMailboxNumbers(
     CMmDataPackage* aDataPackage, 
     TInt aResult )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETMAILBOXNUMBERS_1, "TSY: CMmPhoneTsy::CompleteGetMailboxNumbers");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteGetMailboxNumbers");
 
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -5843,7 +5796,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETM
 //
 TInt CMmPhoneTsy::GetMailboxNumbersCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMAILBOXNUMBERSCANCEL_1, "TSY: CMmPhoneTsy::GetMailboxNumbersCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetMailboxNumbersCancel");
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneGetMailboxNumbers );
@@ -5978,7 +5931,7 @@ void CMmPhoneTsy::TimerExpired(
     //Check if the object is the Phone object
     if( this == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_1, "TSY: CMmPhoneTsy::TimerExpired - this == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - this == aObject");
         //call phone object to complete this request
         this->Complete( aReqHandleType, error );
         }
@@ -5989,14 +5942,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED
     //Check if the object is a Call object
     for ( i = 0; i < iCallList->GetNumberOfObjects(); i++ )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_2, "TSY: CMmPhoneTsy::TimerExpired - iCallList->GetNumberOfObjects()");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iCallList->GetNumberOfObjects()");
         //Get call object
         CMmCallTsy* call = iCallList->GetMmCallByIndex( i );
         //check if the current call is the object that we are
         //trying to find
         if( call == aObject )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_3, "TSY: CMmPhoneTsy::TimerExpired - call == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - call == aObject");
             //call the complete method
             call->Complete( aReqHandleType, error );
             //object found, break
@@ -6007,7 +5960,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED
     // Check if the object is a ConferenceCall object
     if ( iMmConferenceCall == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_4, "TSY: CMmPhoneTsy::TimerExpired - iMmConferenceCall");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmConferenceCall");
         iMmConferenceCall->Complete( aReqHandleType, error );
         }
     //OTHER MODULES
@@ -6015,14 +5968,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED
     //Check if the object is a PBStore object
     for ( i = 0; i < iPBList->GetNumberOfObjects(); i++ )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_5, "TSY: CMmPhoneTsy::TimerExpired - iPBList->GetNumberOfObjects()");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iPBList->GetNumberOfObjects()");
         //Get PBStore object
         CMmPhoneBookStoreTsy* pbStore = iPBList->GetMmPBByIndex( i );
         //check if the current PB is the object that we are
         //trying to find
         if ( pbStore == aObject )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_6, "TSY: CMmPhoneTsy::TimerExpired - aPBStore == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - aPBStore == aObject");
             //call the complete method
 			pbStore->Complete( aReqHandleType, error );
             //object found, break
@@ -6033,41 +5986,41 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED
     // Check if the object is the SMS object
     if ( iMmSmsTsy == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_7, "TSY: CMmPhoneTsy::TimerExpired - iMmSmsTsy == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmSmsTsy == aObject");
         //call the complete method
         iMmSmsTsy->Complete( aReqHandleType, error );
         }
     // Check if the object is the Broadcast object
     else if ( iMmBroadcastTsy == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_8, "TSY: CMmPhoneTsy::TimerExpired - iMmBroadcastTsy == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmBroadcastTsy == aObject");
         //call the complete method
         iMmBroadcastTsy->Complete( aReqHandleType, error );
         }
     // Check if the object is the USSD object
     else if ( iMmUssdTsy == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_9, "TSY: CMmPhoneTsy::TimerExpired - iMmUssdTsy == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmUssdTsy == aObject");
         //call the complete method
         iMmUssdTsy->Complete( aReqHandleType, error );
         }
     // Check if the object is the ONstore object
     else if ( iMmONStoreTsy == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_10, "TSY: CMmPhoneTsy::TimerExpired - iMmONStoreTsy == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmONStoreTsy == aObject");
         //call the complete method
         iMmONStoreTsy->Complete( aReqHandleType, error );
         }
     // Check if the object is the ENstore object
     else if ( iMmENStoreTsy == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_11, "TSY: CMmPhoneTsy::TimerExpired - iMmENStoreTsy == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmENStoreTsy == aObject");
         //call the complete method
         iMmENStoreTsy->Complete( aReqHandleType, error );
         }
     else if ( iMmCustomTsy == aObject )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_12, "TSY: CMmPhoneTsy::TimerExpired - iMmCustomTsy == aObject");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - iMmCustomTsy == aObject");
         iMmCustomTsy->Complete( aReqHandleType, error , aIPC );
         }
 
@@ -6079,13 +6032,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED
     // Data session
     else if ( NULL != iMmPacketServiceTsy )
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_13, "TSY: CMmPhoneTsy::TimerExpired - NULL != iMmPacketServiceTsy");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - NULL != iMmPacketServiceTsy");
         //call the complete method
         iMmPacketServiceTsy->Complete( aObject, aReqHandleType, error );
         }
     else
     	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_TIMEREXPIRED_14, "TSY: CMmPhoneTsy::TimerExpired - else");
+TFLOGSTRING("TSY: CMmPhoneTsy::TimerExpired - else");		
         }
     }
 
@@ -6120,10 +6073,6 @@ void CMmPhoneTsy::SetTypeOfResponse(
       // All Calls Termination
         case EMultimodePhoneTerminateAllCalls:
             timeOut = KMmPhoneTerminateAllCallsTimeOut;
-            break;
-      // Active Calls Termination
-        case EMultimodePhoneTerminateActiveCalls:
-            timeOut = KMmPhoneTerminateActiveCallsTimeOut;
             break;
       //NET
         case EMultimodePhoneSelectNetwork:
@@ -6323,15 +6272,12 @@ void CMmPhoneTsy::Complete(
 	RMobilePhone::TMobilePhoneServiceTableV1 emptyServiceTable;
 	RMobilePhoneStore::TMobilePhoneStoreInfoV1 emptyPhoneStoreInfo;
 	TInt trapError = KErrNone;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETE_1, "TSY: CMmPhoneTsy::Complete - ReqHandleType: %d", aReqHandleType);
+TFLOGSTRING2("TSY: CMmPhoneTsy::Complete - ReqHandleType: %d", aReqHandleType);	
     switch( aReqHandleType )
         {
         case EMultimodePhoneTerminateAllCalls:
         	CompleteTerminateAllCallsReq(aError);
         	break;
-        case EMultimodePhoneTerminateActiveCalls:
-            CompleteTerminateActiveCallsReq(aError);
-            break;
       //DTMF
         case EMultimodePhoneSendDTMFTones:
         case EMultimodePhoneStartDTMFTone:
@@ -6456,7 +6402,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETE_1, 
             CompleteGetFdnStatus( NULL, aError );
             break;         
         default:
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETE_2, "TSY: CMmPhoneTsy::Complete default handle type" );
+TFLOGSTRING("TSY: CMmPhoneTsy::Complete default handle type" );        
             if ( iTsyReqHandleStore->GetTsyReqHandle(
                     aReqHandleType ))
             	{
@@ -6541,7 +6487,7 @@ void CMmPhoneTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError  )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_REQCOMPLETED_1, "TSY: CMmPhoneTsy::Request Completed - Handle:%d Error:%d", aTsyReqHandle, aError);
+TFLOGSTRING3("TSY: CMmPhoneTsy::Request Completed - Handle:%d Error:%d", aTsyReqHandle, aError);
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
 
@@ -6769,7 +6715,6 @@ CMmSecurityTsy* CMmPhoneTsy::GetSecurityTsy()
     return iMmSecurityTsy;
     }
 
-
 // ---------------------------------------------------------------------------
 // CMmPhoneTsy::IsRequestPossibleInOffLine
 // Checks wether a ETel request can be performed or not while offline mode is
@@ -6899,7 +6844,7 @@ TBool CMmPhoneTsy::IsRequestPossibleInOffline(
             break;
         }
 
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ISREQUESTPOSSIBLEINOFFLINE_1, "TSY: CMmPhoneTsy::IsRequestPossibleInOffline - IPC:%d, ret:%d", aIpc, isRequestPossible);
+TFLOGSTRING3("TSY: CMmPhoneTsy::IsRequestPossibleInOffline - IPC:%d, ret:%d", aIpc, isRequestPossible);
     return isRequestPossible;
     }
 
@@ -6916,7 +6861,7 @@ void CMmPhoneTsy::CompleteGetCallForwardingNumber(
     iCallForwardingNumber.Zero();
     aDataPackage->UnPackData( iCallForwardingNumber );
 
-OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETCALLFORWARDINGNUMBER_1, "TSY: CMmPhoneTsy::CompleteGetCallForwardingNumber number = %S ", iCallForwardingNumber);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetCallForwardingNumber number = %S ", &iCallForwardingNumber);
 
     }
 
@@ -6930,7 +6875,7 @@ TInt CMmPhoneTsy::EnumerateAPNEntriesL(
     const TTsyReqHandle aTsyReqHandle, 
     TUint32* aIndex )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ENUMERATEAPNENTRIESL_1, "TSY: CMmPhoneTsy::EnumerateAPNEntries");
+TFLOGSTRING("TSY: CMmPhoneTsy::EnumerateAPNEntries");
 
     // Check if request handle already exists
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
@@ -6982,7 +6927,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ENUMERATEAPN
 //
 TInt CMmPhoneTsy::EnumerateAPNEntriesCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ENUMERATEAPNENTRIESCANCEL_1, "CMmPhoneTsy::EnumerateAPNEntriesCancel");
+TFLOGSTRING("CMmPhoneTsy::EnumerateAPNEntriesCancel");
     iRetAPNEntries = NULL;
     
     //reset the req handle
@@ -7008,7 +6953,7 @@ void CMmPhoneTsy::CompleteEnumerateAPNEntries(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEENUMERATEAPNENTRIES_1, "TSY: CMmPhoneTsy::CompleteEnumerateAPNEntries Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteEnumerateAPNEntries Error: %d", aErrorCode);
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -7044,7 +6989,7 @@ TInt CMmPhoneTsy::GetAPNnameL(
     TUint32* aIndex, 
     TDes8* aAPN )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETAPNNAMEL_1, "TSY: CMmPhoneTsy::GetAPNnameL");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetAPNnameL");    
 
     TInt ret = KErrServerBusy;
     
@@ -7098,7 +7043,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETAPNNAMEL_
 //
 TInt CMmPhoneTsy::GetAPNnameCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETAPNNAMECANCEL_1, "CMmPhoneTsy::GetAPNnameCancel");
+TFLOGSTRING("CMmPhoneTsy::GetAPNnameCancel");
     iRetAPNname = NULL;
     
     //reset the req handle
@@ -7124,7 +7069,7 @@ void CMmPhoneTsy::CompleteGetAPNname(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETAPNNAME_1, "TSY: CMmPhoneTsy::CompleteGetAPNname Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetAPNname Error: %d", aErrorCode);
     
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -7166,7 +7111,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETA
 void CMmPhoneTsy::SetAlsState( 
 	TBool aState )
 	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETALSSTATE_1, "TSY: CMmPhoneTsy::SetAlsState Error: %d", aState);
+TFLOGSTRING2("TSY: CMmPhoneTsy::SetAlsState Error: %d", aState);
 	
 	// Check where set was called
 	if( iCspFileAlsSet )
@@ -7203,7 +7148,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETALSSTATE_
 RMobilePhone::TMobilePhoneALSLine CMmPhoneTsy::MapMEALSLine( 
 	TInt aAlsLineInfo )
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE_1, "TSY: CMmPhoneTsy::MapMEALSLine");
+TFLOGSTRING("TSY: CMmPhoneTsy::MapMEALSLine");
 
 	RMobilePhone::TMobilePhoneALSLine lineInfo;
 	
@@ -7211,23 +7156,23 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE
 		{
 		case 0://TInt from CentRep
 			lineInfo = RMobilePhone::EAlternateLinePrimary;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE_2, "TSY: CMmPhoneTsy::MapMEALSInfo Line line = EAlternateLinePrimary");
+TFLOGSTRING("TSY: CMmPhoneTsy::MapMEALSInfo Line line = EAlternateLinePrimary");
 			break;
 		case 1://TInt from CentRep
 			lineInfo = RMobilePhone::EAlternateLineAuxiliary;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE_3, "TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineAuxiliary");
+TFLOGSTRING("TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineAuxiliary");
 			break;
 		case 2://TInt from CentRep
 			lineInfo = RMobilePhone::EAlternateLineUnknown;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE_4, "TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineUnknown");
+TFLOGSTRING("TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineUnknown");
 			break;
 		case 3://TInt from CentRep
 			lineInfo = RMobilePhone::EAlternateLineNotAvailable;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE_5, "TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineNotAvailable");
+TFLOGSTRING("TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineNotAvailable");
 			break;
 		default:
 			lineInfo = RMobilePhone::EAlternateLineUnknown;
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE_6, "TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineUnknown");
+TFLOGSTRING("TSY: CMmPhoneTsy::MapMEALSLine line = EAlternateLineUnknown");
 			break;
 		}
 		
@@ -7243,13 +7188,13 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_MAPMEALSLINE
 void CMmPhoneTsy::ResetMEAlsInfo()
 	{
 	
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_RESETMEALSINFO_1, "TSY: CMmPhoneTsy::ResetMEAlsInfo");
+TFLOGSTRING("TSY: CMmPhoneTsy::ResetMEAlsInfo");
 	
 	iCentRep->Reset();
 	
 	if( iSimCacheQueue && ( KCacheALSline & iSimCacheQueue ) )
 	    { 
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_RESETMEALSINFO_2, "TSY: CMmPhoneTsy::ResetMEAlsInfo -> CompleteCacheSimL");
+TFLOGSTRING("TSY: CMmPhoneTsy::ResetMEAlsInfo -> CompleteCacheSimL");
         // function can leave, so there for it must be trapped, the error 
         // value is ingnored, because the functionality doesn't depend on it
 	    TRAP_IGNORE( CompleteCacheSimL( KCacheALSline, EFalse ) );	
@@ -7265,7 +7210,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_RESETMEALSIN
 //
 CRepository* CMmPhoneTsy::GetCfisCenRep()
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCFISCENREP_1, "TSY: CMmPhoneTsy::GetCfisCenRep");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetCfisCenRep");
 
 	if( iCFISCentRep )
 		{
@@ -7283,7 +7228,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCFISCENRE
 //
 CRepository* CMmPhoneTsy::GetMwisCenRep()
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMWISCENREP_1, "TSY: CMmPhoneTsy::GetMwisCenRep");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetMwisCenRep");
 
 	if( iMWISCentRep )
 		{
@@ -7301,7 +7246,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETMWISCENRE
 //
 CRepository* CMmPhoneTsy::GetCfisPRCenRep()
 	{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCFISPRCENREP_1, "TSY: CMmPhoneTsy::GetCfisPRCenRep");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetCfisPRCenRep");
 
 	if( iCFISPrivateCentRep )
 		{
@@ -7319,7 +7264,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETCFISPRCEN
 //
 void CMmPhoneTsy::GetSubscriberIdForTSYL()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSUBSCRIBERIDFORTSYL_1, "TSY: CMmPhoneTsy::GetSubscriberIdForTSYL");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetSubscriberIdForTSYL");
     
     // Check if some client has already requested this
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
@@ -7333,7 +7278,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSUBSCRIBE
         }
     else
         {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSUBSCRIBERIDFORTSYL_2, "TSY: CMmPhoneTsy::GetSubscriberIdForTSYL - Already requested");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetSubscriberIdForTSYL - Already requested");
         }
     }
 	
@@ -7346,7 +7291,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETSUBSCRIBE
 TInt CMmPhoneTsy::AppendAPNNameL( 
     RMobilePhone::TAPNEntryV3* aAPNEntry )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_APPENDAPNNAMEL_1, "TSY: CMmPhoneTsy::AppendAPNNameL");
+TFLOGSTRING("TSY: CMmPhoneTsy::AppendAPNNameL");
 
     TInt ret ( KErrServerBusy );
 
@@ -7379,7 +7324,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_APPENDAPNNAM
 //
 TInt CMmPhoneTsy::AppendAPNNameCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_APPENDAPNNAMECANCEL_1, "TSY: CMmPhoneTsy::AppendAPNNameCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::AppendAPNNameCancel");
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneAppendAPNName );
@@ -7402,7 +7347,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_APPENDAPNNAM
 void CMmPhoneTsy::CompleteAppendAPNName( 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEAPPENDAPNNAME_1, "TSY: CMmPhoneTsy::CompleteAppendAPNName. Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteAppendAPNName. Error: %d", aErrorCode);
     
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneAppendAPNName );
@@ -7423,7 +7368,7 @@ TInt CMmPhoneTsy::DeleteAPNNameL(
     const TTsyReqHandle aTsyReqHandle, 
     TUint32* aIndex )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DELETEAPNNAMEL_1, "TSY: CMmPhoneTsy::DeleteAPNNameL, index = %d", aIndex);
+TFLOGSTRING2("TSY: CMmPhoneTsy::DeleteAPNNameL, index = %d", aIndex);
 
     // get the handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
@@ -7463,7 +7408,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DELETEAPNNAM
 //
 TInt CMmPhoneTsy::DeleteAPNNameCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DELETEAPNNAMECANCEL_1, "TSY: CMmPhoneTsy::DeleteAPNNameCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::DeleteAPNNameCancel");
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneDeleteAPNName );
@@ -7485,7 +7430,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_DELETEAPNNAM
 void CMmPhoneTsy::CompleteDeleteAPNName( 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEDELETEAPNNAME_1, "TSY: CMmPhoneTsy::CompleteDeleteAPNName. Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteDeleteAPNName. Error: %d", aErrorCode);
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneDeleteAPNName );
@@ -7505,7 +7450,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEDELE
 //
 TInt CMmPhoneTsy::NotifyAPNListChanged()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNLISTCHANGED_1, "TSY: CMmPhoneTsy::NotifyAPNListChanged");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyAPNListChanged");
 
     iReqHandleType = EMultimodePhoneNotifyAPNListChange;
     
@@ -7521,7 +7466,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNLIS
 //
 TInt CMmPhoneTsy::NotifyAPNListChangedCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNLISTCHANGEDCANCEL_1, "TSY: CMmPhoneTsy::NotifyAPNListChangedCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyAPNListChangedCancel");
     
     TTsyReqHandle reqHandle = iTsyReqHandleStore->
         ResetTsyReqHandle( EMultimodePhoneNotifyAPNListChange );
@@ -7543,7 +7488,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNLIS
 void CMmPhoneTsy::CompleteNotifyAPNListChanged( 
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYAPNLISTCHANGED_1, "TSY: CMmPhoneTsy::CompleteNotifyAPNListChanged");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyAPNListChanged");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneNotifyAPNListChange );
@@ -7565,7 +7510,7 @@ TInt CMmPhoneTsy::SetAPNControlListServiceStatusL(
     const TTsyReqHandle aTsyReqHandle, 
     RMobilePhone::TAPNControlListServiceStatus* aAPNControlListServiceStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETAPNCONTROLLISTSERVICESTATUSL_1, "TSY: CMmPhoneTsy::SetAPNControlListServiceStatusL.");
+TFLOGSTRING("TSY: CMmPhoneTsy::SetAPNControlListServiceStatusL.");
 
     iSetAclStatus = aAPNControlListServiceStatus;
     
@@ -7607,7 +7552,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETAPNCONTRO
 //
 TInt CMmPhoneTsy::SetAPNControlListServiceStatusCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETAPNCONTROLLISTSERVICESTATUSCANCEL_1, "TSY: CMmPhoneTsy::SetAPNControlListServiceStatusCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::SetAPNControlListServiceStatusCancel");
     
     // erase pointer to client data
     iSetAclStatus = NULL;
@@ -7633,7 +7578,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETAPNCONTRO
 void CMmPhoneTsy::CompleteSetAPNControlListServiceStatus( 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETESETAPNCONTROLLISTSERVICESTATUS_1, "TSY: CMmPhoneTsy::CompleteSetAPNControlListServiceStatus. Error: %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteSetAPNControlListServiceStatus. Error: %d", aErrorCode);
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -7656,7 +7601,7 @@ TInt CMmPhoneTsy::GetAPNControlListServiceStatusL(
     const TTsyReqHandle aTsyReqHandle, 
     RMobilePhone::TAPNControlListServiceStatus* aAPNControlListServiceStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETAPNCONTROLLISTSERVICESTATUSL_1, "TSY: CMmPhoneTsy::GetAPNControlListServiceStatusL");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetAPNControlListServiceStatusL");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodePhoneGetAPNControlListServiceStatus );
@@ -7697,7 +7642,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETAPNCONTRO
 //
 TInt CMmPhoneTsy::GetAPNControlListServiceStatusCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_GETAPNCONTROLLISTSERVICESTATUSCANCEL_1, "TSY: CMmPhoneTsy::GetAPNControlListServiceStatusCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::GetAPNControlListServiceStatusCancel");
     // reset the reqhandle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneGetAPNControlListServiceStatus );
@@ -7720,7 +7665,7 @@ void CMmPhoneTsy::CompleteGetAPNControlListServiceStatus(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETAPNCONTROLLISTSERVICESTATUS_1, "TSY: CMmPhoneTsy::CompleteGetAPNControlListServiceStatus. Error %d", aErrorCode);
+TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteGetAPNControlListServiceStatus. Error %d", aErrorCode);
     
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneGetAPNControlListServiceStatus );
@@ -7759,7 +7704,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETEGETA
 TInt CMmPhoneTsy::NotifyAPNControlListServiceStatusChange( 
     RMobilePhone::TAPNControlListServiceStatus* aAPNControlListServiceStatus )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNCONTROLLISTSERVICESTATUSCHANGE_1, "TSY: CMmPhoneTsy::NotifyAPNControlListServiceStatusChange");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyAPNControlListServiceStatusChange");
     
     iRetNotifyAclStatus = aAPNControlListServiceStatus;
     iReqHandleType = EMultimodePhoneNotifyAPNControlListServiceStatusChange;
@@ -7776,7 +7721,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNCON
 //
 TInt CMmPhoneTsy::NotifyAPNControlListServiceStatusChangeCancel()
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYAPNCONTROLLISTSERVICESTATUSCHANGECANCEL_1, "TSY: CMmPhoneTsy::NotifyAPNControlListServiceStatusChangeCancel");
+TFLOGSTRING("TSY: CMmPhoneTsy::NotifyAPNControlListServiceStatusChangeCancel");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneNotifyAPNControlListServiceStatusChange );
@@ -7801,7 +7746,7 @@ void CMmPhoneTsy::CompleteNotifyAPNControlListServiceStatusChange(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYAPNCONTROLLISTSERVICESTATUSCHANGE_1, "TSY: CMmPhoneTsy::CompleteNotifyAPNControlListServiceStatusChange");
+TFLOGSTRING("TSY: CMmPhoneTsy::CompleteNotifyAPNControlListServiceStatusChange");
 
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodePhoneNotifyAPNControlListServiceStatusChange );
@@ -7887,7 +7832,8 @@ void CMmPhoneTsy::CompleteNotifyCallDurationChange()
     CMmDataPackage dataPackage;
     dataPackage.PackData( &duration );
 
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_COMPLETENOTIFYCALLDURATIONCHANGE_1, "TSY: CMmPhoneTsy::CompleteNotifyCallDurationChange - \duration: %d", duration);
+    TFLOGSTRING2("TSY: CMmPhoneTsy::CompleteNotifyCallDurationChange - \
+         duration: %d", duration);
 
 #ifdef USING_CTSY_DISPATCHER	
     TRAP_IGNORE(iMessageManager->HandleRequestL( 
@@ -7905,16 +7851,16 @@ void CMmPhoneTsy::CompleteNotifyCallDurationChange()
 // Receives error notifications from Telephony audio control
 // ---------------------------------------------------------------------------
 //
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
+#if TF_LOGGING_METHOD == 1
 void CMmPhoneTsy::NotifyTelephonyAudioControlError( const TName& aCallName, 
                                                     const TInt& aError )
     {       
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_NOTIFYTELEPHONYAUDIOCONTROLERROR_1, "TSY: CMmPhoneTsy::NotifyAudioControlError. Call name:%S, Error code %d", aCallName, aError );
+    TFLOGSTRING3("TSY: CMmPhoneTsy::NotifyAudioControlError. Call name:%S, Error code %d", &aCallName, aError );
 #else
 void CMmPhoneTsy::NotifyTelephonyAudioControlError( const TName& /*aCallName*/, 
                                                     const TInt& /*aError*/ )
     {
-#endif // 
+#endif // TF_LOGGING_METHOD
     
     TInt callCount( iCallList->GetNumberOfObjects() );
     // find all the audio calls and hang up them all
@@ -7941,8 +7887,8 @@ void CMmPhoneTsy::NotifyTelephonyAudioControlError( const TName& /*aCallName*/,
 //    
 void CMmPhoneTsy::SetPBInitActiveStatus( TBool aIsInitializationActive )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETPBINITACTIVESTATUS_1, "TSY: CMmPhoneTsy::SetPBInitActiveStatus: - prev.status %u", (TUint)iIsInitializationActive);
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETPBINITACTIVESTATUS_2, "TSY: CMmPhoneTsy::SetPBInitActiveStatus: %u", (TUint)aIsInitializationActive);
+TFLOGSTRING2("TSY: CMmPhoneTsy::SetPBInitActiveStatus: - prev.status %i", iIsInitializationActive);    
+TFLOGSTRING2("TSY: CMmPhoneTsy::SetPBInitActiveStatus: %i", aIsInitializationActive);
     
     iIsInitializationActive = aIsInitializationActive;
     }
@@ -7955,7 +7901,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SETPBINITACT
 //    
 TBool CMmPhoneTsy::IsPBInitActive()
     {   
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ISPBINITACTIVE_1, "TSY: CMmPhoneTsy::IsPBInitActive: %x", (TUint)iIsInitializationActive);
+TFLOGSTRING2("TSY: CMmPhoneTsy::IsPBInitActive: %i", iIsInitializationActive);
     
     return iIsInitializationActive;
     }
@@ -7988,7 +7934,7 @@ TBool CMmPhoneTsy::IsHWRMSupported()
 //
 TBool CMmPhoneTsy::IsSIMReady()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ISSIMREADY_1, "TSY: CMmPhoneTsy::IsSIMReady: %u", (TUint)iBootState.iSIMReady);
+	TFLOGSTRING2("TSY: CMmPhoneTsy::IsSIMReady: %i", iBootState.iSIMReady);
 	return iBootState.iSIMReady;
 	}
 
@@ -8000,7 +7946,7 @@ TBool CMmPhoneTsy::IsSIMReady()
 //   
 void CMmPhoneTsy::SaveFdnInfoDetails( TInt aResult, CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SAVEFDNINFODETAILS_1, "TSY: CMmPhoneTsy::SaveFdnInfoDetails aResult:  %d", aResult );
+TFLOGSTRING2("TSY: CMmPhoneTsy::SaveFdnInfoDetails aResult:  %d", aResult );
 
    // Store FDN info only in successfull case
     if ( KErrNone == aResult )
@@ -8011,9 +7957,9 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SAVEFDNINFOD
        iPhoneBookState->iFDNNumberLengthMax = pbFdnInfo.iFDNNumberLengthMax;
        iPhoneBookState->iFDNTextLengthMax = pbFdnInfo.iFDNTextLengthMax;
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SAVEFDNINFODETAILS_2, "TSY: CMmPhoneTsy::SaveFdnInfoDetails - iFDNNumOfEntries: %d",iPhoneBookState->iFDNNumOfEntries );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SAVEFDNINFODETAILS_3, "TSY: CMmPhoneTsy::SaveFdnInfoDetails - iFDNNumberLengthMax: %d",iPhoneBookState->iFDNNumberLengthMax );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SAVEFDNINFODETAILS_4, "TSY: CMmPhoneTsy::SaveFdnInfoDetails - iFDNTextLengthMax: %d",iPhoneBookState->iFDNTextLengthMax );
+TFLOGSTRING2("TSY: CMmPhoneTsy::SaveFdnInfoDetails - iFDNNumOfEntries: %i",iPhoneBookState->iFDNNumOfEntries );
+TFLOGSTRING2("TSY: CMmPhoneTsy::SaveFdnInfoDetails - iFDNNumberLengthMax: %i",iPhoneBookState->iFDNNumberLengthMax );
+TFLOGSTRING2("TSY: CMmPhoneTsy::SaveFdnInfoDetails - iFDNTextLengthMax: %i",iPhoneBookState->iFDNTextLengthMax );
        }
     }
 
@@ -8025,7 +7971,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_SAVEFDNINFOD
 //    
 TBool CMmPhoneTsy::IsModemStatusReady() const
     {   
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ISMODEMSTATUSREADY_1, "TSY: CMmPhoneTsy::IsModemStatusReady: %u", (TUint)iIsModemReady );
+TFLOGSTRING2("TSY: CMmPhoneTsy::IsModemStatusReady: %i", iIsModemReady );
     
     return iIsModemReady;
     }
@@ -8038,7 +7984,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_ISMODEMSTATU
 //    
 void CMmPhoneTsy::PhoneBookStoreInitCompleteL(TInt aError)
     {
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONETSY_PHONEBOOKSTOREINITCOMPLETEL_1, "TSY: CMmPhoneTsy::PhoneBookStoreInitCompleteL ");
+    TFLOGSTRING("TSY: CMmPhoneTsy::PhoneBookStoreInitCompleteL ");
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
         EMultimodePhoneGetMailboxNumbers );   
     if( EMultimodePhoneReqHandleUnknown != reqHandle )

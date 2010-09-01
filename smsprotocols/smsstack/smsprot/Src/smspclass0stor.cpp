@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,12 +18,6 @@
 /**
  @file
 */
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "smspclass0storTraces.h"
-#endif
-
 #include "smspclass0stor.h"
 #include "gsmubuf.h"
 #include "gsmunonieoperations.h"
@@ -57,7 +51,7 @@ construction and leaves nothing on the CleanupStack.
 */
 CSmsPermanentFileStore* CSmsPermanentFileStore::NewL(RFs& aFs, const TDesC& aFileName, const TUid& aThirdUid)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_NEWL_1, "CSmsPermanentFileStore::NewL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::NewL()");
 	CSmsPermanentFileStore*  self = new (ELeave) CSmsPermanentFileStore(aFs, aThirdUid);
 	CleanupStack::PushL(self);
 	self->ConstructL(aFileName);
@@ -68,7 +62,7 @@ CSmsPermanentFileStore* CSmsPermanentFileStore::NewL(RFs& aFs, const TDesC& aFil
 
 void CSmsPermanentFileStore::ConstructL(const TDesC& aFileName)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_CONSTRUCTL_1, "CSmsPermanentFileStore::ConstructL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::ConstructL()");
 	iFileName = aFileName.AllocL();
 	}
 
@@ -115,7 +109,7 @@ It creates a permanent store file.
 */
 void CSmsPermanentFileStore::CreateL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_CREATEL_1, "CSmsPermanentFileStore::CreateL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::CreateL()");
 	TUidType uidtype(KPermanentFileStoreLayoutUid,KSARStoreUid,iThirdUid);
 	iFileStore=CPermanentFileStore::ReplaceL(iFs, iFileName->Des(), EFileShareExclusive|EFileStream|EFileRead|EFileWrite);
 	iFileStore->SetTypeL(uidtype);
@@ -135,7 +129,7 @@ It opens the permanent store file and internalizes the entries.
 */
 void CSmsPermanentFileStore::OpenL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_OPENL_1, "CSmsPermanentFileStore::OpenL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::OpenL()");
 	iFileStore=CPermanentFileStore::OpenL(iFs,iFileName->Des(),EFileShareExclusive|EFileStream|EFileRead|EFileWrite);
 	InternalizeEntryArrayL();
 	}
@@ -147,7 +141,7 @@ It closes the permanent store file.
 */
 void CSmsPermanentFileStore::Close()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_CLOSE_1, "CSmsPermanentFileStore::Close()");
+	LOGSMSPROT1("CSmsPermanentFileStore::Close()");
 	delete iFileStore;
 	iFileStore = NULL;
 	iEntryArray.Reset();
@@ -171,7 +165,7 @@ void CSmsPermanentFileStore::CleanupEntriesWithCompactL(const CArrayFix<TSmsPreA
 	{
     // Ignore in code coverage - a previous CleanupEntries would need to have failed with KErrDiskFull
 	BULLSEYE_OFF
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_CLEANUPENTRIESWITHCOMPACTL_1, "CSmsPermanentFileStore::CleanupEntriesWithCompactL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::CleanupEntriesWithCompactL()");
 
 	iCompact = ETrue;
 	CleanupEntriesL(aEntryArray);
@@ -193,7 +187,7 @@ message has not been deleted due to above reason.
 */
 void CSmsPermanentFileStore::CleanupEntriesL(const CArrayFix<TSmsPreAllocatedFileStoreReassemblyEntry>& aEntryArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_CLEANUPENTRIESL_1, "CSmsPermanentFileStore::CleanupEntriesL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::CleanupEntriesL()");
 
 	TInt reassemblyCount = iEntryArray.Count();
 	TInt index, index2;
@@ -263,7 +257,7 @@ It internalizes its entry array.
 */
 void CSmsPermanentFileStore::InternalizeEntryArrayL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_INTERNALIZEENTRYARRAYL_1, "CSmsPermanentFileStore::InternalizeEntryArrayL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::InternalizeEntryArrayL()");
 
 	iEntryArray.Reset();
 	TStreamId headerid=iFileStore->Root();
@@ -286,7 +280,8 @@ It externalizes its entry array.
 */
 void CSmsPermanentFileStore::ExternalizeEntryArrayL()
 	{
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_EXTERNALIZEENTRYARRAYL_1, "CSmsPermanentFileStore::ExternalizeEntryArrayL(): this=0x%08X count=%d headerid=%u]",(TUint) this, iEntryArray.Count(), (TUint)iFileStore->Root().Value());
+	LOGSMSPROT4("CSmsPermanentFileStore::ExternalizeEntryArrayL(): this=0x%08X count=%d headerid=%d]",
+			 this, iEntryArray.Count(), iFileStore->Root().Value());
 
 	TStreamId headerid=iFileStore->Root();
 	RStoreWriteStream stream;
@@ -335,7 +330,7 @@ It adds the new message in permanent store file.
 */
 void CSmsPermanentFileStore::AddNewMessageL(TInt& aIndex, CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_ADDNEWMESSAGEL_1, "CSmsPermanentFileStore::AddNewMessageL");
+	LOGSMSPROT1("CSmsPermanentFileStore::AddNewMessageL");
 
 	CArrayFix<TInt>* indexArray=new(ELeave) CArrayFixFlat<TInt>(KFlatArrayGranularity);
 	CleanupStack::PushL(indexArray);
@@ -376,7 +371,7 @@ It updates the existing message in permanent store file.
 */
 void CSmsPermanentFileStore::UpdateExistingMessageL(TInt aIndex, const CSmsMessage& aSmsMessage,const CArrayFix<TInt>& aIndexArray,const CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_UPDATEEXISTINGMESSAGEL_1, "CSmsPermanentFileStore::UpdateExistingMessageL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::UpdateExistingMessageL()");
 	TStreamId  streamid = iEntryArray[aIndex].DataStreamId();
 	ExternalizeEntryL(streamid, aSmsMessage, aIndexArray, aSmsArray);
 	TSmsReassemblyEntry entry;
@@ -397,7 +392,7 @@ the index. If not found it returns KErrNotFound.
 void CSmsPermanentFileStore::MatchEntryToExistingMessage(const TReassemblyEntry& aEntry,
 													TInt& aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_MATCHENTRYTOEXISTINGMESSAGE_1, "CSmsPermanentFileStore::MatchEntryToExistingMessage()");
+	LOGSMSPROT1("CSmsPermanentFileStore::MatchEntryToExistingMessage()");
 
 	aIndex = KErrNotFound;
 
@@ -423,7 +418,7 @@ void CSmsPermanentFileStore::MatchEntryToExistingMessage(const TReassemblyEntry&
 			}
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_MATCHENTRYTOEXISTINGMESSAGE_2, "CSmsPermanentFileStore::MatchEntryToExistingMessage(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CSmsPermanentFileStore::MatchEntryToExistingMessage(): aIndex=%d", aIndex);
 	}
 
 /*
@@ -436,7 +431,7 @@ It updates the log server id of the message.
 */
 void CSmsPermanentFileStore::UpdateLogServerIdL(TInt& aIndex, TLogId aLogServerId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_UPDATELOGSERVERIDL_1, "CSmsPermanentFileStore::UpdateLogServerIdL");
+	LOGSMSPROT1("CSmsPermanentFileStore::UpdateLogServerIdL");
 
 	TSmsReassemblyEntry entry;
 	entry = iEntryArray[aIndex];
@@ -458,7 +453,7 @@ It sets the message passed to client or not.
 */
 void CSmsPermanentFileStore::SetPassedToClientL(TInt aIndex, TBool aBool)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_SETPASSEDTOCLIENTL_1, "CSmsPermanentFileStore::SetPassedToClientL(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CSmsPermanentFileStore::SetPassedToClientL(): aIndex=%d", aIndex);
 
 	TSmsReassemblyEntry entry;
 	entry = iEntryArray[aIndex];
@@ -493,7 +488,7 @@ It changes the existing entry with new entry.
 */
 void CSmsPermanentFileStore::ChangeEntryL(TInt aIndex,const TSmsReassemblyEntry& aNewEntry)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_CHANGEENTRYL_1, "CSmsPermanentFileStore::ChangeEntryL(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CSmsPermanentFileStore::ChangeEntryL(): aIndex=%d", aIndex);
 
 	iEntryArray[aIndex].SetIsDeleted(ETrue);
 	iEntryArray.InsertL(aIndex,aNewEntry);
@@ -525,7 +520,7 @@ It externalizes(writes) the entry in permanent store file.
 */
 void CSmsPermanentFileStore::ExternalizeEntryL(TStreamId& aStreamId,const CSmsMessage& aSmsMessage,const CArrayFix<TInt>& aIndexArray,const CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_EXTERNALIZEENTRYL_1, "CSmsPermanentFileStore::ExternalizeEntryL Start [sid=%d]", aStreamId.Value());
+	LOGSMSPROT2("CSmsPermanentFileStore::ExternalizeEntryL Start [sid=%d]", aStreamId.Value());
 
 	RStoreWriteStream writestream;
 	if (aStreamId==KNullStreamId)
@@ -549,7 +544,7 @@ void CSmsPermanentFileStore::ExternalizeEntryL(TStreamId& aStreamId,const CSmsMe
 	writestream.CommitL();
 	CleanupStack::PopAndDestroy();
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_EXTERNALIZEENTRYL_2, "CClass0PermanentFileStore::ExternalizeEntryL End [count=%d]", count);
+	LOGSMSPROT2("CClass0PermanentFileStore::ExternalizeEntryL End [count=%d]", count);
 	}
 
 /*
@@ -565,7 +560,7 @@ It internalizes(reads) the entry from permanent store file.
 void CSmsPermanentFileStore::InternalizeEntryL(const TInt aIndex, CSmsMessage& aSmsMessage, CArrayFix<TInt>& aIndexArray, CArrayFix<TGsmSms>& aSmsArray)
 	{
 	TSmsReassemblyEntry&  entry = iEntryArray[aIndex];
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_INTERNALIZEENTRYL_1, "CSmsPermanentFileStore::InternalizeEntryL Start [sid=%d]", entry.DataStreamId().Value());
+	LOGSMSPROT2("CSmsPermanentFileStore::InternalizeEntryL Start [sid=%d]", entry.DataStreamId().Value());
 	RStoreReadStream readstream;
 	readstream.OpenLC(*iFileStore, entry.DataStreamId());
 	readstream >> aSmsMessage;
@@ -594,7 +589,7 @@ void CSmsPermanentFileStore::InternalizeEntryL(const TInt aIndex, CSmsMessage& a
 	aSmsMessage.SetStorage(entry.Storage());
 	aSmsMessage.SetLogServerId(entry.LogServerId());
 	aSmsMessage.SetTime(entry.Time());
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_INTERNALIZEENTRYL_2, "CSmsPermanentFileStore::InternalizeEntryL End [count=%d]", count);
+	LOGSMSPROT2("CSmsPermanentFileStore::InternalizeEntryL End [count=%d]", count);
 	}
 
 /*
@@ -612,7 +607,7 @@ This functionality is specific to class 0 re-assembly store.
 */
 void CSmsPermanentFileStore::RemovePDUsL(TInt aIndex, TInt aStartPos, TInt aEndPos)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_REMOVEPDUSL_1, "CSmsPermanentFileStore::RemovePDUsL");
+	LOGSMSPROT1("CSmsPermanentFileStore::RemovePDUsL");
 
 	CSmsBuffer*  buffer = CSmsBuffer::NewL();
 	CSmsMessage*  smsMessage = CSmsMessage::NewL(iFs, CSmsPDU::ESmsDeliver, buffer);
@@ -669,11 +664,11 @@ void CSmsPermanentFileStore::RemovePDUsL(TInt aIndex, TInt aStartPos, TInt aEndP
  */
 void CSmsPermanentFileStore::BeginTransactionL()
 	{
-    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_BEGINTRANSACTIONL_1, "CSmsPermanentFileStore::BeginTransactionL [this=0x%08X iInTransaction=%d iFileStore=0x%08X]", (TUint)this, iInTransaction, (TUint)iFileStore);
+    LOGSMSPROT4("CSmsPermanentFileStore::BeginTransactionL [this=0x%08X iInTransaction=%d iFileStore=0x%08X]", this, iInTransaction, iFileStore);
 
 	if (iFileStore == NULL || iInTransaction)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_BEGINTRANSACTIONL_2, "WARNING CSmsPermanentFileStore::BeginTransactionL leaving with KErrAccessDenied");
+		LOGSMSPROT1("WARNING CSmsPermanentFileStore::BeginTransactionL leaving with KErrAccessDenied");
 		User::Leave(KErrAccessDenied);
 		}
 
@@ -685,7 +680,8 @@ void CSmsPermanentFileStore::BeginTransactionL()
  */
 void CSmsPermanentFileStore::Revert()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_REVERT_1, "CSmsPermanentFileStore::Revert(): this=0x%08X, iInTransaction=%d",(TUint)this, iInTransaction);
+	LOGSMSPROT3("CSmsPermanentFileStore::Revert(): this=0x%08X, iInTransaction=%d",
+    		 this, iInTransaction);
 
 	iFileStore->Revert();
 	iInTransaction = EFalse;
@@ -697,18 +693,11 @@ void CSmsPermanentFileStore::Revert()
  */
 void CSmsPermanentFileStore::DoCommitAndCompactL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_DOCOMMITANDCOMPACTL_1, "CSmsPermanentFileStore::DoCommitAndCompactL()");
+	LOGSMSPROT1("CSmsPermanentFileStore::DoCommitAndCompactL()");
 
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) 
-    TBuf<40> timestamp;
-    SmsTimeStampL(timestamp);
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSPERMANENTFILESTORE_DOCOMMITANDCOMPACTL_2, "%S",timestamp);
-#endif
+	LOGSMSPROTTIMESTAMP();
 	iFileStore->CommitL();
-#if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG) 
-    SmsTimeStampL(timestamp);
-    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS,CSMSPERMANENTFILESTORE_DOCOMMITANDCOMPACTL_3, "%S",timestamp);
-#endif
+	LOGSMSPROTTIMESTAMP();
 
 	iCommitCount--;
 	if ((iCommitCount < 0) || (iCompact))
@@ -725,15 +714,16 @@ void CSmsPermanentFileStore::DoCommitAndCompactL()
  */
 void CSmsPermanentFileStore::CommitTransactionL()
 	{
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_COMMITTRANSACTIONL_1, "CSmsPermanentFileStore::CommitTransactionL(): this=0x%08X iInTransaction=%d iFileStore=0x%08X",(TUint)this, iInTransaction, (TUint)iFileStore);
+	LOGSMSPROT4("CSmsPermanentFileStore::CommitTransactionL(): this=0x%08X iInTransaction=%d iFileStore=0x%08X",
+    		 this, iInTransaction, iFileStore);
 
 	ExternalizeEntryArrayL();
 
-#ifdef OST_TRACE_COMPLIER_IN_USE
+#ifdef _SMS_LOGGING_ENABLED
 	TRAPD(err, DoCommitAndCompactL());
 	if (err != KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_COMMITTRANSACTIONL_2, "WARNING! could not CommitL/CompactL due to %d", err);
+		LOGGSMU2("WARNING! could not CommitL/CompactL due to %d", err);
 		User::Leave(err);
 		}
 #else
@@ -750,7 +740,7 @@ void CSmsPermanentFileStore::CommitTransactionL()
  */
 void CSmsPermanentFileStore::RemoveDeletedEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_REMOVEDELETEDENTRIES_1, "CSmsPermanentFileStore::RemoveDeletedEntries()");
+	LOGSMSPROT1("CSmsPermanentFileStore::RemoveDeletedEntries()");
 
 	TInt count=iEntryArray.Count();
 	while (count--)
@@ -774,7 +764,7 @@ void CSmsPermanentFileStore::RemoveDeletedEntries()
  */
 void CSmsPermanentFileStore::ReinstateDeletedEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CSMSPERMANENTFILESTORE_REINSTATEDELETEDENTRIES_1, "CSmsPermanentFileStore::ReinstateDeletedEntries()");
+	LOGSMSPROT1("CSmsPermanentFileStore::ReinstateDeletedEntries()");
 
 	TInt count=iEntryArray.Count();
 	while (count--)
@@ -859,7 +849,7 @@ construction and leaves nothing on the CleanupStack.
 */
 CPreallocatedFile* CPreallocatedFile::NewL(RFs& aFs, const TDesC& aFileName, TInt aMaxClass0Msg, TInt aMaxPDUSeg, TPreAllocatedFileVersion aVersion)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_NEWL_1, "CPreallocatedFile::NewL()");
+	LOGSMSPROT1("CPreallocatedFile::NewL()");
 	CPreallocatedFile*  self = new (ELeave) CPreallocatedFile(aFs, aMaxClass0Msg, aMaxPDUSeg, aVersion);
 	CleanupStack::PushL(self);
 	self->ConstructL(aFileName);
@@ -870,7 +860,7 @@ CPreallocatedFile* CPreallocatedFile::NewL(RFs& aFs, const TDesC& aFileName, TIn
 
 void CPreallocatedFile::ConstructL(const TDesC& aFileName)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_CONSTRUCTL_1, "CPreallocatedFile::ConstructL()");
+	LOGSMSPROT1("CPreallocatedFile::ConstructL()");
 	iFileName = aFileName.AllocL();
 	}
 
@@ -924,7 +914,7 @@ it is corrupted or not.
 */
 TBool CPreallocatedFile::IsFileOK()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_ISFILEOK_1, "CPreallocatedFile::IsFileOK()");
+	LOGSMSPROT1("CPreallocatedFile::IsFileOK()");
 
 	TEntry entry;
 	//  Check file exists
@@ -953,7 +943,7 @@ It creates a pre-allocated file.
 */
 void CPreallocatedFile::CreateL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_CREATEL_1, "CPreallocatedFile::CreateL");
+	LOGSMSPROT1("CPreallocatedFile::CreateL");
 
 	User::LeaveIfError(iFile.Replace(iFs, iFileName->Des(), EFileWrite));
 	User::LeaveIfError(iFile.SetSize(iSizeOfFile));
@@ -1108,7 +1098,7 @@ It adds the new message in pre-allocated file.
 */
 void CPreallocatedFile::AddNewMessageL(TInt& aIndex, CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_ADDNEWMESSAGEL_1, "CPreallocatedFile::AddNewMessageL");
+	LOGSMSPROT1("CPreallocatedFile::AddNewMessageL");
 	//Gets the next free slot where the message will be stored.
 	TInt nextFreeSlot = GetFreeContainer();
 	TInt pduIndex=aSmsMessage.IsDecoded()? 0: aSmsMessage.SmsPDU().ConcatenatedMessagePDUIndex();
@@ -1157,7 +1147,7 @@ It updates the existing message in permanent store file.
 */
 void CPreallocatedFile::UpdateExistingMessageL(TInt aIndex, const CSmsMessage& aSmsMessage, TInt aPduIndex, const TGsmSms& aSms)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_UPDATEEXISTINGMESSAGEL_1, "CPreallocatedFile::UpdateExistingMessageL()");
+	LOGSMSPROT1("CPreallocatedFile::UpdateExistingMessageL()");
 	TInt preAllocatedStorageId = iEntryArray[aIndex].PreAllocatedStorageId();
 	if (preAllocatedStorageId == KErrNotFound)
 		{
@@ -1205,7 +1195,7 @@ the index. If not found it returns KErrNotFound.
 void CPreallocatedFile::MatchEntryToExistingMessage(const TReassemblyEntry& aEntry,
 													TInt& aIndex)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_MATCHENTRYTOEXISTINGMESSAGE_1, "CPreallocatedFile::MatchEntryToExistingMessage()");
+	LOGSMSPROT1("CPreallocatedFile::MatchEntryToExistingMessage()");
 
 	aIndex = KErrNotFound;
 
@@ -1232,7 +1222,7 @@ void CPreallocatedFile::MatchEntryToExistingMessage(const TReassemblyEntry& aEnt
 			}
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_MATCHENTRYTOEXISTINGMESSAGE_2, "CPreallocatedFile::MatchEntryToExistingMessage(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CPreallocatedFile::MatchEntryToExistingMessage(): aIndex=%d", aIndex);
 	}
 
 /*
@@ -1245,7 +1235,7 @@ It updates the log server id of the message.
 */
 void CPreallocatedFile::UpdateLogServerIdL(TInt& aIndex, TLogId aLogServerId)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_UPDATELOGSERVERIDL_1, "CPreallocatedFile::UpdateLogServerId");
+	LOGSMSPROT1("CPreallocatedFile::UpdateLogServerId");
 
 	TSmsPreAllocatedFileStoreReassemblyEntry entry;
 	entry = iEntryArray[aIndex];
@@ -1267,7 +1257,7 @@ It sets the message passed to client or not.
 */
 void CPreallocatedFile::SetPassedToClientL(TInt aIndex, TBool aBool)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_SETPASSEDTOCLIENTL_1, "CPreallocatedFile::SetPassedToClientL(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CPreallocatedFile::SetPassedToClientL(): aIndex=%d", aIndex);
 
 	TSmsPreAllocatedFileStoreReassemblyEntry entry;
 	entry = iEntryArray[aIndex];
@@ -1288,7 +1278,7 @@ It adds the new entry in the existing entry array.
 */
 void CPreallocatedFile::AddEntryL(TSmsPreAllocatedFileStoreReassemblyEntry& aEntry)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_ADDENTRYL_1, "CPreallocatedFile::AddEntryL");
+	LOGSMSPROT1("CPreallocatedFile::AddEntryL");
 	iEntryArray.AppendL(aEntry);
 	iEntryArray[iEntryArray.Count()-1].SetIsAdded(ETrue);
 	}
@@ -1303,7 +1293,7 @@ It changes the existing entry with new entry.
 */
 void CPreallocatedFile::ChangeEntryL(TInt aIndex, const TSmsPreAllocatedFileStoreReassemblyEntry& aNewEntry)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_CHANGEENTRYL_1, "CPreallocatedFile::ChangeEntryL(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CPreallocatedFile::ChangeEntryL(): aIndex=%d", aIndex);
 	iEntryArray[aIndex].SetIsDeleted(ETrue);
 	iEntryArray.InsertL(aIndex,aNewEntry);
 	iEntryArray[aIndex].SetIsAdded(ETrue);
@@ -1318,7 +1308,7 @@ It deletes the entry.
 */
 void CPreallocatedFile::DeleteEntryL(TInt aIndex)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_DELETEENTRYL_1, "CPreallocatedFile::DeleteEntryL(): aIndex=%d", aIndex);
+	LOGSMSPROT2("CPreallocatedFile::DeleteEntryL(): aIndex=%d", aIndex);
 	if (iEntryArray[aIndex].PreAllocatedStorageId() != KErrNotFound)
 		{
 		ClearEntryL(iEntryArray[aIndex].PreAllocatedStorageId(), iEntryArray[aIndex].Count());
@@ -1348,7 +1338,7 @@ NOTE:
 */
 void CPreallocatedFile::ClearEntryL(TInt aStorageId, TInt aNumberOfPDUs)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_CLEARENTRYL_1, "CPreallocatedFile::ClearEntryL");
+	LOGSMSPROT1("CPreallocatedFile::ClearEntryL");
 
 	//Read storage id.
 	TInt storageId;
@@ -1496,7 +1486,7 @@ It externalizes(writes) the entry in permanent store file.
 */
 void CPreallocatedFile::ExternalizeEntry(TInt aContainerId, const TGsmSmsSlotEntry& aSmsSlot, TInt aIndex, const TGsmSms& aGsmSms)
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_EXTERNALIZEENTRY_1, "CPreallocatedFile::ExternalizeEntry() 1: aContainerId=%d, aIndex=%d", aContainerId, aIndex);
+	LOGSMSPROT3("CPreallocatedFile::ExternalizeEntry() 1: aContainerId=%d, aIndex=%d", aContainerId, aIndex);
 
 	// Container id must not be greater than max pdu segment.
 	TInt pos = iBeginOfDataSection + ((aContainerId - 1) * (KSizeOfGsmSmsSlotEntry + sizeof(TInt) + KSizeOfSmsGsmPDU));
@@ -1527,7 +1517,7 @@ It externalizes(writes) the entry in permanent store file.
 */
 void CPreallocatedFile::ExternalizeEntry(TInt aContainerId, TInt aIndex, const TGsmSms& aGsmSms)
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_EXTERNALIZEENTRY1_1, "CPreallocatedFile::ExternalizeEntry() 2: aContainerId=%d, aIndex=%d", aContainerId, aIndex);
+	LOGSMSPROT3("CPreallocatedFile::ExternalizeEntry() 2: aContainerId=%d, aIndex=%d", aContainerId, aIndex);
 
 	// Container id must not be greater than max pdu segment.
 	TInt pos = iBeginOfDataSection + ((aContainerId - 1) * (KSizeOfGsmSmsSlotEntry + sizeof(TInt) + KSizeOfSmsGsmPDU));
@@ -1556,7 +1546,7 @@ It internalizes(reads) the entry from permanent store file.
 */
 void CPreallocatedFile::InternalizeEntryL(const TInt aIndex, CSmsMessage& aSmsMessage, CArrayFix<TInt>& aIndexArray, CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_INTERNALIZEENTRYL_1, "CPreallocatedFile::InternalizeEntryL");
+	LOGSMSPROT1("CPreallocatedFile::InternalizeEntryL");
 	TSmsPreAllocatedFileStoreReassemblyEntry&  entry = iEntryArray[aIndex];
 	//Set other properties of CSmsMessage
 	aSmsMessage.SetStorage(entry.Storage());
@@ -1568,7 +1558,7 @@ void CPreallocatedFile::InternalizeEntryL(const TInt aIndex, CSmsMessage& aSmsMe
 	aSmsMessage.SetForwardToClient(entry.ForwardToClient());
 	aSmsMessage.SetToFromAddressL(entry.Description2());
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_INTERNALIZEENTRYL_2, "CPreallocatedFile::InternalizeEntryL Start [sid=%d]", entry.PreAllocatedStorageId());
+	LOGSMSPROT2("CPreallocatedFile::InternalizeEntryL Start [sid=%d]", entry.PreAllocatedStorageId());
 	if (entry.PreAllocatedStorageId()==KErrNotFound)
 		{
 		return;
@@ -1628,7 +1618,7 @@ void CPreallocatedFile::InternalizeEntryL(const TInt aIndex, CSmsMessage& aSmsMe
 			}
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_INTERNALIZEENTRYL_3, "CPreallocatedFile::InternalizeEntryL End [noOfPDUsRead=%d]", noOfPDUsRead);
+	LOGSMSPROT2("CPreallocatedFile::InternalizeEntryL End [noOfPDUsRead=%d]", noOfPDUsRead);
 	}
 
 /*
@@ -1646,14 +1636,14 @@ This functionality is specific to class 0 re-assembly store.
 */
 void CPreallocatedFile::RemovePDUsL(TInt aIndex, TInt aStartPos, TInt aEndPos)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_REMOVEPDUSL_1, "CPreallocatedFile::RemovePDUsL");
+	LOGSMSPROT1("CPreallocatedFile::RemovePDUsL");
 
 	if ((aStartPos < 1) || (aEndPos > 256) || (aStartPos > aEndPos))
 		{
 		User::Leave(KErrArgument);
 		}
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_REMOVEPDUSL_2, "CPreallocatedFile::RemovePDUsL Start [sid=%d]", iEntryArray[aIndex].PreAllocatedStorageId());
+	LOGSMSPROT2("CPreallocatedFile::RemovePDUsL Start [sid=%d]", iEntryArray[aIndex].PreAllocatedStorageId());
 	if (iEntryArray[aIndex].PreAllocatedStorageId()==KErrNotFound)
 		{
 		return;
@@ -1891,11 +1881,11 @@ TInt CPreallocatedFile::NumberOfPDUStored()
  */
 void CPreallocatedFile::BeginTransactionL()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_BEGINTRANSACTIONL_1, "CPreallocatedFile::BeginTransactionL [this=0x%08X iInTransaction=%d]", (TUint)this, iInTransaction);
+	LOGSMSPROT3("CPreallocatedFile::BeginTransactionL [this=0x%08X iInTransaction=%d]", this, iInTransaction);
 
 	if (iInTransaction)
 		{
-	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_BEGINTRANSACTIONL_2, "WARNING CPreallocatedFile::BeginTransactionL leaving with KErrAccessDenied");
+	    LOGGSMU1("WARNING CPreallocatedFile::BeginTransactionL leaving with KErrAccessDenied");
 		User::Leave(KErrAccessDenied);
 		}
 
@@ -1907,7 +1897,8 @@ void CPreallocatedFile::BeginTransactionL()
  */
 void CPreallocatedFile::CommitTransactionL()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_COMMITTRANSACTIONL_1, "CPreallocatedFile::CommitTransactionL(): this=0x%08X iInTransaction=%d",(TUint)this, iInTransaction);
+	LOGSMSPROT3("CPreallocatedFile::CommitTransactionL(): this=0x%08X iInTransaction=%d",
+				this, iInTransaction);
 
 	ExternalizeEntryArray();
 	//Commit
@@ -1922,7 +1913,8 @@ It reverts the transaction.
 */
 void CPreallocatedFile::Revert()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_REVERT_1, "CPreallocatedFile::Revert(): this=0x%08X, iInTransaction=%d",(TUint)this, iInTransaction);
+	LOGSMSPROT3("CPreallocatedFile::Revert(): this=0x%08X, iInTransaction=%d",
+    		 this, iInTransaction);
 
 	ReinstateEntries();
 	ExternalizeEntryArray();
@@ -1936,7 +1928,7 @@ void CPreallocatedFile::Revert()
  */
 void CPreallocatedFile::RemoveDeletedEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_REMOVEDELETEDENTRIES_1, "CPreallocatedFile::RemoveDeletedEntries()");
+	LOGSMSPROT1("CPreallocatedFile::RemoveDeletedEntries()");
 
 	TInt count=iEntryArray.Count();
 	while (count--)
@@ -1960,7 +1952,7 @@ void CPreallocatedFile::RemoveDeletedEntries()
  */
 void CPreallocatedFile::ReinstateDeletedEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_REINSTATEDELETEDENTRIES_1, "CPreallocatedFile::ReinstateDeletedEntries()");
+	LOGSMSPROT1("CPreallocatedFile::ReinstateDeletedEntries()");
 
 	TInt count=iEntryArray.Count();
 	while (count--)
@@ -1986,7 +1978,7 @@ void CPreallocatedFile::ReinstateDeletedEntries()
  */
 void CPreallocatedFile::ReinstateEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_REINSTATEENTRIES_1, "CPreallocatedFile::ReinstateEntries()");
+	LOGSMSPROT1("CPreallocatedFile::ReinstateEntries()");
 
 	TInt containerId;
 	TInt storageId;
@@ -2022,7 +2014,7 @@ It returns the index of oldest message in pre-allocated file.
 */
 TInt CPreallocatedFile::GetOldestMessageEntryIndex()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPREALLOCATEDFILE_GETOLDESTMESSAGEENTRYINDEX_1, "CPreallocatedFile::GetOldestMessageEntryIndex()");
+	LOGSMSPROT1("CPreallocatedFile::GetOldestMessageEntryIndex()");
 
 	TInt index = KErrNotFound;
 	TTime time;
@@ -2052,7 +2044,7 @@ construction and leaves nothing on the CleanupStack.
 */
 CGuardTimer* CGuardTimer::NewL(CClass0SmsReassemblyStore& aClass0ReassemblyStore, TInt aGuardTimeout)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGUARDTIMER_NEWL_1, "CGuardTimer::NewL()");
+	LOGSMSPROT1("CGuardTimer::NewL()");
 
 	CGuardTimer* timer = new(ELeave) CGuardTimer(aClass0ReassemblyStore, aGuardTimeout);
 	CleanupStack::PushL(timer);
@@ -2085,7 +2077,7 @@ CGuardTimer::~CGuardTimer()
  */
 void CGuardTimer::EnableGuardTimer()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGUARDTIMER_ENABLEGUARDTIMER_1, "CGuardTimer::EnableGuardTimer()");
+	LOGSMSPROT1("CGuardTimer::EnableGuardTimer()");
 	if (!IsActive())
 		{
 		TTime nextTimeOut;
@@ -2107,7 +2099,7 @@ void CGuardTimer::DisableGuardTimer()
  */
 void CGuardTimer::RunL()
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGUARDTIMER_RUNL_1, "CGuardTimer::RunL [iStatus=%d]", iStatus.Int());
+	LOGSMSPROT2("CGuardTimer::RunL [iStatus=%d]", iStatus.Int());
 	iClass0ReassemblyStore.ProcessTimeoutMessageL();
 	EnableGuardTimer();
 	} // CGuardTimer::RunL
@@ -2128,7 +2120,7 @@ construction and leaves nothing on the CleanupStack.
 */
 CClass0SmsReassemblyStore* CClass0SmsReassemblyStore::NewL(RFs& aFs, MSmsComm& aSmsComm)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_NEWL_1, "CClass0SmsReassemblyStore::NewL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::NewL()");
 
 	CClass0SmsReassemblyStore*  self = new (ELeave) CClass0SmsReassemblyStore(aFs, aSmsComm);
 	CleanupStack::PushL(self);
@@ -2196,7 +2188,7 @@ If any of the above element is missing it takes the default value.
 */
 void CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(TInt& aMaxClass0Msg, TInt& aMaxPDUSeg, TInt& aGuardTimeOut)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_READCONFIGURABLECLASS0SMSSETTINGSL_1, "CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL()");
 
 	aMaxClass0Msg = KMaxNumberOfClass0MessagesInReassemblyStore;
 	aMaxPDUSeg    = KNumberOfPDUSegmentsStoredInOODCondition;
@@ -2206,7 +2198,7 @@ void CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(TInt& aMaxCla
 	TRAPD(ret, ini=CESockIniData::NewL(_L("smswap.sms.esk")));
 	if(ret!=KErrNone)
 		{
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_READCONFIGURABLECLASS0SMSSETTINGSL_2, "CESockIniData::NewL() returned=%d", ret);
+		LOGSMSPROT2("CESockIniData::NewL() returned=%d", ret);
 		}
 	else
 		{
@@ -2217,7 +2209,7 @@ void CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(TInt& aMaxCla
 			{
 			if (var > 0)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_READCONFIGURABLECLASS0SMSSETTINGSL_3, "MaxClass0Messages [%d]", var);
+				LOGSMSPROT2("MaxClass0Messages [%d]", var);
 				aMaxClass0Msg = var;
 				}
 			}
@@ -2226,7 +2218,7 @@ void CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(TInt& aMaxCla
 			{
 			if (var > 0)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_READCONFIGURABLECLASS0SMSSETTINGSL_4, "MaxClass0Messages [%d]", var);
+				LOGSMSPROT2("MaxClass0Messages [%d]", var);
 				aMaxPDUSeg = var;
 				}
 			}
@@ -2235,7 +2227,7 @@ void CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(TInt& aMaxCla
 			{
 			if (var > 0)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_READCONFIGURABLECLASS0SMSSETTINGSL_5, "MaxClass0Messages [%d]", var);
+				LOGSMSPROT2("MaxClass0Messages [%d]", var);
 				aGuardTimeOut = var;
 				}
 			}
@@ -2243,7 +2235,8 @@ void CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(TInt& aMaxCla
 		CleanupStack::PopAndDestroy(ini);
 		}
 
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_READCONFIGURABLECLASS0SMSSETTINGSL_6, "CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(): aMaxClass0Msg=%d, aMaxPDUSeg=%d, aGuardTimeOut=%d",aMaxClass0Msg, aMaxPDUSeg, aGuardTimeOut);
+	LOGSMSPROT4("CClass0SmsReassemblyStore::ReadConfigurableClass0SmsSettingsL(): aMaxClass0Msg=%d, aMaxPDUSeg=%d, aGuardTimeOut=%d",
+			    aMaxClass0Msg, aMaxPDUSeg, aGuardTimeOut);
 	}
 
 /**
@@ -2254,7 +2247,7 @@ Then it populates the entry information (all the messages stored in re-assembly 
 */
 void CClass0SmsReassemblyStore::OpenStoreL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_OPENSTOREL_1, "CClass0SmsReassemblyStore::OpenStoreL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::OpenStoreL()");
 	TFileName pathName;
 	CReassemblyStoreUtility::PrivatePath(iFs, pathName);
 	//Create the directory if it is not created.
@@ -2281,7 +2274,7 @@ It closes the class 0 re-assembly store.
 */
 void CClass0SmsReassemblyStore::Close()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_CLOSE_1, "CClass0SmsReassemblyStore::CloseStore()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::CloseStore()");
 	iGuardTimer->DisableGuardTimer();
 	iEntryArray.Reset();
 	iPreallocatedFile->Close();
@@ -2297,7 +2290,7 @@ It populates the entry information stored in class 0 reassembly store.
 */
 void CClass0SmsReassemblyStore::PopulateEntryArrayL(CArrayFix<TReassemblyEntry>& aEntryArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_POPULATEENTRYARRAYL_1, "CClass0SmsReassemblyStore::PopulateEntryArrayL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::PopulateEntryArrayL()");
 	aEntryArray.Reset();
 	//Populate Entries from Pre-allocated file.
 	for (TInt count = 0; count < iPreallocatedFile->Entries().Count(); count++)
@@ -2362,7 +2355,7 @@ void CClass0SmsReassemblyStore::PopulateEntryArrayL(CArrayFix<TReassemblyEntry>&
 		}
 	else if (ret == KErrDiskFull)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_POPULATEENTRYARRAYL_2, "CleanReassemblyEntries() returns KErrDiskFull");
+		LOGSMSPROT1("CleanReassemblyEntries() returns KErrDiskFull");
 		/*
 		In this case permanent store file contains incorrect information.
 		For example forwarded message might be still stored in this store.
@@ -2430,7 +2423,7 @@ pre-allocated file. Otherwise it stores the message in permanent store file.
 */
 void CClass0SmsReassemblyStore::SetDiskSpaceState(TSmsDiskSpaceMonitorStatus aDiskSpaceStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_SETDISKSPACESTATE_1, "CClass0SmsReassemblyStore::SetDiskSpaceState()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::SetDiskSpaceState()");
 	iDiskSpaceStatus = aDiskSpaceStatus;
 	}
 
@@ -2448,7 +2441,7 @@ Otherwise (if disk space is full), it adds the message in pre-allocated file.
 */
 void CClass0SmsReassemblyStore::AddNewMessageL(CSmsMessage& aSmsMessage,const TGsmSms& aGsmSms)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_ADDNEWMESSAGEL_1, "CClass0SmsReassemblyStore::AddNewMessageL");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::AddNewMessageL");
 
 	// Add entry in permanent store file
 	TInt index;
@@ -2506,7 +2499,7 @@ It updates the existing message in class 0 re-assembly store.
 */
 void CClass0SmsReassemblyStore::UpdateExistingMessageL(CSmsMessage& aSmsMessage, const TGsmSms& aGsmSms, TBool& aDuplicateMsgRef, TBool& aDuplicateSlot)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_1, "CClass0SmsReassemblyStore::UpdateExistingMessageL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::UpdateExistingMessageL()");
 
 	aDuplicateMsgRef = EFalse;
 	aDuplicateSlot   = EFalse;
@@ -2566,7 +2559,7 @@ void CClass0SmsReassemblyStore::UpdateExistingMessageL(CSmsMessage& aSmsMessage,
 
 			if (slot.iIndex == newSlot.iIndex  && slot.iStore == newSlot.iStore)
 				{
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_2, "CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate enumerated PDU.");
+				LOGSMSPROT1("CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate enumerated PDU.");
 
 				// It is a duplicate that was already stored on the SIM...
 				aDuplicateSlot = ETrue;
@@ -2581,7 +2574,7 @@ void CClass0SmsReassemblyStore::UpdateExistingMessageL(CSmsMessage& aSmsMessage,
 		{
 		if (indexArray->At(index) == concatPDUIndex)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_UPDATEEXISTINGMESSAGEL_3, "CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate concatenated PDU.");
+			LOGSMSPROT1("CSmsReassemblyStore::UpdateExistingMessageL(): Duplicate concatenated PDU.");
 
 			// The PDU is already stored in the reassembly store.
 			aDuplicateMsgRef = ETrue;
@@ -3068,7 +3061,7 @@ processed. It is also called from ProcessCompleteClass0SmsMessagesL.
 */
 void CClass0SmsReassemblyStore::ProcessTimeoutMessageL()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_PROCESSTIMEOUTMESSAGEL_1, "CClass0SmsReassemblyStore::ProcessTimeoutMessageL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::ProcessTimeoutMessageL()");
 	TBool passedToClient=ETrue;
 	TInt count=iEntryArray.Count();
 
@@ -3192,12 +3185,12 @@ It frees up the memory by removing the forwarded PDUs.
 */
 void CClass0SmsReassemblyStore::SetIncompleteMessageForwardedToClientL(const CSmsMessage& aSmsMessage)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_SETINCOMPLETEMESSAGEFORWARDEDTOCLIENTL_1, "CClass0SmsReassemblyStore::SetIncompleteMessageForwardedToClientL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::SetIncompleteMessageForwardedToClientL()");
 	TInt index = KErrNotFound;
 
 	if (aSmsMessage.IsComplete())
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_SETINCOMPLETEMESSAGEFORWARDEDTOCLIENTL_2, "This function must be called when message is incomplete");
+		LOGSMSPROT1("This function must be called when message is incomplete");
 		User::Leave(KErrArgument);
 		}
 
@@ -3253,7 +3246,7 @@ it is no more in the pre-allocated file which contains master header info.
 */
 TInt CClass0SmsReassemblyStore::CleanReassemblyEntries()
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_CLEANREASSEMBLYENTRIES_1, "CleanReassemblyEntries");
+	LOGSMSPROT1("CleanReassemblyEntries");
 	const CArrayFix<TSmsPreAllocatedFileStoreReassemblyEntry>& preAllocatedFileEntryArray = iPreallocatedFile->Entries();
 	TInt ret=KErrNone;
 	TRAP(ret,	BeginTransactionLC();
@@ -3262,7 +3255,7 @@ TInt CClass0SmsReassemblyStore::CleanReassemblyEntries()
 
 	if (ret == KErrDiskFull)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_CLEANREASSEMBLYENTRIES_2, "CleanupEntriesL returns KErrDiskFull");
+		LOGSMSPROT1("CleanupEntriesL returns KErrDiskFull");
 		/*
 		Get access to reserve memory, call again to clean the entries with compact.
 		Compact needs to be called at this instance because permanent store
@@ -3274,7 +3267,7 @@ TInt CClass0SmsReassemblyStore::CleanReassemblyEntries()
 		TRAP(ret,	BeginTransactionLC();
 					iPermanentFileStore->CleanupEntriesWithCompactL(preAllocatedFileEntryArray);
 					CommitTransactionL(););
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_CLEANREASSEMBLYENTRIES_3, "CleanupEntriesWithCompactL returns %d", ret);
+		LOGSMSPROT2("CleanupEntriesWithCompactL returns %d", ret);
 		iFs.ReleaseReserveAccess(KStoreDrive);
 		}
 	return ret;
@@ -3294,7 +3287,7 @@ from its permanent store & pre-allocated file.
 */
 void CClass0SmsReassemblyStore::GetSmsEntriesL(const TReassemblyEntry& aEntry, CSmsMessage& aSmsMessage, CArrayFix<TInt>& aIndexArray, CArrayFix<TGsmSms>& aSmsArray)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_GETSMSENTRIESL_1, "CClass0SmsReassemblyStore::GetSmsEntriesL()");
+	LOGSMSPROT1("CClass0SmsReassemblyStore::GetSmsEntriesL()");
 	TInt permanentStoreIndex=KErrNotFound;
 	iPermanentFileStore->MatchEntryToExistingMessage(aEntry, permanentStoreIndex);
 	if (permanentStoreIndex!=KErrNotFound)
@@ -3303,7 +3296,7 @@ void CClass0SmsReassemblyStore::GetSmsEntriesL(const TReassemblyEntry& aEntry, C
 		}
 	else
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_GETSMSENTRIESL_2, "No PDUs in Permanent store file");
+		LOGSMSPROT1("No PDUs in Permanent store file");
 		}
 
 	TInt preAllocatedFileIndex=KErrNotFound;
@@ -3337,7 +3330,7 @@ void CClass0SmsReassemblyStore::GetSmsEntriesL(const TReassemblyEntry& aEntry, C
 			{
 			//In this scenario a CSmsMessage object has to be created from the existing PDU in
 			//pre-allocated file & then serialized into aSmsMessage.
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_GETSMSENTRIESL_3, "Number of PDUs in Pre-allocated file %d", aIndexArray.Count());
+			LOGSMSPROT2("Number of PDUs in Pre-allocated file %d", aIndexArray.Count());
 			if (aIndexArray.Count() > 0)
 				{
 				CSmsBuffer* smsBuffer = CSmsBuffer::NewL();
@@ -3510,7 +3503,7 @@ void CClass0SmsReassemblyStore::SortPDUsL(CArrayFix<TInt>& aIndexArray, CArrayFi
  */
 void CClass0StoreCloseObject(TAny* aObj)
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0STORECLOSEOBJECT_1, "WARNING! Hey, CClass0StoreCloseObject called by Untrapper! [0x%08x]", (TUint)aObj);
+	LOGGSMU2("WARNING! Hey, CClass0StoreCloseObject called by Untrapper! [0x%08x]", aObj);
 	((CClass0SmsReassemblyStore*)aObj)->Revert();
 	}
 
@@ -3523,11 +3516,11 @@ void CClass0StoreCloseObject(TAny* aObj)
  */
 void CClass0SmsReassemblyStore::BeginTransactionLC()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_BEGINTRANSACTIONLC_1, "CClass0SmsReassemblyStore::BeginTransactionLC [this=0x%08X iInTransaction=%d]", (TUint)this, iInTransaction);
+	LOGSMSPROT3("CClass0SmsReassemblyStore::BeginTransactionLC [this=0x%08X iInTransaction=%d]", this, iInTransaction);
 
 	if (iInTransaction)
 		{
-	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_BEGINTRANSACTIONLC_2, "WARNING CClass0SmsReassemblyStore::BeginTransactionLC leaving with KErrAccessDenied");
+	    LOGGSMU1("WARNING CClass0SmsReassemblyStore::BeginTransactionLC leaving with KErrAccessDenied");
 		User::Leave(KErrAccessDenied);
 		}
 
@@ -3543,7 +3536,8 @@ void CClass0SmsReassemblyStore::BeginTransactionLC()
  */
 void CClass0SmsReassemblyStore::CommitTransactionL()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_COMMITTRANSACTIONL_1, "CClass0SmsReassemblyStore::CommitTransactionL(): this=0x%08X iInTransaction=%d",(TUint)this, iInTransaction);
+	LOGSMSPROT3("CClass0SmsReassemblyStore::CommitTransactionL(): this=0x%08X iInTransaction=%d",
+				this, iInTransaction);
 
 	//Commit permanent store file
 	iPermanentFileStore->CommitTransactionL();
@@ -3558,7 +3552,8 @@ void CClass0SmsReassemblyStore::CommitTransactionL()
  */
 void CClass0SmsReassemblyStore::Revert()
 	{
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCLASS0SMSREASSEMBLYSTORE_REVERT_1, "CClass0SmsReassemblyStore::Revert(): this=0x%08X, iInTransaction=%d",(TUint)this, iInTransaction);
+	LOGSMSPROT3("CClass0SmsReassemblyStore::Revert(): this=0x%08X, iInTransaction=%d",
+    		 this, iInTransaction);
 
 	iPreallocatedFile->Revert();
 	iPermanentFileStore->Revert();

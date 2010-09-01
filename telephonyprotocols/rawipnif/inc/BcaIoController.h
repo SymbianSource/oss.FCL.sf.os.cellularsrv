@@ -33,6 +33,7 @@
 
 using namespace BasebandChannelAdaptation;
 
+class CBttLogger;
 class CSender;
 class CReceiver;
 class CBcaControl;
@@ -56,7 +57,7 @@ typedef MBcaFactory* (*TNewBcaFactoryL)();
 class CBcaIoController : public CBase
 	{
 public:
-	static CBcaIoController* NewL(MControllerObserver& aObserver);	
+	static CBcaIoController* NewL(MControllerObserver& aObserver, CBttLogger* aTheLogger);	
 	~CBcaIoController();
 
 	void StartL();
@@ -90,12 +91,13 @@ public:
 #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
     
 protected:
+    CBttLogger* iTheLogger;
     TUint iMaxTxPacketSize;
     TUint iMaxRxPacketSize;
     
 private:
     
-    CBcaIoController(MControllerObserver& aObserver);
+    CBcaIoController(MControllerObserver& aObserver, CBttLogger* aTheLogger);
     void ConstructL();
     
     enum TSendState
@@ -254,7 +256,7 @@ inline TPtrC CBcaIoController::Port()const
 class CBcaControl : public CActive
 	{
 public:
-	CBcaControl(CBcaIoController& aObserver);
+	CBcaControl(CBcaIoController& aObserver, CBttLogger* aTheLogger);
 	~CBcaControl();
 public:
 	void StartLoadL();
@@ -266,6 +268,7 @@ protected:
 	virtual void DoCancel();	
 private: // Unowned data.
 	CBcaIoController& iObserver;
+	CBttLogger* iTheLogger;
 private:
 		enum TBcaState
 		{

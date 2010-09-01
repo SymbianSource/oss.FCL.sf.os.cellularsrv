@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -18,15 +18,10 @@
 #include "TE_wapdgrmbase.h"
 #include "smsstackutils.h"
 
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "TE_wapdgrmbaseTraces.h"
-#endif
-
 // WapProt code needs it
 GLDEF_C void Panic(TWAPSMSPanic aPanic)
 {
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TE_WAPDGRMBASE_PANIC_1, "WAPUPANIC %d", aPanic);
+	LOGWAPPROT2("WAPUPANIC %d", aPanic);
 	_LIT(KWapProtPanic, "WAPPROT");
 	User::Panic(KWapProtPanic, aPanic);
 }

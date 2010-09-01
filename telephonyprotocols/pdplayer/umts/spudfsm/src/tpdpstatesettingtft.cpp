@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -20,22 +20,16 @@
  @internalComponent
 */
  						   
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstatesettingtftTraces.h"
-#endif
-
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
+#include "spudfsmdebuglogger.h"
 #include "pdpfsmnmspace.h"
 #include "cpdpfsm.h"
 
 TInt TPdpStateSettingTFT::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGTFT_INPUT_1, ">>TPdpStateSettingTFT::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGTFT_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
+	SPUDFSMVERBOSE_FNLOG("TPdpStateSettingTFT::Input()");
+	SPUDFSMVERBOSE_LOG2(_L("aOperation : %S(%d)"), LogOperation(aFsm, aOperation), aOperation);
 
 	switch (aOperation)
 	{
@@ -58,7 +52,6 @@ TInt TPdpStateSettingTFT::Input (CPdpFsm& aFsm, const TInt aOperation, const TIn
 				}
 			}
 		SpudManNotify(aFsm, KContextTFTModifiedEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGTFT_INPUT_3, "<<TPdpStateSettingTFT::Input()");
 		return KErrNone;
 	case PdpFsm::ETftSetFailed:
 		if (aFsm.iContextType != SpudMan::EMbms)
@@ -70,12 +63,10 @@ TInt TPdpStateSettingTFT::Input (CPdpFsm& aFsm, const TInt aOperation, const TIn
 			aFsm.ChangeStateToCreatedMbms();
 			}
 		SpudManNotify(aFsm, KContextTFTModifiedEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGTFT_INPUT_4, "<<TPdpStateSettingTFT::Input()");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGTFT_INPUT_5, "<<TPdpStateSettingTFT::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -21,12 +21,6 @@
  */
 
 //INCLUDES
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmsecuritytsywithdispatcherTraces.h"
-#endif
-
 #include "cmmsecuritytsy.h"
 #include "cmmphonetsy.h"
 #include "cmmtsyreqhandlestore.h"
@@ -75,12 +69,12 @@ TInt CMmSecurityTsy::VerifySecurityCodeL(
             {
             if ( RMobilePhone::ESecurityCodePin1 == *type )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL1_1, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN VERIFY REQUESTED");
 				iLastPinRequested = EPin1Requested;
 				}
 			if ( RMobilePhone::ESecurityCodePin2 == *type )
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL1_2, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN2 VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PIN2 VERIFY REQUESTED");
 				iLastPinRequested = EPin2Requested;
                 }
             //This is to prevent unnecessary PIN1 request after PUK code 
@@ -89,14 +83,14 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSEC
                    ( RMobilePhone::ESecurityCodePuk2 == *type ) ) &&  
                    ( 0 < codes->iUnblockCode.Length() ) )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL1_3, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PUK VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PUK VERIFY REQUESTED");
                 iPukCodeVerify = ETrue;
                 }
             //This is to prevent unnecessary PIN1 request after phone password
             //request (PYRA-5UBCLC)
             if ( RMobilePhone::ESecurityCodePhonePassword == *type )
                 {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSECURITYCODEL1_4, "TSY: CMmSecurityTsy::VerifySecurityCodeL - PHONE PASSWORD VERIFY REQUESTED");
+TFLOGSTRING("TSY: CMmSecurityTsy::VerifySecurityCodeL - PHONE PASSWORD VERIFY REQUESTED");
                 iPhonePasswordVerify = ETrue;
                 }
             iMmPhoneTsy->iMmPhoneExtInterface->DeliverCode( *codes );
@@ -165,7 +159,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSEC
 void CMmSecurityTsy::CompleteVerifySecurityCodeL(
         TInt aErrorCode ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL1_1, "TSY: CMmSecurityTsy::CompleteVerifySecurityCode - Error:%d", aErrorCode);
+TFLOGSTRING2("TSY: CMmSecurityTsy::CompleteVerifySecurityCode - Error:%d", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneVerifySecurityCode );
@@ -202,7 +196,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEV
 			// IF PIN1 REQUESTED LAST
 			if ( iLastPinRequested == EPin1Requested )
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL1_2, "TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN VERIFICATION NEEDED");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN VERIFICATION NEEDED");
 				CompleteNotifySecurityEventL( RMobilePhone::EPin1Required,
 						KErrNone );
 				iLastPinRequested = EPinUnknown;
@@ -210,7 +204,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEV
 			// IF PIN2 REQUESTED LAST
 			if (iLastPinRequested == EPin2Requested)
 				{
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL1_3, "TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN2");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - PIN2");
 				iLastPinRequested = EPinUnknown;
 				}
             }
@@ -218,7 +212,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEV
                   phoneSetLockSettingHandle && EActiveCodeToUpinAskUpin == 
                                                       iActiveCodeToUpinState )
             {
-OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL1_4, "TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - iActiveCodeToUpinState = EActiveCodeToUpinAskPin");
+TFLOGSTRING("TSY: CMmSecurityTsy::CompleteVerifySecurityCodeL - iActiveCodeToUpinState = EActiveCodeToUpinAskPin");
             if ( KErrNone == aErrorCode )
                 {
                 iActiveCodeToUpinState = EActiveCodeToUpinAskPin;

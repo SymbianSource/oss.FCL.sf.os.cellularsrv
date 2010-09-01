@@ -20,11 +20,6 @@
 #include "TE_wapthdrbase.h"
 #include "smsstackutils.h"
 
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "TE_testwapthdrTraces.h"
-#endif
-
 const TInt KSmsLogBufferSize = 1280;
 
 TVerdict CTestParseWapTextMessage::doTestStepL()
@@ -208,7 +203,7 @@ TVerdict CTestLoggerOverflow::doTestStepL()
 	// Send a buffer too long for the logger to handle, therefore causing an overflow.
 	// Function will panic if overflow handler is not implemented correctly.
 	INFO_PRINTF1(_L("Testing LOGSMSIF2..."));
-	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTESTLOGGEROVERFLOW_DOTESTSTEPL_1, "%s",buf);
+	LOGSMSIF2("%S",&buf);
 
 	return TestStepResult();
 	}
