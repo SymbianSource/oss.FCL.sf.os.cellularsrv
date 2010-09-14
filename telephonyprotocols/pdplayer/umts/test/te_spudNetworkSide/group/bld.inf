@@ -23,17 +23,9 @@ PRJ_EXPORTS
 
 PRJ_TESTEXPORTS
 
-#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-// script files 
-../scripts/version1/TE_spudNetworkSide.script				z:/testdata/scripts/te_spudnetworkside.script
-../scripts/version1/TE_spudNetworkSide_nifman.script			z:/testdata/scripts/te_spudnetworkside_nifman.script
-../scripts/version1/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
-../scripts/version1/Te_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
-#else
 // script files
 ../scripts/TE_spudNetworkSide.script				z:/testdata/scripts/te_spudnetworkside.script
 ../scripts/TE_spudNetworkSide_nifman.script			z:/testdata/scripts/te_spudnetworkside_nifman.script
-../scripts/TE_PppSize_spud.script					z:/testdata/scripts/te_pppsize_spud.script
 ../scripts/Te_SpudNetworkside_Channel.script					z:/testdata/scripts/Te_SpudNetworkside_Channel.script
 ../scripts/TE_spudNetworkSide_R4_and_R5.script				z:/testdata/scripts/te_spudnetworkside_r4_and_r5.script
 ../scripts/te_pdplayer_ip6.script				z:/testdata/scripts/te_pdplayer_ip6.script
@@ -48,8 +40,6 @@ PRJ_TESTEXPORTS
 //Min Max MMU tests
 ../scripts/TE_RawIpSize.script			z:/testdata/scripts/te_rawipsize.script
 
-#endif
-
 ../scripts/TE_spudNetworkSide_ppp_9x.script			z:/testdata/scripts/te_spudnetworkside_ppp.script
 ../configs/te_spudNetworkSide_ppp_config_9x.txt     z:/testdata/configs/te_spudnetworkside_ppp_config.txt
 ../configs/te_spudnetworkside_ppp_config2_9x.txt    z:/testdata/configs/te_spudnetworkside_ppp_config2.txt
@@ -57,26 +47,6 @@ PRJ_TESTEXPORTS
 ../configs/te_spudNetworkSide_config_9x.txt			z:/testdata/configs/te_spudnetworkside_config.txt
 ../configs/te_spudNetworkSide_config_r4_and_r5.txt		z:/testdata/configs/te_spudnetworkside_config_r4_and_r5.txt
 
-#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-../configs/version1/te_SpudNetworkSide.xml					z:/testdata/configs/te_spudnetworkside.xml
-../configs/version1/te_SpudNetworkSide_ppp.xml				z:/testdata/configs/te_spudnetworkside_ppp.xml
-../configs/version1/TE_SpudNetworkSide_PppLoopback.xml			z:/testdata/configs/te_spudnetworkside_ppploopback.xml
-../configs/version1/te_SpudNetworkSide_nifman.xml				z:/testdata/configs/te_spudnetworkside_nifman.xml
-../configs/version1/te_spudNetworkSide.ini					z:/testdata/configs/te_spudnetworkside.ini
-../configs/version1/TE_SpudNetworkSideLoopbackCSY.ini		z:/testdata/configs/te_spudnetworksideloopbackcsy.ini
-../configs/version1/TE_SpudNetworkSideLoopbackCSY_serial.ini	z:/testdata/configs/te_spudnetworksideloopbackcsy_serial.ini
-../configs/version1/te_spudNetworkSide_nifman.ini			z:/testdata/configs/te_spudnetworkside_nifman.ini
-
-../configs/version1/TE_PppSize_spud.ini						z:/testdata/configs/te_pppsize_spud.ini
-../configs/version1/TE_PppSize_spud.xml						z:/testdata/configs/te_pppsize_spud.xml
-../configs/version1/TE_PppSize_config.txt					z:/testdata/configs/te_pppsize_config.txt
-
-../configs/version1/TE_SpudNetworkSide_Channel_config.txt		z:/testdata/configs/TE_SpudNetworkSide_Channel_config.txt
-
-// Some error codes are platsec dependent
-../configs/version1/TE_SpudNetworkSide_9x.ini 	z:/testdata/configs/te_spudnetworkside_platsec.ini
-
-#else
 // requires 399 config values
 ../configs/te_SpudNetworkSide.xml					z:/testdata/configs/te_spudnetworkside.xml
 ../configs/te_spudnetworkside_promptforauth.xml		z:/testdata/configs/te_spudnetworkside_promptforauth.xml
@@ -90,17 +60,10 @@ PRJ_TESTEXPORTS
 ../configs/te_spudNetworkSide_nifman.ini            z:/testdata/configs/te_spudnetworkside_nifman.ini
 ../configs/te_spudNetworkSide_r4_and_r5.ini         z:/testdata/configs/te_spudnetworkside_r4_and_r5.ini
 
-../configs/TE_PppSize_spud.ini						z:/testdata/configs/te_pppsize_spud.ini
-../configs/TE_PppSize_spud.xml						z:/testdata/configs/te_pppsize_spud.xml
-../configs/TE_PppSize_config.txt                    z:/testdata/configs/te_pppsize_config.txt
-
 ../configs/TE_SpudNetworkSide_Channel_config.txt    z:/testdata/configs/TE_SpudNetworkSide_Channel_config.txt
 
 // Some error codes are platsec dependent
 ../configs/TE_SpudNetworkSide_9x.ini                z:/testdata/configs/te_spudnetworkside_platsec.ini
-
-//Used to trigger GuQos to use Qospolicies.ini file for SetDefaultQoS
-../configs/qospolicies.ini                          z:/testdata/configs/qospolicies.ini
 
 // IPv6 testing
 ../configs/te_pdplayer_ip6.ini                      z:/testdata/configs/te_pdplayer_ip6.ini
@@ -119,8 +82,6 @@ PRJ_TESTEXPORTS
 ../configs/TE_RawIpSize.ini				z:/testdata/configs/te_rawipsize.ini
 ../configs/TE_RawIpSize_config.txt			z:/testdata/configs/te_rawipsize_config.txt
 ../configs/TE_RawIpSize.cfg			z:/testdata/configs/te_rawipsize.cfg
-
-#endif // SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 
 TE_spudNetworkSide.iby	/epoc32/rom/include/te_spudnetworkside.iby 
 

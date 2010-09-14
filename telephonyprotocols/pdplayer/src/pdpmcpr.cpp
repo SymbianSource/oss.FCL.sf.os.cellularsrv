@@ -290,6 +290,7 @@ void CPdpMetaConnectionProvider::CancelAvailabilityMonitoring()
 		}
 	}
 	
+#ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
 void CPdpMetaConnectionProvider::ContentionOccured()
 	{
 	// Send a stop request to the stop activity.
@@ -303,6 +304,7 @@ void CPdpMetaConnectionProvider::ContentionResolved(const Messages::TNodeId& aPe
 	TRAP_IGNORE(ReceivedL(TNodeId(Id()), TNodeId(Id()), msg));
 	}
 
+
 void CPdpMetaConnectionProvider::ReportContentionAvailabilityStatus(const TAvailabilityStatus& aAvailabilityStatus) const
 	{
 	if (iAvailabilityListener)
@@ -310,4 +312,5 @@ void CPdpMetaConnectionProvider::ReportContentionAvailabilityStatus(const TAvail
 		iAvailabilityListener->ReportContentionAvailabilityStatusIfRequired(aAvailabilityStatus);
 		}
 	}
+#endif
 

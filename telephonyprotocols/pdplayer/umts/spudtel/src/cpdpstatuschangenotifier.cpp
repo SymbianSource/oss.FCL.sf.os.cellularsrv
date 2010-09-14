@@ -82,15 +82,15 @@ void CPdpStatusChangeNotifier::DoCancel()
 */
 void CPdpStatusChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
-	if(aStatus == KErrNone)
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_1, "Status Change Notification for Context [%S]", iPdpFsmInterface.GetContextName(iId));
+    if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_1, "Notified of context status change");
 		RPacketContext::TContextStatus aOldContextStatus;
 		iPdpFsmInterface.Get(iId,aOldContextStatus);
 		// only notify of change if it has actually changed
 		if (iContextStatus != aOldContextStatus)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_2, "FSM input EContextStatusChangeNetwork");
+			OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSTATUSCHANGENOTIFIER_NOTIFY_2, "Context status changed from [%d] to [%d]", aOldContextStatus, iContextStatus);
 			iPdpFsmInterface.Set(iId, iContextStatus);
             TInt err = KErrNone;
             iPacketContext.GetLastErrorCause(err); // Ignore error return code.
@@ -154,15 +154,16 @@ void CMbmsPdpStatusChangeNotifier::DoCancel()
 */
 void CMbmsPdpStatusChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
-	if(aStatus == KErrNone)
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_1, "MBMS Status Change Notification for Context [%S]", iPdpFsmInterface.GetContextName(iId));
+
+    if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_1, "Notified of context status change");
 		RPacketContext::TContextStatus aOldContextStatus;
 		iPdpFsmInterface.Get(iId,aOldContextStatus);
 		// only notify of change if it has actually changed
 		if (iContextStatus != aOldContextStatus)
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_2, "FSM input EContextStatusChangeNetwork");
+            OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPSTATUSCHANGENOTIFIER_NOTIFY_2, "Context status changed from [%d] to [%d]", aOldContextStatus, iContextStatus);
 			iPdpFsmInterface.Set(iId, iContextStatus);
             TInt err = KErrNone;
             iMbmsPacketContext.GetLastErrorCause(err); // Ignore error return code.

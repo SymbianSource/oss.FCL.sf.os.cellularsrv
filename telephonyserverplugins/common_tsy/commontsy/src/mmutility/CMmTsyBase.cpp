@@ -291,5 +291,32 @@ void CMmTsyBase::Complete(
 
 #endif
 
+// ---------------------------------------------------------------------------
+// CMmTsyBase::ResetReqHandle
+// Resets the request handle in the right req handle store
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TBool CMmTsyBase::ResetReqHandle(const TTsyReqHandle aTsyReqHandle, const TInt aIpc)
+    {
+    TInt max = GetMaxNumberOfSubsystems();
+    CMmSubTsyBase** subTsyPtr = GetSubsystemArrayPtr();
+    TBool ret = EFalse;
+    
+    for ( TInt i = 0 ; max > i; i++ )
+        {
+         //check which custom object handles this IPC
+        if ( ( NULL != subTsyPtr[i] ) 
+        && ( EFalse != subTsyPtr[i]->SupportingIPC( aIpc ) ) )
+               {
+               //call reset handle method of the right custom object
+               ret = subTsyPtr[i]->ResetReqHandle( aTsyReqHandle, aIpc );
+               i = max;
+               }
+        }
+    return ret;
+    }
+
+
 //  End of File
 

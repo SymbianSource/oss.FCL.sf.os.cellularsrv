@@ -1,3 +1,0 @@
-EXPORTS
-	NewServer__Fv @ 1 NONAME R3UNUSED ; NewServer(void)
-

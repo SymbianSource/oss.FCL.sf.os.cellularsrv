@@ -57,9 +57,11 @@ public:
 	virtual ~CPdpMetaConnectionProvider();
 
 public:
+#ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
 	void ContentionResolved(const Messages::TNodeId& aPendingCprId, TBool aResult);
 	void ContentionOccured();
 	void ReportContentionAvailabilityStatus(const ESock::TAvailabilityStatus& aStatus) const;
+#endif
 	
 protected:
     CPdpMetaConnectionProvider(ESock::CMetaConnectionProviderFactoryBase& aFactory, const ESock::TProviderInfo& aProviderInfo);

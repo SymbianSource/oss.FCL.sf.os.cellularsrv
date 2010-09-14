@@ -140,26 +140,27 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_EXTFUNC_
 
     if ( KErrNone != trapError )
         {
+		//reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
+        iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
         CMmPacketQoSTsy::ReqCompleted( aTsyReqHandle, trapError );
         }
     else if ( KErrNone != ret )
         {
         CMmPacketQoSTsy::ReqCompleted( aTsyReqHandle, ret );
         }
-
-    // Save request handle
-    if ( EMultimodePacketQoSReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodePacketQoSReqHandleUnknown != iReqHandleType )
         {
+        // Save request handle
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
-        // We've finished with this value now. Clear it so it doesn't leak
-        //  up to any other instances of this method down the call stack
-        iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
         }
-
+    // We've finished with this value now. Clear it so it doesn't leak
+    //  up to any other instances of this method down the call stack
+    iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
     return KErrNone;
 
     }

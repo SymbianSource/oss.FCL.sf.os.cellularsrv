@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -38,7 +38,7 @@ const TInt KIpcCustomAPIExtensionExt = 1000450;
 
 _LIT(KCustomAPIName,"CUSTOMAPI");
 _LIT(KTerminateAllCalls,"ALL_CALLS");
-const TInt KSimLockMaxPasswordSize = 15;
+const TInt KSimLockMaxPasswordSize = 30;
 const TInt KSimCbTopicNameLength = 20;
 const TInt KSubAddressSize = 20;
 const TInt KBearerCapabilitySize = 14;

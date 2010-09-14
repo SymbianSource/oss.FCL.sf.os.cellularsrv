@@ -309,15 +309,15 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMONSTORETSY_EXTFUNC
 
     if ( KErrNone != trapError )
         {
+		// Reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
         ReqCompleted( aTsyReqHandle, trapError );
         }
     else if ( KErrNone != ret )
         {
         ReqCompleted( aTsyReqHandle, ret );
         }
-
-    // Save request handle
-    if ( EMultimodeONStoreReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodeONStoreReqHandleUnknown != iReqHandleType )
         {
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );

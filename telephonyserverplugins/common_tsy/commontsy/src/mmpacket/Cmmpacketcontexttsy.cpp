@@ -187,6 +187,8 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_E
 
     if ( KErrNone != trapError )
         {
+		// Reset the request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
         ReqCompleted( aTsyReqHandle, trapError );
         }
 
@@ -195,20 +197,19 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_E
         ReqCompleted( aTsyReqHandle, ret );
         }
 
-    if ( EMultimodePacketContextReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodePacketContextReqHandleUnknown != iReqHandleType )
         {
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif // REQHANDLE_TIMER
-#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
-        // We've finished with this value now. Clear it so it doesn't leak
-        //  up to any other instances of this method down the call stack
-        iReqHandleType = EMultimodePacketContextReqHandleUnknown;
-#endif
         }
-
+#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
+     // We've finished with this value now. Clear it so it doesn't leak
+     //  up to any other instances of this method down the call stack
+     iReqHandleType = EMultimodePacketContextReqHandleUnknown;
+#endif
     return KErrNone;
     }
 

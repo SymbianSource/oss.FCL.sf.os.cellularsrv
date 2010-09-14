@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -749,7 +749,7 @@ void CCTsyCustomIPCFU::TestActivateSimLock0002L()
  	//-------------------------------------------------------------------------
 	// Test cancelling of RMmCustomAPI::ActivateSimLock
  	//-------------------------------------------------------------------------
- 	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+ 	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EImsi);	
 	
 	// data for ExpectL
@@ -806,7 +806,7 @@ void CCTsyCustomIPCFU::TestActivateSimLock0003L()
 	// Test A: Test passing wrong parameters to
 	// RMmCustomAPI::ActivateSimLock
  	//-------------------------------------------------------------------------
-	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber((RMmCustomAPI::TLockNumber) 0); 	
 	  
     customAPI.ActivateSimLock(requestStatus, password, lockNumber);
@@ -863,7 +863,7 @@ void CCTsyCustomIPCFU::TestActivateSimLock0004L()
 	// Test A: Test multiple clients requesting RMmCustomAPI::ActivateSimLock
  	//-------------------------------------------------------------------------	
 	// data for the first request
-	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EOperator_Gid1);	
 	
 	// data for the second request
@@ -924,7 +924,7 @@ void CCTsyCustomIPCFU::TestActivateSimLock0005L()
 	//-------------------------------------------------------------------------
 	// Test A: Test timeout of RMmCustomAPI::ActivateSimLock
  	//-------------------------------------------------------------------------
- 	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+ 	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EOperator_Gid2);	
 	
 	// data for ExpectL
@@ -974,7 +974,7 @@ void CCTsyCustomIPCFU::TestDeActivateSimLock0001L()
  	//-------------------------------------------------------------------------
 	// TEST A: failure to dispatch request to LTSY
  	//-------------------------------------------------------------------------
-	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EOperator);	
 	
 	// data for ExpectL
@@ -1113,7 +1113,7 @@ void CCTsyCustomIPCFU::TestDeActivateSimLock0002L()
  	//-------------------------------------------------------------------------
 	// Test cancelling of RMmCustomAPI::DeActivateSimLock
  	//-------------------------------------------------------------------------
- 	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+ 	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EImsi);	
 	
 	// data for ExpectL
@@ -1171,7 +1171,7 @@ void CCTsyCustomIPCFU::TestDeActivateSimLock0003L()
 	// Test A: Test passing wrong version of parameters to
 	// RMmCustomAPI::DeActivateSimLock
  	//-------------------------------------------------------------------------
-	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber((RMmCustomAPI::TLockNumber) 0); 	
 	  
     customAPI.DeActivateSimLock(requestStatus, password, lockNumber);
@@ -1228,11 +1228,11 @@ void CCTsyCustomIPCFU::TestDeActivateSimLock0004L()
 	// Test A: Test multiple clients requesting RMmCustomAPI::DeActivateSimLock
  	//-------------------------------------------------------------------------	
 	// data for the first request
-	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EOperator_Gid1);	
 	
 	// data for the second request
-	RMmCustomAPI::TSimLockPassword password2(_L("changeme2"));
+	RMmCustomAPI::TSimLockPassword password2(_L("changemechangemechangemechang2"));
 	RMmCustomAPI::TLockNumber lockNumber2(RMmCustomAPI::EOperator_Gid2);	
 	
 	// data for the first ExpectL
@@ -1289,7 +1289,7 @@ void CCTsyCustomIPCFU::TestDeActivateSimLock0005L()
 	//-------------------------------------------------------------------------
 	// Test A: Test timeout of RMmCustomAPI::DeActivateSimLock
  	//-------------------------------------------------------------------------
- 	RMmCustomAPI::TSimLockPassword password(_L("changeme"));
+ 	RMmCustomAPI::TSimLockPassword password(_L("changemechangemechangemechange"));
 	RMmCustomAPI::TLockNumber lockNumber(RMmCustomAPI::EOperator_Gid2);	
 	
 	// data for ExpectL

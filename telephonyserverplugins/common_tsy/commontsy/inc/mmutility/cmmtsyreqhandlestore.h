@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -94,7 +94,15 @@ NONSHARABLE_CLASS( CMmTsyReqHandleStore ) : public CBase
          * @param aIndex index which req handle to reset.
          */
         TTsyReqHandle ResetTsyReqHandle( const TInt aIndex );
-
+        
+        /**
+         * Reset TSY request handle by req handle value.
+         *           
+         * @param aTsyReqHanle req handle to be reset.
+         * return TInt EFalse if handle not found
+         */
+        TBool FindAndResetTsyReqHandle( const TTsyReqHandle aTsyReqHandle);
+        
 #ifdef REQHANDLE_TIMER
 
         /**

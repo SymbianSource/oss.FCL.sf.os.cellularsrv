@@ -161,4 +161,8 @@ LIBRARY         	mockhwrm.lib //HWRM
 
 EPOCSTACKSIZE 0x14000
 
+EPOCHEAPSIZE    0x10000 0x400000   //4M maximize needed for TEF3.0 switch over
+//default without this would be >4k <1M for heap
+
+
 

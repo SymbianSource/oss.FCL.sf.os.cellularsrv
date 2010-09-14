@@ -1812,7 +1812,30 @@ void CMmCallGsmWcdmaExt::SetMobileCallData(
         {
         iMobileCallInfo.iAlternatingCall = mobileCallInfo->iAlternatingCall;
         }
-
+    
+    // If a Mobile Originated call, take Alpha ID and Icon ID values from iCallParams, if valid.
+    if ( iMobileCallInfo.iRemoteParty.iDirection == RMobileCall::EMobileOriginated)
+        {
+        // Set the Alpha ID, if not set.
+        if ( iMobileCallInfo.iAlphaId.Length() <= 0 && 
+                iCallParams.iAlphaId.Length() > 0 &&
+                iCallParams.iAlphaId.Length() <= RMobileCall::KAlphaIdMaxSize )
+            {
+            iMobileCallInfo.iAlphaId.Zero();
+            iMobileCallInfo.iAlphaId.Copy(iCallParams.iAlphaId );
+            iMobileCallInfo.iValid |= RMobileCall::KCallAlphaId;
+            }
+        // Set the Icon ID, if not set.
+        if ( iMobileCallInfo.iIconId.iIdentifier == 0 && 
+                iMobileCallInfo.iIconId.iQualifier == RMobileCall::EIconQualifierNotSet &&
+                iCallParams.iIconId.iIdentifier > 0 &&
+                iCallParams.iIconId.iQualifier != RMobileCall::EIconQualifierNotSet )
+            {
+            iMobileCallInfo.iIconId.iIdentifier = iCallParams.iIconId.iIdentifier;
+            iMobileCallInfo.iIconId.iQualifier = iCallParams.iIconId.iQualifier;
+            iMobileCallInfo.iValid |= RMobileCall::KCallIconId;
+            }
+        }
  
     // TMobileCallInfoV3
     if ( (KETelExtMultimodeV3 == extensionId) ||
@@ -1844,14 +1867,20 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCALLGSMWCDMAEXT_SETMO
         	iMobileCallInfo.iCallParamOrigin = mobileCallInfoV7->iCallParamOrigin;
         	}
             
-        if(RMobileCall::KCallIconId & mobileCallInfo->iValid) 
+        // Set the Alpha ID if call is not Mobile Originated.
+        // If MO, the Alpha ID would be set above from iCallParams
+        if(RMobileCall::KCallIconId & mobileCallInfo->iValid &&
+                iMobileCallInfo.iRemoteParty.iDirection != RMobileCall::EMobileOriginated) 
         	{
         	// TIconId iIconId;
 	        iMobileCallInfo.iIconId.iIdentifier = mobileCallInfoV7->iIconId.iIdentifier;
 	        iMobileCallInfo.iIconId.iQualifier = mobileCallInfoV7->iIconId.iQualifier;
         	}
         
-        if(RMobileCall::KCallAlphaId & mobileCallInfo->iValid) 
+        // Set the Icon ID if call is not Mobile Originated.
+        // If MO, Icon ID would be set above from iCallParams
+        if(RMobileCall::KCallAlphaId & mobileCallInfo->iValid &&
+                iMobileCallInfo.iRemoteParty.iDirection != RMobileCall::EMobileOriginated) 
            	{
            	// TAlphaIdBuf iAlphaId;
    	        iMobileCallInfo.iAlphaId.Zero();

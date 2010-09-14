@@ -48,9 +48,8 @@ void TSYLogger::Write(const TDesC8& aText)
 
 
 void TSYLogger::WriteFormat(TRefByValue<const TDesC8> aFmt,...)
-	{
-    //coverity[var_decl]	
-	VA_LIST list;
+	{	
+	/* coverity[var_decl] */ VA_LIST list;
 	VA_START(list,aFmt);
 
 	//
@@ -60,8 +59,7 @@ void TSYLogger::WriteFormat(TRefByValue<const TDesC8> aFmt,...)
 	now.UniversalTime();
 	TDateTime t(now.DateTime());
 	buf.Format(KTimeFormat,t.Hour(),t.Minute(),t.Second(),t.MicroSecond());
-    //coverity[uninit_use_in_call]	
-	buf.AppendFormatList(aFmt,list);
+	/* coverity[uninit_use_in_call] */ buf.AppendFormatList(aFmt,list);
 
 	//
 	// Open log, write text to log and close log

@@ -14,10 +14,10 @@
 //
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\te_pdplayer_ip6.script"-"c:\testdata\scripts\te_pdplayer_ip6.script"
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\te_pdpstresstests.script"-"c:\testdata\scripts\te_pdpstresstests.script"
-"\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_PppSize_spud.script"-"c:\testdata\scripts\TE_PppSize_spud.script"
+"\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\te_rawipsize.script"-"c:\testdata\scripts\te_rawipsize.script"
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_spudNetworkSide.script"-"c:\testdata\scripts\TE_spudNetworkSide.script"
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_SpudNetworkside_Channel.script"-"c:\testdata\scripts\TE_SpudNetworkside_Channel.script"
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_spudNetworkSide_nifman.script"-"c:\testdata\scripts\TE_spudNetworkSide_nifman.script"
-""\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_spudNetworkSide_ppp_9x.script"-"c:\testdata\scripts\TE_spudNetworkSide_ppp.script"
+"\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_spudNetworkSide_ppp_9x.script"-"c:\testdata\scripts\TE_spudNetworkSide_ppp.script"
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\TE_spudNetworkSide_R4_and_R5.script"-"c:\testdata\scripts\TE_spudNetworkSide_R4_and_R5.script"
 "\sf\os\cellularsrv\telephonyprotocols\pdplayer\umts\test\te_spudNetworkSide\scripts\te_spudnetworkside_sipaddress.script"-"c:\testdata\scripts\te_spudnetworkside_sipaddress.script"

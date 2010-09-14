@@ -26,7 +26,6 @@ file=ABI_DIR\DEBUG_DIR\te_spudnetworkside.exe		System\Libs\te_spudnetworkside.ex
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside.script 		testdata\scripts\te_spudnetworkside.script 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_ppp.script 	testdata\scripts\te_spudnetworkside_ppp.script 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_nifman.script 	testdata\scripts\te_spudnetworkside_nifman.script
-data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pppsize_spud.script 			testdata\scripts\te_pppsize_spud.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_channel.script 	testdata\scripts\te_spudnetworkside_channel.script
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudnetworkside_r4_and_r5.script 		testdata\scripts\te_spudnetworkside_r4_and_r5.script
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_config.txt 	testdata\configs\te_spudnetworkside_config.txt
@@ -39,18 +38,13 @@ data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_ppp.xml		testda
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_PppLoopback.xml		testdata\configs\te_spudnetworkside_PppLoopback.xml
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_nifman.xml		testdata\configs\te_spudnetworkside_nifman.xml
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_r4_and_r5.xml 			testdata\configs\te_spudnetworkside_r4_and_r5.xml
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_promptforauth.xml	testdata\configs\te_spudnetworkside_promptforauth.xml
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside.ini 			testdata\configs\te_spudnetworkside.ini
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_nifman.ini		testdata\configs\te_spudnetworkside_nifman.ini
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_platsec.ini 	testdata\configs\te_spudnetworkside_platsec.ini
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworksideLoopbackcsy.ini testdata\configs\te_spudnetworksideLoopbackcsy.ini
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworksideLoopbackcsy_serial.ini	testdata\configs\te_spudnetworksideLoopbackcsy_serial.ini
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_r4_and_r5.ini 			testdata\configs\te_spudnetworkside_r4_and_r5.ini
-#ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
-data=EPOCROOT##epoc32\data\z\testdata\configs\qospolicies.ini 					testdata\configs\qospolicies.ini
-#endif
-data=EPOCROOT##epoc32\data\z\testdata\configs\te_pppsize_spud.ini								testdata\configs\te_pppsize_spud.ini
-data=EPOCROOT##epoc32\data\z\testdata\configs\te_pppsize_spud.xml								testdata\configs\te_pppsize_spud.xml
-data=EPOCROOT##epoc32\data\z\testdata\configs\te_pppsize_config.txt								testdata\configs\te_pppsize_config.txt
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_channel_config.txt			testdata\configs\te_spudnetworkside_channel_config.txt
 
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_pdplayer_ip6.script 		testdata\scripts\te_pdplayer_ip6.script

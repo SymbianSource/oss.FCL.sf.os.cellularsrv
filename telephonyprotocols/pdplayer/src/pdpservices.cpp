@@ -111,6 +111,7 @@ CMBMSServiceRequest::~CMBMSServiceRequest()
 	Cancel();
 	iObjectBundleOwner->Close();
 	delete iRetrievePcktMbms;
+	iRequestOriginator.Close();
 	}
 
 /**

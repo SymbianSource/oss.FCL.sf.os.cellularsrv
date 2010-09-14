@@ -2071,6 +2071,11 @@ void CCTsyCallControlFU::TestDial0001cL()
     callParams0.iInterval = callParams.iInterval;
     callParams0.iWaitForDialTone = callParams.iWaitForDialTone; 
     RCall::TCallParamsPckg   pckgCallParams0(callParams0);
+    // We should expect the appropriate Alpha ID and Icon ID
+    callInfo.iValid |= (RMobileCall::KCallAlphaId | RMobileCall::KCallIconId);    
+    callInfo.iAlphaId.Copy(_L("Alpha Id"));
+    callInfo.iIconId.iQualifier = RMobileCall::ESelfExplanatory;
+    callInfo.iIconId.iIdentifier = 0x0A;
 
     expectData.Close();
     TMockLtsyCallData2< RMobileCall::TMobileCallParamsV7, RMobileCall::TMobileCallInfoV8 >

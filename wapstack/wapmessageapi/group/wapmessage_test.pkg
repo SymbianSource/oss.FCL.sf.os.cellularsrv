@@ -14,9 +14,9 @@
 //
 
 
-"\sf\os\cellularsrv\wapstack\te_wapstack\testdata\WapStackSuite_Config.ini"-"c:\testdata\configs\WapStackSuite_Config.ini"
-"\sf\os\cellularsrv\wapstack\te_wapstack\testdata\WapStackSuite.ini"-"c:\testdata\configs\WapStackSuite.ini"
-"\sf\os\cellularsrv\wapstack\te_wapstack\scripts\Te_WapStackSuite.script"-"c:\testdata\scripts\Te_WapStackSuite.script"
+"\sf\os\cellularsrv\wapstack\wapmessageapi\te_wapstack\testdata\WapStackSuite_Config.ini"-"c:\testdata\configs\WapStackSuite_Config.ini"
+"\sf\os\cellularsrv\wapstack\wapmessageapi\te_wapstack\testdata\WapStackSuite.ini"-"c:\testdata\configs\WapStackSuite.ini"
+"\sf\os\cellularsrv\wapstack\wapmessageapi\te_wapstack\scripts\Te_WapStackSuite.script"-"c:\testdata\scripts\Te_WapStackSuite.script"
 
 
 

@@ -146,7 +146,9 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_EXTFUNC_1, "T
 
         if ( trapError != KErrNone )
             {
-            // Object cannot be created. 
+            // Object cannot be created.
+			// reset request handle to indicate the request is no longer ongoing
+            iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
             ReqCompleted( aTsyReqHandle, trapError );
             }
         else if ( ret != KErrNone )

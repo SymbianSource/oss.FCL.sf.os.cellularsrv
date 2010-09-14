@@ -46,14 +46,13 @@ using namespace ConnectionServ;
 */
 void TOpenStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_1, "TOpenStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	switch(aContext.StrategyStep())
 		{
 		case EStartStep:
 			{
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_1, "TOpenStrategy::Next() - EStartStep - Initialize Phone");
 			aContext.Phone().Initialise (*aStatus);
 			aContext.SetStrategyStep(EInitPhoneStep);
 			break;
@@ -61,13 +60,14 @@ void TOpenStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 			
 		case EInitPhoneStep:
 			{
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_2, "TOpenStrategy::Next() - EStartStep - TOpenStrategy::Next() - EInitPhoneStep");
 			aContext.SetStrategyStep(EFinishStep);
 			break;
 			}
 			
 		default:
 			// incorrect step
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_2, "Incorrect step");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TOPENSTRATEGY_NEXT_3, "TOpenStrategy::Next() - EStartStep - TOpenStrategy::Next() - Incorrect step");
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -135,7 +135,6 @@ void TOpenStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_1, "TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)");
 	
 	TInt err = KErrNone;
 	
@@ -159,11 +158,13 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 				{
 				if (aContext.PacketContext().SubSessionHandle())
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_1, "TContextDeleteStrategy::Next() - EStartStep - PacketContext::Deactivate(), contextName = [%S]", aContext.Name());
 					aContext.PacketContext().Deactivate(*aStatus);
 					aContext.SetStrategyStep (EDeactivateStep);
 					}
 				else
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_2, "TContextDeleteStrategy::Next() - EStartStep - PacketContext::SubSessionHandle() returned error, contextName = [%S]", aContext.Name());
 					aContext.SetStrategyStep(EDeactivateStep);
 					User::RequestComplete(aStatus, err);
 					}
@@ -172,11 +173,13 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 				{
 				if (aContext.MbmsPacketContext().SubSessionHandle())
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_3, "TContextDeleteStrategy::Next() - EStartStep - MbmsPacketContext::Deactivate(), contextName = [%S]", aContext.Name());
 					aContext.MbmsPacketContext().Deactivate(*aStatus);
 					aContext.SetStrategyStep (EDeactivateStep);
 					}
 				else
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_4, "TContextDeleteStrategy::Next() - EStartStep - MbmsPacketContext::SubSessionHandle() returned error, contextName = [%S]", aContext.Name());
 					aContext.SetStrategyStep(EDeleteContextStep);
 					User::RequestComplete(aStatus, err);
 					}	
@@ -190,16 +193,19 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 				{
 				if (aContext.PacketQoS().SubSessionHandle())
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_5, "TContextDeleteStrategy::Next() - EDeactivateStep - PacketQoS::Close(), contextName = [%S]", aContext.Name());
 					aContext.PacketQoS().Close();
 					}
 				
 				if (aContext.PacketContext().SubSessionHandle())
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_6, "TContextDeleteStrategy::Next() - EDeactivateStep - PacketContext::Delete(), contextName = [%S]", aContext.Name());
 					aContext.PacketContext().Delete(*aStatus);
 					aContext.SetStrategyStep(EDeleteContextStep);
 					}
 				else
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_7, "TContextDeleteStrategy::Next() - EDeactivateStep - MbmsPacketContext::SubSessionHandle() returned error, contextName = [%S]", aContext.Name());
 					// jump to next step
 					aContext.SetStrategyStep(EDeleteContextStep);
 					User::RequestComplete( aStatus, err);
@@ -209,11 +215,13 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 				{
 				if (aContext.MbmsPacketContext().SubSessionHandle())
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_8, "TContextDeleteStrategy::Next() - EDeactivateStep - MbmsPacketContext::Delete(), contextName = [%S]", aContext.Name());
 					aContext.MbmsPacketContext().Delete(*aStatus);
 					aContext.SetStrategyStep(EDeleteContextStep);
 					}
 				else
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_9, "TContextDeleteStrategy::Next() - EDeactivateStep - MbmsPacketContext::SubSessionHandle() returned error, contextName = [%S]", aContext.Name());
 					// jump to next step
 					aContext.SetStrategyStep(EDeleteContextStep);
 					User::RequestComplete( aStatus, err);
@@ -227,10 +235,12 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 			{
 			if (aContext.ContextType() != SpudMan::EMbms)
 				{
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_10, "TContextDeleteStrategy::Next() - EDeleteContextStep - PacketContext::Close(), contextName = [%S]", aContext.Name());
 				aContext.PacketContext().Close();
 				}
 			else
 				{
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_11, "TContextDeleteStrategy::Next() - EDeleteContextStep - MbmsPacketContext::Close(), contextName = [%S]", aContext.Name());
 				aContext.MbmsPacketContext().Close();
 				}	
 			// clear the name
@@ -241,7 +251,7 @@ void TContextDeleteStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* 
 			
 		default:
 			// incorrect step
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_2, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCONTEXTDELETESTRATEGY_NEXT_12, "TContextDeleteStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -328,8 +338,6 @@ void TContextDeleteStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_1, "TCreate1ryPdpContextStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	// possible steps:
@@ -340,13 +348,14 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 		{
 		case EStartStep:
 			{
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_1, "TCreate1ryPdpContextStrategy::Next() - EStartStep, PacketContext::OpenNewContext()");  
 			err = aContext.PacketContext().OpenNewContext (aContext.PacketService(), aContext.Name());
 			if (err)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_2, "PacketContextOpenNewContext returned %d", err);
+				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_2, "TCreate1ryPdpContextStrategy::Next() - PacketContext::OpenNewContext() returned %d", err);
 				break;
 				}
-				
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_3, "TCreate1ryPdpContextStrategy::Next() - PacketContext::InitialiseContext(), contextName = [%S]", aContext.Name());   	
 			aContext.PacketContext().InitialiseContext(*aStatus, aContext.DataChannelV2Pckg());						
 			aContext.SetStrategyStep (EInitialiseContextStep);
 			break;
@@ -357,6 +366,7 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			// get packet config from fsm
 			aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextPacketDataConfigBase());
 			// async set config
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_4, "TCreate1ryPdpContextStrategy::Next() - EInitialiseContextStep - PacketContext::SetConfig(), contextName = [%S]", aContext.Name()); 
 			aContext.PacketContext().SetConfig (*aStatus, aContext.ContextConfig());
 			// set next step
 			aContext.SetStrategyStep (ESetConfigStep);
@@ -365,12 +375,13 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			
 		case ESetConfigStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_5, "TCreate1ryPdpContextStrategy::Next() - ESetConfigStep - PacketQoS::OpenNewQoS(), contextName = [%S]", aContext.Name()); 
 			// QoS name is not used anywhere
 			TName newName;
 			err = aContext.PacketQoS().OpenNewQoS (aContext.PacketContext(), newName);
 			if (err)
 				{ 
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_3, "PacketQoS OpenNewQoS returned %d", err);
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_6, "TCreate1ryPdpContextStrategy::Next() - ESetConfigStep - PacketQoS::OpenNewQoS() returned %d, contextName = [%S]", err, aContext.Name());
 				break; 
 				}
 				
@@ -389,19 +400,21 @@ void TCreate1ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpReqProfileParameters ();
 #endif			
-			aContext.PacketQoS().SetProfileParameters (*aStatus, aContext.QosRequestedPckg());
+            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_7, "TCreate1ryPdpContextStrategy::Next() - ESetConfigStep - PacketQoS()::SetProfileParameters(), contextName = [%S]", aContext.Name()); 
+            aContext.PacketQoS().SetProfileParameters (*aStatus, aContext.QosRequestedPckg());
 			aContext.SetStrategyStep (ESetProfileParamsStep);
 			break;
 			}
 			
 		case ESetProfileParamsStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_8, "TCreate1ryPdpContextStrategy::Next() - ESetProfileParamsStep, contextName = [%S]", aContext.Name());    
 			aContext.SetStrategyStep (EFinishStep);
 			break;
 			}
 			
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_4, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE1RYPDPCONTEXTSTRATEGY_NEXT_9, "TCreate1ryPdpContextStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());   
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -483,8 +496,6 @@ void TCreate1ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aConte
 */
 void TCreate2ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_1, "TCreate2ryPdpContextStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	// possible steps:
@@ -496,19 +507,22 @@ void TCreate2ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 		case EStartStep:
 			{
 			const TName& existingContextName = aContext.ExistingContextName();
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_1, "TCreate2ryPdpContextStrategy::Next() - EStartStep - PacketContext::OpenNewSecondaryContext(), existingContextName = [%S]", existingContextName);    
 			aContext.PacketContext().OpenNewSecondaryContext(aContext.PacketService(), existingContextName, aContext.Name());
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_2, "TCreate2ryPdpContextStrategy::Next() - EStartStep - PacketContext::InitialiseContext(), contextName = [%S]", aContext.Name());    
 			aContext.PacketContext().InitialiseContext(*aStatus, aContext.DataChannelV2Pckg());						
 			aContext.SetStrategyStep (EInitialiseContextStep);
 			break;
 			}
 		case EInitialiseContextStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_3, "TCreate2ryPdpContextStrategy::Next() -  EInitialiseContextStep - PacketQoS::OpenNewQoS(), contextName = [%S]", aContext.Name()); 
 			// QoS name is not used anywhere
 			TName newName;
 			err = aContext.PacketQoS().OpenNewQoS (aContext.PacketContext(), newName);
 			if (err)
 				{ 
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_2, "PacketQoS OpenNewQoS returned %d", err);
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_4, "TCreate2ryPdpContextStrategy::Next() - EInitialiseContextStep - PacketQoS OpenNewQoS returned %d, contextName = [%S]", err, aContext.Name());
 				break; 
 				}
 			aContext.SetStrategyStep (EFinishStep);
@@ -516,7 +530,7 @@ void TCreate2ryPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestSt
 			}
 			
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_3, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATE2RYPDPCONTEXTSTRATEGY_NEXT_5, "TCreate2ryPdpContextStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name()); 
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -571,8 +585,6 @@ void TCreate2ryPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& /*aCon
 */
 void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_1, "TSetQoSStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	// possible steps:
@@ -581,6 +593,7 @@ void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 		{
 		case EStartStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_1, "TSetQoSStrategy::Next() - EStartStep, contextName = [%S]", aContext.Name());    
 #ifdef SYMBIAN_NETWORKING_UMTSR5
             RPacketQoS::TQoSR5Requested req;
 #else
@@ -595,6 +608,7 @@ void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpReqProfileParameters ();
 #endif			
+            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_2, "TSetQoSStrategy::Next() - EStartStep - PacketQoS::SetProfileParameters(), contextName = [%S]", aContext.Name()); 
             aContext.PacketQoS().SetProfileParameters (*aStatus, aContext.QosRequestedPckg());
 			aContext.SetStrategyStep (ESetProfileParamsStep);
 			break;
@@ -602,6 +616,7 @@ void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 			
 		case ESetProfileParamsStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_3, "TSetQoSStrategy::Next() - ESetProfileParamsStep, contextName = [%S]", aContext.Name()); 
 			aContext.SetStrategyStep (EFinishStep);
 			break;
 			}
@@ -609,7 +624,7 @@ void TSetQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 		default:
 			{
 			// unexpected
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_2, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETQOSSTRATEGY_NEXT_4, "TSetQoSStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name()); 
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -676,8 +691,6 @@ void TSetQoSStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_1, "TSetTftStrategy::Next()");
-	
 	TInt err = KErrNone;
 
 	// possible steps:
@@ -686,20 +699,22 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 		{
 		case EStartStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_1, "TSetTftStrategy::Next() - EStartStep, contextName = [%S]", aContext.Name());
 			aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftOperationCode());
 			switch(aContext.TftOperationCode())
 				{
 				case KAddFilters:
 					aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftInfo());
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_2, "TftOperationCode - Add Filters %d", aContext.TftInfo().FilterCount());
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_2, "TSetTftStrategy::Next() - EStartStep - TftOperationCode - Add Filters %d, contextName = [%S]", aContext.TftInfo().FilterCount(), aContext.Name());
 					// Set strategy assumes that TFT has to be created on a first place
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_3, "Creating TFT...");
 					if (aContext.ContextType() != SpudMan::EMbms)
 						{	
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_3, "TSetTftStrategy::Next() - EStartStep - TftOperationCode - PacketContext::CreateNewTFT(), contextName = [%S]", aContext.Name());
 						aContext.PacketContext().CreateNewTFT(*aStatus, aContext.TftInfo().FilterCount());
 						}
 					else
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_4, "TSetTftStrategy::Next() - EStartStep - TftOperationCode - MbmsPacketContext::CreateNewTFT, contextName = [%S]", aContext.Name());
 						aContext.MbmsPacketContext().CreateNewTFT(*aStatus, aContext.TftInfo().FilterCount());
 						}	
 					aContext.SetStrategyStep (ECreateNewTFTStep);
@@ -707,17 +722,17 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 
 				case KRemoveFilters:
 					err = KErrNotSupported;
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_4, "TftOperationCode - Remove is not supported in a Set strategy, return %d", err);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_5, "TSetTftStrategy::Next() - EStartStep - TftOperationCode - Remove is not supported in a Set strategy, return %d, contextName = [%S]", err, aContext.Name());
 					break;
 
 				case KDeleteTFT:
 					err = KErrNotSupported;
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_5, "TftOperationCode - Delete is not supported in a Set strategy, return %d", err);
+					OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_6, "TSetTftStrategy::Next() - EStartStep - TftOperationCode - Delete is not supported in a Set strategy, return %d, contextName = [%S]", err, aContext.Name());
 					break;
 
 				default:
 					// wrong case
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_6, "ERROR: Incorrect case");
+					OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_7, "TSetTftStrategy::Next() - EStartStep - TftOperationCode - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 					ASSERT(EFalse);
 					err = KErrNotSupported;
 					break;
@@ -727,15 +742,18 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 	
 		case ECreateNewTFTStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_8, "TSetTftStrategy::Next() - ECreateNewTFTStep, contextName = [%S]", aContext.Name());
 			TInt err1st = aContext.FirstFilterV2();
 			if(err1st == KErrNone)
 				{
 				if (aContext.ContextType() != SpudMan::EMbms)
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_9, "TSetTftStrategy::Next() - ECreateNewTFTStep - PacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 					aContext.PacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 					}
 				else
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_10, "TSetTftStrategy::Next() - ECreateNewTFTStep - MbmsPacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 					aContext.MbmsPacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 					}	
 				aContext.SetStrategyStep (EAddTftStep);
@@ -752,15 +770,18 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 
 		case EAddTftStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_11, "TSetTftStrategy::Next() - EAddTftStep, contextName = [%S]", aContext.Name());
 			TInt errV2 = aContext.NextFilterV2();
 			if(errV2 == KErrNone)
 				{
 				if (aContext.ContextType() != SpudMan::EMbms)
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_12, "TSetTftStrategy::Next() - EAddTftStep - PacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 					aContext.PacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 					}
 				else
 					{
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_13, "TSetTftStrategy::Next() - EAddTftStep - MbmsPacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 					aContext.MbmsPacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 					}
 				aContext.SetStrategyStep (EAddTftStep);
@@ -777,7 +798,7 @@ void TSetTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus
 
 		default:
 			// unexpected
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_7, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_NEXT_14, "TSetTftStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -820,15 +841,15 @@ void TSetTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 		{
 		case ECreateNewTFTStep:
 			{
-			aContext.PacketQoS().CancelAsyncRequest(EPacketContextCreateNewTFT);
 			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_CANCELASYNCREQUEST_1, "Cancel PacketQoS::EPacketContextCreateNewTFT");
+	        aContext.PacketQoS().CancelAsyncRequest(EPacketContextCreateNewTFT);
 			break;
 			}
 			
 		case EAddTftStep:
 			{
-			aContext.PacketQoS().CancelAsyncRequest(EPacketContextAddPacketFilter);
 			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TSETTFTSTRATEGY_CANCELASYNCREQUEST_2, "Cancel PacketQoS::EPacketContextAddPacketFilter");
+			aContext.PacketQoS().CancelAsyncRequest(EPacketContextAddPacketFilter);
 			break;
 			}
 
@@ -851,30 +872,29 @@ void TSetTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_1, "TChangeTftStrategy::Next()");
-	
 	TInt err = KErrNone;
 
 	// special case. 
 	if(EStartStep == aContext.StrategyStep())
 		{
+        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_1, "TChangeTftStrategy::Next() - EStartStep, contextName = [%S]", aContext.Name());
 		aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftOperationCode());
 		switch(aContext.TftOperationCode())
 			{
 			case KAddFilters:
 				aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftInfo());
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_2, "TftOperationCode - Add Filters %d", aContext.TftInfo().FilterCount());
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_2, "TChangeTftStrategy::Next() - EStartStep - TftOperationCode - Add Filters %d, contextName = [%S]", aContext.TftInfo().FilterCount(), aContext.Name());
 				aContext.SetStrategyStep (EAddFirstTftStep);
 				break;
 
 			case KRemoveFilters:
 				aContext.PdpFsmInterface().Get (aContext.Id(), aContext.TftInfo());
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_3, "TftOperationCode - Remove %d Filters", aContext.TftInfo().FilterCount());
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_3, "TChangeTftStrategy::Next() - EStartStep - TftOperationCode - Remove %d Filters, contextName = [%S]", aContext.TftInfo().FilterCount(), aContext.Name());
 				aContext.SetStrategyStep (ERemoveFirstTftStep);
 				break;
 
 			case KDeleteTFT:
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_4, "TftOperationCode - Delete TFT");
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_4, "TChangeTftStrategy::Next() - EStartStep - TftOperationCode - PacketContext::DeleteTFT(), contextName = [%S]", aContext.Name());
 				// delete old TFT
 				aContext.PacketContext().DeleteTFT(*aStatus);
 				aContext.SetStrategyStep (EDeleteTftStep);
@@ -883,7 +903,7 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 
 			default:
 				// wrong case
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_5, "ERROR: Incorrect case");
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_5, "TChangeTftStrategy::Next() - EStartStep - TftOperationCode - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 				ASSERT(EFalse);
 				err = KErrNotSupported;
 				break;
@@ -900,6 +920,7 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 			{
 			case EDeleteTftStep:
 				{
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_6, "TChangeTftStrategy::Next() - EDeleteTftStep, contextName = [%S]", aContext.Name());
 				aContext.SetStrategyStep (EChangeTftFinished);
 				User::RequestComplete( aStatus, KErrNone);
 				break;
@@ -907,15 +928,18 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 				
 			case EAddFirstTftStep:
 				{
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_7, "TChangeTftStrategy::Next() - EAddFirstTftStep, contextName = [%S]", aContext.Name());
 				TInt errV2 = aContext.FirstFilterV2();
 				if(errV2 == KErrNone)
 					{
 					if (aContext.ContextType() == SpudMan::EMbms)
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_8, "TChangeTftStrategy::Next() - EAddFirstTftStep - MbmsPacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.MbmsPacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 						}
 					else
 						{	
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_9, "TChangeTftStrategy::Next() - EAddFirstTftStep - PacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.PacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 						}
 					aContext.SetStrategyStep (EAddTftStep);
@@ -931,15 +955,18 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 
 			case EAddTftStep:
 				{
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_10, "TChangeTftStrategy::Next() - EAddTftStep, contextName = [%S]", aContext.Name());
 				TInt errV2 = aContext.NextFilterV2();
 				if(errV2 == KErrNone)
 					{
 					if (aContext.ContextType() == SpudMan::EMbms)
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_11, "TChangeTftStrategy::Next() - EAddFirstTftStep - MbmsPacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.MbmsPacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 						}
 					else
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_12, "TChangeTftStrategy::Next() - EAddFirstTftStep - PacketContext::AddPacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.PacketContext().AddPacketFilter( *aStatus, aContext.FilterV2Pckg());
 						}
 					aContext.SetStrategyStep (EAddTftStep);
@@ -955,15 +982,18 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 
 			case ERemoveFirstTftStep:
 				{
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_13, "TChangeTftStrategy::Next() - ERemoveFirstTftStep, contextName = [%S]", aContext.Name());
 				TInt errV2 = aContext.FirstFilterV2();
 				if(errV2 == KErrNone)
 					{
 					if (aContext.ContextType() == SpudMan::EMbms)
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_14, "TChangeTftStrategy::Next() - EAddFirstTftStep - MbmsPacketContext::RemovePacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.MbmsPacketContext().RemovePacketFilter( *aStatus, aContext.FilterV2().iId);
 						}
 					else
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_15, "TChangeTftStrategy::Next() - EAddFirstTftStep - PacketContext::RemovePacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.PacketContext().RemovePacketFilter( *aStatus, aContext.FilterV2().iId);
 						}	
 					aContext.SetStrategyStep (ERemoveTftStep);
@@ -979,15 +1009,18 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 				
 			case ERemoveTftStep:
 				{
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_16, "TChangeTftStrategy::Next() - ERemoveTftStep, contextName = [%S]", aContext.Name());
 				TInt errV2 = aContext.NextFilterV2();
 				if(errV2 == KErrNone)
 					{
 					if (aContext.ContextType() == SpudMan::EMbms)
 						{
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_17, "TChangeTftStrategy::Next() - EAddFirstTftStep - MbmsPacketContext::RemovePacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.MbmsPacketContext().RemovePacketFilter( *aStatus, aContext.FilterV2().iId);
 						}
 					else
-						{				
+						{	
+                        OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_18, "TChangeTftStrategy::Next() - EAddFirstTftStep - PacketContext::RemovePacketFilter(), contextName = [%S]", aContext.Name());
 						aContext.PacketContext().RemovePacketFilter( *aStatus, aContext.FilterV2().iId);
 						}
 					aContext.SetStrategyStep (ERemoveTftStep);
@@ -1003,6 +1036,7 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 
 			case EChangeTftFinished:
 				{
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_19, "TChangeTftStrategy::Next() - ERemoveTftStep, contextName = [%S]", aContext.Name());
 				aContext.SetStrategyStep (EFinishStep);
 				}
 				break;
@@ -1010,7 +1044,7 @@ void TChangeTftStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 				
 			default:
 				// unexpected
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_6, "ERROR: Incorrect case");
+				OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCHANGETFTSTRATEGY_NEXT_20, "TChangeTftStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 				ASSERT(EFalse);
 				err = KErrNotSupported;
 				break;
@@ -1093,15 +1127,13 @@ void TChangeTftStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_1, "TActivatePdpStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	switch(aContext.StrategyStep())
 		{
 		case EStartStep:
-			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_3, "RPacketContext::Activate()");
+			{			 
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_1, "TActivatePdpStrategy::Next() - EStartStep - RPacketContext::Activate(), contextName = [%S]", aContext.Name());
 			aContext.PacketContext().Activate(*aStatus);
 			aContext.SetStrategyStep (EActivateStep);
 			break;
@@ -1110,7 +1142,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 		case EActivateStep:
 		case ENotifyStatusChange:
 			{
-            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_4, "RPacketContext::GetStatus()");
+            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_2, "TActivatePdpStrategy::Next() - ENotifyStatusChange - RPacketContext::GetStatus(), contextName = [%S]", aContext.Name());
 
             if (aContext.PacketContext().GetStatus(aContext.ContextStatus()) != KErrNone)
                 {
@@ -1120,15 +1152,17 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             switch (aContext.ContextStatus())
             	{
             	case RPacketContext::EStatusActive:
+            	    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_3, "TActivatePdpStrategy::Next() - ENotifyStatusChange - EStatusActive, contextName = [%S]", aContext.Name());
                 	// Context is now active
     	            aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextPacketDataConfigBase());
-    	            OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_5, "RPacketContext::GetConfig()");
+    	            OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_4, "TActivatePdpStrategy::Next() - ENotifyStatusChange - RPacketContext::GetConfig(), contextName = [%S]", aContext.Name());
     				aContext.PacketContext().GetConfig (*aStatus, aContext.ContextConfig());
     				aContext.SetStrategyStep (EGetConfigStep);
     				break;
 
             	case RPacketContext::EStatusInactive:
                     {
+                    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_5, "TActivatePdpStrategy::Next() - ENotifyStatusChange - EStatusInactive - PacketContext::GetLastErrorCause(), contextName = [%S]", aContext.Name());
                     // Context is inactive so find out why
                     TInt errTsy = KErrNone;
                     TInt rc = aContext.PacketContext().GetLastErrorCause(errTsy);
@@ -1163,7 +1197,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
             	
             	default:
             		// Not active, not inactive. Re-request the status and try again
-                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_6, "RPacketContext::NotifyStatusChange()");
+                    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_6, "TActivatePdpStrategy::Next() - ENotifyStatusChange - default - RPacketContext::NotifyStatusChange(), status = %d, contextName = [%S]", aContext.ContextStatus(), aContext.Name());
                     aContext.PacketContext().NotifyStatusChange(*aStatus, aContext.ContextStatus());
                     aContext.SetStrategyStep (ENotifyStatusChange);
                     break;
@@ -1173,9 +1207,11 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 			
 		case EGetConfigStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_7, "TActivatePdpStrategy::Next() - EGetConfigStep, contextName = [%S]", aContext.Name());
 			aContext.PdpFsmInterface().Set (aContext.Id(), aContext.ContextPacketDataConfigBase());
 			if (KPrimaryContextId == aContext.Id())
 				{
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_8, "TActivatePdpStrategy::Next() - EGetConfigStep - PacketQoS::GetProfileParameters(), contextName = [%S]", aContext.Name());
                 aContext.PacketQoS().GetProfileParameters (*aStatus, aContext.QosNegotiatedPckg());	
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
                 aContext.DumpNegProfileParameters ();
@@ -1196,6 +1232,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 			
 		case EGetProfileParamsStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_9, "TActivatePdpStrategy::Next() - EGetProfileParamsStep, contextName = [%S]", aContext.Name());
 			// start notifications in case of normal creation of a context
 			// -- 	StatusChangeNotifier
 			// --	QoSChangeNotifier
@@ -1207,7 +1244,7 @@ void TActivatePdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aS
 			
 		default:
 			// unexpected
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_2, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEPDPSTRATEGY_NEXT_10, "TActivatePdpStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1312,14 +1349,13 @@ void TActivatePdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TGetNegQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_1, "TGetNegQoSStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	switch(aContext.StrategyStep())
 		{
 		case EStartStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_1, "TGetNegQoSStrategy::Next() - EStartStep - PacketQoS::GetProfileParameters(), contextName = [%S]", aContext.Name());
 			aContext.PacketQoS().GetProfileParameters (*aStatus, aContext.QosNegotiatedPckg());
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpNegProfileParameters ();
@@ -1330,13 +1366,14 @@ void TGetNegQoSStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aSta
 
 		case EGetProfileParamsStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_2, "TGetNegQoSStrategy::Next() - EGetProfileParamsStep, contextName = [%S]", aContext.Name());
 			aContext.SetStrategyStep (EFinishStep);
 			break;
 			}
 			
 		default:
 			// unexpected
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_2, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TGETNEGQOSSTRATEGY_NEXT_3, "TGetNegQoSStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1416,8 +1453,6 @@ void TGetNegQoSStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_1, "TModifyActiveStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	switch(aContext.StrategyStep())
@@ -1426,11 +1461,13 @@ void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* a
 			{
 			if (aContext.ContextType() != SpudMan::EMbms)
 				{
+                 OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_1, "TModifyActiveStrategy::Next() - EStartStep - PacketContext::ModifyActiveContext(), contextName = [%S]", aContext.Name());
 				aContext.PacketContext().ModifyActiveContext(*aStatus);
 				aContext.SetStrategyStep (EModifyActiveStep);
 				}
 			else
 				{
+                 OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_2, "TModifyActiveStrategy::Next() - EStartStep - MbmsPacketContext::ModifyActiveContext(), contextName = [%S]", aContext.Name());
 				aContext.MbmsPacketContext().ModifyActiveContext(*aStatus);
 				aContext.SetStrategyStep (EGetProfileParamsStep);
 				}	
@@ -1440,6 +1477,7 @@ void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* a
 		
 		case EModifyActiveStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_3, "TModifyActiveStrategy::Next() - EModifyActiveStep - PacketQoS::GetProfileParameters(), contextName = [%S]", aContext.Name());
 			aContext.PacketQoS().GetProfileParameters (*aStatus, aContext.QosNegotiatedPckg());
 #if (OST_TRACE_CATEGORY & OST_TRACE_CATEGORY_DEBUG)
             aContext.DumpNegProfileParameters ();
@@ -1450,13 +1488,14 @@ void TModifyActiveStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* a
 			
 		case EGetProfileParamsStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_4, "TModifyActiveStrategy::Next() - EGetProfileParamsStep, contextName = [%S]", aContext.Name());
 			aContext.SetStrategyStep (EFinishStep);
 			break;
 			}
 			
 		default:
 			// unexpected
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_2, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMODIFYACTIVESTRATEGY_NEXT_5, "TModifyActiveStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1534,12 +1573,6 @@ void TModifyActiveStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 	}
 
 
-
-
-
-
-
-
 // 
 //	TCreateMbmsPdpContextStrategy 
 //
@@ -1550,8 +1583,6 @@ void TModifyActiveStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */
 void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_1, "TCreateMbmsPdpContextStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	// possible steps:
@@ -1562,13 +1593,14 @@ void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestS
 		{
 		case EStartStep:
 			{
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_1, "TCreateMbmsPdpContextStrategy::Next() - EStartStep - MbmsPacketContext::OpenNewContext()");
 			err = aContext.MbmsPacketContext().OpenNewContext (aContext.PacketService(), aContext.Name());
 			if (err)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_2, "PacketContextOpenNewContext returned for MBMS %d", err);
+				OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_2, "TCreateMbmsPdpContextStrategy::Next() - EStartStep - PacketContextOpenNewContext returned for MBMS %d, contextName = [%S]", err, aContext.Name());
 				break;
 				}
-				
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_3, "TCreateMbmsPdpContextStrategy::Next() - EStartStep - MbmsPacketContext::InitialiseContext(), contextName = [%S]", aContext.Name());	
 			aContext.MbmsPacketContext().InitialiseContext(*aStatus, aContext.DataChannelV2Pckg());						
 			aContext.SetStrategyStep (EInitialiseContextStep);
 			break;
@@ -1576,6 +1608,7 @@ void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestS
 			
 		case EInitialiseContextStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_4, "TCreateMbmsPdpContextStrategy::Next() - EInitialiseContextStep - MbmsPacketContext::SetConfig(), contextName = [%S]", aContext.Name());    
 			// get mbms packet config from fsm
 			aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextConfigMbms());
 			// async set config
@@ -1585,11 +1618,12 @@ void TCreateMbmsPdpContextStrategy::Next(CEtelDriverContext& aContext, TRequestS
 			break;
 			}
 		case ESetConfigStep:
+		    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_5, "TCreateMbmsPdpContextStrategy::Next() - ESetConfigStep, contextName = [%S]", aContext.Name());    
 			aContext.SetStrategyStep (EFinishStep);
 			break;	
 	
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_3, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TCREATEMBMSPDPCONTEXTSTRATEGY_NEXT_6, "TCreateMbmsPdpContextStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());    
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1659,14 +1693,13 @@ void TCreateMbmsPdpContextStrategy::CancelAsyncRequest(CEtelDriverContext& aCont
 */
 void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_1, "TActivatePdpStrategy::Next()");
-	
 	TInt err = KErrNone;
 	
 	switch(aContext.StrategyStep())
 		{
 		case EStartStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_1, "TActivatePdpStrategy::Next() - EStartStep - MbmsPacketContext::Activate(), contextName = [%S]", aContext.Name());    
 			aContext.MbmsPacketContext().Activate(*aStatus);
 			aContext.SetStrategyStep (EActivateStep);
 			break;
@@ -1674,6 +1707,7 @@ void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus
 		
 		case EActivateStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_2, "TActivatePdpStrategy::Next() - EActivateStep - MbmsPacketContext::GetConfig(), contextName = [%S]", aContext.Name());    
 			aContext.PdpFsmInterface().Get (aContext.Id(), aContext.ContextConfigMbms());
 			aContext.MbmsPacketContext().GetConfig (*aStatus, aContext.ContextConfigMbmsPckg());
 			aContext.SetStrategyStep (EGetConfigStep);
@@ -1682,6 +1716,7 @@ void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus
 			
 		case EGetConfigStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_3, "TActivatePdpStrategy::Next() - EGetConfigStep - MbmsPacketContext::InitialiseContext(), contextName = [%S]", aContext.Name());    
 			aContext.PdpFsmInterface().Set (aContext.Id(), aContext.ContextConfigMbms());
 			aContext.MbmsPacketContext().InitialiseContext(*aStatus, aContext.DataChannelV2Pckg());
 			aContext.SetStrategyStep (EGetProfileParamsStep);
@@ -1691,6 +1726,7 @@ void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus
 				
 		case EGetProfileParamsStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_4, "TActivatePdpStrategy::Next() - EGetProfileParamsStep, contextName = [%S]", aContext.Name());    
 			// start notifications in case of normal creation of a context
 			// -- 	StatusChangeNotifier
 			// --	QoSChangeNotifier
@@ -1702,7 +1738,7 @@ void TActivateMbmsPdpStrategy::Next(CEtelDriverContext& aContext, TRequestStatus
 			
 		default:
 			// unexpected
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_2, "ERROR: Incorrect case");
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TACTIVATEMBMSPDPSTRATEGY_NEXT_5, "TActivatePdpStrategy::Next() - ERROR: Incorrect case, contextName = [%S]", aContext.Name());    
 			ASSERT(EFalse);
 			err = KErrNotSupported;
 			break;
@@ -1788,13 +1824,12 @@ void TActivateMbmsPdpStrategy::CancelAsyncRequest(CEtelDriverContext& aContext)
 */	
 void TMbmsSessionUpdateStrategy::Next(CEtelDriverContext& aContext, TRequestStatus* aStatus)
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_1, "TMbmsSessionUpdateStrategy::Next()");
-	
 	TInt err = KErrNone;
 	switch(aContext.StrategyStep())
 		{
 		case EStartStep:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_1, "TMbmsSessionUpdateStrategy::Next() - EStartStep, contextName = [%S]", aContext.Name());    
 			TInt sessionId=KErrNotFound;
 			aContext.PdpFsmInterface().Get (aContext.Id(), aContext.GetSessionInfo());
 			TSessionOperatioInfo sessionInfo = aContext.GetSessionInfo();
@@ -1813,18 +1848,21 @@ void TMbmsSessionUpdateStrategy::Next(CEtelDriverContext& aContext, TRequestStat
 			if ((sessionInfo.iOperation == CSubConMBMSExtensionParamSet::EAddSession) 
 				  && (sessionId != KErrNotFound))
 				{
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_2, "TMbmsSessionUpdateStrategy::Next() - EStartStep - MbmsPacketContext::UpdateMbmsSessionList() with EAddEntries, contextName = [%S]", aContext.Name());    
 				aContext.MbmsPacketContext().UpdateMbmsSessionList(*aStatus,EAddEntries,sessionId);
 				break;
 				}
 			else if ((sessionInfo.iOperation == CSubConMBMSExtensionParamSet::ERemoveSession) 
 					&& (sessionId != KErrNotFound))
 				{
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_3, "TMbmsSessionUpdateStrategy::Next() - EStartStep - MbmsPacketContext::UpdateMbmsSessionList() with ERemoveEntries, contextName = [%S]", aContext.Name());   
 				aContext.MbmsPacketContext().UpdateMbmsSessionList(*aStatus,ERemoveEntries,sessionId);
 				break;
 				}
 			else if ((sessionInfo.iOperation == CSubConMBMSExtensionParamSet::ERemoveAll) 
 					&& (sessionId != KErrNotFound))
 				{
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_4, "TMbmsSessionUpdateStrategy::Next() - EStartStep - MbmsPacketContext::UpdateMbmsSessionList() with ERemoveAllEntries, contextName = [%S]", aContext.Name());   
 				aContext.MbmsPacketContext().UpdateMbmsSessionList(*aStatus,ERemoveAllEntries,sessionId);
 				aContext.SetStrategyStep(EUpdateMbmsSessionList);	
 				break;
@@ -1842,6 +1880,7 @@ void TMbmsSessionUpdateStrategy::Next(CEtelDriverContext& aContext, TRequestStat
 
 		case EUpdateMbmsSessionList:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_5, "TMbmsSessionUpdateStrategy::Next() - EUpdateMbmsSessionList - CRetrievePcktMbmsSessionList::Start(), contextName = [%S]", aContext.Name());  
 			TRAP_IGNORE(aContext.SetMbmsSession(RPacketMbmsContext::CMbmsSession::NewL()));
 			TRAP_IGNORE(aContext.SetRetrievePcktMbmsSessionList(CRetrievePcktMbmsSessionList::NewL(aContext.MbmsPacketContext(),*aContext.MbmsSession())));
 			aContext.RetrievePcktMbmsSessionList()->Start(*aStatus);
@@ -1851,6 +1890,7 @@ void TMbmsSessionUpdateStrategy::Next(CEtelDriverContext& aContext, TRequestStat
 			
 		case EPrepareSessionList:
 			{
+			OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_6, "TMbmsSessionUpdateStrategy::Next() - EPrepareSessionList, contextName = [%S]", aContext.Name());  
 			RPacketMbmsContext::CMbmsSession *mbmsSession =	aContext.MbmsSession();
 			if (mbmsSession)
 				{
@@ -1869,6 +1909,7 @@ void TMbmsSessionUpdateStrategy::Next(CEtelDriverContext& aContext, TRequestStat
 			}
 		
 		default: 
+		    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TMBMSSESSIONUPDATESTRATEGY_NEXT_7, "TMbmsSessionUpdateStrategy::Next() - default, contextName = [%S]", aContext.Name());  
 			CRetrievePcktMbmsSessionList *retrievePktMbmsSessionList=aContext.RetrievePcktMbmsSessionList();
 			if (retrievePktMbmsSessionList)
 				delete retrievePktMbmsSessionList;

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1997-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -169,10 +169,6 @@ CTestStep* CWapProtSuite::CreateTestStep(const TDesC& aStepName)
 	else if (aStepName == _L("IoctlStep_15"))
 		{
 		testStep = new CIoctlStep_15();
-		}
-	else if (aStepName == _L("BackupRestoreStep"))
-		{
-		testStep = new CBackupRestoreStep();
 		}
 	else if (aStepName == _L("IoctlStep_17"))
 		{

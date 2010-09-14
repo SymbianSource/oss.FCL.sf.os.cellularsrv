@@ -41,6 +41,17 @@ START_TESTCASE BA-CTSY-FXD-CDNFC-0001c
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyFixedDiallingFU.TestDialNoFdnCheck0001cL
 END_TESTCASE BA-CTSY-FXD-CDNFC-0001c
 
+START_TESTCASE BA-CTSY-FXD-CDNFC-0001d
+//!@SYMTestCaseID BA-CTSY-FXD-CDNFC-0001d
+//!@SYMComponent telephony_ctsy
+@SYMTestCaseDesc est support in CTSY for RMobileCall::DialNoFdnCheck for voice calls with extended parameters (RMobileCall::TCallParamsV7)
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileCall::DialNoFdnCheck for voice calls
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyFixedDiallingFU.TestDialNoFdnCheck0001dL
+END_TESTCASE BA-CTSY-FXD-CDNFC-0001d
+
 START_TESTCASE BA-CTSY-FXD-CDNFC-0002
 //!@SYMTestCaseID BA-CTSY-FXD-CDNFC-0002
 //!@SYMComponent telephony_ctsy

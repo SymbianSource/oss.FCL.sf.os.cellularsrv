@@ -136,21 +136,21 @@ run_script z:\TestData\scripts\te_esock_test_loadesock.script
 
 START_TESTCASE          NET-Spud-NetworkSide-0806
 //! @SYMTestCaseID      NET-Spud-NetworkSide-0806
-//! @SYMTestCaseDesc  GUQoS triggers the KContextDelete on SPUDMAN after the Seondary PDP Context is created. -  This does not happen anymore in Guqos
-//! @SYMFssID NETWORKING/Spud/Control Plane/ PDP Context Deactivation
-//! @SYMTestActions Activate the primary and the secondary contexts by opening a socket & setting QoS on it, GuQoS deletes the created secondary context.
-//! @SYMTestExpectedResults EQoSEventAddPolicy, EQoSEventFailure are received by the test app.
+//! @SYMTestCaseDesc Activation of Primary fails. 
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Explicitly start Spud. SIM TSY returns an error on activation of the primary context (-4178 too many contexts) 
+//! @SYMTestExpectedResults Spud cannot be started: RConnection::Start returns an error.
 //! @SYMTestPriority Critical
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
-//! DUE TO BEHAVIOURAL CHANGES IN GUQOS - THIS CASE IS NO LONGER VALID AND THEREFORE NOT RUN
-//RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudSecondary z:\testdata\configs\te_spudNetworkSide.ini KContextDelete
-//DELAY 3000
-//RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudPrimary z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationFails202
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
 END_TESTCASE            NET-Spud-NetworkSide-0806
 
-//run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
-//run_script z:\TestData\scripts\te_esock_test_loadesock.script
+run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
+run_script z:\TestData\scripts\te_esock_test_loadesock.script
+
 
 
 START_TESTCASE          NET-Spud-NetworkSide-0807

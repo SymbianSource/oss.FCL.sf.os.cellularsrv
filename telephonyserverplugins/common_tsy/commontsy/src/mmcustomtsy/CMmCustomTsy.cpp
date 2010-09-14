@@ -230,9 +230,10 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_EXTFUNC_1, 
         if ( KErrNone != trapError )
             {
             // error handling. Object cannot be created.
-            ret = trapError;
-            }
-        if ( KErrNone != ret )
+            ResetReqHandle(aTsyReqHandle, aIpc);
+		    ret = trapError;            
+			}
+      	if ( KErrNone != ret )
             {
             ReqCompleted( aTsyReqHandle, ret );
             }
@@ -6913,5 +6914,16 @@ TInt CMmCustomTsy::NotifyRemoteAlertingToneStatusChangeCancel()
 
     return KErrNone;
     }
+
+TBool CMmCustomTsy::ResetReqHandle( const TTsyReqHandle aTsyReqHandle, TInt aIpc )
+    {
+    TBool ret = CMmTsyBase::ResetReqHandle(aTsyReqHandle, aIpc);
+    if(!ret)
+        {
+        ret = iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
+        }
+    return ret;
+    }
+    
 
 //  End of File

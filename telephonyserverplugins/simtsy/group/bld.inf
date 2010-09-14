@@ -19,6 +19,10 @@
  @file
 */
 
+
+#include "../testconfigfileparser/group/bld.inf"
+
+
 PRJ_EXPORTS
 
 ../inc/SimTsy.h SYMBIAN_OS_LAYER_PLATFORM_EXPORT_PATH(simtsy.h)
@@ -106,3 +110,5 @@ PRJ_TESTMMPFILES
 ../test/Te_SimSS/Te_SimSS.mmp
 ../test/Te_SimVoice/Te_SimVoice.mmp
 ../test/te_simeap/te_simeap.mmp
+
+

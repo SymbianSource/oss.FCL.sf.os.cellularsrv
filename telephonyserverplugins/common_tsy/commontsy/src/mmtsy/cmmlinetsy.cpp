@@ -287,16 +287,17 @@ TInt CMmLineTsy::ExtFunc(
     if ( trapError != KErrNone )
         {
         // Object cannot be created.
+		// Reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
         ReqCompleted( aTsyReqHandle, trapError );
         }
     else if ( ret != KErrNone )
         {
         ReqCompleted( aTsyReqHandle, ret );
         }
-    
-    //save request handle
-    if ( EMultimodeLineReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodeLineReqHandleUnknown != iReqHandleType )
         {
+        //save request handle
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
         }
 

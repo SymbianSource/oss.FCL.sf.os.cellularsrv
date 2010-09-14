@@ -15,11 +15,8 @@
 
 
 "\sf\os\cellularsrv\smsprotocols\smsstack\wapprot\Test\TE_WAPDGRM\TE_wapdgrm.script"-"c:\testdata\scripts\TE_wapdgrm.script"
-
 "\sf\os\cellularsrv\smsprotocols\smsstack\wapprot\Test\TE_WAPTHDR\TE_wapthdr.script"-"c:\testdata\scripts\TE_wapthdr.script"
-"\sf\os\cellularsrv\smsprotocols\smsstack\wapprot\Test\TE_WAPTHDR\TE_wapthdr_setup.script"-"c:\testdata\scripts\TE_wapthdr_setup.script"
-
 "\sf\os\cellularsrv\smsprotocols\smsstack\wapprot\Test\Te_wapprot\Te_WapProt.script"-"c:\testdata\scripts\Te_WapProt.script"
-"\sf\os\cellularsrv\smsprotocols\smsstack\wapprot\Test\Te_wapprot\Te_WapStackOutOfDiskSpace_ARM_UREL.script"-"c:\testdata\scripts\Te_WapStackOutOfDiskSpace_ARM_UREL.script"
+"\sf\os\cellularsrv\smsprotocols\smsstack\wapprot\Test\Te_wapprot\Te_WapStackOutOfDiskSpace.script"-"c:\testdata\scripts\Te_WapStackOutOfDiskSpace.script"
 
 

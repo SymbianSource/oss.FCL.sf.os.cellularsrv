@@ -122,7 +122,7 @@ void CSimPacketService::ConstructL()
 	iReleaseModeTimer = CSimTimer::NewL(iPhone);
 	iDynamicCapsTimer = CSimTimer::NewL(iPhone);
 	iMbmsPcktTimer = CSimTimer::NewL(iPhone);
-	iMutex.CreateGlobal(KNullDesC, EOwnerProcess);
+	User::LeaveIfError(iMutex.CreateGlobal(KNullDesC, EOwnerProcess));
 	
 	iNtwkRegStatusInfo = new(ELeave) CArrayFixFlat<TNtwkRegStatus>(KGranularity);
 	iPcktRegStatusInfo=new(ELeave) CArrayFixFlat<TPacketRegStatus>(KGranularity);

@@ -49,7 +49,7 @@ Write the function name entry plus plus 8 bits formated list
 */
 	:iFnName(aFnName), iLayer(aLayer), iErr(KErrNone)
 	{
-	VA_LIST list;
+	/* coverity[var_decl] */ VA_LIST list;
 	VA_START(list,aFmt);
 	TBuf8<KLineLength> line;
 	line.Append(_L8(">>"));
@@ -57,7 +57,7 @@ Write the function name entry plus plus 8 bits formated list
 	line.Append(' ');
 	line.Append(aFmt);
 	TBuf8<KLineLength> evaluatedLine;
-	evaluatedLine.FormatList(line,list);
+	/* coverity[uninit_use_in_call] */ evaluatedLine.FormatList(line,list);
 	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT1_1, "%s", evaluatedLine);
 	};
 
@@ -67,7 +67,7 @@ Write the function name entry plus 16 bits formated list
 */
 	:iFnName(aFnName), iLayer(aLayer), iErr(KErrNone)
 	{
-	VA_LIST list;
+	/* coverity[var_decl] */ VA_LIST list;
 	VA_START(list,aFmt);
 
 	TBuf<KLineLength> line;
@@ -76,7 +76,7 @@ Write the function name entry plus 16 bits formated list
 	line.Append(' ');
 	line.Append(aFmt);
 	TBuf<KLineLength> evaluatedLine;
-	evaluatedLine.FormatList(line,list);
+	/* coverity[uninit_use_in_call] */ evaluatedLine.FormatList(line,list);
 	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, TLOGENTRYEXIT_TLOGENTRYEXIT2_1, "%S", evaluatedLine);
 	};
 			

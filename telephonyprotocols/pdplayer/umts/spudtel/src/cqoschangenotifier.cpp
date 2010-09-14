@@ -83,9 +83,10 @@ void CQoSChangeNotifier::DoCancel()
 */
 void CQoSChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
-	if(aStatus == KErrNone)
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_1, "Qos Change Notification for Context [%S]", iPdpFsmInterface.GetContextName(iId));
+
+    if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_1, "FSM set QoSProfile");
 
 #ifdef SYMBIAN_NETWORKING_UMTSR5
         iPdpFsmInterface.Set(iId, iProfileBuffer.NegotiatedQoSR5());
@@ -97,15 +98,11 @@ void CQoSChangeNotifier::Notify(const TRequestStatus& aStatus)
 #endif
 // SYMBIAN_NETWORKING_UMTSR5
 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_2, "FSM input EQoSProfileChangeNetwork");
 		iPdpFsmInterface.Input(iId, PdpFsm::EQoSProfileChangeNetwork);
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_3, "CQoSChangeNotifier::Notify(), error: %d", aStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CQOSCHANGENOTIFIER_NOTIFY_2, "CQoSChangeNotifier::Notify(), error: %d", aStatus.Int());
 		ASSERT(aStatus == KErrCancel); 
 		}
 	}
-
-
-

@@ -786,5 +786,17 @@ TInt CPdpFsmInterface::Get(TContextId aPdpId, TSessionOperatioInfo& aParam) cons
 	return KErrNone;
 	}
 
+/** Get context name
 
+@param aPdpId - the PDP context ID, 0 to KMaxPdpContexts
+@return - Context name in a TName
+*/
+const TName& CPdpFsmInterface::GetContextName(TContextId aPdpId)
+    {
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMINTERFACE_GETCONTEXTNAME_1, ">>CPdpFsmInterface::GetContextName() for context id [%d]", aPdpId);
 
+    ASSERT(iPdpFsmFactory);
+    ASSERT(iPdpFsmFactory->ContextIdIsValid(aPdpId));
+    ASSERT(iPdpFsmFactory->HaveFsmContext(aPdpId));
+    return iPdpFsmFactory->GetFsmContext(aPdpId)->GetDataChannelV2().iChannelId;
+    }

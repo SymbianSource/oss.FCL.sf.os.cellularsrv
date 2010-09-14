@@ -1989,14 +1989,15 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_EXTF
 
     if ( KErrNone != trapError )
         {
+		//reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
         CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, trapError );
         }
     else if ( KErrNone != ret )
         {
         CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, ret );
         }
-
-    if ( EMultimodePacketServiceReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodePacketServiceReqHandleUnknown != iReqHandleType )
         {
         // Save request handle type
 
@@ -2005,11 +2006,10 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_EXTF
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, iTsyReqHandle );
 #endif // REQHANDLE_TIMER
-        // We've finished with this value now. Clear it so it doesn't leak
-        //  up to any other instances of this method down the call stack
-        iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
         }
-
+    // We've finished with this value now. Clear it so it doesn't leak
+    //  up to any other instances of this method down the call stack
+    iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
     return KErrNone;
     }
 
@@ -4110,6 +4110,17 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETSERVICETSY_COMP
 TInt CMmPacketServiceTsy::MaximumActiveServices()
     {
     return iMaxActiveServices;
+    }
+
+    
+//-----------------------------------------------------------------------------
+// TBool CMmPacketServiceTsy::ResetReqHandle
+// Resets request handle in the req handle store
+//-----------------------------------------------------------------------------
+// 
+TBool CMmPacketServiceTsy::ResetReqHandle( const TTsyReqHandle aTsyReqHandle )
+    {
+    return iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
     }
 
 //  End of File

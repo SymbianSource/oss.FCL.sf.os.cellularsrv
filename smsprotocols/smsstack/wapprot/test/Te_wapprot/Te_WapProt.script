@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -206,18 +206,6 @@ START_TESTCASE SMS-SMSStack-NA-8015
 RUN_TEST_STEP 100 TE_WapProt  IoctlStep_15 z:\testdata\configs\WapProtSuite\WapProtSuite.ini TestStep15
 
 END_TESTCASE SMS-SMSStack-NA-8015
-
-START_TESTCASE SMS-SMSStack-NA-8014
-//!@SYMTestCaseID SMS-SMSStack-NA-8014
-//!@SYMREQ REQ0000
-//!@SYMTestCaseDesc IoctlStep_16
-//!@SYMTestPriority critical
-//!@SYMTestActions IoctlStep 16
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 TE_WapProt  BackupRestoreStep z:\testdata\configs\WapProtSuite\WapProtSuite.ini TestStep16
-
-END_TESTCASE SMS-SMSStack-NA-8014
 
 START_TESTCASE                 SMS-SMSStack-NA-8017
 //! @SYMTestCaseID               SMS-SMSStack-NA-8017

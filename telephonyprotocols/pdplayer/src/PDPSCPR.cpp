@@ -42,12 +42,6 @@ using namespace ESock;
 using namespace NetStateMachine;
 using namespace Factories;
 
-//We reserve space for two preallocated activities that may start concurrently on the SCPR
-//node: destroy and data client stop.
-static const TUint KDefaultMaxPreallocatedActivityCount = 2;
-static const TUint KMaxPreallocatedActivitySize = sizeof(MeshMachine::CNodeRetryParallelActivity) + sizeof(MeshMachine::APreallocatedOriginators<4>);
-static const TUint KPDPSCPRPreallocatedActivityBufferSize = KDefaultMaxPreallocatedActivityCount * KMaxPreallocatedActivitySize;
-
 //-=========================================================
 //
 // CPDPSubConnectionProvider Activities
@@ -266,7 +260,7 @@ void CPDPSubConnectionProvider::ConstructL()
 IP SubConnection Provider Second Phase Constructor
 */
 	{
-	CCoreSubConnectionProvider::ConstructL(KPDPSCPRPreallocatedActivityBufferSize);
+	CCoreSubConnectionProvider::ConstructL();
 	}
 
 void CPDPSubConnectionProvider::Received(TNodeContextBase& aContext)

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -34,8 +34,11 @@ NONSHARABLE_CLASS(CPsdAvailabilityListener) : public CActive, public Messages::A
 public:
 	static CPsdAvailabilityListener* NewL(const Messages::TNodeCtxId& aAvailabilityActivity, const CTSYProvision& aTsyProvision, TUint aApId, TBool aUnavailableDueToContention);
 	virtual ~CPsdAvailabilityListener();
+	
+#ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
 	void ReportContentionAvailabilityStatusIfRequired(const ESock::TAvailabilityStatus& aAvailabilityStatus);
-
+#endif
+	
 private:
 	CPsdAvailabilityListener(const Messages::TNodeCtxId& aAvailabilityActivity, const CTSYProvision& aTsyProvision, TUint aApId, TBool aUnavailableDueToContention);
 	void StartL();

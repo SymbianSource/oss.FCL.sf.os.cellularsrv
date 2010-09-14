@@ -333,6 +333,8 @@ TInt CMmENStoreTsy::ExtFunc(
     if ( trapError != KErrNone )
         {
         // Complete with error if trap error
+		// Reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
         ReqCompleted( aTsyReqHandle, trapError );
         }
     else if ( ret != KErrNone )
@@ -340,21 +342,19 @@ TInt CMmENStoreTsy::ExtFunc(
         // Complete with error if return value error
         ReqCompleted( aTsyReqHandle, ret );
         }
-
-    // Save request handle
-    if ( EMultimodeENStoreReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodeENStoreReqHandleUnknown != iReqHandleType )
         {
+        // Save request handle
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif
+        }
         // We've finished with this value now. Clear it so it doesn't leak
         //  up to any other instances of this method down the call stack
         iReqHandleType = EMultimodeENStoreReqHandleUnknown;
-        }
-
-    return KErrNone;
+        return KErrNone;
     }
 
 // ---------------------------------------------------------------------------

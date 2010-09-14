@@ -220,6 +220,27 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_RES
     return ret;
 }
 
+// ---------------------------------------------------------------------------
+// CMmTsyReqHandleStore::FindAndResetTsyReqHandle
+// Finds and resets all TSY req handle of a given value.
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TBool CMmTsyReqHandleStore::FindAndResetTsyReqHandle( const TTsyReqHandle aTsyReqHandle )
+    {
+        TInt ret = EFalse;  
+        for( TInt i = 0; i < iNumOfRequests  ; i++ )
+            {
+            if( *( iReqHandles + i ) == aTsyReqHandle )
+                {
+                    //reset req handle
+					ResetTsyReqHandle(i);
+                    ret = ETrue;
+                }
+            }
+        return ret;
+    }
+
 #ifdef REQHANDLE_TIMER
 
 // ---------------------------------------------------------------------------

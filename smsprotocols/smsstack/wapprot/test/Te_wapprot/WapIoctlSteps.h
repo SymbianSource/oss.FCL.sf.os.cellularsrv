@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -158,19 +158,6 @@ class CIoctlStep_15 : public CWapProtSuiteStepBase
 	{
 public:
 	virtual TVerdict doTestStepL();
-	};
-
-class CBackupRestoreStep : public CWapProtSuiteStepBase
-/**
- *  Simulating client crash conditions with 8bit message
- */
-	{
-public:
-	virtual TVerdict doTestStepL();
-
-private:
-	TInt SendWapL();
-	TBool IsWapFileOpenL();
 	};
 
 class CIoctlStep_17 : public CWapProtSuiteStepBase

@@ -136,16 +136,15 @@ void CPdpConfigChangeNotifier::DoCancel()
 */
 void CPdpConfigChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_1, "Config Change Notification for Context [%S]", iPdpFsmInterface.GetContextName(iId));
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_1, "FSM set ConfigGPRS");
 		iPdpFsmInterface.Set(iId, GetScratchContextAs<TPacketDataConfigBase>());
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_2, "FSM input EConfigGPRSChangeNetwork");
 		iPdpFsmInterface.Input(iId, PdpFsm::EConfigGPRSChangeNetwork);
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_3, "CPdpConfigChangeNotifier::Notify(), error: %d", aStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONFIGCHANGENOTIFIER_NOTIFY_2, "CPdpConfigChangeNotifier::Notify(), error: %d", aStatus.Int());
 		// Not all TSYs support RPacketContext::NotifyConfigChanged so we handle
 		// KErrNotSupported silently (PDEF118981).
 		ASSERT((aStatus == KErrCancel) || (aStatus == KErrNotSupported));
@@ -201,18 +200,16 @@ void CMbmsPdpConfigChangeNotifier::DoCancel()
 */
 void CMbmsPdpConfigChangeNotifier::Notify(const TRequestStatus& aStatus)
 	{
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_1, "MBMS Config Change Notification for Context [%S]", iPdpFsmInterface.GetContextName(iId));
 	if(aStatus == KErrNone)
 		{
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_1, "FSM set ConfigMbms");
 		iPdpFsmInterface.Set(iId, iConfigMbms);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_2, "FSM input EConfigMbmsChangeNetwork");
 		iPdpFsmInterface.Input(iId, PdpFsm::EConfigGPRSChangeNetwork,SpudMan::EMbms);
-		//to be discussed...
-		
+		//to be discussed...		
 		}
 	else
 		{ 
-		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_3, "CMbmsPdpConfigChangeNotifier::Notify(), error: %d", aStatus.Int());
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMBMSPDPCONFIGCHANGENOTIFIER_NOTIFY_2, "CMbmsPdpConfigChangeNotifier::Notify(), error: %d", aStatus.Int());
 		// Not all TSYs support RPacketContext::NotifyConfigChanged so we handle
 		// KErrNotSupported silently (PDEF118981).
 		ASSERT((aStatus == KErrCancel) || (aStatus == KErrNotSupported));

@@ -49,18 +49,11 @@
 
 using namespace ESock;
 
-
 //-=========================================================
 //
 // CPDPConnectionProvider methods
 //
 //-=========================================================	
-
-//We reserve space for two preallocated activities that may start concurrently on the CPR
-//node: destroy and data client stop.
-static const TUint KDefaultMaxPreallocatedActivityCount = 2;
-static const TUint KMaxPreallocatedActivitySize = sizeof(MeshMachine::CNodeRetryParallelActivity) + sizeof(MeshMachine::APreallocatedOriginators<4>);
-static const TUint KPDPCPRPreallocatedActivityBufferSize = KDefaultMaxPreallocatedActivityCount * KMaxPreallocatedActivitySize;
 
 #ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 namespace PDPCprLinkCharacteristicActivity
@@ -108,7 +101,7 @@ void CPDPConnectionProvider::ConstructL()
  * @return void
  */
 	{
-	CCoreConnectionProvider::ConstructL(KPDPCPRPreallocatedActivityBufferSize);
+	CCoreConnectionProvider::ConstructL();
 	}
 
 CPDPConnectionProvider::CPDPConnectionProvider(ESock::CConnectionProviderFactoryBase& aFactory)

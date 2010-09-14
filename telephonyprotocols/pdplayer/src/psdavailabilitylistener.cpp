@@ -219,6 +219,7 @@ void CPsdAvailabilityListener::ReceivedL(const TRuntimeCtxId& /*aSender*/, const
 	delete this;
 	}
 
+#ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
 void CPsdAvailabilityListener::ReportContentionAvailabilityStatusIfRequired(const TAvailabilityStatus& aAvailabilityStatus)
 	{
 	if (aAvailabilityStatus.Score() == TAvailabilityStatus::EMinAvailabilityScore && !iUnavailableDueToContention)
@@ -242,4 +243,5 @@ void CPsdAvailabilityListener::ReportContentionAvailabilityStatusIfRequired(cons
 		iUnavailableDueToContention = EFalse;
 		}
 	}
+#endif
 

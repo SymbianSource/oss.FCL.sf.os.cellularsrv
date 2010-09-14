@@ -136,6 +136,8 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_EXT
 
     if ( KErrNone != trapError )
         {
+		// Reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
         ReqCompleted( aTsyReqHandle, trapError );
         }
 
@@ -143,8 +145,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_EXT
         {
         ReqCompleted( aTsyReqHandle, ret );
         }
-
-    if ( EMultimodePacketMbmsReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodePacketMbmsReqHandleUnknown != iReqHandleType )
         {
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
@@ -152,7 +153,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_EXT
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif // REQHANDLE_TIMER
         }
-
+    iReqHandleType = EMultimodePacketMbmsReqHandleUnknown;
     return KErrNone;
     }
 
