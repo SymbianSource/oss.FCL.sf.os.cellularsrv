@@ -4,8 +4,8 @@ EXPORTS
 	??0TGprsInformation@RMmCustomAPI@@QAE@XZ @ 3 NONAME ; public: __thiscall RMmCustomAPI::TGprsInformation::TGprsInformation(void)
 	??0TLifeTimeData@RMmCustomAPI@@QAE@XZ @ 4 NONAME ; public: __thiscall RMmCustomAPI::TLifeTimeData::TLifeTimeData(void)
 	??0TSimFileInfo@RMmCustomAPI@@QAE@XZ @ 5 NONAME ; public: __thiscall RMmCustomAPI::TSimFileInfo::TSimFileInfo(void)
-	?ActivateSimLock@RMmCustomAPI@@QBEHABV?$TBuf@$0P@@@W4TLockNumber@1@@Z @ 6 NONAME ; public: int __thiscall RMmCustomAPI::ActivateSimLock(class TBuf<15> const &,enum RMmCustomAPI::TLockNumber)const 
-	?ActivateSimLock@RMmCustomAPI@@QBEXAAVTRequestStatus@@ABV?$TBuf@$0P@@@W4TLockNumber@1@@Z @ 7 NONAME ; public: void __thiscall RMmCustomAPI::ActivateSimLock(class TRequestStatus &,class TBuf<15> const &,enum RMmCustomAPI::TLockNumber)const 
+	?ActivateSimLock@RMmCustomAPI@@QBEHABV?$TBuf@$0BO@@@W4TLockNumber@1@@Z @ 6 NONAME ; int RMmCustomAPI::ActivateSimLock(class TBuf<30> const &, enum RMmCustomAPI::TLockNumber) const 
+	?ActivateSimLock@RMmCustomAPI@@QBEXAAVTRequestStatus@@ABV?$TBuf@$0BO@@@W4TLockNumber@1@@Z @ 7 NONAME ; void RMmCustomAPI::ActivateSimLock(class TRequestStatus &, class TBuf<30> const &, enum RMmCustomAPI::TLockNumber) const 
 	?CallOrigin@RMmCustomAPI@@QBEHAAV?$TBuf@$0IA@@@AAW4TCallOrigin@1@@Z @ 8 NONAME ; public: int __thiscall RMmCustomAPI::CallOrigin(class TBuf<128> &,enum RMmCustomAPI::TCallOrigin &)const 
 	?CancelUssdSession@RMmCustomAPI@@QAEXAAVTRequestStatus@@@Z @ 9 NONAME ; public: void __thiscall RMmCustomAPI::CancelUssdSession(class TRequestStatus &)
 	?CancelUssdSession@RMmCustomAPI@@QBEHXZ @ 10 NONAME ; public: int __thiscall RMmCustomAPI::CancelUssdSession(void)const 
@@ -21,8 +21,8 @@ EXPORTS
 	?ClearCallBlackList@RMmCustomAPI@@QBEHXZ @ 20 NONAME ; public: int __thiscall RMmCustomAPI::ClearCallBlackList(void)const 
 	?Close@RMmCustomAPI@@QAEXXZ @ 21 NONAME ; public: void __thiscall RMmCustomAPI::Close(void)
 	?ConstructL@RMmCustomAPI@@IAEXXZ @ 22 NONAME ; protected: void __thiscall RMmCustomAPI::ConstructL(void)
-	?DeActivateSimLock@RMmCustomAPI@@QBEHABV?$TBuf@$0P@@@W4TLockNumber@1@@Z @ 23 NONAME ; public: int __thiscall RMmCustomAPI::DeActivateSimLock(class TBuf<15> const &,enum RMmCustomAPI::TLockNumber)const 
-	?DeActivateSimLock@RMmCustomAPI@@QBEXAAVTRequestStatus@@ABV?$TBuf@$0P@@@W4TLockNumber@1@@Z @ 24 NONAME ; public: void __thiscall RMmCustomAPI::DeActivateSimLock(class TRequestStatus &,class TBuf<15> const &,enum RMmCustomAPI::TLockNumber)const 
+	?DeActivateSimLock@RMmCustomAPI@@QBEHABV?$TBuf@$0BO@@@W4TLockNumber@1@@Z @ 23 NONAME ; int RMmCustomAPI::DeActivateSimLock(class TBuf<30> const &, enum RMmCustomAPI::TLockNumber) const 
+	?DeActivateSimLock@RMmCustomAPI@@QBEXAAVTRequestStatus@@ABV?$TBuf@$0BO@@@W4TLockNumber@1@@Z @ 24 NONAME ; void RMmCustomAPI::DeActivateSimLock(class TRequestStatus &, class TBuf<30> const &, enum RMmCustomAPI::TLockNumber) const 
 	?DeleteSimCbTopic@RMmCustomAPI@@QAEHABI@Z @ 25 NONAME ; public: int __thiscall RMmCustomAPI::DeleteSimCbTopic(unsigned int const &)
 	?DeleteSimCbTopic@RMmCustomAPI@@QAEXAAVTRequestStatus@@ABI@Z @ 26 NONAME ; public: void __thiscall RMmCustomAPI::DeleteSimCbTopic(class TRequestStatus &,unsigned int const &)
 	?Destruct@RMmCustomAPI@@IAEXXZ @ 27 NONAME ; protected: void __thiscall RMmCustomAPI::Destruct(void)

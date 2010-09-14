@@ -64,7 +64,11 @@ const TUint16 KVanJacUnCompTCPIPFrameType = 0x2f;
 const TUint16 KIp6FrameType = 0x57;
 
 const TUint KDefaultSpeedMetric = 1;
-const TUint KDefaultMtu = 1500;
+// generally, the default MTU should be 1500 bytes but it has been 
+// determined that for a number of real world use cases, 1500 bytes
+// provides fairly poor performance, so we're limiting it 1400 here
+// this can be overridden by patchable constant (iby file).
+const TUint KDefaultMtu = 1400; 
 
 const TUint KDataPacketMaxSize = 4096;
 
@@ -78,7 +82,11 @@ _LIT8(KNifSubDir, "RawIp");
 _LIT8(KRefFile, "RawIP"); 
 
 // Max size of IP packet 
-const TUint KMaxIPPacket = 1500;
+// generally, the default MTU should be 1500 bytes but it has been 
+// determined that for a number of real world use cases, 1500 bytes
+// provides fairly poor performance, so we're limiting it 1400 here
+// this can be overridden by patchable constant (iby file).
+const TUint KMaxIPPacket = 1400;
 const TUint KIPTagHeaderLength = 2;
 const TUint KMaxIPPacketAndHeader = KMaxIPPacket + KIPTagHeaderLength;
 

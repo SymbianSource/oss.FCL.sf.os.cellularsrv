@@ -177,6 +177,9 @@ TInt CIPv4Binder::GetConfig(TBinderConfig& aConfig)
     // Default value for Tx and Rx packet size
     config->iInfo.iMtu = KMtuIPv4;
     config->iInfo.iRMtu = KRMtuIPv4;
+    
+    _LOG_L1C3(_L8("CIPv4Binder::GetConfig [TxMtu=%d, RxMtu=%d]"),
+        config->iInfo.iMtu, config->iInfo.iRMtu);
 #else // WINS
     // Set default values in case patch is not present in epoc.ini
     config->iInfo.iMtu = KDefaultMtu;

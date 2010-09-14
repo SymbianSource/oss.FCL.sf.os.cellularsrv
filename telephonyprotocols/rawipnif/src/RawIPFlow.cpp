@@ -236,7 +236,13 @@ MLowerDataSender::TSendResult CRawIPFlow::SendPacket(RMBufChain& aPdu, TAny* /*a
 	_LOG_L1C3(_L8("CRawIPFlow %08x:\tSendPacket(): length=%d"),
 		this, aPdu.Length() - aPdu.First()->Length());
 
-    __PACKETLOG_WRITE_PACKET(aPdu, 0);
+#ifdef _DEBUG
+	if (__packetLogger__ != NULL)
+	    {
+	    __PACKETLOG_WRITE_PACKET(aPdu, 0);
+	    }
+#endif
+
     return iBcaController->Send(aPdu);
 	}
 
