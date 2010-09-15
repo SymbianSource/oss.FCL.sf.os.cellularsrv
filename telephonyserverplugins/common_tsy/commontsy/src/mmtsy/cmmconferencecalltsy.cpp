@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -191,7 +191,10 @@ TInt CMmConferenceCallTsy::ExtFunc(
     if ( trapError != KErrNone )
         {
         //error handling. Object cannot be created.
-        ReqCompleted( 0, trapError );
+		//reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
+        iReqHandleType = EMultimodeConferenceCallReqHandleUnknown;
+        ReqCompleted( aTsyReqHandle, trapError );
         }
     //if return value is not KErrNone
     else if ( ret != KErrNone )
@@ -199,20 +202,20 @@ TInt CMmConferenceCallTsy::ExtFunc(
         //Complete request with this error value
         ReqCompleted( aTsyReqHandle, ret );
         }
-
-    //save request handle
-    if ( EMultimodeConferenceCallReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodeConferenceCallReqHandleUnknown != iReqHandleType )
         {
+        //save request handle
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse ( iReqHandleType, aTsyReqHandle );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif
-        // We've finished with this value now. Clear it so it doesn't leak
-        //  up to any other instances of this method down the call stack
-        iReqHandleType = EMultimodeConferenceCallReqHandleUnknown;
         }
-
+    
+    // We've finished with this value now. Clear it so it doesn't leak
+    //  up to any other instances of this method down the call stack
+    iReqHandleType = EMultimodeConferenceCallReqHandleUnknown;
+    
     return KErrNone;
 
     }

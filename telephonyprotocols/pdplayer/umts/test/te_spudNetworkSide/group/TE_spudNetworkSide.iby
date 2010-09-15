@@ -76,4 +76,10 @@ data=EPOCROOT##epoc32\data\z\testdata\configs\te_rawipsize_config.txt					testda
 data=EPOCROOT##epoc32\data\z\testdata\configs\te_rawipsize.cfg					testdata\configs\te_rawipsize.cfg
 data=EPOCROOT##epoc32\data\z\testdata\scripts\te_rawipsize.script 		testdata\scripts\te_rawipsize.script
 
+//MBufExhaustion Tests
+data=EPOCROOT##epoc32\data\z\testdata\configs\te_spudnetworkside_mbufexhaust.ini			testdata\configs\te_spudnetworkside_mbufexhaust.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_mbufexhaustion_loopbackcsy.ini		testdata\configs\te_spudnetworkside_mbufexhaustion_loopbackCSY.ini
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_mbufexhaustion_config.txt		testdata\configs\te_spudnetworkside_mbufexhaustion_config.txt
+data=EPOCROOT##epoc32\data\z\TestData\Configs\te_spudnetworkside_mbufexhaustion.cfg			testdata\configs\te_spudnetworkside_mbufexhaustion.cfg
+data=EPOCROOT##epoc32\data\z\testdata\scripts\te_spudmbufexhaustion.script 				testdata\scripts\te_spudmbufexhaustion.script
 #endif // TE_SPUD_NETWORK_SIDE_IBY

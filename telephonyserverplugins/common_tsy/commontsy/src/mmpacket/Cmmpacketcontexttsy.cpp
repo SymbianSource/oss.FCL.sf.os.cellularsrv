@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -182,28 +182,27 @@ TFLOGSTRING3( "TSY: CMmPacketContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc
 
     if ( KErrNone != trapError )
         {
+		// Reset the request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
         ReqCompleted( aTsyReqHandle, trapError );
         }
-
     else if ( KErrNone != ret )
         {
         ReqCompleted( aTsyReqHandle, ret );
         }
-
-    if ( EMultimodePacketContextReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodePacketContextReqHandleUnknown != iReqHandleType )
         {
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif // REQHANDLE_TIMER
-#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
-        // We've finished with this value now. Clear it so it doesn't leak
-        //  up to any other instances of this method down the call stack
-        iReqHandleType = EMultimodePacketContextReqHandleUnknown;
-#endif
         }
-
+#ifdef ADD_REMOVE_PACKETFILTER_DEFECT_FIXED  // search for this up from bottom of file
+     // We've finished with this value now. Clear it so it doesn't leak
+     //  up to any other instances of this method down the call stack
+     iReqHandleType = EMultimodePacketContextReqHandleUnknown;
+#endif
     return KErrNone;
     }
 

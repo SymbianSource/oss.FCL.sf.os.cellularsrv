@@ -986,10 +986,12 @@ It opens the pre-allocated file. Then it internalizes all the entry information.
 void CPreallocatedFile::OpenL()
 	{
 	User::LeaveIfError(iFile.Open(iFs, iFileName->Des(), EFileShareExclusive|EFileRead|EFileWrite));
+	CleanupClosePushL(iFile);
 	// Check the validity of the data.
 	CheckDataL();
 	// Internalize data
 	InternalizeEntryArrayL();
+	CleanupStack::Pop(&iFile);
 	}
 
 /**

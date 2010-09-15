@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -569,6 +569,32 @@ void CMmPacketTsy::Complete(
     }
 #endif // REQHANDLE_TIMER
 
+// ---------------------------------------------------------------------------
+// CMmPacketTsy::ResetReqHandle
+// Resets the request handle in req handle store
+// (other items were commented in a header).
+// ---------------------------------------------------------------------------
+//
+TBool CMmPacketTsy::ResetReqHandle(const TTsyReqHandle aTsyReqHandle, const TInt aIpc)
+    {
+    //handle has not been reset yet
+    TInt ret = EFalse;
+    if(aIpc == ECustomSetAlwaysOnMode)
+        { 
+		// request handle is set in packet data session
+        CMmPacketServiceTsy* packetSession = iMmPhone->PacketDataSession();
+        if(packetSession)
+            {
+            ret = packetSession->ResetReqHandle(aTsyReqHandle);
+            }
+        }
+    else
+        { 
+		// request handle stored locally
+        ret = iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
+        }
+    return ret;
+    }
 
 //  End of File
 

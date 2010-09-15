@@ -1153,14 +1153,15 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
 
         if ( trapError != KErrNone )
             {
+			//reset request handle to indicate the request is no longer ongoing
+            iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
             ReqCompleted( aTsyReqHandle, trapError );
             }
         else if ( ret != KErrNone )
             {
             ReqCompleted( aTsyReqHandle, ret );
             }
-
-        if ( EMultimodePhoneReqHandleUnknown != iReqHandleType )
+        else if ( EMultimodePhoneReqHandleUnknown != iReqHandleType )
             {
 #ifdef REQHANDLE_TIMER
             SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
@@ -1168,10 +1169,10 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
             iTsyReqHandleStore->SetTsyReqHandle( 
                 iReqHandleType, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
-            // We've finished with this value now. Clear it so it doesn't leak
-            //  up to any other instances of this method down the call stack
-            iReqHandleType = EMultimodePhoneReqHandleUnknown;
             }
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePhoneReqHandleUnknown;
         }
 
     return KErrNone;

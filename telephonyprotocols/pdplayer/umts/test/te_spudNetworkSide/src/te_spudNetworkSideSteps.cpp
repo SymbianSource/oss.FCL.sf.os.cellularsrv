@@ -32,6 +32,9 @@
 #include <comms-infras/es_config.h>
 #include <nifman.h>
 
+#define SYMBIAN_COMMSFW_MBUF_GOBBLER // include MACRO defined in mbufgobblerproviders.mmp, used to differentiate the MBUFGOBBLER component from the pass through layer which it is based on.
+#include <comms-infras/mbufgobblerpubsub.h>
+
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 #include <networking/qoslib.h>
 #else
@@ -2489,5 +2492,180 @@ enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
 
     CleanupStack::PopAndDestroy(7); //conn1, conn2, sock1, sock2, sendBuf, recvBuf, recvBuf2
 
+    return EPass;
+    }
+
+
+enum TVerdict CRawIpMBufExhaustionRx::RunTestStepL()
+    {    
+    /*
+      * This test checks that the PDP flow can handle the scenario when it receives a packet but finds that
+      * the MBuf pool is exhausted.
+      * 
+      * The test has the following form:
+      * 
+      *  1) Initialisation
+      *  1.1) Connections conn1 and conn2 are started.
+      *  1.2) Socket sock1 is opened against conn1 and socket sock2 is opened against conn2;
+      *     The sockets are logically joined by the packet loopback csy; data which is written by 
+      *     sock1 is read by sock2.
+      *  1.3) Connection conn3 is started. It creates a stack within ESOCK which contains the MBufGobbler layer;
+      *     this is a layer which contains a publish and subscribe function which allows the ESOCK client to control the 
+      *     number of MBufs that are available in the MBuf pool.
+      *  
+      *  2) Test Scenario
+      *  2.1) The client writes data to sock1 successfully; the packetloopback csy delays forwarding the data to sock2.
+      *  2.2) The client configures a publish and subscribe attribute which exhausts ESOCK's MBuf pool. 
+      *       It uses the MBufGobbler publish / subscribe function contained in the MBufGobbler layer started by conn3.
+      *  2.3) The packet loopback csy forwards the data to the flow associated with sock2. 
+      *  2.4) The flow is unable to obtain a MBuf from the MBuf pool as the pool is exhausted, so it discards the packet
+      *       and posts a request to receive the next packet.  
+      *  2.5) The client cancels the read request from sock2.
+      *  2.6) The client configures a publish and subscribe attribute to replenish ESocks's MBuf pool.
+      *  2.7) The client writes data to sock1 successfully and reads data from sock2 successfully.
+      *  
+      */
+     
+    //Start 1st context
+    RConnection* conn1 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn1);
+
+    TInt primaryIapId;
+    if (!GetIntFromConfig(ConfigSection(), _L("PrimaryIapId1"), primaryIapId))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    TCommDbConnPref conn1Pref;
+    conn1Pref.SetIapId(primaryIapId);
+    
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId);  
+    TestL(conn1->Open(iEsock), _L("RConnection::Open the interface"));
+    TestL(conn1->Start(conn1Pref), _L("RConnection::Start the interface"));
+
+    //Start 2nd context
+    RConnection* conn2 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn2);
+
+    if (!GetIntFromConfig(ConfigSection(), _L("PrimaryIapId2"), primaryIapId))
+        {
+        User::Leave(KErrNotFound);
+        }
+
+    TCommDbConnPref conn2Pref;
+    conn2Pref.SetIapId(primaryIapId);
+    
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId);     
+    TestL(conn2->Open(iEsock), _L("RConnection::Open the interface"));
+    TestL(conn2->Start(conn2Pref), _L("RConnection::Start the interface"));
+    
+    TRequestStatus status;
+    RConnection* conn3 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn3);   
+    TestL(conn3->Open(iEsock), _L("RConnection::Open the interface"));
+    conn3->Start(status);
+    User::WaitForRequest(status);
+    TestL(status.Int(), _L("RConnection::Start - start connection containing MBuf Gobbler layer"));
+    
+    //Open & Connect 1st Socket
+    RSocket sock1;
+    TestL(sock1.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn1), _L("RSocket::Open"));
+    CleanupClosePushL<RSocket>(sock1);
+    TInetAddr localAddr;
+    localAddr.SetPort(KConfiguredTftFilter1DestPort);
+    TestL(sock1.Bind(localAddr), _L("Binding the local Socket"));
+    
+    TInetAddr dstAddr;
+    dstAddr.SetPort(KConfiguredTftFilter1SrcPort);
+    dstAddr.Input(KConfiguredTftFilter1SrcAddr);
+    sock1.Connect(dstAddr, status);
+    User::WaitForRequest(status);
+    TestL(status.Int(), _L("RSocket::Connect status opening 1st socket"));
+
+    //Open & Bind 2nd Socket
+    RSocket sock2;
+    TestL(sock2.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn2), _L("RSocket::Open"));
+    CleanupClosePushL<RSocket>(sock2);
+    localAddr.SetPort(KConfiguredTftFilter1SrcPort);
+    TestL(sock2.Bind(localAddr), _L("Binding the local Socket"));
+
+    //then send & receive data.
+    const TInt KMaxMMU = 4000;
+    TBuf8<KMaxMMU> *sendBuf = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(sendBuf);
+    
+    TBuf8<KMaxMMU> *recvBuf = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(recvBuf);
+
+    TBuf8<KMaxMMU> *recvBuf2 = new(ELeave) TBuf8<KMaxMMU>();
+    CleanupStack::PushL(recvBuf2);
+
+    TRequestStatus readStatus;
+
+    const TInt KOneSecond = 1000000;
+    const TInt KOneUs     = 1;
+    
+    sendBuf->Zero();
+    sendBuf->Append(Math::Random() & 0x7f); // add a token character
+        
+    sock1.Write(*sendBuf, status); // Allow packet to be sent
+    User::After( KOneSecond ); // Wait for a second to allow time for server/protocol to send
+        
+    sock1.CancelSend();
+
+    User::WaitForRequest(status);
+    
+    TInt result = RProperty::Set(TUid::Uid(EMBufGobbler ), EAdjustNumberOfMBufsRemainingInPool , EGobbleAllMBufs); // Allocate all MBuffs
+    if (result != KErrNone)
+        {
+        INFO_PRINTF2(_L("Unable to set gobber publish/subscribe %d"), result);
+        User::Leave(result);
+        }
+    User::After(KOneUs); // Relinquish CPU, to give time for        
+    
+    sock2.Read(*recvBuf, readStatus);    
+    User::After( KOneSecond ); 
+
+    sock2.CancelRecv();
+            
+    User::WaitForRequest( readStatus );
+    
+    if ((status != KErrNone) && (readStatus != KErrCancel))         
+        {
+        INFO_PRINTF3(_L("Unexpected error status tx= %d, rx = %d"), status.Int(), readStatus.Int());
+        User::Leave(readStatus.Int());
+        }
+   
+    result = RProperty::Set(TUid::Uid(EMBufGobbler), EAdjustNumberOfMBufsRemainingInPool, EReleaseAllMBufs);  // Free all buffers
+    if (result != KErrNone)
+        {
+        INFO_PRINTF2(_L("Unable to set gobber publish/subscribe %d"), result);
+        User::Leave(result);
+        }
+    User::After(KOneUs); // Relinquish CPU to allow time for MBufs to be returned to the pool.
+
+    sock1.Write(*sendBuf, status);        
+    
+    User::After( KOneSecond ); // Wait for a second to allow time for server/protocol to send
+        
+    sock1.CancelSend();
+
+    User::WaitForRequest(status);
+    
+    sock2.Read(*recvBuf, readStatus);    
+    User::After( KOneSecond ); 
+
+    sock2.CancelRecv();
+            
+    User::WaitForRequest( readStatus );
+    
+    if ((status != KErrNone) && (readStatus != KErrNone))         
+        {
+        INFO_PRINTF3(_L("Unexpected error status tx = %d rx = %d"), status.Int(), readStatus.Int());
+        User::Leave(readStatus.Int());
+        }     
+        
+    CleanupStack::PopAndDestroy(8); //conn1, conn2, conn3, sock1, sock2, sendBuf, recvBuf, recvBuf2
+    
     return EPass;
     }

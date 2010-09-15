@@ -128,6 +128,17 @@ PRJ_TESTEXPORTS
 ../configs/TE_RawIpSize.cfg			z:/testdata/configs/te_rawipsize.cfg
 #endif
 
+// MBuf Exhaustion Tests
+../configs/te_spudnetworkside_mbufexhaust.ini			z:/testdata/configs/te_spudnetworkside_mbufexhaust.ini
+../configs/te_spudnetworkside_mbufexhaustion_config.txt		z:/testdata/configs/te_spudnetworkside_mbufexhaustion_config.txt
+../configs/te_spudnetworkside_mbufexhaustion_loopbackcsy.ini	z:/testdata/configs/te_spudnetworkside_mbufexhaustion_loopbackcsy.ini
+../scripts/te_spudmbufexhaustion.script				z:/testdata/scripts/te_spudmbufexhaustion.script
+#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
+../configs/te_spudnetworkside_mbufexhaustion_pdpcpr.cfg		z:/testdata/configs/te_spudnetworkside_mbufexhaustion.cfg
+#else
+../configs/te_spudnetworkside_mbufexhaustion.cfg		z:/testdata/configs/te_spudnetworkside_mbufexhaustion.cfg
+#endif
+
 #endif // SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 
 TE_spudNetworkSide.iby	/epoc32/rom/include/te_spudnetworkside.iby 

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -131,15 +131,15 @@ TFLOGSTRING3( "TSY: CMmMBMSContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, 
 
     if ( KErrNone != trapError )
         {
+		// Reset request handle to indicate the request is no longer ongoing
+        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
         ReqCompleted( aTsyReqHandle, trapError );
         }
-
     else if ( KErrNone != ret )
         {
         ReqCompleted( aTsyReqHandle, ret );
         }
-
-    if ( EMultimodePacketMbmsReqHandleUnknown != iReqHandleType )
+    else if ( EMultimodePacketMbmsReqHandleUnknown != iReqHandleType )
         {
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
@@ -147,7 +147,7 @@ TFLOGSTRING3( "TSY: CMmMBMSContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, 
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif // REQHANDLE_TIMER
         }
-
+    iReqHandleType = EMultimodePacketMbmsReqHandleUnknown;
     return KErrNone;
     }
 
