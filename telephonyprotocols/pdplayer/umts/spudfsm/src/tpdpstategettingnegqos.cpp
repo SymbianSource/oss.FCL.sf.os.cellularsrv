@@ -19,8 +19,6 @@
  @file 
  @internalComponent
 */
- 
-
 
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
@@ -34,39 +32,28 @@
 
 TInt TPdpStateGettingNegQoS::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_1, ">>TPdpStateGettingNegQoS::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	    {
     	case SpudMan::EGetNegQoS:
     		EtelDriverInput(aFsm, EtelDriver::ENegQoSGet);
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_3, "<<TPdpStateGettingNegQoS::Input()");
     		return KErrNone;
     		
     	case PdpFsm::EPdpNegQoSRetrieved:
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_4, "*** SUCCESS ***");
     		aFsm.ChangeStateToOpen();
     		SpudManNotify(aFsm, KGetNegQoSEvent, KErrNone);
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_5, "<<TPdpStateGettingNegQoS::Input()");
     		return KErrNone;
     		
     	case PdpFsm::EPdpNegQoSRetrievedFailed:
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_6, "*** FAILURE ***");
+    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_1, "*** PDP NEGOTIATED QOS RETRIEVE FAILED ***");
     		// As far as everybody is concerned, the context was activated:
     		// This makes it eligible for certain events. 
     		// We have to move to Open state, so that that we can handle any operations
     		// on the activated PDP context correctly.
     		aFsm.ChangeStateToOpen(); 
     		SpudManNotify(aFsm, KGetNegQoSEvent, aErrorCode);
-    		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_7, "<<TPdpStateGettingNegQoS::Input()");
     		return KErrNone;
     	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEGETTINGNEGQOS_INPUT_8, "<<TPdpStateGettingNegQoS::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
     }
-
-
-

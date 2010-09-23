@@ -209,6 +209,7 @@ TInt CMmBroadcastTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_DOEXTFUNCL_1, "TSY: CMmBroadcastTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, aTsyReqHandle, (TUint)this);
     TInt ret( KErrNone );
     TAny* dataPtr = aPackage.Ptr1();
 
@@ -238,6 +239,7 @@ TInt CMmBroadcastTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_DOEXTFUNCL_2, "TSY: CMmBroadcastTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -587,7 +589,7 @@ TInt CMmBroadcastTsy::ReceiveMessageL(
 void CMmBroadcastTsy::InternalCompleteCbRoutingRequest( 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_INTERNALCOMPLETECBROUTINGREQUEST_1, "TSY:CMmBroadcastTsy::InternalCompleteCbRoutingRequest:error=%d.", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_INTERNALCOMPLETECBROUTINGREQUEST_1, "TSY:CMmBroadcastTsy::InternalCompleteCbRoutingRequest:error=%{TSymbianErrorCodes}.", aError);
     if ( KErrNone == aError )
         {
         iCbRoutingActivated = ETrue;
@@ -697,7 +699,7 @@ void CMmBroadcastTsy::CompleteReceiveMessageGsmCbs(
     TInt aError, 
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEGSMCBS_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageGsmCbs:error=%d.",aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEGSMCBS_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageGsmCbs:error=%{TSymbianErrorCodes}.",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastReceiveMessage );
 
@@ -742,7 +744,7 @@ void CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs(
     TInt aError, 
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%d.", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:error=%{TSymbianErrorCodes}.", aError);
 	TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastReceiveMessage );
 
@@ -859,7 +861,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETE
 				aError = KErrCorrupt;
 				}			
 			}
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_5, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:Completing with error=%d.", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGEWCDMACBS_5, "TSY:CMmBroadcastTsy::CompleteReceiveMessageWcdmaCbs:Completing with error=%{TSymbianErrorCodes}.", aError);
 			
 		ReqCompleted( reqHandle, aError );		
 		}		
@@ -939,7 +941,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_RECEIVEM
 void CMmBroadcastTsy::CompleteReceiveMessageCancel( 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGECANCEL_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageCancel:error=%d.",aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETERECEIVEMESSAGECANCEL_1, "TSY:CMmBroadcastTsy::CompleteReceiveMessageCancel:error=%{TSymbianErrorCodes}.",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastReceiveMessageCancel );
 
@@ -1058,7 +1060,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_SETFI
 void CMmBroadcastTsy::CompleteSetFilterSetting( 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETESETFILTERSETTING_1, "TSY:CMmBroadcastTsy::CompleteSetFilterSetting:error=%d.",aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMBROADCASTTSY_COMPLETESETFILTERSETTING_1, "TSY:CMmBroadcastTsy::CompleteSetFilterSetting:error=%{TSymbianErrorCodes}.",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeBroadcastSetFilterSetting );
 

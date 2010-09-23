@@ -34,9 +34,6 @@
 
 TInt TPdpStateActivatingSecondary::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_1, ">>TPdpStateActivatingSecondary::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::EPdpActivated:
@@ -46,20 +43,15 @@ TInt TPdpStateActivatingSecondary::Input (CPdpFsm& aFsm, const TInt aOperation, 
 		aFsm.ChangeStateToGettingNegQoS();  // Context was activated, but we don't necessarily have negotiated QoS yet; 
                        					    // a TSY might wait for a successfull activation to report it to Etel. 
 		SpudManNotify (aFsm, KContextActivateEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_3, "<<TPdpStateActivatingSecondary::Input()");
 		return KErrNone;
 	case PdpFsm::EPdpActivatedFailed:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_4, "*** FAILURE ***");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_1, "*** PDP SECONDARY CONTEXT ACTIVATION FAILED ***");
 		aFsm.ChangeStateToCreatedSecondary();
 		SpudManNotify (aFsm, KContextActivateEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_5, "<<TPdpStateActivatingSecondary::Input()");
 		return KErrNone;
 	// no default
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGSECONDARY_INPUT_6, "<<TPdpStateActivatingSecondary::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
-
-

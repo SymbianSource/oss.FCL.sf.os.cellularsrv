@@ -206,7 +206,7 @@ TInt CMmFaxCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DOEXTFUNCL_1, "TSY: CMmFaxCallTsy::DoExtFuncL. IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DOEXTFUNCL_1, "TSY: CMmFaxCallTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret( KErrNone );
 
@@ -297,6 +297,7 @@ TInt CMmFaxCallTsy::DoExtFuncL(
             break;
         }
 
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_DOEXTFUNCL_2, "TSY: CMmFaxCallTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -310,7 +311,7 @@ TInt CMmFaxCallTsy::DoExtFuncL(
 CTelObject::TReqMode CMmFaxCallTsy::ReqModeL(
     const TInt aIpc )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_REQMODEL_1, "TSY: CMmFaxCallTsy::ReqModeL. IPC:%d",aIpc);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_REQMODEL_1, "TSY: CMmFaxCallTsy::ReqModeL. IPC:%{TIPCNamesList}",aIpc);
 
     CTelObject::TReqMode ret( 0 ); // default return value
     
@@ -553,7 +554,7 @@ TInt CMmFaxCallTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_CANCELSERVICE_1, "TSY: CMmFaxCallTsy::CancelService. IPC: %d, Req handle: %d",aIpc, aTsyReqHandle);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_CANCELSERVICE_1, "TSY: CMmFaxCallTsy::CancelService. IPC: %{TIPCNamesList}, Req handle: %d",(TUint)aIpc, (TUint)aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -657,7 +658,7 @@ void CMmFaxCallTsy::CompleteNotifyStatusChange(
 
         callDataPackage->UnPackData( callStatus );
 
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. aResult:%d",aResult );
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. aResult:%{TSymbianErrorCodes}",aResult );
         OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMFAXCALLTSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmFaxCallTsy::CompleteNotifyStatusChange. \Call status:%d Call name:%S", callStatus, iCallName);
 
         switch( callStatus )

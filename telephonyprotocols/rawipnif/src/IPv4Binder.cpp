@@ -32,18 +32,13 @@
 #include "IPv4Binder.h"
 #include <comms-infras/linkprovision.h>
 #include <u32hal.h>
+#include <rawip_const.h>
 
 using namespace ESock;
 #ifdef WCDMA_STUB
 #include <networking/umtsnifcontrolif.h>
 #endif
 
-
-#ifdef __EABI__
-// Patch data is used and KMtuIPv4 and KRMtuIPv4 can be modified to a different value in RawIpNif.iby file
-extern const TInt KMtuIPv4 = KDefaultMtu;
-extern const TInt KRMtuIPv4 = KDefaultMtu;
-#endif
 
 CIPv4Binder::CIPv4Binder(CRawIPFlow& aFlow)
 /**
@@ -69,6 +64,7 @@ MLowerDataSender* CIPv4Binder::Bind(MUpperDataReceiver* aUpperReceiver, MUpperCo
  * @param aUpperControl A pointer to Upper layer control class
  */
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_BIND_1, "CIPv4Binder::Bind");
 	CBinderBase::Bind(aUpperReceiver, aUpperControl); // Call the superclass's method.
 	return this;
 	}
@@ -178,8 +174,8 @@ TInt CIPv4Binder::GetConfig(TBinderConfig& aConfig)
 	
 #if defined __EABI__
     // Default value for Tx and Rx packet size
-    config->iInfo.iMtu = KMtuIPv4;
-    config->iInfo.iRMtu = KRMtuIPv4;
+    config->iInfo.iMtu = RawIPConst::KMtuIPv4;
+    config->iInfo.iRMtu = RawIPConst::KRMtuIPv4;
 #else // WINS
     // Set default values in case patch is not present in epoc.ini
     config->iInfo.iMtu = KDefaultMtu;
@@ -189,6 +185,7 @@ TInt CIPv4Binder::GetConfig(TBinderConfig& aConfig)
     UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMtuIPv4",&(config->iInfo.iMtu));
     UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KRMtuIPv4",&(config->iInfo.iRMtu));
 #endif
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_GETCONFIG_3, "config->{iInfo.iMtu=%d, iInfo.iRMtu=%d}", config->iInfo.iMtu, config->iInfo.iRMtu);
 	
 	config->iInfo.iSpeedMetric = iSpeedMetric;		/* approximation of the interface speed in Kbps. */
 
@@ -364,7 +361,7 @@ void CIPv4Binder::UpdateConnectionSpeed(TUint aConnectionSpeed)
  * @param aConnectionSpeed Our connection speed
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONNECTIONSPEED_1, "CIPv4Binder::UpdateConnectionSpeed");
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV4BINDER_UPDATECONNECTIONSPEED_1, "Connection Speed [%d]", aConnectionSpeed);
 
 	iSpeedMetric = aConnectionSpeed;
 	}

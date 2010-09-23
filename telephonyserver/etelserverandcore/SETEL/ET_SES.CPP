@@ -167,7 +167,7 @@ void CTelSession::ServiceL(const RMessage2 &aMessage)
 // Handle messages for this session
 //
 	{
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_SERVICEL_1, "CTelSession::Service Called, IPC: %d", aMessage.Function());
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSESSION_SERVICEL_1, "CTelSession::Service Called, CTelSession: 0x%08X, IPC: %{TIPCNamesList}", (TUint)this, aMessage.Function());
 
 	iMessage=aMessage;
 

@@ -92,7 +92,7 @@ TInt CMmSecurityTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DOEXTFUNCL_1, "TSY: CMmSecurityTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DOEXTFUNCL_1, "TSY: CMmSecurityTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret ( KErrNone );
 
@@ -157,6 +157,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DOEXTF
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_DOEXTFUNCL_2, "TSY: CMmSecurityTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -613,7 +614,7 @@ void CMmSecurityTsy::CompleteSetLockSetting(
     RMobilePhone::TMobilePhoneLockStatus, 
     RMobilePhone::TMobilePhoneLockSetting ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETESETLOCKSETTING_1, "LTSY: CMmSecurityTsy::CompleteSetLockSetting - Error:%d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETESETLOCKSETTING_1, "LTSY: CMmSecurityTsy::CompleteSetLockSetting - Error:%{TSymbianErrorCodes}", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneSetLockSetting );
@@ -676,7 +677,7 @@ TInt CMmSecurityTsy::ChangeSecurityCodeL(
 TInt CMmSecurityTsy::CompleteChangeSecurityCode(
     TInt aErrorCode ) // Error code
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETECHANGESECURITYCODE_1, "TSY: CMmSecurityTsy::CompleteChangeSecurityCode - Error:%d", aErrorCode);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETECHANGESECURITYCODE_1, "TSY: CMmSecurityTsy::CompleteChangeSecurityCode - Error:%{TSymbianErrorCodes}", aErrorCode);
 
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
@@ -767,7 +768,7 @@ void CMmSecurityTsy::CompleteNotifySecurityEventL(
     RMobilePhone::TMobilePhoneSecurityEvent aEvent, 
     TInt aErrorCode ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETENOTIFYSECURITYEVENTL_1, "TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - Event: %d, Error: %d",aEvent, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETENOTIFYSECURITYEVENTL_1, "TSY: CMmSecurityTsy::CompleteNotifySecurityEvent - Event: %d, Error: %{TSymbianErrorCodes}",aEvent, aErrorCode );
 
 	if ( iLastPinRequested != EPinUnknown && 
 		( RMobilePhone::EPin1Verified == aEvent ) || 
@@ -1080,7 +1081,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_VERIFYSEC
 void CMmSecurityTsy::CompleteVerifySecurityCodeL(
         TInt aErrorCode ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL_1, "TSY: CMmSecurityTsy::CompleteVerifySecurityCode - Error:%d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEVERIFYSECURITYCODEL_1, "TSY: CMmSecurityTsy::CompleteVerifySecurityCode - Error:%{TSymbianErrorCodes}", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneVerifySecurityCode );
@@ -1266,7 +1267,7 @@ TInt CMmSecurityTsy::AbortSecurityCodeL(
 void CMmSecurityTsy::CompleteAbortSecurityCode(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEABORTSECURITYCODE_1, "TSY: CMmSecurityTsy::CompleteAbortSecurityCode - Error:%d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEABORTSECURITYCODE_1, "TSY: CMmSecurityTsy::CompleteAbortSecurityCode - Error:%{TSymbianErrorCodes}", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneAbortSecurityCode );
@@ -1299,7 +1300,7 @@ void CMmSecurityTsy::CompleteGetLockInfo(
     CMmDataPackage* aDataPackage, 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEGETLOCKINFO_1, "LTSY: CMmSecurityTsy::CompleteGetLockInfo - Error:%d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSECURITYTSY_COMPLETEGETLOCKINFO_1, "LTSY: CMmSecurityTsy::CompleteGetLockInfo - Error:%{TSymbianErrorCodes}", aErrorCode);
 
     TTsyReqHandle reqHandle = iMmPhoneTsy->iTsyReqHandleStore->
         ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetLockInfo );

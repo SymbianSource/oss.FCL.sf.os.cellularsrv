@@ -19,13 +19,6 @@
  @file 
  @internalComponent
 */
- 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstatecreatedmbmsTraces.h"
-#endif
 
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
@@ -39,9 +32,6 @@
 
 TInt TPdpStateCreatedMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDMBMS_INPUT_1, "TPdpStateCreatedMbms::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDMBMS_INPUT_2, "aOperation : %S(%d)", *LogOperation(aFsm, aOperation), aOperation);
-
 	switch (aOperation)
 	{
 	case SpudMan::EContextActivate: 

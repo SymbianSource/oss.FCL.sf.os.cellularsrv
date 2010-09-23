@@ -75,6 +75,7 @@ CPDPTierManager::CPDPTierManager(ESock::CTierManagerFactoryBase& aFactory,
 	:CCoreTierManager(aFactory,aActivityMap)
 	{
 	LOG_NODE_CREATE(KPDPTierMgrTag, CPDPTierManager);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_CONSTRUCTOR_1, "Constructor");
 	}
 
 /**
@@ -83,7 +84,7 @@ Descructor for CPDPTierManager
 CPDPTierManager::~CPDPTierManager()
 	{
 	LOG_NODE_DESTROY(KPDPTierMgrTag, CPDPTierManager);
-
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_DESTRUCTOR_1, "Destructor");
 #ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
 	delete iPdpContentionManager;
 	iPdpContentionManager = NULL;
@@ -124,8 +125,8 @@ void CPDPTierManager::ConstructL()
 */
 void CPDPTierManager::PacketServiceAttachedCallbackL()
 	{
-    
 #ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_PACKETSERVICEATTACHEDCALLBACKL_1, "Starting PDP Contention Manager");
 	if (!iPdpContentionManager)
 		{
 		iPdpContentionManager = CPdpContentionManager::NewL(*this, iMBMSEngine->GetRPacketService());
@@ -142,9 +143,11 @@ The messages from RConnectionServ are received in ReceivedL function.
 */
 void CPDPTierManager::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipient, TSignatureBase& aMessage)
 	{
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_RECEIVEDL_1, "Realm Id [%u] Message Id [%u]", aMessage.MessageId().Realm(), aMessage.MessageId().MessageId());
 	//TODO I think that the generic TCancel handling will do this - so perhaps remove this and CancelAndRemoveFromRequestList!
 	if (aMessage.IsMessage<TEBase::TCancel>())
 		{
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_RECEIVEDL_2, "Received Message Type: TEBase::TCancel");
 		TRAPD(err, iMBMSEngine->CancelAndRemoveFromRequestListL(aSender));
 		if (err == KErrNone)
 			{
@@ -161,6 +164,7 @@ void CPDPTierManager::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRe
 
 	if (aMessage.IsMessage<TCFTierStatusProvider::TTierNotificationRegistration>())
 		{
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_RECEIVEDL_3, "Received Message Type: TCFTierStatusProvider::TTierNotificationRegistration");
 		TCFTierStatusProvider::TTierNotificationRegistration* msgTNR = message_cast<TCFTierStatusProvider::TTierNotificationRegistration>(&aMessage);
 
 		const Messages::TNodeSignal::TMessageId requestType = TCFTierStatusProvider::TTierNotificationRegistration::Id();
@@ -189,6 +193,7 @@ void CPDPTierManager::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRe
 
 TBool CPDPTierManager::HandleContentionL(ESock::CMetaConnectionProviderBase* aMcpr, Messages::TNodeId& aPendingCprId, TUint aPriority)
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPTIERMANAGER_HANDLECONTENTIONL_1, "Handle Contention Request");
 	User::LeaveIfNull(iMBMSEngine);
 	if (!iPdpContentionManager)
 		{

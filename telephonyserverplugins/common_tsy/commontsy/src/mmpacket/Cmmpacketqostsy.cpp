@@ -124,7 +124,7 @@ TInt CMmPacketQoSTsy::ExtFunc(
         const TInt aIpc,     
         const TDataPackage& aPackage )      
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_EXTFUNC_1, "TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_EXTFUNC_1, "TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %{TIPCNamesList}", aIpc );
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
 
@@ -175,7 +175,7 @@ TInt CMmPacketQoSTsy::DoExtFuncL(
         const TInt aIpc,        
         const TDataPackage& aPackage )  
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DOEXTFUNCL_1, "TSY: CMmPacketQoSTsy::DoExtFuncL. IPC: %d  Handle:%u", aIpc, (TUint)aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DOEXTFUNCL_1, "TSY: CMmPacketQoSTsy::DoExtFuncL. IPC: %{TIPCNamesList}  Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
     TInt ret( KErrNotSupported );
 
     switch ( aIpc )
@@ -195,6 +195,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DOEXT
         default:
             break;
         }
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DOEXTFUNCL_2, "<-- TSY: CMmPacketQoSTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);
     return ret;
 
     }
@@ -208,7 +209,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DOEXT
 CTelObject::TReqMode CMmPacketQoSTsy::ReqModeL(    
         const TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQMODEL_1, "TSY: CMmPacketQoSTsy::ReqModeL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQMODEL_1, "TSY: CMmPacketQoSTsy::ReqModeL. IPC: %{TIPCNamesList}", aIpc );
     CTelObject::TReqMode reqMode( 0 );
 
     switch ( aIpc )
@@ -242,7 +243,7 @@ TInt CMmPacketQoSTsy::NumberOfSlotsL(
         const TInt aIpc ) 
     {
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_NUMBEROFSLOTSL_1, "TSY: CMmPacketQoSTsy::NumberOfSlotsL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_NUMBEROFSLOTSL_1, "TSY: CMmPacketQoSTsy::NumberOfSlotsL. IPC: %{TIPCNamesList}", aIpc );
 
     TInt numberOfSlots( 0 );
 
@@ -270,7 +271,7 @@ TInt CMmPacketQoSTsy::CancelService(
         const TInt aIpc,   
         const TTsyReqHandle aTsyReqHandle ) 
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_CANCELSERVICE_1, "TSY: CMmPacketQoSTsy::CancelService. IPC: %d  Handle:%u", aIpc, (TUint)aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_CANCELSERVICE_1, "TSY: CMmPacketQoSTsy::CancelService. IPC: %{TIPCNamesList}  Handle:%u", aIpc, (TUint)aTsyReqHandle);
      TInt ret( KErrNone );
 
      switch ( aIpc )
@@ -311,7 +312,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_CANCE
 TInt CMmPacketQoSTsy::RegisterNotification(    
         const TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REGISTERNOTIFICATION_1, "TSY: CMmPacketQoSTsy::RegisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REGISTERNOTIFICATION_1, "TSY: CMmPacketQoSTsy::RegisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     if ( EPacketQoSNotifyProfileChanged == aIpc )
         {
@@ -331,7 +332,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REGISTER
 TInt CMmPacketQoSTsy::DeregisterNotification(
         const TInt aIpc )    
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DEREGISTERNOTIFICATION_1, "TSY: CMmPacketQoSTsy::DeregisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_DEREGISTERNOTIFICATION_1, "TSY: CMmPacketQoSTsy::DeregisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     if ( EPacketQoSNotifyProfileChanged == aIpc )
         {
@@ -522,7 +523,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_SETPR
 void CMmPacketQoSTsy::CompleteSetProfileParameters(
         const TInt aError )     
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_COMPLETESETPROFILEPARAMETERS_1, "TSY: CMmPacketQoSTsy::CompleteSetProfileParameters. Error: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_COMPLETESETPROFILEPARAMETERS_1, "TSY: CMmPacketQoSTsy::CompleteSetProfileParameters. Error: %{TSymbianErrorCodes}", aError );
 
     // Reset the request handle. 
     TTsyReqHandle reqHandle( iTsyReqHandleStore->ResetTsyReqHandle(
@@ -613,9 +614,11 @@ void CMmPacketQoSTsy::ReqCompleted(
         const TInt aError )     
        
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQCOMPLETED_1, "TSY: CMmPacketQoSTsy::Request Completed.  Handle: %d Error:%d", aTsyReqHandle, aError );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQCOMPLETED_1, "TSY: CMmPacketQoSTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", aTsyReqHandle, aError, this);
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );  
+
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETQOSTSY_REQCOMPLETED_2, "<-- TSY: CMmPacketQoSTsy::ReqCompleted");
     }
 
 #endif //TF_LOGGING_ENABLED

@@ -12,6 +12,10 @@
 //
 // Description:
 //
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "pdpmcprstatesTraces.h"
+#endif
 
 #include <etelqos.h>
 #include <comms-infras/ss_metaconnprov.h>
@@ -66,6 +70,8 @@ void CPdpErrorRecoveryActivity::TProcessErrorRecoveryReq::DoL()
 	TEErrorRecovery::TErrorRecoveryRequest& req = message_cast<TEErrorRecovery::TErrorRecoveryRequest>(iContext.iMessage);
 	TInt error = req.iErrContext.iStateChange.iError;
 
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPERRORRECOVERYACTIVITY_TPROCESSERRORRECOVERYREQ_DOL_1, "Error Recovery Req. Message Id [%d] Error Id [%d]", req.iErrContext.iMessageId.MessageId(), req.iErrContext.iStateChange.iError);
+
 #ifdef SYMBIAN_NETWORKING_CONTENTION_MANAGEMENT
 	if (req.iErrContext.iStateChange.iError == KErrUmtsMaxNumOfContextExceededByNetwork ||
 	    req.iErrContext.iStateChange.iError == KErrUmtsMaxNumOfContextExceededByPhone)
@@ -118,6 +124,7 @@ void CPdpErrorRecoveryActivity::TProcessContentionResult::DoL()
 	{
 	TPDPMessages::TPdpContentionResultMessage* msg = message_cast<TPDPMessages::TPdpContentionResultMessage>(&iContext.iMessage);
 	CPdpErrorRecoveryActivity& activity = static_cast<CPdpErrorRecoveryActivity&>(*iContext.iNodeActivity);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPERRORRECOVERYACTIVITY_TPROCESSCONTENTIONRESULT_DOL_1, "Contention Result Code [%d]", msg->iValue);
 	if (msg->iValue != 0)
 		{
 		TErrResponse retryResp(TErrResponse::ERetry, 0, activity.iCprMessageId);

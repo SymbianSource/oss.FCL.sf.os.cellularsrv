@@ -255,7 +255,7 @@ TInt CMmSmsTsy::ExtFunc(
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() &&
         !IsRequestPossibleInOffline( aIpc ) )  
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %{TIPCNamesList}", aIpc );
         TInt error = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral, 
                 KErrGsmOfflineOpNotAllowed );
 
@@ -306,7 +306,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_1, "TS
 
                 if ( KErrNone != leaveCode )
                     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_2, "CMmSmsTsy: Leave trapped!, IPC=%d, error value:%d", aIpc, leaveCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_EXTFUNC_2, "CMmSmsTsy: Leave trapped!, IPC=%{TIPCNamesList}, error value:%{TSymbianErrorCodes}", aIpc, leaveCode );
                     //reset request handle to indicate the request is no longer ongoing
 					iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
                     ReqCompleted( aTsyReqHandle, leaveCode );
@@ -344,6 +344,7 @@ TInt CMmSmsTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_DOEXTFUNCL_1, "TSY: CMmSmsTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
     TAny* dataPtr = aPackage.Ptr1();
     TAny* dataPtr2 = aPackage.Ptr2();
 
@@ -413,6 +414,7 @@ TInt CMmSmsTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_DOEXTFUNCL_2, "TSY: CMmSmsTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -1870,7 +1872,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_SENDMESSAGEL_1
 // --------------------------------------------------------------------------- 
 TBool CMmSmsTsy::IsRPError(TInt aError)
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ISRPERROR_1, "CMmSmsTsy::IsRPError(): %d", aError);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_ISRPERROR_1, "CMmSmsTsy::IsRPError(): %{TSymbianErrorCodes}", aError);
     
     TBool  isRPError = EFalse;
     switch (aError)
@@ -2096,7 +2098,7 @@ void CMmSmsTsy::DoSendSatMessageL(
 void CMmSmsTsy::CompleteSendSatMessage( 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETESENDSATMESSAGE_1, "TSY: CMmSmsTsy::CompleteSendSatMessage. Complete SAT SMS send Error: %d", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETESENDSATMESSAGE_1, "TSY: CMmSmsTsy::CompleteSendSatMessage. Complete SAT SMS send Error: %{TSymbianErrorCodes}", aError);
     iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeSmsSendSatMessage );
     
     if ( iTsySatMessaging )
@@ -2465,7 +2467,7 @@ void CMmSmsTsy::CompleteReadAllSmspPhase1(
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         EMultimodeSmsReadSmspListPhase1 );
     
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_1, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1 Complete read first phase error: %d",aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_1, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1 Complete read first phase error: %{TSymbianErrorCodes}",aError);
     if ( KErrNone == aError )
         {
         aDataPackage->UnPackData( &smsParams );
@@ -2491,7 +2493,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADAL
                 }
             else
                 {   
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_3, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1: Could not create SMSP list, trapError=%d",trapError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSTSY_COMPLETEREADALLSMSPPHASE1_3, "TSY: CMmSmsTsy::CompleteReadAllSmspPhase1: Could not create SMSP list, trapError=%{TSymbianErrorCodes}",trapError);
                 // Complete with error
                 ReqCompleted( reqHandle, trapError );
                 }

@@ -29,19 +29,15 @@
 #include <nifmbuf.h>
 #include <e32svr.h>
 #include <u32hal.h>
+#include <rawip_const.h>
 
 #include "Constants.h"
 #include "BcaIoController.h"
 #include "Sender.h"
 #include "Receiver.h"
 
+#ifndef __EABI__
 const TUint KDefaultSendQueueSize=5;
-
-#ifdef __EABI__
-// Patch data is used and KMaxTxIPPacketSize and KMaxRxIPPacketSize can be modified to a different value in RawIpNif.iby file
-extern const TInt KMaxSendQueueLen = KDefaultSendQueueSize;
-extern const TInt KMaxTxIPPacketSize = KMaxIPPacket + KIPTagHeaderLength;
-extern const TInt KMaxRxIPPacketSize = KMaxIPPacket + KIPTagHeaderLength;
 #endif
 
 CBcaIoController::CBcaIoController(MControllerObserver& aObserver)
@@ -90,10 +86,10 @@ void CBcaIoController::ConstructL()
 
 #if defined __EABI__
     // Default value for queue length
-    iMaxSendQueueLen = KMaxSendQueueLen;
+    iMaxSendQueueLen = RawIPConst::KMaxSendQueueLen;
     // Default value for Tx and Rx packet size
-    iMaxTxPacketSize = KMaxTxIPPacketSize;
-    iMaxRxPacketSize = KMaxRxIPPacketSize;
+    iMaxTxPacketSize = RawIPConst::KMaxTxIPPacketSize;
+    iMaxRxPacketSize = RawIPConst::KMaxRxIPPacketSize;
 #else // WINS
     // Set default values in case patch is not present in epocrawip.ini
     iMaxSendQueueLen = KDefaultSendQueueSize;    
@@ -107,7 +103,9 @@ void CBcaIoController::ConstructL()
 #endif
     
     // end note
-    
+    //explicit casts required otherwise compiler fails with ambiguous function calls
+    OstTraceDefExt3( OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_CONSTRUCTL_2, "CBcaIoController::ConstructL;iMaxSendQueueLen=%d;iMaxTxPacketSize=%d;iMaxRxPacketSize=%d", (TInt32)iMaxSendQueueLen, (TInt32)iMaxTxPacketSize, (TInt32)iMaxRxPacketSize );
+
     iSender = CSender::NewL(*this, iMaxTxPacketSize);
     iReceiver = CReceiver::NewL(*this, iMaxRxPacketSize);
     iLoader = new (ELeave) CBcaControl(*this);
@@ -138,6 +136,7 @@ CBcaIoController::~CBcaIoController()
 */	
 void CBcaIoController::SetBcaStackAndName(const TDesC& aBcaStack, const TDesC& aBcaName)
 	{
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCAIOCONTROLLER_SETBCASTACKANDNAME_1, "BcaStack [%S] BcaName [%S]", aBcaStack, aBcaName);
 	iBcaName.Set(aBcaName);
 	iBcaStack.Set(aBcaStack);
 	}
@@ -480,7 +479,7 @@ void CBcaControl::RunL()
  *  
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_1, "CBcaControl::RunL() called");
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_1, "RunL() called with iState [%d] iStatus [%d]", iState, iStatus.Int());
 	switch (iState)
 		{
 		//in this state, Ioctl is called to set IAP ID, check the result of
@@ -489,21 +488,13 @@ void CBcaControl::RunL()
 		case EIdling:
 			{
 			if(iStatus == KErrNone || iStatus == KErrNotSupported)
-				{
-				if(iStatus == KErrNotSupported)
-					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_2, "This BCA does not support IAPID set");
-					}
-				else
-					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_3, "This BCA supports IAPID set");
-					}
-				
+				{				
 				TPtrC bcaStack = iObserver.BcaStack();
 				if(bcaStack.Length())
 					{
 					TBuf8<KMaxName> remainingBcaStack8;
 					remainingBcaStack8.Copy(bcaStack);
+					OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_2, "Setting BCA Stack [%S]", bcaStack);
 					iMBca->Ioctl(iStatus, KBcaOptLevelGeneric,KBCASetBcaStack,remainingBcaStack8);
 					}
 				else
@@ -512,11 +503,10 @@ void CBcaControl::RunL()
 					User::RequestComplete(statusPtr,KErrNone);
 					}
 				iState = EIAPSet;
-				SetActive();	
+				SetActive();
 				}
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_4, "ERROR in BCA IAPID set = %d", iStatus.Int());
 				iObserver.Stop(iStatus.Int());
 				}
 			
@@ -529,21 +519,13 @@ void CBcaControl::RunL()
 			{
 			if(iStatus == KErrNotSupported || iStatus == KErrNone)
 				{
-				if(iStatus == KErrNotSupported)
-					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_5, "This BCA does not support BCA stacking");
-					}
-				else
-					{
-					OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_6, "This BCA supports BCA stacking");
-					}
+                OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_3, "Opening Port [%S]", iObserver.Port());
 				iMBca->Open(iStatus, iObserver.Port());
 				iState = EBcaStackSet;
 				SetActive();	
 				}
 			else
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_7, "ERROR in BCA stack set = %d", iStatus.Int());
 				iObserver.Stop(iStatus.Int());
 				}
 			break;
@@ -555,7 +537,6 @@ void CBcaControl::RunL()
 			{
 			if(iStatus != KErrNone && iStatus !=  KErrAlreadyExists)
 				{
-				OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_8, "ERROR in BCA Open = %d", iStatus.Int());
 				iObserver.Stop(iStatus.Int());
 				}
 			else
@@ -563,11 +544,11 @@ void CBcaControl::RunL()
                 iState = EBcaOpened;
                 //Activate the receiver Active Object
 				iObserver.Receiver().StartListening();
-				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_9, "CBcaIoController Is Initialised");
+				OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_4, "CBcaIoController Is Initialised");
 				TRAPD(err, iObserver.GetObserver().InitialiseL(MRawIPObserverBase::EBcaController,KErrNone));
 				if(err != KErrNone)
 					{
-					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_10, "ERROR in BCA Open Initialise observer = %d", err);
+					OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_5, "ERROR in BCA Open Initialise observer = %d", err);
 					iObserver.Stop(err);
 					}
 				}
@@ -579,14 +560,15 @@ void CBcaControl::RunL()
 			{
 			// linklayer shutdown
 			iState = EIdling;
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_6, "Shutting down with error = %d", iError);
 			iObserver.GetObserver().ShutDown(MControllerObserver::EBcaController, iError);
 			break;
 			}
 		// Wrong state.
 		default:
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_11, "ERROR CBcaControl::RunL(): Unknown state");
-	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_12, "PANIC: %S %d", KNifName, KBcaUnkownState);
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_7, "ERROR CBcaControl::RunL(): Unknown state");
+	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_RUNL_8, "PANIC: %S %d", KNifName, KBcaUnkownState);
 	        User::Panic(KNifName, KBcaUnkownState);
 			break;
 			}
@@ -599,8 +581,7 @@ void CBcaControl::DoCancel()
  *	cancel active request. 
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_1, "CBcaControl::DoCancel called.");
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_2, "iState value is %d", iState);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_1, "Cancel called with iState value [%d]", iState);
 	switch (iState)
 		{
 		case EIdling:
@@ -616,13 +597,13 @@ void CBcaControl::DoCancel()
             iState = EIdling;		    
             break;    
 		default:
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_3, "ERROR CBcaControl::DoCancel(): Unknown state");
-	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_4, "PANIC: %S %d", KNifName, KBcaUnkownState);
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_2, "ERROR CBcaControl::DoCancel(): Unknown state");
+	        OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_DOCANCEL_3, "PANIC: %S %d", KNifName, KBcaUnkownState);
 	        User::Panic(KNifName, KBcaUnkownState);
 			break;
 		}
 	}
-	
+
 void CBcaControl::StartLoadL()
 /**
  *  This method loads the C32BCA library and uses Ioctl to set the Bca iIapId. 
@@ -668,6 +649,7 @@ void CBcaControl::StartLoadL()
 	
 	iObserver.SetBca(iMBca); //Pass BCA pointer.
 
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_STARTLOADL_4, "Setting IAP Id [%d]", iObserver.IapId());
 	TPckg<TUint32> aOpt(iObserver.IapId());
 	iMBca->Ioctl(iStatus,KBcaOptLevelGeneric,KBCASetIapId,aOpt);
 	
@@ -685,7 +667,8 @@ void CBcaControl::ShutdownBca(TInt aError)
 	{
 	__ASSERT_DEBUG(iMBca,Panic(KBcaNotExist));
 	Cancel();
-        
+
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CBCACONTROL_SHUTDOWNBCA_4, "Error Code [%d]", aError);
     //We should only call shutdown or close if we have successfully opened a BCA Channel
     if((iMBca) && (EBcaOpened == iState))
         {

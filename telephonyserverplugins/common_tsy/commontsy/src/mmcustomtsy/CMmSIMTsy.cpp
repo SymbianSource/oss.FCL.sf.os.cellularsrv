@@ -64,7 +64,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_1, 
         ( KPhEngMaxViagHomeZones * KPhEngMaxCacheId ) ); );
     if ( leaveCode )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_2, "TSY: CMmSIMTsy::ConstructL: Could not construct o2 HomeZone dynamic cache, error=%d", leaveCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_CONSTRUCTL_2, "TSY: CMmSIMTsy::ConstructL: Could not construct o2 HomeZone dynamic cache, error=%{TSymbianErrorCodes}", leaveCode);
         iViagDynamicCache = NULL;
         }
     else
@@ -155,7 +155,7 @@ TInt CMmSIMTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DOEXTFUNCL_1, "TSY: CMmSIMTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DOEXTFUNCL_1, "TSY: CMmSIMTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, aTsyReqHandle, (TUint)this);
     TInt ret( KErrGeneral );
 
     // Ensure the ReqHandleType is unset.
@@ -220,6 +220,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DOEXTFUNCL_
         iReqHandleType = ESIMTsyReqHandleUnknown;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DOEXTFUNCL_2, "<-- TSY: CMmSIMTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -459,7 +460,7 @@ void CMmSIMTsy::CompleteReadViagHomeZoneParamsResp(
     RMmCustomAPI::TViagElements* aElems, 
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_1, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - aError: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_1, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - aError: %{TSymbianErrorCodes}", aError );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeReadParams );
     if ( ESIMTsyReqHandleUnknown != reqHandle )
@@ -474,14 +475,14 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVI
             for ( TUint8 i = 0; i < RMmCustomAPI::KViagElementCount; i++ )
                 {
                 iViagElems[ i ].iCoordinates.iX = aElems->At(i).iCoordinates.iX;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_5, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iX: %d", i, aElems->At(i).iCoordinates.iX );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_5, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iX: %d", (TUint)i, aElems->At(i).iCoordinates.iX );
 
                 iViagElems[ i ].iCoordinates.iY = aElems->At(i).iCoordinates.iY;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_6, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iY: %d", i, aElems->At(i).iCoordinates.iY );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_6, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iY: %d", (TUint)i, aElems->At(i).iCoordinates.iY );
 
                 iViagElems[ i ].iCoordinates.iR2 = aElems->
                     At(i).iCoordinates.iR2;
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_7, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iR2: %d", i, aElems->At(i).iCoordinates.iR2 );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONEPARAMSRESP_7, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneParamsResp - Element: %d, iR2: %d", (TUint)i, aElems->At(i).iCoordinates.iR2 );
 
                 iViagElems[ i ].iCoordinates.iZoneId = aElems->
                     At(i).iCoordinates.iZoneId;
@@ -660,7 +661,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVI
             // caching aborted
         delete iCurrentlyRetrievedCache;
         iCurrentlyRetrievedCache = NULL;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_5, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:There was a problem reading cache values from SIM, error=%d", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_5, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL:There was a problem reading cache values from SIM, error=%{TSymbianErrorCodes}", aError);
             //iViagHomeZoneCacheReady = ETrue;
 OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEREADVIAGHOMEZONECACHERESPL_6, "TSY: CMmSIMTsy::CompleteReadViagHomeZoneCacheRespL: Caching completed unsuccessfully!");
 
@@ -874,7 +875,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEWRITEV
 void CMmSIMTsy::CompleteWriteViagHomeZoneUHZIUESettingsResp(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEWRITEVIAGHOMEZONEUHZIUESETTINGSRESP_1, "TSY: CMmSIMTsy::CompleteWriteViagHomeZoneUHZIUESettingsResp error = %d",aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEWRITEVIAGHOMEZONEUHZIUESETTINGSRESP_1, "TSY: CMmSIMTsy::CompleteWriteViagHomeZoneUHZIUESettingsResp error = %{TSymbianErrorCodes}",aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeWriteSettings );
 
@@ -927,7 +928,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCA
         RMmCustomAPI::TViagCacheRecordId(); );
     if ( trapError )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_3, "TSY: CMmSIMTsy::StartDynamicCachingL:Could not start caching, error=%d", trapError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_3, "TSY: CMmSIMTsy::StartDynamicCachingL:Could not start caching, error=%{TSymbianErrorCodes}", trapError);
         return;
     }
 OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_STARTDYNAMICCACHINGL_4, "TSY: CMmSIMTsy::StartDynamicCachingL:Starting caching now.");
@@ -1193,7 +1194,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_DELETESIMCBTOP
 void CMmSIMTsy::CompleteDeleteSimCbTopic(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEDELETESIMCBTOPIC_1, "TSY: CMmSIMTsy::CompleteDeleteSimCbTopic- aError: %d", aError);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETEDELETESIMCBTOPIC_1, "TSY: CMmSIMTsy::CompleteDeleteSimCbTopic- aError: %{TSymbianErrorCodes}", aError);
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ESIMRequestTypeDeleteSimCbTopic );
 
@@ -1303,7 +1304,7 @@ void CMmSIMTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETE_1,  "CustomTSY: CMmSIMTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMTSY_COMPLETE_1,  "CustomTSY: CMmSIMTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%{TSymbianErrorCodes}\n", aReqHandleType, aError );
 
     // All possible TSY req handle types are listed in the
     // switch case below.

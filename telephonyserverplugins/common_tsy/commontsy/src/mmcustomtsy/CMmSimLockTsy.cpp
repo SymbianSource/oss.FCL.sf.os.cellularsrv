@@ -121,23 +121,30 @@ TInt CMmSimLockTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMLOCKTSY_DOEXTFUNCL_1, "TSY: CMmSimLockTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, aTsyReqHandle, (TUint)this);
+    TInt ret(KErrNone);
+
     switch ( aIpc )
         {
         case ECustomSimLockActivateIPC:
-            return ActivateSimLockL( aTsyReqHandle, 
+            ret = ActivateSimLockL( aTsyReqHandle, 
                 REINTERPRET_CAST( RMmCustomAPI::TSimLockPassword*,
                     aPackage.Ptr1() ),
                 REINTERPRET_CAST( RMmCustomAPI::TLockNumber*,
                     aPackage.Ptr2() ) );
+            break;
         case ECustomSimLockDeActivateIPC:   
-            return DeActivateSimLockL( aTsyReqHandle, 
+            ret = DeActivateSimLockL( aTsyReqHandle, 
                 REINTERPRET_CAST( RMmCustomAPI::TSimLockPassword*,
                     aPackage.Ptr1() ),
                 REINTERPRET_CAST( RMmCustomAPI::TLockNumber*,
                     aPackage.Ptr2() ) );
+            break;
         default:
-            return KErrNotSupported;
+            ret = KErrNotSupported;
         }
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMLOCKTSY_DOEXTFUNCL_2, "TSY: CMmSimLockTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
+	return ret;
     }
     
 // ---------------------------------------------------------------------------
@@ -453,7 +460,7 @@ void CMmSimLockTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMLOCKTSY_COMPLETE_1,  "CMmCustomTsy: CMmSimLockTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSIMLOCKTSY_COMPLETE_1,  "CMmCustomTsy: CMmSimLockTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%{TSymbianErrorCodes}\n", aReqHandleType, aError );
 
     // All possible TSY req handle types are listed in the
     // switch case below.

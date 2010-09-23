@@ -98,7 +98,7 @@ void CMmMessageRouterProxy::Complete(
     CMmDataPackage* aData, 
     TInt aResult )
 	{
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_COMPLETE_1, "TSY: CMmMessageRouterProxy::Complete. IPC = %d, result: %d", aIpc, aResult);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_COMPLETE_1, "TSY: CMmMessageRouterProxy::Complete. IPC = %{TIPCNamesList}, result: %d", aIpc, aResult);
 	RouteCompletion( aIpc, aData, aResult ); 
 	}
 	
@@ -126,7 +126,9 @@ EXPORT_C void CMmMessageRouterProxy::RouteCompletion(
     CMmDataPackage* aDataPackage,
     TInt aResult )
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETION_1, "CMmMessageRouterProxy::RouteCompletion. IPC:%{TIPCNamesList} Result:%d Object:0x%08x", (TUint)aIpc, aResult, (TUint)this);
     TRAP_IGNORE( RouteCompletionL( aIpc, aDataPackage, aResult ) );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEROUTERPROXY_ROUTECOMPLETION_2, "<-- CMmMessageRouterProxy::RouteCompletion" );
     }
 
 // ---------------------------------------------------------------------------

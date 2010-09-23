@@ -167,13 +167,15 @@ CPDPDefaultSubConnectionProvider::CPDPDefaultSubConnectionProvider(ESock::CSubCo
 	iAuthDialog(NULL)
     {
     LOG_NODE_CREATE1(KPDPSCprSubTag, CPDPDefaultSubConnectionProvider, " [factory=%08x]", &aFactory)
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_CTOR_1, "Constructor");
     __FLOG_OPEN(KCFNodeTag, KPDPSCprSubTag);
     }
 
 CPDPDefaultSubConnectionProvider::~CPDPDefaultSubConnectionProvider()
     {
 	LOG_NODE_DESTROY(KPDPSCprSubTag, CPDPDefaultSubConnectionProvider)
-    __FLOG_CLOSE;
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_DTOR_1, "Destructor");
+	__FLOG_CLOSE;
 	delete iAuthDialog;
     }
 
@@ -200,6 +202,7 @@ void CPDPDefaultSubConnectionProvider::ConstructL()
 
 void CPDPDefaultSubConnectionProvider::PdpFsmAllContextEvent(TInt aNotification, TInt /*aParam*/)
     {
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_PDPFSMALLCONTEXTEVENT_1, "Notification Id [%d]", aNotification);
     if (aNotification == KNetworkStatusEvent)
         {
         TPDPMessages::TPDPFSMMessage statusMsg(KNetworkStatusEvent, KErrNone);
@@ -211,6 +214,7 @@ void CPDPDefaultSubConnectionProvider::LinkUp()
     {
     if (iLinkUps++ == 0)
         {
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_LINKUP_1, "Sending KLinkLayerOpen message to control client/provider");
 		TCFMessage::TStateChange msg(Elements::TStateChange(KLinkLayerOpen, KErrNone));
 		//Forward to control clients if there are any
 		TInt ctrlClientCount = PostToClients<TDefaultClientMatchPolicy>(Id(), msg, TClientType(TCFClientType::ECtrl));
@@ -225,6 +229,7 @@ void CPDPDefaultSubConnectionProvider::LinkDown(TInt aCause)
     {
     if (++iLinkDowns-iLinkUps == 0 || iLinkUps == 0)
         {
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_LINKDOWN_1, "Sending KLinkLayerClosed message to control provider");
         ControlProvider()->PostMessage(Id(),
             TCFMessage::TStateChange(Elements::TStateChange(KLinkLayerClosed, aCause)).CRef());
         }
@@ -243,6 +248,7 @@ void CPDPDefaultSubConnectionProvider::SendDataClientIdleIfNoSubconnsAndNoClient
 			RNodeInterface* cp = ControlProvider();
 			if (cp)
 				{ //If there is no Control Provider we probably are an MCPR/Tier Manager/etc
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_SENDDATACLIENTIDLE_1, "Sending Idle message to control provider");
 				cp->PostMessage(Id(), TCFControlProvider::TIdle().CRef());
 				}
 			return;
@@ -266,6 +272,7 @@ void CPDPDefaultSubConnectionProvider::SendDataClientIdleIfNoSubconnsAndNoClient
 			RNodeInterface* dc;
 			while ((dc = dciter[i++]) != NULL)
 				{
+                OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_SENDDATACLIENTIDLE_2, "Sending Idle message");
 				dc->PostMessage(Id(), TCFControlProvider::TIdle().CRef());
 				}
 			}
@@ -323,6 +330,8 @@ RPacketContext::TProtocolConfigOptionV2* CPDPDefaultSubConnectionProvider::Proto
         {
         User::Leave(KErrCorrupt);
         }
+
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPDEFAULTSUBCONNECTIONPROVIDER_PROTOCOLCONFIGOPTIONL_1, "Return pointer to TProtocolConfigOptionV2 of UMTS GPRS release [%d]", gprsProvision->UmtsGprsRelease());
 
     RPacketContext::TProtocolConfigOptionV2* configOption=NULL;
 

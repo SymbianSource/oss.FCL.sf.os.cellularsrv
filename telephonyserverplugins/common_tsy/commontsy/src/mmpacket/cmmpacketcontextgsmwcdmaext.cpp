@@ -291,7 +291,7 @@ void CMmPacketContextGsmWcdmaExt::CompleteActivate(
         CMmDataPackage* aDataPackage,
         TInt aResult ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATE_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. Status: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATE_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. Status: %{TSymbianErrorCodes}",aResult );
 
     if ( KErrNone == aResult )
         {
@@ -337,7 +337,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMA
         }
     else
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATE_2,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. ErrorCause: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEACTIVATE_2,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteActivate. ErrorCause: %{TSymbianErrorCodes}",aResult );
         // Re-activation is allowed because activation has not succeeded
         iIsActivateAllowed = ETrue;
         }
@@ -649,7 +649,7 @@ void CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferred(
         {
         errorValue = KErrGeneral;
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEGETDATAVOLUMETRANSFERRED_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferred. Error Value:%d",errorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTGSMWCDMAEXT_COMPLETEGETDATAVOLUMETRANSFERRED_1,  "TSY: CMmPacketContextGsmWcdmaExt::CompleteGetDataVolumeTransferred. Error Value:%{TSymbianErrorCodes}",errorValue );
 
     iMmPacketContextTsy->CompleteGetDataVolumeTransferred( errorValue );
 

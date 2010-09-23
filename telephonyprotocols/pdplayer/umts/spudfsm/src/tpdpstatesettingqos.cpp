@@ -19,8 +19,6 @@
  @file 
  @internalComponent
 */
- 
-
 
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
@@ -34,26 +32,19 @@
 
 TInt TPdpStateSettingQoS::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGQOS_INPUT_1, ">>TPdpStateSettingQoS::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGQOS_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::EQoSSet:
 		aFsm.ChangeStateToCreatedSecondary();
 		SpudManNotify(aFsm, KContextQoSSetEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGQOS_INPUT_3, "<<TPdpStateSettingQoS::Input()");
 		return KErrNone;
 	case PdpFsm::EQoSSetFailed:
 		aFsm.ChangeStateToCreatedSecondary();
 		SpudManNotify(aFsm, KContextQoSSetEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGQOS_INPUT_4, "<<TPdpStateSettingQoS::Input()");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGQOS_INPUT_1, "*** QOS SET FAILED ***()");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESETTINGQOS_INPUT_5, "<<TPdpStateSettingQoS::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
-
-

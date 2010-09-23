@@ -216,7 +216,7 @@ TInt CMmCustomTsy::ExtFunc(
     if ( ERfsStateInfoInactive == iMmPhoneTsy->GetRfStateInfo() &&
         !IsRequestPossibleInOffline( aIpc ) )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %{TIPCNamesList}", aIpc );
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral,
                 KErrGsmOfflineOpNotAllowed );
 
@@ -255,6 +255,7 @@ TInt CMmCustomTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DOEXTFUNCL_1, "TSY: CMmCustomTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", aIpc, (TUint)aTsyReqHandle, (TUint)this);
     TInt ret( KErrNotSupported );
 
     // first check if request is supported in CMmSecurityTsy
@@ -550,7 +551,7 @@ TInt CMmCustomTsy::DoExtFuncL(
                     break;
                 default:
                     // ret is already set as KErrNotSupported
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DOEXTFUNCL_1, "TSY: CMmCustomTsy::DoExtFuncL unsupported ipc=%d", aIpc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DOEXTFUNCL_2, "TSY: CMmCustomTsy::DoExtFuncL unsupported ipc=%{TIPCNamesList}", aIpc);
                     break;
                 }
 
@@ -571,6 +572,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DOEXTFUNCL_
             }
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_DOEXTFUNCL_3, "<-- TSY: CMmCustomTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -806,7 +808,7 @@ TInt CMmCustomTsy::NumberOfSlotsL(
 TSecurityPolicy CMmCustomTsy::GetRequiredPlatSecCaps(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_1,  "TSY: CMmCustomTsy::GetRequiredPlatSecCaps ipc=%d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_1,  "TSY: CMmCustomTsy::GetRequiredPlatSecCaps ipc=%{TIPCNamesList}", aIpc );
     // assume fail as default return value
     TSecurityPolicy policy( TSecurityPolicy::EAlwaysFail );
 
@@ -815,7 +817,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIRED
     if (ipc >= KIpcCustomExt + EMobileCancelOffset)
         {
         ipc  -= EMobileCancelOffset;
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_2, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps cancel for ipc=%d", ipc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETREQUIREDPLATSECCAPS_2, "TSY: CMmCustomTsy::GetRequiredPlatSecCaps cancel for ipc=%{TIPCNamesList}", ipc);
         }
 
     switch ( ipc )
@@ -2337,7 +2339,7 @@ TInt CMmCustomTsy::TerminateCallL(
 void CMmCustomTsy::CompleteTerminateCall(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETETERMINATECALL_1,  "TSY: CMmCustomTsy::CompleteTerminateCall - aError: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETETERMINATECALL_1,  "TSY: CMmCustomTsy::CompleteTerminateCall - aError: %{TSymbianErrorCodes}", aError );
 
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2481,7 +2483,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGN
                     break;
                 }
             }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_2,  "TSY: CMmCustomTsy::GetDiagnosticInfo - ReqCompleted - Error code: %d", errorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_2,  "TSY: CMmCustomTsy::GetDiagnosticInfo - ReqCompleted - Error code: %{TSymbianErrorCodes}", errorValue );
         // complete errorvalue to client  - inform change  
         ReqCompleted( aTsyReqHandle, errorValue ); 
         }
@@ -2491,7 +2493,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOST
 OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_3, "TSY: CMmCustomTsy::GetDiagnosticInfo - Call is not found");
         ReqCompleted( aTsyReqHandle, KErrNotFound );
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_4,  "TSY: CMmCustomTsy::GetDiagnosticInfo - Error code: %d", errorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETDIAGNOSTICINFO_4,  "TSY: CMmCustomTsy::GetDiagnosticInfo - Error code: %{TSymbianErrorCodes}", errorValue );
    
     return KErrNone;
     }
@@ -2631,7 +2633,7 @@ void CMmCustomTsy::CompleteGetAlsBlocked(
     RMmCustomAPI::TGetAlsBlockStatus  aBlockStatus,
     TInt aErrorCode )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSBLOCKED_1,  "TSY: CMmCustomTsy::CompleteGetAlsBlocked - Block status: %d, Error code: %d", aBlockStatus, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSBLOCKED_1,  "TSY: CMmCustomTsy::CompleteGetAlsBlocked - Block status: %d, Error code: %{TSymbianErrorCodes}", aBlockStatus, aErrorCode );
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         ECustomTsyGetAlsBlocked );
@@ -2783,7 +2785,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETALSBL
 void CMmCustomTsy::CompleteSetAlsBlocked(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETALSBLOCKED_1,  "TSY: CMmCustomTsy::CompleteSetAlsBlocked - Error code: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETALSBLOCKED_1,  "TSY: CMmCustomTsy::CompleteSetAlsBlocked - Error code: %{TSymbianErrorCodes}", aErrorCode );
     // get reaq handle for NotifyAlsBlockedChanged
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle(
         ECustomTsyNotifyAlsBlockedChanged );
@@ -2987,7 +2989,7 @@ void CMmCustomTsy::CompleteGetAlsPpSupport(
     RMmCustomAPI::TAlsSupport aAlsSupport,
     TInt aErrorCode )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSPPSUPPORT_1,  "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS support: %d, Error: %d", aAlsSupport, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETALSPPSUPPORT_1,  "TSY: CMmCustomTsy::CompleteGetAlsPpSupport - ALS support: %d, Error: %{TSymbianErrorCodes}", aAlsSupport, aErrorCode );
     TBool status = EFalse;
     
     // Check if the get was called internally during boot
@@ -3523,7 +3525,7 @@ void CMmCustomTsy::Complete(
     TInt aError,
     TInt aIPC )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETE_1,  "TSY: CMmCustomTsy::Complete - ReqHandleType: %d Error: %d", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETE_1,  "TSY: CMmCustomTsy::Complete - ReqHandleType: %d Error: %{TSymbianErrorCodes}", aReqHandleType, aError );
     TBool subTsyReqFound = EFalse;
     TInt max = GetMaxNumberOfSubsystems();
     CMmSubTsyBase** subTsyPtr = GetSubsystemArrayPtr();
@@ -4679,7 +4681,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_RESETNETSER
 void CMmCustomTsy::CompleteResetNetServer(
     TInt aErrorValue )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERESETNETSERVER_1, "TSY: CMmCustomTsy::CompleteResetNetServer - Error: %d", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERESETNETSERVER_1, "TSY: CMmCustomTsy::CompleteResetNetServer - Error: %{TSymbianErrorCodes}", aErrorValue );
     // reset the reqhandle
     TTsyReqHandle tsyReqHandle =
         iTsyReqHandleStore->ResetTsyReqHandle( ECustomTsyResetNetServer );
@@ -4695,7 +4697,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERES
             aErrorValue = KErrNotReady; 
             }
             
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERESETNETSERVER_2, "TSY: CMmCustomTsy::CompleteResetNetServer - complete with error value: %d", aErrorValue );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETERESETNETSERVER_2, "TSY: CMmCustomTsy::CompleteResetNetServer - complete with error value: %{TSymbianErrorCodes}", aErrorValue );
         ReqCompleted( tsyReqHandle, aErrorValue );
         }
     }
@@ -5426,7 +5428,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_SETDRIVE
 void CMmCustomTsy::CompleteSetDriveMode(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETDRIVEMODE_1,  "TSY: CMmCustomTsy::CompleteSetDriveMode - Error code: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETESETDRIVEMODE_1,  "TSY: CMmCustomTsy::CompleteSetDriveMode - Error code: %{TSymbianErrorCodes}", aErrorCode );
 	if ( (iUsingFeatureManager) && (iFeatureControl.FeatureSupported(NFeature::KDriveModeCanRestrictMtCalls) == KFeatureSupported) )
         {
         //Reset req handle, returns the deleted req handle
@@ -5922,7 +5924,7 @@ void CMmCustomTsy::CompleteNotifyHSxPAStatus(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYHSXPASTATUS_1, "TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, Error: %d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYHSXPASTATUS_1, "TSY: CMmCustomTsy::CompleteNotifyHSxPAStatus, Error: %{TSymbianErrorCodes}", aErrorCode);
 
     RMmCustomAPI::THSxPAStatus status;
     aDataPackage->UnPackData( status );
@@ -6044,7 +6046,7 @@ void CMmCustomTsy::CompleteGetIccCallForwardingStatus(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_1, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus, aErrorCode=%d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETICCCALLFORWARDINGSTATUS_1, "TSY: CMmCustomTsy::CompleteGetIccCallForwardingStatus, aErrorCode=%{TSymbianErrorCodes}", aErrorCode );
 
     //reset req handle.
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6185,7 +6187,7 @@ void CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange(
     CMmDataPackage* aDataPackage,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYICCCALLFORWARDINGSTATUSCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange, Error: %d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYICCCALLFORWARDINGSTATUSCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyIccCallForwardingStatusChange, Error: %{TSymbianErrorCodes}", aErrorCode);
 
     RMmCustomAPI::TCFIndicators tempNotifyCFIndicator;
     aDataPackage->UnPackData( tempNotifyCFIndicator );
@@ -6383,7 +6385,7 @@ void CMmCustomTsy::CompleteGetCellInfo(
     RMmCustomAPI::TMmCellInfo* aCellInfo,
     TInt aErrorValue )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETCELLINFO_1, "TSY: CMmCustomTsy::CompleteGetCellInfo - aErrorValue %d", aErrorValue);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETEGETCELLINFO_1, "TSY: CMmCustomTsy::CompleteGetCellInfo - aErrorValue %{TSymbianErrorCodes}", aErrorValue);
 
     // reset the req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6444,7 +6446,7 @@ void CMmCustomTsy::CompleteNotifyCellInfoChange(
     RMmCustomAPI::TMmCellInfo* aCellInfo,
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYCELLINFOCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyCellInfoChange Error: %d", aErrorCode);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_COMPLETENOTIFYCELLINFOCHANGE_1, "TSY: CMmCustomTsy::CompleteNotifyCellInfoChange Error: %{TSymbianErrorCodes}", aErrorCode);
 
     // Check if notification was requested
 	TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -6532,9 +6534,11 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_GETPHONEBOO
 void CMmCustomTsy::ReqCompleted( const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_REQCOMPLETED_1, "TSY: CMmCustomTsy::ReqCompleted, aTsyReqHandle=%d, aError=%d", aTsyReqHandle, aError );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_REQCOMPLETED_1, "TSY: CMmCustomTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", (TUint)aTsyReqHandle, aError, (TUint)this);
 
 	CTelObject::ReqCompleted ( aTsyReqHandle, aError );
+
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMTSY_REQCOMPLETED_2, "<-- TSY: CMmCustomTsy::ReqCompleted");
 	}
 
 // ---------------------------------------------------------------------------

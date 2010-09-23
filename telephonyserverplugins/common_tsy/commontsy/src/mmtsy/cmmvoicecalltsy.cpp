@@ -124,7 +124,7 @@ TInt CMmVoiceCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXTFUNCL_1, "TSY: CMmVoiceCallTsy::DoExtFuncL. IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXTFUNCL_1, "TSY: CMmVoiceCallTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TInt)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret( KErrNone );
 
@@ -259,6 +259,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXT
             ret = KErrNotSupported;
             break;
         }
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXTFUNCL_2, "TSY: CMmVoiceCallTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -272,7 +273,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DOEXT
 CTelObject::TReqMode CMmVoiceCallTsy::ReqModeL(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_REQMODEL_1, "TSY: CMmVoiceCallTsy::ReqModeL. IPC:%d",aIpc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_REQMODEL_1, "TSY: CMmVoiceCallTsy::ReqModeL. IPC:%{TIPCNamesList}",aIpc);
 
     CTelObject::TReqMode ret( 0 ); // default return value
     
@@ -516,7 +517,7 @@ TInt CMmVoiceCallTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_CANCELSERVICE_1, "TSY: CMmVoiceCallTsy::CancelService. IPC: %d, Req handle: %d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_CANCELSERVICE_1, "TSY: CMmVoiceCallTsy::CancelService. IPC: %{TIPCNamesList}, Req handle: %d", (TUint)aIpc, (TUint)aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -637,7 +638,7 @@ void CMmVoiceCallTsy::CompleteNotifyStatusChange(
         callDataPackage->GetCallIdAndMode( callId, callMode ); 
         callDataPackage->UnPackData( callStatus );
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. aResult:%d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. aResult:%{TSymbianErrorCodes}", aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmVoiceCallTsy::CompleteNotifyStatusChange. Call status:%d Call name:%S", callStatus, iCallName);
 
         TTsyReqHandle holdHandle = 
@@ -1434,7 +1435,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_11,
                 // complete the dial with error value 
                 if ( KErrNone != ret )
                     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_12, "TSY: CMmVoiceCallTsy::Dial - UUS ERROR:%d", ret );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIAL_12, "TSY: CMmVoiceCallTsy::Dial - UUS ERROR:%{TSymbianErrorCodes}", ret );
                     // Complete the request with appropiate error
                     ReqCompleted ( aTsyReqHandle, KErrGsmCCResourceNotAvailable );
                     ClearCallStatus(); 
@@ -1790,7 +1791,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_HANGU
 void CMmVoiceCallTsy::CompleteHangUp(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEHANGUP_1, "TSY: CMmVoiceCallTsy::CompleteHangUp.\n  \t\t\t Result:%d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEHANGUP_1, "TSY: CMmVoiceCallTsy::CompleteHangUp.\n  \t\t\t Result:%{TSymbianErrorCodes}", aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEHANGUP_2, "TSY: CMmVoiceCallTsy::CompleteHangUp. Call Id:%d Call name:%S", iCallId, iCallName);
 
     TInt ret( KErrNone );
@@ -2211,7 +2212,7 @@ TInt CMmVoiceCallTsy::DialEmergencyCall(
 void CMmVoiceCallTsy::CompleteDialEmergencyCall(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEDIALEMERGENCYCALL_1, "TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Result:%d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEDIALEMERGENCYCALL_1, "TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Result:%{TSymbianErrorCodes}", aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_COMPLETEDIALEMERGENCYCALL_2, "TSY: CMmVoiceCallTsy::CompleteDialEmergencyCall. Call Id:%d Call name:%S", iCallId, iCallName);
 
     //reset req handle. Returns the deleted req handle
@@ -2340,7 +2341,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBI
         iMmCallExtInterface->FillMobileCallInfoV8( &info );
         }
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_7, "TSY: CMmVoiceCallTsy::FillMobileCallInfo end. ret=%d",ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_FILLMOBILECALLINFO_7, "TSY: CMmVoiceCallTsy::FillMobileCallInfo end. ret=%{TSymbianErrorCodes}",ret);
       
     return ret;
     }
@@ -2872,7 +2873,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFD
 	                iCallMode, paramsPckgV1, aTelNumber, 
 	                KMultimodeCallTypeIDNoFdnCheck ));
 	                
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_4, "TSY: CMmVoiceCallTsy::DialNoFdnCheck ret = %d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_4, "TSY: CMmVoiceCallTsy::DialNoFdnCheck ret = %{TSymbianErrorCodes}", ret);
 			if(err != KErrNone)
 				{
 				ret = err;
@@ -2900,7 +2901,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFD
 	            }
 			else
             	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_5, "TSY: CMmVoiceCallTsy::DialNoFdnCheck Before ReqCompleted ret = %d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMVOICECALLTSY_DIALNOFDNCHECK_5, "TSY: CMmVoiceCallTsy::DialNoFdnCheck Before ReqCompleted ret = %{TSymbianErrorCodes}", ret);
             	ReqCompleted( aTsyReqHandle, ret );
             	ClearCallStatus();
             	SetDialFlag(EFalse);

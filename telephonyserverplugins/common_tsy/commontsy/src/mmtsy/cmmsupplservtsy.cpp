@@ -132,6 +132,7 @@ TInt CMmSupplServTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage ) 
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_DOEXTFUNCL_1, "TSY: CMmSupplServTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
     TInt ret = KErrNone;
     TAny* dataPtr = aPackage.Ptr1();
     TAny* dataPtr2 = aPackage.Ptr2();
@@ -328,6 +329,7 @@ TInt CMmSupplServTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_DOEXTFUNCL_2, "TSY: CMmSupplServTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -2012,7 +2014,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCME
 			        ret = ReadIccMessageWaitingIndicatorsFromCentRep( 
 			            iMessageWaiting );
 			        
-			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSL_3, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, Error during the reading from CentRep:%d", ret);
+			OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_GETICCMESSAGEWAITINGINDICATORSL_3, "TSY: CMmSupplServTsy::GetIccMessageWaitingIndicatorsL, Error during the reading from CentRep:%{TSymbianErrorCodes}", ret);
 				
 				   	if ( KErrNone == ret )
 				   		{
@@ -2057,7 +2059,7 @@ void CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators(
     RMobilePhone::TMobilePhoneMessageWaitingV1* aMessageWaiting, 
     TInt aErrorCode )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_1, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, bootup=%d, Error: %d", iGetIccSupportAtBoot, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_1, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, bootup=%d, Error: %{TSymbianErrorCodes}", iGetIccSupportAtBoot, aErrorCode );
              
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2126,7 +2128,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETE
             iMessageWaiting.iDisplayStatus = aMessageWaiting->iDisplayStatus;
             aErrorCode = iMwisCentRep->Set( KCtsyMessageWaitingDisplayStatus, 
                 aMessageWaiting->iDisplayStatus );
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_4, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, CPHS bootup, status=%d, error=%d ", aMessageWaiting->iDisplayStatus, aErrorCode );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETEGETICCMESSAGEWAITINGINDICATORS_4, "TSY: CMmSupplServTsy::CompleteGetIccMessageWaitingIndicators, CPHS bootup, status=%d, error=%{TSymbianErrorCodes} ", aMessageWaiting->iDisplayStatus, aErrorCode );
             }
         else
             {
@@ -2260,7 +2262,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_SETICCME
 void CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators( 
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESETICCMESSAGEWAITINGINDICATORS_1, "TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESETICCMESSAGEWAITINGINDICATORS_1, "TSY: CMmSupplServTsy::CompleteSetIccMessageWaitingIndicators, Error: %{TSymbianErrorCodes}", aErrorCode );
    
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle(
@@ -2379,7 +2381,7 @@ void CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange(
     RMobilePhone::TMobilePhoneMessageWaitingV1* aMessageWaiting,
     TInt& aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYICCMESSAGEWAITINGINDICATORCHANGE_1, "TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange, error:%d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYICCMESSAGEWAITINGINDICATORCHANGE_1, "TSY: CMmSupplServTsy::CompleteNotifyIccMessageWaitingIndicatorChange, error:%{TSymbianErrorCodes}", aErrorCode );
     
     if ( IsMwisInfoChanged( *aMessageWaiting ) )
         {
@@ -2650,7 +2652,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYSE
 void CMmSupplServTsy::CompleteSendNetworkServiceRequestInd(
     TInt aErrorCode, CMmDataPackage* aDataPackage  )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESENDNETWORKSERVICEREQUESTIND_1, "TSY: CMmSupplServTsy::CompleteSendNetworkServiceRequestInd. Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETESENDNETWORKSERVICEREQUESTIND_1, "TSY: CMmSupplServTsy::CompleteSendNetworkServiceRequestInd. Error: %{TSymbianErrorCodes}", aErrorCode );
   
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle( 
@@ -2755,7 +2757,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_NOTIFYAL
 void CMmSupplServTsy::CompleteNotifyAllSendNetworkServiceRequest(
     TInt aErrorCode, CMmDataPackage* aDataPackage  )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYALLSENDNETWORKSERVICEREQUEST_1, "TSY: CMmSupplServTsy::CompleteNotifyAllSendNetworkRequest. Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSUPPLSERVTSY_COMPLETENOTIFYALLSENDNETWORKSERVICEREQUEST_1, "TSY: CMmSupplServTsy::CompleteNotifyAllSendNetworkRequest. Error: %{TSymbianErrorCodes}", aErrorCode );
    
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iMmPhone->iTsyReqHandleStore->ResetTsyReqHandle( 

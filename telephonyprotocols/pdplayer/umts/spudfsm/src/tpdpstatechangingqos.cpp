@@ -34,28 +34,21 @@
 
 TInt TPdpStateChangingQoS::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGQOS_INPUT_1, ">>TPdpStateChangingQoS::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGQOS_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::EQoSSet:
 		aFsm.ChangeStateToOpen();
 		SpudManNotify (aFsm, KContextQoSSetEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGQOS_INPUT_3, "<<TPdpStateChangingQoS::Input()");
 		return KErrNone;
 	case PdpFsm::EQoSSetFailed:
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGQOS_INPUT_1, "*** QOS SET FAILED ***");
 		aFsm.ChangeStateToOpen();
 		SpudManNotify (aFsm, KContextQoSSetEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGQOS_INPUT_4, "<<TPdpStateChangingQoS::Input()");
 		return KErrNone;
 	
 	// no default	
 	}
-	
+
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGQOS_INPUT_5, "<<TPdpStateChangingQoS::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
-
-

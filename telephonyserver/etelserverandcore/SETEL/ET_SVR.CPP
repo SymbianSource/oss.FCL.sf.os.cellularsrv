@@ -203,7 +203,7 @@ CTelServer::~CTelServer()
 	iEmergencyClientSessions.Reset();
 	}
 
-CSession2* CTelServer::NewSessionL(const TVersion &aVersion,const RMessage2& /*aMessage*/) const
+CSession2* CTelServer::NewSessionL(const TVersion &aVersion,const RMessage2& aMessage) const
 //
 // Create a new client for this server.
 //
@@ -214,6 +214,27 @@ CSession2* CTelServer::NewSessionL(const TVersion &aVersion,const RMessage2& /*a
 	CTelSession* sess = new(ELeave) CTelSession(iPhoneManager);	
 	RECORD_SESSION_NEW(sess);
 	RECORD_COMPLETE(sess,0,KErrNone);
+	
+#ifdef OST_TRACE_COMPILER_IN_USE
+	/* Get name of the client. */
+	RProcess process;
+	RThread thread;
+	User::LeaveIfError(aMessage.Client(thread));
+	TInt err=thread.Process(process);
+	thread.Close();
+	User::LeaveIfError(err);
+	TName cliName = process.Name();
+	process.Close();
+	    
+	TInt index = cliName.LocateReverse('[');
+	if (index >= 1)
+	{
+	   cliName.SetLength(index);
+    }
+	TBuf8<KMaxName> processName;
+	processName.Copy(cliName);
+#endif
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELSERVER_NEWSESSIONL_1, "CTelServer::NewSessionL - 0x%08X, Client Name: %s", (TUint)sess, processName);
 	return sess;
 	}
 

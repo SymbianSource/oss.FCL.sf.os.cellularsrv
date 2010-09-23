@@ -134,6 +134,7 @@ TInt CMmCustomSecurityTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_DOEXTFUNCL_1, "TSY: CMmCustomSecurityTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, aTsyReqHandle, (TUint)this);
     TInt ret( KErrGeneral );
 
     // reset last tsy request type
@@ -177,6 +178,7 @@ TInt CMmCustomSecurityTsy::DoExtFuncL(
 #endif // REQHANDLE_TIMER
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_DOEXTFUNCL_2, "<-- TSY: CMmCustomSecurityTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
     
@@ -337,7 +339,7 @@ void CMmCustomSecurityTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETE_1,  "CustomTSY: CMmCustomSecurityTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETE_1,  "CustomTSY: CMmCustomSecurityTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%{TSymbianErrorCodes}\n", aReqHandleType, aError );
     // All possible TSY req handle types are listed in the
     // switch case below.
     switch ( aReqHandleType )
@@ -528,7 +530,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_
 void CMmCustomSecurityTsy::CompleteCheckSecurityCode(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETECHECKSECURITYCODE_1, "TSY: CMmCustomSecurityTsy::CompleteCheckSecurityCode - Error code: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETECHECKSECURITYCODE_1, "TSY: CMmCustomSecurityTsy::CompleteCheckSecurityCode - Error code: %{TSymbianErrorCodes}", aErrorCode );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         ESecurityRequestTypeCheckSecurityCode );
@@ -652,7 +654,7 @@ TInt CMmCustomSecurityTsy::DisablePhoneLockL(
 void CMmCustomSecurityTsy::CompleteDisablePhoneLock(
     TInt aErrorCode )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETEDISABLEPHONELOCK_1, "TSY: CMmCustomSecurityTsy::CompleteDisablePhoneLock - Error code: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCUSTOMSECURITYTSY_COMPLETEDISABLEPHONELOCK_1, "TSY: CMmCustomSecurityTsy::CompleteDisablePhoneLock - Error code: %{TSymbianErrorCodes}", aErrorCode );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
         ESecurityRequestTypeDisablePhoneLock );

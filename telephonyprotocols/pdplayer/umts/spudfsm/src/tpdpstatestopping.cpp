@@ -20,8 +20,6 @@
  @internalComponent
 */
 
-
-
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
 #include "tpdpstatestoppingTraces.h"
@@ -35,33 +33,25 @@
 
 TInt TPdpStateStopping::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_1, ">>TPdpStateStopping::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::EContextDeleted:
 		aFsm.ChangeStateToInitialised();
 		SpudManNotify (aFsm, KPrimaryContextCreated, KErrGeneral);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_3, "<<TPdpStateStopping::Input()");
 		return KErrNone;			
 	case PdpFsm::EContextDeletedFailed:
 		// There isn't any corrective action that can be taken here. 
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_4, "**** DELETE FAILURE ****");
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_5, "*** DELETE FAILURE ***");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_1, "**** CONTEXT DELETE FAILED ****");
 		aFsm.ChangeStateToInitialised();
 		EtelDriverCancel (aFsm);
 		SpudManNotify (aFsm, KPrimaryContextCreated, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_6, "<<TPdpStateStopping::Input()");
 		return KErrNone;
 	case SpudMan::EContextDelete:
 		// already doing this and don't want default action
-	    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_7, "<<TPdpStateStopping::Input()");
 		return KErrInUse;
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESTOPPING_INPUT_8, "<<TPdpStateStopping::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

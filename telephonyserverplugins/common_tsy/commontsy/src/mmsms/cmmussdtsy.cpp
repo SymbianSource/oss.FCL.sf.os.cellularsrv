@@ -132,7 +132,7 @@ TInt CMmUssdTsy::ExtFunc(
     if ( ERfsStateInfoInactive == iMmPhone->GetRfStateInfo() && 
         ( !IsRequestPossibleInOffline( aIpc ) ) )  
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_EXTFUNC_1, "TSY: Offline mode ON, request is not allowed: %{TIPCNamesList}", aIpc );
         ret = CMmCommonStaticUtility::EpocErrorCode( KErrGeneral, 
             KErrGsmOfflineOpNotAllowed );
 
@@ -173,6 +173,7 @@ TInt CMmUssdTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_DOEXTFUNCL_1, "TSY: CMmUssdTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TInt)aIpc, (TUint)aTsyReqHandle, (TUint)this);
     TInt ret(KErrNone);
 
     switch ( aIpc ) 
@@ -223,6 +224,7 @@ TInt CMmUssdTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_DOEXTFUNCL_2, "TSY: CMmUssdTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -353,7 +355,7 @@ CTelObject* CMmUssdTsy::OpenNewObjectByNameL(
 TInt CMmUssdTsy::RegisterNotification(
     const TInt aIpc )                             // Notification IPC number
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REGISTERNOTIFICATION_1,  "TSY: CMmUssdTsy::RegisterNotification. IPC: %d", aIpc );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REGISTERNOTIFICATION_1,  "TSY: CMmUssdTsy::RegisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     TInt ret( KErrNone );
 
@@ -384,7 +386,7 @@ TInt CMmUssdTsy::RegisterNotification(
 TInt CMmUssdTsy::DeregisterNotification(
     const TInt aIpc )                             // Notification IPC number
     {        
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmUssdTsy::DeregisterNotification. IPC: %d", aIpc );
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmUssdTsy::DeregisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     TInt ret( KErrNone );
 
@@ -874,7 +876,7 @@ void CMmUssdTsy::CompleteNotifyNetworkRelease(
     CMmDataPackage* aDataPackage )
     {
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETENOTIFYNETWORKRELEASE_1, "TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %d", aErrorCode );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_COMPLETENOTIFYNETWORKRELEASE_1, "TSY: CMmUssdTsy::CompleteNotifyNetworkRelease. Error: %{TSymbianErrorCodes}", aErrorCode );
     // reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
 		EMultimodeUssdNotifyNetworkRelease );
@@ -1068,8 +1070,9 @@ void CMmUssdTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle, 
     const TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REQCOMPLETED_1, "TSY: CMmUssdTsy::ReqCompleted. Handle: %d Error: %d", aTsyReqHandle, aError);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REQCOMPLETED_1, "TSY: CMmUssdTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", aTsyReqHandle, aError, this);
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMUSSDTSY_REQCOMPLETED_2, "<-- TSY: CMmUssdTsy::ReqCompleted");
     }
 #endif // TF_LOGGING_ENABLED
 

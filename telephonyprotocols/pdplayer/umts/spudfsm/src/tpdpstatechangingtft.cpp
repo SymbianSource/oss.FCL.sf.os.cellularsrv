@@ -34,27 +34,22 @@
 
 TInt TPdpStateChangingTFT::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGTFT_INPUT_1, ">>TPdpStateChangingTFT::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGTFT_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::ETftChanged:
 		aFsm.ChangeStateToOpen();
 		SpudManNotify (aFsm, KContextTFTModifiedEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGTFT_INPUT_3, "<<TPdpStateChangingTFT::Input()");
 		return KErrNone;
 	case PdpFsm::ETftChangedFailed:
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGTFT_INPUT_1, "*** TFT CHANGE FAILED ***");
 		aFsm.ChangeStateToOpen();
 		SpudManNotify (aFsm, KContextTFTModifiedEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGTFT_INPUT_4, "<<TPdpStateChangingTFT::Input()");
 		return KErrNone;
 		
 	// no default
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECHANGINGTFT_INPUT_5, "<<TPdpStateChangingTFT::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

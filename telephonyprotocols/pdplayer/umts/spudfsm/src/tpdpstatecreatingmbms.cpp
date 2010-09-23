@@ -36,42 +36,34 @@
 
 
 TInt TPdpStateCreatingMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
-{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_1, ">>TPdpStateCreatingMbms::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-	
-	
+{	
 	switch (aOperation)
 	{
 	case PdpFsm::EMbmsPdpContextCreated:
 		EtelDriverInput(aFsm, EtelDriver::ESessionUpdate);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_3, "<<TPdpStateCreatingMbms::Input()");
 		return KErrNone;
 
 	case  SpudMan::EMbmsParameterUpdate:
 		aFsm.ChangeStateToCreatedMbms();
 		SpudManNotify(aFsm,KMbmsContextCreated, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_4, "<<TPdpStateCreatingMbms::Input()");
 		return KErrNone;
 
 	case PdpFsm::EMbmsPdpContextCreatedFailed:
 		iErrorCode = aErrorCode;
 		EtelDriverInput(aFsm, EtelDriver::EContextDelete);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_5, "<<TPdpStateCreatingMbms::Input()");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_1, "**** MBMS PDP CONTEXT CREATE FAILED ****");
 		return KErrNone;
 
 	case PdpFsm::EContextDeletedFailed:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_6, "**** DELETE FAILURE ****");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_2, "**** CONTEXT DELETE FAILED ****");
 		// fall through
 	case PdpFsm::EContextDeleted:
 		aFsm.ChangeStateToInitialised();
 		SpudManNotify(aFsm, KMbmsContextCreated, iErrorCode);
 		iErrorCode = KErrNone;
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_7, "<<TPdpStateCreatingMbms::Input()");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGMBMS_INPUT_8, "<<TPdpStateCreatingMbms::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }

@@ -170,7 +170,7 @@ CMmCallTsy* CMmLineTsy::CallObjectForIncomingCall()
 CTelObject::TReqMode CMmLineTsy::ReqModeL(
     const TInt aIpc )
     {
-    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQMODEL_1, "TSY: CMmLineTsy::ReqModeL IPC:%d",aIpc);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQMODEL_1, "TSY: CMmLineTsy::ReqModeL IPC:%{TIPCNamesList}",aIpc);
     
     CTelObject::TReqMode ret( 0 );    // default return value
     
@@ -317,7 +317,7 @@ TInt CMmLineTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_DOEXTFUNCL_1, "TSY: CMmLineTsy::DoExtFuncL IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_DOEXTFUNCL_1, "TSY: CMmLineTsy::DoExtFuncL IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret ( KErrNone );
 
@@ -343,6 +343,7 @@ TInt CMmLineTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_DOEXTFUNCL_2, "TSY: CMmLineTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -1247,9 +1248,11 @@ void CMmLineTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQCOMPLETED_1, "TSY: CMmLineTsy::ReqCompleted Handle:%d Error:%d", aTsyReqHandle, aError);
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQCOMPLETED_1, "TSY: CMmLineTsy::Request Completed. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", aTsyReqHandle, aError, this);
 
-    CTelObject::ReqCompleted(aTsyReqHandle,aError);        
+    CTelObject::ReqCompleted(aTsyReqHandle,aError);
+
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMLINETSY_REQCOMPLETED_2, "<-- TSY: CMmLineTsy::ReqCompleted");
     }
 
 #endif

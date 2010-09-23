@@ -86,10 +86,12 @@ CNodeActivityBase* CPdpErrorRecoveryActivity::NewL( const MeshMachine::TNodeActi
 CPdpErrorRecoveryActivity::CPdpErrorRecoveryActivity(const MeshMachine::TNodeActivity& aActivitySig, MeshMachine::AMMNodeBase& aNode, TUint aActivitiesCount)
 :	MeshMachine::CNodeParallelActivityBase(aActivitySig, aNode, aActivitiesCount)
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPERRORRECOVERYACTIVITY_CONSTRUCTOR_1, "Constructor");
 	}
 	
 CPdpErrorRecoveryActivity::~CPdpErrorRecoveryActivity()
-	{	
+	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPERRORRECOVERYACTIVITY_DESTRUCTOR_1, "Destructor");
 	}
 }
 
@@ -143,12 +145,14 @@ void CPdpMetaConnectionProvider::ConstructL()
         // the access point config for that connection.
         // code from the PDP.SCPR will need to be moved into the PDP.CPR when
         // that component becomes available for use.
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CONSTRUCTL_1, "Configuring PDP SCPR specific information");
         ConfigurePDPLayerL();
         }
     else
         {
         // non-PDP.SCPR specific behaviour
         // this is legacy for any layers that are constructed expecting the previous behaviour
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CONSTRUCTL_2, "Non-PDP SCPR used...Configuring Non-PDP SCPR specific information");
         SetAccessPointConfigFromDbL();
         }
     }
@@ -157,17 +161,19 @@ CPdpMetaConnectionProvider::CPdpMetaConnectionProvider(CMetaConnectionProviderFa
 :	CAgentMetaConnectionProvider(aFactory, aProviderInfo, PdpMCprStates::stateMap::Self())
 	{
 	LOG_NODE_CREATE(KPdpMCprSubTag, CPdpMetaConnectionProvider);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CONSTRUCTOR_1, "Constructor");
 	}
 
 CPdpMetaConnectionProvider::~CPdpMetaConnectionProvider()
 	{
 	CPdpMetaConnectionProvider::CancelAvailabilityMonitoring(); //Don't call virtual for obvious reasons!
 	LOG_NODE_DESTROY(KPdpMCprSubTag, CPdpMetaConnectionProvider);
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_DESTRUCTOR_1, "Destructor");
 	}
 
 void CPdpMetaConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipient, TSignatureBase& aMessage)
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_RECEIVEDL_1, "CPdpMetaConnectionProvider [this=%08x]::ReceivedL() aMessage=%d",(TUint)this, aMessage.MessageId().MessageId());
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_RECEIVEDL_1, "Realm Id [%u] Message Id [%u]", aMessage.MessageId().Realm(), aMessage.MessageId().MessageId());
 
 	ESOCK_DEBUG_MESSAGE_INTERCEPT(aSender, aMessage, aRecipient);
 
@@ -275,6 +281,7 @@ void CPdpMetaConnectionProvider::SetAccessPointConfigFromDbL()
 
 void CPdpMetaConnectionProvider::StartAvailabilityMonitoringL(const TNodeCtxId& aAvailabilityActivity)
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_STARTAVAILABILITYMONITORINGL_1, "Start Monitoring PSD Availability");
 	ASSERT(iAvailabilityListener==NULL); //Only one start allowed from the av activity!
 	const CTSYProvision& config = static_cast<const CTSYProvision&>(AccessPointConfig().FindExtensionL(STypeId::CreateSTypeId(CTSYProvision::EUid, CTSYProvision::ETypeId)));
 	iAvailabilityListener = CPsdAvailabilityListener::NewL(aAvailabilityActivity, config, ProviderInfo().APId(), GetTierManager()->IsUnavailableDueToContention(this));
@@ -283,6 +290,7 @@ void CPdpMetaConnectionProvider::StartAvailabilityMonitoringL(const TNodeCtxId& 
 
 void CPdpMetaConnectionProvider::CancelAvailabilityMonitoring()
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CANCELAVAILABILITYMONITORINGL_1, "Cancel Monitoring PSD Availability");
 	if (iAvailabilityListener)
 		{
 		RemoveClient(iAvailabilityListener->Id());
@@ -295,11 +303,13 @@ void CPdpMetaConnectionProvider::ContentionOccured()
 	{
 	// Send a stop request to the stop activity.
 	TInt stopCode = KErrConnectionContention;
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CONTENTIONOCCURED_1, "Contention Occured: Error Code [%d]", stopCode);
 	RClientInterface::OpenPostMessageClose(NodeId(), NodeId(), TCFDataClient::TStop(stopCode).CRef());
 	}
 
 void CPdpMetaConnectionProvider::ContentionResolved(const Messages::TNodeId& aPendingCprId, TBool aResult)
 	{
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CONTENTIONRESOLVED_1, "Contention Resolved: Result [%d]", aResult);
 	TPDPMessages::TPdpContentionResultMessage msg(aPendingCprId, aResult);
 	TRAP_IGNORE(ReceivedL(TNodeId(Id()), TNodeId(Id()), msg));
 	}
@@ -307,7 +317,8 @@ void CPdpMetaConnectionProvider::ContentionResolved(const Messages::TNodeId& aPe
 
 void CPdpMetaConnectionProvider::ReportContentionAvailabilityStatus(const TAvailabilityStatus& aAvailabilityStatus) const
 	{
-	if (iAvailabilityListener)
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPMETACONNECTIONPROVIDER_CONTENTIONAVAILABILITYSTATUS_1, "Contention Availability Status [%d]", aAvailabilityStatus.Score());
+    if (iAvailabilityListener)
 		{
 		iAvailabilityListener->ReportContentionAvailabilityStatusIfRequired(aAvailabilityStatus);
 		}

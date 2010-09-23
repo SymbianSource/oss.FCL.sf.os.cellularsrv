@@ -86,7 +86,7 @@ void CChargingStatusObserver::RunL()
     
 	if ( KErrNone != errorStatus )
 	    {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_RUNL_1, "TSY: CChargingStatusObserver::RunL - iStatus: %d", errorStatus );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_RUNL_1, "TSY: CChargingStatusObserver::RunL - iStatus: %{TSymbianErrorCodes}", errorStatus );
 	    iChargingStatusNotifier.NotifyChargingStatus( errorStatus,
 	        batteryInfo );
         return;
@@ -95,7 +95,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_
     // property updated, get new value
     TInt level( 0 );
     TInt error = iChargingStatus.Get( level );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_RUNL_2, "TSY: CChargingStatusObserver::RunL error: %d", error);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CCHARGINGSTATUSOBSERVER_RUNL_2, "TSY: CChargingStatusObserver::RunL error: %{TSymbianErrorCodes}", error);
 
     if ( KErrNone == error )
         {

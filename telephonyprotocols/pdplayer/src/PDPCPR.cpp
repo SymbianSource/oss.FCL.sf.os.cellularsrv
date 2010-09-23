@@ -20,6 +20,11 @@
  @internalComponent
 */
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "PDPCPRTraces.h"
+#endif
+
 #include "PDPCPR.h"
 #include <comms-infras/ss_log.h>
 #include <comms-infras/ss_msgintercept.h>
@@ -114,8 +119,9 @@ CPDPConnectionProvider::CPDPConnectionProvider(ESock::CConnectionProviderFactory
 /**
  * Construct PDP connection provider.
  */	
-    {        
+    {
     LOG_NODE_CREATE(KESockConnectionTag, CPDPConnectionProvider);
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_CONSTRUCTOR_1, "Constructor");
     }
 
 CPDPConnectionProvider::~CPDPConnectionProvider()
@@ -124,21 +130,23 @@ CPDPConnectionProvider::~CPDPConnectionProvider()
  */
     {    
     LOG_NODE_DESTROY(KESockConnectionTag, CPDPConnectionProvider);
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_DESTRUCTOR_1, "Destructor");
 #ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
     StopListener();
 #endif
 	delete iDynamicCapsEventListener;
 	delete iNetworkModeEventListener;
     }
-    
+
 void CPDPConnectionProvider::ReceivedL(const Messages::TRuntimeCtxId& aSender, const Messages::TNodeId& aRecipient, Messages::TSignatureBase& aMessage)
 	{
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_RECEIVEDL_1, "Realm Id [%u] Message Id [%u]", aMessage.MessageId().Realm(), aMessage.MessageId().MessageId());
+
 	//ESOCK_DEBUG_MESSAGE_INTERCEPT(aSender, aMessage, aRecipient);
 	MeshMachine::TNodeContext<CPDPConnectionProvider> ctx(*this, aMessage, aSender, aRecipient);
 	CCoreConnectionProvider::Received(ctx);
 	User::LeaveIfError(ctx.iReturn);
 	}
-	
 
 void CPDPConnectionProvider::BearerChangeDetectedL()
 /**
@@ -147,6 +155,7 @@ void CPDPConnectionProvider::BearerChangeDetectedL()
  */
 	{
 #ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_BEARERCHANGEDETECTEDL_1, "BearerChangeDetectedL()");
 	//Update bearers.
 	UpdateBearer();
 	
@@ -188,15 +197,17 @@ void CPDPConnectionProvider::StartListener()
  * @return void
  */
     {
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_STARTLISTENER_1, "Starting Notifier Objects");
     iDynamicCapsEventListener->NotifyDynamicCapsChange(this);
     iNetworkModeEventListener->NotifyNetworkModeChange(this);
     }
 
 void CPDPConnectionProvider::StopListener()
 /**
- * Start listening for dynamic caps or network mode changes.
+ * Stop listening for dynamic caps or network mode changes.
  */
     {
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_STOPLISTENER_1, "Stoping Notifier Objects");
     if(iDynamicCapsEventListener)
         {
         iDynamicCapsEventListener->Cancel();
@@ -206,6 +217,7 @@ void CPDPConnectionProvider::StopListener()
         iNetworkModeEventListener->Cancel();
         }
     }
+
 void CPDPConnectionProvider::UpdateBearer()
 /**
  * Update bearer type based on the change of the dynamic caps or network mode.
@@ -218,6 +230,7 @@ void CPDPConnectionProvider::UpdateBearer()
 	
 	//Resolve the bearer based on both dynamic caps and network mode
 	iBearerType = Bearer(dynamicCaps, networkMode);
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCONNECTIONPROVIDER_UPDATEBEARER_1, "Bearer Type [%d]", iBearerType);
 	iBearerSet = ETrue;
 	}
 
@@ -261,6 +274,7 @@ void PDPCprStates::TUpdateBundle::DoL()
  * Process TGetParamsRequest
  */
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPCPRSTATES_TUPDATEBUNDLE_DOL_1, "Bearer Type Request");
 	// Node receives TGetParamsRequest msg containing the bundle.
 	// Determine current network type - GPRS/EDGE/UMTS/HSDPA and update the bundle.
 	const CTSYProvision& tsyProvision = static_cast<const CTSYProvision&>(iContext.Node().AccessPointConfig().FindExtensionL(

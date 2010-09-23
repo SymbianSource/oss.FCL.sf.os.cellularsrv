@@ -33,18 +33,13 @@
 #include <comms-infras/linkprovision.h>
 #include <e32hal.h>
 #include <u32hal.h>
+#include <rawip_const.h>
 
 using namespace ESock;
 #ifdef WCDMA_STUB
 #include <networking/umtsnifcontrolif.h>
 #endif
 
-
-#ifdef __EABI__
-// Patch data is used and KMtuIPv6 and KRMtuIPv6 can be modified to a different value in RawIpNif.iby file
-extern const TInt KMtuIPv6 = KDefaultMtu;
-extern const TInt KRMtuIPv6 = KDefaultMtu;
-#endif
 
 CIPv6Binder::CIPv6Binder(CRawIPFlow& aFlow)
 /**
@@ -70,6 +65,7 @@ MLowerDataSender* CIPv6Binder::Bind(MUpperDataReceiver* aUpperReceiver, MUpperCo
  * @param aUpperControl A pointer to Upper layer control class
  */
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_BIND_1, "CIPv6Binder::Bind");
 	CBinderBase::Bind(aUpperReceiver, aUpperControl); // Call the superclass's method.
 	return this;
 	}
@@ -162,6 +158,8 @@ TInt CIPv6Binder::Control(TUint aLevel, TUint aName, TDes8& /*aOption*/)
 
 TInt CIPv6Binder::GetConfig(TBinderConfig& aConfig)
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_GETCONFIG_1, "CIPv6Binder::GetConfig");
+
     TBinderConfig6* config = TBinderConfig::Cast<TBinderConfig6>(aConfig);
     
    	if(config == NULL)
@@ -175,8 +173,8 @@ TInt CIPv6Binder::GetConfig(TBinderConfig& aConfig)
 	
 #if defined __EABI__
     // Default value for Tx and Rx packet size
-    config->iInfo.iMtu = KMtuIPv6;
-    config->iInfo.iRMtu = KRMtuIPv6;
+    config->iInfo.iMtu = RawIPConst::KMtuIPv6;
+    config->iInfo.iRMtu = RawIPConst::KRMtuIPv6;
 #else // WINS
     // Set default values in case patch is not present in epoc.ini
     config->iInfo.iMtu = KDefaultMtu;
@@ -186,6 +184,7 @@ TInt CIPv6Binder::GetConfig(TBinderConfig& aConfig)
     UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KMtuIPv6",&(config->iInfo.iMtu));
     UserSvr::HalFunction(EHalGroupEmulator,EEmulatorHalIntProperty,(TAny*)"rawip_KRMtuIPv6",&(config->iInfo.iRMtu));
 #endif
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_GETCONFIG_2, "config->{iInfo.iMtu=%d, iInfo.iRMtu=%d}", config->iInfo.iMtu, config->iInfo.iRMtu);
     
 	config->iInfo.iSpeedMetric = iSpeedMetric;		/* approximation of the interface speed in Kbps. */
 	
@@ -336,7 +335,7 @@ void CIPv6Binder::UpdateConnectionSpeed(TUint aConnectionSpeed)
  * @param aConnectionSpeed Our connection speed
  */
 	{
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONNECTIONSPEED_1, "CIPv6Binder::UpdateConnectionSpeed");
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIPV6BINDER_UPDATECONNECTIONSPEED_1, "ConnectionSpeed [%d]", aConnectionSpeed);
 
 	iSpeedMetric = aConnectionSpeed;
 	}

@@ -34,9 +34,6 @@
 
 TInt TPdpStateActivatingMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_1, ">>TPdpStateActivatingMbms::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::EPdpActivated:
@@ -45,18 +42,15 @@ TInt TPdpStateActivatingMbms::Input (CPdpFsm& aFsm, const TInt aOperation, const
 		aFsm.Set(RPacketContext::EStatusActive);
 		aFsm.ChangeStateToCreatedMbms();//there is no Qos to be set
 		SpudManNotify (aFsm, KContextActivateEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_3, "<<TPdpStateActivatingMbms::Input()");
 		return KErrNone;
 	case PdpFsm::EPdpActivatedFailed:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_4, "*** FAILURE ***");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_1, "*** PDP MBMS CONTEXT ACTIVATED EVENT FAILED ***");
 		aFsm.ChangeStateToCreatedMbms();
 		SpudManNotify (aFsm, KContextActivateEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_5, "<<TPdpStateActivatingMbms::Input()");
 		return KErrNone;
 	// no default
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEACTIVATINGMBMS_INPUT_6, "<<TPdpStateActivatingMbms::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }

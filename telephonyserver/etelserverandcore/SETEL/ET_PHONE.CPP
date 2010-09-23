@@ -957,7 +957,7 @@ void CTelObject::GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReq
 //
 	{
 
-	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_GENERALREQ_1, "CTelObject::GeneralReq - IPC=%d", aMessage.Function());
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CTELOBJECT_GENERALREQ_1, "CTelObject::GeneralReq - IPC=%{TIPCNamesList}", aMessage.Function());
 	RECORD_IPC(aMessage,aSession,this,aFromFlowControlResume);
 	if (aFromFlowControlResume && !aFromFlowControlResume){	; } // avoid compiler warning when ETEL_RECORDER is not defined
 	
@@ -1127,7 +1127,7 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 	TInt error = ResolveError(updatedReqEntry->iSession,aError);		// set error as either low or high byte
 
 	ipc=updatedReqEntry->iFunction;
-	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTELOBJECT_REQCOMPLETED_1, "CTelObject::ReqCompleted, IPC=%d, TsyHandle=%d, Error=%d", ipc, aTsyReqHandle, aError);
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CTELOBJECT_REQCOMPLETED_1, "CTelObject::ReqCompleted, IPC=%{TIPCNamesList}, TsyHandle=%d, Error=%{TSymbianErrorCodes}", (TUint)ipc, aTsyReqHandle, aError);
 
 	TReqMode reqMode = updatedReqEntry->iReqMode;
 	TBool ret=EFalse;

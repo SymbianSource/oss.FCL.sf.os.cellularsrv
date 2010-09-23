@@ -19,13 +19,6 @@
  @file 
  @internalComponent
 */
- 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstatesuspendedTraces.h"
-#endif
 
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
@@ -35,15 +28,11 @@
 
 TInt TPdpStateSuspended::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESUSPENDED_INPUT_1, ">>TPdpStateSuspended::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESUSPENDED_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case SpudMan::EResume:
 		aFsm.ChangeStateToOpen();
 		SpudManNotify(aFsm, KContextUnblockedEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESUSPENDED_INPUT_3, "<<TPdpStateSuspended::Input()");
 		return KErrNone;
 	case PdpFsm::EContextStatusChangeNetwork:
 		if (aFsm.iContextStatus == RPacketContext::EStatusActive)
@@ -51,15 +40,11 @@ TInt TPdpStateSuspended::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt
 			aFsm.ChangeStateToOpen();
 			SpudManNotify(aFsm, KContextUnblockedEvent, KErrNone); 
 			//SpudManNotify (aFsm, KNetworkStatusEvent, KErrNone);
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESUSPENDED_INPUT_4, "<<TPdpStateSuspended::Input()");
 			return KErrNone;
 		}
 		break;		
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATESUSPENDED_INPUT_5, "<<TPdpStateSuspended::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
-
-

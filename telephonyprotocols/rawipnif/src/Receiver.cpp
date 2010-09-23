@@ -111,6 +111,7 @@ void CReceiver::RunL()
                     }
                 else
                     {
+                    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_3, "Read request after increasing size of read buffer");
                     (iObserver.Bca())->Read(iStatus, iData);    
                     SetActive();
                     }
@@ -118,14 +119,14 @@ void CReceiver::RunL()
 			}
 		else 
 			{
-			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_3, "WARNING! CReceiver: Read failed");
+			OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_4, "WARNING! CReceiver: Read failed");
 			iObserver.Stop(iStatus.Int());
 			}
 		return;
 		}
 	else
 	    {
-        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_4, "CReceiver: Data Packet Received");
+        OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRECEIVER_RUNL_5, "CReceiver: Data Packet Received");
     
         iRMBufPacket.CreateL(iData);
         

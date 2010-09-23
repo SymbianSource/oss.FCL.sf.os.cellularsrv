@@ -19,8 +19,6 @@
  @file 
  @internalComponent
 */
- 
-
 
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
@@ -36,9 +34,6 @@
 
 TInt TPdpStateOpeningPhone::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_1, ">>TPdpStateOpeningPhone::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	// ETel notifications
@@ -46,25 +41,20 @@ TInt TPdpStateOpeningPhone::Input (CPdpFsm& aFsm, const TInt aOperation, const T
 		aFsm.ChangeStateToCreatingPrimary();
 		iPdpFsmFactory->iEtelOpened = ETrue;		
 		EtelDriverInput(aFsm, EtelDriver::ECreate1ryPdpContext);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_3, "<<TPdpStateOpeningPhone::Input()");
 		return KErrNone;
 	case PdpFsm::EPhoneOpenedFailed:
 		aFsm.ChangeStateToInitialised();
 		iPdpFsmFactory->iEtelOpened = EFalse;		
 		SpudManNotify (aFsm, KPrimaryContextCreated, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_4, "<<TPdpStateOpeningPhone::Input()");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_1, "*** PHONE OPEN FAILED ***");
 		return KErrNone;
   case SpudMan::ECancelContextCreate:
 		aFsm.ChangeStateToStopping();
 		EtelDriverCancel(aFsm);
 		EtelDriverInput(aFsm, EtelDriver::EContextDelete);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_5, "<<TPdpStateOpeningPhone::Input()");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEOPENINGPHONE_INPUT_6, "<<TPdpStateOpeningPhone::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
-
-

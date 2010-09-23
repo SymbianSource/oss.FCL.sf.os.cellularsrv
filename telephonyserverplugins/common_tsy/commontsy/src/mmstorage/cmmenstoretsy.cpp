@@ -368,6 +368,7 @@ TInt CMmENStoreTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMENSTORETSY_DOEXTFUNCL_1, "TSY: CMmENStoreTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     // Initialize return value
     TInt ret( KErrNotSupported );
@@ -406,6 +407,7 @@ TInt CMmENStoreTsy::DoExtFuncL(
             break;
         }
         
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMENSTORETSY_DOEXTFUNCL_2, "TSY: CMmENStoreTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 

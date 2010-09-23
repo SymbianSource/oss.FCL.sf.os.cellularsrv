@@ -126,7 +126,7 @@ TInt CMmNetTsy::DoExtFuncL(
     const TInt aIpc, // IPC number of request          
     const TDataPackage& aPackage ) // Contains parameters for request
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_1, "TSY: CMmPhoneTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n \t\t\t Handle:%d", aIpc, aTsyReqHandle);
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_1, "TSY: CMmNetTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret ( KErrNone );
 
@@ -294,6 +294,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_2, 
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_DOEXTFUNCL_5, "TSY: CMmNetTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
 
     }
@@ -308,7 +309,7 @@ TInt CMmNetTsy::CancelService(
     const TInt aIpc, // IPC number of request.
     const TTsyReqHandle aTsyReqHandle ) // Request handle of given request.
     {
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_CANCELSERVICE_1, "TSY: CMmNetTsy::CancelService IPC: %d ret: %d", aIpc, aTsyReqHandle);
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_CANCELSERVICE_1, "TSY: CMmNetTsy::CancelService IPC: %{TIPCNamesList} ret: %d", aIpc, aTsyReqHandle);
     TInt ret ( KErrNotSupported );
     
     //When the clients close their sub-sessions (eg. by calling RLine::Close), 
@@ -1540,7 +1541,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKN
 
         if( KErrNone == ret )
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME_4, "TSY: CMmNetTsy::GetNetworkName - completing, ret: %d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKNAME_4, "TSY: CMmNetTsy::GetNetworkName - completing, ret: %{TSymbianErrorCodes}", ret);
             iMmPhoneTsy->ReqCompleted( aTsyReqHandle, ret );
             }
         }
@@ -2156,7 +2157,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGI
 
             if ( KErrNone != ret )
                 {
-                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_4, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Complete with error %d", ret );
+                OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_GETNETWORKREGISTRATIONSTATUSL_4, "TSY: CMmNetTsy::GetNetworkRegistrationStatusL - Complete with error %{TSymbianErrorCodes}", ret );
                 iMmPhoneTsy->ReqCompleted( aTsyReqHandle, ret );
                 }
             else
@@ -2888,7 +2889,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPT
             }
         else
             {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPTIONS_2, "TSY:CMmNetTsy::ReadVariantOptions:Could not open file Z:\\private\\101f7989\\operatorVariants.ini, error=%d",err);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMNETTSY_READVARIANTOPTIONS_2, "TSY:CMmNetTsy::ReadVariantOptions:Could not open file Z:\\private\\101f7989\\operatorVariants.ini, error=%{TSymbianErrorCodes}",err);
             }
 
         // close connection to file server

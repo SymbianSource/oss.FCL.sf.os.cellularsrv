@@ -550,6 +550,8 @@ Return the Flow corresponding to the MFlowBinderControl
 
 void CRawIPFlow::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipient, TSignatureBase& aMessage)
     {
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOW_RECEIVEDL_1, "Realm Id [%u] Message Id [%u]", aMessage.MessageId().Realm(), aMessage.MessageId().MessageId());
+
     CSubConnectionFlowBase::ReceivedL(aSender, aRecipient, aMessage);
 
 	if (aMessage.IsMessage<TEBase::TError>())

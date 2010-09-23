@@ -35,35 +35,29 @@
 
 TInt TPdpStateCreatingSecondary::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_1, ">>TPdpStateCreatingSecondary::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::E2ryPdpContextCreated:
 		aFsm.ChangeStateToCreatedSecondary();
 		SpudManNotify(aFsm, KSecondaryContextCreated, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_3, "<<TPdpStateCreatingSecondary::Input()");
 		return KErrNone;
 	case PdpFsm::E2ryPdpContextCreatedFailed:
 		iErrorCode = aErrorCode;
 		EtelDriverInput(aFsm, EtelDriver::EContextDelete);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_4, "<<TPdpStateCreatingSecondary::Input()");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_1, "**** SECONDARY PDP CONTEXT CREATE FAILED ****");
 		return KErrNone;
 
 	case PdpFsm::EContextDeletedFailed:
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_5, "**** DELETE FAILURE ****");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_2, "**** CONTEXT DELETE FAILED ****");
 		// fall through
 	case PdpFsm::EContextDeleted:
 		aFsm.ChangeStateToInitialised();
 		SpudManNotify(aFsm, KSecondaryContextCreated, iErrorCode);
 		iErrorCode = KErrNone;
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_6, "<<TPdpStateCreatingSecondary::Input()");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGSECONDARY_INPUT_7, "<<TPdpStateCreatingSecondary::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

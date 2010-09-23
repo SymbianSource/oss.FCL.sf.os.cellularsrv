@@ -151,7 +151,7 @@ void CMmTsyReqHandleStore::SetTsyReqHandle(
     TInt aIPC ) 
     {
     OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_SETTSYREQHANDLE1_1, "TSY:CMmTsyReqHandleStore::SetTsyReqHandle aIndex=%d, aTsyReqHandle=0x%08x",aIndex,(TUint)aTsyReqHandle);
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_SETTSYREQHANDLE1_2, "TSY:CMmTsyReqHandleStore::SetTsyReqHandle aTimeout=%d  IPC=%d", aTimeout, aIPC);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMTSYREQHANDLESTORE_SETTSYREQHANDLE1_2, "TSY:CMmTsyReqHandleStore::SetTsyReqHandle aTimeout=%d  IPC=%{TIPCNamesList}", aTimeout, aIPC);
     
     if ( aIndex >= 0 && aIndex < iNumOfRequests )
         {

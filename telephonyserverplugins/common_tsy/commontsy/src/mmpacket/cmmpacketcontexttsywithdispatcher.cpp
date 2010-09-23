@@ -24,7 +24,7 @@
 
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
-#include "CmmpacketcontexttsywithdispatcherTraces.h"
+#include "cmmpacketcontexttsywithdispatcherTraces.h"
 #endif
 
 #include "cmmpacketservicegsmwcdmaext.h"

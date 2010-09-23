@@ -80,7 +80,8 @@ void CGPRSProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
 	    getErr = KErrNone;
 	    iUmtsGprsRelease = TPacketDataConfigBase::KConfigGPRS;
 	    }
-	    
+	
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_INITIALISECONFIGL_1, "InitialiseConfigL() for packet network [%d]", iUmtsGprsRelease);
 	TBool useEdge = EFalse;
 	
 	aIapView->GetBoolL(KCDTIdWCDMAUseEdge | KCDTIdOutgoingGprsRecord, useEdge);
@@ -324,7 +325,9 @@ void CGPRSProvision::RetrieveIPAndDnsSettingsL(TDes8& aPdpAddress, TDes8& aDns1,
 	    // Anything else is a serious misconfiguration
 	    User::Leave(KErrArgument);
 	    }
+	OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEIPANDDNSSETTINGSL_1, "PDP address [%s], DNS1 [%s], DNS2 [%s]", aPdpAddress, aDns1, aDns2);
 	}
+
 void CGPRSProvision::RetrieveUmtsCompressionL(RPacketContext::THeaderCompression& aHeaderCompression, RPacketContext::TDataCompression& aDataCompression, ESock::CCommsDatIapView* aIapView) const
 	{
 	TUint32 headerComp;
@@ -350,6 +353,7 @@ void CGPRSProvision::RetrieveUmtsCompressionL(RPacketContext::THeaderCompression
 	User::LeaveIfError(err);
 
 	aDataCompression = static_cast<RPacketContext::TDataCompression>(dataComp);	
+	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEUMTSCOMPRESSIONL_1, "Header Compression [%d], Data Compression [%d]", aHeaderCompression, aDataCompression);
 	}
 
 void CGPRSProvision::RetrieveUmtsPacketFlowIdentifierL(RPacketContext::TPacketFlowIdentifier& aPfi, ESock::CCommsDatIapView* aIapView) const
@@ -363,8 +367,8 @@ void CGPRSProvision::RetrieveUmtsPacketFlowIdentifierL(RPacketContext::TPacketFl
 	    }
 	User::LeaveIfError(err);
 	aPfi = static_cast<RPacketContext::TPacketFlowIdentifier>(pfi);
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CGPRSPROVISION_RETRIEVEUMTSPACKETFLOWIDENTIFIERL_1, "Packet Flow Identifier [%d]", aPfi);
 	}
-
 
 TInt CGPRSProvision::InitialiseScratchContext(TUint32 aConfigRel) const
 	{
@@ -426,6 +430,7 @@ CDefaultPacketQoSProvision* CDefaultPacketQoSProvision::NewL(ESock::CCommsDatIap
 	
  void CDefaultPacketQoSProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
     {
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CDEFAULTPACKETQOSPROVISION_INITIALISECONFIGL_1, "Default Qos Provision");
     TUint32 data;
 	    
 	aIapView->GetIntL(KCDTIdWCDMAReqTrafficClass,data);
@@ -521,6 +526,7 @@ void CImsExtProvision::InitialiseConfigL(ESock::CCommsDatIapView* aIapView)
 	TBool bdata = EFalse;
 	aIapView->GetBool(KCDTIdWCDMAImCmSignallingIndication,bdata);
 	iImsSignalIndicator = bdata;
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CIMSEXTPROVISION_INITIALISECONFIGL_1, "Ims Signal Indicator [%d]", iImsSignalIndicator);
     }
 
 

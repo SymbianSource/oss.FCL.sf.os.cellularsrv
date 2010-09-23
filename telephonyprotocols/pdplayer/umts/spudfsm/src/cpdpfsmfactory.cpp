@@ -32,8 +32,7 @@
 // NewL 
 CPdpFsmFactory* CPdpFsmFactory::NewL ()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWL_1, ">>CPdpFsmFactory::NewL()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWL_2, "<<CPdpFsmFactory::NewL()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWL_1, " NewL()");
 	return new (ELeave) CPdpFsmFactory ();	
     }
 
@@ -70,51 +69,45 @@ CPdpFsmFactory::CPdpFsmFactory()
   iStateActivatingMbms(this),
   iStateCreatedMbms(this)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CTOR_1, ">>CPdpFsmFactory::CPdpFsmFactory()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CTOR_2, "<<CPdpFsmFactory::CPdpFsmFactory()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CTOR_1, " Constructor");
     }
 
 
 CPdpFsmFactory::~CPdpFsmFactory()
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DTOR_1, ">>CPdpFsmFactory::~CPdpFsmFactory()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DTOR_1, " Destructor");
 
 	iContexts.DeleteAll();
     iContexts.Reset();
 	
     delete iEtelDriverInput;   
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DTOR_2, "<<CPdpFsmFactory::~CPdpFsmFactory()");
     }
 
 
 void CPdpFsmFactory::InitL(const TName& aTsyName, CPdpFsmInterface * aPdpFsmInterface)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_INITL_1, ">>CPdpFsmFactory::InitL()");
+	OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_INITL_1, " Tsy Name [%S]", aTsyName);
 
 	iPdpFsmInterface = aPdpFsmInterface;
-	
 	iTsyName = aTsyName;
 
 	// lets kick off the ETelDriver first then we only alloc FSMs if it works
 	//
 	iEtelDriverInput = new (ELeave) REtelDriverInput;
-
 	iEtelDriverInput->OpenL (*iPdpFsmInterface);
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_INITL_2, "<<CPdpFsmFactory::InitL()");
 	// Only create PDP contexts if specifically requested.
     }
 
 
 void CPdpFsmFactory::Close (void)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CLOSE_1, ">>CPdpFsmFactory::Close()");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CLOSE_1, " Close()");
 	// in OOM conditions iEtelDriveInput may not have successfully
 	// been created, check here for safety.
 	if (iEtelDriverInput != NULL)
 	    {
         iEtelDriverInput->Close();
 	    }
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_CLOSE_2, "<<CPdpFsmFactory::Close()");
     }
 
 
@@ -123,8 +116,7 @@ void CPdpFsmFactory::Close (void)
 */
 CPdpFsm* CPdpFsmFactory::GetFsmContext (TContextId aPdpId)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_GETFSMCONTEXT_1, ">>CPdpFsmFactory::GetContext()");
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_GETFSMCONTEXT_2, "<<CPdpFsmFactory::GetContext()");
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_GETFSMCONTEXT_1, " for context id [%d]", aPdpId);
 	return iContexts[aPdpId];
     }
 
@@ -140,7 +132,7 @@ TInt CPdpFsmFactory::NewFsmContext(TContextId aPdpId)
 TContextId CPdpFsmFactory::NewFsmContextL(MPdpFsmEventHandler& aPdpFsmEventHandler,SpudMan::TPdpContextType aContextType)
 #endif
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_1, ">>CPdpFsmFactory::NewFsmContext()");
+	OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_1, " for context type [%d]", aContextType);
 
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	TInt ret = KErrNone;
@@ -168,19 +160,19 @@ TContextId CPdpFsmFactory::NewFsmContextL(MPdpFsmEventHandler& aPdpFsmEventHandl
         iContexts[i] = p;
         iEtelDriverInput->CreatePdpL(i, aContextType);
         }
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_3, "<<CPdpFsmFactory::NewFsmContext()");
+
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_NEWFSMCONTEXTL_3, " Return Context Id [%d]", i);
     return i;
 #endif	
     }
    
 TInt CPdpFsmFactory::DeleteFsmContext(TContextId aPdpId)
     {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DELETEFSMCONTEXT_1, ">>CPdpFsmFactory::DeleteFsmContext()");
 	ASSERT(ContextIsValid(aPdpId));
+    OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DELETEFSMCONTEXT_1, " for context name [%S]", iContexts[aPdpId]->GetDataChannelV2().iChannelId);
 
     delete iContexts[aPdpId];
     iContexts[aPdpId] = NULL;
-    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPFSMFACTORY_DELETEFSMCONTEXT_2, "<<CPdpFsmFactory::DeleteFsmContext()");
 	return KErrNone;
     }
     

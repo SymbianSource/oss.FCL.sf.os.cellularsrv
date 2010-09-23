@@ -88,7 +88,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_BORDER, CMMMESSAGEMANAGERBASE_SETPH
 TInt CMmMessageManagerBase::HandleRequestL(    
     const TInt aIpc )        
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %{TIPCNamesList}", aIpc );
     return HandleRequestL( 
         aIpc, REINTERPRET_CAST( const CMmDataPackage*, NULL ) );
     }
@@ -103,7 +103,7 @@ TInt CMmMessageManagerBase::HandleRequestL(
     const TInt aIpc,      
     const CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL1_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL1_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %{TIPCNamesList}", aIpc );
    
     return iMessageRouter->ExtFuncL( aIpc, aDataPackage );
     }
@@ -118,7 +118,7 @@ TInt CMmMessageManagerBase::HandleRequestL(
     const TInt aIpc,        
     const TDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL2_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMESSAGEMANAGERBASE_HANDLEREQUESTL2_1, "TSY: CMmMessageManagerBase::HandleRequestL. IPC = %{TIPCNamesList}", aIpc );
 
     // map the TDataPackage into a CMmDataPackage
     // Non-core Methods from the SOS layer using the DOS layer will perforn

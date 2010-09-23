@@ -19,13 +19,6 @@
  @file 
  @internalComponent
 */
- 
-
-
-#include "OstTraceDefinitions.h"
-#ifdef OST_TRACE_COMPILER_IN_USE
-#include "tpdpstatecreatedSecondaryTraces.h"
-#endif
 
 #include <networking/umtsnifcontrolif.h>
 #include "tpdpstates.h"
@@ -36,30 +29,23 @@
 
 TInt TPdpStateCreatedSecondary::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDSECONDARY_INPUT_1, ">>TPdpStateCreatedSecondary::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDSECONDARY_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case SpudMan::EContextActivate: 
 		aFsm.ChangeStateToActivatingSecondary();
 		EtelDriverInput(aFsm, EtelDriver::EActivatePdp);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDSECONDARY_INPUT_3, "<<TPdpStateCreatedSecondary::Input()");
 		return KErrNone;		
 	case SpudMan::EContextQoSSet:
 		aFsm.ChangeStateToSettingQoS();
 		EtelDriverInput(aFsm, EtelDriver::ESetQoS);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDSECONDARY_INPUT_4, "<<TPdpStateCreatedSecondary::Input()");
 		return KErrNone;
 	case SpudMan::EContextTFTModify:
 		aFsm.ChangeStateToSettingTFT();
 		EtelDriverInput(aFsm, EtelDriver::ESetTft);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDSECONDARY_INPUT_5, "<<TPdpStateCreatedSecondary::Input()");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATEDSECONDARY_INPUT_6, "<<TPdpStateCreatedSecondary::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

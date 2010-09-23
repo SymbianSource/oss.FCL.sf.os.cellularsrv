@@ -20,6 +20,10 @@
  @internalComponent
 */
 
+#include "OstTraceDefinitions.h"
+#ifdef OST_TRACE_COMPILER_IN_USE
+#include "PDPSCPRTraces.h"
+#endif
 
 #include "PDPSCPRStates.h"
 #include "PDPDeftSCPR.h"
@@ -225,6 +229,7 @@ Construct a new PDP SubConnection Provider Object
 CPDPSubConnectionProvider::~CPDPSubConnectionProvider()
     {
     LOG_NODE_DESTROY(KPDPSCprSubTag, CPDPSubConnectionProvider)
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_DTOR_1, "Destructor");
     __FLOG_CLOSE;
     if (iPdpFsmInterface)
         {
@@ -241,6 +246,7 @@ CPDPSubConnectionProvider::CPDPSubConnectionProvider(ESock::CSubConnectionProvid
  iProvisionFailure(KErrCorrupt)
     {
     LOG_NODE_CREATE1(KPDPSCprSubTag, CPDPSubConnectionProvider, " [factory=%08x]", &aFactory)
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_CTOR_1, "Constructor");
     __FLOG_OPEN(KCFNodeTag, KPDPSCprSubTag);
     }
 
@@ -277,6 +283,7 @@ void CPDPSubConnectionProvider::Received(TNodeContextBase& aContext)
 
 void CPDPSubConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const TNodeId& aRecipient, TSignatureBase& aMessage)
     {
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_RECEIVEDL_1, "Realm Id [%u] Message Id [%u]", aMessage.MessageId().Realm(), aMessage.MessageId().MessageId());
 	ESOCK_DEBUG_MESSAGE_INTERCEPT(aSender, aMessage, aRecipient);
 
 	PDPSCprStates::TContext ctx(*this, aMessage, aSender, aRecipient);
@@ -286,6 +293,7 @@ void CPDPSubConnectionProvider::ReceivedL(const TRuntimeCtxId& aSender, const TN
 
 void CPDPSubConnectionProvider::Event(TInt aEvent, TInt aParam)
     {
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_EVENT_1, "Event [%d], Param [%d]", aEvent, aParam);
     TPDPMessages::TPDPFSMMessage msg(aEvent, aParam);
 
 	RClientInterface::OpenPostMessageClose(TNodeCtxId(iActivityAwaitingResponse, Id()), Id(), msg);
@@ -390,6 +398,7 @@ MFactoryQuery::TMatchResult THighestQoSQuery::Match(TFactoryObjectInfo& aSubConn
 
 TTFTInfo CPDPSubConnectionProvider::GetTftInfoL(CSubConIPAddressInfoParamSet* aParamSet)
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_GETTFTINFOL_1, "GetTftInfoL");
 	/** TODO: What to do if there will be second request before ggsn responce back and first one will go to the granted list
 	Assigning of id's is not correct in that case*/
 
@@ -434,6 +443,7 @@ TTFTOperationCode CPDPSubConnectionProvider::GetOperationCodeL(CSubConIPAddressI
 	if(count > 0)
 		{
 		CSubConIPAddressInfoParamSet::TSubConIPAddressInfo paramInfo(aParamSet->GetParamInfoL(0));
+		OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_GETOPERATIONCODEL_1, "Param Info State [%d]", paramInfo.iState);
 		switch(paramInfo.iState)
 			{
 			case CSubConIPAddressInfoParamSet::TSubConIPAddressInfo::EAdd:
@@ -462,6 +472,7 @@ TTFTOperationCode CPDPSubConnectionProvider::GetOperationCodeL(CSubConIPAddressI
 
 TUint CPDPSubConnectionProvider::FindPacketFilterIdL(CSubConIPAddressInfoParamSet::TSubConIPAddressInfo aParamInfo)
 	{
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_FINDPACKETFILTERIDL_1, "Param Info State [%d]", aParamInfo.iState);
 	TUint id = 0;
 
 	switch(aParamInfo.iState)
@@ -497,6 +508,7 @@ TUint CPDPSubConnectionProvider::FindPacketFilterIdL(CSubConIPAddressInfoParamSe
 
 TUint CPDPSubConnectionProvider::FindIdOfMatchingParamSetL(CSubConIPAddressInfoParamSet::TSubConIPAddressInfo aParamInfo)
 	{
+    OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_FINDIDOFMATCHINGPARAMSETL_1, "Returns Id of Matching Param Set");
 	// check the list of the granted params for an index
 	if(GetParameterBundle().IsNull())
 		{
@@ -534,6 +546,7 @@ TUint CPDPSubConnectionProvider::FindIdOfMatchingParamSetL(CSubConIPAddressInfoP
 
 void CPDPSubConnectionProvider::NewPacketFilterAddedL(CSubConIPAddressInfoParamSet::TSubConIPAddressInfo aParamInfo, TUint aId)
 	{
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_NEWPACKETFILTERADDEDL_1, "Adding New Packet Filter Id [%d]", aId);
     RParameterFamily ipAddressInfoFamily = GetParameterBundle().FindFamily(KSubConIPAddressInfoFamily);
     if ( ! ipAddressInfoFamily.IsNull())
         {
@@ -555,6 +568,7 @@ void CPDPSubConnectionProvider::NewPacketFilterAddedL(CSubConIPAddressInfoParamS
 
 void CPDPSubConnectionProvider::PacketFilterRemovedL(TUint aId)
 	{
+    OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CPDPSUBCONNECTIONPROVIDER_PACKETFILTERREMOVEDL_1, "Removing Packet Filter Id [%d]", aId);
     RParameterFamily ipAddressInfoFamily = GetParameterBundle().FindFamily(KSubConIPAddressInfoFamily);
 
     if ( ! ipAddressInfoFamily.IsNull())
@@ -562,7 +576,6 @@ void CPDPSubConnectionProvider::PacketFilterRemovedL(TUint aId)
 		// find an index from given id value
 		//TUint count = iPacketFilterId.Count();
 		TInt index = iPacketFilterId.Find(aId);
-
 		//for (index = 0; (index < count) && (iPacketFilterId[index] != aId); ++index){}
 
 		if(index >= 0)

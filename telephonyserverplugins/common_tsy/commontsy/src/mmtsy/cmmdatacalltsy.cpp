@@ -19,7 +19,7 @@
 
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
-#include "cmmdatacalltsyTraces.h"
+#include "cmmdatacalltsytraces.h"
 #endif
 
 #include "cmmdatacalltsy.h"
@@ -150,7 +150,7 @@ TInt CMmDataCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTFUNCL_1, "TSY: CMmDataCallTsy::DoExtFuncL - IPC: %d Handle: %d",aIpc, aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTFUNCL_1, "TSY: CMmDataCallTsy::DoExtFuncL.IPC:%{TIPCNamesList}  Handle:%u Object:0x%08x",(TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret( KErrNone );
 
@@ -276,6 +276,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTF
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTFUNCL_2, "TSY: CMmDataCallTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -289,7 +290,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DOEXTF
 CTelObject::TReqMode CMmDataCallTsy::ReqModeL(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQMODEL_1, "TSY: CMmDataCallTsy::ReqModeL - IPC: %d", aIpc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQMODEL_1, "TSY: CMmDataCallTsy::ReqModeL - IPC: %{TIPCNamesList}", aIpc);
 
     CTelObject::TReqMode ret( 0 ); // default return value
     
@@ -535,7 +536,7 @@ TInt CMmDataCallTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CANCELSERVICE_1, "TSY: CMmDataCallTsy::CancelService - IPC: %d, Req handle: %d",aIpc, aTsyReqHandle);
+    OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_CANCELSERVICE_1, "TSY: CMmDataCallTsy::CancelService - IPC: %{TIPCNamesList}, Req handle: %d",aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -640,7 +641,7 @@ void CMmDataCallTsy::CompleteNotifyStatusChange(
 
         callDataPackage->UnPackData( callStatus );
 
-        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \aResult: %d", aResult );
+        OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_1, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \aResult: %{TSymbianErrorCodes}", aResult );
         OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETENOTIFYSTATUSCHANGE_2, "TSY: CMmDataCallTsy::CompleteNotifyStatusChange - \Call status: %d, Call name: %S", callStatus, iCallName);
 
         switch( callStatus )
@@ -1231,7 +1232,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIAL_3, "
 void CMmDataCallTsy::CompleteDial(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIAL_1, "TSY: CMmDataCallTsy::CompleteDial - Result: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIAL_1, "TSY: CMmDataCallTsy::CompleteDial - Result: %{TSymbianErrorCodes}", aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIAL_2, "TSY: CMmDataCallTsy::CompleteDial - Call Id: %d, Call name: %S",iCallId, iCallName);
     
     // Set dial flag to false
@@ -1460,7 +1461,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_ANSWERINC
 void CMmDataCallTsy::CompleteAnswerIncomingCall(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEANSWERINCOMINGCALL_1, "TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEANSWERINCOMINGCALL_1, "TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Result: %{TSymbianErrorCodes}",aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEANSWERINCOMINGCALL_2, "TSY: CMmDataCallTsy::CompleteAnswerIncomingCall - Call Id: %d, Call name: %S",iCallId, iCallName);
 
     //reset req handle. Returns the deleted req handle
@@ -1661,7 +1662,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_HANGUP_3,
 void CMmDataCallTsy::CompleteHangUp(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_1, "TSY: CMmDataCallTsy::CompleteHangUp.\n  \t\t\t Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_1, "TSY: CMmDataCallTsy::CompleteHangUp.\n  \t\t\t Result: %{TSymbianErrorCodes}",aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEHANGUP_2, "TSY: CMmDataCallTsy::CompleteHangUp - Call Id: %d, Call name: %S", iCallId, iCallName);
 
     TInt ret( KErrNone );
@@ -3154,7 +3155,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_DIALNOFDN
 void CMmDataCallTsy::CompleteDialNoFdn(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_1, "TSY: CMmDataCallTsy::CompleteDialNoFdn - Result: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_1, "TSY: CMmDataCallTsy::CompleteDialNoFdn - Result: %{TSymbianErrorCodes}", aResult );
 OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_2, "TSY: CMmDataCallTsy::CompleteDialNoFdn - Call Id: %d, Call name: %S",iCallId, iCallName);
     
     // Set dial flag to false
@@ -3179,7 +3180,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLE
             //complete caps change notification
             CompleteNotifyCapsChange();
             }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_3, "TSY: CMmDataCallTsy::CompleteDialNoFdn before ReqComplete %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_3, "TSY: CMmDataCallTsy::CompleteDialNoFdn before ReqComplete %{TSymbianErrorCodes}", aResult );
         ReqCompleted( reqHandle, aResult );
 
 OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_COMPLETEDIALNOFDN_4, "TSY: CMmDataCallTsy::CompleteDialNoFdn - set dialtype to none ");
@@ -3217,9 +3218,11 @@ void CMmDataCallTsy::ReqCompleted(
     //Overloads CTelObject::ReqCompleted for logging purposes. It 
     //prints the aTsyReqHandle and aError variable in the log file and then 
     //calls CTelObject::ReqCompleted.
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQCOMPLETED_1, "TSY: CMmDataCallTsy::Request Completed. Handle:%d Error:%d", aTsyReqHandle, aError);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQCOMPLETED_1, "TSY: CMmDataCallTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", aTsyReqHandle, aError, this);
 
     CTelObject::ReqCompleted(aTsyReqHandle,aError);
+
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDATACALLTSY_REQCOMPLETED_2, "<-- TSY: CMmPhoneTsy::ReqCompleted");
     }
 #endif
 

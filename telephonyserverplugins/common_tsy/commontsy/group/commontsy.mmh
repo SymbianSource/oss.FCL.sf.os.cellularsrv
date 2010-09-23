@@ -181,7 +181,11 @@ USERINCLUDE     ../inc/mmutility
 
 USERINCLUDE     ../../licenseetsy_lib/inc
 
-USERINCLUDE ../traces
+#ifndef USING_DISPATCHER
+USERINCLUDE ../traces_commontsy
+#else 
+USERINCLUDE ../traces_dispatchercommontsy
+#endif
 
 // Default system include paths for OS extension layer modules.
 OS_LAYER_SYSTEMINCLUDE_SYMBIAN

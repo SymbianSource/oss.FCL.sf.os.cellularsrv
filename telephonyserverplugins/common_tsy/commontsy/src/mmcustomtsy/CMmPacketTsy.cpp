@@ -164,7 +164,7 @@ TInt CMmPacketTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUNCL_1,  "CustomTSY: CMmPacketTsy::DoExtFuncL - IPC:%d Handle:%d", aIpc, aTsyReqHandle );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUNCL_1,  "TSY: CMmPacketTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", aIpc, (TUint)aTsyReqHandle, (TUint)this );
     TInt ret( KErrNotSupported );
 
     switch ( aIpc )
@@ -184,7 +184,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUNCL_
             break;
         }
 
-    return ret;
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_DOEXTFUNCL_3, "<-- TSY: CMmPacketTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);    return ret;
     }
 
 // ---------------------------------------------------------------------------
@@ -282,7 +282,7 @@ TInt CMmPacketTsy::CancelService(
     const TInt aIpc, 
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_CANCELSERVICE_1,  "CustomTSY: CMmPacketTsy::CancelService IPC:%d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_CANCELSERVICE_1,  "CustomTSY: CMmPacketTsy::CancelService IPC:%{TIPCNamesList}", aIpc );
     TInt ret( KErrNone );
 
     // Req handle type
@@ -338,8 +338,9 @@ void CMmPacketTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle, 
     const TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_REQCOMPLETED_1,  "CustomTSY: CMmPacketTsy::ReqCompleted Handle:%d Error:%d", aTsyReqHandle, aError );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_REQCOMPLETED_1, "TSY: CMmPacketTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", (TUint)aTsyReqHandle, aError, (TUint)this);
     iMmCustomTsy->ReqCompleted( aTsyReqHandle, aError );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETTSY_REQCOMPLETED_2, "<-- TSY: CMmPacketTsy::ReqCompleted");
     }
 
 // ---------------------------------------------------------------------------

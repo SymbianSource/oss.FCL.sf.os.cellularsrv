@@ -20,8 +20,6 @@
  @file 
  @internalComponent
 */
- 
-
 
 #include "OstTraceDefinitions.h"
 #ifdef OST_TRACE_COMPILER_IN_USE
@@ -35,26 +33,19 @@
 
 TInt TPdpStateModifyingActive::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEMODIFYINGACTIVE_INPUT_1, ">>TPdpStateModifyingActive::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEMODIFYINGACTIVE_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::EPdpContextModified:
 		aFsm.ChangeStateToOpen();
 		SpudManNotify(aFsm, KContextModifyActiveEvent, KErrNone);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEMODIFYINGACTIVE_INPUT_3, "<<TPdpStateModifyingActive::Input()");
 		return KErrNone;
 	case PdpFsm::EPdpContextModifiedFailed:
 		aFsm.ChangeStateToOpen();
 		SpudManNotify(aFsm, KContextModifyActiveEvent, aErrorCode);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEMODIFYINGACTIVE_INPUT_4, "<<TPdpStateModifyingActive::Input()");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEMODIFYINGACTIVE_INPUT_4, "*** PDP CONTEXT MODIFY FAILED ***");
 		return KErrNone;
 	}
 	
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATEMODIFYINGACTIVE_INPUT_5, "<<TPdpStateModifyingActive::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
-
-

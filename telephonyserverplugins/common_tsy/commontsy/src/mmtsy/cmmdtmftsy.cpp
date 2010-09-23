@@ -87,6 +87,7 @@ TInt CMmDtmfTsy::DoExtFuncL(
     const TDataPackage& aPackage )  
                                   
     {
+    OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_DOEXTFUNCL_1, "TSY: CMmDtmfTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
     TInt ret = KErrNone;
     TAny* dataPtr = aPackage.Ptr1();
     TBool cont ( EFalse );
@@ -141,6 +142,7 @@ TInt CMmDtmfTsy::DoExtFuncL(
             break;	
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMDTMFTSY_DOEXTFUNCL_2, "TSY: CMmDtmfTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 

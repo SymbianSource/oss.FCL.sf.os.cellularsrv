@@ -187,6 +187,7 @@ TInt CMmWimTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_DOEXTFUNCL_1, "TSY: CMmWimTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, aTsyReqHandle, (TUint)this);
     TInt ret( KErrNotSupported );
 
     switch ( aIpc )
@@ -224,6 +225,7 @@ TInt CMmWimTsy::DoExtFuncL(
             break;
         }
         
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_DOEXTFUNCL_2, "<-- TSY: CMmWimTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);
     return ret;        
     }
 
@@ -508,7 +510,7 @@ void CMmWimTsy::Complete(
     TInt aReqHandleType, 
     TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETE_1,  "CustomTSY: CMmWimTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%d\n", aReqHandleType, aError );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMWIMTSY_COMPLETE_1,  "CustomTSY: CMmWimTsy::Complete.\n\t ReqHandleType:%d \n\t Error:%{TSymbianErrorCodes}\n", aReqHandleType, aError );
     iMmCustomTsy->ReqCompleted( iTsyReqHandleStore->ResetTsyReqHandle( 
         aReqHandleType ), aError );
     }

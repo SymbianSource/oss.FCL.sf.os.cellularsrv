@@ -64,7 +64,7 @@ Default SubConnection Flow Factory Constructor
 CSubConnectionFlowBase* CRawIPFlowFactory::DoCreateFlowL(ESock::CProtocolIntfBase* aProtocol, ESock::TFactoryQueryBase& aQuery)
 	{
 
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOWFACTORY_DOCREATEFLOWL_1, "Raw IP logging started.");
+	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CRAWIPFLOWFACTORY_DOCREATEFLOWL_1, "Creating Raw IP Flow.");
 	
 	const TDefaultFlowFactoryQuery& query = static_cast<const TDefaultFlowFactoryQuery&>(aQuery);
  	CRawIPFlow* s = new (ELeave) CRawIPFlow(*this, query.iSCprId, aProtocol);

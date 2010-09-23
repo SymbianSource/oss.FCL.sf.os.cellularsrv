@@ -151,7 +151,7 @@ class CPdpFsmInterface
 		return iUmtsRelease;
 		}
 
-	const TName& GetContextName(TContextId aPdpId);
+	const TName& GetContextName(TContextId aPdpId) const;
 
  protected:
  private:

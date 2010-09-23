@@ -54,6 +54,7 @@ SOURCE	rawipmcpr.cpp
 SOURCE	rawipmcprfactory.cpp
 SOURCE	RawIpAgentHandler.cpp
 SOURCE	ecom_impl.cpp
+SOURCE	rawipnif_const.cpp
 
 
 USERINCLUDE		../inc

@@ -35,32 +35,26 @@
 
 TInt TPdpStateCreatingPrimary::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErrorCode)
 {
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_1, ">>TPdpStateCreatingPrimary::Input()");
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_2, "aOperation : %S(%d)", *(LogOperation(aFsm, aOperation)), aOperation);
-
 	switch (aOperation)
 	{
 	case PdpFsm::E1ryPdpContextCreated:
 		aFsm.ChangeStateToActivatingPrimary();
 		EtelDriverInput(aFsm, EtelDriver::EActivatePdp);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_3, "<<TPdpStateCreatingPrimary::Input()");
 		return KErrNone;
 	case PdpFsm::E1ryPdpContextCreatedFailed: 
 		aFsm.ChangeStateToInitialised();
 		SpudManNotify (aFsm, KPrimaryContextCreated, aErrorCode); // or is it KContextActivateEvent?
 		EtelDriverInput(aFsm, EtelDriver::EContextDelete);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_5, "<<TPdpStateCreatingPrimary::Input()");
+		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_1, "**** PRIMARY PDP CONTEXT CREATE FAILED ****");
 		return KErrNone;
    case SpudMan::ECancelContextCreate:
 		aFsm.ChangeStateToStopping();
 		EtelDriverCancel(aFsm);
 		EtelDriverInput(aFsm, EtelDriver::EContextDelete);
-		OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_6, "<<TPdpStateCreatingPrimary::Input()");
 		return KErrNone;
 	}
 
 	// default error handling
-	OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, TPDPSTATECREATINGPRIMARY_INPUT_7, "<<TPdpStateCreatingPrimary::Input()");
 	return TPdpState::Input(aFsm, aOperation, aErrorCode);
 }
 

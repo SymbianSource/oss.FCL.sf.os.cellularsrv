@@ -238,7 +238,7 @@ TInt CMmConferenceCallTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_DOEXTFUNCL_1, "TSY: CMmConferenceCallTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle:%d",aIpc, aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_DOEXTFUNCL_1, "TSY: CMmConferenceCallTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TInt ret( KErrNotSupported );
 
@@ -297,6 +297,7 @@ TInt CMmConferenceCallTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_DOEXTFUNCL_2, "TSY: CMmConferenceCallTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
 
     }
@@ -823,7 +824,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_ADD
 void CMmConferenceCallTsy::CompleteAddCall(
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_1, "TSY: CMmConferenceCallTsy::CompleteAddCall, Result: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_COMPLETEADDCALL_1, "TSY: CMmConferenceCallTsy::CompleteAddCall, Result: %{TSymbianErrorCodes}", aResult );
 
     //reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1763,11 +1764,12 @@ void CMmConferenceCallTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-	OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REQCOMPLETED_1, "TSY: CMmConferenceCallTsy::Request Completed. \n\t\t\tHandle:%d\n\t\t\t Error:%d",aTsyReqHandle, aError);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REQCOMPLETED_1, "TSY: CMmConferenceCallTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", aTsyReqHandle, aError, this);
 
     //call original ReqCompleted from CTelObject
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMCONFERENCECALLTSY_REQCOMPLETED_2, "<-- TSY: CMmConferenceCallTsy::ReqCompleted" );
     }
 #endif // TF_LOGGING_ENABLED
 

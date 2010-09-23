@@ -164,7 +164,7 @@ TInt CMmPacketContextTsy::ExtFunc(
         const TInt aIpc, 
         const TDataPackage& aPackage )  
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_EXTFUNC_1,  "TSY: CMmPacketContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, iContextName );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_EXTFUNC_1,  "TSY: CMmPacketContextTsy::ExtFunc. IPC: %{TIPCNamesList} Context name:%S", (TUint)aIpc, iContextName );
 
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
@@ -223,7 +223,7 @@ TInt CMmPacketContextTsy::DoExtFuncL(
         const TInt aIpc,      
         const TDataPackage& aPackage )   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DOEXTFUNCL_1,  "TSY: CMmPacketContextTsy::DoExtFuncL. IPC: %d Handle:%d",aIpc, aTsyReqHandle );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DOEXTFUNCL_1,  "TSY: CMmPacketContextTsy::DoExtFuncL. IPC: %{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, (TInt)aTsyReqHandle, (TUint)this );
 
     TInt ret( KErrNotSupported );
 
@@ -378,6 +378,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_D
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DOEXTFUNCL_2, "<-- TSY: CMmPacketContextTsy::DoExtFuncL, error = %{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -389,7 +390,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_D
 CTelObject::TReqMode CMmPacketContextTsy::ReqModeL( 
         const TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQMODEL_1,  "TSY: CMmPacketContextTsy::ReqModeL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQMODEL_1,  "TSY: CMmPacketContextTsy::ReqModeL. IPC: %{TIPCNamesList}", aIpc );
 
     CTelObject::TReqMode reqMode( 0 );
     TBool doLeave( EFalse );
@@ -532,7 +533,7 @@ TInt CMmPacketContextTsy::NumberOfSlotsL(
             break;
 
         }  
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NUMBEROFSLOTSL_1,  "TSY: CMmPacketContextTsy::NumberOfSlotsL. IPC: %d Number of slots: %d",aIpc, numberOfSlots );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_NUMBEROFSLOTSL_1,  "TSY: CMmPacketContextTsy::NumberOfSlotsL. IPC: %{TIPCNamesList} Number of slots: %d",aIpc, numberOfSlots );
 
     return numberOfSlots;
 
@@ -554,7 +555,7 @@ TInt CMmPacketContextTsy::CancelService(
         const TInt aIpc,                            
         const TTsyReqHandle aTsyReqHandle )         
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_CANCELSERVICE_1,  "TSY: CMmPacketContextTsy::CancelService. IPC: %d Handle:%d",aIpc, aTsyReqHandle );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_CANCELSERVICE_1,  "TSY: CMmPacketContextTsy::CancelService. IPC: %{TIPCNamesList} Handle:%d",aIpc, aTsyReqHandle );
 
     TInt ret( KErrNone );
 	TTsyReqHandle reqHandle( NULL );
@@ -678,7 +679,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_C
 TInt CMmPacketContextTsy::RegisterNotification( 
         const TInt aIpc )              
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REGISTERNOTIFICATION_1,  "TSY: CMmPacketContextTsy::RegisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REGISTERNOTIFICATION_1,  "TSY: CMmPacketContextTsy::RegisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     TInt ret( KErrNone );
 
@@ -720,7 +721,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REGI
 TInt CMmPacketContextTsy::DeregisterNotification(
         const TInt aIpc )                          
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmPacketContextTsy::DeregisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmPacketContextTsy::DeregisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     TInt ret( KErrNone );
 
@@ -762,7 +763,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPEN
     // Each context can have only one QoS
     if ( NULL != iQoSProfile )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTL_2,  "TSY: CMmPacketContextTsy::OpenNewObjectL. Leaves with: %d", KErrAlreadyExists );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTL_2,  "TSY: CMmPacketContextTsy::OpenNewObjectL. Leaves with: %{TSymbianErrorCodes}", KErrAlreadyExists );
         User::Leave( KErrAlreadyExists );
         }
     
@@ -794,7 +795,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_O
 
     if ( aName != iQoSProfileName )
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTBYNAMEL_2,  "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. Leaves with: %d", KErrNotFound );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_OPENNEWOBJECTBYNAMEL_2,  "TSY: CMmPacketContextTsy::OpenNewObjectByNameL. Leaves with: %{TSymbianErrorCodes}", KErrNotFound );
         User::Leave( KErrNotFound );
         }
 
@@ -833,7 +834,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_INIT
 //
 void CMmPacketContextTsy::CompleteInitialiseContext(const TInt aResult )     
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmPacketContextTsy::CompleteInitialiseContext. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmPacketContextTsy::CompleteInitialiseContext. Error: %{TSymbianErrorCodes}", aResult );
 
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -888,7 +889,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_A
 void CMmPacketContextTsy::CompleteActivate( 
         const TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEACTIVATE_1,  "TSY: CMmPacketContextTsy::CompleteActivate. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEACTIVATE_1,  "TSY: CMmPacketContextTsy::CompleteActivate. Error: %{TSymbianErrorCodes}", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextActivate );
@@ -933,7 +934,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_D
 void CMmPacketContextTsy::CompleteDeactivate( 
         const TInt aResult )    
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEDEACTIVATE_1,  "TSY: CMmPacketContextTsy::CompleteDeactivate. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEDEACTIVATE_1,  "TSY: CMmPacketContextTsy::CompleteDeactivate. Error: %{TSymbianErrorCodes}", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextDeactivate );
@@ -982,7 +983,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_D
 void CMmPacketContextTsy::CompleteDelete( 
         const TInt aResult )        
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEDELETE_1,  "TSY: CMmPacketContextTsy::CompleteDelete. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEDELETE_1,  "TSY: CMmPacketContextTsy::CompleteDelete. Error: %{TSymbianErrorCodes}", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePacketContextDelete );
@@ -1083,7 +1084,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_G
 void CMmPacketContextTsy::CompleteGetDataVolumeTransferred( 
         const TInt aResult )  
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEGETDATAVOLUMETRANSFERRED_1,  "TSY: CMmPacketContextTsy::CompleteGetDataVolumeTransferred. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETEGETDATAVOLUMETRANSFERRED_1,  "TSY: CMmPacketContextTsy::CompleteGetDataVolumeTransferred. Error: %{TSymbianErrorCodes}", aResult );
 
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -1116,7 +1117,7 @@ TInt CMmPacketContextTsy::GetLastErrorCause(
         const TTsyReqHandle aTsyReqHandle,  
         TInt* const aError )    
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETLASTERRORCAUSE_1,  "TSY: CMmPacketContextTsy::GetLastErrorCause. Context name:%S Last error cause: %d",iContextName, iLastErrorCause );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_GETLASTERRORCAUSE_1,  "TSY: CMmPacketContextTsy::GetLastErrorCause. Context name:%S Last error cause: %{TSymbianErrorCodes}",iContextName, iLastErrorCause );
 
     *aError = iLastErrorCause;
     CMmPacketContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
@@ -1389,7 +1390,7 @@ void CMmPacketContextTsy::CompleteSetConfig(
         const TInt aError,   
         TBool aIsAddMediaAuthorizationCalled )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETESETCONFIG_1,  "TSY: CMmPacketContextTsy::CompleteSetConfig. Error: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_COMPLETESETCONFIG_1,  "TSY: CMmPacketContextTsy::CompleteSetConfig. Error: %{TSymbianErrorCodes}", aError );
     
     TTsyReqHandle reqHandle( EMultimodePacketContextReqHandleUnknown );
     //if context exists eg. its name length is bigger than zero
@@ -1512,7 +1513,7 @@ void CMmPacketContextTsy::SetLastErrorCause(
         iLastErrorCause =  aErrorCause;           
         }
 
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_SETLASTERRORCAUSE_1,  "TSY: CMmPacketContextTsy::SetLastErrorCause.  aErrorCause: %d iLastErrorCause:%d", aErrorCause, iLastErrorCause );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_SETLASTERRORCAUSE_1,  "TSY: CMmPacketContextTsy::SetLastErrorCause.  aErrorCause: %{TSymbianErrorCodes} iLastErrorCause:%{TSymbianErrorCodes}", aErrorCause, iLastErrorCause );
 
     }
 
@@ -1613,7 +1614,7 @@ void CMmPacketContextTsy::ReqCompleted(
         const TTsyReqHandle aTsyReqHandle, 
         const TInt aError )   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQCOMPLETED_1,  "TSY: CMmPacketContextTsy::ReqCompleted. Handle:%d Error:%d", aTsyReqHandle, aError );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQCOMPLETED_1, "TSY: CMmPacketContextTsy::ReqCompleted. Error:%{TSymbianErrorCodes} Handle:%d Object:0x%08x", (TInt)aError, (TUint)aTsyReqHandle, (TUint)this);
 
     // Set last error cause
     if ( KErrNone != aError )
@@ -1623,6 +1624,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_R
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPACKETCONTEXTTSY_REQCOMPLETED_2, "<-- TSY: CMmPacketContextTsy::ReqCompleted");
     }
 
 #ifdef REQHANDLE_TIMER

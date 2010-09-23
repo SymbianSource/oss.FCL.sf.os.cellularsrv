@@ -120,7 +120,7 @@ TInt CMmMBMSContextTsy::ExtFunc(
         TInt aIpc, 
         const TDataPackage& aPackage )  
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_EXTFUNC_1,  "TSY: CMmMBMSContextTsy::ExtFunc. IPC: %d Context name:%S", aIpc, iContextName );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_EXTFUNC_1,  "TSY: CMmMBMSContextTsy::ExtFunc. IPC: %{TIPCNamesList} Context name:%S", (TUint)aIpc, iContextName );
 
     TInt ret( KErrNone );
     TInt trapError( KErrNone );
@@ -167,7 +167,7 @@ TInt CMmMBMSContextTsy::DoExtFuncL(
         TInt aIpc,      
         const TDataPackage& aPackage )   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOEXTFUNCL_1,  "TSY: CMmMBMSContextTsy::DoExtFuncL. IPC: %d Handle:%d",aIpc, aTsyReqHandle );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOEXTFUNCL_1,  "TSY: CMmMBMSContextTsy::DoExtFuncL. IPC: %{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, (TInt)aTsyReqHandle, (TUint)this );
 
     TInt ret( KErrNotSupported );
 
@@ -247,6 +247,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOE
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOEXTFUNCL_2, "TSY: CMmMBMSContextTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -260,7 +261,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DOE
 CTelObject::TReqMode CMmMBMSContextTsy::ReqModeL( 
         TInt aIpc ) 
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQMODEL_1,  "TSY: CMmMBMSContextTsy::ReqModeL. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQMODEL_1,  "TSY: CMmMBMSContextTsy::ReqModeL. IPC: %{TIPCNamesList}", aIpc );
 
     CTelObject::TReqMode reqMode( 0 );
     TBool doLeave( EFalse );
@@ -372,7 +373,7 @@ TInt CMmMBMSContextTsy::NumberOfSlotsL(
             break;
 
         }  
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NUMBEROFSLOTSL_1,  "TSY: CMmMBMSContextTsy::NumberOfSlotsL. IPC: %d Number of slots: %d", aIpc, numberOfSlots );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_NUMBEROFSLOTSL_1,  "TSY: CMmMBMSContextTsy::NumberOfSlotsL. IPC: %{TIPCNamesList} Number of slots: %d", aIpc, numberOfSlots );
 
     return numberOfSlots;
 
@@ -394,7 +395,7 @@ TInt CMmMBMSContextTsy::CancelService(
         TInt aIpc,                            
         TTsyReqHandle aTsyReqHandle )         
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_CANCELSERVICE_1,  "TSY: CMmMBMSContextTsy::CancelService. IPC: %d Handle:%d", aIpc, aTsyReqHandle );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_CANCELSERVICE_1,  "TSY: CMmMBMSContextTsy::CancelService. IPC: %{TIPCNamesList} Handle:%d", aIpc, aTsyReqHandle );
 
     TInt ret( KErrNone );
 	//TTsyReqHandle reqHandle( NULL );
@@ -467,7 +468,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_CAN
 TInt CMmMBMSContextTsy::RegisterNotification( 
         TInt aIpc )              
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REGISTERNOTIFICATION_1,  "TSY: CMmMBMSContextTsy::RegisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REGISTERNOTIFICATION_1,  "TSY: CMmMBMSContextTsy::RegisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     TInt ret( KErrNone );
 
@@ -500,7 +501,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REGIST
 TInt CMmMBMSContextTsy::DeregisterNotification(
         TInt aIpc )                          
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmMBMSContextTsy::DeregisterNotification. IPC: %d", aIpc );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEREGISTERNOTIFICATION_1,  "TSY: CMmMBMSContextTsy::DeregisterNotification. IPC: %{TIPCNamesList}", aIpc );
 
     TInt ret( KErrNone );
 
@@ -566,7 +567,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_INI
 
 void CMmMBMSContextTsy::CompleteInitialiseContext(TInt aResult, RPacketContext::TDataChannelV2* aDataChannel )     
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmMBMSContextTsy::CompleteInitialiseContext. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEINITIALISECONTEXT_1,  "TSY: CMmMBMSContextTsy::CompleteInitialiseContext. Error: %{TSymbianErrorCodes}", aResult );
 
     iIsActivateAllowed = ETrue;
     if (KErrNone == aResult )
@@ -652,7 +653,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_ACT
 //
 void CMmMBMSContextTsy::CompleteActivate(TInt aResult)
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEACTIVATE_1,  "TSY: CMmMBMSContextTsy::CompleteActivate. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEACTIVATE_1,  "TSY: CMmMBMSContextTsy::CompleteActivate. Error: %{TSymbianErrorCodes}", aResult );
    
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
@@ -668,7 +669,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLE
         }        
     else
         {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEACTIVATE_2,  "TSY: CMmMBMSContextTsy::CompleteActivate. ErrorCause: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEACTIVATE_2,  "TSY: CMmMBMSContextTsy::CompleteActivate. ErrorCause: %{TSymbianErrorCodes}",aResult );
         // Re-activation is allowed because activation has not succeeded
         iIsActivateAllowed = ETrue;
         }
@@ -724,7 +725,7 @@ void CMmMBMSContextTsy::CompleteDeactivate(
         CMmDataPackage* aDataPackage,
         TInt aResult )    
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEDEACTIVATE_1,  "TSY: CMmMBMSContextTsy::CompleteDeactivate. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEDEACTIVATE_1,  "TSY: CMmMBMSContextTsy::CompleteDeactivate. Error: %{TSymbianErrorCodes}", aResult );
     // Reset the req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodeMbmsContextDeactivate );
@@ -818,7 +819,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_DEL
 void CMmMBMSContextTsy::CompleteDelete( 
         TInt aResult )        
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEDELETE_1,  "TSY: CMmMBMSContextTsy::CompleteDelete. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETEDELETE_1,  "TSY: CMmMBMSContextTsy::CompleteDelete. Error: %{TSymbianErrorCodes}", aResult );
 
     if( KErrNone == aResult )
         {
@@ -884,7 +885,7 @@ TInt CMmMBMSContextTsy::GetLastErrorCause(
         TTsyReqHandle aTsyReqHandle,  
         TInt* aError )    
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETLASTERRORCAUSE_1,  "TSY: CMmMBMSContextTsy::GetLastErrorCause. Context name:%S Last error cause: %d", iContextName, iLastErrorCause );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_GETLASTERRORCAUSE_1,  "TSY: CMmMBMSContextTsy::GetLastErrorCause. Context name:%S Last error cause: %{TSymbianErrorCodes}", iContextName, iLastErrorCause );
 
     *aError = iLastErrorCause;
     CMmMBMSContextTsy::ReqCompleted( aTsyReqHandle, KErrNone );
@@ -904,7 +905,7 @@ void CMmMBMSContextTsy::SetLastErrorCause(
     
      iLastErrorCause =  aErrorCause;           
     
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SETLASTERRORCAUSE_1,  "TSY: CMmMBMSContextTsy::SetLastErrorCause.  aErrorCause: %d iLastErrorCause:%d", aErrorCause, iLastErrorCause );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SETLASTERRORCAUSE_1,  "TSY: CMmMBMSContextTsy::SetLastErrorCause.  aErrorCause: %{TSymbianErrorCodes} iLastErrorCause:%{TSymbianErrorCodes}", aErrorCause, iLastErrorCause );
 
     }
 
@@ -1176,7 +1177,7 @@ OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_SET
 void CMmMBMSContextTsy::CompleteSetConfig( 
         TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETESETCONFIG_1,  "TSY: CMmMBMSContextTsy::CompleteSetConfig. Error: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_COMPLETESETCONFIG_1,  "TSY: CMmMBMSContextTsy::CompleteSetConfig. Error: %{TSymbianErrorCodes}", aError );
     
     if( (KErrNone == aError) && (iConfig) && (iTempConfig) )
 	    {
@@ -1221,7 +1222,7 @@ void CMmMBMSContextTsy::ReqCompleted(
         TTsyReqHandle aTsyReqHandle, 
         TInt aError )   
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQCOMPLETED_1,  "TSY: CMmMBMSContextTsy::ReqCompleted. Handle:%d Error:%d",  aTsyReqHandle, aError );
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQCOMPLETED_1,  "TSY: CMmMBMSContextTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", (TUint)aTsyReqHandle, aError, (TUint)this);
 
     // Set last error cause
     if ( KErrNone != aError )
@@ -1231,6 +1232,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQ
 
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
 
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMMBMSCONTEXTTSY_REQCOMPLETED_2,  "<-- TSY: CMmMBMSContextTsy::ReqCompleted");
     }
 
 #ifdef REQHANDLE_TIMER

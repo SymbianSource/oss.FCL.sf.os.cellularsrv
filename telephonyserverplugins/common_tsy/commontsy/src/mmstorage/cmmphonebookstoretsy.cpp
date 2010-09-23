@@ -304,7 +304,7 @@ CTelObject* CMmPhoneBookStoreTsy::OpenNewObjectL( TDes& )
 CTelObject::TReqMode CMmPhoneBookStoreTsy::ReqModeL(
     const TInt aIpc )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQMODEL_1, "TSY: CMmPhoneBookStoreTsy::ReqModeL IPC:%d", aIpc);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQMODEL_1, "TSY: CMmPhoneBookStoreTsy::ReqModeL IPC:%{TIPCNamesList}", aIpc);
 
     CTelObject::TReqMode ret = 0;
     switch ( aIpc )
@@ -443,7 +443,7 @@ TInt CMmPhoneBookStoreTsy::CancelService(
     const TInt aIpc,
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CANCELSERVICE_1, "TSY: CMmPhoneBookStoreTsy::CancelService IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CANCELSERVICE_1, "TSY: CMmPhoneBookStoreTsy::CancelService IPC:%{TIPCNamesList} Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret( KErrNone );
 
@@ -469,7 +469,7 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_
         default:
             break;
         }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CANCELSERVICE_2, "TSY: CMmPhoneBookStoreTsy::CancelService return: %d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_CANCELSERVICE_2, "TSY: CMmPhoneBookStoreTsy::CancelService return: %{TSymbianErrorCodes}", ret);
 
     return ret;
     }
@@ -488,7 +488,7 @@ TInt CMmPhoneBookStoreTsy::ExtFunc(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_EXTFUNC_1, "TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_EXTFUNC_1, "TSY: CMmPhoneBookStoreTsy::ExtFunc IPC:%{TIPCNamesList} Handle:%d", aIpc, aTsyReqHandle);
 
     TInt ret = KErrNone;
     TInt trapError = KErrNone;
@@ -542,7 +542,7 @@ TInt CMmPhoneBookStoreTsy::DoExtFuncL(
     const TInt aIpc,
     const TDataPackage& aPackage )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DOEXTFUNCL_1, "TSY: CMmPhoneBookStoreTsy::DoExtFuncL IPC:%d Handle:%d", aIpc, aTsyReqHandle);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DOEXTFUNCL_1, "TSY: CMmPhoneBookStoreTsy::DoExtFuncL IPC:%{TIPCNamesList} Handle:%u Object:0x%08x", (TUint)aIpc, (TUint)aTsyReqHandle, (TUint)this);
 
     TAny* dataPtr=aPackage.Ptr1();
     TAny* dataPtr2=aPackage.Ptr2();
@@ -586,6 +586,8 @@ OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_
         default:
             result = KErrNotSupported;
         }
+
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_DOEXTFUNCL_2, "TSY: CMmPhoneBookStoreTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", result);
     return result;
     }
 
@@ -648,7 +650,7 @@ void CMmPhoneBookStoreTsy::CompletePBStoreInitializationL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEPBSTOREINITIALIZATIONL_1, "TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEPBSTOREINITIALIZATIONL_1, "TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - Result: %{TSymbianErrorCodes}",aResult );
 OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEPBSTOREINITIALIZATIONL_2, "TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneBookType: %u",iPhoneBookType );
 
     // If initialization made successfully
@@ -984,7 +986,7 @@ void CMmPhoneBookStoreTsy::CompleteReadL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEREADL_1, "TSY: CMmPhoneBookStoreTsy::CompleteReadL - aResult: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEREADL_1, "TSY: CMmPhoneBookStoreTsy::CompleteReadL - aResult: %{TSymbianErrorCodes}",aResult );
 
     TInt errCode = aResult;
     // Reset req handle. Returns the deleted req handle
@@ -1054,7 +1056,7 @@ void CMmPhoneBookStoreTsy::CompleteCountEntries(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECOUNTENTRIES_1, "TSY: CMmPhoneBookStoreTsy::CompleteCountEntries - Result: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECOUNTENTRIES_1, "TSY: CMmPhoneBookStoreTsy::CompleteCountEntries - Result: %{TSymbianErrorCodes}", aResult );
     TInt numOfEntries( 0 );
 
     //reset request handle. Returns the deleted req handle.
@@ -1165,7 +1167,7 @@ void CMmPhoneBookStoreTsy::CompleteCachingL(
     TInt aResult, CMmDataPackage* aDataPackage )
     {
 OstTraceDefExt1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_1, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - PB %S Caching completed", iPhoneBookName);
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_2, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETECACHINGL_2, "TSY: CMmPhoneBookStoreTsy::CompleteCachingL - Result: %{TSymbianErrorCodes}",aResult );
 	
 #ifdef USING_CTSY_DISPATCHER 		
 	aDataPackage->UnPackData(iPBStoreCache);
@@ -1536,7 +1538,7 @@ TInt CMmPhoneBookStoreTsy::FillBufferedDesL(
         if ( 0 == marked )
             {
             ret = pbBuffer->AddNewEntryTag();
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_1, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 0, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_1, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 0, ret: %{TSymbianErrorCodes} ", ret);
             }
         // Append Index
         else if ( 1 == marked )
@@ -1544,7 +1546,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
             ret = pbBuffer->PutTagAndValue(
                 RMobilePhoneBookStore::ETagPBAdnIndex, (TUint16)(
                 aPhoneBookStoreResp->iLocation ) );
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_2, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 1, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_2, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 1, ret: %{TSymbianErrorCodes} ", ret);
             }
         // Append Name
         else if ( 2 == marked )
@@ -1556,7 +1558,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
                     RMobilePhoneBookStore::ETagPBText,
                     aPhoneBookStoreResp->iText->Des() );
                 }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_3, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 2, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_3, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 2, ret: %{TSymbianErrorCodes} ", ret);
             }
         // Append Number
         else if ( 3 == marked )
@@ -1568,7 +1570,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
                     RMobilePhoneBookStore::ETagPBNumber,
                     aPhoneBookStoreResp->iNumber->Des() );
                 }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_4, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 3, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_4, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 3, ret: %{TSymbianErrorCodes} ", ret);
             }
         // Append Email
         else if ( 4 == marked )
@@ -1581,7 +1583,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
                     RMobilePhoneBookStore::ETagPBEmailAddress,
                     aPhoneBookStoreResp->iEmail->MdcaPoint( numEmails ) );
                 }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_5, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 4, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_5, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 4, ret: %{TSymbianErrorCodes} ", ret);
             }
         // Append Sne
         else if ( 5 == marked )
@@ -1594,7 +1596,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
                     RMobilePhoneBookStore::ETagPBSecondName,
                     aPhoneBookStoreResp->iSne->MdcaPoint( numSnes ) );
                 }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_6, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 5, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_6, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 5, ret: %{TSymbianErrorCodes} ", ret);
             }
         // Append Anr
         else if ( 6 == marked )
@@ -1608,7 +1610,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
                     RMobilePhoneBookStore::ETagPBNumber,
                     aPhoneBookStoreResp->iAnr->MdcaPoint( numAnrs ) );
                 }
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_7, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 6, ret: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_7, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - 6, ret: %{TSymbianErrorCodes} ", ret);
             }
 
         marked++;
@@ -1632,7 +1634,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FIL
     
     CleanupStack::PopAndDestroy(pbBuffer);
 
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_8, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - returnvalue: %d ", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_FILLBUFFEREDDESL_8, "TSY: CMmPhoneBookStoreTsy::FillBufferedDesL - returnvalue: %{TSymbianErrorCodes} ", ret);
 
     //If simrefresh registration is failed prevent new cache
     if( KErrOverflow == ret && !( iMmPhoneTsy->GetSimRefreshRegister() ) )
@@ -1818,7 +1820,7 @@ void CMmPhoneBookStoreTsy::CompleteWriteL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_1, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEWRITEL_1, "TSY: CMmPhoneBookStoreTsy::CompleteWriteL - Result: %{TSymbianErrorCodes}",aResult );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneBookStoreWrite );
@@ -2182,7 +2184,7 @@ void CMmPhoneBookStoreTsy::CompleteDeleteL(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEL_1, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteL - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEL_1, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteL - Result: %{TSymbianErrorCodes}",aResult );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneStoreDelete );
@@ -2331,7 +2333,7 @@ void CMmPhoneBookStoreTsy::CompleteDeleteAll(
     TInt aResult,
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEALL_1, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll - Result: %d",aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEDELETEALL_1, "TSY: CMmPhoneBookStoreTsy::CompleteDeleteAll - Result: %{TSymbianErrorCodes}",aResult );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneStoreDeleteAll );
@@ -2675,7 +2677,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_GET
 void CMmPhoneBookStoreTsy::CompleteGetInfo(
     TInt aError )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEGETINFO_1, "TSY: CMmPhoneBookStoreTsy::CompleteGetInfo - Result: %d", aError );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_COMPLETEGETINFO_1, "TSY: CMmPhoneBookStoreTsy::CompleteGetInfo - Result: %{TSymbianErrorCodes}", aError );
     // Reset req handle. Returns the deleted req handle
     TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
         EMultimodePhoneStoreGetInfo );
@@ -3028,8 +3030,9 @@ void CMmPhoneBookStoreTsy::ReqCompleted(
     const TTsyReqHandle aTsyReqHandle,
     const TInt aError )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQCOMPLETED_1, "TSY: CMmPhoneBookStoreTsy::ReqCompleted - Handle:%d Error:%d", aTsyReqHandle, aError);
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQCOMPLETED_1, "TSY: CMmPhoneBookStoreTsy::ReqCompleted. Handle:%d Error:%{TSymbianErrorCodes} Object:0x%08x", aTsyReqHandle, aError, this);
     CTelObject::ReqCompleted( aTsyReqHandle, aError );
+OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_REQCOMPLETED_2, "<-- TSY: CMmPhoneBookStoreTsy::ReqCompleted");
     }
 
 #endif
@@ -3049,7 +3052,7 @@ void CMmPhoneBookStoreTsy::SetTypeOfResponse(
     const TInt aReqHandleType,
     const TTsyReqHandle aTsyReqHandle )
     {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SETTYPEOFRESPONSE_1, "TSY: CMmPhoneBookStoreTsy::SetTypeOfResponse - Handle:%d Type:%d", aTsyReqHandle, aReqHandleType );
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMPHONEBOOKSTORETSY_SETTYPEOFRESPONSE_1, "TSY: CMmPhoneBookStoreTsy::SetTypeOfResponse - Handle:%d Type:%d", (TUint)aTsyReqHandle, aReqHandleType );
 
     TInt timeOut( 0 );
 

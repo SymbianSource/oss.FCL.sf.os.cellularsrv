@@ -195,6 +195,7 @@ TInt CMmSmsStorageTsy::DoExtFuncL(
     const TInt aIpc, 
     const TDataPackage& aPackage )      
     {
+OstTraceDefExt3(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_DOEXTFUNCL_1, "TSY: CMmSmsStorageTsy::DoExtFuncL. IPC:%{TIPCNamesList} Handle:%d Object:0x%08x", (TUint)aIpc, aTsyReqHandle, (TUint)this);
     TAny* dataPtr = aPackage.Ptr1();
     TAny* dataPtr2 = aPackage.Ptr2();
 
@@ -234,6 +235,7 @@ TInt CMmSmsStorageTsy::DoExtFuncL(
             break;
         }
 
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_DOEXTFUNCL_2, "TSY: CMmSmsStorageTsy::DoExtFuncL, error=%{TSymbianErrorCodes}", ret);
     return ret;
     }
 
@@ -650,7 +652,7 @@ void CMmSmsStorageTsy::CompleteReadSms(
     TInt aResult, 
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADSMS_1, "TSY: CMmSmsStorageTsy::CompleteReadSms. Error: %d",aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADSMS_1, "TSY: CMmSmsStorageTsy::CompleteReadSms. Error: %{TSymbianErrorCodes}",aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsReadSms );
 
@@ -737,7 +739,7 @@ void CMmSmsStorageTsy::CompleteWriteSms(
     TInt aResult, 
     CMmDataPackage* aDataPackage )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEWRITESMS_1, "TSY: CMmSmsStorageTsy::CompleteWriteSms. Error: %d",aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEWRITESMS_1, "TSY: CMmSmsStorageTsy::CompleteWriteSms. Error: %{TSymbianErrorCodes}",aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsWriteSms );
 
@@ -833,7 +835,7 @@ TInt CMmSmsStorageTsy::DeleteSmsL(
 void CMmSmsStorageTsy::CompleteDeleteSms( 
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEDELETESMS_1, "TSY: CMmSmsStorageTsy::CompleteDeleteSms. Error: %d", aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEDELETESMS_1, "TSY: CMmSmsStorageTsy::CompleteDeleteSms. Error: %{TSymbianErrorCodes}", aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsEraseSms );
 
@@ -900,7 +902,7 @@ TInt CMmSmsStorageTsy::DeleteAllSmsL(
 void CMmSmsStorageTsy::CompleteDeleteAllSms( 
     TInt aResult )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEDELETEALLSMS_1,  "TSY: CMmSmsStorageTsy::CompleteDeleteAllSms. Error: %d", aResult );
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEDELETEALLSMS_1,  "TSY: CMmSmsStorageTsy::CompleteDeleteAllSms. Error: %{TSymbianErrorCodes}", aResult );
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsEraseAllSms );
 
@@ -1078,7 +1080,7 @@ OstTraceDef0(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALL
             
             if ( KErrNone != ret )
             	{
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_3, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L - and the returned value for EMobilePhoneStoreReadAllPhase1:%d", ret);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_3, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L - and the returned value for EMobilePhoneStoreReadAllPhase1:%{TSymbianErrorCodes}", ret);
 				(void)iMmTsyReqHandleStore->ResetTsyReqHandle( CMmSmsTsy::EMultimodeSimStSmsReadAllSms );
 				// the returned value from ResetTsyReqHandle is not needed. 
             	}
@@ -1092,7 +1094,7 @@ OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALL
 		// DOS layer returned with error
 	    if ( ret != KErrNone )
 	        {
-OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_4, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L aTsyReqHandle: %u and ret:%d", (TUint)aTsyReqHandle, ret);
+OstTraceDefExt2(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_READALLSMSPHASE1L_4, "TSY: CMmSmsStorageTsy::ReadAllSmsPhase1L aTsyReqHandle: %u and ret:%{TSymbianErrorCodes}", (TUint)aTsyReqHandle, ret);
 	        ReqCompleted( aTsyReqHandle, ret );
 	        }
 			
@@ -1232,7 +1234,7 @@ void CMmSmsStorageTsy::CompleteReadAllSmsPhase1(
     TInt aResult, 
 	TBool aReceivedClass2ToBeReSent )
     {
-OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADALLSMSPHASE1_1, "TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1. Complete read first phase error: %d", aResult);
+OstTraceDef1(OST_TRACE_CATEGORY_DEBUG, TRACE_INTERNALS, CMMSMSSTORAGETSY_COMPLETEREADALLSMSPHASE1_1, "TSY: CMmSmsStorageTsy::CompleteReadAllSmsPhase1. Complete read first phase error: %{TSymbianErrorCodes}", aResult);
     TTsyReqHandle reqHandle = iMmTsyReqHandleStore->ResetTsyReqHandle( 
         CMmSmsTsy::EMultimodeSimStSmsReadAllSms );
     if ( reqHandle )
