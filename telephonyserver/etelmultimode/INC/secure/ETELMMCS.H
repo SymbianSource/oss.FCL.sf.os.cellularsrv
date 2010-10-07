@@ -760,14 +760,16 @@ enum
 	{
 	EMobilePhoneSendNetworkServiceRequestNoFdnCheck = EEtelMMIpcOffset8,  // 28000
 	EMobileUssdMessagingSendMessage,                                      // 28001
-	EMobileUssdMessagingSendMessageNoFdnCheck                             // 28002
+	EMobileUssdMessagingSendMessageNoFdnCheck,                            // 28002
+	EMobileUssdMessagingSendMessageDefaultHandler                         // 28003
 	};
 
 enum
 	{
 	EMobilePhoneSendNetworkServiceRequestNoFdnCheckCancel = EMobilePhoneSendNetworkServiceRequestNoFdnCheck + EMobileCancelOffset,             // 28500
 	EMobileUssdMessagingSendMessageCancel = EMobileUssdMessagingSendMessage + EMobileCancelOffset,                                             // 28501
-	EMobileUssdMessagingSendMessageNoFdnCheckCancel = EMobileUssdMessagingSendMessageNoFdnCheck + EMobileCancelOffset                          // 28502
+	EMobileUssdMessagingSendMessageNoFdnCheckCancel = EMobileUssdMessagingSendMessageNoFdnCheck + EMobileCancelOffset,                         // 28502
+	EMobileUssdMessagingSendMessageDefaultHandlerCancel = EMobileUssdMessagingSendMessageDefaultHandler + EMobileCancelOffset                  // 28503
 	};
 
 //

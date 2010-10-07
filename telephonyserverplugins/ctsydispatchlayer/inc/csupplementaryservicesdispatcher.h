@@ -91,6 +91,7 @@ public:
 	TInt DispatchSetSsPasswordL(const CMmDataPackage* aDataPackage);
 	TInt DispatchGetCallForwardingStatusL(const CMmDataPackage* aDataPackage);
 	TInt DispatchSendUssdMessageL(const CMmDataPackage* aDataPackage);
+	TInt DispatchSendUssdMessageDefaultHandlerL(const CMmDataPackage* aDataPackage);
 	TInt DispatchSendUssdMessageNoFdnCheckL(const CMmDataPackage* aDataPackage);
 	TInt DispatchSendUssdReleaseL();
 	TInt DispatchClearBlacklistL();

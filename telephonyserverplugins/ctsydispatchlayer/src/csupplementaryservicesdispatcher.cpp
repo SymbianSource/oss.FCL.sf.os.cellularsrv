@@ -519,6 +519,42 @@ TInt CSupplementaryServicesDispatcher::DispatchSendUssdMessageL(const CMmDataPac
 	return TSYLOGSETEXITERR(ret);
 	} // CSupplementaryServicesDispatcher::DispatchSendUssdMessageL
 
+TInt CSupplementaryServicesDispatcher::DispatchSendUssdMessageDefaultHandlerL(const CMmDataPackage* aDataPackage)
+/**
+ * Unpack data related to EMobileUssdMessagingSendMessage
+ * and pass request on to Licensee LTSY.
+ *
+ * @return Returns error code returned by the Licensee LTSY or KErrNotSupported if
+ * the Licensee LTSY does not support this request.
+ */
+	{
+	TSYLOGENTRYEXIT;
+	TInt ret = KErrNotSupported;
+
+	__ASSERT_DEBUG(aDataPackage, CtsyDispatcherPanic(EInvalidNullPtr));
+
+	// Call Handle... method in Licensee LTSY
+	if (iLtsyDispatchSupplementaryServicesSendUssdMessage)
+		{
+		RMobileUssdMessaging::TMobileUssdAttributesV1Pckg** attributesPckg = NULL;
+		RMobileUssdMessaging::TGsmUssdMessageData* data = NULL;
+		aDataPackage->UnPackData(&data, &attributesPckg);
+			
+		__ASSERT_DEBUG(attributesPckg, CtsyDispatcherPanic(EInvalidNullPtr));
+		__ASSERT_DEBUG(data, CtsyDispatcherPanic(EInvalidNullPtr));
+			
+		const RMobileUssdMessaging::TMobileUssdAttributesV1& attributes =(**attributesPckg)();			
+				
+		ret = iLtsyDispatchSupplementaryServicesSendUssdMessage->HandleSendUssdMessageReqL(*data,
+				attributes.iDcs,
+				attributes.iFormat,
+				attributes.iType);
+		}
+
+	return TSYLOGSETEXITERR(ret);
+	} // CSupplementaryServicesDispatcher::DispatchSendUssdMessageL
+
+
 TInt CSupplementaryServicesDispatcher::DispatchSendUssdMessageNoFdnCheckL(const CMmDataPackage* aDataPackage)
 /**
  * Unpack data related to EMobileUssdMessagingSendMessageNoFdnCheck

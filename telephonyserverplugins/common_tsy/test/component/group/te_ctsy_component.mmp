@@ -24,6 +24,8 @@ UID				0x1000007A 0x101F777C
 VENDORID 		0x70000001
 CAPABILITY CommDD PowerMgmt ReadDeviceData WriteDeviceData TrustedUI ProtServ NetworkControl NetworkServices LocalServices ReadUserData WriteUserData Location
 
+EPOCHEAPSIZE    0x10000 0x400000
+
 SOURCEPATH		../src
 SOURCE		cctsylbsfu.cpp
 SOURCE		cctsysmsstorefu.cpp

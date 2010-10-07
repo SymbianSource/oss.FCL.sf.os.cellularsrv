@@ -674,9 +674,9 @@ const TInt CTelServer::iRanges[iRangeCount] =
 	27500,		//range is 27500-27506 inclusive
 	27507,		//range is 27507-27999 inclusive
 	28000,		//range is 28000-28002 inclusive
-	28003,		//range is 28003-28499 inclusive
+	28004,		//range is 28004-28499 inclusive
 	28500,		//range is 28500-28502 inclusive
-	28503,		//range is 28503-28999 inclusive
+	28504,		//range is 28504-28999 inclusive
 	29000,		//range is 29000-29004 inclusive
 	29005,		//range is 29005-29005 inclusive
 	29006,		//range is 29006

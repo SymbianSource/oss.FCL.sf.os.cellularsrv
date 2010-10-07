@@ -1182,6 +1182,36 @@ EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, cons
 	Set(EMobileUssdMessagingSendMessage, aReqStatus, aMsgData, aMsgAttributes);
 	}
 
+EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, const TDesC8& aMsgData, 
+												const TDesC8& aMsgAttributes, TInt aCommand) const
+/**
+	This member function sends a USSD message to the network.
+
+	See	3GPP spec. 04.90 for more details on expected responses from
+	the network.
+	
+	Use RTelSubSessionBase::CancelAsyncRequest(EMobileUssdMessagingSendMessageDefaultHandler) 
+	to cancel a previously placed asynchronous SendMessage() request.
+	
+	@param aReqStatus On return, KErrNone if successful.
+	@param aMsgData The message data.
+	@param aMsgAttributes The TMobileUssdAttributesV1Pckg with the message attributes.
+
+	@see TMobileUssdAttributesV1
+
+@capability NetworkServices
+@capability WriteDeviceData
+@capability NetworkControl
+*/
+	{	
+	if(ETransferToDefaultHandler != aCommand)
+	{
+	aReqStatus = KErrArgument;
+	return;
+	}
+	Set(EMobileUssdMessagingSendMessageDefaultHandler, aReqStatus, aMsgData, aMsgAttributes); 	
+	}
+
 EXPORT_C void RMobileUssdMessaging::SendMessageNoFdnCheck(TRequestStatus& aReqStatus, const TDesC8& aMsgData, const TDesC8& aMsgAttributes) const
 /**
 	Sends an outgoing USSD to the network. 

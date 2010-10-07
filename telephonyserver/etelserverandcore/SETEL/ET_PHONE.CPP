@@ -994,8 +994,8 @@ void CTelObject::GeneralReq(const RMessage2& aMessage,CTelSession* aSession,CReq
 
         // If a call is session based then it can only be used
         // when the client is the session owner.
-        if (reqMode&KReqModeSessionBased && IsSessionInProgress() 
-                /*&& aMessage.Int3() != iSessionOwner.iSubSessionId TODO*/)
+        if ( (reqMode&KReqModeSessionBased && IsSessionInProgress()) 
+        		&& (aMessage.Int3() != iDeliveryObject->iSessionOwner.iSubSessionId) )
             {
             // Each type of session only allowed to have one ongoing 'session/dialogue'.
 			RECORD_COMPLETE_SUB(aMessage.Session(), this, aMessage.Int3(), aMessage.Function(), res);
@@ -1354,7 +1354,7 @@ void CTelObject::OfferToClient(CReqEntry* aReqEntry,CReqEntry* aUpdatedReqEntry,
 			}
         }
     
-    CheckAndDestroyDummySubSession(); //TODO
+    CheckAndDestroyDummySubSession();
     }
 
 void CTelObject::RepostRequest(CReqEntry* aUpdatedReqEntry, const TInt aError)
@@ -1389,27 +1389,33 @@ void CTelObject::RepostRequest(CReqEntry* aUpdatedReqEntry, const TInt aError)
 void CTelObject::SetSessionOwner(TInt aSessionHandle, TInt aSubSessionHandle)
     {
 	iDeliveryObject->iSessionOwner = TPhoneClientId(aSessionHandle, aSubSessionHandle);
-    // TODO notify TSY that the session owner has changed 
     }
 
-// TODO can be used by the TSY to set the session owner to the current request.
+// Can be used by the TSY to set the session owner to the current request.
 // For each request the CTSY is given a TsyReqHandle so this is a sensible thing
 // for it to be dealing with.
-// TODO note that once a session has an owner the reserved state is irrelevant.
+// Note that once a session has an owner the reserved state is irrelevant.
 
 EXPORT_C void CTelObject::SetSessionOwnerByTsyHandle(const TTsyReqHandle aTsyReqHandle)
     {
-//    const TInt owningsession = PhoneOwner()->FindSessionByTsyHandle( aTsyReqHandle );
-//    const TInt owningsubsession = PhoneOwner()->FindSubSessionByTsyHandle( aTsyReqHandle );
 	
-//	iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
-    // TODO notify TSY that the session owner has changed 
+    const TInt owningsession = PhoneOwner()->FindSessionByTsyHandle( aTsyReqHandle );
+    const TInt owningsubsession = PhoneOwner()->FindSubSessionByTsyHandle( aTsyReqHandle );
+    
+        
+    if(iDeliveryObject->GetReqMode() == (KReqModeSessionBased | KReqModeTransferToDefaultHandler)) // transfer to default handler
+    	{
+    	iDeliveryObject->iSessionOwner = TPhoneClientId(KUssdDefaultClientSid, owningsubsession);
+    	}
+    else //not default handler
+    	{
+    	iDeliveryObject->iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
+    	}
     }
 
 
 TBool CTelObject::IsSessionOwner(CReqEntry* aReqEntry) const
     {
-	// TODO Neil's experimental update
     TPhoneClientId clientId(reinterpret_cast<TInt>(aReqEntry->iSession),aReqEntry->iMessage.Int3());
 	return (clientId == iDeliveryObject->iSessionOwner);
     }
@@ -1430,7 +1436,7 @@ TInterestCategory CTelObject::FindInterestCategory( const TSecureId aSid)
 
 EXPORT_C TBool CTelObject::IsSessionInProgress() const
     {
-	// TODO Neil's experimental update
+	//Indicates if there is an ongoing USSD dialogue.
 	if (iDeliveryObject)
 		{
 		return iDeliveryObject->iSessionOwner != TPhoneClientId();
@@ -1440,8 +1446,12 @@ EXPORT_C TBool CTelObject::IsSessionInProgress() const
 
 EXPORT_C TInt CTelObject::ReserveSession()
     {
-	// TODO Neil's experimental update
-	ASSERT(iDeliveryObject);
+    // There is no active session so we have to work out who to deliver it to. 
+    if (NULL == iDeliveryObject)
+    	{
+    	iDeliveryObject = CMmDeliveryObject::NewL(*this); 
+    	}
+    //Reserve the session if it is not already reserved
     if (iDeliveryObject->iSessionReserved)
         {
         return KErrInUse;
@@ -1452,21 +1462,32 @@ EXPORT_C TInt CTelObject::ReserveSession()
 
 EXPORT_C TBool CTelObject::IsSessionReserved() const
     {
-	// TODO Neil's experimental update
-    return iDeliveryObject->iSessionReserved;
+	//Check if the USSD session has been reserved
+	if (NULL != iDeliveryObject)
+		{
+		return iDeliveryObject->iSessionReserved;
+		}
+	else
+		{
+		return EFalse;
+		}
     }
 
 EXPORT_C void CTelObject::CancelReserveSession()
     {
-	// TODO Neil's experimental update
-    iDeliveryObject->iSessionReserved = EFalse;
+	if (iDeliveryObject)
+		{
+		iDeliveryObject->iSessionReserved = EFalse;
+		}
     }
 
 EXPORT_C void CTelObject::EndSession()
     {
-	// TODO Neil's experimental update
-    iDeliveryObject->iSessionOwner = TPhoneClientId();
-    iDeliveryObject->iSessionReserved = EFalse;
+	if (iDeliveryObject)
+		{
+		iDeliveryObject->iSessionOwner = TPhoneClientId();
+		iDeliveryObject->iSessionReserved = EFalse;
+		}
     }
 
 TInt CTelObject::ResolveError(CTelSession* aSession, const TInt aError) const

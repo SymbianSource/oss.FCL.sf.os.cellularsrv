@@ -136,6 +136,7 @@ te_ctsy_component.iby          /epoc32/rom/include/te_ctsy_component.iby
   
 // include USSD test client
 #include "../ussdtestclient/group/bld.inf"
+#include "../consoleussdtestclient/group/bld.inf"
 
 PRJ_TESTMMPFILES
 //build test components

@@ -674,3 +674,5 @@
 	?TerminateActiveCalls@RMobilePhone@@QBEXAAVTRequestStatus@@@Z @ 673 NONAME ; void RMobilePhone::TerminateActiveCalls(class TRequestStatus &) const
 	?AcceptIncomingDialogue@RMobileUssdMessaging@@QBEHXZ @ 674 NONAME ; int RMobileUssdMessaging::AcceptIncomingDialogue(void) const
 	?RejectIncomingDialogue@RMobileUssdMessaging@@QBEHXZ @ 675 NONAME ; int RMobileUssdMessaging::RejectIncomingDialogue(void) const
+	?SendMessage@RMobileUssdMessaging@@QBEXAAVTRequestStatus@@ABVTDesC8@@1H@Z @ 676 NONAME ; void RMobileUssdMessaging::SendMessage(class TRequestStatus &, class TDesC8 const &, class TDesC8 const &, int) const
+

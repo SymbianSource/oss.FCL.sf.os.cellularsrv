@@ -115,8 +115,9 @@ TInt CMockSmsMessHandler::ExtFuncL(
 			TMockLtsyData1<TSendSmsDataAndAttributes> data(smsData);
 			return iMessageRouter->MockLtsyEngine()->ExecuteCommandL(aIpc, data);    		
     	    }
+    	case EMobileUssdMessagingSendMessageDefaultHandler:     	
     	case EMobileUssdMessagingSendMessageNoFdnCheck:
-    	case EMobileUssdMessagingSendMessage:
+    	case EMobileUssdMessagingSendMessage:    	
     		{
     		TDes8*  ptr1 = NULL;
     		TDes8** ptr2 = NULL;

@@ -16,280 +16,13 @@
 
 LOAD_SUITE te_ctsy_component
 
-START_TESTCASE BA-CTSY-USSDM-USM-0001
-//!@SYMTestCaseID BA-CTSY-USSDM-USM-0001
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0001L
-END_TESTCASE BA-CTSY-USSDM-USM-0001
+// The USSD test client is copied into new executables with differing SIDs to differentiate
+//  between a priority/default/normal clients.
+//
+RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 11111111 ussdtestclient_priority.exe
+RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 55555555 ussdtestclient_normal.exe
+RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 22222222 ussdtestclient_default.exe
 
-START_TESTCASE BA-CTSY-USSDM-USM-0002
-//!@SYMTestCaseID BA-CTSY-USSDM-USM-0002
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0002L
-END_TESTCASE BA-CTSY-USSDM-USM-0002
-
-START_TESTCASE BA-CTSY-USSDM-USM-0003
-//!@SYMTestCaseID BA-CTSY-USSDM-USM-0003
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessage with bad parameter data
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessage with bad parameter data
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0003L
-END_TESTCASE BA-CTSY-USSDM-USM-0003
-
-START_TESTCASE BA-CTSY-USSDM-USM-0004
-//!@SYMTestCaseID BA-CTSY-USSDM-USM-0004
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0004L
-END_TESTCASE BA-CTSY-USSDM-USM-0004
-
-START_TESTCASE BA-CTSY-USSDM-USR-0001
-//!@SYMTestCaseID BA-CTSY-USSDM-USR-0001
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0001L
-END_TESTCASE BA-CTSY-USSDM-USR-0001
-
-START_TESTCASE BA-CTSY-USSDM-USR-0001b
-//!@SYMTestCaseID BA-CTSY-USSDM-USR-0001b
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0001bL
-END_TESTCASE BA-CTSY-USSDM-USR-0001b
-
-START_TESTCASE BA-CTSY-USSDM-USR-0002
-//!@SYMTestCaseID BA-CTSY-USSDM-USR-0002
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendRelease
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendRelease
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0002L
-END_TESTCASE BA-CTSY-USSDM-USR-0002
-
-START_TESTCASE BA-CTSY-USSDM-USR-0003
-//!@SYMTestCaseID BA-CTSY-USSDM-USR-0003
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease with bad parameter data
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease with bad parameter data
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0003L
-END_TESTCASE BA-CTSY-USSDM-USR-0003
-
-START_TESTCASE BA-CTSY-USSDM-USR-0004
-//!@SYMTestCaseID BA-CTSY-USSDM-USR-0004
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendRelease
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendRelease
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0004L
-END_TESTCASE BA-CTSY-USSDM-USR-0004
-
-START_TESTCASE BA-CTSY-USSDM-URM-0001
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0001
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0001L
-END_TESTCASE BA-CTSY-USSDM-URM-0001
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::ReceiveMessage (including via calling Close).
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002L
-END_TESTCASE BA-CTSY-USSDM-URM-0002
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002b
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002b
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Two clients present, first client calls Cancel before message received.
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002bL
-END_TESTCASE BA-CTSY-USSDM-URM-0002b
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002c
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002c
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Two clients present, first client calls Cancel AFTER accepting dialogue.
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002cL
-END_TESTCASE BA-CTSY-USSDM-URM-0002c
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002d
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002d
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Two clients present, second client calls Cancel.
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002dL
-END_TESTCASE BA-CTSY-USSDM-URM-0002d
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002e
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002e
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Two clients present, second client calls Close().
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002eL
-END_TESTCASE BA-CTSY-USSDM-URM-0002e
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002f
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002f
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Cancel one of the clients in the middle of a delivery. 
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002fL
-END_TESTCASE BA-CTSY-USSDM-URM-0002f
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002g
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002g
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Have two clients. Request offered to 1st. 1st client cancels. 2nd client should now be offered request.
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002gL
-END_TESTCASE BA-CTSY-USSDM-URM-0002g
-
-START_TESTCASE BA-CTSY-USSDM-URM-0002h
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002h
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
-//!@SYMTestPriority High
-//!@SYMTestActions Have two clients. Request offered to 1st. 1st client cancels. 2nd client should now be offered request.
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002hL
-END_TESTCASE BA-CTSY-USSDM-URM-0002h
-
-START_TESTCASE BA-CTSY-USSDM-URM-0003
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0003
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::ReceiveMessage with bad parameter data
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::ReceiveMessage with bad parameter data
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0003L
-END_TESTCASE BA-CTSY-USSDM-URM-0003
-
-START_TESTCASE BA-CTSY-USSDM-URM-0004
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004L
-END_TESTCASE BA-CTSY-USSDM-URM-0004
-
-START_TESTCASE BA-CTSY-USSDM-URM-0004b
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004b
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004bL
-END_TESTCASE BA-CTSY-USSDM-URM-0004b
-
-START_TESTCASE BA-CTSY-USSDM-URM-0004c
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004c
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004cL
-END_TESTCASE BA-CTSY-USSDM-URM-0004c
-
-START_TESTCASE BA-CTSY-USSDM-URM-0004d
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004d
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004dL
-END_TESTCASE BA-CTSY-USSDM-URM-0004d
-
-START_TESTCASE BA-CTSY-USSDM-URM-0004e
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004e
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004eL
-END_TESTCASE BA-CTSY-USSDM-URM-0004e
-
-START_TESTCASE BA-CTSY-USSDM-URM-0004f
-//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004f
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004fL
-END_TESTCASE BA-CTSY-USSDM-URM-0004f
 START_TESTCASE BA-CTSY-USSDM-UNNR-0001
 //!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001
 //!@SYMComponent telephony_ctsy
@@ -301,27 +34,38 @@ START_TESTCASE BA-CTSY-USSDM-UNNR-0001
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0001L
 END_TESTCASE BA-CTSY-USSDM-UNNR-0001
 
-START_TESTCASE BA-CTSY-USSDM-UNNR-0002
-//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0002
+START_TESTCASE BA-CTSY-USSDM-UNNR-0001e
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001e
 //!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease
 //!@SYMTestPriority High
-//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0002L
-END_TESTCASE BA-CTSY-USSDM-UNNR-0002
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0001eL
+END_TESTCASE BA-CTSY-USSDM-UNNR-0001e
 
-START_TESTCASE BA-CTSY-USSDM-UNNR-0003
-//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0003
+START_TESTCASE BA-CTSY-USSDM-UNNR-0001c
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001c
 //!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease with bad parameter data
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease
 //!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease with bad parameter data
+//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0003L
-END_TESTCASE BA-CTSY-USSDM-UNNR-0003
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0001cL
+END_TESTCASE BA-CTSY-USSDM-UNNR-0001c
+
+START_TESTCASE BA-CTSY-USSDM-UNNR-0001d
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease before accepting a dialogue
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0001dL
+END_TESTCASE BA-CTSY-USSDM-UNNR-0001d
 
 START_TESTCASE BA-CTSY-USSDM-UNNR-0004
 //!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0004
@@ -334,78 +78,16 @@ START_TESTCASE BA-CTSY-USSDM-UNNR-0004
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0004L
 END_TESTCASE BA-CTSY-USSDM-UNNR-0004
 
-START_TESTCASE BA-CTSY-USSDM-USMNFC-0001
-//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0001
+START_TESTCASE BA-CTSY-USSDM-UNNR-0004b
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0004b
 //!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::NotifyNetworkRelease
 //!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::NotifyNetworkRelease
 //!@SYMTestExpectedResults Pass
 //!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0001L
-END_TESTCASE BA-CTSY-USSDM-USMNFC-0001
-
-START_TESTCASE BA-CTSY-USSDM-USMNFC-0002
-//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0002
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendMessageNoFdnCheck
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendMessageNoFdnCheck
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0002L
-END_TESTCASE BA-CTSY-USSDM-USMNFC-0002
-
-START_TESTCASE BA-CTSY-USSDM-USMNFC-0003
-//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0003
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageNoFdnCheck with bad parameter data
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageNoFdnCheck with bad parameter data
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0003L
-END_TESTCASE BA-CTSY-USSDM-USMNFC-0003
-
-START_TESTCASE BA-CTSY-USSDM-USMNFC-0004
-//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0004
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendMessageNoFdnCheck
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendMessageNoFdnCheck
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0004L
-END_TESTCASE BA-CTSY-USSDM-USMNFC-0004
-
-START_TESTCASE BA-CTSY-USSDM-UGC-0001
-//!@SYMTestCaseID BA-CTSY-USSDM-UGC-0001
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::GetCaps
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::GetCaps
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestGetCaps0001L
-END_TESTCASE BA-CTSY-USSDM-UGC-0001
-
-START_TESTCASE BA-CTSY-USSDM-UGC-0003
-//!@SYMTestCaseID BA-CTSY-USSDM-UGC-0003
-//!@SYMComponent telephony_ctsy
-//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::GetCaps with bad parameter data
-//!@SYMTestPriority High
-//!@SYMTestActions Invokes RMobileUssdMessaging::GetCaps with bad parameter data
-//!@SYMTestExpectedResults Pass
-//!@SYMTestType CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestGetCaps0003L
-END_TESTCASE BA-CTSY-USSDM-UGC-0003
-
-// The USSD test client is copied into new executables with differing SIDs to differentiate
-//  between a priority/default/normal clients.
-//
-RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 11111111 ussdtestclient_priority.exe
-RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 55555555 ussdtestclient_normal.exe
-RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 22222222 ussdtestclient_default.exe
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0004bL
+END_TESTCASE BA-CTSY-USSDM-UNNR-0004b
 
 START_TESTCASE BA-CTSY-USSDM-URM-0005
 //!@SYMTestCaseID BA-CTSY-USSDM-URM-0005
@@ -568,6 +250,41 @@ START_TESTCASE BA-CTSY-USSDM-URM-0020
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0016L
 END_TESTCASE BA-CTSY-USSDM-URM-0020
 
+START_TESTCASE BA-CTSY-USSDM-URM-0021
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0021
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test ReceiveMessage with multiple clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients, both call ReceiveMessage. 
+// A message is received. First client offered message. Both clients call Close.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessageWithTestClient0017L
+END_TESTCASE BA-CTSY-USSDM-URM-0021
+
+START_TESTCASE BA-CTSY-USSDM-UGC-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-UGC-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::GetCaps
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::GetCaps
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestGetCaps0001L
+END_TESTCASE BA-CTSY-USSDM-UGC-0001
+
+START_TESTCASE BA-CTSY-USSDM-UGC-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-UGC-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::GetCaps with bad parameter data
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::GetCaps with bad parameter data
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestGetCaps0003L
+END_TESTCASE BA-CTSY-USSDM-UGC-0003
+
+START_TESTCASE BA-CTSY-USSDM-UARM-0001
 //!@SYMComponent telephony_ctsy
 //!@SYMTestCaseDesc Test calling accept and reject before a session has been created
 //!@SYMTestPriority High
@@ -598,3 +315,457 @@ START_TESTCASE BA-CTSY-USSDM-MIUM-0001
 //!@SYMTestType CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestMultipleIncomingUssdMessages0001L
 END_TESTCASE BA-CTSY-USSDM-MIUM-0001
+
+START_TESTCASE BA-CTSY-USSDM-USMNFC-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0001L
+END_TESTCASE BA-CTSY-USSDM-USMNFC-0001
+
+START_TESTCASE BA-CTSY-USSDM-USMNFC-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0002L
+END_TESTCASE BA-CTSY-USSDM-USMNFC-0002
+
+START_TESTCASE BA-CTSY-USSDM-USMNFC-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageNoFdnCheck with bad parameter data
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageNoFdnCheck with bad parameter data
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0003L
+END_TESTCASE BA-CTSY-USSDM-USMNFC-0003
+
+START_TESTCASE BA-CTSY-USSDM-USMNFC-0004
+//!@SYMTestCaseID BA-CTSY-USSDM-USMNFC-0004
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendMessageNoFdnCheck
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageNoFdnCheck0004L
+END_TESTCASE BA-CTSY-USSDM-USMNFC-0004
+
+START_TESTCASE BA-CTSY-USSDM-USM-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-USM-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0001L
+END_TESTCASE BA-CTSY-USSDM-USM-0001
+
+START_TESTCASE BA-CTSY-USSDM-USM-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-USM-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0002L
+END_TESTCASE BA-CTSY-USSDM-USM-0002
+
+START_TESTCASE BA-CTSY-USSDM-USM-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-USM-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessage with bad parameter data
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessage with bad parameter data
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0003L
+END_TESTCASE BA-CTSY-USSDM-USM-0003
+
+START_TESTCASE BA-CTSY-USSDM-USM-0004
+//!@SYMTestCaseID BA-CTSY-USSDM-USM-0004
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0004L
+END_TESTCASE BA-CTSY-USSDM-USM-0004
+
+START_TESTCASE BA-CTSY-USSDM-USM-0005
+//!@SYMTestCaseID BA-CTSY-USSDM-USM-0005
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0005L
+END_TESTCASE BA-CTSY-USSDM-USM-0005
+
+START_TESTCASE BA-CTSY-USSDM-USM-0006
+//!@SYMTestCaseID BA-CTSY-USSDM-USM-0006
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessage DefaultHandler
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessage DefaultHandler
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessage0006L
+END_TESTCASE BA-CTSY-USSDM-USM-0006
+
+START_TESTCASE BA-CTSY-USSDM-USR-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0001L
+END_TESTCASE BA-CTSY-USSDM-USR-0001
+
+START_TESTCASE BA-CTSY-USSDM-USR-0001b
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0001b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0001bL
+END_TESTCASE BA-CTSY-USSDM-USR-0001b
+
+START_TESTCASE BA-CTSY-USSDM-USR-0001c
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0001c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease  without USSD session in progress
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0001cL
+END_TESTCASE BA-CTSY-USSDM-USR-0001c
+
+START_TESTCASE BA-CTSY-USSDM-USR-0001d
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0001d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for failure on completion of pending comRMobileUssdMessaging::SendRelease request from LTSY->CTSY
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0001dL
+END_TESTCASE BA-CTSY-USSDM-USR-0001d
+
+START_TESTCASE BA-CTSY-USSDM-USR-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0002L
+END_TESTCASE BA-CTSY-USSDM-USR-0002
+
+START_TESTCASE BA-CTSY-USSDM-USR-0002b
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0002b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::SendRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0002bL
+END_TESTCASE BA-CTSY-USSDM-USR-0002b
+
+START_TESTCASE BA-CTSY-USSDM-USR-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendRelease with bad parameter data
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease with bad parameter data
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0003L
+END_TESTCASE BA-CTSY-USSDM-USR-0003
+
+START_TESTCASE BA-CTSY-USSDM-USR-0004
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0004
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0004L
+END_TESTCASE BA-CTSY-USSDM-USR-0004
+
+START_TESTCASE BA-CTSY-USSDM-USR-0004b
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0004b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::SendRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::SendRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0004bL
+END_TESTCASE BA-CTSY-USSDM-USR-0004b
+
+START_TESTCASE BA-CTSY-USSDM-USR-0005
+//!@SYMTestCaseID BA-CTSY-USSDM-USR-0005
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc est support in CTSY for RMobileUssdMessaging::SendRelease with timeout
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendRelease and tests for timeout
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendRelease0005L
+END_TESTCASE BA-CTSY-USSDM-USR-0005
+
+START_TESTCASE BA-CTSY-USSDM-UNNR-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0001L
+END_TESTCASE BA-CTSY-USSDM-UNNR-0001
+
+START_TESTCASE BA-CTSY-USSDM-UNNR-0001b
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease with optional paramter
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0001bL
+END_TESTCASE BA-CTSY-USSDM-UNNR-0001b
+
+START_TESTCASE BA-CTSY-USSDM-UNNR-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::NotifyNetworkRelease
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0002L
+END_TESTCASE BA-CTSY-USSDM-UNNR-0002
+
+START_TESTCASE BA-CTSY-USSDM-UNNR-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::NotifyNetworkRelease with bad parameter data
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::NotifyNetworkRelease with bad parameter data
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestNotifyNetworkRelease0003L
+END_TESTCASE BA-CTSY-USSDM-UNNR-0003
+
+START_TESTCASE BA-CTSY-USSDM-URM-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0001L
+END_TESTCASE BA-CTSY-USSDM-URM-0001
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for cancelling of RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes cancelling of RMobileUssdMessaging::ReceiveMessage (including via calling Close).
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002L
+END_TESTCASE BA-CTSY-USSDM-URM-0002
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002b
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, first client calls Cancel before message received.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002bL
+END_TESTCASE BA-CTSY-USSDM-URM-0002b
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002c
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, first client calls Cancel AFTER accepting dialogue.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002cL
+END_TESTCASE BA-CTSY-USSDM-URM-0002c
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002d
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, second client calls Cancel.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002dL
+END_TESTCASE BA-CTSY-USSDM-URM-0002d
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002e
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002e
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, second client calls Close().
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002eL
+END_TESTCASE BA-CTSY-USSDM-URM-0002e
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002f
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002f
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Cancel one of the clients in the middle of a delivery. 
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002fL
+END_TESTCASE BA-CTSY-USSDM-URM-0002f
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002g
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002g
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Have two clients. Request offered to 1st. 1st client cancels. 2nd client should now be offered request.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002gL
+END_TESTCASE BA-CTSY-USSDM-URM-0002g
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002h
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002h
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test cancelling of ReceiveMessage with multiple interested clients.
+//!@SYMTestPriority High
+//!@SYMTestActions Have two clients. Request offered to 1st. 1st client cancels. 2nd client should now be offered request.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002hL
+END_TESTCASE BA-CTSY-USSDM-URM-0002h
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002i
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002i
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support of RMobileUssdMessaging::ReceiveMessage for consecutive reception of two USSD dialogues/messages by two different clients. 
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present, first client calls Cancel before message received.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002iL
+END_TESTCASE BA-CTSY-USSDM-URM-0002i
+
+START_TESTCASE BA-CTSY-USSDM-URM-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::ReceiveMessage with bad parameter data
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::ReceiveMessage with bad parameter data
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0003L
+END_TESTCASE BA-CTSY-USSDM-URM-0003
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004L
+END_TESTCASE BA-CTSY-USSDM-URM-0004
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004b
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004b
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004bL
+END_TESTCASE BA-CTSY-USSDM-URM-0004b
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004c
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004c
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004cL
+END_TESTCASE BA-CTSY-USSDM-URM-0004c
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004d
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004d
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004dL
+END_TESTCASE BA-CTSY-USSDM-URM-0004d
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004e
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004e
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004eL
+END_TESTCASE BA-CTSY-USSDM-URM-0004e
+
+START_TESTCASE BA-CTSY-USSDM-URM-0004f
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0004f
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes multiple client requests to RMobileUssdMessaging::ReceiveMessage
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0004fL
+END_TESTCASE BA-CTSY-USSDM-URM-0004f
+
+
+

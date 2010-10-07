@@ -10402,6 +10402,14 @@ Modes: GSM/WCDMA */
 		KCapsMTUssd=0x00000002
 		};
 
+/** Defines transfer modes for USSD reply
+
+Modes: GSM/WCDMA */
+	enum TMobileUssdTransferMode
+		{
+		/**Transfer the reply to the default client*/
+		ETransferToDefaultHandler
+		};
 	
 
 	class TMobileUssdCapsV1 : public RMobilePhone::TMultimodeType
@@ -10554,6 +10562,7 @@ API member function. */
 
 	IMPORT_C void SendMessage(TRequestStatus& aReqStatus, const TDesC8& aMsgData, const TDesC8& aMsgAttributes) const;
 	IMPORT_C void SendMessageNoFdnCheck(TRequestStatus& aReqStatus, const TDesC8& aMsgData, const TDesC8& aMsgAttributes) const;
+	IMPORT_C void SendMessage(TRequestStatus& aReqStatus, const TDesC8& aMsgData, const TDesC8& aMsgAttributes, TInt aCommand) const;
 	
 	IMPORT_C void SendRelease(TRequestStatus& aReqStatus, TDes8& aReturnResult) const;
 	IMPORT_C void NotifyNetworkRelease(TRequestStatus& aReqStatus, TDes8& aReturnResult) const;

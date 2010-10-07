@@ -867,7 +867,10 @@ TInt CMessageRouter::ExtFuncL(TInt aIpc, const CMmDataPackage* aDataPackage)
 		break;
 	case EMobileUssdMessagingSendMessage:
 	    ret = iCtsyDispatcherSupplementaryServicesDispatcher->DispatchSendUssdMessageL(aDataPackage);
-	    break;
+	    break;	
+	case EMobileUssdMessagingSendMessageDefaultHandler:
+		ret = iCtsyDispatcherSupplementaryServicesDispatcher->DispatchSendUssdMessageDefaultHandlerL(aDataPackage);
+		break;
 	case EMobileUssdMessagingSendMessageNoFdnCheck:
 	    ret = iCtsyDispatcherSupplementaryServicesDispatcher->DispatchSendUssdMessageNoFdnCheckL(aDataPackage);
 		break;

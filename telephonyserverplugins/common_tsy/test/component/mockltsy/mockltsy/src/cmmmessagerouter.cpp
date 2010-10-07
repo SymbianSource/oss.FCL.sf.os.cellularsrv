@@ -358,7 +358,8 @@ MMockMessHandlerBase* CMmMessageRouter::RouteRequest(const TInt aIpc )
         case EMobilePhoneStoreReadAllPhase1:
         case EMobilePhoneStoreWrite:
         case EMmTsySmsSendSatMessage:
-        case EMobileUssdMessagingSendMessage:
+        case EMobileUssdMessagingSendMessageDefaultHandler:
+        case EMobileUssdMessagingSendMessage:        
         case EMobileBroadcastMessagingReceiveMessage:
         case EMobileBroadcastMessagingReceiveMessageCancel:
         case EMobileBroadcastMessagingSetFilterSetting:

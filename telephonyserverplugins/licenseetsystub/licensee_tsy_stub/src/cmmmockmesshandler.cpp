@@ -109,6 +109,7 @@ TFLOGSTRING2("TSY: CMmMockMessHandler::ExtFuncL. IPC: %d", aIpc );
         case EMobilePhoneStoreWrite:
         case EMobileBroadcastMessagingReceiveMessage:
         case EMobileUssdMessagingSendMessage:
+        case EMobileUssdMessagingSendMessageDefaultHandler:
         case EMobileSmsMessagingGetMessageStoreInfo: 
         case EMobileSmsMessagingGetSmspListPhase1:
         case EMobilePhoneStoreReadAllPhase1:

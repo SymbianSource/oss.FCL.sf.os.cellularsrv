@@ -352,6 +352,7 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
         // USSD functionality
         case EMobileUssdMessagingSendRelease:
         case EMobileUssdMessagingSendMessage:
+        case EMobileUssdMessagingSendMessageDefaultHandler: 
         case EMobileUssdMessagingSendMessageNoFdnCheck:
         case EMobileUssdMessagingReceiveMessage:
         case EMobileUssdMessagingNotifyNetworkRelease:
@@ -376,7 +377,7 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
         case EMmTsyActivateSmsRouting:
         case EMmTsyDeactivateSmsRouting:
         case EMobileSmsMessagingReceiveMessage:
-        case EMobileSmsMessagingSendMessage:
+        case EMobileSmsMessagingSendMessage:        
         case EMobileSmsMessagingSendMessageNoFdnCheck: 
         case EMmTsySmsSendSatMessage:
         case EMobileSmsMessagingResumeSmsReception:
@@ -1515,7 +1516,11 @@ TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S"
             case EMobileUssdMessagingSendMessage:                
                 static_cast<CMmUssdTsy*>( mmObject )->
                     CompleteSendMessage( aResult );
-                break;                
+                break;
+            case EMobileUssdMessagingSendMessageDefaultHandler:                 
+				static_cast<CMmUssdTsy*>( mmObject )->
+					CompleteSendMessageDefaultHandler( aResult );
+				break; 
             case EMobileUssdMessagingSendMessageNoFdnCheck:                
                 static_cast<CMmUssdTsy*>( mmObject )->
                     CompleteSendMessageNoFdnCheck( aResult );

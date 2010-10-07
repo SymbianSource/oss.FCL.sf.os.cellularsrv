@@ -1571,6 +1571,7 @@ CTelObject::TReqMode CUssdMessagingDMmTsy::ReqModeL(const TInt aIpc)
 	case EMobileUssdMessagingSendMessage:
 	case EMobileUssdMessagingSendMessageNoFdnCheck:
 	case EMobileUssdMessagingSendRelease:
+	case EMobileUssdMessagingSendMessageDefaultHandler:
 		ret=KReqModeFlowControlObeyed;
 		break;
 
@@ -1589,6 +1590,7 @@ CTelObject::TReqMode CUssdMessagingDMmTsy::ReqModeL(const TInt aIpc)
 	case EMobileUssdMessagingSendMessageNoFdnCheckCancel:
 	case EMobileUssdMessagingSendReleaseCancel:
 	case EMobileUssdMessagingNotifyNetworkReleaseCancel:
+	case EMobileUssdMessagingSendMessageDefaultHandlerCancel:
 	default:
 		User::Leave(KErrNotSupported);
 		break;
@@ -1662,7 +1664,8 @@ TInt CUssdMessagingDMmTsy::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt 
 
 	case EMobileUssdMessagingSendMessage:
 		return SendMessage(aTsyReqHandle, aPackage.Des1n(), aPackage.Des2n());
-
+	case EMobileUssdMessagingSendMessageDefaultHandler: 
+		return SendMessageDefaultHandler(aTsyReqHandle, aPackage.Des1n(), aPackage.Des2n());
 	case EMobileUssdMessagingSendMessageNoFdnCheck:
 		return SendMessageNoFdnCheck(aTsyReqHandle, aPackage.Des1n(), aPackage.Des2n());
 
@@ -1688,6 +1691,7 @@ TInt CUssdMessagingDMmTsy::ExtFunc(const TTsyReqHandle aTsyReqHandle,const TInt 
 	case EMobileUssdMessagingReceiveMessageCancel:
 		return ReceiveMessageCancel(aTsyReqHandle);
 	case EMobileUssdMessagingSendMessageCancel:
+	case EMobileUssdMessagingSendMessageDefaultHandlerCancel: 
 		return SendMessageCancel(aTsyReqHandle);
 	case EMobileUssdMessagingSendMessageNoFdnCheckCancel:
 		return SendMessageNoFdnCheckCancel(aTsyReqHandle);
@@ -1708,7 +1712,9 @@ TInt CUssdMessagingDMmTsy::CancelService(const TInt aIpc,const TTsyReqHandle aTs
 		{
 	case EMobileUssdMessagingReceiveMessage:
 		return ReceiveMessageCancel(aTsyReqHandle);
-	case EMobileUssdMessagingSendMessage:
+	case EMobileUssdMessagingSendMessageDefaultHandler: 
+		return SendMessageCancelDefaultHandler(aTsyReqHandle);
+	case EMobileUssdMessagingSendMessage:	
 		return SendMessageCancel(aTsyReqHandle);
 	case EMobileUssdMessagingSendMessageNoFdnCheck:
 		return SendMessageNoFdnCheckCancel(aTsyReqHandle);
@@ -1766,8 +1772,24 @@ TInt CUssdMessagingDMmTsy::SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8
 	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessage called"));
 	RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
 	RMobileUssdMessaging::TMobileUssdAttributesV1& atts = (*attsPckg)();
-	if ((aMsgData->Compare(DMMTSY_USSD_MESSAGE_PDU) != 0) ||
-		atts.iFlags != DMMTSY_USSD_ATTRIBUTE_FLAGS || 
+		
+	if (atts.iFlags != DMMTSY_USSD_ATTRIBUTE_FLAGS || 
+		atts.iFormat != DMMTSY_USSD_ATTRIBUTE_FORMAT ||
+		atts.iType != DMMTSY_USSD_ATTRIBUTE_TYPE ||
+		atts.iDcs != DMMTSY_USSD_ATTRIBUTE_DCS)
+		ReqCompleted(aTsyReqHandle,KErrCorrupt);
+	else
+		iPhone->AddDelayedReq(aTsyReqHandle,this);
+	return KErrNone;
+	}
+
+TInt CUssdMessagingDMmTsy::SendMessageDefaultHandler(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes)
+	{
+	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessage called"));
+	RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
+	RMobileUssdMessaging::TMobileUssdAttributesV1& atts = (*attsPckg)();
+		
+	if (atts.iFlags != DMMTSY_USSD_ATTRIBUTE_FLAGS || 
 		atts.iFormat != DMMTSY_USSD_ATTRIBUTE_FORMAT ||
 		atts.iType != DMMTSY_USSD_ATTRIBUTE_TYPE ||
 		atts.iDcs != DMMTSY_USSD_ATTRIBUTE_DCS)
@@ -1784,7 +1806,13 @@ TInt CUssdMessagingDMmTsy::SendMessageCancel(const TTsyReqHandle aTsyReqHandle)
 	ReqCompleted(aTsyReqHandle,KErrCancel);
 	return KErrNone;
 	}
-
+TInt CUssdMessagingDMmTsy::SendMessageCancelDefaultHandler(const TTsyReqHandle aTsyReqHandle)
+	{
+	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessageCancelDefaultHandler called"));
+	iPhone->RemoveDelayedReq(aTsyReqHandle);
+	ReqCompleted(aTsyReqHandle,KErrCancel);
+	return KErrNone;
+	}
 TInt CUssdMessagingDMmTsy::SendMessageNoFdnCheck(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes)
 	/**
 	* This method sends an outgoing SMS to the network. The number used for sending the SMS   

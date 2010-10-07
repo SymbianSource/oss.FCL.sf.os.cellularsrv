@@ -929,7 +929,6 @@ CReqEntry* CPhoneBase::FindByTsyHandle(const TTsyReqHandle aTsyReqHandle)
 	return NULL;
 	}
 
-/*
 EXPORT_C TInt CPhoneBase::FindSessionByTsyHandle(const TTsyReqHandle aTsyReqHandle)
 	{
 	CReqEntry* reqEntry = FindByTsyHandle(aTsyReqHandle);
@@ -952,7 +951,7 @@ EXPORT_C TInt CPhoneBase::FindSubSessionByTsyHandle(const TTsyReqHandle aTsyReqH
 		}
 	return reqEntry->iMessage.Int3();
 	}
-*/
+
 void CPhoneBase::UpdateBuffer(CReqEntry* aUpdatedReqEntry,CReqEntry* aReqEntry)
 //
 //	Is passed both the TSY-updated request entry (which may be multi-buffered or not)
@@ -1357,7 +1356,7 @@ void CMmDeliveryObject::RunL()
 				SetActive();
 				break;
 			case EInterestCategoryDefault:
-				// wait on default client (no timeout) //TODO: What if the default client doesn't respond? (Neil)
+				// wait on default client (no timeout)
 				break;
 			default:
                 // No more clients
@@ -1461,11 +1460,13 @@ TInt CMmDeliveryObject::DeliverReqL( TDblQue<CReqEntry>& aArray, CReqEntry* aUpd
 TBool CMmDeliveryObject::DeliveryInProgress() const
 	{
 	// In the case of delivery to the default client we won't be active when
-	// delivery is carried out as no timeout is used for the default client -
-	// TODO is it correct that the default client should have no timeout?
+	// delivery is carried out as no timeout is used for the default client
 	return (IsActive() || iCurrentReq);
 	}
-
+CTelObject::TReqMode CMmDeliveryObject::GetReqMode()const 
+	{
+	return iReqMode;
+	}
 TInt CMmDeliveryObject::ClientsDecision( const RMessage2& aMessage, CTelSession* aSession, TBool aAccepted )
 	{
 	if (!DeliveryInProgress())

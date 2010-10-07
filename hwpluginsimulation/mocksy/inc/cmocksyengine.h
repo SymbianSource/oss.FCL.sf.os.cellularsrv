@@ -33,7 +33,7 @@ public:
 		EHandlingTerminated,	//< all messages are handled
 		EFailure,				//< receive message doesn't correspond to the expected one
 		};
-
+	
 	virtual void Notify(TNotificationType aNotification) =0;	
 	};
 

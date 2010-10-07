@@ -1040,8 +1040,10 @@ private:
 	TInt GetCaps(const TTsyReqHandle aTsyReqHandle, TDes8* aCaps);
 	TInt ReceiveMessage(const TTsyReqHandle aTsyReqHandle, TDes8* aMsgData, TDes8* aMsgAttributes);
 	TInt ReceiveMessageCancel(const TTsyReqHandle aTsyReqHandle);
-	TInt SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes);
+	TInt SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes);	
+	TInt SendMessageDefaultHandler(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes);
 	TInt SendMessageCancel(const TTsyReqHandle aTsyReqHandle);
+	TInt SendMessageCancelDefaultHandler(const TTsyReqHandle aTsyReqHandle);
 	TInt SendMessageNoFdnCheck(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes);
 	TInt SendMessageNoFdnCheckCancel(const TTsyReqHandle aTsyReqHandle);
 	TInt SendRelease(const TTsyReqHandle aTsyReqHandle, TDes8* aReturnResult);

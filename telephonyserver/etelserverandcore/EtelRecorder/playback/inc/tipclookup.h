@@ -633,6 +633,7 @@ const TIpcToName TIpcLookup[] =
 		{28000, _L8("EMobilePhoneSendNetworkServiceRequestNoFdnCheck")},
 		{28001, _L8("EMobileUssdMessagingSendMessage")},
 		{28002, _L8("EMobileUssdMessagingSendMessageNoFdnCheck")},
+		{28003, _L8("EMobileUssdMessagingSendMessageDefaultHandler")},
 		{28500, _L8("EMobilePhoneSendNetworkServiceRequestNoFdnCheckCancel")},
 		{28501, _L8("EMobileUssdMessagingSendMessageCancel")},
 		{28502, _L8("EMobileUssdMessagingSendMessageNoFdnCheckCancel")},

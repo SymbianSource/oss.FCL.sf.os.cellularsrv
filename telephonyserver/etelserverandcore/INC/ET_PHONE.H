@@ -282,6 +282,7 @@ public:
     TInt ClientsDecision( const RMessage2& aMessage, CTelSession* aSession, TBool aAccepted );
 	void DeletedReqEntry( CReqEntry* aReqEntry );
 	CReqEntry* NewUpdatedReqEntry();
+	CTelObject::TReqMode GetReqMode()const; 
         
 private:
     void ConstructL();
@@ -294,8 +295,7 @@ private:
     void Clear();
 
 public:
-	// TODO temp for testing. Is delivery manager the correct place for these
-	// or should there be a separate data storage object?
+
 	TPhoneClientId iSessionOwner;
 	TBool iSessionReserved;
 

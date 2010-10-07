@@ -52,6 +52,7 @@ const TUint KReqModeFlowControlObeyed=0x00000002;
 const TUint KReqModeRePostImmediately=0x00000004;
 const TUint KReqModeMultipleCompletionWithInterestLevel=0x00000008;
 const TUint KReqModeSessionBased=0x00000010;
+const TUint KReqModeTransferToDefaultHandler=0x00000020;  
 
 
 class CTelObject;

@@ -190,7 +190,7 @@ TFLOGSTRING("TSY: CMmPhoneTsy::ConstructL Central Repository opened successfully
     
     //Create the SSM Plugin Handler on creation rather than on demand to avoid problems 
     //with Emergency Calls in Out Of Memory situations.
-    iSystemStatePluginHandler = CCtsySystemStatePluginHandler::NewL();
+    //iSystemStatePluginHandler = CCtsySystemStatePluginHandler::NewL();
 	
 //#ifdef __WINS__  SYMBIAN commented out
 //   iMmPhoneExtInterface->NotifySimStatusReadyL();

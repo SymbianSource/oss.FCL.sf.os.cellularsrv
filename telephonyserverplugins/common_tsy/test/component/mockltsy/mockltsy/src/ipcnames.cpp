@@ -595,6 +595,8 @@ _LIT(KEMobileSmsMessagingSendMessageNoFdnCheckCancel, "EMobileSmsMessagingSendMe
 _LIT(KEMobileUssdMessagingSendReleaseCancel, "EMobileUssdMessagingSendReleaseCancel");
 _LIT(KEMobilePhoneSendNetworkServiceRequestNoFdnCheck, "EMobilePhoneSendNetworkServiceRequestNoFdnCheck");
 _LIT(KEMobileUssdMessagingSendMessage, "EMobileUssdMessagingSendMessage");
+_LIT(KEMobileUssdMessagingSendMessageDefaultHandler, "EMobileUssdMessagingSendMessageDefaultHandler");
+_LIT(KEMobileUssdMessagingSendMessageDefaultHandlerCancel, "EMobileUssdMessagingSendMessageDefaultHandlerCancel");
 _LIT(KEMobileUssdMessagingSendMessageNoFdnCheck, "EMobileUssdMessagingSendMessageNoFdnCheck");
 _LIT(KEMobilePhoneSendNetworkServiceRequestNoFdnCheckCancel, "EMobilePhoneSendNetworkServiceRequestNoFdnCheckCancel");
 _LIT(KEMobileUssdMessagingSendMessageCancel, "EMobileUssdMessagingSendMessageCancel");
@@ -1367,6 +1369,8 @@ const TDesC& IpcName(TInt aIpc)
 	case EMobileUssdMessagingSendReleaseCancel : return KEMobileUssdMessagingSendReleaseCancel;
 	case EMobilePhoneSendNetworkServiceRequestNoFdnCheck : return KEMobilePhoneSendNetworkServiceRequestNoFdnCheck;
 	case EMobileUssdMessagingSendMessage : return KEMobileUssdMessagingSendMessage;
+	case EMobileUssdMessagingSendMessageDefaultHandler : return KEMobileUssdMessagingSendMessageDefaultHandler;
+	case EMobileUssdMessagingSendMessageDefaultHandlerCancel : return KEMobileUssdMessagingSendMessageDefaultHandlerCancel; 
 	case EMobileUssdMessagingSendMessageNoFdnCheck : return KEMobileUssdMessagingSendMessageNoFdnCheck;
 	case EMobilePhoneSendNetworkServiceRequestNoFdnCheckCancel : return KEMobilePhoneSendNetworkServiceRequestNoFdnCheckCancel;
 	case EMobileUssdMessagingSendMessageCancel : return KEMobileUssdMessagingSendMessageCancel;

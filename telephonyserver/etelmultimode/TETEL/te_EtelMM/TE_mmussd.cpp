@@ -114,6 +114,27 @@ enum TVerdict CTestUssdMessaging::doTestStepL()
 	else
 		INFO_PRINTF2(_L("Test %d - RMobileUssdMessaging::SendMessage (async & cancel (Request Not Cancelled)) passed"), iTestCount++);
 
+	sendMsg = DMMTSY_USSD_MESSAGE_PDU;
+	sendAtts.iFlags = DMMTSY_USSD_ATTRIBUTE_FLAGS;
+	sendAtts.iFormat = DMMTSY_USSD_ATTRIBUTE_FORMAT;
+	sendAtts.iType = DMMTSY_USSD_ATTRIBUTE_TYPE;
+	sendAtts.iDcs = DMMTSY_USSD_ATTRIBUTE_DCS;
+		
+	ussdMessaging.SendMessage(reqStatus, sendMsg, sendAttsPckg, RMobileUssdMessaging::ETransferToDefaultHandler);
+	User::WaitForRequest(reqStatus);
+	TEST(reqStatus.Int()==KErrNone);
+	INFO_PRINTF2(_L("Test %d - RMobileUssdMessaging::SendMessage /EMobileUssdMessagingSendMessageDefaultHandler/  passed"), iTestCount++);
+	
+	// asynchronous & cancel	
+	ussdMessaging.SendMessage(reqStatus, sendMsg, sendAttsPckg, RMobileUssdMessaging::ETransferToDefaultHandler);
+	ussdMessaging.CancelAsyncRequest(EMobileUssdMessagingSendMessageDefaultHandler);
+	User::WaitForRequest(reqStatus);
+	TEST(reqStatus.Int()==KErrNone || reqStatus.Int()==KErrCancel);
+	if (reqStatus.Int()==KErrCancel)
+		INFO_PRINTF2(_L("Test %d - RMobileUssdMessaging::SendMessage /EMobileUssdMessagingSendMessageDefaultHandler/ (async & cancel (Cancelled Request)) passed"), iTestCount++);
+	else
+		INFO_PRINTF2(_L("Test %d - RMobileUssdMessaging::SendMessage /EMobileUssdMessagingSendMessageDefaultHandler/ (async & cancel (Request Not Cancelled)) passed"), iTestCount++);
+
 //	test.Next(_L("OK: RMobileUssdMessaging's Receive & Send Message"));
 
 	// Send Message NoFdnCheck
