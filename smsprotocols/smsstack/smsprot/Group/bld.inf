@@ -102,6 +102,7 @@ PRJ_TESTEXPORTS
 //
 // TE_SMSPRT test files...
 //
+../Test/TE_Smsprt/TE_smsprt.script                            z:/testdata/scripts/te_smsprt.script
 ../Test/TE_Smsprt/TE_smsprt_setup.script                      z:/testdata/scripts/te_smsprt_setup.script
 ../Test/TE_Smsprt/tsmsprt_config.txt                          z:/sms/tsmsprt_config.txt
 ../Test/TE_Smsprt/tsmsprt_config_extra.txt                    z:/sms/tsmsprt_config_extra.txt
@@ -115,9 +116,6 @@ PRJ_TESTEXPORTS
 ../Test/TE_Smsprt/smswap.sms-AutomaticDeletionOfType0.esk     z:/sms/smswap.sms-automaticdeletionoftype0.esk
 ../Test/TE_Smsprt/smswap.sms-AutoDeletionClass2.esk           z:/sms/smswap.sms-autodeletionclass2.esk
 ../Test/TE_Smsprt/testsmswap.Sms.esk                          z:/sms/testsmswap.sms.esk
-../Test/TE_Smsprt/TE_smsprt_gsmu.script                       z:/testdata/scripts/te_smsprt_gsmu.script
-../Test/TE_Smsprt/TE_smsprt_prot.script                       z:/testdata/scripts/te_smsprt_prot.script
-../Test/TE_Smsprt/TE_smsprt_smsstack.script                   z:/testdata/scripts/te_smsprt_smsstack.script
 
 //SMSOutOfDiskSpace
 ../Test/TE_Smsprt/Te_SMSStackOutOfDiskSpace.script            z:/testdata/scripts/te_smsstackoutofdiskspace.script

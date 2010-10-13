@@ -124,36 +124,36 @@ void CReceiver::RunL()
 	else
 	    {
         _LOG_L1C1(_L8("CReceiver: Data Packet Received"));
-
-        // Trap the leave to prevent the flow from being stopped if
-        // the MBuf pool is temporarily exhausted.    
-		TRAPD(err,iRMBufPacket.CreateL(iData));
-
+        
+        // Trap the leave to prevent the flow from being stopped if 
+        // the MBuf pool is temporarily exhausted.
+        TRAPD(err,iRMBufPacket.CreateL(iData));
+        
         // Immediately execute new read request, regardless of whether MBufs are
         // exhausted or not.
         (iObserver.Bca())->Read(iStatus, iData);
-    
+     
         SetActive();
-        
+    
         if (err == KErrNone)
-            {
-        	iRMBufPacket.Pack();
-    
-#ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
-        	TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
-#else
-        	TUint16 protocolCode = 0;
-#endif // RAWIP_HEADER_APPENDED_TO_PACKETS
-    
-        	// Process the packet
-        	iObserver.GetObserver().Process(iRMBufPacket, protocolCode);
-        	iRMBufPacket.Free();
-			}
-		else
-			{
-			// If MBuff Allocation failed then dont process the packet, rely on layers above for recovery
-			_LOG_L2C2(_L8("CReceiver::RunL MBuff Allocation Failure [err=%d]"), err);
-			}
+             {
+             iRMBufPacket.Pack();
+     
+    #ifdef RAWIP_HEADER_APPENDED_TO_PACKETS
+             TUint16 protocolCode = iObserver.RemoveHeader(iRMBufPacket);
+    #else
+             TUint16 protocolCode = 0;
+    #endif // RAWIP_HEADER_APPENDED_TO_PACKETS
+     
+             // Process the packet
+             iObserver.GetObserver().Process(iRMBufPacket, protocolCode);
+             iRMBufPacket.Free();
+             }
+        else
+             {
+             // If MBuff Allocation failed then dont process the packet, rely on layers above for recovery
+             _LOG_L2C2(_L8("CReceiver::RunL MBuff Allocation Failure [err=%d]"), err);
+             }
 	    }
 	}
 

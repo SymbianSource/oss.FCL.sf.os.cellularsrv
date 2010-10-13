@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -134,27 +134,26 @@ TFLOGSTRING2("TSY: CMmPacketQoSTsy::ExtFunc. aIpc: %d", aIpc );
 
     if ( KErrNone != trapError )
         {
-		//reset request handle to indicate the request is no longer ongoing
-        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
-        iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
         CMmPacketQoSTsy::ReqCompleted( aTsyReqHandle, trapError );
         }
     else if ( KErrNone != ret )
         {
         CMmPacketQoSTsy::ReqCompleted( aTsyReqHandle, ret );
         }
-    else if ( EMultimodePacketQoSReqHandleUnknown != iReqHandleType )
+
+    // Save request handle
+    if ( EMultimodePacketQoSReqHandleUnknown != iReqHandleType )
         {
-        // Save request handle
 #ifdef REQHANDLE_TIMER
         SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
 #endif //REQHANDLE_TIMER
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
         }
-    // We've finished with this value now. Clear it so it doesn't leak
-    //  up to any other instances of this method down the call stack
-    iReqHandleType = EMultimodePacketQoSReqHandleUnknown;
+
     return KErrNone;
 
     }

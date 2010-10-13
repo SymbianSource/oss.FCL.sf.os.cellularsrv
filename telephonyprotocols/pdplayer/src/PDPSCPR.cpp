@@ -92,7 +92,7 @@ NODEACTIVITY_END()
 
 namespace PDPSCprStopActivity
 {
-DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStopDataClient, Stop, TCFDataClient::TStop, MeshMachine::CPreallocatedNodeRetryActivity::New)
+DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStopDataClient, Stop, TCFDataClient::TStop, MeshMachine::CNodeRetryActivity::NewL)
     FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingDataClientStopOrCancel, MeshMachine::TNoTag)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TDoNothing, PRDataClientStopActivity::TNoTagOrProviderStoppedBlockedByStart)
     

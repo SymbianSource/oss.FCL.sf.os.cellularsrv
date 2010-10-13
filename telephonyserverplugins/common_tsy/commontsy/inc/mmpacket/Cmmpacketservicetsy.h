@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -1021,16 +1021,7 @@ NONSHARABLE_CLASS( CMmPacketServiceTsy ) : public CSubSessionExtBase
             const TInt aError );
                                                            
 #endif // TF_LOGGING_ENABLED
-        
-		/**
-         * Resets an entry in the req handle store 
-         * 
-         * 
-         * @param aTsyReqHandle req handle 
-         * return EFalse if request handle not found
-         */       
-        virtual TBool ResetReqHandle( const TTsyReqHandle aTsyReqHandle );
-        
+
     private: // New functions
 
         /** 

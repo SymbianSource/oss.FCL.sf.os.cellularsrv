@@ -147,7 +147,6 @@ namespace te_spudNetworkSide
 #endif
 		
 		void FailNextPktLoopbackCsyWriteL(TInt aPortNum, TInt aErrorCode);
-		void ClearNextPktLoopbackCsyWriteL(TInt aPortNum);
 		TEtelRequestType RetrieveNetSideEventRequestFromConfigL(const TDesC& aEventName);
 		void EtelRequestL(TEtelRequestType aEtelCommand, TInt aNewValue);
 		TInt RetrieveNetSideEventValFromConfigL(const TDesC& aEventValName);
@@ -243,10 +242,8 @@ namespace te_spudNetworkSide
 	
 	//SIP server address retrieve
 	SYMBIAN_SPUD_TEST_CLASS(CIoctlAddressRetrieve)
-	SYMBIAN_SPUD_TEST_CLASS(CRawIpMinMaxMMU)
-
 	//MBuf Exhaustion
 	SYMBIAN_SPUD_TEST_CLASS(CRawIpMBufExhaustionRx)
-	}
-
+	} 
+	
 #endif 

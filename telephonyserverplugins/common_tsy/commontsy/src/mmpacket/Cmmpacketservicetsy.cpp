@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1984,15 +1984,14 @@ TFLOGSTRING2("TSY: CMmPacketServiceTsy::ExtFunc. IPC: %d", aIpc );
 
     if ( KErrNone != trapError )
         {
-		//reset request handle to indicate the request is no longer ongoing
-        iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
         CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, trapError );
         }
     else if ( KErrNone != ret )
         {
         CMmPacketServiceTsy::ReqCompleted( iTsyReqHandle, ret );
         }
-    else if ( EMultimodePacketServiceReqHandleUnknown != iReqHandleType )
+
+    if ( EMultimodePacketServiceReqHandleUnknown != iReqHandleType )
         {
         // Save request handle type
 
@@ -2001,10 +2000,11 @@ TFLOGSTRING2("TSY: CMmPacketServiceTsy::ExtFunc. IPC: %d", aIpc );
 #else
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, iTsyReqHandle );
 #endif // REQHANDLE_TIMER
+        // We've finished with this value now. Clear it so it doesn't leak
+        //  up to any other instances of this method down the call stack
+        iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
         }
-    // We've finished with this value now. Clear it so it doesn't leak
-    //  up to any other instances of this method down the call stack
-    iReqHandleType = EMultimodePacketServiceReqHandleUnknown;
+
     return KErrNone;
     }
 
@@ -4105,17 +4105,6 @@ TFLOGSTRING2( "TSY: CMmPacketServiceTsy::CompleteEnumerateMbmsActiveServiceList.
 TInt CMmPacketServiceTsy::MaximumActiveServices()
     {
     return iMaxActiveServices;
-    }
-
-    
-//-----------------------------------------------------------------------------
-// TBool CMmPacketServiceTsy::ResetReqHandle
-// Resets request handle in the req handle store
-//-----------------------------------------------------------------------------
-// 
-TBool CMmPacketServiceTsy::ResetReqHandle( const TTsyReqHandle aTsyReqHandle )
-    {
-    return (iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle ) > 0);
     }
 
 //  End of File

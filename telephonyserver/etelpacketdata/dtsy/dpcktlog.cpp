@@ -42,7 +42,7 @@ void CDTSYLogger::ConstructL()
  *	In debug mode the logfile will not be deleted at start of new session
  */
 	{
-	User::LeaveIfError(iFs.Connect());
+	iFs.Connect();
 	TInt ret=KErrNone;
 	ret=iFile.Open(iFs,KLogFileName,EFileShareAny|EFileWrite);
 	if(ret!=KErrNone)

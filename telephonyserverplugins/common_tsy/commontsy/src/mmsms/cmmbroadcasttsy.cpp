@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -168,12 +168,11 @@ TInt CMmBroadcastTsy::ExtFunc(
 
             if ( KErrNone != leaveCode )
                 {
-				// reset request handle to indicate the request is no longer ongoing
-                iTsyReqHandleStore->FindAndResetTsyReqHandle(aTsyReqHandle);
-                ReqCompleted( aTsyReqHandle, leaveCode );				
+                ReqCompleted( aTsyReqHandle, leaveCode );
                 }
+
             // save request handle
-            else if ( EMultimodeBroadcastReqHandleUnknown != iReqHandleType )
+            if ( EMultimodeBroadcastReqHandleUnknown != iReqHandleType )
                 {
 #ifdef REQHANDLE_TIMER
                 SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
@@ -182,10 +181,10 @@ TInt CMmBroadcastTsy::ExtFunc(
                 iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, 
                     aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+                // We've finished with this value now. Clear it so it doesn't leak
+                //  up to any other instances of this method down the call stack
+                iReqHandleType = EMultimodeBroadcastReqHandleUnknown;
                 }
-            // We've finished with this value now. Clear it so it doesn't leak
-            //  up to any other instances of this method down the call stack
-            iReqHandleType = EMultimodeBroadcastReqHandleUnknown;
             break;
         }
 

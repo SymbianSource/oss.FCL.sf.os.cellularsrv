@@ -245,13 +245,20 @@ CTestStep* CSpudNetworkSideTestServer::CreateTestStep(const TDesC& aStepName)
             {
             step = new CIoctlAddressRetrieve;
             }
-      else if (aStepName == KCRawIpMinMaxMMU)
-          {
-          step = new CRawIpMinMaxMMU;
-          }
       else if (aStepName == KCRawIpMBufExhaustionRx)
           {
           step = new CRawIpMBufExhaustionRx;
           }		
 	return step;	
 	}
+
+
+
+
+
+
+
+
+
+
+

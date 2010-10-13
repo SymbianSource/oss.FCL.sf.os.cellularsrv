@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -163,16 +163,6 @@ NONSHARABLE_CLASS( CMmTsyBase ) : public CSubSessionExtBase
                                     const TInt anIpc,
                                     const TDataPackage& aPackage);
 
-        /**
-         * Resets an entry in a handle request store for a given request handle
-         *          
-         * 
-         * @param aTsyReqHandle Request handle
-         * @param aIpc IPC value
-         * @return EFalse if req handle not found 
-         */        
-        virtual TBool ResetReqHandle(const TTsyReqHandle aTsyReqHandle, const TInt aIpc);
-        
     };
 
 #endif // CMMTSYBASE_H

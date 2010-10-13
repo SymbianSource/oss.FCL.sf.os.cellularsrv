@@ -1865,13 +1865,10 @@ void TFillInImsExtParams::DoL()
 	RCFParameterFamilyBundle newBundle;
 	newBundle.CreateL();
 	newBundle.Open(iContext.Node().iParameterBundle);
-    CleanupClosePushL(newBundle);
-
 	RParameterFamily imcnFamily = newBundle.CreateFamilyL(KSubConnContextDescrParamsFamily);
 
 	CSubConImsExtParamSet *imcnFlag = CSubConImsExtParamSet::NewL(imcnFamily,RParameterFamily::EGranted);
-
-	CleanupStack::PopAndDestroy(&newBundle);
+	newBundle.Close();
 
 	RPacketContext::TProtocolConfigOptionV2* pco = NULL;
 	switch (gprsProvision->UmtsGprsRelease())

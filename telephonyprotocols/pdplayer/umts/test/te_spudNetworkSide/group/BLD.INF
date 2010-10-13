@@ -45,9 +45,6 @@ PRJ_TESTEXPORTS
 //sip tests
 ../scripts/te_spudnetworkside_sipaddress.script				z:/testdata/scripts/te_spudnetworkside_sipaddress.script
 
-//Min Max MMU tests
-../scripts/TE_RawIpSize.script			z:/testdata/scripts/te_rawipsize.script
-
 #endif
 
 ../scripts/TE_spudNetworkSide_ppp_9x.script			z:/testdata/scripts/te_spudnetworkside_ppp.script
@@ -118,15 +115,6 @@ PRJ_TESTEXPORTS
 //sip tests
 ../configs/te_spudnetworkside_sipaddress.ini				z:/testdata/configs/te_spudnetworkside_sipaddress.ini
 ../configs/te_spudnetworkside_sipaddress_config.txt			z:/testdata/configs/te_spudnetworkside_sipaddress_config.txt
-
-//Min Max MMU tests
-../configs/TE_RawIpSize.ini				z:/testdata/configs/te_rawipsize.ini
-../configs/TE_RawIpSize_config.txt			z:/testdata/configs/te_rawipsize_config.txt
-#ifdef SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
-../configs/TE_RawIpSize_pdpcpr.cfg			z:/testdata/configs/te_rawipsize.cfg
-#else
-../configs/TE_RawIpSize.cfg			z:/testdata/configs/te_rawipsize.cfg
-#endif
 
 // MBuf Exhaustion Tests
 ../configs/te_spudnetworkside_mbufexhaust.ini			z:/testdata/configs/te_spudnetworkside_mbufexhaust.ini

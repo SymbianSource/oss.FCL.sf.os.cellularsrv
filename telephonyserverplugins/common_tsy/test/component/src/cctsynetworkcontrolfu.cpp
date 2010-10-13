@@ -102,20 +102,17 @@ CTestSuite* CCTsyNetworkControlFU::CreateSuiteL(const TDesC& aName)
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0001aL);
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0001bL);
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0002L);
-    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestStorePreferredNetworksListL0004L);    
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001L);
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001aL);
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001bL);
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0001cL);
     ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0002L);
-    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestRetrieveMobilePhonePreferredNetworks0004L);    
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0004L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestGetNetworkRegistrationStatus0005L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyPreferredNetworksListChange0001L);
-    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyPreferredNetworksListChange0002L);
-    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyPreferredNetworksListChange0004L);    
+    ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyPreferredNetworksListChange0002L);           
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyNetworkSelectionSettingChange0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyNetworkSelectionSettingChange0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyNetworkControlFU, TestNotifyNetworkSelectionSettingChange0004L);
@@ -5273,7 +5270,7 @@ void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001L()
     prefNetworks[2].iCountryCode = _L("262");
     prefNetworks[2].iNetworkId = _L("03");
         
-    for( TInt i=0; i < 3; ++i )
+    for( TInt i=0; i < 3; i++ )
         {
         list->AddEntryL(prefNetworks[i]);
         }
@@ -5343,16 +5340,11 @@ void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001aL()
 @SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0001b
 @SYMPREQ                417-71654
 @SYMComponent           telephony_ctsy
-@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL 
-                        with error and with duplicate LTSY complete message
+@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL with error
 @SYMTestPriority        High
 @SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL.
-                        2. LTSY returns error.
-                        3. Test code receives error.
-                        3. Invoke RMobilePhone:StorePreferredNetworksListL.
-                        4. LTSY returns duplicate complete message with KErrNone
-                        5. Duplicate complete message is ignored and test code receives KErrNone.  
-@SYMTestExpectedResults All tests pass. 
+                        2. LTSY returns error.  
+@SYMTestExpectedResults Test code receives error. 
 @SYMTestType            CT
 */
 void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001bL()
@@ -5394,28 +5386,17 @@ void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0001bL()
     AssertMockLtsyStatusL();
     ASSERT_EQUALS(KErrUnknown, requestStatus.Int());
 
-    // Invoke Store request - LTSY returns duplicate complete messages with KErrNone
-    
-    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
-    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
-    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);    
-
-    iPhone.StorePreferredNetworksListL(requestStatus, list);
-
-    User::WaitForRequest(requestStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    
     // Invoke Store request - LTSY returns KErrNotSupported
     
-    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data, KErrNotSupported);
+    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
+    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNotSupported);
     
     iPhone.StorePreferredNetworksListL(requestStatus, list);
 
     User::WaitForRequest(requestStatus);
     AssertMockLtsyStatusL();
     ASSERT_EQUALS(KErrNotSupported, requestStatus.Int());
-   
+    
     CleanupStack::PopAndDestroy(3, this); // list, data, this
     }
 
@@ -5463,7 +5444,7 @@ void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0002L()
     
     iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
     iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
-    
+        
     iPhone.StorePreferredNetworksListL(requestStatus, list);
 
     // Cancel outstanding request
@@ -5474,84 +5455,6 @@ void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0002L()
     ASSERT_EQUALS(KErrNone, requestStatus.Int());
 
     CleanupStack::PopAndDestroy(3, this); // list, data, this
-    
-    }
-
-/**
-@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0004
-@SYMPREQ                417-71654
-@SYMComponent           telephony_ctsy
-@SYMTestCaseDesc        Test support in CTSY for multiple client requests to RMobilePhone::StorePreferredNetworksListL
-@SYMTestPriority        High
-@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL.
-                        2. Invoke RMobilePhone::StorePreferredNetworksListL from second client.
-@SYMTestExpectedResults Second cleint receives KErrServerBusy. 
-@SYMTestType            CT
-*/
-void CCTsyNetworkControlFU::TestStorePreferredNetworksListL0004L()
-    {
-
-    OpenEtelServerL(EUseExtendedError);
-    CleanupStack::PushL(TCleanupItem(Cleanup,this));
-    OpenPhoneL();
-
-    RBuf8 data;
-    CleanupClosePushL(data);
-
-    TRequestStatus requestStatus;
-
-    // Open second client
-    RTelServer telServer2;
-    TInt ret = telServer2.Connect();
-    ASSERT_EQUALS(KErrNone, ret);
-    CleanupClosePushL(telServer2);
-
-    RMobilePhone phone2;
-    ret = phone2.Open(iTelServer,KMmTsyPhoneName);
-    ASSERT_EQUALS(KErrNone, ret);
-    CleanupClosePushL(phone2);
-    
-    TRequestStatus requestStatus2;
-    
-    // --- prepare data ---
-    
-    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
-    CleanupStack::PushL(list);
-
-    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
-    
-    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
-    prefNetwork.iCountryCode = _L("262");
-    prefNetwork.iNetworkId = _L("01");
-    
-    list->AddEntryL(prefNetwork);
-    
-    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
-    listData.SerialiseL(data);
-    
-    // Invoke Store request
-    
-    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
-        
-    iPhone.StorePreferredNetworksListL(requestStatus, list);
-    
-    // Invoke store request from second client
-    
-    phone2.StorePreferredNetworksListL(requestStatus2, list);
-    
-    // Wait for second request
-    User::WaitForRequest(requestStatus2);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrServerBusy, requestStatus2.Int());
-    
-    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
-    
-    // Wait for first request
-    User::WaitForRequest(requestStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    
-    CleanupStack::PopAndDestroy(5, this); // list, phone2, telServer2, data, this
     
     }
 
@@ -5637,7 +5540,7 @@ void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001L()
                                                    // retrieveMobilePhonePreferredNetworks
 
     CActiveScheduler::Install(NULL);
-    
+/*    
     // Add new entry to the list
     
     RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork2;
@@ -5662,7 +5565,7 @@ void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001L()
    
     AssertMockLtsyStatusL();
     ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    
+*/    
     CleanupStack::PopAndDestroy(3, this); // list, data, this
 
     }
@@ -5758,7 +5661,7 @@ void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001aL()
                                                    // retrieveMobilePhonePreferredNetworks
 
     CActiveScheduler::Install(NULL);
-    
+/*    
     // Remove the last entry from the list
     
     list->DeleteEntryL(1);
@@ -5777,7 +5680,7 @@ void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001aL()
     User::WaitForRequest(requestStatus);
     AssertMockLtsyStatusL();
     ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    
+ */   
     CleanupStack::PopAndDestroy(3, this); // list, data, this
 
     }
@@ -5913,7 +5816,8 @@ void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0001cL()
 
     // Invoke Retrieve request - LTSY returns KErrNotSupported
     
-    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq, KErrNotSupported);
+    iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
+    iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNotSupported, data);    
     
     retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
     activeRetriever->Activate();
@@ -6003,105 +5907,6 @@ void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0002L()
      CActiveScheduler::Install(NULL);
          
      CleanupStack::PopAndDestroy(3, this); // list, data, this
-    
-    }
-
-/**
-@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0004
-@SYMPREQ                417-71654
-@SYMComponent           telephony_ctsy
-@SYMTestCaseDesc        Test support in CTSY for multiple client requests to CRetrieveMobilePhonePreferredNetworks::Start
-@SYMTestPriority        High
-@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
-                        2. Invoke CRetrieveMobilePhonePreferredNetworks::Start from second client.
-@SYMTestExpectedResults Second client receives KErrInUse.
-@SYMTestType            CT
-*/
-void CCTsyNetworkControlFU::TestRetrieveMobilePhonePreferredNetworks0004L()
-    {
-     OpenEtelServerL(EUseExtendedError);
-     CleanupStack::PushL(TCleanupItem(Cleanup,this));
-     OpenPhoneL();
-
-     RBuf8 data;
-     CleanupClosePushL(data);
-
-     // Open second client
-     RTelServer telServer2;
-     TInt ret = telServer2.Connect();
-     ASSERT_EQUALS(KErrNone, ret);
-     CleanupClosePushL(telServer2);
-
-     RMobilePhone phone2;
-     ret = phone2.Open(iTelServer,KMmTsyPhoneName);
-     ASSERT_EQUALS(KErrNone, ret);
-     CleanupClosePushL(phone2);
-     
-     // --- prepare data ---
-     
-     CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
-     CleanupStack::PushL(list);
-        
-     CFilteringActiveScheduler scheduler;
-     CActiveScheduler::Install(&scheduler);
-
-     // Create first retriever
-     
-     CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks = 
-                         CRetrieveMobilePhonePreferredNetworks::NewL(iPhone);
-     CleanupStack::PushL(retrieveMobilePhonePreferredNetworks);
-     
-     CActiveRetriever::ResetRequestsNumber();
-     CActiveRetriever* activeRetriever = 
-                         CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks);
-     CleanupStack::PushL(activeRetriever);
-     scheduler.AddRetrieverL(*activeRetriever);
-
-     // Create second retriever
-     
-     CRetrieveMobilePhonePreferredNetworks* retrieveMobilePhonePreferredNetworks2 = 
-                         CRetrieveMobilePhonePreferredNetworks::NewL(phone2);
-     CleanupStack::PushL(retrieveMobilePhonePreferredNetworks2);
-     
-     CActiveRetriever::ResetRequestsNumber();
-     CActiveRetriever* activeRetriever2 = 
-                         CActiveRetriever::NewL(*retrieveMobilePhonePreferredNetworks2);
-     CleanupStack::PushL(activeRetriever2);
-     scheduler.AddRetrieverL(*activeRetriever2);
-     
-     TMockLtsyData1<CMobilePhoneStoredNetworkList*> completeLtsyData(list);    
-     completeLtsyData.SerialiseL(data);
-         
-     TRequestStatus mockLtsyStatus;
-     iMockLTSY.ExpectL(ECtsyPhoneGetPreferredNetworksReq);
-     iMockLTSY.CompleteL(ECtsyPhoneGetPreferredNetworksComp, KErrNone, data);    
-     
-     // Invoke Retrieve request
-       
-     retrieveMobilePhonePreferredNetworks->Start(activeRetriever->Status());
-     activeRetriever->Activate();
-
-     // Invoke Retrieve request from second client
-     
-     retrieveMobilePhonePreferredNetworks->Start(activeRetriever2->Status());
-     activeRetriever2->Activate();
-     
-     scheduler.StartScheduler();
-     
-     ASSERT_EQUALS(0, CActiveRetriever::ResetRequestsNumber());
-     ASSERT_EQUALS(KErrNone, activeRetriever->iStatus.Int());
-     ASSERT_EQUALS(KErrInUse, activeRetriever2->iStatus.Int());
-     AssertMockLtsyStatusL();    
-        
-     CleanupStack::PopAndDestroy(4, 
-             retrieveMobilePhonePreferredNetworks); // activeRetriever2
-                                                    // retrieveMobilePhonePreferredNetworks2
-                                                    // activeRetriever
-                                                    // retrieveMobilePhonePreferredNetworks
-     
-     CActiveScheduler::Install(NULL);
-         
-     CleanupStack::PopAndDestroy(5, this); // list, phone2, telServer2, data, this
     
     }
 
@@ -6537,10 +6342,6 @@ void CCTsyNetworkControlFU::TestNotifyPreferredNetworksListChange0002L()
     TRequestStatus mockLtsyStatus;    
     iMockLTSY.NotifyTerminated(mockLtsyStatus);
     
-    User::WaitForRequest(requestStatus);
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrCancel, requestStatus.Int());
-    
     // Invoke Store request
     
     iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
@@ -6557,103 +6358,12 @@ void CCTsyNetworkControlFU::TestNotifyPreferredNetworksListChange0002L()
     AssertMockLtsyStatusL();
     ASSERT_EQUALS(KErrNone, storeRequestStatus.Int());    
     
-    // Start timer and check if any notification is received
-
-    TRequestStatus waitStatus = KRequestPending;
-    RTimer timer;
-    timer.CreateLocal();
-    CleanupClosePushL(timer);
-    timer.After(waitStatus, TTimeIntervalMicroSeconds32(KOneSecond));  // Wait 1 sec
-    
-    User::WaitForRequest(requestStatus, waitStatus);     
-    AssertMockLtsyStatusL();
-    ASSERT_EQUALS(KErrNone, waitStatus.Int()); // timer fired
-    ASSERT_EQUALS(KErrCancel, requestStatus.Int());
-    
-    CleanupStack::PopAndDestroy(4, this); // timer, list, data, this
-      
-    }
-
-/**
-@SYMTestCaseID          BA-CTSY-NTWC-MNPNLC-0004
-@SYMPREQ                417-71654
-@SYMComponent           telephony_ctsy
-@SYMTestCaseDesc        Test support in CTSY for multiple client requests to RMobilePhone::NotifyPreferredNetworksListChange
-@SYMTestPriority        High
-@SYMTestActions         1. Invoke RMobilePhone::NotifyPreferredNetworksListChange.
-                        1. Invoke RMobilePhone::NotifyPreferredNetworksListChange from second client.
-                        2. Invoke RMobilePhone::StorePreferredNetworksListL.
-@SYMTestExpectedResults Clients receive preferred network list notification
-@SYMTestType            CT
-*/
-void CCTsyNetworkControlFU::TestNotifyPreferredNetworksListChange0004L()
-    {
-
-    OpenEtelServerL(EUseExtendedError);
-    CleanupStack::PushL(TCleanupItem(Cleanup,this));
-    OpenPhoneL();
-
-    RBuf8 data;
-    CleanupClosePushL(data);
-    
-    // Open second client
-    RTelServer telServer2;
-    TInt ret = telServer2.Connect();
-    ASSERT_EQUALS(KErrNone, ret);
-    CleanupClosePushL(telServer2);
-
-    RMobilePhone phone2;
-    ret = phone2.Open(iTelServer,KMmTsyPhoneName);
-    ASSERT_EQUALS(KErrNone, ret);
-    CleanupClosePushL(phone2);
-    
-    TRequestStatus requestStatus;
-    TRequestStatus requestStatus2;    
-
-    // --- prepare data ---
-
-    CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
-    CleanupStack::PushL(list);
-
-    RMobilePhone::TMobilePreferredNetworkEntryV3 prefNetwork;
-    
-    prefNetwork.iAccess = RMobilePhone::KNetworkAccessGsm;
-    prefNetwork.iCountryCode = _L("262");
-    prefNetwork.iNetworkId = _L("01");
-    
-    list->AddEntryL(prefNetwork);
-    
-    TMockLtsyData1<CMobilePhoneStoredNetworkList*> listData(list);    
-    listData.SerialiseL(data);
-    
-    // Invoke Notify request
-    
-    iPhone.NotifyPreferredNetworksListChange(requestStatus);
-
-    // Invoke Notify request for second client
-    
-    phone2.NotifyPreferredNetworksListChange(requestStatus2);
-    
-    // Invoke Store request
-        
-    iMockLTSY.ExpectL(ECtsyPhoneStorePreferredNetworksListReq, data);
-    iMockLTSY.CompleteL(ECtsyPhoneStorePreferredNetworksListComp, KErrNone);
-    
-    TRequestStatus storeRequestStatus;
-    iPhone.StorePreferredNetworksListL(storeRequestStatus, list);
-
-    User::WaitForRequest(storeRequestStatus);
-    ASSERT_EQUALS(KErrNone, storeRequestStatus.Int());    
-    AssertMockLtsyStatusL();
-    
     User::WaitForRequest(requestStatus);
-    User::WaitForRequest(requestStatus2);
-    
-    ASSERT_EQUALS(KErrNone, requestStatus.Int());
-    ASSERT_EQUALS(KErrNone, requestStatus2.Int());    
+    AssertMockLtsyStatusL();
+    ASSERT_EQUALS(KErrCancel, requestStatus.Int());
 
-    CleanupStack::PopAndDestroy(5, this); // list, phone2, telServer2, data, this
-    
+    CleanupStack::PopAndDestroy(3, this); // list, data, this
+      
     }
 
 /**

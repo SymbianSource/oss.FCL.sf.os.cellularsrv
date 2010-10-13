@@ -65,13 +65,13 @@ EXPORTS
 	_ZNK12RMmCustomAPI13SetAlsBlockedENS_12TSetAlsBlockE @ 64 NONAME
 	_ZNK12RMmCustomAPI13TerminateCallER4TBufILi128EE @ 65 NONAME
 	_ZNK12RMmCustomAPI14ResetNetServerEv @ 66 NONAME
-	_ZNK12RMmCustomAPI15ActivateSimLockER14TRequestStatusRK4TBufILi30EENS_11TLockNumberE @ 67 NONAME
-	_ZNK12RMmCustomAPI15ActivateSimLockERK4TBufILi30EENS_11TLockNumberE @ 68 NONAME	
+	_ZNK12RMmCustomAPI15ActivateSimLockER14TRequestStatusRK4TBufILi15EENS_11TLockNumberE @ 67 NONAME
+	_ZNK12RMmCustomAPI15ActivateSimLockERK4TBufILi15EENS_11TLockNumberE @ 68 NONAME
 	_ZNK12RMmCustomAPI16DisablePhoneLockER14TRequestStatusR4TBufILi10EE @ 69 NONAME
 	_ZNK12RMmCustomAPI17CancelUssdSessionEv @ 70 NONAME
 	_ZNK12RMmCustomAPI17CheckAlsPpSupportERNS_11TAlsSupportE @ 71 NONAME
-	_ZNK12RMmCustomAPI17DeActivateSimLockER14TRequestStatusRK4TBufILi30EENS_11TLockNumberE @ 72 NONAME
-	_ZNK12RMmCustomAPI17DeActivateSimLockERK4TBufILi30EENS_11TLockNumberE @ 73 NONAME
+	_ZNK12RMmCustomAPI17DeActivateSimLockER14TRequestStatusRK4TBufILi15EENS_11TLockNumberE @ 72 NONAME
+	_ZNK12RMmCustomAPI17DeActivateSimLockERK4TBufILi15EENS_11TLockNumberE @ 73 NONAME
 	_ZNK12RMmCustomAPI17GetPndCacheStatusER14TRequestStatusRNS_15TPndCacheStatusERK4TBufILi128EE @ 74 NONAME
 	_ZNK12RMmCustomAPI18ClearCallBlackListEv @ 75 NONAME
 	_ZNK12RMmCustomAPI18GetAirTimeDurationER20TTimeIntervalSeconds @ 76 NONAME
@@ -113,15 +113,15 @@ EXPORTS
 	_ZNK12RMmCustomAPI23SetSimMessageStatusReadER5TTimeRi @ 112 NONAME
 	_ZNK12RMmCustomAPI31WriteViagHomeZoneUHZIUESettingsER14TRequestStatusRNS_19TViagUHZIUESettingsE @ 113 NONAME
 	_ZNK12RMmCustomAPI31WriteViagHomeZoneUHZIUESettingsERNS_19TViagUHZIUESettingsE @ 114 NONAME
-	_ZTI18CMmCustomPtrHolder @ 115 NONAME ; #<TI>#
-	_ZTV18CMmCustomPtrHolder @ 116 NONAME ; #<VT>#
+	_ZTI18CMmCustomPtrHolder @ 115 NONAME DATA 12 ; #<TI>#
+	_ZTV18CMmCustomPtrHolder @ 116 NONAME DATA 20 ; #<VT>#
 	_ZNK12RMmCustomAPI11SetAlwaysOnER14TRequestStatusRNS_16TSetAlwaysOnModeE @ 117 NONAME
 	_ZN12RMmCustomAPI14NotifyRauEventER14TRequestStatusRNS_15TRauEventStatusE @ 118 NONAME
 	_ZN12RMmCustomAPI15ReadHSxPAStatusER14TRequestStatusRNS_12THSxPAStatusE @ 119 NONAME
 	_ZN12RMmCustomAPI16WriteHSxPAStatusER14TRequestStatusRNS_12THSxPAStatusE @ 120 NONAME
 	_ZN12RMmCustomAPI17NotifyHSxPAStatusER14TRequestStatusRNS_12THSxPAStatusE @ 121 NONAME
 	_ZNK12RMmCustomAPI35GetIccCallForwardingIndicatorStatusER14TRequestStatusR5TDes8 @ 122 NONAME
-	_ZN12RMmCustomAPI35NotifyIccCallForwardingStatusChangeER14TRequestStatusR5TDes8 @ 123 NONAME
+ 	_ZN12RMmCustomAPI35NotifyIccCallForwardingStatusChangeER14TRequestStatusR5TDes8 @ 123 NONAME
 	_ZN12RMmCustomAPI13TCFIndicatorsC1Ev @ 124 NONAME
 	_ZN12RMmCustomAPI13TCFIndicatorsC2Ev @ 125 NONAME
 	_ZNK12RMmCustomAPI11GetCellInfoER14TRequestStatusR5TDes8 @ 126 NONAME
@@ -146,4 +146,3 @@ EXPORTS
 	_ZN12RMmCustomAPI36TSimAuthenticationGbaBootstrapUpdateC2Ev @ 145 NONAME
 	_ZNK12RMmCustomAPI21GetUSIMServiceSupportER14TRequestStatusRNS_11TAppSupportE @ 146 NONAME
 	_ZN12RMmCustomAPI36NotifyRemoteAlertingToneStatusChangeER14TRequestStatusRNS_25TRemoteAlertingToneStatusE @ 147 NONAME
-	

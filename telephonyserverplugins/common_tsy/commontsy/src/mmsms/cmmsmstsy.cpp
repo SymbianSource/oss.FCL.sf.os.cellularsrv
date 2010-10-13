@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -301,13 +301,11 @@ TFLOGSTRING2 ("TSY: Offline mode ON, request is not allowed: %d", aIpc );
                 if ( KErrNone != leaveCode )
                     {
 TFLOGSTRING3("CMmSmsTsy: Leave trapped!, IPC=%d, error value:%d", aIpc, leaveCode );
-                    //reset request handle to indicate the request is no longer ongoing
-					iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
-					ReqCompleted( aTsyReqHandle, leaveCode );
+                    ReqCompleted( aTsyReqHandle, leaveCode );
                     }
 
                 //save request handle
-                else if ( EMultimodeSmsReqHandleUnknown != iReqHandleType )
+                if ( EMultimodeSmsReqHandleUnknown != iReqHandleType )
                     {
 #ifdef REQHANDLE_TIMER
                     SetTypeOfResponse( iReqHandleType, aTsyReqHandle );
@@ -316,10 +314,10 @@ TFLOGSTRING3("CMmSmsTsy: Leave trapped!, IPC=%d, error value:%d", aIpc, leaveCod
                     iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, 
                         aTsyReqHandle );
 #endif // REQHANDLE_TIMER
+                    // We've finished with this value now. Clear it so it doesn't leak
+                    //  up to any other instances of this method down the call stack
+                    iReqHandleType = EMultimodeSmsReqHandleUnknown;
                     }
-                // We've finished with this value now. Clear it so it doesn't leak
-                //  up to any other instances of this method down the call stack
-                iReqHandleType = EMultimodeSmsReqHandleUnknown;
                 break;
             }
         }
@@ -1795,63 +1793,69 @@ TInt CMmSmsTsy::SendMessageL(
         
         // structure for all sms parameters and data
         TSendSmsDataAndAttributes sendData;
-        TSmsRequestTypes reqType;
-
+        
         sendData.iAttributes = &msgAttr;
         sendData.iMsgData = aMsgData;
   
         if ( iSmsNoFdnCheckFlag == ESmsNoFdnCheckUsed )
             {
             //set ipc
-            sendData.iIpc = EMobileSmsMessagingSendMessageNoFdnCheck; 
-            reqType = EMultimodeSmsSendMessageNoFdnCheck;
+            sendData.iIpc = EMobileSmsMessagingSendMessageNoFdnCheck;    
             }
-        else //(iSmsNoFdnCheckFlag == ESmsNoFdnCheckNotUsed)
+        if ( iSmsNoFdnCheckFlag == ESmsNoFdnCheckNotUsed )
             {
             //set ipc
-            sendData.iIpc = EMobileSmsMessagingSendMessage;
-            reqType = EMultimodeSmsSendMessage;
+            sendData.iIpc = EMobileSmsMessagingSendMessage;        
             }
 
         // Pack parameters
         package.PackData( &sendData );
 
-        iSmsSendReq = new (ELeave) CSmsSendRequest();
-        iSmsSendReq->SetSmsDataAndAttributes( sendData );
+        CSmsSendRequest* smsSendReq = new (ELeave) CSmsSendRequest();
+        smsSendReq->SetSmsDataAndAttributes( sendData );
 
-        TFLOGSTRING("TSY: CMmSmsTsy::SendMessageL: Send request saved");
+        // save send request
+        iSmsSendReq = smsSendReq;
+TFLOGSTRING("TSY: CMmSmsTsy::SendMessageL: Send request saved");
 
-#ifdef REQHANDLE_TIMER
-        SetTypeOfResponse( reqType, aTsyReqHandle );
-#else
-        iTsyReqHandleStore->SetTsyReqHandle( reqType, aTsyReqHandle );
-#endif // REQHANDLE_TIMER
-
-        TInt leaveCode( KErrNone );
         // send request to DOS
         // packed parameter: TSendSmsDataAndAttributes
-        TRAP(leaveCode, ret = iMmPhone->MessageManager()->HandleRequestL(sendData.iIpc, &package ););
-
-        if ( (leaveCode != KErrNone) || (ret != KErrNone) )
+        if ( iSmsNoFdnCheckFlag == ESmsNoFdnCheckUsed )
             {
-            iTsyReqHandleStore->ResetTsyReqHandle( reqType );
-            delete iSmsSendReq;              // Delete object
+            ret = iMmPhone->MessageManager()->HandleRequestL( 
+                EMobileSmsMessagingSendMessageNoFdnCheck, &package );
+            }
+        if ( iSmsNoFdnCheckFlag == ESmsNoFdnCheckNotUsed )
+            {
+            ret = iMmPhone->MessageManager()->HandleRequestL( 
+                EMobileSmsMessagingSendMessage, &package );
+            }
+
+        if ( KErrNone == ret )
+            {  
+            if ( iSmsNoFdnCheckFlag == ESmsNoFdnCheckUsed )
+                {
+                //set request type
+                iReqHandleType = EMultimodeSmsSendMessageNoFdnCheck;    
+                }
+            if ( iSmsNoFdnCheckFlag == ESmsNoFdnCheckNotUsed )
+                {
+                //set request type
+                iReqHandleType = EMultimodeSmsSendMessage;    
+                }            
+            smsSendReq->IncreaseSendCounter();
+            }
+        else 
+            {
+            // Phonet returned error
+            delete smsSendReq;              // Delete object
             iSmsSendReq = NULL; // Reset pointer
+            // Message construction failed or phonet sender returned error
+            ReqCompleted( aTsyReqHandle, ret );
             // reset pointer to client memory
             iSendMessageMsgAttrPckgPtr = NULL;
+            
             iSmsNoFdnCheckFlag = ESmsNoFdnCheckUnknown;
-            if (leaveCode != KErrNone)
-                {
-                ReqCompleted( aTsyReqHandle, leaveCode );
-                }
-            else
-                {
-                ReqCompleted( aTsyReqHandle, ret );
-                }
-            }
-        else
-            {
-            iSmsSendReq->IncreaseSendCounter();
             }
         }
 
@@ -1928,13 +1932,10 @@ void CMmSmsTsy::CompleteSendMessage(
         // reset req handle and complete request
         TTsyReqHandle reqHandle = iTsyReqHandleStore->ResetTsyReqHandle( 
                    EMultimodeSmsSendMessage );
-        if ( EMultimodeSmsReqHandleUnknown < reqHandle )
-            {
-            ReqCompleted( reqHandle, extendedError );
-            // reset pointer to client memory
-            iSendMessageMsgAttrPckgPtr = NULL;
-            iSmsNoFdnCheckFlag = ESmsNoFdnCheckUnknown;        
-            }
+        ReqCompleted( reqHandle, extendedError );
+        // reset pointer to client memory
+        iSendMessageMsgAttrPckgPtr = NULL;
+        iSmsNoFdnCheckFlag = ESmsNoFdnCheckUnknown;
         }        
     else if ( ( KErrNone != aError ) && ( KErrTimedOut != aError ) 
         && ( KErrGsmSMSOperationNotAllowed != 

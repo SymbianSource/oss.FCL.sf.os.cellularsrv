@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -282,17 +282,16 @@ TInt CMmLineTsy::ExtFunc(
     if ( trapError != KErrNone )
         {
         // Object cannot be created.
-		// Reset request handle to indicate the request is no longer ongoing
-        iTsyReqHandleStore->FindAndResetTsyReqHandle( aTsyReqHandle );
         ReqCompleted( aTsyReqHandle, trapError );
         }
     else if ( ret != KErrNone )
         {
         ReqCompleted( aTsyReqHandle, ret );
         }
-    else if ( EMultimodeLineReqHandleUnknown != iReqHandleType )
+    
+    //save request handle
+    if ( EMultimodeLineReqHandleUnknown != iReqHandleType )
         {
-        //save request handle
         iTsyReqHandleStore->SetTsyReqHandle( iReqHandleType, aTsyReqHandle );
         }
 
