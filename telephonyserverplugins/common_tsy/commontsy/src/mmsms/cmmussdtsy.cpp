@@ -59,8 +59,7 @@ TFLOGSTRING("TSY: CMmUssdTsy::ConstructL\n" );
     ResetVariables();
 
     // Initialize boolean flag
-    iUssdNoFdnCheckFlag =  EUssdNoFdnCheckUnknown;
-    iSendToDefaultHandler = EFalse;
+    iUssdNoFdnCheckFlag =  EUssdNoFdnCheckUnknown;    
     }
 
 CMmUssdTsy* CMmUssdTsy::NewL( 
@@ -259,14 +258,11 @@ TInt CMmUssdTsy::CancelService(
             ReceiveMessageCancel( aTsyReqHandle );
             ret = KErrNone;
             break;
+        case EMobileUssdMessagingSendMessageDefaultHandler:
         case EMobileUssdMessagingSendMessage:
             SendMessageCancel( aTsyReqHandle );
             ret = KErrNone;
-            break;
-        case EMobileUssdMessagingSendMessageDefaultHandler: 
-        	SendMessageCancelDefaultHandler( aTsyReqHandle );
-        	ret = KErrNone;
-        	break;
+            break;        
         case EMobileUssdMessagingSendMessageNoFdnCheck:
             SendMessageNoFdnCheckCancel( aTsyReqHandle );
             ret = KErrNone;
@@ -670,14 +666,14 @@ TFLOGSTRING2("TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFd
             // Set timer for the request
             SetTypeOfResponse( EMultimodeUssdSendMessage, 
                 aTsyReqHandle );
-            }  
+            }        
         if ( (iUssdNoFdnCheckFlag == EUssdNoFdnCheckNotUsed) && 
 			(EFalse != iSendToDefaultHandler)) //send to default hadnler 
 			   {
 			   // Set timer for the request
 			   SetTypeOfResponse( EMultimodeUssdSendMessageDefaultHandler, 
 				   aTsyReqHandle );
-			   }  
+			   }	 
 #else
         // Check if NoFdnCheck is used or not
         if ( iUssdNoFdnCheckFlag == EUssdNoFdnCheckUsed )
@@ -709,7 +705,15 @@ TInt CMmUssdTsy::SendMessageCancel(
     const TTsyReqHandle aTsyReqHandle )
     {
     // reset the req handle
-    iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeUssdSendMessage );
+	if(EFalse == iSendToDefaultHandler)
+		{
+		iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeUssdSendMessage );
+		}
+	else // default handler
+		{
+		iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeUssdSendMessageDefaultHandler );
+		}
+    
     
     CancelReserveSession();
     
@@ -722,67 +726,8 @@ TInt CMmUssdTsy::SendMessageCancel(
     return KErrNone;
     }
    
-// ---------------------------------------------------------------------------
-// CmmUssdTsy::SendMessageCancelDefaultHandler
-// Cancels cancelling of USSD session.
-// (other items were commented in a header).
-// ---------------------------------------------------------------------------
-//
-TInt CMmUssdTsy::SendMessageCancelDefaultHandler(
-    const TTsyReqHandle aTsyReqHandle )
-    {
-    // reset the req handle
-    iTsyReqHandleStore->ResetTsyReqHandle( EMultimodeUssdSendMessageDefaultHandler );
-    
-    CancelReserveSession();
-    
-    // complete with cancel
-    ReqCompleted( aTsyReqHandle, KErrCancel );
-    iSsTransactionOngoing = EFalse;
-    
-    iUssdNoFdnCheckFlag = EUssdNoFdnCheckUnknown;
-    
-    return KErrNone;
-    }
 
-// ---------------------------------------------------------------------------
-// CMmUssdTsy::CompleteSendMessageDefaultHandler
-// Complete SendMessage 
-// (other items were commented in a header).
-// ---------------------------------------------------------------------------
-//
-void CMmUssdTsy::CompleteSendMessageDefaultHandler(
-    TInt aError )
-    {
-TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
-    TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
-        /*EMultimodeUssdSendMessage*/EMultimodeUssdSendMessageDefaultHandler );
-	
-    if ( EMultimodeUssdReqHandleUnknown != reqHandle )
-        {
-        // reset req handle. Returns the deleted req handle
-        reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
-        		/*EMultimodeUssdSendMessage*/EMultimodeUssdSendMessageDefaultHandler );     
-        // If the session is already in progress then no session management
-        // action is required. Otherwise we either promote the reserved
-        // session to an open session or cancel the reservation.
-        if ( !IsSessionInProgress() && IsSessionReserved() )
-            {
-            if ( KErrNone == aError )
-                {
-                SetSessionOwnerByTsyHandle( reqHandle );
-                }
-            else
-                {
-                CancelReserveSession();
-                }
-            }
-       
-        ReqCompleted( reqHandle, aError );
-        iSsTransactionOngoing = EFalse;
-        iUssdNoFdnCheckFlag = EUssdNoFdnCheckUnknown;
-        }
-    }
+
 // ---------------------------------------------------------------------------
 // CMmUssdTsy::CompleteSendMessage
 // Complete SendMessage 
@@ -793,14 +738,32 @@ void CMmUssdTsy::CompleteSendMessage(
     TInt aError )
     {
 TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
-    TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
-        EMultimodeUssdSendMessage );
+    TTsyReqHandle reqHandle;
+    
+    if(EFalse == iSendToDefaultHandler)
+    	{
+    	reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
+    	        EMultimodeUssdSendMessage );
+    	}
+    else //default hanlder
+    	{
+    	reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
+    			EMultimodeUssdSendMessageDefaultHandler );
+    	}
 	
     if ( EMultimodeUssdReqHandleUnknown != reqHandle )
         {
         // reset req handle. Returns the deleted req handle
-        reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
-        		EMultimodeUssdSendMessage );     
+    	if(EFalse == iSendToDefaultHandler)
+    		{
+    		reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
+        		EMultimodeUssdSendMessage );
+    		}
+    	else// default handler
+    		{
+    		reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
+    		        		EMultimodeUssdSendMessageDefaultHandler );
+    		}
         // If the session is already in progress then no session management
         // action is required. Otherwise we either promote the reserved
         // session to an open session or cancel the reservation.
@@ -957,14 +920,15 @@ TInt CMmUssdTsy::NotifyNetworkRelease(
     TDes8* aMsgAttributes) // aMsgAttributes may be NULL
     {
 TFLOGSTRING("TSY: CMmUssdTsy::NotifyNetworkRelease" );
-/*
+
+//TODO if we do not remove the following if block emulator would not start in GUI mode
 	//Check if there is a session in progress
 	if ( !IsSessionInProgress() )
     {
     // You can't release a dialogue that isn't in progress.
     return KErrDisconnected;
     }
-*/
+
 
 	if (aMsgData->MaxLength() < sizeof(RMobilePhone::TMobilePhoneSendSSRequestV3Pckg))
 		{
@@ -1187,12 +1151,10 @@ void CMmUssdTsy::Complete(
     switch( aReqHandleType )
         {
         // Cases handled with automatic completion
-        case EMultimodeUssdSendMessage:
+    	case EMultimodeUssdSendMessageDefaultHandler:
+    	case EMultimodeUssdSendMessage:
             CompleteSendMessage( aError );
             break; 
-        case EMultimodeUssdSendMessageDefaultHandler:
-             CompleteSendMessageDefaultHandler( aError );
-             break;
         case EMultimodeUssdSendMessageNoFdnCheck:
             CompleteSendMessageNoFdnCheck( aError );
             break;

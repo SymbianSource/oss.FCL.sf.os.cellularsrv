@@ -1712,8 +1712,7 @@ TInt CUssdMessagingDMmTsy::CancelService(const TInt aIpc,const TTsyReqHandle aTs
 		{
 	case EMobileUssdMessagingReceiveMessage:
 		return ReceiveMessageCancel(aTsyReqHandle);
-	case EMobileUssdMessagingSendMessageDefaultHandler: 
-		return SendMessageCancelDefaultHandler(aTsyReqHandle);
+	case EMobileUssdMessagingSendMessageDefaultHandler:
 	case EMobileUssdMessagingSendMessage:	
 		return SendMessageCancel(aTsyReqHandle);
 	case EMobileUssdMessagingSendMessageNoFdnCheck:
@@ -1806,13 +1805,7 @@ TInt CUssdMessagingDMmTsy::SendMessageCancel(const TTsyReqHandle aTsyReqHandle)
 	ReqCompleted(aTsyReqHandle,KErrCancel);
 	return KErrNone;
 	}
-TInt CUssdMessagingDMmTsy::SendMessageCancelDefaultHandler(const TTsyReqHandle aTsyReqHandle)
-	{
-	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessageCancelDefaultHandler called"));
-	iPhone->RemoveDelayedReq(aTsyReqHandle);
-	ReqCompleted(aTsyReqHandle,KErrCancel);
-	return KErrNone;
-	}
+
 TInt CUssdMessagingDMmTsy::SendMessageNoFdnCheck(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes)
 	/**
 	* This method sends an outgoing SMS to the network. The number used for sending the SMS   

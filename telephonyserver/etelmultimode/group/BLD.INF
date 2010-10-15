@@ -50,7 +50,3 @@ PRJ_TESTMMPFILES
 ../DTsy/Dmmtsy.mmp	support
 ../TETEL/te_EtelMM/TE_EtelMM.mmp manual
 
-// include console USSD test client
-#include "../commontsy/group/bld.inf"
-#include "../mockltsy/group/bld.inf"
-#include "../consoleussdtestclient/group/bld.inf"

@@ -1513,14 +1513,11 @@ TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S"
 #endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 	            	            	            
             //USSD
-            case EMobileUssdMessagingSendMessage:                
+	        case EMobileUssdMessagingSendMessageDefaultHandler:  
+	        case EMobileUssdMessagingSendMessage:                
                 static_cast<CMmUssdTsy*>( mmObject )->
                     CompleteSendMessage( aResult );
-                break;
-            case EMobileUssdMessagingSendMessageDefaultHandler:                 
-				static_cast<CMmUssdTsy*>( mmObject )->
-					CompleteSendMessageDefaultHandler( aResult );
-				break; 
+                break;                           
             case EMobileUssdMessagingSendMessageNoFdnCheck:                
                 static_cast<CMmUssdTsy*>( mmObject )->
                     CompleteSendMessageNoFdnCheck( aResult );

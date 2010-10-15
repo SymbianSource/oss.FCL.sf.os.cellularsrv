@@ -172,15 +172,7 @@ NONSHARABLE_CLASS( CMmUssdTsy ) : public CSubSessionExtBase
          * @param aError Completes send message request
          */
         virtual void CompleteSendMessage( TInt aError );
-        
-        /**
-		 * Complete SendMessage to Default Handler
-		 *          
-		 * 
-		 * @param aError Completes send message request
-		 */
-        virtual void CompleteSendMessageDefaultHandler( TInt aError );
-
+                
         /**
          * Complete SendMessageNoFdnCheck
          *          
@@ -330,15 +322,6 @@ NONSHARABLE_CLASS( CMmUssdTsy ) : public CSubSessionExtBase
          * @return KErrNone
          */
         TInt SendMessageCancel( const TTsyReqHandle aTsyReqHandle );
-        
-        /**
-		 * Cancels an outstanding SendMessage request
-		 *          
-		 * 
-		 * @param aTsyReqHandle Request handle
-		 * @return KErrNone
-		 */
-		TInt SendMessageCancelDefaultHandler( const TTsyReqHandle aTsyReqHandle );
               
         /** 
          * Cancels an outstanding SendMessageNoFdnCheck request
