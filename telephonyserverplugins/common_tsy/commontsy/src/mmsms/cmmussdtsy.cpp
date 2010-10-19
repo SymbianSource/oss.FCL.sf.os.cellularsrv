@@ -771,7 +771,14 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
             {
             if ( KErrNone == aError )
                 {
-                SetSessionOwnerByTsyHandle( reqHandle );
+            	if(EFalse == iSendToDefaultHandler)
+            		{
+            		SetSessionOwnerByTsyHandle( reqHandle );
+            		}
+            	else // default handler
+            		{            		
+            		SetSessionOwnerByTsyHandleAndIpc( reqHandle, EMultimodeUssdSendMessageDefaultHandler );
+            		}
                 }
             else
                 {

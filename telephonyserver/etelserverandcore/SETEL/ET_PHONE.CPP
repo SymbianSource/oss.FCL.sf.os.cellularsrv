@@ -1392,27 +1392,41 @@ void CTelObject::SetSessionOwner(TInt aSessionHandle, TInt aSubSessionHandle)
     }
 
 // Can be used by the TSY to set the session owner to the current request.
+// For each request the CTSY is given a TsyReqHandle and and IPC so this is a sensible thing
+// for it to be dealing with.
+// Note that once a session has an owner the reserved state is irrelevant.
+EXPORT_C void CTelObject::SetSessionOwnerByTsyHandleAndIpc(const TTsyReqHandle aTsyReqHandle, TInt aIpc)
+    {
+	
+    TInt owningsession = PhoneOwner()->FindSessionByTsyHandle( aTsyReqHandle );
+    TInt owningsubsession = PhoneOwner()->FindSubSessionByTsyHandle( aTsyReqHandle );
+    
+        
+    if((NULL != aIpc) && 
+    (iDeliveryObject->GetReqMode() == (KReqModeSessionBased | KReqModeTransferToDefaultHandler)))
+    // transfer to default handler
+    	{
+    	CReqEntry* reqEntry = PhoneOwner()->FindByIpcAndSecureId(aIpc, KUssdDefaultClientSid);
+    	if(NULL != reqEntry)
+    		{
+    		owningsession = reinterpret_cast<TInt>(reqEntry->iSession);
+    		owningsubsession = reqEntry->iMessage.Int3();    		
+    		}
+    	}
+    iDeliveryObject->iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
+    }
+
+// Can be used by the TSY to set the session owner to the current request.
 // For each request the CTSY is given a TsyReqHandle so this is a sensible thing
 // for it to be dealing with.
 // Note that once a session has an owner the reserved state is irrelevant.
-
 EXPORT_C void CTelObject::SetSessionOwnerByTsyHandle(const TTsyReqHandle aTsyReqHandle)
     {
 	
     const TInt owningsession = PhoneOwner()->FindSessionByTsyHandle( aTsyReqHandle );
     const TInt owningsubsession = PhoneOwner()->FindSubSessionByTsyHandle( aTsyReqHandle );
-    
-        
-    if(iDeliveryObject->GetReqMode() == (KReqModeSessionBased | KReqModeTransferToDefaultHandler)) // transfer to default handler
-    	{
-    	iDeliveryObject->iSessionOwner = TPhoneClientId(KUssdDefaultClientSid, owningsubsession);
-    	}
-    else //not default handler
-    	{
-    	iDeliveryObject->iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
-    	}
+    iDeliveryObject->iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
     }
-
 
 TBool CTelObject::IsSessionOwner(CReqEntry* aReqEntry) const
     {

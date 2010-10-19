@@ -264,4 +264,7 @@ EXPORTS
 	?SetSessionOwnerByTsyHandle@CTelObject@@QAEXK@Z @ 263 NONAME ; void CTelObject::SetSessionOwnerByTsyHandle(unsigned long)
 	?EndSession@CTelObject@@QAEXXZ @ 264 NONAME ; void CTelObject::EndSession(void)
 	?IsSessionInProgress@CTelObject@@QBEHXZ @ 265 NONAME ; int CTelObject::IsSessionInProgress(void) const
+	?FindSessionByTsyHandle@CPhoneBase@@QAEHK@Z @ 266 NONAME ; int CPhoneBase::FindSessionByTsyHandle(unsigned long)
+	?FindSubSessionByTsyHandle@CPhoneBase@@QAEHK@Z @ 267 NONAME ; int CPhoneBase::FindSubSessionByTsyHandle(unsigned long)
+	?SetSessionOwnerByTsyHandleAndIpc@CTelObject@@QAEXKH@Z @ 268 NONAME ; void CTelObject::SetSessionOwnerByTsyHandleAndIpc(unsigned long, int)
 

@@ -180,7 +180,8 @@ public:
 	IMPORT_C virtual TInt ServerVersion() const;
 	IMPORT_C virtual TSecurityPolicy GetRequiredPlatSecCaps(const TInt aIpc);
 
-    IMPORT_C void SetSessionOwnerByTsyHandle(const TTsyReqHandle aTsyReqHandle);
+	IMPORT_C void SetSessionOwnerByTsyHandle(const TTsyReqHandle aTsyReqHandle);	
+    IMPORT_C void SetSessionOwnerByTsyHandleAndIpc(const TTsyReqHandle aTsyReqHandle, TInt aIpc);
     IMPORT_C TInt ReserveSession();
     IMPORT_C TBool IsSessionReserved() const;
     IMPORT_C void CancelReserveSession();
@@ -470,6 +471,7 @@ public:
 	CReqEntry* FindClientInActive(CTelSession* aSession,const TInt aSubSessionHandle,const TInt aIpc);
 	CReqEntry* FindByIpcAndTelObject(const TInt aIpc, const CTelObject* aTelObject, const TUint aBufSize);
 	CReqEntry* FindByIpcAndTelObjectInWaiting(const TInt aIpc, const CTelObject* aTelObject, const TUint aBufSize);
+	CReqEntry* FindByIpcAndSecureId(const TInt aIpc, const TSecureId aSid);
 	void AddReqToActive(CReqEntry* aReqEntry);
 	void AddReqToWaiting(CReqEntry* aReqEntry);
 

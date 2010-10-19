@@ -1054,6 +1054,21 @@ CReqEntry* CPhoneBase::FindByIpcAndTelObject(const TInt aIpc, const CTelObject* 
 	return NULL;
 	}
 
+CReqEntry* CPhoneBase::FindByIpcAndSecureId(const TInt aIpc, const TSecureId aSid)
+//
+//	Finds an active request by both IPC and by the TSecureId it was placed on
+//
+	{
+	CReqEntry* reqEntry;
+	TDblQueIter<CReqEntry> iter(iReqActiveList);
+	while(reqEntry = iter++, reqEntry!=NULL)
+		{
+		if(reqEntry->iFunction==aIpc && reqEntry->iMessage.SecureId()==aSid
+			&& EFalse != reqEntry->iPlacedRequest)	
+			return reqEntry;
+		}
+	return NULL;
+	}
 CReqEntry* CPhoneBase::FindByIpcAndTelObjectInWaiting(const TInt aIpc, const CTelObject* aTelObject, const TUint aBufSize)
 //
 //	Finds a waiting request by both IPC and by the TelObject it was placed on
