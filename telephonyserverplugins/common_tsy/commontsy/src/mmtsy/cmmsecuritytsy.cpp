@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -105,7 +105,7 @@ TFLOGSTRING3("TSY: CMmSecurityTsy::DoExtFuncL.\n  \t\t\t IPC:%d\n  \t\t\t Handle
                 REINTERPRET_CAST( TUint32*, dataPtr ) );
             break;
                 case EMobilePhoneGetLockInfo:
-            ret = GetLockInfoL( aTsyReqHandle, aPackage );
+            ret = GetLockInfoL( aPackage );
             break;
         // Notify Change of Lock Information
         case EMobilePhoneNotifyLockInfoChange:
@@ -288,7 +288,7 @@ TInt CMmSecurityTsy::CompleteNotifySecurityCapsChange(
 // (other items were commented in a header).
 // ---------------------------------------------------------------------------
 //
-TInt CMmSecurityTsy::GetLockInfoL( const TTsyReqHandle aTsyReqHandle, const TDataPackage& aPackage ) 
+TInt CMmSecurityTsy::GetLockInfoL( const TDataPackage& aPackage ) 
     {
 TFLOGSTRING("LTSY: CMmSecurityTsy::GetLockInfoL - Client call");
     
@@ -302,18 +302,13 @@ TFLOGSTRING("LTSY: CMmSecurityTsy::GetLockInfoL - Client call");
         //save pointer to client side for completion
         iRetGetLockInfo = data;
 
-#ifdef REQHANDLE_TIMER
-        iMmPhoneTsy->SetTypeOfResponse( CMmPhoneTsy::EMultimodePhoneGetLockInfo, aTsyReqHandle );
-#else
-        iMmPhoneTsy->iTsyReqHandleStore->SetTsyReqHandle( 
-                    CMmPhoneTsy::EMultimodePhoneGetLockInfo, aTsyReqHandle );
-#endif //REQHANDLE_TIMER
-
         ret = iMmPhoneTsy->iMmPhoneExtInterface->GetLockInfoL( aPackage );
          
-        if ( KErrNone != ret )
+        if ( KErrNone == ret )
             {
-            iMmPhoneTsy->iTsyReqHandleStore->ResetTsyReqHandle( CMmPhoneTsy::EMultimodePhoneGetLockInfo );
+            //save req handle type
+            iMmPhoneTsy->iReqHandleType = 
+                CMmPhoneTsy::EMultimodePhoneGetLockInfo;
             }
         }
 

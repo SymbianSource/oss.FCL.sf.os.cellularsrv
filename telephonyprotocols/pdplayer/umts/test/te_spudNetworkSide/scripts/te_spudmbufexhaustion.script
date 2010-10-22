@@ -22,26 +22,26 @@ RUN_UTILS  DeleteFile c:\simtsy\config.txt
 RUN_UTILS  DeleteFile c:\config.txt
 RUN_UTILS  DeleteFile c:\loopback.ini
 
-RUN_UTILS  CopyFile z:\TestData\Configs\te_rawipsize_config.txt c:\simtsy\config.txt
-RUN_UTILS  CopyFile z:\TestData\Configs\te_rawipsize_config.txt c:\config.txt
-RUN_UTILS  CopyFile z:\TestData\Configs\TE_SpudNetworkSideLoopbackCSY.ini c:\loopback.ini
+RUN_UTILS  CopyFile z:\TestData\Configs\te_spudnetworkside_mbufexhaustion_config.txt c:\simtsy\config.txt
+RUN_UTILS  CopyFile z:\TestData\Configs\te_spudnetworkside_mbufexhaustion_config.txt c:\config.txt
+RUN_UTILS  CopyFile z:\TestData\Configs\te_spudnetworkside_mbufexhaustion_loopbackCSY.ini c:\loopback.ini
 
 run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
-ced -i z:\testdata\configs\te_rawipsize.cfg
+ced -i z:\testdata\configs\te_spudnetworkside_mbufexhaustion.cfg
 run_script z:\TestData\scripts\te_esock_test_loadesock.script
 
 LOAD_SUITE TE_SpudNetworkSide
 
-START_TESTCASE          CBS-RAWIP-0001
-//! @SYMTestCaseID      CBS-RAWIP-0001
-//! @SYMTestCaseDesc Sanity check: Sends & receives the packets of different size.
-//! @SYMTestActions Open two sockets. Sends & receives data frame of configured size.
-//! @SYMTestExpectedResults  Successfully sends & receives the packet.
+START_TESTCASE          CBS-RAWIP-0002
+//! @SYMTestCaseID      CBS-RAWIP-0002
+//! @SYMTestCaseDesc Checks that the PDP flow is robust when MBufs are exhausted.
+//! @SYMTestActions Connect 2 sockets using loopback, PDP flow receives a packet when MBufs are exhausted, PDP flow subsequently receives a packet when MBufs available.  
+//! @SYMTestExpectedResults  No packet received when MBufs are exhausted, packet received when MBufs available.
 //! @SYMTestPriority Critical
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
-RUN_TEST_STEP 2000 TE_SpudNetworkSide CRawIpMinMaxMMU z:\testdata\configs\te_rawipsize.ini MMUInfo
-END_TESTCASE            CBS-RAWIP-0001
+RUN_TEST_STEP 2000 TE_SpudNetworkSide CRawIpMBufExhaustionRx z:\testdata\configs\te_spudnetworkside_mbufexhaust.ini MBufExhaustionRx
+END_TESTCASE            CBS-RAWIP-0002
 
 run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
 

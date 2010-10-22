@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -28,7 +28,7 @@
 #include <ecom/implementationproxy.h>
 #include <networking/qos3gpp_subconparams.h>
 #include <comms-infras/metatypearray.h>
-#include <networking/qos3gpp_subconparams_factory.h>
+#include <networking/qos3GPP_subconparams_factory.h>
 
 START_ATTRIBUTE_TABLE( CSubConQosR99ParamSet, KSubCon3GPPExtParamsFactoryUid, KSubConQosR99ParamsType )
 	REGISTER_ATTRIBUTE( CSubConQosR99ParamSet, iTrafficClass, TMetaNumber )

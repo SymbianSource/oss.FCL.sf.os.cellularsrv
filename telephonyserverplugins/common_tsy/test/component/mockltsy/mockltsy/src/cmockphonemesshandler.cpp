@@ -64,7 +64,6 @@ CMockPhoneMessHandler::~CMockPhoneMessHandler()
 	iNetworkInfoV1List.ResetAndDestroy();
 	iNetworkInfoV2List.ResetAndDestroy();
 	iNetworkInfoV5List.ResetAndDestroy();
-	iStoredNetworkLists.ResetAndDestroy();
     }
 
 /**
@@ -951,7 +950,6 @@ void CMockPhoneMessHandler::CompleteL(TInt aIpc, const TDesC8& aData, TInt aResu
         case ECtsyPhoneGetPreferredNetworksComp:
             {
             CMobilePhoneStoredNetworkList* list = CMobilePhoneStoredNetworkList::NewL();
-            iStoredNetworkLists.Append(list);
             TSerializer<CMobilePhoneStoredNetworkList>::DeserialiseL(aData, *list);
             dataPackage.PackData(list);
             }

@@ -252,15 +252,6 @@ public:
 	IMPORT_C TInt IdentifierMatch() const;
 	IMPORT_C void SetIdentifierMatch(TInt aIdentifier);
 	IMPORT_C TPtrC8 TextMatch() const;
-	
-	/**
-	 *  Sets the match text. The matching is case-insensitive comparison 
-	 *  done against the leading text in the message. Wild card matching
-	 *  is not supported.
-	 *  
-	 *  @param aText The match text
-	 *  @capability None
-	 */
 	IMPORT_C void SetTextMatch(const TDesC8& aText);
 	IMPORT_C TBool operator==(const TSmsAddr& aAddr) const;
 	};

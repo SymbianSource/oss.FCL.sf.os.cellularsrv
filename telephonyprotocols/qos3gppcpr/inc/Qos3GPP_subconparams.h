@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -253,7 +253,7 @@ protected:
 	};
 
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
-#include <networking/qos3gpp_subconparams_factory.h>
+#include <networking/qos3GPP_subconparams_factory.h>
 #endif
 
 #include <networking/qos3gpp_subconparams.inl>

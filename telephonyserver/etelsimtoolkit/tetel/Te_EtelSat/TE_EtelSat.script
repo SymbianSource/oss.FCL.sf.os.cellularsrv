@@ -31,7 +31,7 @@ START_TESTCASE TEL-ETEL-NA-4000
 //!@SYMTestActions Tests RSat functions
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatFns
+RUN_TEST_STEP 30 Te_EtelSat TestSatFns
 
 END_TESTCASE TEL-ETEL-NA-4000
 
@@ -43,7 +43,7 @@ START_TESTCASE TEL-ETEL-NA-4001
 //!@SYMTestActions Tests RSat Envelope Cmds functions
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatEnvelopeCmds
+RUN_TEST_STEP 30 Te_EtelSat TestSatEnvelopeCmds
 
 END_TESTCASE TEL-ETEL-NA-4001
 
@@ -55,7 +55,7 @@ START_TESTCASE TEL-ETEL-NA-4002
 //!@SYMTestActions Tests RSat control functions
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatControl
+RUN_TEST_STEP 30 Te_EtelSat TestSatControl
 
 END_TESTCASE TEL-ETEL-NA-4002
 
@@ -67,7 +67,7 @@ START_TESTCASE TEL-ETEL-NA-4003
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1a
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1a
 
 END_TESTCASE TEL-ETEL-NA-4003
 
@@ -79,7 +79,7 @@ START_TESTCASE TEL-ETEL-NA-4004
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1b
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1b
 
 END_TESTCASE TEL-ETEL-NA-4004
 
@@ -91,7 +91,7 @@ START_TESTCASE TEL-ETEL-NA-4005
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1c
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1c
 
 END_TESTCASE TEL-ETEL-NA-4005
 
@@ -103,7 +103,7 @@ START_TESTCASE TEL-ETEL-NA-4006
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1d
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1d
 
 END_TESTCASE TEL-ETEL-NA-4006
 
@@ -115,7 +115,7 @@ START_TESTCASE TEL-ETEL-NA-4007
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1e
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1e
 END_TESTCASE TEL-ETEL-NA-4007
 
 START_TESTCASE TEL-ETEL-NA-4008
@@ -126,7 +126,7 @@ START_TESTCASE TEL-ETEL-NA-4008
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, if any APIs fail the step will leave
 //!@SYMTestType CT 
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1f
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1f
 END_TESTCASE TEL-ETEL-NA-4008
 
 START_TESTCASE TEL-ETEL-NA-4009
@@ -137,5 +137,5 @@ START_TESTCASE TEL-ETEL-NA-4009
 //!@SYMTestActions Calls RSat Proactive Commands
 //!@SYMTestExpectedResults Pass, client and TSY data is consistent.
 //!@SYMTestType CT
-RUN_TEST_STEP 300 Te_EtelSat TestSatPCmds1g
+RUN_TEST_STEP 30 Te_EtelSat TestSatPCmds1g
 END_TESTCASE TEL-ETEL-NA-4009

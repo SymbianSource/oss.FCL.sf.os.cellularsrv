@@ -739,16 +739,11 @@ START_TESTCASE BA-CTSY-NTWC-MSPNL-0001b
 //!@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0001b
 //!@SYMPREQ                417-71654
 //!@SYMComponent           telephony_ctsy
-//!@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL
-//!@   			   with error and with duplicate LTSY complete message
+//!@SYMTestCaseDesc        Test support in CTSY for RMobilePhone::StorePreferredNetworksListL with error
 //!@SYMTestPriority        High
 //!@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL.
 //!                        2. LTSY returns error.  
-//!                        3. Test code receives error.
-//!                        3. Invoke RMobilePhone:StorePreferredNetworksListL.
-//!                        4. LTSY returns duplicate complete message with KErrNone
-//!                        5. Duplicate complete message is ignored and test code receives KErrNone.  
-//!@SYMTestExpectedResults All tests pass. 
+//!@SYMTestExpectedResults Test code receives error. 
 //!@SYMTestType            CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestStorePreferredNetworksListL0001bL
 END_TESTCASE BA-CTSY-NTWC-MSPNL-0001b
@@ -767,19 +762,6 @@ START_TESTCASE BA-CTSY-NTWC-MSPNL-0002
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestStorePreferredNetworksListL0002L
 END_TESTCASE BA-CTSY-NTWC-MSPNL-0002
 
-START_TESTCASE BA-CTSY-NTWC-MSPNL-0004
-//!@SYMTestCaseID          BA-CTSY-NTWC-MSPNL-0004
-//!@SYMPREQ                417-71654
-//!@SYMComponent           telephony_ctsy
-//!@SYMTestCaseDesc        Test support in CTSY for multiple client requests to RMobilePhone::StorePreferredNetworksListL
-//!@SYMTestPriority        High
-//!@SYMTestActions         1. Invoke RMobilePhone::StorePreferredNetworksListL.
-//!                        2. Invoke RMobilePhone::StorePreferredNetworksListL from second client.
-//!@SYMTestExpectedResults Second cleint receives KErrServerBusy. 
-//!@SYMTestType            CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestStorePreferredNetworksListL0004L
-END_TESTCASE BA-CTSY-NTWC-MSPNL-0004
-
 START_TESTCASE BA-CTSY-NTWC-CRMPPN-0001
 //!@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0001
 //!@SYMPREQ                417-71654
@@ -787,9 +769,7 @@ START_TESTCASE BA-CTSY-NTWC-CRMPPN-0001
 //!@SYMTestCaseDesc        Test support in CTSY for CRetrieveMobilePhonePreferredNetworks::Start
 //!@SYMTestPriority        High
 //!@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
-//!                        2. Add a new entry to the list.
-//!                        3. Invoke RMobilePhone::StorePreferredNetworksListL. 
-//!@SYMTestExpectedResults LTSY receives the modified list and test code receives KErrNone. 
+//!@SYMTestExpectedResults Test code receives the preferred network list. 
 //!@SYMTestType            CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestRetrieveMobilePhonePreferredNetworks0001L
 END_TESTCASE BA-CTSY-NTWC-CRMPPN-0001
@@ -801,9 +781,7 @@ START_TESTCASE BA-CTSY-NTWC-CRMPPN-0001a
 //!@SYMTestCaseDesc        Test support in CTSY for CRetrieveMobilePhonePreferredNetworks::Start
 //!@SYMTestPriority        High
 //!@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
-//!                        2. Remove an entry from the list.
-//!                        3. Invoke RMobilePhone::StorePreferredNetworksListL. 
-//!@SYMTestExpectedResults LTSY receives the modified list and test code receives KErrNone. 
+//!@SYMTestExpectedResults Test code receives the preferred network list. 
 //!@SYMTestType            CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestRetrieveMobilePhonePreferredNetworks0001aL
 END_TESTCASE BA-CTSY-NTWC-CRMPPN-0001a
@@ -846,19 +824,6 @@ START_TESTCASE BA-CTSY-NTWC-CRMPPN-0002
 //!@SYMTestType            CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestRetrieveMobilePhonePreferredNetworks0002L
 END_TESTCASE BA-CTSY-NTWC-CRMPPN-0002
-
-START_TESTCASE BA-CTSY-NTWC-CRMPPN-0004
-//!@SYMTestCaseID          BA-CTSY-NTWC-CRMPPN-0004
-//!@SYMPREQ                417-71654
-//!@SYMComponent           telephony_ctsy
-//!@SYMTestCaseDesc        Test support in CTSY for multiple client requests to CRetrieveMobilePhonePreferredNetworks::Start
-//!@SYMTestPriority        High
-//!@SYMTestActions         1. Invoke CRetrieveMobilePhonePreferredNetworks::Start.
-//!                        2. Invoke CRetrieveMobilePhonePreferredNetworks::Start from second client.
-//!@SYMTestExpectedResults Second client receives KErrInUse.
-//!@SYMTestType            CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestRetrieveMobilePhonePreferredNetworks0004L
-END_TESTCASE BA-CTSY-NTWC-CRMPPN-0004
 
 START_TESTCASE BA-CTSY-NTWC-MGNRS-0001
 //!@SYMTestCaseID BA-CTSY-NTWC-MGNRS-0001
@@ -922,19 +887,6 @@ START_TESTCASE BA-CTSY-NTWC-MNPNLC-0002
 //!@SYMTestType            CT
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestNotifyPreferredNetworksListChange0002L
 END_TESTCASE BA-CTSY-NTWC-MNPNLC-0002
-
-START_TESTCASE BA-CTSY-NTWC-MNPNLC-0004
-//!@SYMPREQ                417-71654
-//!@SYMComponent           telephony_ctsy
-//!@SYMTestCaseDesc        Test support in CTSY for multiple client requests to RMobilePhone::NotifyPreferredNetworksListChange
-//!@SYMTestPriority        High
-//!@SYMTestActions         1. Invoke RMobilePhone::NotifyPreferredNetworksListChange.
-//!                        1. Invoke RMobilePhone::NotifyPreferredNetworksListChange from second client.
-//!                        2. Invoke RMobilePhone::StorePreferredNetworksListL.
-//!@SYMTestExpectedResults Clients receive preferred network list notification
-//!@SYMTestType            CT
-RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyNetworkControlFU.TestNotifyPreferredNetworksListChange0004L
-END_TESTCASE BA-CTSY-NTWC-MNPNLC-0004
 
 START_TESTCASE BA-CTSY-NTWC-MNNSSC-0001
 //!@SYMTestCaseID BA-CTSY-NTWC-MNNSSC-0001

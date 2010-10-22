@@ -15,6 +15,7 @@
 
 #ifdef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 
+#include "../mbufgobblerlayer/group/bld.inf"
 #include "../te_spud/group/bld.inf"
 #include "../Te_UmtsGprsSCPR/group/bld.inf"
 #include "../te_mbms/group/bld.inf"

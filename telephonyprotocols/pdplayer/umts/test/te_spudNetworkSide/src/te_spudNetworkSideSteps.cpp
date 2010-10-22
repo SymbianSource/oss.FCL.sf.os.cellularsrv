@@ -31,6 +31,7 @@
 #include <es_enum.h> 
 #include <comms-infras/es_config.h>
 #include <nifman.h>
+#include <comms-infras/mbufgobblerpubsub.h>
 
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 #include <networking/qoslib.h>
@@ -97,18 +98,7 @@ void CSpudNetSideTestBase::FailNextPktLoopbackCsyWriteL(TInt aPortNum, TInt aErr
 	TestL(RProperty::Set(KUidPSCsyWriteResultCategory, aPortNum, aErrorCode), _L("Set PSCsy write result"));
   	INFO_PRINTF3(_L("Next write on [PKTLOOPBACK::%d] is going to fail with [%d]"), aPortNum, aErrorCode);
   	}
-
-void CSpudNetSideTestBase::ClearNextPktLoopbackCsyWriteL(TInt aPortNum)
-    {
-    TInt dummy(0);
-    TInt ret = RProperty::Get(KUidPSCsyWriteResultCategory, aPortNum, dummy);
-    if(ret != KErrNotFound)
-        {
-        RProperty::Set(KUidPSCsyWriteResultCategory, aPortNum, KErrNone);
-        }
-    INFO_PRINTF2(_L("Reset to KErrNone for the next write on [PKTLOOPBACK::%d] port"), aPortNum);
-    }
-
+	
 /**
 Blocks until Nifman progress notification is received.
 
@@ -1646,8 +1636,7 @@ enum TVerdict CSpudSecondaryLowerNifDownStop::RunTestStepL()
 	StopInterfaceL();
 	
 	StopSecondaryL();
-
-	ClearNextPktLoopbackCsyWriteL(loopbackPort);
+	
 	return EPass;
 	}
 
@@ -1720,7 +1709,7 @@ enum TVerdict CSpudPrimaryDeletionInterfaceStop::RunTestStepL()
 		User::Leave(KErrNotFound);
 		}
 	FailNextPktLoopbackCsyWriteL(loopbackPort, KErrCompletion);
-
+		
 	TRequestStatus sendStatus;
 	iSocket.Send(KCommWriteData, 0, sendStatus);
 	User::WaitForRequest(sendStatus);
@@ -1731,8 +1720,6 @@ enum TVerdict CSpudPrimaryDeletionInterfaceStop::RunTestStepL()
 	// In the meanwhile, we sneak in and stop the interface.
 	
 	StopInterfaceL();
-
-	ClearNextPktLoopbackCsyWriteL(loopbackPort);
 	return EPass;	
 	};
 
@@ -2152,17 +2139,10 @@ TVerdict CSpudPppSecondarySend::RunTestStepL()
 	CConnectionStart *primaryIfStart = CConnectionStart::NewLC(iEsock, *this, primaryIapId);
 	CConnectionStart *secondaryIfStart = CConnectionStart::NewLC(iEsock, *this, secondaryIapId);
 
-    TRequestStatus progressReqSt;   
-    primaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
-
-    WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0); // We can wait here forever. Set timeout on test step.
-
-    secondaryIfStart->iInterface.ProgressNotification(iProgressBuf, progressReqSt, KConnectionUp);
-    WaitForProgressNotificationL(progressReqSt, KConnectionUp, 0); // We can wait here forever. Set timeout on test step.
-
 #ifndef SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY
 	WaitForQoSEventL(_L("SecondaryActivationEvent2"), _L("SecondaryActivationEvent2Reason"));
 #else
+	User::After(2*KTimeToStartSecondary);
 	VerifySubconnectionCountL(_L("SubConnectionCount2"), PDPIAP);
 #endif
 
@@ -2369,8 +2349,36 @@ enum TVerdict CIoctlAddressRetrieve::RunTestStepL()
     return EPass;
     }
 
-enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
-    {
+enum TVerdict CRawIpMBufExhaustionRx::RunTestStepL()
+    {    
+    /*
+      * This test checks that the PDP flow can handle the scenario when it receives a packet but finds that
+      * the MBuf pool is exhausted.
+      * 
+      * The test has the following form:
+      * 
+      *  1) Initialisation
+      *  1.1) Connections conn1 and conn2 are started.
+      *  1.2) Socket sock1 is opened against conn1 and socket sock2 is opened against conn2;
+      *     The sockets are logically joined by the packet loopback csy; data which is written by 
+      *     sock1 is read by sock2.
+      *  1.3) Connection conn3 is started. It creates a stack within ESOCK which contains the MBufGobbler layer;
+      *     this is a layer which contains a publish and subscribe function which allows the ESOCK client to control the 
+      *     number of MBufs that are available in the MBuf pool.
+      *  
+      *  2) Test Scenario
+      *  2.1) The client writes data to sock1 successfully; the packetloopback csy delays forwarding the data to sock2.
+      *  2.2) The client configures a publish and subscribe attribute which exhausts ESOCK's MBuf pool. 
+      *       It uses the MBufGobbler publish / subscribe function contained in the MBufGobbler layer started by conn3.
+      *  2.3) The packet loopback csy forwards the data to the flow associated with sock2. 
+      *  2.4) The flow is unable to obtain a MBuf from the MBuf pool as the pool is exhausted, so it discards the packet
+      *       and posts a request to receive the next packet.  
+      *  2.5) The client cancels the read request from sock2.
+      *  2.6) The client configures a publish and subscribe attribute to replenish ESocks's MBuf pool.
+      *  2.7) The client writes data to sock1 successfully and reads data from sock2 successfully.
+      *  
+      */
+     
     //Start 1st context
     RConnection* conn1 = new (ELeave) RConnection();
     CleanupClosePushL<RConnection>(*conn1);
@@ -2384,7 +2392,7 @@ enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
     TCommDbConnPref conn1Pref;
     conn1Pref.SetIapId(primaryIapId);
     
-    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId); 
+    INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId);  
     TestL(conn1->Open(iEsock), _L("RConnection::Open the interface"));
     TestL(conn1->Start(conn1Pref), _L("RConnection::Start the interface"));
 
@@ -2403,7 +2411,15 @@ enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
     INFO_PRINTF2(_L("Test starting Interface IAP ID == %d"), primaryIapId);     
     TestL(conn2->Open(iEsock), _L("RConnection::Open the interface"));
     TestL(conn2->Start(conn2Pref), _L("RConnection::Start the interface"));
-
+    
+    TRequestStatus status;
+    RConnection* conn3 = new (ELeave) RConnection();
+    CleanupClosePushL<RConnection>(*conn3);   
+    TestL(conn3->Open(iEsock), _L("RConnection::Open the interface"));
+    conn3->Start(status);
+    User::WaitForRequest(status);
+    TestL(status.Int(), _L("RConnection::Start - start connection containing MBuf Gobbler layer"));
+    
     //Open & Connect 1st Socket
     RSocket sock1;
     TestL(sock1.Open(iEsock, KAfInet, KSockDatagram, KProtocolInetUdp, *conn1), _L("RSocket::Open"));
@@ -2415,8 +2431,6 @@ enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
     TInetAddr dstAddr;
     dstAddr.SetPort(KConfiguredTftFilter1SrcPort);
     dstAddr.Input(KConfiguredTftFilter1SrcAddr);
-
-    TRequestStatus status;
     sock1.Connect(dstAddr, status);
     User::WaitForRequest(status);
     TestL(status.Int(), _L("RSocket::Connect status opening 1st socket"));
@@ -2439,55 +2453,72 @@ enum TVerdict CRawIpMinMaxMMU::RunTestStepL()
     TBuf8<KMaxMMU> *recvBuf2 = new(ELeave) TBuf8<KMaxMMU>();
     CleanupStack::PushL(recvBuf2);
 
-    TInt end;
-    if (!GetIntFromConfig(ConfigSection(), _L("TestMaxMMU"), end))
-        {
-        User::Leave(KErrNotFound);
-        }
-    
-    TInt begin;
-    if (!GetIntFromConfig(ConfigSection(), _L("TestMinMMU"), begin))
-        {
-        User::Leave(KErrNotFound);
-        }
-
-    if (begin > end)
-        {
-        User::Leave(KErrArgument);
-        }
-
-    INFO_PRINTF3(_L("Sending data frame size from (%d) to (%d)"), begin, end); 
     TRequestStatus readStatus;
 
-    for(TInt j=begin;j<=end;j++)
-        {
-        sendBuf->Zero();
-        for (TInt i=0;i<j;i++)
-            {
-            sendBuf->Append(Math::Random() & 0x7f);
-            }
-
-        recvBuf->Zero();
-        sock2.Read(*recvBuf, readStatus);
-        sock1.Write(*sendBuf, status);
+    const TInt KOneSecond = 1000000;
+    const TInt KOneUs     = 1;
+    
+    sendBuf->Zero();
+    sendBuf->Append(Math::Random() & 0x7f); // add a token character
         
-        User::WaitForRequest(status);
-        TESTL(status.Int() == 0);
-        User::WaitForRequest(readStatus);
-        TESTL(readStatus.Int() == 0);
-        if (sendBuf->Length() > recvBuf->Length())
-            {
-            recvBuf2->Zero();
-            sock2.Read(*recvBuf2, readStatus);
-            User::WaitForRequest(readStatus);
-            TESTL(readStatus.Int() == 0);
-            recvBuf->Append(*recvBuf2);
-            TESTL(sendBuf->Length() == recvBuf->Length());
-            }
-        TESTL(recvBuf->Compare(*sendBuf) == 0);
+    sock1.Write(*sendBuf, status); // Allow packet to be sent
+    User::After( KOneSecond ); // Wait for a second to allow time for server/protocol to send
+        
+    sock1.CancelSend();
+
+    User::WaitForRequest(status);
+    
+    TInt result = RProperty::Set(TUid::Uid(EMBufGobbler ), EAdjustNumberOfMBufsRemainingInPool , EGobbleAllMBufs); // Allocate all MBuffs
+    if (result != KErrNone)
+        {
+        INFO_PRINTF2(_L("Unable to set gobber publish/subscribe %d"), result);
+        User::Leave(result);
         }
+    User::After(KOneUs); // Relinquish CPU, to give time for        
+    
+    sock2.Read(*recvBuf, readStatus);    
+    User::After( KOneSecond ); 
 
-    CleanupStack::PopAndDestroy(7); //conn1, conn2, sock1, sock2, sendBuf, recvBuf, recvBuf2
+    sock2.CancelRecv();
+            
+    User::WaitForRequest( readStatus );
+    
+    if ((status != KErrNone) && (readStatus != KErrCancel))         
+        {
+        INFO_PRINTF3(_L("Unexpected error status tx= %d, rx = %d"), status.Int(), readStatus.Int());
+        User::Leave(readStatus.Int());
+        }
+   
+    result = RProperty::Set(TUid::Uid(EMBufGobbler), EAdjustNumberOfMBufsRemainingInPool, EReleaseAllMBufs);  // Free all buffers
+    if (result != KErrNone)
+        {
+        INFO_PRINTF2(_L("Unable to set gobber publish/subscribe %d"), result);
+        User::Leave(result);
+        }
+    User::After(KOneUs); // Relinquish CPU to allow time for MBufs to be returned to the pool.
 
+    sock1.Write(*sendBuf, status);        
+    
+    User::After( KOneSecond ); // Wait for a second to allow time for server/protocol to send
+        
+    sock1.CancelSend();
+
+    User::WaitForRequest(status);
+    
+    sock2.Read(*recvBuf, readStatus);    
+    User::After( KOneSecond ); 
+
+    sock2.CancelRecv();
+            
+    User::WaitForRequest( readStatus );
+    
+    if ((status != KErrNone) && (readStatus != KErrNone))         
+        {
+        INFO_PRINTF3(_L("Unexpected error status tx = %d rx = %d"), status.Int(), readStatus.Int());
+        User::Leave(readStatus.Int());
+        }     
+        
+    CleanupStack::PopAndDestroy(8); //conn1, conn2, conn3, sock1, sock2, sendBuf, recvBuf, recvBuf2
+    
     return EPass;
     }
