@@ -25,7 +25,7 @@ my $baud;
 print "What COMM port is the modem on?\n(Note: Symbian COMM ports are 1 less than windows)\n\tCOMM::";
 chomp ($com = <>);
 
-print "What is the baud rate of the modem?\n(Wavecomm default is 9600, Telit default is 152000)\n\tBaud=";
+print "What is the baud rate of the modem?\n(Wavecomm default is 9600, Telit default is 115200)\n\tBaud=";
 chomp ($baud = <>);
 
 #print "\nComm::$com Baud=$baud\n";
