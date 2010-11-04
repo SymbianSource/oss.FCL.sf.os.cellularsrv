@@ -134,11 +134,16 @@ public:
 	void TestAcceptRejectMisuse0001L();
 	void TestAcceptRejectMisuse0002L();
 	void TestMultipleIncomingUssdMessages0001L();	
-
+	void TestSendMessageDefaultHandlerWithTestClient0001L();
+	void TestSendMessageDefaultHandlerWithTestClient0002L();
+	void TestSendMessageDefaultHandlerWithTestClient0003L();
+	void TestSendMessageDefaultHandlerWithTestClient0004L();
+		
 private:
 	static TInt TestReceiveMessage(TAny* aThreadData);
 	static void CompleteMockRequestL(RBuf8& aData, TInt aMsgType, RMockLtsy& aMockLTSY);
 	void TestReceiveMessageWithTestClientL(RArray<TUssdClientTestData> & aClientTestData, TBool aRandomLoopingTest=EFalse);
+	
 	}; // class CCTsyUssdMessagingFU
 
 

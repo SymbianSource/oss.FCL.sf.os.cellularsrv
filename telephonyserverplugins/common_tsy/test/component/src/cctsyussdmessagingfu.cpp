@@ -99,6 +99,10 @@ CTestSuite* CCTsyUssdMessagingFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestAcceptRejectMisuse0001L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestAcceptRejectMisuse0002L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestMultipleIncomingUssdMessages0001L);
+	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestSendMessageDefaultHandlerWithTestClient0001L);
+	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestSendMessageDefaultHandlerWithTestClient0002L);
+	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestSendMessageDefaultHandlerWithTestClient0003L);	
+	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestSendMessageDefaultHandlerWithTestClient0004L);
 	END_SUITE;
 	
 	}
@@ -5043,8 +5047,7 @@ void CCTsyUssdMessagingFU::TestReceiveMessageWithTestClientL(RArray<TUssdClientT
         return;
         }
     
-    iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, data, 15);
-
+   iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, data, 15);
     User::WaitForAnyRequest();
     
     // Wait for any clients given a timeout
@@ -5617,3 +5620,616 @@ void CCTsyUssdMessagingFU::TestMultipleIncomingUssdMessages0001L()
 	
 	}
 	
+
+/**
+@SYMTestCaseID BA-CTSY-USSDM-USMDH-0001
+@SYMComponent telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with default handler
+@SYMTestPriority High
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0001L()
+    {	
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhoneL();
+
+	RBuf8 data;
+	CleanupClosePushL(data);
+
+	RArray<TUssdClientTestData> data1;
+	RMobileUssdMessaging ussdMessaging;
+	TInt ret = ussdMessaging.Open(iPhone);
+	ASSERT_EQUALS(KErrNone, ret);
+	CleanupClosePushL(ussdMessaging);
+	
+	TRequestStatus requestStatus;
+
+	TUint32 flags = 100;
+	RMobileUssdMessaging::TMobileUssdDataFormat format = RMobileUssdMessaging::EFormatUnspecified;
+	RMobileUssdMessaging::TMobileUssdMessageType type  = RMobileUssdMessaging::EUssdMORequest;
+	TUint8 dcs = 200;
+
+	//-------------------------------------------------------------------------
+	// function parameters
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 attributes;
+	TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1> msgAttributes(attributes);
+	
+	attributes.iFlags  = flags;
+	attributes.iFormat = format;
+	attributes.iType   = type;
+	attributes.iDcs   = dcs;
+	
+	TName name = _L("Name1");
+	TPckg<TName> msgData(name);
+
+	//-------------------------------------------------------------------------
+
+	TMockLtsyData2<TName, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2(name, attributes);
+	mockData2.SerialiseL(data);	
+	//-------------------------------------------------------------------------
+	RBuf8 data2;
+	CleanupClosePushL(data2);
+	//-------------------------------------------------------------------------	
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributes;
+	completeAttributes.iFlags  = flags;
+	completeAttributes.iFormat = format;
+	completeAttributes.iType   = type;
+	completeAttributes.iDcs    = dcs;
+	TBuf8<KMaxName> completeName = _L8("Name2");
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+											mockData3(completeName, completeAttributes);
+	mockData3.SerialiseL(data2);
+	//-------------------------------------------------------------------------	
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_default.exe"), _L("-R -M"), KErrNone, EExitKill, KErrNone)); //Default
+	const TInt numClients = data1.Count();
+	RProcess* proc = new RProcess[numClients];
+	TRequestStatus* req = new TRequestStatus[numClients];
+	
+	for (TInt i=0; i<numClients; ++i)
+		{
+		TInt err = proc[i].Create(data1[i].iExe, data1[i].iClientParams);
+		// If a client isn't created properly, we need to clean up previously created ones here
+		if (err != KErrNone)
+			{
+			for (TInt c=0; c<i-1; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			}
+		// Fail the test if any client has not been created properly
+		ASSERT_EQUALS(err, KErrNone);
+		}
+	// All processes created successfully, start their execution
+	for (TInt i = 0; i < numClients; i++)
+		{
+		proc[i].Logon(req[i]);
+		proc[i].Resume();
+		// Pause here so that clients register in the order specified (i.e. As ordered in the array)
+		// Resolves timing issues in WDP/SMP.
+		User::After(500000);
+		}
+	//-------------------------------------------------------------------------
+	
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+		
+	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
+	User::WaitForRequest(requestStatus);        
+	AssertMockLtsyStatusL();
+	ASSERT_EQUALS(KErrNone, requestStatus.Int());	
+	//---------------------------------------------------------------------------
+		
+	iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, data2, 15);
+	User::After(5 * 1000000);
+	
+	for (TInt i = 0; i < numClients; i++)
+		{
+		TRequestStatus status = req[i];
+		TExitType exit = proc[i].ExitType();
+		TInt reason = proc[i].ExitReason();
+		
+		// Kill/Close the clients before doing assert
+		proc[i].Kill(KErrNone);
+		proc[i].Close();
+
+		const TBool checkRequestStatus = status.Int() == data1[i].iReqStatus;
+		const TBool checkExitType = exit == data1[i].iExitType;
+		TBool checkExitReason = ETrue;
+		if (data1[i].iExitType == EExitKill)
+			{
+			checkExitReason = reason == data1[i].iExitReason;
+			}
+
+		if (!checkRequestStatus || !checkExitType || !checkExitReason)
+			{
+			// Some useful output in case of a failed test
+			INFO_PRINTF2(_L("Client[%d] returned unexpected results:"),i);
+			if (!checkRequestStatus)
+				INFO_PRINTF3(_L("  [RequestStatus] Expected: %d , Actual: %d"),data1[i].iReqStatus,status.Int());
+			if (!checkExitType)
+				INFO_PRINTF3(_L("  [ExitType]      Expected: %d , Actual: %d"),data1[i].iExitType,exit);
+			if (!checkExitReason)
+				INFO_PRINTF3(_L("  [ExitReason]    Expected: %d , Actual: %d"),data1[i].iExitReason,reason);
+			for (TInt c=i+1; c<numClients; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			ASSERT_TRUE(checkRequestStatus);
+			ASSERT_TRUE(checkExitType);
+			ASSERT_TRUE(checkExitReason);
+			}
+		}	
+	//---------------------------------------------------------------------------
+	data1.Close();
+	CleanupStack::PopAndDestroy(4, this); // data, data2, this, ussdMessaging
+    }
+
+
+
+/**
+@SYMTestCaseID BA-CTSY-USSDM-USMDH-0002
+@SYMComponent telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with two default clients
+@SYMTestPriority High
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0002L()
+    {	
+	
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhoneL();
+
+	RBuf8 data;
+	CleanupClosePushL(data);
+
+	RArray<TUssdClientTestData> data1;
+	RMobileUssdMessaging ussdMessaging;
+	TInt ret = ussdMessaging.Open(iPhone);
+	ASSERT_EQUALS(KErrNone, ret);
+	CleanupClosePushL(ussdMessaging);
+	
+	TRequestStatus requestStatus;
+
+	TUint32 flags = 100;
+	RMobileUssdMessaging::TMobileUssdDataFormat format = RMobileUssdMessaging::EFormatUnspecified;
+	RMobileUssdMessaging::TMobileUssdMessageType type  = RMobileUssdMessaging::EUssdMORequest;
+	TUint8 dcs = 200;
+
+	//-------------------------------------------------------------------------
+	// function parameters
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 attributes;
+	TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1> msgAttributes(attributes);
+	
+	attributes.iFlags  = flags;
+	attributes.iFormat = format;
+	attributes.iType   = type;
+	attributes.iDcs   = dcs;
+	
+	TName name = _L("Name1");
+	TPckg<TName> msgData(name);
+
+	//-------------------------------------------------------------------------
+
+	TMockLtsyData2<TName, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2(name, attributes);
+	mockData2.SerialiseL(data);	
+	//-------------------------------------------------------------------------
+	RBuf8 data2;
+	CleanupClosePushL(data2);
+	//-------------------------------------------------------------------------	
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributes;
+	completeAttributes.iFlags  = flags;
+	completeAttributes.iFormat = format;
+	completeAttributes.iType   = type;
+	completeAttributes.iDcs    = dcs;
+	TBuf8<KMaxName> completeName = _L8("Name2");
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+											mockData3(completeName, completeAttributes);
+	mockData3.SerialiseL(data2);
+	//-------------------------------------------------------------------------	
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_default.exe"), _L("-R -M"), KErrNone, EExitKill, KErrNone)); //Default
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_default.exe"),_L("-R -M"), KRequestPending, EExitPending, KErrNone)); //Second default client
+	const TInt numClients = data1.Count();
+	RProcess* proc = new RProcess[numClients];
+	TRequestStatus* req = new TRequestStatus[numClients];
+	
+	for (TInt i=0; i<numClients; ++i)
+		{
+		TInt err = proc[i].Create(data1[i].iExe, data1[i].iClientParams);
+		// If a client isn't created properly, we need to clean up previously created ones here
+		if (err != KErrNone)
+			{
+			for (TInt c=0; c<i-1; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			}
+		// Fail the test if any client has not been created properly
+		ASSERT_EQUALS(err, KErrNone);
+		}
+	// All processes created successfully, start their execution
+	for (TInt i = 0; i < numClients; i++)
+		{
+		proc[i].Logon(req[i]);
+		proc[i].Resume();
+		// Pause here so that clients register in the order specified (i.e. As ordered in the array)
+		// Resolves timing issues in WDP/SMP.
+		User::After(500000);
+		}
+	//-------------------------------------------------------------------------
+	
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+		
+	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
+	User::WaitForRequest(requestStatus);        
+	AssertMockLtsyStatusL();
+	ASSERT_EQUALS(KErrNone, requestStatus.Int());	
+	//---------------------------------------------------------------------------
+		
+	iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, data2, 15);
+	User::After(5 * 1000000);
+	
+	for (TInt i = 0; i < numClients; i++)
+		{
+		TRequestStatus status = req[i];
+		TExitType exit = proc[i].ExitType();
+		TInt reason = proc[i].ExitReason();
+		
+		// Kill/Close the clients before doing assert
+		proc[i].Kill(KErrNone);
+		proc[i].Close();
+
+		const TBool checkRequestStatus = status.Int() == data1[i].iReqStatus;
+		const TBool checkExitType = exit == data1[i].iExitType;
+		TBool checkExitReason = ETrue;
+		if (data1[i].iExitType == EExitKill)
+			{
+			checkExitReason = reason == data1[i].iExitReason;
+			}
+
+		if (!checkRequestStatus || !checkExitType || !checkExitReason)
+			{
+			// Some useful output in case of a failed test
+			INFO_PRINTF2(_L("Client[%d] returned unexpected results:"),i);
+			if (!checkRequestStatus)
+				INFO_PRINTF3(_L("  [RequestStatus] Expected: %d , Actual: %d"),data1[i].iReqStatus,status.Int());
+			if (!checkExitType)
+				INFO_PRINTF3(_L("  [ExitType]      Expected: %d , Actual: %d"),data1[i].iExitType,exit);
+			if (!checkExitReason)
+				INFO_PRINTF3(_L("  [ExitReason]    Expected: %d , Actual: %d"),data1[i].iExitReason,reason);
+			for (TInt c=i+1; c<numClients; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			ASSERT_TRUE(checkRequestStatus);
+			ASSERT_TRUE(checkExitType);
+			ASSERT_TRUE(checkExitReason);
+			}
+		}	
+	//---------------------------------------------------------------------------
+	data1.Close();
+	CleanupStack::PopAndDestroy(4, this); // data, data2, this, ussdMessaging
+    }
+
+
+
+/**
+@SYMTestCaseID BA-CTSY-USSDM-USMDH-0003
+@SYMComponent telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with default and priority clients
+@SYMTestPriority High
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0003L()
+    {	
+	
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhoneL();
+
+	RBuf8 data;
+	CleanupClosePushL(data);
+
+	RArray<TUssdClientTestData> data1;
+	RMobileUssdMessaging ussdMessaging;
+	TInt ret = ussdMessaging.Open(iPhone);
+	ASSERT_EQUALS(KErrNone, ret);
+	CleanupClosePushL(ussdMessaging);
+	
+	TRequestStatus requestStatus;
+
+	TUint32 flags = 100;
+	RMobileUssdMessaging::TMobileUssdDataFormat format = RMobileUssdMessaging::EFormatUnspecified;
+	RMobileUssdMessaging::TMobileUssdMessageType type  = RMobileUssdMessaging::EUssdMORequest;
+	TUint8 dcs = 200;
+
+	//-------------------------------------------------------------------------
+	// function parameters
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 attributes;
+	TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1> msgAttributes(attributes);
+	
+	attributes.iFlags  = flags;
+	attributes.iFormat = format;
+	attributes.iType   = type;
+	attributes.iDcs   = dcs;
+	
+	TName name = _L("Name1");
+	TPckg<TName> msgData(name);
+
+	//-------------------------------------------------------------------------
+
+	TMockLtsyData2<TName, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2(name, attributes);
+	mockData2.SerialiseL(data);	
+	//-------------------------------------------------------------------------
+	RBuf8 data2;
+	CleanupClosePushL(data2);
+	//-------------------------------------------------------------------------	
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributes;
+	completeAttributes.iFlags  = flags;
+	completeAttributes.iFormat = format;
+	completeAttributes.iType   = type;
+	completeAttributes.iDcs    = dcs;
+	TBuf8<KMaxName> completeName = _L8("Name2");
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+											mockData3(completeName, completeAttributes);
+	mockData3.SerialiseL(data2);
+	//-------------------------------------------------------------------------
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_priority.exe"),_L("-R -M"), KRequestPending, EExitPending, KErrNone)); //Priority
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_default.exe"), _L("-R -M"), KErrNone, EExitKill, KErrNone)); //Default
+	const TInt numClients = data1.Count();
+	RProcess* proc = new RProcess[numClients];
+	TRequestStatus* req = new TRequestStatus[numClients];
+	
+	for (TInt i=0; i<numClients; ++i)
+		{
+		TInt err = proc[i].Create(data1[i].iExe, data1[i].iClientParams);
+		// If a client isn't created properly, we need to clean up previously created ones here
+		if (err != KErrNone)
+			{
+			for (TInt c=0; c<i-1; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			}
+		// Fail the test if any client has not been created properly
+		ASSERT_EQUALS(err, KErrNone);
+		}
+	// All processes created successfully, start their execution
+	for (TInt i = 0; i < numClients; i++)
+		{
+		proc[i].Logon(req[i]);
+		proc[i].Resume();
+		// Pause here so that clients register in the order specified (i.e. As ordered in the array)
+		// Resolves timing issues in WDP/SMP.
+		User::After(500000);
+		}
+	//-------------------------------------------------------------------------
+	
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+		
+	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
+	User::WaitForRequest(requestStatus);        
+	AssertMockLtsyStatusL();
+	ASSERT_EQUALS(KErrNone, requestStatus.Int());	
+	//---------------------------------------------------------------------------
+		
+	iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, data2, 15);
+	User::After(5 * 1000000);
+	
+	for (TInt i = 0; i < numClients; i++)
+		{
+		TRequestStatus status = req[i];
+		TExitType exit = proc[i].ExitType();
+		TInt reason = proc[i].ExitReason();
+		
+		// Kill/Close the clients before doing assert
+		proc[i].Kill(KErrNone);
+		proc[i].Close();
+
+		const TBool checkRequestStatus = status.Int() == data1[i].iReqStatus;
+		const TBool checkExitType = exit == data1[i].iExitType;
+		TBool checkExitReason = ETrue;
+		if (data1[i].iExitType == EExitKill)
+			{
+			checkExitReason = reason == data1[i].iExitReason;
+			}
+
+		if (!checkRequestStatus || !checkExitType || !checkExitReason)
+			{
+			// Some useful output in case of a failed test
+			INFO_PRINTF2(_L("Client[%d] returned unexpected results:"),i);
+			if (!checkRequestStatus)
+				INFO_PRINTF3(_L("  [RequestStatus] Expected: %d , Actual: %d"),data1[i].iReqStatus,status.Int());
+			if (!checkExitType)
+				INFO_PRINTF3(_L("  [ExitType]      Expected: %d , Actual: %d"),data1[i].iExitType,exit);
+			if (!checkExitReason)
+				INFO_PRINTF3(_L("  [ExitReason]    Expected: %d , Actual: %d"),data1[i].iExitReason,reason);
+			for (TInt c=i+1; c<numClients; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			ASSERT_TRUE(checkRequestStatus);
+			ASSERT_TRUE(checkExitType);
+			ASSERT_TRUE(checkExitReason);
+			}
+		}	
+	//---------------------------------------------------------------------------
+	data1.Close();
+	CleanupStack::PopAndDestroy(4, this); // data, data2, this, ussdMessaging
+    }
+
+
+/**
+@SYMTestCaseID BA-CTSY-USSDM-USMDH-0004
+@SYMComponent telephony_ctsy
+@SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with default, normal and priority clients
+@SYMTestPriority High
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0004L()
+    {	
+	
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhoneL();
+
+	RBuf8 data;
+	CleanupClosePushL(data);
+
+	RArray<TUssdClientTestData> data1;
+	RMobileUssdMessaging ussdMessaging;
+	TInt ret = ussdMessaging.Open(iPhone);
+	ASSERT_EQUALS(KErrNone, ret);
+	CleanupClosePushL(ussdMessaging);
+	
+	TRequestStatus requestStatus;
+
+	TUint32 flags = 100;
+	RMobileUssdMessaging::TMobileUssdDataFormat format = RMobileUssdMessaging::EFormatUnspecified;
+	RMobileUssdMessaging::TMobileUssdMessageType type  = RMobileUssdMessaging::EUssdMORequest;
+	TUint8 dcs = 200;
+
+	//-------------------------------------------------------------------------
+	// function parameters
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 attributes;
+	TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1> msgAttributes(attributes);
+	
+	attributes.iFlags  = flags;
+	attributes.iFormat = format;
+	attributes.iType   = type;
+	attributes.iDcs   = dcs;
+	
+	TName name = _L("Name1");
+	TPckg<TName> msgData(name);
+
+	//-------------------------------------------------------------------------
+
+	TMockLtsyData2<TName, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2(name, attributes);
+	mockData2.SerialiseL(data);	
+	//-------------------------------------------------------------------------
+	RBuf8 data2;
+	CleanupClosePushL(data2);
+	//-------------------------------------------------------------------------	
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributes;
+	completeAttributes.iFlags  = flags;
+	completeAttributes.iFormat = format;
+	completeAttributes.iType   = type;
+	completeAttributes.iDcs    = dcs;
+	TBuf8<KMaxName> completeName = _L8("Name2");
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+											mockData3(completeName, completeAttributes);
+	mockData3.SerialiseL(data2);
+	//-------------------------------------------------------------------------
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_priority.exe"),_L("-R -M"), KRequestPending, EExitPending, KErrNone)); //Priority
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_normal.exe"),_L("-R -M"), KRequestPending, EExitPending, KErrNone)); //Normal
+	data1.Append(TUssdClientTestData(_L("ussdtestclient_default.exe"), _L("-R -M"), KErrNone, EExitKill, KErrNone)); //Default
+	const TInt numClients = data1.Count();
+	RProcess* proc = new RProcess[numClients];
+	TRequestStatus* req = new TRequestStatus[numClients];
+	
+	for (TInt i=0; i<numClients; ++i)
+		{
+		TInt err = proc[i].Create(data1[i].iExe, data1[i].iClientParams);
+		// If a client isn't created properly, we need to clean up previously created ones here
+		if (err != KErrNone)
+			{
+			for (TInt c=0; c<i-1; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			}
+		// Fail the test if any client has not been created properly
+		ASSERT_EQUALS(err, KErrNone);
+		}
+	// All processes created successfully, start their execution
+	for (TInt i = 0; i < numClients; i++)
+		{
+		proc[i].Logon(req[i]);
+		proc[i].Resume();
+		// Pause here so that clients register in the order specified (i.e. As ordered in the array)
+		// Resolves timing issues in WDP/SMP.
+		User::After(500000);
+		}
+	//-------------------------------------------------------------------------
+	
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+		
+	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
+	User::WaitForRequest(requestStatus);        
+	AssertMockLtsyStatusL();
+	ASSERT_EQUALS(KErrNone, requestStatus.Int());	
+	//---------------------------------------------------------------------------
+		
+	iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, data2, 15);
+	User::After(5 * 1000000);
+	
+	for (TInt i = 0; i < numClients; i++)
+		{
+		TRequestStatus status = req[i];
+		TExitType exit = proc[i].ExitType();
+		TInt reason = proc[i].ExitReason();
+		
+		// Kill/Close the clients before doing assert
+		proc[i].Kill(KErrNone);
+		proc[i].Close();
+
+		const TBool checkRequestStatus = status.Int() == data1[i].iReqStatus;
+		const TBool checkExitType = exit == data1[i].iExitType;
+		TBool checkExitReason = ETrue;
+		if (data1[i].iExitType == EExitKill)
+			{
+			checkExitReason = reason == data1[i].iExitReason;
+			}
+
+		if (!checkRequestStatus || !checkExitType || !checkExitReason)
+			{
+			// Some useful output in case of a failed test
+			INFO_PRINTF2(_L("Client[%d] returned unexpected results:"),i);
+			if (!checkRequestStatus)
+				INFO_PRINTF3(_L("  [RequestStatus] Expected: %d , Actual: %d"),data1[i].iReqStatus,status.Int());
+			if (!checkExitType)
+				INFO_PRINTF3(_L("  [ExitType]      Expected: %d , Actual: %d"),data1[i].iExitType,exit);
+			if (!checkExitReason)
+				INFO_PRINTF3(_L("  [ExitReason]    Expected: %d , Actual: %d"),data1[i].iExitReason,reason);
+			for (TInt c=i+1; c<numClients; ++c)
+				{
+				proc[c].Kill(KErrNone);
+				proc[c].Close();
+				}
+			ASSERT_TRUE(checkRequestStatus);
+			ASSERT_TRUE(checkExitType);
+			ASSERT_TRUE(checkExitReason);
+			}
+		}	
+	//---------------------------------------------------------------------------
+	data1.Close();
+	CleanupStack::PopAndDestroy(4, this); // data, data2, this, ussdMessaging
+    }
+

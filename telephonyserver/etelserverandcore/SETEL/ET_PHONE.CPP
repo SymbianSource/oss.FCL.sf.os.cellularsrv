@@ -1229,7 +1229,7 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 			
 		if (!nextPostedReqEntry)
 			// then we don't want to post any other client's requests in place of this one
-			{
+			{			
 			nextPostedReqEntry = PhoneOwner()->FindNonCancelledClientReq(updatedReqEntry->iSession,updatedReqEntry->iMessage.Int3(),ipc);
 			__ASSERT_DEBUG(updatedReqEntry!=nextPostedReqEntry, Fault(EEtelFaultCancelErrorWithoutCancelled));
 			if (nextPostedReqEntry==NULL && reqMode&KReqModeRePostImmediately)
@@ -1251,7 +1251,12 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 	if (reqMode & KReqModeRePostImmediately)
 		{
 		// this will destroy the reqEntry if an error occurred.
-		UpdateAndCompleteIfNecessary(updatedReqEntry,error);	
+		if(!IsSessionReserved())
+			//when there is an ongoing MO session we must ensure
+			//that the message is deliver only to the session owner
+			{
+			UpdateAndCompleteIfNecessary(updatedReqEntry,error);
+			}
 		}														
 	else
 		{
@@ -1299,7 +1304,6 @@ TInt CTelObject::DeliverReqL(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode
 		// Session in progress.
         return KErrPermissionDenied;
         }
-
 	return iDeliveryObject->DeliverReqL(PhoneOwner()->ReqActiveList(), aUpdatedReqEntry, aReqMode, aIpc, aError);
     }
 	
@@ -1307,23 +1311,50 @@ void CTelObject::FindReq(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,con
     {
 	CReqEntry* reqEntry;
 	TDblQueIter<CReqEntry> iter(PhoneOwner()->ReqActiveList());
-	while(reqEntry = iter++, reqEntry!=NULL)
+	if(!IsSessionReserved())//network initiated dialogue
 		{
-		if(reqEntry->iFunction==aIpc 
-			&& reqEntry->iTelObject==aUpdatedReqEntry->iTelObject 
-			&& reqEntry->iBuffer->Size()==aUpdatedReqEntry->iBuffer->Size()
-			/*&& IsSessionOwner(reqEntry)*/)    
+		while(reqEntry = iter++, reqEntry!=NULL)
 			{
-			if (aUpdatedReqEntry != reqEntry)
-				{
-				// Copy data from the 'placed' request to the one
-				// that is owned by the client.
-				PhoneOwner()->UpdateBuffer(aUpdatedReqEntry,reqEntry);
+				//loop through all interested clients which are not session owners
+			if(reqEntry->iFunction==aIpc 
+				&& reqEntry->iTelObject==aUpdatedReqEntry->iTelObject 
+				&& reqEntry->iBuffer->Size()==aUpdatedReqEntry->iBuffer->Size()
+				/*&& IsSessionOwner(reqEntry)*/)
+				{			
+				if (aUpdatedReqEntry != reqEntry)
+					{
+					// Copy data from the 'placed' request to the one
+					// that is owned by the client.				
+					PhoneOwner()->UpdateBuffer(aUpdatedReqEntry,reqEntry);
+					}
+				OfferToClient(reqEntry, aUpdatedReqEntry, aReqMode, aError);
+				RepostRequest(aUpdatedReqEntry, aError);
 				}
-			OfferToClient(reqEntry, aUpdatedReqEntry, aReqMode, aError);
-			RepostRequest(aUpdatedReqEntry, aError);
+			}		
+		}   	
+	else//mobile originated dialogue -> the session is reserved and message must be passed 
+		//only to the session owner		
+		{
+		while(reqEntry = iter++, reqEntry!=NULL)
+			{
+			if(reqEntry->iFunction==aIpc 
+				&& reqEntry->iTelObject==aUpdatedReqEntry->iTelObject 
+				&& reqEntry->iBuffer->Size()==aUpdatedReqEntry->iBuffer->Size()
+				&& IsSessionOwner(reqEntry))  
+				//TODO uncommented IsSessionOwner(reqEntry) to make sure
+				//request is delievered to the session owner(sometimes the default handler)
+				{			
+				if (aUpdatedReqEntry != reqEntry)
+					{
+					// Copy data from the 'placed' request to the one
+					// that is owned by the client.				
+					PhoneOwner()->UpdateBuffer(aUpdatedReqEntry,reqEntry);
+					}
+				OfferToClient(reqEntry, aUpdatedReqEntry, aReqMode, aError);
+				RepostRequest(aUpdatedReqEntry, aError);
+				}
 			}
-		}   
+		}
 	}
 	
 void CTelObject::OfferToClient(CReqEntry* aReqEntry,CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,const TInt aError)
@@ -1397,13 +1428,11 @@ void CTelObject::SetSessionOwner(TInt aSessionHandle, TInt aSubSessionHandle)
 // Note that once a session has an owner the reserved state is irrelevant.
 EXPORT_C void CTelObject::SetSessionOwnerByTsyHandleAndIpc(const TTsyReqHandle aTsyReqHandle, TInt aIpc)
     {
-	
+	//these are used to fall back to original client if the default handler was not found
     TInt owningsession = PhoneOwner()->FindSessionByTsyHandle( aTsyReqHandle );
     TInt owningsubsession = PhoneOwner()->FindSubSessionByTsyHandle( aTsyReqHandle );
-    
         
-    if((NULL != aIpc) && 
-    (iDeliveryObject->GetReqMode() == (KReqModeSessionBased | KReqModeTransferToDefaultHandler)))
+    if((NULL != aIpc))
     // transfer to default handler
     	{
     	CReqEntry* reqEntry = PhoneOwner()->FindByIpcAndSecureId(aIpc, KUssdDefaultClientSid);
@@ -1413,7 +1442,7 @@ EXPORT_C void CTelObject::SetSessionOwnerByTsyHandleAndIpc(const TTsyReqHandle a
     		owningsubsession = reqEntry->iMessage.Int3();    		
     		}
     	}
-    iDeliveryObject->iSessionOwner = TPhoneClientId(owningsession, owningsubsession);
+    iDeliveryObject->iSessionOwner = TPhoneClientId(owningsession, owningsubsession);    
     }
 
 // Can be used by the TSY to set the session owner to the current request.

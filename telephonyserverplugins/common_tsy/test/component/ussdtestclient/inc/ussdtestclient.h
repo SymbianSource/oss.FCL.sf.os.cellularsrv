@@ -29,15 +29,18 @@ enum
     EOptionSend = 2,
     EOptionAccept = 4,
     EOptionReceiveTimeout = 8,
-    EOptionRandom = 16
+    EOptionRandom = 16,
+    EOptionDefault = 32,
+    EOptionMO = 64 // this is a mobile originated(MO) request
     };
 
 class CCTsyUssdMessagingTestClient : public CBase
 	{
 public:
 CCTsyUssdMessagingTestClient();
-TInt ReceiveMessageL(TBool aAcceptDialogue, TBool aReceiveTimeout, TReal aAfterTimeperiod);
+TInt ReceiveMessageL(TBool aAcceptDialogue, TBool aReceiveTimeout, TReal aAfterTimeperiod, TBool aMO);
 TInt SendMessageL();
+TInt SendMessageDefaultHandlerL();
 TInt RandomLoopL();
 
 private:

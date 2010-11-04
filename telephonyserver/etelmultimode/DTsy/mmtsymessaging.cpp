@@ -1567,11 +1567,11 @@ CTelObject::TReqMode CUssdMessagingDMmTsy::ReqModeL(const TInt aIpc)
 		break;
 //
 // Flow Controlled Services
-//
+//	
+	case EMobileUssdMessagingSendMessageDefaultHandler:
 	case EMobileUssdMessagingSendMessage:
 	case EMobileUssdMessagingSendMessageNoFdnCheck:
-	case EMobileUssdMessagingSendRelease:
-	case EMobileUssdMessagingSendMessageDefaultHandler:
+	case EMobileUssdMessagingSendRelease:	
 		ret=KReqModeFlowControlObeyed;
 		break;
 
@@ -1744,8 +1744,7 @@ TInt CUssdMessagingDMmTsy::ReceiveMessage(const TTsyReqHandle aTsyReqHandle, TDe
 		{
 		LOGTEXT(_L8("CUssdMessagingDMmTsy::ReceiveMessage called"));
 		RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
-		RMobileUssdMessaging::TMobileUssdAttributesV1& atts = (*attsPckg)();
-
+		RMobileUssdMessaging::TMobileUssdAttributesV1& atts = (*attsPckg)();		
 		*aMsgData = DMMTSY_USSD_MESSAGE_PDU;
 
 		atts.iFlags = DMMTSY_USSD_ATTRIBUTE_FLAGS;
@@ -1771,7 +1770,7 @@ TInt CUssdMessagingDMmTsy::SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8
 	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessage called"));
 	RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
 	RMobileUssdMessaging::TMobileUssdAttributesV1& atts = (*attsPckg)();
-		
+	
 	if (atts.iFlags != DMMTSY_USSD_ATTRIBUTE_FLAGS || 
 		atts.iFormat != DMMTSY_USSD_ATTRIBUTE_FORMAT ||
 		atts.iType != DMMTSY_USSD_ATTRIBUTE_TYPE ||
@@ -1784,16 +1783,16 @@ TInt CUssdMessagingDMmTsy::SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8
 
 TInt CUssdMessagingDMmTsy::SendMessageDefaultHandler(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes)
 	{
-	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessage called"));
+	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessageDefaultHandler called"));
 	RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
 	RMobileUssdMessaging::TMobileUssdAttributesV1& atts = (*attsPckg)();
-		
+	
 	if (atts.iFlags != DMMTSY_USSD_ATTRIBUTE_FLAGS || 
 		atts.iFormat != DMMTSY_USSD_ATTRIBUTE_FORMAT ||
 		atts.iType != DMMTSY_USSD_ATTRIBUTE_TYPE ||
 		atts.iDcs != DMMTSY_USSD_ATTRIBUTE_DCS)
-		ReqCompleted(aTsyReqHandle,KErrCorrupt);
-	else
+		ReqCompleted(aTsyReqHandle,KErrCorrupt);		
+	else	
 		iPhone->AddDelayedReq(aTsyReqHandle,this);
 	return KErrNone;
 	}

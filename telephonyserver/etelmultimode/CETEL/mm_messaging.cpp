@@ -1208,7 +1208,7 @@ EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, cons
 	{
 	aReqStatus = KErrArgument;
 	return;
-	}
+	}	
 	Set(EMobileUssdMessagingSendMessageDefaultHandler, aReqStatus, aMsgData, aMsgAttributes); 	
 	}
 

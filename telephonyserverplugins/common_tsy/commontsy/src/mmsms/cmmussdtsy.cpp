@@ -195,7 +195,7 @@ TInt CMmUssdTsy::DoExtFuncL(
             }
             break;
         case EMobileUssdMessagingSendMessageDefaultHandler: 
-			{
+			{			
 			iUssdNoFdnCheckFlag = EUssdNoFdnCheckNotUsed;
 			iSendToDefaultHandler = ETrue;
 			ret = SendMessageL( 
@@ -563,7 +563,7 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
             TDes8* unpackedReceiveUssdMessagePtr = NULL;
             RMobileUssdMessaging::TMobileUssdAttributesV1* unpackedReceiveUssdMessageAttributesPtr = NULL;            
             aDataPackage->UnPackData (&unpackedReceiveUssdMessagePtr, &unpackedReceiveUssdMessageAttributesPtr);
-                                  
+                    
             if(iReceiveUssdMessagePtr->MaxLength() >= unpackedReceiveUssdMessagePtr->Length())
                	{             
 				*iReceiveUssdMessagePtr = *unpackedReceiveUssdMessagePtr;
@@ -572,7 +572,7 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
             else
             	{            	
             	aError = KErrArgument;
-            	}               
+            	}
 			}
         ReqCompleted( reqHandle, aError );
         }
@@ -623,12 +623,10 @@ TFLOGSTRING2("TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFd
         		}
         	else //default handler 
 				{
-					ret = iMmPhone->MessageManager()->HandleRequestL( 
+				ret = iMmPhone->MessageManager()->HandleRequestL( 
 						EMobileUssdMessagingSendMessageDefaultHandler, &package );            
 				}      	
             }
-        
-            
         iSsTransactionOngoing = ETrue;        
         }
 
@@ -762,7 +760,7 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
     	else// default handler
     		{
     		reqHandle = iTsyReqHandleStore->ResetTsyReqHandle(
-    		        		EMultimodeUssdSendMessageDefaultHandler );
+    		        		EMultimodeUssdSendMessageDefaultHandler );    		
     		}
         // If the session is already in progress then no session management
         // action is required. Otherwise we either promote the reserved
@@ -776,8 +774,10 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
             		SetSessionOwnerByTsyHandle( reqHandle );
             		}
             	else // default handler
-            		{            		
-            		SetSessionOwnerByTsyHandleAndIpc( reqHandle, EMultimodeUssdSendMessageDefaultHandler );
+            		{    
+            		//this function call will transfer received message to the 
+            		//default handler which already has EMobileUssdMessagingReceiveMessage request.
+            		SetSessionOwnerByTsyHandleAndIpc( reqHandle, EMobileUssdMessagingReceiveMessage );
             		}
                 }
             else

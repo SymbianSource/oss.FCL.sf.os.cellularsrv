@@ -23,6 +23,51 @@ RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 11111111 ussdtestclient_p
 RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 55555555 ussdtestclient_normal.exe
 RUN_PROGRAM -1 setcap ussdtestclient.exe FFFFFFFE -SID 22222222 ussdtestclient_default.exe
 
+START_TESTCASE BA-CTSY-USSDM-USMDH-0001
+//!@SYMTestCaseID BA-CTSY-USSDM-USMDH-0001
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageDefaultHandlerWithTestClient0001L
+END_TESTCASE BA-CTSY-USSDM-USMDH-0001
+
+START_TESTCASE BA-CTSY-USSDM-USMDH-0002
+//!@SYMTestCaseID BA-CTSY-USSDM-USMDH-0002
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageDefaultHandlerWithTestClient0002L
+END_TESTCASE BA-CTSY-USSDM-USMDH-0002
+
+START_TESTCASE BA-CTSY-USSDM-USMDH-0003
+//!@SYMTestCaseID BA-CTSY-USSDM-USMDH-0003
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageDefaultHandlerWithTestClient0003L
+END_TESTCASE BA-CTSY-USSDM-USMDH-0003
+
+START_TESTCASE BA-CTSY-USSDM-USMDH-0004
+//!@SYMTestCaseID BA-CTSY-USSDM-USMDH-0004
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support in CTSY for RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestPriority High
+//!@SYMTestActions Invokes RMobileUssdMessaging::SendMessageDefaultHandler
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestSendMessageDefaultHandlerWithTestClient0004L
+END_TESTCASE BA-CTSY-USSDM-USMDH-0004
+
+
 START_TESTCASE BA-CTSY-USSDM-UNNR-0001
 //!@SYMTestCaseID BA-CTSY-USSDM-UNNR-0001
 //!@SYMComponent telephony_ctsy
