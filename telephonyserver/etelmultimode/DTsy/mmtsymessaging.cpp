@@ -1765,7 +1765,7 @@ TInt CUssdMessagingDMmTsy::ReceiveMessageCancel(const TTsyReqHandle aTsyReqHandl
 	return KErrNone;
 	}
 
-TInt CUssdMessagingDMmTsy::SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes)
+TInt CUssdMessagingDMmTsy::SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8* /*aMsgData*/, TDesC8* aMsgAttributes)
 	{
 	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessage called"));
 	RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
@@ -1781,7 +1781,7 @@ TInt CUssdMessagingDMmTsy::SendMessage(const TTsyReqHandle aTsyReqHandle, TDesC8
 	return KErrNone;
 	}
 
-TInt CUssdMessagingDMmTsy::SendMessageDefaultHandler(const TTsyReqHandle aTsyReqHandle, TDesC8* aMsgData, TDesC8* aMsgAttributes)
+TInt CUssdMessagingDMmTsy::SendMessageDefaultHandler(const TTsyReqHandle aTsyReqHandle, TDesC8* /*aMsgData*/, TDesC8* aMsgAttributes)
 	{
 	LOGTEXT(_L8("CUssdMessagingDMmTsy::SendMessageDefaultHandler called"));
 	RMobileUssdMessaging::TMobileUssdAttributesV1Pckg* attsPckg = REINTERPRET_CAST(RMobileUssdMessaging::TMobileUssdAttributesV1Pckg*,aMsgAttributes);
@@ -1932,3 +1932,4 @@ TInt CUssdMessagingDMmTsy::NotifyNetworkRelease(const TTsyReqHandle aTsyReqHandl
 		}
 	return KErrNone;
 	}
+
