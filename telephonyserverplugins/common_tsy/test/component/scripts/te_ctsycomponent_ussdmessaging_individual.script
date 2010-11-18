@@ -735,6 +735,28 @@ START_TESTCASE BA-CTSY-USSDM-URM-0002i
 RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002iL
 END_TESTCASE BA-CTSY-USSDM-URM-0002i
 
+START_TESTCASE BA-CTSY-USSDM-URM-0002j
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002j
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support of RMobileUssdMessaging::ReceiveMessage for reception of USSD notification while other client is handling USSD session. 
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients present which receive and accept network initiated USSD messages.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002jL
+END_TESTCASE BA-CTSY-USSDM-URM-0002j
+
+START_TESTCASE BA-CTSY-USSDM-URM-0002k
+//!@SYMTestCaseID BA-CTSY-USSDM-URM-0002k
+//!@SYMComponent telephony_ctsy
+//!@SYMTestCaseDesc Test support of RMobileUssdMessaging::ReceiveMessage for network iniated requests.
+//!@SYMTestPriority High
+//!@SYMTestActions Two clients handling network initiated requests.
+//!@SYMTestExpectedResults Pass
+//!@SYMTestType CT
+RUN_TEST_STEP 100 te_ctsy_component TEFUnit.CCTsyUssdMessagingFU.TestReceiveMessage0002kL
+END_TESTCASE BA-CTSY-USSDM-URM-0002k
+
 START_TESTCASE BA-CTSY-USSDM-URM-0003
 //!@SYMTestCaseID BA-CTSY-USSDM-URM-0003
 //!@SYMComponent telephony_ctsy

@@ -1193,11 +1193,6 @@ EXPORT_C void CTelObject::ReqCompleted(const TTsyReqHandle aTsyReqHandle,const T
 		    }
         else if (reqMode&KReqModeMultipleCompletionWithInterestLevel && error ==KErrNone)
             {
-            // TODO if delivery is active for this req then return 
-            // KErrInUse / KErrServerBusy?
-            // TODO what if one CTelObject has multiple requests which are 
-            // KReqModeMultipleCompletionWithInterestLevel. Would we need multiple
-            // delivery managers?
             if (!IsSessionInProgress())
                 {
                 // Find an owner for the new session by offering it to the 
@@ -1341,7 +1336,6 @@ void CTelObject::FindReq(CReqEntry* aUpdatedReqEntry,const TReqMode aReqMode,con
 				&& reqEntry->iTelObject==aUpdatedReqEntry->iTelObject 
 				&& reqEntry->iBuffer->Size()==aUpdatedReqEntry->iBuffer->Size()
 				&& IsSessionOwner(reqEntry))  
-				//TODO uncommented IsSessionOwner(reqEntry) to make sure
 				//request is delievered to the session owner(sometimes the default handler)
 				{			
 				if (aUpdatedReqEntry != reqEntry)
@@ -2627,3 +2621,4 @@ void CFaxSharedFileHandles::ConstructL(const RMessage2& aMsg)
 	//Use the RMessage2 and EKA2 adopt functions to adopt the file.  Slots 0 & 2 contain relevant session handles.
 	User::LeaveIfError(iFile.AdoptFromClient(aMsg, 0, 2));
 	}
+

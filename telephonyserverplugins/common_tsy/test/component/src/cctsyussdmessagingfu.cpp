@@ -58,6 +58,8 @@ CTestSuite* CCTsyUssdMessagingFU::CreateSuiteL(const TDesC& aName)
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0002gL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0002hL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0002iL);
+	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0002jL);
+	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0002kL);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0003L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0004L);
 	ADD_TEST_STEP_ISO_CPP(CCTsyUssdMessagingFU, TestReceiveMessage0004bL);	
@@ -635,7 +637,7 @@ void CCTsyUssdMessagingFU::TestSendMessage0006L()
  	//-------------------------------------------------------------------------
 	
 	
-    iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data, KErrNotSupported);
+    iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data, KErrNotSupported);
 
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);
 	
@@ -647,8 +649,8 @@ void CCTsyUssdMessagingFU::TestSendMessage0006L()
 	// TEST B: failure on completion of pending request from LTSY->CTSY
  	//-------------------------------------------------------------------------
 
-    iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
-    iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrGeneral);
+    iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data);
+    iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrGeneral);
 
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);
 	
@@ -661,8 +663,8 @@ void CCTsyUssdMessagingFU::TestSendMessage0006L()
 	// RMobileUssdMessaging::SendMessage when result is not cached.
  	//-------------------------------------------------------------------------
 
-    iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
-    iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+    iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data);
+    iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrNone);
 
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);
 	
@@ -678,7 +680,7 @@ void CCTsyUssdMessagingFU::TestSendMessage0006L()
     TRequestStatus mockLtsyStatus;
 
 	iMockLTSY.NotifyTerminated(mockLtsyStatus);
-	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrNone);
 	User::WaitForRequest(mockLtsyStatus);
 	AssertMockLtsyStatusL();
 	ASSERT_EQUALS(KErrNone, mockLtsyStatus.Int());
@@ -2683,6 +2685,219 @@ void CCTsyUssdMessagingFU::TestReceiveMessage0002iL()
 	CleanupStack::PopAndDestroy(4, this); //  this, data, ussd1, ussd2
 	}
 
+/**
+@SYMTestCaseID BA-CTSY-USSDM-URM-0002j
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc est support of RMobileUssdMessaging::ReceiveMessage for reception of USSD notification while other client is handling USSD session. 
+@SYMTestPriority High
+@SYMTestActions Two clients present which receive and accept network initiated USSD messages.
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyUssdMessagingFU::TestReceiveMessage0002jL()
+	{
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhoneL();
+
+	RBuf8 dataCl1;
+	CleanupClosePushL(dataCl1);
+	
+	RBuf8 dataCl2;
+	CleanupClosePushL(dataCl2);
+
+	RMobileUssdMessaging ussd1;
+	RMobileUssdMessaging ussd2;
+	TInt ret1 = ussd1.Open(iPhone);
+	TInt ret2 = ussd2.Open(iPhone);
+	ASSERT_EQUALS(KErrNone, ret1);
+	ASSERT_EQUALS(KErrNone, ret2);
+	CleanupClosePushL(ussd1);
+	CleanupClosePushL(ussd2);
+
+	TRequestStatus requestStatus1;
+	TRequestStatus requestStatus2;
+
+ 	//-------------------------------------------------------------------------
+	TUint32 flags = 100;
+	RMobileUssdMessaging::TMobileUssdDataFormat format = RMobileUssdMessaging::EFormatUnspecified;
+	RMobileUssdMessaging::TMobileUssdMessageType typeNotify  = RMobileUssdMessaging::EUssdMTNotify;
+	RMobileUssdMessaging::TMobileUssdMessageType typeReply  = RMobileUssdMessaging::EUssdMTRequest;
+	TUint8 dcs = 200;
+
+	// function parameters
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 attributes;
+	TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1> msgAttributes(attributes);
+	
+	RMobileUssdMessaging::TGsmUssdMessageData name;
+
+ 	//-------------------------------------------------------------------------
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributesClient1;
+
+	completeAttributesClient1.iFlags  = flags;
+	completeAttributesClient1.iFormat = format;
+	completeAttributesClient1.iType   = typeNotify;
+	completeAttributesClient1.iDcs    = dcs;
+	
+	TBuf8<KMaxName> completeName = _L8("Name1");
+
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2(completeName, completeAttributesClient1);
+
+	mockData2.SerialiseL(dataCl1);	
+	
+ 	//-------------------------------------------------------------------------
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributesClient2;
+
+	completeAttributesClient2.iFlags  = flags;
+	completeAttributesClient2.iFormat = format;
+	completeAttributesClient2.iType   = typeReply;
+	completeAttributesClient2.iDcs    = dcs;
+	
+	TBuf8<KMaxName> completeNameCl2 = _L8("Name2");
+
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2Cl2(completeNameCl2, completeAttributesClient2);
+
+	mockData2Cl2.SerialiseL(dataCl2);
+
+	//-------------------------------------------------------------------------
+	// TEST: The first client accepts a network initiated USSD request.
+	// The SECOND client accepts a USSD notification.
+	//-------------------------------------------------------------------------
+	
+	//network initiated USSD request
+	ussd1.ReceiveMessage(requestStatus1, name, msgAttributes);
+    iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, dataCl1);
+
+    User::WaitForRequest(requestStatus1);
+	AssertMockLtsyStatusL();
+
+	ASSERT_EQUALS(KErrNone, requestStatus1.Int());	
+	ussd1.AcceptIncomingDialogue();
+	
+	//USSD notification
+	ussd2.ReceiveMessage(requestStatus2, name, msgAttributes);	
+    iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, dataCl2);
+
+    User::WaitForRequest(requestStatus2);
+	AssertMockLtsyStatusL();
+
+	ASSERT_EQUALS(KErrNone, requestStatus2.Int());
+	ussd2.AcceptIncomingDialogue();
+	
+	CleanupStack::PopAndDestroy(5, this); //  this, dataCl1, dataCl2, ussd1, ussd2
+	}
+
+/**
+@SYMTestCaseID BA-CTSY-USSDM-URM-0002k
+@SYMComponent  telephony_ctsy
+@SYMTestCaseDesc Test support of RMobileUssdMessaging::ReceiveMessage for network iniated requests.
+@SYMTestPriority High
+@SYMTestActions Two clients handling network initiated requests.
+@SYMTestExpectedResults Pass
+@SYMTestType CT
+*/
+void CCTsyUssdMessagingFU::TestReceiveMessage0002kL()
+	{
+	OpenEtelServerL(EUseExtendedError);
+	CleanupStack::PushL(TCleanupItem(Cleanup,this));
+	OpenPhoneL();
+
+	RBuf8 dataCl1;
+	CleanupClosePushL(dataCl1);
+	
+	RBuf8 dataCl2;
+	CleanupClosePushL(dataCl2);
+
+	RMobileUssdMessaging ussd1;
+	RMobileUssdMessaging ussd2;
+	TInt ret1 = ussd1.Open(iPhone);
+	TInt ret2 = ussd2.Open(iPhone);
+	ASSERT_EQUALS(KErrNone, ret1);
+	ASSERT_EQUALS(KErrNone, ret2);
+	CleanupClosePushL(ussd1);
+	CleanupClosePushL(ussd2);
+
+	TRequestStatus requestStatus1;
+	TRequestStatus requestStatus2;
+
+ 	//-------------------------------------------------------------------------
+	TUint32 flags = 100;
+	RMobileUssdMessaging::TMobileUssdDataFormat format = RMobileUssdMessaging::EFormatUnspecified;
+	RMobileUssdMessaging::TMobileUssdMessageType typeNotify  = RMobileUssdMessaging::EUssdMTNotify;
+	RMobileUssdMessaging::TMobileUssdMessageType typeReply  = RMobileUssdMessaging::EUssdMTRequest;
+	TUint8 dcs = 200;
+
+	// function parameters
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 attributes;
+	TPckg<RMobileUssdMessaging::TMobileUssdAttributesV1> msgAttributes(attributes);
+	
+	RMobileUssdMessaging::TGsmUssdMessageData name;
+
+ 	//-------------------------------------------------------------------------
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributesClient1;
+
+	completeAttributesClient1.iFlags  = flags;
+	completeAttributesClient1.iFormat = format;
+	completeAttributesClient1.iType   = typeNotify;
+	completeAttributesClient1.iDcs    = dcs;
+	
+	TBuf8<KMaxName> completeName = _L8("Name1");
+
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2(completeName, completeAttributesClient1);
+
+	mockData2.SerialiseL(dataCl1);	
+	
+ 	//-------------------------------------------------------------------------
+
+	RMobileUssdMessaging::TMobileUssdAttributesV1 completeAttributesClient2;
+
+	completeAttributesClient2.iFlags  = flags;
+	completeAttributesClient2.iFormat = format;
+	completeAttributesClient2.iType   = typeReply;
+	completeAttributesClient2.iDcs    = dcs;
+	
+	TBuf8<KMaxName> completeNameCl2 = _L8("Name2");
+
+	TMockLtsyData2<TBuf8<KMaxName>, RMobileUssdMessaging::TMobileUssdAttributesV1> 
+		mockData2Cl2(completeNameCl2, completeAttributesClient2);
+
+	mockData2Cl2.SerialiseL(dataCl2);
+
+	//-------------------------------------------------------------------------
+	// TEST: The first client accepts a network initiated USSD request.
+	// The SECOND client rejects a USSD notification.
+	//-------------------------------------------------------------------------
+	
+	//network initiated USSD request
+	ussd1.ReceiveMessage(requestStatus1, name, msgAttributes);
+    iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, dataCl1);
+
+    User::WaitForRequest(requestStatus1);
+	AssertMockLtsyStatusL();
+
+	ASSERT_EQUALS(KErrNone, requestStatus1.Int());	
+	ussd1.AcceptIncomingDialogue();
+	
+	//USSD notification
+	ussd2.ReceiveMessage(requestStatus2, name, msgAttributes);	
+    iMockLTSY.CompleteL(EMobileUssdMessagingReceiveMessage, KErrNone, dataCl2);
+
+    User::WaitForRequest(requestStatus2);
+	AssertMockLtsyStatusL();
+
+	ASSERT_EQUALS(KErrNone, requestStatus2.Int());
+	ussd2.RejectIncomingDialogue();
+	
+	CleanupStack::PopAndDestroy(5, this); //  this, dataCl1, dataCl2, ussd1, ussd2
+	}
 
 /**
 @SYMTestCaseID BA-CTSY-USSDM-URM-0003
@@ -5626,7 +5841,7 @@ void CCTsyUssdMessagingFU::TestMultipleIncomingUssdMessages0001L()
 @SYMComponent telephony_ctsy
 @SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with default handler
 @SYMTestPriority High
-@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessage with DefaultHandler option
 @SYMTestExpectedResults Pass
 @SYMTestType CT
 */
@@ -5716,8 +5931,8 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0001L()
 		}
 	//-------------------------------------------------------------------------
 	
-	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
-	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrNone);
 		
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
 	User::WaitForRequest(requestStatus);        
@@ -5778,7 +5993,7 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0001L()
 @SYMComponent telephony_ctsy
 @SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with two default clients
 @SYMTestPriority High
-@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessage with DefaultHandler option
 @SYMTestExpectedResults Pass
 @SYMTestType CT
 */
@@ -5870,8 +6085,8 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0002L()
 		}
 	//-------------------------------------------------------------------------
 	
-	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
-	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrNone);
 		
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
 	User::WaitForRequest(requestStatus);        
@@ -5932,7 +6147,7 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0002L()
 @SYMComponent telephony_ctsy
 @SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with default and priority clients
 @SYMTestPriority High
-@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessage with DefaultHandler option
 @SYMTestExpectedResults Pass
 @SYMTestType CT
 */
@@ -6024,8 +6239,8 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0003L()
 		}
 	//-------------------------------------------------------------------------
 	
-	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
-	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrNone);
 		
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
 	User::WaitForRequest(requestStatus);        
@@ -6085,7 +6300,7 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0003L()
 @SYMComponent telephony_ctsy
 @SYMTestCaseDesc Test support in CTSY client requests to RMobileUssdMessaging::SendMessage with default, normal and priority clients
 @SYMTestPriority High
-@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessageDefaultHandler option
+@SYMTestActions Invokes request to RMobileUssdMessaging::SendMessage with EMobileUssdMessagingSendMessage with DefaultHandler option
 @SYMTestExpectedResults Pass
 @SYMTestType CT
 */
@@ -6178,8 +6393,8 @@ void CCTsyUssdMessagingFU::TestSendMessageDefaultHandlerWithTestClient0004L()
 		}
 	//-------------------------------------------------------------------------
 	
-	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessageDefaultHandler, data);
-	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessageDefaultHandler, KErrNone);
+	iMockLTSY.ExpectL(EMobileUssdMessagingSendMessage, data);
+	iMockLTSY.CompleteL(EMobileUssdMessagingSendMessage, KErrNone);
 		
 	ussdMessaging.SendMessage(requestStatus, msgData, msgAttributes, RMobileUssdMessaging::ETransferToDefaultHandler);	
 	User::WaitForRequest(requestStatus);        

@@ -351,8 +351,7 @@ TFLOGSTRING("TSY: CMmMessageRouterProxy::RouteCompletion: PB object not found!")
 
         // USSD functionality
         case EMobileUssdMessagingSendRelease:
-        case EMobileUssdMessagingSendMessage:
-        case EMobileUssdMessagingSendMessageDefaultHandler: 
+        case EMobileUssdMessagingSendMessage:         
         case EMobileUssdMessagingSendMessageNoFdnCheck:
         case EMobileUssdMessagingReceiveMessage:
         case EMobileUssdMessagingNotifyNetworkRelease:
@@ -1512,8 +1511,7 @@ TFLOGSTRING2("TSY: CMmMessageRouterProxy::RouteCompletion: complete also to: %S"
 	            }
 #endif // SYMBIAN_ADAPTIVE_TCP_RECEIVE_WINDOW
 	            	            	            
-            //USSD
-	        case EMobileUssdMessagingSendMessageDefaultHandler:  
+            //USSD	          
 	        case EMobileUssdMessagingSendMessage:                
                 static_cast<CMmUssdTsy*>( mmObject )->
                     CompleteSendMessage( aResult );

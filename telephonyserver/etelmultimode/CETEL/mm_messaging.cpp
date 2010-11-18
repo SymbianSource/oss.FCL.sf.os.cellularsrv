@@ -1186,6 +1186,8 @@ EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, cons
 												const TDesC8& aMsgAttributes, TInt aCommand) const
 /**
 	This member function sends a USSD message to the network.
+	The received responce is later transfered to the default handler if 
+	ETransferToDefaultHandler == aCommand (the only available command for now).
 
 	See	3GPP spec. 04.90 for more details on expected responses from
 	the network.
@@ -1196,6 +1198,8 @@ EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, cons
 	@param aReqStatus On return, KErrNone if successful.
 	@param aMsgData The message data.
 	@param aMsgAttributes The TMobileUssdAttributesV1Pckg with the message attributes.
+	@param aCommand For now only ETransferToDefaultHandler is handled. In the future
+		   more commands might be introduced. 
 
 	@see TMobileUssdAttributesV1
 
@@ -1205,10 +1209,10 @@ EXPORT_C void RMobileUssdMessaging::SendMessage(TRequestStatus& aReqStatus, cons
 */
 	{	
 	if(ETransferToDefaultHandler != aCommand)
-	{
-	aReqStatus = KErrArgument;
-	return;
-	}	
+		{
+		aReqStatus = KErrArgument;
+		return;
+		}	
 	Set(EMobileUssdMessagingSendMessageDefaultHandler, aReqStatus, aMsgData, aMsgAttributes); 	
 	}
 

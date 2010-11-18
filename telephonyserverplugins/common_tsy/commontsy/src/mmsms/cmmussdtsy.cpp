@@ -551,7 +551,8 @@ void CMmUssdTsy::CompleteReceiveMessage(
 TFLOGSTRING("TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
     TTsyReqHandle reqHandle = iTsyReqHandleStore->GetTsyReqHandle( 
         EMultimodeUssdReceiveMessage );
-        
+      
+
     if ( ( EMultimodeUssdReqHandleUnknown != reqHandle ) )
         {
         // reset req handle. Returns the deleted req handle
@@ -573,7 +574,9 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteReceiveMessage.\n" );
             	{            	
             	aError = KErrArgument;
             	}
+            
 			}
+			
         ReqCompleted( reqHandle, aError );
         }
     }
@@ -616,16 +619,8 @@ TFLOGSTRING2("TSY: CMmUssdTsy::SendMessageL: iUssdNoFdnCheckFlag: %d", iUssdNoFd
         if ( iUssdNoFdnCheckFlag == EUssdNoFdnCheckNotUsed )
             {
             // Send request to the Domestic OS layer.
-        	if(EFalse == iSendToDefaultHandler)
-        		{
-        		ret = iMmPhone->MessageManager()->HandleRequestL( 
-        				EMobileUssdMessagingSendMessage, &package );
-        		}
-        	else //default handler 
-				{
-				ret = iMmPhone->MessageManager()->HandleRequestL( 
-						EMobileUssdMessagingSendMessageDefaultHandler, &package );            
-				}      	
+        	ret = iMmPhone->MessageManager()->HandleRequestL( 
+        				EMobileUssdMessagingSendMessage, &package );   	
             }
         iSsTransactionOngoing = ETrue;        
         }
@@ -770,8 +765,10 @@ TFLOGSTRING("TSY: CMmUssdTsy::CompleteSendMessage.\n" );
             if ( KErrNone == aError )
                 {
             	if(EFalse == iSendToDefaultHandler)
-            		{
-            		SetSessionOwnerByTsyHandle( reqHandle );
+            		{            		
+            		//This is the non-default handler case. Session owner remains the same.
+            		//This session owner will get the newly received message.
+            		SetSessionOwnerByTsyHandleAndIpc( reqHandle, NULL );
             		}
             	else // default handler
             		{    

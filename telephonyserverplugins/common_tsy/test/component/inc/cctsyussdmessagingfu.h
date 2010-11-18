@@ -92,6 +92,8 @@ public:
 	void TestReceiveMessage0002gL();
 	void TestReceiveMessage0002hL();
 	void TestReceiveMessage0002iL();
+	void TestReceiveMessage0002jL();
+	void TestReceiveMessage0002kL();
 	void TestReceiveMessage0003L();
 	void TestReceiveMessage0004L();
 	void TestReceiveMessage0004bL();
