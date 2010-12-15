@@ -147,32 +147,35 @@ TUint CATGprsContextConnect::GetConnectionSpeed()
 // other items were commented in a header
 // ---------------------------------------------------------------------------
 void CATGprsContextConnect::ParseResponseL(const TDesC8& /*aResponseBuf*/)
-	{
-	RArray<TPtrC8> array;
-	CleanupClosePushL(array);
-	iParser->ParseRespondedBuffer(array,CurrentLine());
-	TInt Count = array.Count();
-	if (Count < 1)
-		{
-		CleanupStack::PopAndDestroy();
-		iError = KErrGeneral;
-		return ;
-		}
-	if( array[0].MatchF(KLtsyGprsConnect)==KErrNotFound)
-		{
-		CleanupStack::PopAndDestroy();
-		iError = KErrGeneral;
-		return ;
-		}
-	else
-		{
-		TUint val = 0;
-		TLex8 lex(array[1]);
-		lex.Val(val);
-		iConnectionSpeed = val;
-		CleanupStack::PopAndDestroy(&array);
-		iError = KErrNone;
-		}
-	}
+        {
+        RArray<TPtrC8> array;
+        CleanupClosePushL(array);
+        iParser->ParseRespondedBuffer(array,CurrentLine());
+        TInt Count = array.Count();
+        if (Count < 1)
+                {
+                CleanupStack::PopAndDestroy();
+                iError = KErrGeneral;
+                return ;
+                }
+        if( array[0].MatchF(KLtsyGprsConnect)==KErrNotFound)
+                {
+                CleanupStack::PopAndDestroy();
+                iError = KErrGeneral;
+                return ;
+                }
+        else if(Count>1)//modem might not always give speed
+                {
+                TUint val = 0;
+                TLex8 lex(array[1]);
+                lex.Val(val);
+                iConnectionSpeed = val;
+                CleanupStack::PopAndDestroy(&array);
+                iError = KErrNone;
+                return;
+                }
+        CleanupStack::PopAndDestroy(&array);
+        }
+
 
 // End of file
