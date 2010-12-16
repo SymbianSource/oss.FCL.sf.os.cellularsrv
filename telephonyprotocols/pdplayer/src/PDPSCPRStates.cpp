@@ -1580,6 +1580,9 @@ void TCleanupFSM::DoL()
         if (tNode.ContentionRequested() == EFalse)
             {
             CSubConGenEventSubConDown* event = CSubConGenEventSubConDown::NewL();
+            
+            event->SetError(iContext.iNodeActivity->Error());
+            
             CleanupStack::PushL(event);
             tNode.NotifyClientsL(*event);
             CleanupStack::Pop(event);
@@ -1617,14 +1620,48 @@ TBool TAwaitingPDPContextGoneDown::Accept()
         {
 		if (!iContext.Node().ContentionRequested())
 			{
-			//Following SPUD, we're ignoring the error raised by the FSM and override it with KErrDisconnected
-			iContext.Node().LinkDown(KErrDisconnected);
+            //Following SPUD, we're ignoring the error raised by the FSM and override it with KErrDisconnected
+            iContext.Node().LinkDown(KErrDisconnected);
 			}
+			
         return ETrue;
         }
     return EFalse;
     }
 
+DEFINE_SMELEMENT(TAwaitingNWIPrimaryGoneDown, NetStateMachine::MState, PDPSCprStates::TContext)
+TBool TAwaitingNWIPrimaryGoneDown::Accept()
+    {
+    CPDPSubConnectionProvider& tNode = static_cast<CPDPSubConnectionProvider&>(iContext.Node());
+    
+    TBool result(EFalse);
+    
+    if (TAwaitingPDPContextDestroyed::Accept())
+        {
+        // RPacketContext::TContextStatus aStatus;
+        
+        // tNode.iPdpFsmInterface->Get(tNode.iPDPFsmContextId,aStatus);
+ 
+        // ideally, network initiated context deletion should only happen 
+        // when the state of the connection has gone to EStatusInactive from the modem
+        // however, if we've received an indication that the connection has gone down
+        // for any reason, its still a deactivation (basically this is future proofing).
+        
+        //ASSERT(aStatus != RPacketContext::EStatusInactive);    
+        result = ETrue;
+        }
+
+    return result;
+    }
+
+DEFINE_SMELEMENT(TStopSelfNWI, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
+void TStopSelfNWI::DoL()
+    {
+    // We're going to stop ourselves but we need to explicitly tell the stop activity that we've
+    // come to be stopped because the network has deleted the context (KErrDisconect)
+    iContext.iNodeActivity->PostRequestTo(iContext.NodeId(),
+            TCFDataClient::TStop(KErrDisconnected).CRef());
+    }
 
 DEFINE_SMELEMENT(TNoTagOrProviderStopped, NetStateMachine::MStateFork, PDPSCprStates::TContext)
 TInt TNoTagOrProviderStopped::TransitionTag()
@@ -1637,8 +1674,6 @@ TInt TNoTagOrProviderStopped::TransitionTag()
         }
     return CoreNetStates::KProviderStopped;
     }
-
-
 
 //===========================================================
 //   Sip Address retrieval
@@ -1847,6 +1882,7 @@ TInt CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped::TransitionTag()
     	{
     	return KNoTag;
     	}
+    
     return CoreNetStates::KProviderStopped;
 	}
 
@@ -1865,10 +1901,13 @@ void TFillInImsExtParams::DoL()
 	RCFParameterFamilyBundle newBundle;
 	newBundle.CreateL();
 	newBundle.Open(iContext.Node().iParameterBundle);
+    CleanupClosePushL(newBundle);
+
 	RParameterFamily imcnFamily = newBundle.CreateFamilyL(KSubConnContextDescrParamsFamily);
 
 	CSubConImsExtParamSet *imcnFlag = CSubConImsExtParamSet::NewL(imcnFamily,RParameterFamily::EGranted);
-	newBundle.Close();
+
+	CleanupStack::PopAndDestroy(&newBundle);
 
 	RPacketContext::TProtocolConfigOptionV2* pco = NULL;
 	switch (gprsProvision->UmtsGprsRelease())

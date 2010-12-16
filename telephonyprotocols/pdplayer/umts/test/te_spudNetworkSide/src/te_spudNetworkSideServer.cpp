@@ -135,6 +135,10 @@ CTestStep* CSpudNetworkSideTestServer::CreateTestStep(const TDesC& aStepName)
 			{
 			step = new CSpudPrimaryEvent;
 			}
+		else if (aStepName == KCSpudNWIContextDeletion)
+		    {
+		    step = new CSpudNWIContextDeletion;
+		    }
         else if(aStepName == KCSpudPrimaryContextEventProgress)
             {
             step = new CSpudPrimaryContextEventProgress;

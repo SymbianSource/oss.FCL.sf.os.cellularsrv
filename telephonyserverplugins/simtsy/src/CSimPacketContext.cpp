@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -2679,47 +2679,42 @@ TInt CSimPacketContext::ChangeState(RPacketContext::TContextStatus aNewState)
 * @param aNewState the new state to change to
 * @return Error indication if change of state is successful or not
 */
-	{
-	LOGPACKET2(">>CSimPacketContext::ChangeState [newState=%d]", aNewState);
-	__ASSERT_ALWAYS(aNewState!=RPacketContext::EStatusUnknown,SimPanic(ECallStatusUnknownIllegal));
+    {
+    LOGPACKET2(">>CSimPacketContext::ChangeState [newState=%d]", aNewState);
+    __ASSERT_ALWAYS(aNewState!=RPacketContext::EStatusUnknown,SimPanic(ECallStatusUnknownIllegal));
+    
+    if (iState == aNewState)
+        {
+        return KErrNone;
+        }
 
-	if(iState==aNewState)
-		return KErrNone;
-
-	TInt ret=KErrGeneral;
-	const struct TContextStateChangeValidity* stateChangePnt=KContextStateChangeValidity;
-	while(stateChangePnt->iOldState!=KContextStateTableTerminator)
-		{
-		if((stateChangePnt->iOldState==iState) && (stateChangePnt->iNewState==aNewState))
-			{
-			ret=stateChangePnt->iError;
-			break;
-			}
-		stateChangePnt++;
-		}
-
-	if(ret!=KErrNone)
-		return ret;
-
-//Request permission from the phone to change the state of the packet connection
-	ret = iPacketService->ChangeState(ConvertToPacketServiceStatus(aNewState));
-	if(ret!=KErrNone)
-		return ret;
-
-// Actually change the state.
-	iState=aNewState;
-
-// Check for a pending line state notification.
-	if(iNotifyStatusChange.iNotifyPending)
-		{
-		iNotifyStatusChange.iNotifyPending=EFalse;
-		*(RPacketContext::TContextStatus*)iNotifyStatusChange.iNotifyData=iState;
-		ReqCompleted(iNotifyStatusChange.iNotifyHandle,KErrNone);
-		}
+    TInt ret = KErrGeneral;
+    
+    if (KPacketContextStateChangeTable[iState][aNewState])
+        {
+        
+        //Request permission from the phone to change the state of the packet connection
+        ret = iPacketService->ChangeState(ConvertToPacketServiceStatus(aNewState));
+            
+        if (ret == KErrNone)
+            {
+        
+            // Actually change the state.
+            iState = aNewState;
+            
+            // Check for a pending line state notification.
+            if (iNotifyStatusChange.iNotifyPending)
+                {
+                iNotifyStatusChange.iNotifyPending=EFalse;
+                *(RPacketContext::TContextStatus*)iNotifyStatusChange.iNotifyData=iState;
+                ReqCompleted(iNotifyStatusChange.iNotifyHandle,KErrNone);
+                }
+            }
+        }
 
 
 	LOGPACKET1("<<CSimPacketContext::ChangeState");
-	return KErrNone;
+	return ret;
 	}
 
 TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
@@ -2772,23 +2767,54 @@ TInt CSimPacketContext::ActionEvent(TContextEvent aEvent,TInt aStatus)
 
 		case EContextEventDeactivate:
 			LOGPACKET1(">>CSimPacketContext::ActionEvent = [EContextEventDeactivate]");
-			if(iState==RPacketContext::EStatusActive)
-				{
-				iCurrentEvent=EContextEventDeactivate;
-				ret = ChangeState(RPacketContext::EStatusDeactivating);
-					if(ret!=KErrNone)
-						ReqCompleted(iDeactivateRequestHandle,ret);
-					else
-						{
-						if (!found)
-							iTimer->Start(iDeactivatePause,this);
-						else
-							iTimer->Start(iContextConfigsRel99->At(i).iDeactivatePause,this);
-						}
-				}
-			else
-				ReqCompleted(iDeactivateRequestHandle, KErrNone);
-			break;
+			
+			switch (iState)
+			    {
+			    case RPacketContext::EStatusActive:
+			        // if we're active we need to change state in such a way that we're 
+			        // eventually taken into the following states, deactivating->inactive
+                    iCurrentEvent = EContextEventDeactivate;
+                    
+                    ret = ChangeState(RPacketContext::EStatusDeactivating);
+                    
+                    if (ret != KErrNone)
+                        {
+                        ReqCompleted(iDeactivateRequestHandle,ret);
+                        }
+                    else
+                        {
+                        if (!found)
+                            iTimer->Start(iDeactivatePause,this);
+                        else
+                            iTimer->Start(iContextConfigsRel99->At(i).iDeactivatePause,this);
+                        }
+			        break;
+			        
+			    case RPacketContext::EStatusSuspended:
+			        // this should be handled similarly to the active state
+                    
+			        ret = ChangeState(RPacketContext::EStatusDeactivating);
+			        
+			        if (ret == KErrNone)
+                        {
+                        ret = ChangeState(RPacketContext::EStatusInactive);
+                        }
+                
+                    ReqCompleted(iDeactivateRequestHandle,ret);
+			        break;
+			        
+			    case RPacketContext::EStatusDeactivating:
+			        // this should never happen but we test for it.. so we should place
+			        // the context in the correct state so that it can be deleted
+			        
+			        // fallthrough
+			    default:
+			        // attempt to make the context state inactive, then complete with succes or error
+			        ret = ChangeState(RPacketContext::EStatusInactive);
+			        ReqCompleted(iDeactivateRequestHandle,ret);
+			        break;
+			    }
+            break;
 
 		case EContextEventDelete:
 			LOGPACKET1(">>CSimPacketContext::ActionEvent = [EContextEventDelete]");

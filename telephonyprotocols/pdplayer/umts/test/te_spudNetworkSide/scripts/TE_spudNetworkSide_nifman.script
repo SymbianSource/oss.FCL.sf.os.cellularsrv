@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2005-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -107,7 +107,8 @@ RUN_TEST_STEP 180 TE_SpudNetworkSide CSpudPrimaryInterfaceEventStop z:\testdata\
 DELAY 3000
 END_TESTCASE            NET-Spud-NetworkSide-1004
 
-START_TESTCASE          NET-Spud-NetworkSide-1005
+//! this test is no longer valid - network context deletion is signalled by changing the status of the context from active->inactive.
+//START_TESTCASE          NET-Spud-NetworkSide-1005
 //! @SYMTestCaseID      NET-Spud-NetworkSide-1005
 //! @SYMTestCaseDesc Stop (EStopNormal) the interface when the primary context is inactive.
 //! @SYMFssID NETWORKING/Spud/Control Plane/ PDP Context Deactivation
@@ -116,9 +117,9 @@ START_TESTCASE          NET-Spud-NetworkSide-1005
 //! @SYMTestPriority Critical
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
-RUN_TEST_STEP 180 TE_SpudNetworkSide CSpudPrimaryInterfaceEventStop z:\testdata\configs\te_spudNetworkSide_nifman.ini NormalStopOnPrimaryInactive1
-DELAY 3000
-END_TESTCASE            NET-Spud-NetworkSide-1005
+//RUN_TEST_STEP 180 TE_SpudNetworkSide CSpudPrimaryInterfaceEventStop z:\testdata\configs\te_spudNetworkSide_nifman.ini NormalStopOnPrimaryInactive1
+//DELAY 3000
+//END_TESTCASE            NET-Spud-NetworkSide-1005
 
 START_TESTCASE          NET-Spud-NetworkSide-1006
 //! @SYMTestCaseID      NET-Spud-NetworkSide-1006
@@ -146,8 +147,8 @@ RUN_TEST_STEP 180 TE_SpudNetworkSide CSpudPrimaryInterfaceEventStop z:\testdata\
 DELAY 3000
 END_TESTCASE            NET-Spud-NetworkSide-1007
 
-
-START_TESTCASE          NET-Spud-NetworkSide-1008
+//! this test is no longer valid - network context deletion is signalled by changing the status of the context from active->inactive.
+//START_TESTCASE          NET-Spud-NetworkSide-1008
 //! @SYMTestCaseID      NET-Spud-NetworkSide-1008
 //! @SYMTestCaseDesc Stop (EStopAuthoritative) the interface when the primary context is inactive.
 //! @SYMFssID NETWORKING/Spud/Control Plane/ PDP Context Deactivation
@@ -156,9 +157,9 @@ START_TESTCASE          NET-Spud-NetworkSide-1008
 //! @SYMTestPriority Critical
 //! @SYMTestStatus Implemented
 //! @SYMTestType CIT
-RUN_TEST_STEP 180 TE_SpudNetworkSide CSpudPrimaryInterfaceEventStop z:\testdata\configs\te_spudNetworkSide_nifman.ini AuthStopOnPrimaryInactive1
-DELAY 3000
-END_TESTCASE            NET-Spud-NetworkSide-1008
+//RUN_TEST_STEP 180 TE_SpudNetworkSide CSpudPrimaryInterfaceEventStop z:\testdata\configs\te_spudNetworkSide_nifman.ini AuthStopOnPrimaryInactive1
+//DELAY 3000
+//END_TESTCASE            NET-Spud-NetworkSide-1008
 
 START_TESTCASE          NET-Spud-NetworkSide-1009
 //! @SYMTestCaseID      NET-Spud-NetworkSide-1009

@@ -213,6 +213,7 @@ namespace te_spudNetworkSide
 	SYMBIAN_SPUD_TEST_CLASS(CESockCheck)
 	SYMBIAN_SPUD_TEST_CLASS(CSpudPrimary)
 	SYMBIAN_SPUD_TEST_CLASS(CSpudPrimaryEvent)
+	SYMBIAN_SPUD_TEST_CLASS(CSpudNWIContextDeletion)
 	SYMBIAN_SPUD_TEST_CLASS(CSpudPrimaryContextEventProgress)
 	SYMBIAN_SPUD_TEST_CLASS(CSpudDeletePrimary)
 	SYMBIAN_SPUD_TEST_CLASS(CSpudPrimaryEventOnLowerNifStarting)

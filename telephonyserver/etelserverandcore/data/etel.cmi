@@ -11,6 +11,6 @@ StackSize=16384
 ScaledStartupState=0x1085
 HeapOption=ENewHeap
 MinHeapSize=256
-MaxHeapSize=1486432
+MaxHeapSize=1998432
 SystemCritical=1
 ControlFlags=1

@@ -33,64 +33,80 @@ TInt TPdpStateOpen::Input (CPdpFsm& aFsm, const TInt aOperation, const TInt aErr
 	SPUDFSMVERBOSE_FNLOG("TPdpStateOpen::Input()");
 	SPUDFSMVERBOSE_LOG2(_L("aOperation : %S(%d)"), LogOperation(aFsm, aOperation), aOperation);
 
+	TInt result = KErrNone;
+	
 	switch (aOperation)
 	{
 	case PdpFsm::EQoSProfileChangeNetwork:
 //		RPacketQoS::TQoSR99_R4Negotiated
 		SpudManNotify (aFsm, KContextParametersChangeEvent, KErrNone);
-		return KErrNone;
+		break;
 	case PdpFsm::EConfigGPRSChangeNetwork:
 //		//RPacketContext::TContextConfigGPRS
 		SpudManNotify (aFsm, KContextParametersChangeEvent, KErrNone);
-		return KErrNone;
+		break;
 	case PdpFsm::EContextStatusChangeNetwork:
 		if (aFsm.iContextStatus == RPacketContext::EStatusSuspended)
     		{
 			aFsm.ChangeStateToSuspended();
 			SpudManNotify(aFsm, KContextBlockedEvent, KErrNone); 
     		}
+		// network initiated context deletion - inform the state machine that
+		// it needs to do 'normal' deletion handling
+		else if (aFsm.iContextStatus == RPacketContext::EStatusInactive)
+		    {
+		    SpudManNotify(aFsm, KContextDeleteEvent, KErrNone);
+		    }
 		else if (aFsm.iContextStatus == RPacketContext::EStatusDeleted)
     		{
-			aFsm.ChangeStateToClosing();
-			EtelDriverInput(aFsm, EtelDriver::EContextDelete);
+			  SpudManNotify(aFsm, KContextDeleteEvent, KErrNone);
     		}
+		else if (aFsm.iContextStatus == RPacketContext::EStatusDeactivating)
+		    {
+		    // context is being deactivated (torn down internally), this should never happen
+		    // however it is likely that if it were implemented this way, then the Inactive 
+		    // would soon follow. 
+		    }
 		else
     		{
 			// no change in state - the upper layer must change the state if it needs to
 			SpudManNotify (aFsm, KContextParametersChangeEvent, aErrorCode);
     		}
-		return KErrNone;
+		break;
 	case SpudMan::EContextDelete:
 		aFsm.ChangeStateToClosing();
 		EtelDriverInput(aFsm, EtelDriver::EContextDelete);
-		return KErrNone;
+		break;
 	case SpudMan::EContextQoSSet:
 		aFsm.ChangeStateToChangingQoS();
 		EtelDriverInput(aFsm, EtelDriver::ESetQoS);
-		return KErrNone;
+		break;
 	case SpudMan::EContextModifyActive:
 		aFsm.ChangeStateToModifingActive();
 		EtelDriverInput(aFsm, EtelDriver::EModifyActive);
-		return KErrNone;
+		break;
 	case SpudMan::EContextTFTModify:
 		aFsm.ChangeStateToChangingTFT();
 		EtelDriverInput(aFsm, EtelDriver::EChangeTft);
-		return KErrNone;
+		break;
 	case SpudMan::ESuspend: // think this is superfluous - DAN will see at review :)
 		aFsm.ChangeStateToSuspended();
 		SpudManNotify(aFsm, KContextBlockedEvent, KErrNone);
-		return KErrNone;
+		break;
 	case SpudMan::EMbmsSessionUpdate:
 		EtelDriverInput(aFsm, EtelDriver::ESessionUpdate);
-		return KErrNone;
+		break;
 		
 	case SpudMan::EMbmsParameterUpdate:
 		SpudManNotify (aFsm, KContextParametersChangeEvent, aErrorCode);
-		return KErrNone;
+		break;
+		
+	default: // default error handling
+	    result = TPdpState::Input(aFsm, aOperation, aErrorCode);
+	    break;
 	}
 	
-	// default error handling
-	return TPdpState::Input(aFsm, aOperation, aErrorCode);
+	return result;
 }
 
 

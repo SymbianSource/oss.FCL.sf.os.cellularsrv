@@ -582,6 +582,9 @@ NONSHARABLE_CLASS( CMmCallGsmWcdmaExt ) : public CMmCallExtInterface, public MCt
 		
 		// Pointer to SystemStatePlugin
 		CCtsySystemStatePluginHandler* iSystemStatePluginHandler;
+		
+		// Flag that indicate if the CTSY asked to start the RF. 
+		TBool iIsRfToBeSetBackToInactive;
     };
 
 #endif      // CMMCALLGSMWCDMAEXT_H   

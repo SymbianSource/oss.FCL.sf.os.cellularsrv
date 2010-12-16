@@ -604,6 +604,19 @@ DELAY 3000
 RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
 END_TESTCASE            NET-Spud-NetworkSide-0832
 
+START_TESTCASE          NET-Spud-NetworkSide-0833
+//! @SYMTestCaseID      NET-Spud-NetworkSide-0833
+//! @SYMTestCaseDesc Network deletes active Primary PDP context
+//! @SYMFssID NETWORKING/Spud/Control Plane/Primary PDP Context Creation
+//! @SYMTestActions Activate primary, change state to inactive (network deleted) validate that it is torn down (KErrDisconnected).
+//! @SYMTestExpectedResults  Link Down with KErrDisconnected
+//! @SYMTestPriority Critical
+//! @SYMTestStatus Implemented
+//! @SYMTestType CIT
+RUN_TEST_STEP 60 TE_SpudNetworkSide CSpudNWIContextDeletion z:\testdata\configs\te_spudNetworkSide.ini PrimaryActivationNetworkDelete
+DELAY 3000
+RUN_TEST_STEP 60 TE_SpudNetworkSide CESockCheck z:\testdata\configs\te_spudNetworkSide.ini ESockCheck
+END_TESTCASE            NET-Spud-NetworkSide-0833
 
 run_script z:\TestData\scripts\te_esock_test_unloadesockForced.script
 

@@ -1175,6 +1175,64 @@ enum TVerdict CSpudPrimaryEvent::RunTestStepL()
 	return EPass;
 	}
 
+
+/**
+Test operation of the primary PDP context when the network deletes the context
+
+@leave if the test fails.
+*/  
+enum TVerdict CSpudNWIContextDeletion::RunTestStepL()
+    {
+    TInt idx                 = RetrieveNetSideEventValFromConfigL(_L("QoSEventReq1Idx"));
+    TEtelRequestType request = RetrieveNetSideEventRequestFromConfigL(_L("QoSEventReq1"));
+    
+    TInt expProgress(0);
+    TInt expErrorCode(0);
+    if(!GetIntFromConfig(ConfigSection(), _L("ExpectedNifProgress"), expProgress) ||
+       !GetIntFromConfig(ConfigSection(), _L("ExpectedNifError"), expErrorCode))
+        {
+        User::Leave(KErrNotFound);
+        }
+    
+    StartPrimaryOnlyL();    
+    User::After(KTimeToStartSecondary);
+
+    TRequestStatus progressReqSt;   
+    iInterface.ProgressNotification(iProgressBuf, progressReqSt, static_cast<TUint>(expProgress));
+    
+    EtelRequestL(request, idx); // Will fire after we register for notifications  
+    
+    // not sure why these aren't forwarded but will look into it later.
+    
+    //    WaitForProgressNotificationL(progressReqSt, KPsdStartingDeactivation, 0);
+    //    
+    //    WaitForProgressNotificationL(progressReqSt, KPsdFinishedDeactivation, KErrDisconnected);
+    
+    WaitForProgressNotificationL(progressReqSt, expProgress, expErrorCode); // We can wait here forever. Set timeout on test step.
+
+    if (KLinkLayerClosed == expProgress) // The Nif is expected to shutdown, so if we are here, then the NIF is down.
+        {
+        // N.B.
+        // At this point the NIF is down, and all the associated data structures in ESock server / Nifman are in 
+        // the process of being deleted, or have been deleted already.
+        // Calling *anything* on the NIF itself is no longer possible, because there is no NIF.
+        // Typically, ESock will react with KErrNotReady(-18) to these attempts.
+        // Because of timing issues (ESock thread vs. TestExecute thread), especially on hardware,
+        // ESock client-side objects may not be yet aware of that, and return KErrNone.  This makes testing for the 
+        // return error codes problematic.
+        // In any case, calling Stop() on the NIF is inappropriate. Close() closes the client-side handle,
+        // which is OK.
+        iInterface.Close();
+        }
+    else // The interface was not stopped. We should stop it now and verify that is was OK.
+        {
+        TestL(iInterface.Stop(), _L("Shutting down the interface using RConnection::Stop()"));
+        return EFail;
+        }
+    
+    return EPass;
+    }
+
 /**
 Test of the primary PDP context progress. 
 

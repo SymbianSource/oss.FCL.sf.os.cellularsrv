@@ -288,7 +288,8 @@ START_TESTCASE			NET-SubConnProv-spud-0251
 RUN_TEST_STEP 100 TE_SpudUnit SpudFsmTestNotificationsR5OrR99R4
 END_TESTCASE			NET-SubConnProv-spud-0251
 
-START_TESTCASE			NET-UMTS-Spud-0119
+// This is handled differently now.
+//START_TESTCASE			NET-UMTS-Spud-0119
 //! @SYMTestCaseID		NET-UMTS-Spud-0119
 //! @SYMFssID NETWORKING/Spud/Control Plane/Network initiated PDP Context Modification
 //! @SYMFssID NETWORKING/Spud/Control Plane/ PDP Context Deactivation
@@ -297,8 +298,8 @@ START_TESTCASE			NET-UMTS-Spud-0119
 //! @SYMTestPriority Critical
 //! @SYMTestStatus Implemented
 //! @SYMTestType UT
-RUN_TEST_STEP 100 TE_SpudUnit SpudFsmNetworkDelete
-END_TESTCASE			NET-UMTS-Spud-0119
+//RUN_TEST_STEP 100 TE_SpudUnit SpudFsmNetworkDelete
+//END_TESTCASE			NET-UMTS-Spud-0119
 
 
 RUN_UTILS  MakeReadWrite c:\simtsy\config.txt

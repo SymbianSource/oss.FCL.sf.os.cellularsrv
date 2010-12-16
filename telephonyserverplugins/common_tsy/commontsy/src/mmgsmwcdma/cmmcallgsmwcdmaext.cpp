@@ -126,6 +126,7 @@ void CMmCallGsmWcdmaExt::ConstructL()
 	iSystemStatePluginHandler = iMmCallTsy->Phone()->SystemStatePluginHandler();
 
 	ResetInternalAttributes();
+	iIsRfToBeSetBackToInactive = EFalse;
     }
 
 CMmCallGsmWcdmaExt* CMmCallGsmWcdmaExt::NewL(
@@ -1703,6 +1704,8 @@ TFLOGSTRING2("TSY: CMmCallGsmWcdmaExt::SetRfState - state=%d", aMtcState );
         	        	
         if ( ERfsStateInfoNormal == aMtcState )
        		{
+			// Since the RF state was inactive, we need to set it back when the emergency call is finished
+			iIsRfToBeSetBackToInactive = ETrue;
        		iSystemStatePluginHandler->ActivateRfForEmergencyCall(aSsmPluginCallback, aCallbackData);
        		}
        	else if ( ERfsStateInfoInactive == aMtcState )
@@ -2996,8 +2999,7 @@ void CMmCallGsmWcdmaExt::SsmPluginCallback(TInt aResult, TCtsySsmCallbackData& a
         //change the status of the RF in phone to EEmergencyCallMade
         //this will enable that RF is set back to off when emergency call
         //is finished
-        TRfStateInfo stateInfo = iMmCallTsy->Phone()->GetRfStateInfo();
-        if ( result == KErrNone && stateInfo != ERfsStateInfoNormal )
+        if ( (result == KErrNone) && iIsRfToBeSetBackToInactive )
         	{
             iMmCallTsy->Phone()->SetRfStatus( EEmergencyCallMade );            
             }
@@ -3006,7 +3008,8 @@ void CMmCallGsmWcdmaExt::SsmPluginCallback(TInt aResult, TCtsySsmCallbackData& a
     
     //pass answer from SSM further to CMmVoiceCallTsy::SsmPluginCallback()
     ((CMmVoiceCallTsy*)iMmCallTsy)->SsmPluginCallback(result, aCallbackData);		
-
+	// Reset the flag
+	iIsRfToBeSetBackToInactive = EFalse;
 	}
 
 // End of File

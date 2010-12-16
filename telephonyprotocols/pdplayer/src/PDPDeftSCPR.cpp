@@ -103,22 +103,29 @@ typedef MeshMachine::TAcceptErrorState<CoreNetStates::TAwaitingApplyResponse> TA
 //           to TRejoin, whereas TRejoin doesn't mean swap - suggesting to
 //           introduce PDP level msg: TRejoinAndSwap.
 DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityGoneDown, PDPDeftSCprGoneDown, TPDPMessages::TPDPFSMMessage, PDPSCprStates::CPrimaryPDPGoneDownActivity::NewL)
-    FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingPDPContextGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
-    THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCleanupFSM, PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
+    FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingNWIPrimaryGoneDown, MeshMachine::TActiveOrNoTag<ECFActivityStartDataClient>)
+   
+    // First - figure out what situation we're in, do we have secondaries or not, etc.
+    ROUTING_NODEACTIVITY_ENTRY(KNoTag,PDPSCprStates::CPrimaryPDPGoneDownActivity::TNoTagOrProviderStopped)
+    
+    // KNoTag - there is a secondary that can be promoted to primary
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStoreOriginalDataClient, MeshMachine::TNoTag)
     NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TRejoinDataClient, CoreNetStates::TAwaitingRejoinDataClientComplete, MeshMachine::TNoTag)
     NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TApplyNewDefault, TAwaitingApplyResponseOrError, MeshMachine::TNoTag)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TSwitchToNewDefault, MeshMachine::TNoTag)
     NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::CPrimaryPDPGoneDownActivity::TStopOriginalDataClient, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TNoTag)
-    
     LAST_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TClearError)
+    
+    // KActiveTag - there was an active StartDataClient being attempted on this node
+    // not sure if this is even possible, what we're saying is that the node is starting and the network
+    // had deleted it before the context has been activated. 
     THROUGH_NODEACTIVITY_ENTRY(KActiveTag, MeshMachine::TDoNothing, PDPSCprStates::TNoTagOrContentionTag)
     //Awaiting for contention result, do not stop the start activity.
     LAST_NODEACTIVITY_ENTRY(PDPSCprStates::KContentionTag, MeshMachine::TDoNothing)
-    
     LAST_NODEACTIVITY_ENTRY(KNoTag, PDPSCprStates::TCancelDataClientStartInPDP)
     
-    NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, CoreNetStates::TStopSelf, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
+    // normal de-activation in primary only case, stop the connection and send gone down to those who care.
+    NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TStopSelfNWI, CoreNetStates::TAwaitingDataClientStopped, MeshMachine::TTag<CoreNetStates::KProviderStopped>)
     LAST_NODEACTIVITY_ENTRY(CoreNetStates::KProviderStopped, PDPSCprStates::TSendGoneDown)
 NODEACTIVITY_END()
 }

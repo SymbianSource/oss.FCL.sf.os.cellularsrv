@@ -373,6 +373,14 @@ DECLARE_SMELEMENT_HEADER( TAwaitingPDPContextGoneDown, PDPSCprStates::TAwaitingP
 	virtual TBool Accept();
 DECLARE_SMELEMENT_FOOTER( TAwaitingPDPContextGoneDown )
 
+DECLARE_SMELEMENT_HEADER( TAwaitingNWIPrimaryGoneDown, PDPSCprStates::TAwaitingPDPContextDestroyed, NetStateMachine::MState, PDPSCprStates::TContext )
+    virtual TBool Accept();
+DECLARE_SMELEMENT_FOOTER( TAwaitingNWIPrimaryGoneDown )
+
+DECLARE_SMELEMENT_HEADER(TStopSelfNWI, MeshMachine::TStateTransition<TContext>, NetStateMachine::MStateTransition, PDPSCprStates::TContext)
+    virtual void DoL();
+DECLARE_SMELEMENT_FOOTER(TStopSelfNWI)
+
 DECLARE_SMELEMENT_HEADER( TNoTagOrProviderStopped, MeshMachine::TStateFork<TContext>, NetStateMachine::MStateFork, TContext )
   	virtual TInt TransitionTag();
 DECLARE_SMELEMENT_FOOTER( TNoTagOrProviderStopped )
@@ -386,7 +394,6 @@ DECLARE_AGGREGATED_TRANSITION2(
    PDPSCprStates::TCleanupFSM,
    PRStates::TDestroyOrphanedDataClients
    )    
-
 
 //===========================================================
 //   Sip Address retrieval

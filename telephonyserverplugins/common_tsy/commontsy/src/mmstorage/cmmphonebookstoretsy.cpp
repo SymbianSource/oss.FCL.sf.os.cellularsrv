@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -650,13 +650,18 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompletePBStoreInitializationL - PhoneB
     // fill phonebook related static data
     if ( KErrNone == aResult )
         {
-        // Response information
-        CStorageInfoData* pbInitResp;
-        //unpack data
-        aDataPackage->UnPackData( &pbInitResp );
+        // Don't update iStoreInfo if data package is null.
+        if ( aDataPackage )
+            {
+            // Response information
+            CStorageInfoData* pbInitResp;
+            //unpack data
+            aDataPackage->UnPackData( &pbInitResp );
 
-        // Set data got from phonebook initialization
-        *iStoreInfoData = *pbInitResp;
+            // Set data got from phonebook initialization
+            *iStoreInfoData = *pbInitResp;
+            }
+        
         // Reset initialization value
         iStoreInfoData->iIsPhonebookInitialized = ETrue;
         iStoreInfoData->iIsPhonebookInitializeFailed = EFalse;
@@ -1269,6 +1274,14 @@ TFLOGSTRING2("TSY: CMmPhoneBookStoreTsy::CompleteCachingL - ADN cachestatus %d",
     	    {
     	    bootState->iCachingActive = ETrue;
     	    }
+        
+        // When caching starts, the initialization flag is set to false in ResetInitialisationStatus().
+        // We need to call CompletePBStoreInitializationL() to set the initialization flag back to
+        // true and complete any outstanding request.
+        if ( !iStoreInfoData->iIsPhonebookInitialized && KErrNone == aResult )
+            {
+            CompletePBStoreInitializationL( aResult, NULL );
+            }
         }
     }
 

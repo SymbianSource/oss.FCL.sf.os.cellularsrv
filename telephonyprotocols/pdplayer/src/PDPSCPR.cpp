@@ -92,7 +92,7 @@ NODEACTIVITY_END()
 
 namespace PDPSCprStopActivity
 {
-DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStopDataClient, Stop, TCFDataClient::TStop, MeshMachine::CNodeRetryActivity::NewL)
+DECLARE_DEFINE_CUSTOM_NODEACTIVITY(ECFActivityStopDataClient, Stop, TCFDataClient::TStop, MeshMachine::CPreallocatedNodeRetryActivity::New)
     FIRST_NODEACTIVITY_ENTRY(PDPSCprStates::TAwaitingDataClientStopOrCancel, MeshMachine::TNoTag)
     THROUGH_NODEACTIVITY_ENTRY(KNoTag, MeshMachine::TDoNothing, PRDataClientStopActivity::TNoTagOrProviderStoppedBlockedByStart)
     
@@ -373,8 +373,10 @@ MFactoryQuery::TMatchResult THighestQoSQuery::Match(TFactoryObjectInfo& aSubConn
 	{
 	CPDPSubConnectionProvider* sc = static_cast<CPDPSubConnectionProvider*>(aSubConnectionInfo.iInfo.iFactoryObject);
 	ASSERT(sc && sc->ControlProvider());
-    if (sc->ControlProvider()->RecipientId() == iCtrlProvider &&
-        sc->iPDPFsmContextId != CPDPSubConnectionProvider::EInvalidContextId)
+	
+    if ((sc->ControlProvider()->RecipientId() == iCtrlProvider) &&\
+        (sc->iPDPFsmContextId != CPDPSubConnectionProvider::EInvalidContextId) &&\
+        (sc->iPDPFsmContextId != KPrimaryContextId))
         {
         if (NULL == iHighestQoSProvider)
             {

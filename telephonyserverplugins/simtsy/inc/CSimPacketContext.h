@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2002-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -51,44 +51,63 @@ enum TContextEvent //< Enum for the state machine
 	EContextEventTimeOut
 	};	
 
-const RPacketContext::TContextStatus KContextStateTableTerminator=(RPacketContext::TContextStatus)999;
-
-struct TContextStateChangeValidity
-	{
-	RPacketContext::TContextStatus iOldState;
-	RPacketContext::TContextStatus iNewState;
-	TInt iError;
-	};
+//const RPacketContext::TContextStatus KContextStateTableTerminator=(RPacketContext::TContextStatus)999;
+//
+//struct TContextStateChangeValidity
+//	{
+//	RPacketContext::TContextStatus iOldState;
+//	RPacketContext::TContextStatus iNewState;
+//	TInt iError;
+//	};
 
 //< This table is used to ensure that the TSY state changes are as accurate as possibly
 //< It makes sure that there is no state irregularities and the TSY does not skip any state.
 //< Returns KErrNone for a valid change state request (3rd column).
-const struct TContextStateChangeValidity	KContextStateChangeValidity[]= {
-	{ RPacketContext::EStatusInactive,		RPacketContext::EStatusActivating,	KErrNone },
-	{ RPacketContext::EStatusInactive,		RPacketContext::EStatusDeleted,	KErrNone },
+//const struct TContextStateChangeValidity	KContextStateChangeValidity[]= {
+//	{ RPacketContext::EStatusInactive,		RPacketContext::EStatusActivating,	KErrNone },
+//	{ RPacketContext::EStatusInactive,		RPacketContext::EStatusDeleted,	KErrNone },
+//
+//	{ RPacketContext::EStatusActivating,	RPacketContext::EStatusActive,		KErrNone },
+//	{ RPacketContext::EStatusActivating,	RPacketContext::EStatusInactive,	KErrNone },
+//	{ RPacketContext::EStatusActivating,	RPacketContext::EStatusDeleted,	KErrNone },
+//	
+//	{ RPacketContext::EStatusActive,		RPacketContext::EStatusDeactivating, KErrNone },
+//	{ RPacketContext::EStatusActive,		RPacketContext::EStatusSuspended,	KErrNone },
+//	{ RPacketContext::EStatusActive,		RPacketContext::EStatusDeleted,	KErrNone },
+//	{ RPacketContext::EStatusActive,        RPacketContext::EStatusInactive, KErrNone },  // network context deletion
+//
+//	{ RPacketContext::EStatusDeactivating,	RPacketContext::EStatusInactive,	KErrNone },
+//	{ RPacketContext::EStatusDeactivating,	RPacketContext::EStatusActive,		KErrNone },
+//	{ RPacketContext::EStatusDeactivating,	RPacketContext::EStatusDeleted,	KErrNone },
+//
+//	{ RPacketContext::EStatusSuspended,		RPacketContext::EStatusDeactivating, KErrNone },
+//	{ RPacketContext::EStatusSuspended,		RPacketContext::EStatusActive,		KErrNone },
+//	{ RPacketContext::EStatusSuspended,		RPacketContext::EStatusDeleted,	KErrNone },
+//
+//	{ RPacketContext::EStatusDeleted,		RPacketContext::EStatusInactive,	KErrNone },
+//
+//
+//	{ KContextStateTableTerminator,			KContextStateTableTerminator,		KContextStateTableTerminator}
+//	};
 
-	{ RPacketContext::EStatusActivating,	RPacketContext::EStatusActive,		KErrNone },
-	{ RPacketContext::EStatusActivating,	RPacketContext::EStatusInactive,	KErrNone },
-	{ RPacketContext::EStatusActivating,	RPacketContext::EStatusDeleted,	KErrNone },
-	
-	{ RPacketContext::EStatusActive,		RPacketContext::EStatusDeactivating, KErrNone },
-	{ RPacketContext::EStatusActive,		RPacketContext::EStatusSuspended,	KErrNone },
-	{ RPacketContext::EStatusActive,		RPacketContext::EStatusDeleted,	KErrNone },
+// note: I've decided to create this table as i feel it is easier to understand 
+// the state table for the packet context.  This encompasses the information above, however
+// there are a number of state changes that i don't think are correct (above).  as an example,
+// it should be possible to make a suspended context inactive (network deleted suspended context)
+// or it shouldn't be possible to delete a suspended context as it would need to be deactivated first
 
-	{ RPacketContext::EStatusDeactivating,	RPacketContext::EStatusInactive,	KErrNone },
-	{ RPacketContext::EStatusDeactivating,	RPacketContext::EStatusActive,		KErrNone },
-	{ RPacketContext::EStatusDeactivating,	RPacketContext::EStatusDeleted,	KErrNone },
-
-	{ RPacketContext::EStatusSuspended,		RPacketContext::EStatusDeactivating, KErrNone },
-	{ RPacketContext::EStatusSuspended,		RPacketContext::EStatusActive,		KErrNone },
-	{ RPacketContext::EStatusSuspended,		RPacketContext::EStatusDeleted,	KErrNone },
-
-	{ RPacketContext::EStatusDeleted,		RPacketContext::EStatusInactive,	KErrNone },
-
-
-	{ KContextStateTableTerminator,			KContextStateTableTerminator,		KContextStateTableTerminator}
-	};
-
+const TUint8 KPacketContextStateChangeTable[7][8] = 
+    {
+    // Unknown, Inactive, Activating, Active, Deactivating, Suspended, Deleted, Receiving }
+          { 0,        0,          0,      0,            0,         0,       0, 0}, // Unknown 
+          { 0,        0,          1,      0,            0,         0,       1, 0}, // Inactive
+          { 0,        1,          0,      1,            1,         0,       0, 0}, // Activating
+          { 0,        1,          0,      0,            1,         1,       1, 0}, // Active
+          { 0,        1,          0,      1,            0,         0,       1, 0}, // Deactivating
+          { 0,        1,          0,      1,            1,         0,       1, 0}, // Suspended
+          { 0,        1,          0,      0,            0,         0,       0, 0} // Deleted
+    // {} // Receiving (MBMS only)
+    };
 
 struct TProtocolConfigOption	// used for authentication parameters 
 	{
